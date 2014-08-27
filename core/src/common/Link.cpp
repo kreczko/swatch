@@ -1,72 +1,23 @@
-// SWATCH HEADERS
-#include "swatch/core/Link.hpp"
+/* 
+ * File:   Link.cpp
+ * Author: ale
+ * 
+ * Created on July 27, 2014, 10:59 PM
+ */
 
-#include "swatch/core/Device.hpp"
-#include "swatch/core/Port.hpp"
+#include "swatch/core/Link.hpp" 
 
+namespace swatch {
+namespace core {
 
-// OTHER HEADERS
-
-// C++ HEADERS
-#include <iostream>
-
-using namespace swatch::core;
-using namespace std;
-
-
-Link::Link(
-		const string& id,
-		const boost::shared_ptr<Port>& src,
-		const boost::shared_ptr<Port>& dst
-		)
-:
-		id_(id),
-		enabled_(false),
-		srcPort_(src),
-		dstPort_(dst)
-{
-	cout << "swatch::core::Link::Link --> Link CTOR called. Id " << id_ << endl;
+Link::Link(const std::string& aId, OutputPort* aSrc, InputPort* aDst, const Arguments& aArguments) :
+    ObjectView( aId ), src_(aSrc), dst_(aDst) {
+    this->addObj(src_, "src");
+    this->addObj(dst_, "dst");
 }
 
-
-
-Link::~Link()
-{
-	cout << "swatch::core::Link::~Link --> Link DTOR called. Id " << id_ << endl;
+Link::~Link() {   
 }
 
-
-string
-Link::getId()
-{
-	return id_;
-}
-
-
-boost::shared_ptr<Port>
-Link::getSrcPort()
-{
-	return srcPort_;
-}
-
-
-boost::shared_ptr<Port>
-Link::getDstPort()
-{
-	return dstPort_;
-}
-
-
-void
-Link::enable()
-{
-	enabled_ = true;
-}
-
-
-
-bool
-Link::isEnabled()
-{
-	return enabled_;
-}
+} // namespace core
+} // namespace swatch

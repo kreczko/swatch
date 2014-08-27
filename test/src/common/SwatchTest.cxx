@@ -1,103 +1,76 @@
-// SWATCH HEADERS
-#include "swatch/system/System.hpp"
+/* 
+ * File:   SystemTesrt.cpp
+ * Author: ale
+ *
+ * Created on July 8, 2014, 2:43 PM
+ */
 
-// OTHER HEADERS
-
-
-// C++ HEADERS
-#include <boost/thread.hpp>
-#include <iostream>
-#include <queue>
 #include <cstdlib>
 
+#include "swatch/test/TestSuite.hpp"
+ 
+// C++ Headers
+#include <stdexcept>
+#include <iostream>
+#include <vector>
 
+// Boost Headers
+#include <boost/program_options.hpp>
+#include <boost/foreach.hpp>
 
 using namespace std;
 
+//namespace po = boost::program_options;
 
-namespace swatch
-{
+/*
+ * 
+ */
+int main(int argc, char** argv) {
+    using namespace swatch::test;
+    
+    set<string> args(argv+1,argv+argc);
+    BOOST_FOREACH( string a, args) {
+        cout << a << endl;
+    }
+    
+//    vector<swatch::test::TestUnit*> units;
+    
+    
+    map<string, TestUnit*>  units;
+//    units["sys_build"]   = new SystemBuildTest();
+    units["sys_explore"] = new SystemExploreTest();
+//    units["sys_crate"]   = new SystemBuildFullCrate();
+//    units["par_test"]    = new ParameterSetTest();
+    units["json_build"]  = new JsonBuildTest();
 
+    int counts = 0;
+    BOOST_FOREACH(string a, args) {
 
-namespace test
-{
+        try {
 
-class SwatchTest
-{
+            if ( units.count( a ) ) {
+                ++counts;
+                units[a]->run();
+            }
 
-private:
+        } catch (const runtime_error e) {
+            cout << "ERROR: " << e.what() << endl;
+        }
 
-	const size_t iterations_;
-	const size_t channelSize_;
-	queue<unsigned int> channel_;
+    }
 
+    if ( !counts ) {
+        cout  << "WARNING: No test executed" << endl;
+        cout  << "Available tests are:" << endl;
+        map<string, TestUnit*>::const_iterator it;
+        for ( it = units.begin(); it != units.end(); ++it )
+            cout << " - " << it->first << endl;
+    }
 
-public:
-
-	SwatchTest():
-		iterations_(20),
-		channelSize_(10)
-	{
-
-	}
-
-	~SwatchTest()
-	{
-
-	}
-
-
-
-	int run()
-	{
-		cout << "swatch::test::SwatchTest::run --> Running tests..." << endl;
-		// initialize systems: ID, load boards etc
-		swatch::system::System gt("GT");
-		cout << gt.displayStatus();
-
-		cout << "swatch::test::SwatchTest::run --> systems ready; will go through the FSM... " << endl;
-		cout << "************************************************************************" << endl;
-
-
-		// configure systems
-		gt.configure();
-		cout << gt.displayStatus();
-
-		/*
-		// play with the FSM
-		gt.enable();
-		gt.stop();
-		gt.enable();
-		gt.suspend();
-		gt.stop();
-		gt.enable();
-		gt.suspend();
-		gt.enable();
-		gt.stop();
-
-		// finish with enable state
-		gt.enable();
-		 */
-		cout << "swatch::test::SwatchTest::run --> systems enabled; will start the tests now... " << endl;
-		cout << "************************************************************************" << endl;
-
-		// start producing and consuming data
-//		gt.test();
-
-
-		return 0;
-	}
-
-
-
-};
-
-} // end ns test
-} // end ns swatch
-
-
-int main(int argc, char* argv[])
-{
-	swatch::test::SwatchTest st;
-	return st.run();
+    // Cleanup
+    map<string, TestUnit*>::iterator itU;
+    for( itU = units.begin(); itU != units.end(); ++itU)
+        delete itU->second;
+    
 }
+

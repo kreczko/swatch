@@ -1,0 +1,29 @@
+<node>
+  <node id="ctrl" address="0x0000">
+    <node id="id" address="0x0" description="ID register">
+      <node id="magic" address="0x0"/>
+      <node id="fwrev" address="0x1">
+        <node id="c" mask="0x000000ff"/>
+        <node id="b" mask="0x0000ff00"/>
+        <node id="a" mask="0x00ff0000"/>
+        <node id="design" mask="0xff000000"/>
+      </node>
+      <node id="infos" address="0x2">
+        <node id="n_tx" mask="0x00000ff"/>
+        <node id="n_rx" mask="0x000ff00"/>
+      </node>
+    </node>
+    <node id="hardreset" address="0x3"/>
+    <node id="softreset" address="0x4"/>
+  </node> 
+  <node id="buffer" address="0x10">
+    <node id="stat" address="0x2">
+      <node id="size" mask="0x0000fff"/>
+    </node>
+  </node>     
+  <node id="ttc" address="0x20">
+    <node id="enable" mask="0x0"/>
+    <node id="sendL1A" mask="0x1"/>
+    <node id="sendBGo" mask="0x2"/>
+  </node> 
+</node>

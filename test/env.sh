@@ -1,3 +1,6 @@
+[[ $_ != $0 ]] && echo "Script is being sourced" || echo "Script is a subshell"
+
+#
 function pathadd() {
   # TODO add check for empty path
   # and what happens if $1 == $2
@@ -14,15 +17,20 @@ function pathadd() {
 
 }
 
-CACTUS_ROOT="/opt/cactus"
+CACTUS_ROOT=${CACTUS_ROOT:-"/opt/cactus"}
 SWATCH_TESTS=$( readlink -f $(dirname $BASH_SOURCE)/ )
 SWATCH_ROOT=$( readlink -f ${SWATCH_TESTS}/.. )
 
-pathadd PATH "${SWATCH_ROOT}/tests/bin"
-#pathadd PYTHONPATH "${SWATCH_ROOT}/tests/src/python"
-pathadd LD_LIBRARY_PATH "${SWATCH_ROOT}/core/lib"
-pathadd LD_LIBRARY_PATH "${SWATCH_ROOT}/board/lib"
-pathadd LD_LIBRARY_PATH "${SWATCH_ROOT}/system/lib"
-pathadd LD_LIBRARY_PATH "${SWATCH_ROOT}/tests/lib"
+pathadd PATH "${SWATCH_ROOT}/test/bin"
 
-export PATH LD_LIBRARY_PATH
+pathadd LD_LIBRARY_PATH "${SWATCH_ROOT}/core/lib"
+pathadd LD_LIBRARY_PATH "${SWATCH_ROOT}/processor/lib"
+pathadd LD_LIBRARY_PATH "${SWATCH_ROOT}/system/lib"
+pathadd LD_LIBRARY_PATH "${SWATCH_ROOT}/test/lib"
+
+# tests
+pathadd LD_LIBRARY_PATH "${SWATCH_ROOT}/core/test/lib"
+pathadd LD_LIBRARY_PATH "${SWATCH_ROOT}/processor/test/lib"
+pathadd LD_LIBRARY_PATH "${SWATCH_ROOT}/system/test/lib"
+
+export PATH LD_LIBRARY_PATH CACTUS_ROOT SWATCH_ROOT SWATCH_TESTS

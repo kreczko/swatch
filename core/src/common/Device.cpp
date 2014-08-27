@@ -1,101 +1,35 @@
-// SWATCH HEADERS
+/* 
+ * File:   Device.cpp
+ * Author: ale
+ * 
+ * Created on July 11, 2014, 12:51 PM
+ */
+
 #include "swatch/core/Device.hpp"
 
-
-// OTHER HEADERS
-
-// C++ HEADERS
-#include <iostream>
-
-
-using namespace swatch::core;
 using namespace std;
 
+namespace swatch {
+namespace core {
 
-
-Device::Device(const string& id):
-		id_(id),
-		state_(Halted)
-{
-	cout << "swatch::core::Device::Device --> Device CTOR called. Id: " << id_ << endl;
+Device::Device(const std::string& aId, const Arguments& aArguments) :
+    Object(aId) {
 }
 
-
-
-Device::~Device()
-{
-	cout << "swatch::core::Device::~Device --> Device DTOR called. Id " << id_ << endl;
+Device::~Device() {
 }
-
-
-
-string
-Device::getId()
-{
-	return id_;
-}
-
 
 void
-Device::addTx(const Device::shared_port& tx)
-{
-	txPorts_.push_back(tx);
+Device::addInput(InputPort* aInput) {
+    this->addObj(aInput);
+    inputs_.push_back(aInput);
 }
-
 
 void
-Device::addRx(const Device::shared_port& rx)
-{
-	txPorts_.push_back(rx);
+Device::addOutput(OutputPort* aOutput) {
+    this->addObj(aOutput);
+    outputs_.push_back(aOutput);
 }
 
-
-void
-Device::configure()
-{
 }
-
-
-void
-Device::enable()
-{
-}
-
-
-void
-Device::suspend()
-{
-}
-
-
-void
-Device::stop()
-{
-
-}
-
-
-void
-Device::resume()
-{
-}
-
-
-void
-Device::test()
-{
-}
-
-
-void
-Device::setState(const Device::FSMStates& state)
-{
-	state_ = state;
-}
-
-
-Device::FSMStates
-Device::getState()
-{
-	return state_;
 }

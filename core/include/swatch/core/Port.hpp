@@ -1,94 +1,46 @@
-#ifndef CACTUSCORE_SWATCH_CORE_PORT_H
-#define CACTUSCORE_SWATCH_CORE_PORT_H
+/* 
+ * File:   Port.hpp
+ * Author: ale
+ *
+ * Created on July 21, 2014, 9:57 AM
+ */
 
+#ifndef __swatch_core_port_hpp__
+#define	__swatch_core_port_hpp__
 
-// SWATCH HEADERS
+#include "swatch/core/Object.hpp"
+#include "swatch/core/ParameterSet.hpp"
 
-// OTHER HEADERS
-// C++ HEADERS
-#include <string>
-#include <boost/shared_ptr.hpp>
+namespace swatch {
+namespace core {
 
-namespace swatch
-{
-
-namespace core
-{
-
-class Device;
-class Link;
-
-class Port
-{
-
-protected:
-	//! Enum type defining data direction for a Port object
-	typedef enum Direction {IN, OUT} PortDirection;
-
-	//! Enum types for a boost shared pointer wrapping Device and Link objets, respectively
-	typedef boost::shared_ptr<Device> shared_device;
-	typedef boost::shared_ptr<Link>   shared_link;
-
-
+/**
+ *  Trigger network port class.
+ */
+class Port : public Object {
 public:
-
-	/**
-	 *
-	 * @param id Port unique identifier
-	 * @param device Device object the Port object belongs to
-	 * @param enabled Whether the Port is enabled (ready for transmission or reception) or not
-	 */
-	Port(const std::string& id, const shared_device& device, bool enabled=false);
-
-	/**
-	 * Destructor
-	 *
-	 */
-	~Port();
-
-	/**
-	 * Sets this port object direction to "OUT", meaning data will flow out of the port
-	 */
-	void setTxDirection();
-
-	/**
-	 * Sets this port object direction to "IN", meaning data will flow IN the port
-	 */
-	void setRxDirection();
-
-	/**
-	 * Attaches a Link object to this Port object
-	 * @param link The link this Port object will be part of
-	 */
-	void setLink(const shared_link& link);
-
-	/**
-	 * Gets the data direction for this Port object
-	 * @return IN (Port receives data), OUT (Port transmits data)
-	 */
-	PortDirection getDirection();
-
-protected:
-
-	//! Port unique identifier
-	std::string id_;
-
-	//! boost::shared_ptr<Device> this Port object belongs to
-	shared_device device_;
-
-	//! Tells whehter the port is enabled (ready for tx or rx) or not
-	bool enabled_;
-
-	//! Port data direction
-	Direction direction_;
-
-	//! boost::shared_ptr<Link> this Port makes part of
-	shared_link link_;
-
-private:
+    explicit Port( const std::string& aId, const Arguments& aArguments = Arguments() );
+    virtual ~Port();
+    
+    /// add here methods to do things with a Port
 };
-} // end ns core
-} // end ns swatch
 
 
-#endif
+class InputPort : public Port {
+public:
+    explicit InputPort( const std::string& aId, const Arguments& aArguments = Arguments() ) : Port(aId, aArguments) {}
+    virtual ~InputPort() {}
+};
+
+class OutputPort : public Port {
+public:
+    explicit OutputPort( const std::string& aId, const Arguments& aArguments = Arguments() ) : Port(aId, aArguments) {}
+    virtual ~OutputPort() {}
+};
+
+
+}
+}
+
+#endif	/* __swatch_core_port_hpp__ */
+

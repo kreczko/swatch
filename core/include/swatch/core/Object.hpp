@@ -1,0 +1,152 @@
+/**
+ * @file    Object.hpp
+ * @author  Alessandro Thea
+ * @brief   Base class to exercise the Object interface
+ * @date    20.08.2014
+ *
+ * Detailed description
+ */
+
+#ifndef _swatch_test_object_hpp_
+#define	_swatch_test_object_hpp_
+
+// Standard Headers
+#include <typeinfo>
+
+// Boost Headers
+#include "boost/unordered_map.hpp"
+#include "boost/lexical_cast.hpp"
+#include "ParameterSet.hpp"
+
+namespace swatch {
+namespace core {
+
+//! Base class for swatch classes. Inspired by uhal::Node
+class Object {
+public:
+    //! Class to iterate on childrens 
+    class iterator : public std::iterator< std::forward_iterator_tag , Object > {
+        friend class Object;
+        typedef std::deque< std::deque< Object* >::const_iterator > Stack;
+        public:
+            iterator();
+            virtual ~iterator();
+            iterator ( Object* aBegin );
+            iterator ( iterator& aOrig );
+  
+            Object& value() const;
+            Object& operator*() const;
+            Object* operator->() const;
+  
+            bool next();
+            iterator& operator++();
+            iterator operator++ ( int );
+  
+            bool operator== ( const iterator& aIt ) const;
+            bool operator!= ( const iterator& aIt ) const;
+        private:
+            Object* begin_;
+            Stack itStack_;
+    };
+    
+    explicit Object( const std::string& aId );
+
+    Object( const std::string& aId, const Arguments& aArguments );
+    
+    virtual ~Object();
+    
+    virtual iterator begin();
+    virtual iterator end();
+    
+    virtual const std::type_info& type();
+    virtual std::string typeName();
+    
+    virtual const std::string& id() const; 
+    virtual const std::string path() const;
+
+    std::vector<std::string> getPaths() const;
+
+    virtual std::vector<std::string> getChildren();
+
+    Object* getObj(const std::string& aId);
+    
+    template<typename T>
+    T* getObj(const std::string& aId);
+    
+    const ParameterSet& pset() { return pSet_; }
+    
+protected:
+
+    void addObj( Object* aChild );
+    
+    //! Container for child objects. Deleted by destructor
+    std::deque< Object* > children_;
+    
+    //! Map of children and their child nodes
+    boost::unordered_map< std::string, Object* > objectsChart_;
+
+private:
+    
+    void getCharts( std::string path, boost::unordered_map<std::string, Object*>& ) const;
+    
+    void getAncestors ( std::deque< const Object* >& aGenealogy ) const;
+
+    void setParent( Object* aParent );    
+    
+    std::string id_;
+    
+    Object* parent_;
+    
+    const ParameterSet pSet_;
+
+    friend class iterator;
+    friend class ObjectView;
+};
+
+class ObjectView : public Object {
+public:
+    
+    /**
+     */
+    ObjectView( const std::string& aId );
+    
+    /**
+     * Constructor 
+     * @param aId Identifier of this object
+     * @param aAttributes 
+     */
+    ObjectView( const std::string& aId, const Arguments& Arguments );
+    /**
+     * @brief Destructor
+     */
+    virtual ~ObjectView();
+    
+protected:
+
+    /**
+     * 
+     * @param aChild
+     * @param alias
+     */
+    void addObj( Object* aChild, const std::string& aAlias );
+    
+    /**
+     * 
+     * @param aChild
+     */
+    void addObj( Object* aChild );
+    
+};
+
+
+template<typename T>
+T* Object::getObj(const std::string& aId) {
+    return dynamic_cast<T*>( this->getObj(aId) );
+}
+
+
+} // namespace core
+} // namespace swatch
+
+#endif	/* _swatch_test_object_hpp_ */
+

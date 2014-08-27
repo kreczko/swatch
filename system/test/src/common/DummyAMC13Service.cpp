@@ -1,0 +1,56 @@
+/* 
+ * File:   DummyAMC13Service.cpp
+ * Author: ale
+ * 
+ * Created on August 3, 2014, 9:18 PM
+ */
+
+#include "swatch/system/test/DummyAMC13Service.hpp"
+
+// Boost Headers
+#include <boost/foreach.hpp>
+
+// uHAL Headers
+//#include "uhal/log/log.hpp"
+
+// Swatch Headers
+#include "swatch/system/ServiceFactory.hpp"
+
+// Namespace resolution
+using namespace std;
+
+namespace swatch {
+namespace system {
+namespace test {
+
+SWATCH_SERVICE_REGISTER_CLASS(DummyAMC13Service);
+
+DummyAMC13Service::DummyAMC13Service( const std::string& aId, const core::Arguments& aArguments ) : system::AMC13Service(aId,aArguments) {
+//    using namespace uhal;
+    cout << "Building a DummyAMC13Service" << endl;
+
+    cout << "Id:" << this->id() << endl;;
+    cout << "Arguments:" << endl;
+    BOOST_FOREACH( std::string name, aArguments.names() ) {
+        cout << "   " << name << " : " << core::anyToString(aArguments.get(name)) << endl;
+    }
+}
+
+DummyAMC13Service::~DummyAMC13Service() {
+}
+
+
+void
+DummyAMC13Service::enableTTC(const std::vector<uint32_t>& aSlots) {
+    
+    cout << "Enabling slots ";
+    BOOST_FOREACH( uint32_t s, aSlots ) {
+        cout << s << " ";
+    }
+    cout << endl;
+    
+}
+
+} // namespace test
+} // namespace system
+} // namespace swatch

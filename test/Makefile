@@ -1,112 +1,62 @@
-BUILD_HOME = $(shell pwd)/../../..
+SWATCH_BACK_TO_ROOT= $(shell pwd)/..
 
-include $(BUILD_HOME)/config/Makefile.macros
+include ${SWATCH_BACK_TO_ROOT}/config/mfCommonDefs.mk
 
 Project = cactuscore
-Package = swatch/test
-PackagePath = $(CACTUS_RPM_ROOT)/$(Project)/${Package}
+Package = swatch/core/test
+PackagePath = $(SWATCH_ROOT)/test
 PackageName = cactuscore-swatch-test
 
-Packager = Carlos Ghabrous Larrea
+Packager = Alessandro Thea
 
 PACKAGE_VER_MAJOR = 0
-PACKAGE_VER_MINOR = 0
+PACKAGE_VER_MINOR = 1
 PACKAGE_VER_PATCH = 0
 PACKAGE_RELEASE = 0
 
-LIBRARY = 
-LIBRARY_SOURCES = 
-LIBRARY_OBJECT_FILES = 
+Library = libcactus_swatch_test.so
 
-EXECUTABLE_SOURCES = $(wildcard src/common/*.cxx)
-EXECUTABLE_OBJECT_FILES = $(patsubst src/common/%.cxx,obj/%.o,${EXECUTABLE_SOURCES})
-EXECUTABLES = $(patsubst src/common/%.cxx,bin/%.exe,${EXECUTABLE_SOURCES})
+Includes = 	\
+		include/ \
+		${SWATCH_ROOT}/core/include \
+		${SWATCH_ROOT}/processor/include \
+		${SWATCH_ROOT}/system/include \
+		${SWATCH_ROOT}/system/test/include \
+		${CACTUS_ROOT}/include
 
-$(info ${EXECUTABLE_SOURCES})
-$(info ${EXECUTABLE_OBJECT_FILES})
-$(info ${EXECUTABLE})
+LibraryPaths =	\
+		lib \
+		${SWATCH_ROOT}/core/lib \
+		${SWATCH_ROOT}/processor/lib \
+		${SWATCH_ROOT}/system/lib \
+		${SWATCH_ROOT}/system/test/lib \
+		${CACTUS_ROOT}/lib
 
+Libraries =	\
+		boost_system \
+		boost_filesystem \
+		boost_regex \
+		boost_thread \
+		boost_unit_test_framework \
+		cactus_extern_pugixml \
+		cactus_uhal_uhal \
+		cactus_uhal_log \
+		cactus_swatch_core \
+		cactus_swatch_processor \
+		cactus_swatch_system \
+		cactus_swatch_system_test \
 
+ExecutableLibraries = ${Libraries} cactus_swatch_test
 
-LIBRARY_PATH = \
-			-L${BUILD_HOME}/${Project}/swatch/core/lib \
-			-L${BUILD_HOME}/${Project}/swatch/board/lib \
-			-L${BUILD_HOME}/${Project}/swatch/system/lib \
-			-L${CACTUS_ROOT}/lib
+IgnoreSources = src/common/console_test_runner.cxx
+# Temporary, horrible hack
+# console_test_runner must not be linked to cactus_core_test nor to the other test libraries
+# and therefore needs a dedicated build target
+ExtraTargets += bin/console_test_runner.exe
+	
+include ${SWATCH_ROOT}/config/mfRules.mk
+include ${SWATCH_ROOT}/config/mfRPMRules.mk
 
-LIBRARIES = 	\
-			-lboost_system \
-			-lboost_filesystem \
-			-lboost_regex \
-			-lboost_thread \
-			-lcactus_extern_pugixml \
-			-lcactus_uhal_grammars \
-			-lcactus_uhal_log \
-			-lcactus_uhal_uhal \
-			-lcactus_swatch_core \
-			-lcactus_swatch_board \
-			-lcactus_swatch_system 
-
-EXECUTABLE_LIBRARIES = ${LIBRARIES}
-
-INCLUDE_PATH = 	\
-				-I${BUILD_HOME}/${Project}/swatch/core/include \
-				-I${BUILD_HOME}/${Project}/swatch/board/include \
-				-I${BUILD_HOME}/${Project}/swatch/system/include \
-				-I${CACTUS_ROOT}/include
-
-CPP_FLAGS = -g -Wall -O3 -MMD -MP -fPIC 
-
-LINK_LIBRARY_FLAGS = 
-
-LINK_EXECUTABLE_FLAGS = -g -Wall -O3 ${LIBRARY_PATH} ${LIBRARIES}
-
-RPMBUILD_DIR = ${PackagePath}/RPMBUILD
-
-.PHONY: all _all clean _cleanall build _buildall install _installall rpm _rpmall test _testall spec_update
-
-default: build
-
-clean: _cleanall
-_cleanall:
-	rm -rf ${RPMBUILD_DIR}
-	rm -rf obj
-	rm -rf bin
-	rm -rf lib
-
-all: _all
-build: _all
-buildall: _all
-_all: ${EXECUTABLES}
-
-
-${EXECUTABLES}: bin/%.exe: obj/%.o ${EXECUTABLE_OBJECT_FILES}
-	g++ ${LINK_EXECUTABLE_FLAGS} $< -o $@
-
-${EXECUTABLE_OBJECT_FILES}: obj/%.o : src/common/%.cxx 
-	mkdir -p {bin,obj,lib}
-	g++ -c ${CPP_FLAGS} ${INCLUDE_PATH} $< -o $@
-
--include $(EXECUTABLE_OBJECT_FILES:.o=.d)
-
-
-rpm: _rpmall
-_rpmall: 
-	mkdir -p ${RPMBUILD_DIR}/{RPMS/{i386,i586,i686,x86_64},SPECS,BUILD,SOURCES,SRPMS}
-	mkdir -p ${RPMBUILD_DIR}/SOURCES/{bin/${Package},lib,include/${Package},etc/${Package}}
-	cp -p include/${Package}/*.hpp ${RPMBUILD_DIR}/SOURCES/include/${Package}/.
-	cp -p bin/*.exe ${RPMBUILD_DIR}/SOURCES/bin/${Package}/.
-	cp -p src/python/test_pycohal ${RPMBUILD_DIR}/SOURCES/bin/${Package}/.
-	cp -p scripts/* ${RPMBUILD_DIR}/SOURCES/bin/${Package}/.
-	cp -p lib/*.so ${RPMBUILD_DIR}/SOURCES/lib/.
-	cp -p etc/${Package}/*.xml ${RPMBUILD_DIR}/SOURCES/etc/${Package}
-	rpmbuild -bb -bl --buildroot=${RPMBUILD_DIR}/BUILD						\
-			--define  "_topdir ${RPMBUILD_DIR}"						\
-			--define "_prefix ${CACTUS_ROOT}"							\
-			--define "sources_dir ${RPMBUILD_DIR}/SOURCES"					\
-			--define "name ${PackageName}"								\
-			--define "version ${PACKAGE_VER_MAJOR}.${PACKAGE_VER_MINOR}.${PACKAGE_VER_PATCH}"	\
-			--define "release ${PACKAGE_RELEASE}.${CACTUS_OS}"							\
-			--define "packager ${Packager}"								\
-			${PackageName}.spec
-
+# Extra target after all others
+bin/console_test_runner.exe: obj/console_test_runner.o
+	${LD} ${CxxFlags} -L${CACTUS_ROOT}/lib -lboost_unit_test_framework -ldl $< -o $@

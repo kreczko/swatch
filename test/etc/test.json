@@ -1,0 +1,22 @@
+{
+  "system" : "s1calol2",
+  "boolean" : true,
+  "processors" : [
+    { 
+      "name" : "p1",
+      "uuid" : "0xc0de1",
+      "class" : "DummyProcessor"
+    },
+    {
+      "name" : "p2",
+      "uuid" : "0xc0de2",
+      "class" : "DummyProcessor"
+    },
+    {
+      "name" : "p3",
+      "uuid" : "0xc0de3",
+      "class" : "DummyProcessor"
+    }
+  ]
+  
+}

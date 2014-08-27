@@ -1,124 +1,66 @@
-#ifndef CACTUSCORE_SWATCH_SYSTEM_SYSTEM_H
-#define CACTUSCORE_SWATCH_SYSTEM_SYSTEM_H
+/* 
+ * File:   System.hpp
+ * Author: ale
+ *
+ * Created on July 13, 2014, 11:20 AM
+ */
 
-// SWATCH HEADERS
-#include "swatch/core/Device.hpp"
-
-
-// OTHER HEADERS
-
-
-// C++ HEADERS
-#include <string>
-#include <vector>
+#ifndef _swatch_test_system_hpp_
+#define	_swatch_test_system_hpp_
 
 
-// FORWARD DECLARATIONS
+// Swatch Headers
+#include "swatch/processor/Processor.hpp"
+#include "swatch/core/Link.hpp"
+#include "swatch/system/Service.hpp"
+#include "swatch/system/AMC13Service.hpp"
+#include "swatch/system/Crate.hpp"
 
-namespace swatch
-{
-
-
-namespace board
-{
-class Board;
-class BoardFactory;
-}
+namespace swatch {
+namespace system {
 
 
-namespace system
-{
+//! Generic class to build a 
+class System : public core::Device {
+public:
 
-// CLASS SYSTEM
+    System( const std::string& aId, const core::Arguments& aArgument = core::Arguments() );
+    virtual ~System();
+    
+    void add( processor::Processor* aProcessor );
+    void add( system::AMC13Service* aAMC13 );
+    void add( core::Link* aLink );
+    void add( system::Service* aService );
+    
+    const std::deque<processor::Processor*>& getProcessors() const;
+    const std::deque<core::Link*>& getLinks() const;
+    const boost::unordered_map<std::string, Crate*>& getCrates() const;
+    
+    
+protected:
 
-	//! Class extending the Device class for the case of a System (collection of boards and links)
-	class System : public swatch::core::Device
-	{
-	public:
+    //! List of processors
+    std::deque<processor::Processor*> processors_;
+    
+    //! List of AMC13s
+    std::deque<AMC13Service*> amc13s_;
+    
+    //! List of services
+    std::deque<Service*> services_;
+    
+    //! List of internal links
+    std::deque<core::Link*> links_; 
+    
+    //! List of external ports
+    // std::deque<SysPorts*> mPorts;
+    
+    //! Map of crates
+    boost::unordered_map<std::string, Crate*> cratesMap_;
+    
+};
 
-		/**
-		 * Constructor
-		 * @param id Name of this system object
-		 */
-		System(const std::string& id);
-
-		/**
-		 * Destructor
-		 */
-		~System();
-
-		/**
-		 * System implementation of the configure transition. Final state: Configured.
-		 */
-		void configure();
-
-		/**
-		 * System implementation of the enable transition. Final state: Enabled.
-		 */
-		void enable();
-
-		/**
-		 * System implementation of the suspend transition. Final state: Suspended.
-		 */
-		void suspend();
-
-		/**
-		 * System implementation of the stop transition. Final state: Configured.
-		 */
-		void stop();
-
-		/**
-		 * System implementation of the resume transition. Final state: Enabled.
-		 */
-		void resume();
-
-		/**
-		 * We'll see
-		 */
-		void test();
-
-
-		/**
-		 * For testing purposes
-		 */
-		std::string displayStatus();
-
-
-	protected:
-	private:
-
-		typedef boost::shared_ptr<swatch::core::Device> shared_board;
-		typedef std::vector<shared_board> Boards;
-		/**
-		 * Performs initialization operaton for this System object:
-		 * 1. Reads from database ...
-		 * 2. Creates Board objects...
-		 * 3. Creates Link objects...
-		 */
-		void init();
-
-		/**
-		 * Checks whether the system is ready. The system is considered to be ready for operations after the init() method has
-		 * successfully finished, leaving the System in a first known state
-		 * @return boolean value telling whether the System has acquired a first known state ready for operations
-		 */
-		bool isSystemReady();
-
-		/**
-		 * System configuration is subdivided in these different tasks
-		 */
-		void configureBoards();
-		void configureMasks();
-		void configureSW();
-
-
-		//! Vector containing all the Board objects part of this System object
-		Boards boards_;
-
-		//! Boolean telling whether this System object is in a known state ready for operations
-		bool ready_;
-
-	};
 }
 }
-#endif
+
+#endif	/* _swatch_test_system_hpp_ */
+

@@ -1,64 +1,21 @@
-// SWATCH HEADERS
+/* 
+ * File:   Port.cpp
+ * Author: ale
+ * 
+ * Created on July 21, 2014, 9:57 AM
+ */
+
 #include "swatch/core/Port.hpp"
 
-// OTHER HEADERS
 
+namespace swatch {
+namespace core {
 
-// C++ HEADERS
-#include <iostream>
-
-using namespace swatch::core;
-using namespace std;
-
-
-
-Port::Port
-		(
-		const string& id,
-		const shared_device& device,
-		bool enabled
-		)
-:
-		id_(id),
-		device_(device),
-		enabled_(enabled)
-{
-
+Port::Port(const std::string& aId, const Arguments& aAttributes) : Object(aId) {
 }
 
-
-
-Port::~Port()
-{
-
+Port::~Port() {
 }
 
-
-
-void
-Port::setTxDirection()
-{
-	direction_ = OUT;
 }
-
-
-void
-Port::setRxDirection()
-{
-	direction_ = IN;
-}
-
-
-
-Port::PortDirection
-Port::getDirection()
-{
-	return direction_;
-}
-
-
-void
-Port::setLink(const shared_link& link)
-{
-	link_ = link;
 }

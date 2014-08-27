@@ -1,21 +1,22 @@
-# List of packages
 PACKAGES = \
 	core \
-	board \
+	core/test \
+	processor \
+	processor/test \
 	system \
-	test
-
+	system/test \
+	test 
 
 VIRTUAL_PACKAGES = $(addsuffix /.virtual.Makefile,${PACKAGES})
 
-FLAGS= -$(MAKEFLAGS)
-
 ifeq ($(MAKEFLAGS), "")
   FLAGS= ""
+else
+  FLAGS= $(MAKEFLAGS)
 endif
 
 # Makefile targets declared as phony
-TARGETS = build rpm clean 
+TARGETS = build rpm clean cleanrpm
 .PHONY = $(TARGETS)
 
 default: build
