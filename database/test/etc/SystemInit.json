@@ -1,0 +1,120 @@
+{
+"GSYSTEM":
+ [
+     
+  {"SYSTEM#1":
+    {
+    "NAME" : "CALOL2",
+    "PROCESSORS" : 
+    [
+        {"PROCESSOR#1" : 
+            {"PROCESSOR NAME" : "MP7#1_CALO2",
+            "PROCESSOR TYPE" : "MP7",
+            "ADDRESS TABLE" : "/address/table/location",
+            "CRATE ID" : "S2G17-01",
+            "CRATE SLOT": 1,
+            "CRATE LOCATION" : "MyLocation",
+            "CRATE DESCRIPTION" : "MyCrateDescription",
+            "PORTS NAMES" : ["Port#1", "Port#2", "Port#3", "Port#144"]}}, 
+        {"PROCESSOR#2" : 
+            {"PROCESSOR NAME" : "MP7#2_CALO2",
+            "PROCESSOR TYPE" : "MP7",
+            "ADDRESS TABLE" : "/address/table/location",
+            "CRATE ID" : "S2G17-01",
+            "CRATE SLOT": 2,
+            "CRATE LOCATION" : "MyLocation",
+            "CRATE DESCRIPTION" : "MyCrateDescription",
+            "PORTS NAMES" : ["Port#1", "Port#2", "Port#3", "Port#144"]}}, 
+        {"PROCESSOR#3" : 
+            {"PROCESSOR NAME" : "MP7#3_CALO2",
+            "PROCESSOR TYPE" : "MP7",
+            "ADDRESS TABLE" : "/address/table/location",
+            "CRATE ID" : "S2G17-01",
+            "CRATE SLOT": 3,
+            "CRATE LOCATION" : "MyLocation",
+            "CRATE DESCRIPTION" : "MyCrateDescription",
+            "PORTS NAMES" : ["Port#1", "Port#2", "Port#3", "Port#144"]}}
+     ],
+     "SERVICES" : 
+        [
+        {"SERVICE#1" : 
+            {"SERVICE NAME" : "AMC13",
+            "SERVICE TYPE" : "",
+            "ADDRESS TABLE" : "/address/table/location",
+            "CRATE ID" : "S2G17-01",
+            "CRATE SLOT" : 13, 
+            "CRATE LOCATION" : "MyCrateLocation", 
+            "CRATE DESCRIPTION" : "MyCrateDescription",
+            "IP ADDRESS #1" : "192.168.0.13",
+            "IP ADDRESS #2" : "192.168.0.14"}},
+        {"SERVICE#2" : 
+            {"SERVICE NAME" : "MCH", 
+            "SERVICE TYPE" : "",
+            "CRATE ID" : "S2G17-01",
+            "CRATE SLOT" : 12, 
+            "CRATE LOCATION" : "MyCrateLocation", 
+            "CRATE DESCRIPTION" : "MyCrateDescription",
+            "IP ADDRESS" : "192.168.0.15"}
+        }
+        ]
+    }},
+ 
+ {"SYSTEM#2":
+ {
+  "NAME" : "CALOL1",
+  "PROCESSORS" : 
+   [
+    {"PROCESSOR#1" : 
+      {"PROCESSOR NAME" : "MP7#1_CALO2",
+       "PROCESSOR TYPE" : "MP7",
+       "ADDRESS TABLE" : "/address/table/location",
+       "CRATE ID" : "S2G17-01",
+       "CRATE SLOT": 1,
+       "CRATE LOCATION" : "MyLocation",
+       "CRATE DESCRIPTION" : "MyCrateDescription",
+       "PORTS NAMES" : ["Port#1", "Port#2", "Port#3", "Port#144"]}
+    }, 
+    {"PROCESSOR#2" : 
+      {"PROCESSOR NAME" : "MP7#2_CALO2",
+       "PROCESSOR TYPE" : "MP7",
+       "ADDRESS TABLE" : "/address/table/location",
+       "CRATE ID" : "S2G17-01",
+       "CRATE SLOT": 2,
+       "CRATE LOCATION" : "MyLocation",
+       "CRATE DESCRIPTION" : "MyCrateDescription",
+       "PORTS NAMES" : ["Port#1", "Port#2", "Port#3", "Port#144"]}}, 
+    {"PROCESSOR#3" : 
+     {"PROCESSOR NAME" : "MP7#3_CALO2",
+      "PROCESSOR TYPE" : "MP7",
+       "ADDRESS TABLE" : "/address/table/location",
+       "CRATE ID" : "S2G17-01",
+       "CRATE SLOT": 3,
+       "CRATE LOCATION" : "MyLocation",
+       "CRATE DESCRIPTION" : "MyCrateDescription",
+       "PORTS NAMES" : ["Port#1", "Port#2", "Port#3", "Port#144"]}}
+   ],
+  "SERVICES" : 
+   [
+    {"SERVICE#1" : 
+     {"NAME" : "AMC13",
+      "ADDRESS TABLE" : "/address/table/location",
+      "CRATE ID" : "S2G17-01",
+      "CRATE SLOT" : 13, 
+      "CRATE LOCATION" : "MyCrateLocation", 
+      "CRATE DESCRIPTION" : "MyCrateDescription",
+      "IP ADDRESS #1" : "192.168.0.13",
+      "IP ADDRESS #2" : "192.168.0.14"
+     }
+    },
+    {"SERVICE#2" : 
+     {"NAME" : "MCH", 
+      "CRATE ID" : "S2G17-01",
+      "CRATE SLOT" : 12, 
+      "CRATE LOCATION" : "MyCrateLocation", 
+      "CRATE DESCRIPTION" : "MyCrateDescription",
+      "IP ADDRESS" : "192.168.0.15"}}
+   ]
+ }}
+ 
+   ]
+}
