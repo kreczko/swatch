@@ -5,6 +5,8 @@ PACKAGES = \
 	processor/test \
 	system \
 	system/test \
+	database \
+	database/test \
 	test 
 
 VIRTUAL_PACKAGES = $(addsuffix /.virtual.Makefile,${PACKAGES})

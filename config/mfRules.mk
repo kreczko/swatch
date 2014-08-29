@@ -27,7 +27,11 @@ DependentLibraries += $(addprefix -l,${Libraries})
 ExecutableDependentLibraries += $(addprefix -L,${LibraryPaths})
 ExecutableDependentLibraries += $(addprefix -l,${ExecutableLibraries})
 
+ifeq ("${Library}","")
+LibraryTarget=
+else
 LibraryTarget=lib/${Library}
+endif
 
 .PHONY: default
 default: build

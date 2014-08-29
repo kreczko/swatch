@@ -14,25 +14,29 @@ PACKAGE_VER_MINOR = 1
 PACKAGE_VER_PATCH = 0
 PACKAGE_RELEASE = 0
 
-Library = libcactus_swatch_database_test.so
+#Library = libcactus_swatch_database_test.so
 
 Includes = 	\
 		include \
+		${SWATCH_ROOT}/core/include \
 		${SWATCH_ROOT}/database/include \
 		
 
 LibraryPaths =	\
 		lib \
+		${SWATCH_ROOT}/core/lib \
 		${SWATCH_ROOT}/database/lib \
+		${CACTUS_ROOT}/lib
 	
 
 Libraries =	\
 		boost_system \
 		boost_unit_test_framework \
+		cactus_swatch_core \
 		cactus_swatch_database \
 
 
-ExecutableLibraries = ${Libraries} cactus_swatch_database_test
+ExecutableLibraries = ${Libraries} # cactus_swatch_database_test
 
 include ${SWATCH_ROOT}/config/mfRules.mk
 include ${SWATCH_ROOT}/config/mfRPMRules.mk
