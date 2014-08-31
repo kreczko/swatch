@@ -14,7 +14,7 @@ PACKAGE_VER_MINOR = 1
 PACKAGE_VER_PATCH = 0
 PACKAGE_RELEASE = 0
 
-Library = libcactus_swatch_system_test.so
+Library = cactus_swatch_system_test
 
 Includes = 	\
 		include \
@@ -39,7 +39,7 @@ Libraries =	\
 		cactus_swatch_system
 
 
-ExecutableLibraries = ${Libraries} cactus_swatch_system_test
+ExecutableLibraries = ${Libraries} ${Library}
 
 include ${SWATCH_ROOT}/config/mfRules.mk
 include ${SWATCH_ROOT}/config/mfRPMRules.mk

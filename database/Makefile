@@ -15,7 +15,7 @@ PACKAGE_VER_MINOR = 1
 PACKAGE_VER_PATCH = 0
 PACKAGE_RELEASE = 0
 
-Library = libcactus_swatch_database.so
+Library = cactus_swatch_database
 
 Includes = \
 	include \

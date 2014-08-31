@@ -30,7 +30,7 @@ ExecutableDependentLibraries += $(addprefix -l,${ExecutableLibraries})
 ifeq ("${Library}","")
 LibraryTarget=
 else
-LibraryTarget=lib/${Library}
+LibraryTarget=lib/lib${Library}.so
 endif
 
 .PHONY: default

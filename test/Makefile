@@ -14,7 +14,7 @@ PACKAGE_VER_MINOR = 1
 PACKAGE_VER_PATCH = 0
 PACKAGE_RELEASE = 0
 
-Library = libcactus_swatch_test.so
+Library = cactus_swatch_test
 
 Includes = 	\
 		include/ \
@@ -46,7 +46,7 @@ Libraries =	\
 		cactus_swatch_system \
 		cactus_swatch_system_test \
 
-ExecutableLibraries = ${Libraries} cactus_swatch_test
+ExecutableLibraries = ${Libraries} ${Library}
 
 IgnoreSources = src/common/console_test_runner.cxx
 # Temporary, horrible hack
