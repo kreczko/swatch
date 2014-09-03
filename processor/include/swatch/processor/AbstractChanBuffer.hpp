@@ -2,7 +2,6 @@
 #define SWATCH_PROCESSOR_ABSTRACTCHANBUFFER_HPP
 
 // SWATCH Headers
-#include "swatch/processor/Connection.hpp"
 #include "swatch/processor/Component.hpp"
 
 // C++ Headers
