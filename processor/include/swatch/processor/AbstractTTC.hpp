@@ -1,21 +1,19 @@
-#ifndef CACTUSCORE_SWATCH_TTCINTERFACE_TTCINTERFACE_H
-#define CACTUSCORE_SWATCH_TTCINTERFACE_TTCINTERFACE_H
+#ifndef SWATCH_PROCESSOR_ABSTRACTTTC_HPP
+#define SWATCH_PROCESSOR_ABSTRACTTTC_HPP
 // OTHER HEADERS
 
 // SWATCH HEADERS
-#include "swatch/processor/Connection.hpp"
+#include "swatch/processor/Component.hpp"
 
 // C++ HEADERS
 #include <stdint.h>
 
 namespace swatch {
-
-// TTCNODE CLASS
 namespace processor {
 
 //! A class derived from swatch::processor::Processor used as a base class for concrete type of uTCA processors
 
-class AbstractTTC {
+class AbstractTTC : public Component {
 protected:
 
     /**
@@ -23,11 +21,6 @@ protected:
      * @param id The name of the processor
      */
     AbstractTTC(Connection* connection);
-
-    Connection* connection() {
-        return connection_;
-    }
-
 public:
     /**
      * Destructor Made virtual to delegate this task to this class's children and avoid potential run time errors
@@ -50,20 +43,17 @@ public:
     virtual uint32_t getBunchCount() = 0;
     virtual uint32_t getEvtCount() = 0;
     virtual uint32_t getOrbitCount() = 0;
-    virtual uint32_t getSBEC() = 0;
-    virtual uint32_t getDBEC() = 0;
+    virtual uint32_t getSingleBitErrorCounter() = 0;
+    virtual uint32_t getDoubleBitErrorCounter() = 0;
     //virtual void getTTChistory()   = 0;
     //virtual void getTTShistory()   = 0;
     virtual uint32_t getClk40lock() = 0;
     virtual uint32_t getClk40stopped() = 0;
     virtual uint32_t getBC0lock() = 0;
-    virtual uint32_t getBC0stopped() = 0;
 
-private:
-    Connection* connection_;
 
 };
 
-} // end ns processor
-} // end ns swatch
-#endif
+} // namespace processor
+} // namespace swatch
+#endif /* SWATCH_PROCESSOR_ABSTRACTTTC_HPP */

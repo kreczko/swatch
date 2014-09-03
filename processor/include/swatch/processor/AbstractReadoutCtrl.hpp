@@ -1,22 +1,25 @@
-#ifndef CACTUSCORE_SWATCH_READOUTCTRL_READOUTCTRL_H
-#define CACTUSCORE_SWATCH_READOUTCTRL_READOUTCTRL_H
+/**
+ * @file    Template.hpp
+ * @author  Author1, Author2
+ * @brief   Brief description
+ * @date 
+ */
 
-// OTHER HEADERS
-#include "swatch/processor/Connection.hpp"
+#ifndef SWATCH_PROCESSOR_READOUTCTRL_HPP
+#define SWATCH_PROCESSOR_READOUTCTRL_HPP
 
-// SWATCH HEADERS
+
+// Swatch Headers
+#include "swatch/processor/Component.hpp"
 #include "swatch/processor/Processor.hpp"
 
-// C++ HEADERS
-
+// C++ Headers
 namespace swatch {
-
-// READOUTCTRL CLASS
 namespace processor {
 
 //! A class derived from swatch::processor::Processor used as a base class for concrete type of uTCA processors
 
-class AbstractReadoutCtrl {
+class AbstractReadoutCtrl : public Component {
 protected:
 
     /**
@@ -25,22 +28,14 @@ protected:
      */
     AbstractReadoutCtrl(Connection* connection);
 
-    Connection* connection() {
-        return connection_;
-    }
-
 public:
 
     /**
      * Destructor Made virtual to delegate this task to this class's children and avoid potential run time errors
      */
     ~AbstractReadoutCtrl();
-
-private:
-    Connection* connection_;
-
 };
 
-} // end ns processor
-} // end ns swatch
-#endif
+} // namespace processor
+} // namespace swatch
+#endif /* SWATCH_PROCESSOR_READOUTCTRL_HPP */

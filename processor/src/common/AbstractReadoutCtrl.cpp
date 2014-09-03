@@ -11,7 +11,7 @@ using namespace std;
 namespace swatch {
 namespace processor {
 
-AbstractReadoutCtrl::AbstractReadoutCtrl(Connection* connection) : connection_(connection) {
+AbstractReadoutCtrl::AbstractReadoutCtrl(Connection* connection) : Component(connection) {
     cout << "ReadoutCtrl::ReadoutCtrl --> ReadoutCtrl CTOR called." << endl;
 }
 

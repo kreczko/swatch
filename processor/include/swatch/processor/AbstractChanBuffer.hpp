@@ -1,33 +1,25 @@
-#ifndef CACTUSCORE_SWATCH_CHANNELBUFFERS_CHANNELBUFFERS_H
-#define CACTUSCORE_SWATCH_CHANNELBUFFERS_CHANNELBUFFERS_H
+#ifndef SWATCH_PROCESSOR_ABSTRACTCHANBUFFER_HPP
+#define SWATCH_PROCESSOR_ABSTRACTCHANBUFFER_HPP
 
-// OTHER HEADERS
-
-// SWATCH HEADERS
+// SWATCH Headers
 #include "swatch/processor/Connection.hpp"
+#include "swatch/processor/Component.hpp"
 
-// C++ HEADERS
+// C++ Headers
 #include <vector>
 #include <stdint.h>
 
 namespace swatch {
 
-// CHANNELBUFFERS CLASS
 namespace processor {
 
-//! A class derived from swatch::processor::Processor used as a base class for concrete type of uTCA processors
-
-class AbstractChanBuffer {
+class AbstractChanBuffer : public Component {
 protected:
     /**
      * Constructor
      * @param id The name of the processor
      */
     AbstractChanBuffer(Connection* connection);
-
-    Connection* connection() {
-        return connection_;
-    }
     
     std::vector<uint64_t> payload_;
 
@@ -56,12 +48,11 @@ public:
     virtual uint32_t getBufferSize() { return buffersize_; }
 
 private:
-    Connection* connection_;
-    uint32_t buffersize_;
-    
+    uint32_t buffersize_;    
 
 };
 
-} // end ns processor
-} // end ns swatch
-#endif
+} // namespace processor
+} // namespace swatch
+
+#endif /* SWATCH_PROCESSOR_ABSTRACTCHANBUFFER_HPP */

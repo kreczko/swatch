@@ -17,7 +17,7 @@ using namespace std;
 namespace swatch {
 namespace processor {
 
-AbstractChannel::AbstractChannel(Connection* connection) : connection_(connection) {
+AbstractChannel::AbstractChannel(Connection* connection) : Component(connection) {
     cout << "AbstractChannel::AbstractChannel --> AbstractChannel CTOR called: " << endl;
 }
 

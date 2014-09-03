@@ -1,8 +1,15 @@
-#ifndef CACTUSCORE_SWATCH_CTRLNODE_CTRLNODE_H
-#define CACTUSCORE_SWATCH_CTRLNODE_CTRLNODE_H
+/**
+ * @file    AbstractChannel.hpp
+ * @author  Maxime Guilbaud
+ * @brief   Brief description
+ * @date    24/07/2014
+ */
+
+#ifndef SWATCH_PROCESSOR_ABSTRACTCTRL_HPP
+#define SWATCH_PROCESSOR_ABSTRACTCTRL_HPP
 
 // OTHER HEADERS
-#include "swatch/processor/Connection.hpp"
+#include "swatch/processor/Component.hpp"
 
 // SWATCH HEADERS
 #include "swatch/core/ParameterSet.hpp"
@@ -10,23 +17,16 @@
 // C++ HEADERS
 
 namespace swatch {
-
-// CTRLNODE CLASS
 namespace processor {
 
 //! A class derived from swatch::processor::Processor used as a base class for concrete type of uTCA processors
-
-class AbstractCtrl {
+class AbstractCtrl : public Component {
 protected:
     /**
      * Constructor
      * @param id The name of the processor
      */
     AbstractCtrl(Connection* connection);
-
-    Connection* connection() {
-        return connection_;
-    }
 
 public:
     /**
@@ -40,11 +40,8 @@ public:
     virtual void clk40Reset() = 0;
     virtual void configureClk(const swatch::core::ParameterSet& pset) = 0;
 
-private:
-    Connection* connection_;
-
 };
 
-} // end ns processor
-} // end ns swatch
-#endif
+} // namespace processor
+} // namespace swatch
+#endif /* SWATCH_PROCESSOR_ABSTRACTCTRL_HPP */

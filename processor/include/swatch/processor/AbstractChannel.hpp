@@ -1,16 +1,14 @@
-/* 
- * File:   AbstractChannel.hpp
- * Author: mguilbau
- *
- * Created on 24 juillet 2014, 17:03
+/**
+ * @file    AbstractChannel.hpp
+ * @author  Maxime Guilbaud
+ * @brief   Brief description
+ * @date    24/07/2014
  */
-#ifndef ABSTRACTCHANNEL_HPP
-#define	ABSTRACTCHANNEL_HPP
 
-// OTHER HEADERS
+#ifndef SWATHC_PROCESSOR_ABSTRACTCHANNEL_HPP
+#define	SWATHC_PROCESSOR_ABSTRACTCHANNEL_HPP
 
-// SWATCH HEADERS
-#include "swatch/processor/Connection.hpp"
+// Swatch Headers
 #include "swatch/processor/AbstractChanBuffer.hpp"
 #include "swatch/processor/AbstractChanCtrl.hpp"
 
@@ -19,7 +17,7 @@
 namespace swatch {
 namespace processor {
 
-class AbstractChannel {
+class AbstractChannel : public Component {
 protected:
     AbstractChannel(Connection* connection);
 
@@ -40,13 +38,9 @@ public:
     AbstractChanBuffer* getBuffer() {
         return buffer_;
     }
-
-private:
-    Connection* connection_;
-
 };
 
 }
 }
-#endif	/* ABSTRACTCHANNEL_HPP */
+#endif	/* SWATHC_PROCESSOR_ABSTRACTCHANNEL_HPP */
 

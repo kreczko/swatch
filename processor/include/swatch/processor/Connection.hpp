@@ -1,26 +1,26 @@
-/* 
- * File:   Connection.hpp
- * Author: ale
- *
- * Created on July 23, 2014, 12:03 PM
+/**
+ * @file    Connection.hpp
+ * @author  Alessandro Thea
+ * @brief   General purpose container for hardware drivers
+ * @date    23/07/2014
  */
-#ifndef CONNECTION_HPP
-#define	CONNECTION_HPP
-// OTHER HEADERS
 
-// Boost Headers
-#include "boost/smart_ptr.hpp"
-#include <boost/interprocess/smart_ptr/unique_ptr.hpp>
+#ifndef SWATCH_PROCESSOR_CONNECTION_HPP
+#define	SWATCH_PROCESSOR_CONNECTION_HPP
 
-// SWATCH HEADERS
+// Swatch Headers
+#include "swatch/core/Utilities.hpp"
 
-// C++ HEADERS
+// C++ Headers
 #include <string>
 #include <typeinfo>
 
 namespace swatch {
 namespace processor {
 
+/**
+ * @class Connection
+ */
 class Connection {
 public:
 
@@ -48,10 +48,12 @@ public:
 
 protected:
     virtual void * connection_() = 0;
-    static std::string demangleName(const char* iMangledName);
 
 };
 
+/**
+ * @class ConnectionHolder
+ */
 template<class T>
 class ConnectionHolder : public Connection {
 public:
@@ -104,7 +106,7 @@ private:
 
 template<typename T>
 const std::string & ConnectionHolder<T>::typeName_() {
-    static const std::string name(demangleName(typeid (T).name()));
+    static const std::string name(core::demangleName(typeid (T).name()));
     return name;
 }
 
@@ -121,5 +123,5 @@ Connection* Connection::make(T* ptr) {
 }
 }
 
-#endif	/* CONNECTION_HPP */
+#endif	/* SWATCH_PROCESSOR_CONNECTION_HPP */
 

@@ -12,7 +12,7 @@ using namespace std;
 namespace swatch {
 namespace processor {
 
-AbstractTTC::AbstractTTC(Connection* connection) : connection_(connection) {
+AbstractTTC::AbstractTTC(Connection* connection) : Component(connection) {
     cout << "TTCinterface::TTCinterface --> TTCinterface CTOR called." << endl;
 }
 

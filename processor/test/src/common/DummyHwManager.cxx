@@ -116,7 +116,7 @@ public:
                 uhal::HwInterface b = uhal::ConnectionManager::getDevice(
                         "DummyProcessor",
                         ssURI.str().c_str(),
-                        "file://${SWATCH_TESTS}/etc/dummy.xml");
+                        "file://${SWATCH_ROOT}/processor/tests/etc/dummy.xml");
 
                 BOOST_FOREACH(RegisterMap::value_type p, registers_) {
                     b.getNode(p.first).write(p.second);

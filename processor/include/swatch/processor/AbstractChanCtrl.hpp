@@ -1,22 +1,18 @@
-#ifndef CACTUSCORE_SWATCH_CHANNELCTRL_CHANNELCTRL_H
-#define CACTUSCORE_SWATCH_CHANNELCTRL_CHANNELCTRL_H
-// OTHER HEADERS
+#ifndef SWATCH_PROCESSOR_ABSTRACTCHANNELCTRL_H
+#define SWATCH_PROCESSOR_ABSTRACTCHANNELCTRL_H
 
-// SWATCH HEADERS
-#include "swatch/processor/Connection.hpp"
+
+// Swatch Headers
 #include "swatch/core/ParameterSet.hpp"
+#include "swatch/processor/Component.hpp"
 
-// C++ HEADERS
+// C++ Headers
 #include <stdint.h>
 
 namespace swatch {
-
-// CHANNELCTRL CLASS
 namespace processor {
 
-//! A class derived from swatch::processor::Processor used as a base class for concrete type of uTCA processors
-
-class AbstractChanCtrl {
+class AbstractChanCtrl : public Component {
 protected:
 
     /**
@@ -24,10 +20,6 @@ protected:
      * @param id The name of the processor
      */
     AbstractChanCtrl(Connection* connection);
-
-    Connection* connection() {
-        return connection_;
-    }
 
 public:
 
@@ -46,13 +38,8 @@ public:
     virtual bool isSync() = 0;
 
     virtual void configure(const swatch::core::ParameterSet& pset) = 0;
-
-
-private:
-    Connection* connection_;
-
 };
 
-} // end ns processor
-} // end ns swatch
-#endif
+} // namespace processor
+} // namespace swatch
+#endif /* SWATCH_PROCESSOR_ABSTRACTCHANNELCTRL_H */

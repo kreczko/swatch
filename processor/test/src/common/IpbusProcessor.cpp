@@ -24,7 +24,7 @@ namespace swatch {
 namespace processor {
 namespace test {
 
-/**
+/*------------------------------------------------------------------------------
  * Dummy Processor implementation
  */
 IpbusProcessor::IpbusProcessor(const std::string& id, const swatch::core::ParameterSet& pset) : Processor(id, pset) {
@@ -71,30 +71,31 @@ IpbusProcessor::~IpbusProcessor() {
 
 }
 
-/**
+/*------------------------------------------------------------------------------
  * Dummy Info implementation
  */
 IpbusInfo::IpbusInfo(swatch::processor::Connection* connection) : AbstractInfo(connection) {
     cout << "this is a very dummy info block" << endl;
-
-    uhal::HwInterface& dummyhw = this->connection()->get<uhal::HwInterface>();
-
-    uhal::ValWord<uint32_t> fwv   = dummyhw.getNode("ctrl.id.fwrev").read();
-    uhal::ValWord<uint32_t> magic = dummyhw.getNode("ctrl.id.magic").read();
-    dummyhw.dispatch();
-    
-    fwversion_ = fwv.value() ;
-    magicNumber_ =  magic.value() ;
-    cout << "A dummy info block was built with: " << endl;
-    cout << "   - fw version  : 0x" << hex << fwVersion()   << endl;
-    cout << "   - magic number: 0x" << hex << magicNumber() << endl;    
 }
 
 IpbusInfo::~IpbusInfo() {
     cout << "dummy info block destroyed" << endl;
 }
 
-/**
+uint32_t
+IpbusInfo::getFwVersion() {
+    
+    uhal::HwInterface& dummyhw = connection()->get<uhal::HwInterface>();
+
+    uhal::ValWord<uint32_t> fwv   = dummyhw.getNode("ctrl.id.fwrev").read();
+    
+    dummyhw.dispatch();
+    
+    return fwv.value() ;
+}
+
+
+/*------------------------------------------------------------------------------
  * Dummy Ctrl
  */
 IpbusCtrl::IpbusCtrl(swatch::processor::Connection* connection) : AbstractCtrl(connection) {
@@ -126,8 +127,7 @@ IpbusCtrl::configureClk(const swatch::core::ParameterSet& pset) {
     cout << "Configure clocking of the processor" << endl;
 }
 
-
-/**
+/*------------------------------------------------------------------------------
  * Dummy TTC
  */
 IpbusTTC::IpbusTTC(swatch::processor::Connection* connection) : AbstractTTC(connection) {
@@ -214,14 +214,14 @@ IpbusTTC::getOrbitCount() {
 }
 
 uint32_t
-IpbusTTC::getSBEC() {
+IpbusTTC::getSingleBitErrorCounter() {
     cout << "Getting single bit error count..." << endl;
     uint32_t SBECount = 0;
     return SBECount;
 }
 
 uint32_t
-IpbusTTC::getDBEC() {
+IpbusTTC::getDoubleBitErrorCounter() {
     cout << "Getting double bit error count..." << endl;
     uint32_t DBECount = 0;
     return DBECount;
@@ -291,7 +291,7 @@ IpbusChannel::~IpbusChannel() {
     cout << "Our dummy channel is destroyed" << endl;
 }
 
-/**
+/*------------------------------------------------------------------------------
  * Dummy Channel Control
  */
 IpbusChanCtrl::IpbusChanCtrl(swatch::processor::Connection* connection) : AbstractChanCtrl(connection) {
@@ -353,7 +353,7 @@ IpbusChanCtrl::configure(const swatch::core::ParameterSet& pset) {
     cout << "configure the channel control with a given set of parameters " << endl;
 }
 
-/**
+/*------------------------------------------------------------------------------
  * Dummy Channel Buffer 
  */
 IpbusChanBuffer::IpbusChanBuffer(swatch::processor::Connection* connection) : AbstractChanBuffer(connection) {

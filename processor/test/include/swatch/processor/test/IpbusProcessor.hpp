@@ -35,7 +35,10 @@ class IpbusInfo : public swatch::processor::AbstractInfo {
 public:
     
     IpbusInfo(swatch::processor::Connection* connection);
-    virtual ~IpbusInfo();    
+    virtual ~IpbusInfo(); 
+    
+    virtual uint32_t getFwVersion();
+
 };
 
 //----------------------------------------------------------------------------//
@@ -60,8 +63,8 @@ public:
     uint32_t getBunchCount();
     uint32_t getEvtCount();
     uint32_t getOrbitCount();
-    uint32_t getSBEC();
-    uint32_t getDBEC();
+    uint32_t getSingleBitErrorCounter();
+    uint32_t getDoubleBitErrorCounter();
     //void getTTChistory();
     //void getTTShistory();
     uint32_t getClk40lock();
