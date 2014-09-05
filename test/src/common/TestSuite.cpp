@@ -295,61 +295,6 @@ public:
 
 uint32_t Dummy::counts = 0;
 
-//ParameterSetTest::ParameterSetTest() :
-//TestUnit("par_test") {
-//}
-//
-//bool
-//ParameterSetTest::run() {
-//    
-//    { // artificial scope to check destruction
-//    using namespace boost::assign;
-//    using namespace swatch::core;
-//
-//    ParameterSet pars, subpars;
-//    std::vector<ParameterSet> vpars;
-//
-//    pars.set("alpha","beta");
-//
-//    pars.insert("gamma",5)("pippo","pluto");
-//    
-//    pars.insert("eta",10.5)("phi",0x0);
-//    
-//    std::vector<int> aaaa(3,9);
-//    pars.set( "vec", aaaa);
-//    
-////    pars.set("zada",new float[10]);
-//    
-//    pars.set("dummy", Dummy("plain") );
-//    // this will break the compilation
-//    // pars.set("dummy*", new Dummy("pointer") );
-//    
-//    subpars.insert("a",1)("b",2)("c",3);
-//    pars.set("dummyset", subpars);
-//    
-//    vpars.push_back(subpars);
-//    pars.set("vset",vpars);
-//    
-//    pars.set("dummy_shr", boost::shared_ptr<Dummy>(new Dummy("shared_dummy")));
-//    
-//    uhal::log(uhal::Info(),"-- List of parameters --");
-//    BOOST_FOREACH( ParameterSet::value_type p, pars ) {
-//        uhal::log(uhal::Info(),p.first," = ",demangleName(p.second.type().name()));
-//    } 
-//    
-//    cout << "--ss--ss--ss--" << endl;
-//    cout << "alpha: " << pars.get<std::string>("alpha") << endl;
-//    try {
-//        cout << "gamma: " << pars.get<int>("gamma") << endl;
-//    } catch ( swatch::core::ParameterSet::bad_cast e ) {
-//        cout << "Failed to cast: " << e.what() << endl;
-//    }   
-//    }
-//    cout << "No dummies beyond this point? Dummies left " << Dummy::counts << endl;
-//            
-//    return true;
-//}
-
 JsonBuildTest::JsonBuildTest() :
 TestUnit("json_test"){
 }

@@ -50,6 +50,20 @@ strPrintf( const char* fmt, ... ) {
     free(ret);
     return str;
 }
+
+void
+millisleep( const double& millisec ) {
+    //  using namespace uhal;
+    //  logging();
+    double secs(millisec / 1e3);
+    int intPart(( int ) secs);
+    double fracPart(secs - ( double ) intPart);
+    struct timespec sleepTime, returnTime;
+    sleepTime.tv_sec = intPart;
+    sleepTime.tv_nsec = ( long ) (fracPart * 1e9);
+    //  log ( Notice() , "Sleeping " , Integer ( uint32_t ( sleepTime.tv_sec ) ) , "s " , Integer ( uint32_t ( sleepTime.tv_nsec ) ) , "ns" );
+    nanosleep(&sleepTime, &returnTime);
 }
 
-}
+} // namespace core
+} // namespace swatch

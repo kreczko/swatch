@@ -19,14 +19,14 @@ protected:
      * Constructor
      * @param id The name of the processor
      */
-    AbstractChanCtrl(Connection* connection);
+    AbstractChanCtrl(Connection* connection) : Component( connection_ ) {}
 
 public:
 
     /**
      * Destructor Made virtual to delegate this task to this class's children and avoid potential run time errors
      */
-    virtual ~AbstractChanCtrl();
+    virtual ~AbstractChanCtrl() {}
 
     virtual void reset() = 0;
     virtual void setLoopback() = 0;

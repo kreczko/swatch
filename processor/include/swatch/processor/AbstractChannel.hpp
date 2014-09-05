@@ -19,17 +19,13 @@ namespace processor {
 
 class AbstractChannel : public Component {
 protected:
-    AbstractChannel(Connection* connection);
-
-    Connection* connection() {
-        return connection_;
-    }
-
+    AbstractChannel(Connection* connection) : Component( connection ) {}
+            
     AbstractChanCtrl* ctrl_;
     AbstractChanBuffer* buffer_;
 
 public:
-    virtual ~AbstractChannel();
+    virtual ~AbstractChannel() {}
 
     AbstractChanCtrl* getCtrl() {
         return ctrl_;

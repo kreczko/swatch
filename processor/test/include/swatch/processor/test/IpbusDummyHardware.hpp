@@ -27,20 +27,29 @@ namespace test {
 
 class IpbusDummyHardware {
 public:
-    IpbusDummyHardware(const std::string& name, uint32_t port);
+    
+    typedef boost::unordered_map<std::string,uint32_t> RegisterMap;
+
+    IpbusDummyHardware(const std::string& name, uint32_t port, const std::string& addrtab);
     virtual ~IpbusDummyHardware();
 
-    pid_t pid();
+    pid_t pid() const;
     void start();
     void terminate();
     void run();
 
+    uhal::HwInterface& hw() const;
+    
+    void load( const RegisterMap& map );
+
+    bool started() const { return started_; }
+
 private:
-    typedef boost::unordered_map<std::string, uint32_t> RegisterMap;
+    // uhal::HwInterface getHwInterface( const std::string& addrtab );
 
     std::string name_;
+
     uint32_t port_;
-    RegisterMap registers_;
 
     //! process id
     pid_t pid_;
@@ -48,9 +57,17 @@ private:
     //! udp hw return status (do we need it?)
     int status_;
 
-    //! 
-    bool dead_;
+    //!
+    bool started_;
+
+    //!
+    std::string addrtab_;
+
+    //!
     boost::thread thread_;
+
+    //!
+    uhal::HwInterface* hw_;
 };
 
 }

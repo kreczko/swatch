@@ -26,14 +26,14 @@ protected:
      * Constructor
      * @param id The name of the processor
      */
-    AbstractReadoutCtrl(Connection* connection);
+    AbstractReadoutCtrl(Connection* connection) : Component(connection) {}
 
 public:
 
     /**
      * Destructor Made virtual to delegate this task to this class's children and avoid potential run time errors
      */
-    ~AbstractReadoutCtrl();
+    ~AbstractReadoutCtrl() {}
 };
 
 } // namespace processor

@@ -24,11 +24,11 @@ protected:
      * Constructor
      * @param connexion object to connect to the hardware
      */
-    AbstractInfo(Connection* connection);
+    AbstractInfo(Connection* connection) : Component(connection) {}
     
 public:
 
-    virtual ~AbstractInfo();
+    virtual ~AbstractInfo() {}
     
     virtual uint32_t getFwVersion() = 0;
 

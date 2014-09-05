@@ -26,19 +26,21 @@ protected:
      * Constructor
      * @param id The name of the processor
      */
-    AbstractCtrl(Connection* connection);
+    AbstractCtrl(Connection* connection) : Component( connection ) {}
 
 public:
     /**
      * Destructor Made virtual to delegate this task to this class's children and avoid potential run time errors
      */
-    virtual ~AbstractCtrl();
+    virtual ~AbstractCtrl() {}
+
+    virtual std::vector<std::string> clockConfigurations() const = 0;
 
     virtual void hardReset() = 0;
     virtual void softReset() = 0;
 
-    virtual void clk40Reset() = 0;
-    virtual void configureClk(const swatch::core::ParameterSet& pset) = 0;
+//    virtual void clk40Reset() = 0;
+    virtual void configureClock( const std::string& config ) = 0;
 
 };
 

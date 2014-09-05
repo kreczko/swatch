@@ -20,12 +20,12 @@ protected:
      * Constructor
      * @param id The name of the processor
      */
-    AbstractTTC(Connection* connection);
+    AbstractTTC(Connection* connection) : Component(connection)  {}
 public:
     /**
      * Destructor Made virtual to delegate this task to this class's children and avoid potential run time errors
      */
-    virtual ~AbstractTTC();
+    virtual ~AbstractTTC() {}
 
     //functionality
     virtual void enableTTC() = 0;

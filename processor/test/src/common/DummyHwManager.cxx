@@ -22,9 +22,9 @@ int main(int argc, char** argv) {
     
     uhal::setLogLevelTo(uhal::Warning());
 
-    IpbusDummyHardware x("ararar", 50010);
+    IpbusDummyHardware x("ararar", 50010, "${SWATCH_ROOT}/processor/test/etc/dummy.xml");
     x.start();
-    IpbusDummyHardware y("zzzzzz", 50011);
+    IpbusDummyHardware y("zzzzzz", 50011, "${SWATCH_ROOT}/processor/test/etc/dummy.xml");
     y.start();
 
     cout << "Do we have a pid? " << x.pid() << endl;

@@ -7,6 +7,12 @@
 
 #include "swatch/processor/test/IpbusDummyHardware.hpp"
 
+// Swatch Headers
+#include "swatch/core/Utilities.hpp"
+
+// C++ Headers
+#include <sys/prctl.h>
+
 // Namespace resolution
 using std::cout;
 using std::endl;
@@ -15,39 +21,49 @@ namespace swatch {
 namespace processor {
 namespace test {
 
-IpbusDummyHardware::IpbusDummyHardware(const std::string& name, uint32_t port) : name_(name), port_(port), pid_(0), status_(0), dead_(false) {
-    // This shall become a parameter
-    registers_["ctrl.id.magic"] = 0xc0de9;
-    registers_["ctrl.id.fwrev"] = 0x11223344;
-    registers_["ctrl.id.infos.n_rx"] = 32;
-    registers_["ctrl.id.infos.n_rx"] = 18;
+IpbusDummyHardware::IpbusDummyHardware(const std::string& name, uint32_t port, const std::string& addrtab) :
+    name_(name), port_(port), pid_(0), status_(0), started_(false), addrtab_(addrtab), hw_(0x0) {
 }
 
 pid_t
-IpbusDummyHardware::pid() {
+IpbusDummyHardware::pid() const {
     return pid_;
 }
 
 IpbusDummyHardware::~IpbusDummyHardware() {
+    terminate();
 }
 
 void
 IpbusDummyHardware::start() {
     // start the hardware
     thread_ = boost::thread(&IpbusDummyHardware::run, this);
+    
+    uint32_t counts(100);
+    while( counts-- ) {
+        if ( started() ) return;
+        core::millisleep(100);
+    }
+    
+    if ( !counts ) {
+        throw std::runtime_error("Timed out when waiting for dummyhardware to start");
+    }
 }
 
 void
 IpbusDummyHardware::terminate() {
     // To be cleaned up
-    if (dead_ || pid_ == 0) return;
-    cout << "Killing subprocess" << endl;
-    int code = ::kill(pid_, SIGTERM);
-    dead_ = true;
-    cout << "Killing code: " << code << endl;
-    // Fix logfile permissions
-    std::string logfile = "udp-" + name_ + ".log";
-    chmod(logfile.c_str(), S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH );
+    if ( pid_ != 0 ) {
+        cout << "Killing subprocess" << endl;
+        int code = ::kill(pid_, SIGTERM);
+        cout << "Killing code: " << code << endl;
+        // Fix logfile permissions
+        std::string logfile = "udp-" + name_ + ".log";
+        chmod(logfile.c_str(), S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH );
+        pid_ = 0;
+    }
+
+    if ( hw_ ) delete hw_; 
 }
 
 void
@@ -61,7 +77,9 @@ IpbusDummyHardware::run() {
     pid_ = fork();
     if (pid_ == 0) {
         /* This is the child process.  Execute the shell command. */
-
+        // But first 
+        ::prctl(PR_SET_PDEATHSIG, SIGHUP);
+        
         std::string logfile = "udp-" + name_ + ".log";
         // Redirect stdout and stderr to logfile
         int fd = open(logfile.c_str(), O_CREAT | O_WRONLY);
@@ -76,31 +94,29 @@ IpbusDummyHardware::run() {
     } else if (pid_ < 0) {
         /* The fork failed.  Report failure.  */
         status_ = -1;
-        dead_ = true;
     } else {
         // It forked. Incredible.
         cout << "Started server with pid " << pid_ << endl;
         try {
-            cout << "Wait a moment to let the Dummy to start" << endl;
-            sleep(2);
+            cout << "Wait a sec for " << name_ << " to start" << endl;
+            sleep(1);
 
+            uhal::setLogLevelTo(uhal::WarningLevel());
             std::stringstream ssURI;
             ssURI << "ipbusudp-2.0://127.0.0.1:" << port_;
-            uhal::HwInterface b = uhal::ConnectionManager::getDevice(
-                    "DummyProcessor",
+            hw_ = new uhal::HwInterface( uhal::ConnectionManager::getDevice(
+                    name_,
                     ssURI.str().c_str(),
-                    "file://${SWATCH_ROOT}/processor/test/etc/dummy.xml");
+                    addrtab_
+                    )
+            );
 
-            BOOST_FOREACH(RegisterMap::value_type p, registers_) {
-                b.getNode(p.first).write(p.second);
-            }
-
-            b.dispatch();
+            started_ = true;
 
             // waits until the process finishes
             ::waitpid(pid_, &status_, 0);
 
-            cout << "Dummy Hardware " << name_ << " is dead!" << endl;
+            cout << name_ << " is dead!" << endl;
 
         } catch (...) {
             // Any problem? Shoot the server
@@ -109,7 +125,22 @@ IpbusDummyHardware::run() {
     }
 }
 
+uhal::HwInterface&
+IpbusDummyHardware::hw() const {
+    if ( !hw_ )
+        throw std::runtime_error("No uhal hardware interface instantiated");
+    
+    return *hw_;
+}
 
+void
+IpbusDummyHardware::load(const IpbusDummyHardware::RegisterMap& map) {
+    BOOST_FOREACH(RegisterMap::value_type p, map) {
+        hw().getNode(p.first).write(p.second);
+    }
+
+    hw().dispatch();   
+}
 
 }
 }

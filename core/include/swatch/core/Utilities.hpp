@@ -37,6 +37,13 @@ std::string anyToString( const boost::any& );
  * @return A formatted string
  */
 std::string strPrintf(const char* aFmt, ...);
+
+/**
+ * Sleeps for time in millisecs
+ * @param millisec
+ */
+void millisleep( const double& millisec );
+
 }
 }
 

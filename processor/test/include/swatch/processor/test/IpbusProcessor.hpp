@@ -26,8 +26,17 @@ namespace test {
 //----------------------------------------------------------------------------//
 class IpbusProcessor : public swatch::processor::Processor {
 public:
-    IpbusProcessor(const std::string& id, const swatch::core::ParameterSet& pset);
+    IpbusProcessor(const std::string& id, const swatch::core::Arguments& args);
     virtual ~IpbusProcessor();
+    
+    virtual uint32_t getSlot() const;
+    virtual const std::string& getCrateId() const;
+    
+private:
+    
+    uint32_t slot_;
+    std::string crate_;
+    
 };
 
 //----------------------------------------------------------------------------//
@@ -80,11 +89,18 @@ public:
     IpbusCtrl(swatch::processor::Connection* connection);
     virtual ~IpbusCtrl();
 
+    virtual std::vector<std::string> clockConfigurations() const;
+    
     virtual void hardReset();
     virtual void softReset();
 
-    virtual void clk40Reset();
-    virtual void configureClk(const swatch::core::ParameterSet& pset);
+//    virtual void clk40Reset();
+//    virtual void configureClk(const swatch::core::ParameterSet& pset);
+
+    virtual void configureClock(const std::string& config);
+
+private:
+    std::set<std::string> configs_;
 };
 
 //----------------------------------------------------------------------------//
@@ -119,10 +135,17 @@ public:
     IpbusChanBuffer(swatch::processor::Connection* connection);
     virtual ~IpbusChanBuffer();
 
+
+    virtual uint32_t getBufferSize() { return bufferSize_; }
     virtual void configure(BufferMode aMode, uint32_t aFirstBx, uint32_t aLastBx);
 
     virtual std::vector<uint64_t> download();
     virtual void upload(const std::vector<uint64_t>& aPayload);
+    
+private:
+    
+    uint32_t bufferSize_;
+    std::vector<uint64_t> payload_;
 
 };
 

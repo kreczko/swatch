@@ -4,13 +4,17 @@
  * 
  * Created on 18 juillet 2014, 11:17
  */
-// OTHER HEADERS
+
 #include "uhal/ConnectionManager.hpp"
 
-// SWATCH HEADERS
+// Swatch Headers
 #include "swatch/processor/test/IpbusProcessor.hpp"
 #include "swatch/processor/Connection.hpp"
 
+// Boost Headers
+#include <boost/assign.hpp>
+
+// C++ Headers
 #include <iomanip>
 
 // Namespace Resolution
@@ -27,37 +31,44 @@ namespace test {
 /*------------------------------------------------------------------------------
  * Dummy Processor implementation
  */
-IpbusProcessor::IpbusProcessor(const std::string& id, const swatch::core::ParameterSet& pset) : Processor(id, pset) {
+IpbusProcessor::IpbusProcessor(const std::string& id, const swatch::core::Arguments& args) : Processor(id, args) {
+    
+    crate_ = args.get<std::string>("crate");
+    slot_ = args.get<uint32_t>("slot");
 
-    uhal::HwInterface dummyhw = uhal::ConnectionManager("file://${SWATCH_TEST}/etc/connections.xml").getDevice("DummyProcessor");
+    // Build the objects
 
-    uhal::ValWord<uint32_t> magic = dummyhw.getNode("ctrl.id.magic").read();
-    dummyhw.dispatch();
+    uhal::HwInterface interface = uhal::ConnectionManager::getDevice(
+        id,
+        args.get<std::string>("uri"),
+        args.get<std::string>("addrtab")
+        );
 
-    std::cout << "Magic Number: 0x" << std::hex << magic.value() << std::endl;
-
-    int nTx = pset.get<int>("nTx");
-    int nRx = pset.get<int>("nRx");
-
-    std::cout << "nTx=" << std::dec << nTx << "   nRx=" << nRx << std::endl;
-
-    connection_ = swatch::processor::Connection::make(dummyhw);
-    ctrl_ = new IpbusCtrl(connection());
-    ttc_ = new IpbusTTC(connection());
-
+    
+    connection_ = swatch::processor::Connection::make(interface);
+    info_ = new IpbusInfo( connection_ );
+    ctrl_ = new IpbusCtrl( connection_ );
+    ttc_ = new IpbusTTC( connection_ );
+    
+    // build the list of links based on the firmware informations
+    uhal::ValWord<uint32_t> n_rx = interface.getNode("ctrl.id.infos.n_rx").read();
+    uhal::ValWord<uint32_t> n_tx = interface.getNode("ctrl.id.infos.n_tx").read();
+    interface.dispatch();
+    
     //    return;
-    tx_.resize(nTx);
-    std::vector<AbstractChannel*>::iterator itTx;
-    for (itTx = tx_.begin(); itTx != tx_.end(); ++itTx) (*itTx) = new IpbusChannel(connection());
+    // tx_.resize(nTx);
+    // std::vector<AbstractChannel*>::iterator itTx;
+    // for (itTx = tx_.begin(); itTx != tx_.end(); ++itTx) (*itTx) = new IpbusChannel(connection());
 
-    rx_.resize(nRx);
-    std::vector<AbstractChannel*>::iterator itRx;
-    for (itRx = rx_.begin(); itRx != rx_.end(); ++itRx) (*itRx) = new IpbusChannel(connection());
+    // rx_.resize(nRx);
+    // std::vector<AbstractChannel*>::iterator itRx;
+    // for (itRx = rx_.begin(); itRx != rx_.end(); ++itRx) (*itRx) = new IpbusChannel(connection());
 
 }
 
 IpbusProcessor::~IpbusProcessor() {
 
+    delete info_;
     delete ctrl_;
     delete ttc_;
 
@@ -70,6 +81,15 @@ IpbusProcessor::~IpbusProcessor() {
     rx_.clear();
 
 }
+
+const std::string& IpbusProcessor::getCrateId() const {
+    return crate_;
+}
+
+uint32_t IpbusProcessor::getSlot() const {
+    return slot_;
+}
+
 
 /*------------------------------------------------------------------------------
  * Dummy Info implementation
@@ -86,11 +106,8 @@ uint32_t
 IpbusInfo::getFwVersion() {
     
     uhal::HwInterface& dummyhw = connection()->get<uhal::HwInterface>();
-
     uhal::ValWord<uint32_t> fwv   = dummyhw.getNode("ctrl.id.fwrev").read();
-    
     dummyhw.dispatch();
-    
     return fwv.value() ;
 }
 
@@ -99,11 +116,18 @@ IpbusInfo::getFwVersion() {
  * Dummy Ctrl
  */
 IpbusCtrl::IpbusCtrl(swatch::processor::Connection* connection) : AbstractCtrl(connection) {
-    cout << "this is a very dummy control block" << endl;
+    using namespace boost::assign;
+    configs_ += "internal","external";
 }
 
 IpbusCtrl::~IpbusCtrl() {
-    cout << "dummy control block destroyed" << endl;
+}
+
+std::vector<std::string>
+IpbusCtrl::clockConfigurations() const {
+    std::vector<std::string> configs;
+    std::copy(configs_.begin(), configs_.end(), configs.begin());
+    return configs;
 }
 
 void
@@ -117,13 +141,13 @@ IpbusCtrl::softReset() {
     cout << "Resetting processor registers to startup values" << endl;
 }
 
-void
-IpbusCtrl::clk40Reset() {
-    cout << "Resetting clock 40" << endl;
-}
+//void
+//IpbusCtrl::clk40Reset() {
+//    cout << "Resetting clock 40" << endl;
+//}
 
 void
-IpbusCtrl::configureClk(const swatch::core::ParameterSet& pset) {
+IpbusCtrl::configureClock(const std::string& config ) {
     cout << "Configure clocking of the processor" << endl;
 }
 
@@ -364,13 +388,15 @@ IpbusChanBuffer::IpbusChanBuffer(swatch::processor::Connection* connection) : Ab
     uhal::ValWord<uint32_t> bsize = dummyhw.getNode("buffer.stat.size").read();
     dummyhw.dispatch();
     
-    setBufferSize(bsize.value());
+    bufferSize_ = bsize;
+        
     cout << "A dummy buffer was built with a size: " << dec << getBufferSize() << endl;
 }
 
 IpbusChanBuffer::~IpbusChanBuffer() {
     cout << "Our dummy channel buffer is destroyed" << endl;
 }
+
 
 void
 IpbusChanBuffer::configure(BufferMode aMode, uint32_t aFirstBx = 0, uint32_t aLastBx = 0) {
