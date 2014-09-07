@@ -33,6 +33,7 @@ void ParameterSet::set(const std::string& aKey, const T& aValue) {
     this->operator[](aKey) = aValue;
 }
 
+
 template<typename T>
 T&
 ParameterSet::get(const std::string& aKey) {
@@ -48,6 +49,7 @@ ParameterSet::get(const std::string& aKey) {
     T* ptr = boost::any_cast<T>(&(it->second));
     return *ptr;
 }
+
 
 template<typename T>
 const T&
@@ -65,6 +67,7 @@ ParameterSet::get(const std::string& aKey) const {
     return *const_ptr;
 }
 
+
 template<typename T>
 const T&
 ParameterSet::get(const std::string& aKey, const T& aDefault ) const {
@@ -74,15 +77,18 @@ ParameterSet::get(const std::string& aKey, const T& aDefault ) const {
     if ( typeid(T) != it->second.type() ) {
         std::cout << "Cannot cast " << demangleName(it->second.type().name()) << " to " << demangleName(typeid(T).name()) << std::endl;
     }
-    
-    return boost::any_cast<T>(it->second);
+
+    const T* const_ptr = boost::any_cast<T>(&(it->second));    
+    return *const_ptr;
 }
+
 
 template<typename T>
 ParameterSet::Inserter& ParameterSet::Inserter::operator()(const std::string& aKey, const T& aValue) {
     mPS->set(aKey, aValue);
     return *this;
 }
+
 
 template<typename T>
 ParameterSet::Inserter ParameterSet::insert(const std::string& aKey, const T& aValue) {
