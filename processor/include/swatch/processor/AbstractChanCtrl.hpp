@@ -34,7 +34,7 @@ public:
 
     virtual uint32_t getCRCcounts() = 0;
     virtual uint32_t getCRCErrcounts() = 0;
-    virtual bool isPLLlock() = 0;
+    virtual bool isPLLLocked() = 0;
     virtual bool isSync() = 0;
 
     virtual void configure(const swatch::core::ParameterSet& pset) = 0;

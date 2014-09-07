@@ -30,7 +30,7 @@ public:
     virtual ~Connection() {
     }
 
-    template <class T> T& get() {
+    template <class T> T& get() const {
         if (typeid (T) != typeId()) {
             throw std::bad_cast();
         };
@@ -47,7 +47,7 @@ public:
     virtual const std::string & typeName() const = 0;
 
 protected:
-    virtual void * connection_() = 0;
+    virtual void * connection_() const = 0;
 
 };
 
@@ -94,7 +94,7 @@ public:
     }
 protected:
 
-    virtual void * connection_() {
+    virtual void * connection_() const {
         return obj_;
     }
 private:

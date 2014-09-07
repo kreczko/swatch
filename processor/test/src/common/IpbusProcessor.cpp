@@ -13,6 +13,7 @@
 
 // Boost Headers
 #include <boost/assign.hpp>
+#include <boost/foreach.hpp>
 
 // C++ Headers
 #include <iomanip>
@@ -32,12 +33,12 @@ namespace test {
  * Dummy Processor implementation
  */
 IpbusProcessor::IpbusProcessor(const std::string& id, const swatch::core::Arguments& args) : Processor(id, args) {
-    
+
     crate_ = args.get<std::string>("crate");
     slot_ = args.get<uint32_t>("slot");
 
-    // Build the objects
 
+    // Build the objects
     uhal::HwInterface interface = uhal::ConnectionManager::getDevice(
         id,
         args.get<std::string>("uri"),
@@ -47,12 +48,12 @@ IpbusProcessor::IpbusProcessor(const std::string& id, const swatch::core::Argume
     
     connection_ = swatch::processor::Connection::make(interface);
     info_ = new IpbusInfo( connection_ );
-    ctrl_ = new IpbusCtrl( connection_ );
+    ctrl_ = new IpbusCtrl( connection_, args );
     ttc_ = new IpbusTTC( connection_ );
     
     // build the list of links based on the firmware informations
-    uhal::ValWord<uint32_t> n_rx = interface.getNode("ctrl.id.infos.n_rx").read();
-    uhal::ValWord<uint32_t> n_tx = interface.getNode("ctrl.id.infos.n_tx").read();
+    uhal::ValWord<uint32_t> n_rx = interface.getNode("ctrl.infos.nRx").read();
+    uhal::ValWord<uint32_t> n_tx = interface.getNode("ctrl.infos.nTx").read();
     interface.dispatch();
     
     //    return;
@@ -105,9 +106,9 @@ IpbusInfo::~IpbusInfo() {
 uint32_t
 IpbusInfo::getFwVersion() {
     
-    uhal::HwInterface& dummyhw = connection()->get<uhal::HwInterface>();
-    uhal::ValWord<uint32_t> fwv   = dummyhw.getNode("ctrl.id.fwrev").read();
-    dummyhw.dispatch();
+//    uhal::HwInterface& hw = connection()->get<uhal::HwInterface>();
+    uhal::ValWord<uint32_t> fwv = hw().getNode("ctrl.id.fwrev").read();
+    hw().dispatch();
     return fwv.value() ;
 }
 
@@ -115,20 +116,16 @@ IpbusInfo::getFwVersion() {
 /*------------------------------------------------------------------------------
  * Dummy Ctrl
  */
-IpbusCtrl::IpbusCtrl(swatch::processor::Connection* connection) : AbstractCtrl(connection) {
+IpbusCtrl::IpbusCtrl(swatch::processor::Connection* connection, const swatch::core::Arguments& args) : AbstractCtrl(connection) {
     using namespace boost::assign;
     configs_ += "internal","external";
+
+    poweron_ = args.get<RegisterMap>("poweron");
 }
 
 IpbusCtrl::~IpbusCtrl() {
 }
 
-std::vector<std::string>
-IpbusCtrl::clockConfigurations() const {
-    std::vector<std::string> configs;
-    std::copy(configs_.begin(), configs_.end(), configs.begin());
-    return configs;
-}
 
 void
 IpbusCtrl::hardReset() {
@@ -138,7 +135,10 @@ IpbusCtrl::hardReset() {
 
 void
 IpbusCtrl::softReset() {
-    cout << "Resetting processor registers to startup values" << endl;
+    BOOST_FOREACH( RegisterMap::value_type p, poweron_) {
+        hw().getNode(p.first).write(p.second);
+    }
+    hw().dispatch();
 }
 
 //void
@@ -155,29 +155,51 @@ IpbusCtrl::configureClock(const std::string& config ) {
  * Dummy TTC
  */
 IpbusTTC::IpbusTTC(swatch::processor::Connection* connection) : AbstractTTC(connection) {
-    cout << "this is a very dummy TTC interface" << endl;
+//    cout << "this is a very dummy TTC interface" << endl;
+    using namespace boost::assign;
+    // 2 simple modes, internal and external
+    configs_ += "internal","external";
+
 }
 
 IpbusTTC::~IpbusTTC() {
-    cout << "Our dummy TTC interface is destroyed" << endl;
+//    cout << "Our dummy TTC interface is destroyed" << endl;
 }
 
-//functionality
+
+void IpbusTTC::configure(const std::string& config) {
+    // Kind of an overkill, but let's try to do things properly
+    if ( configs_.find(config) == configs_.end() )
+        throw std::logic_error("Configuration "+config+" not found.");
+
+    if ( config == "internal" ) {
+        this->enable(false);
+        this->generateInternalOrbit(true);
+    } else if ( config == "extenal" ) {
+        this->enable(true);
+        this->generateInternalOrbit(false);  
+    }
+}
+
 
 void
-IpbusTTC::enableTTC() {
-    cout << "enable TTC" << endl;
+IpbusTTC::enable(bool enable) {
+    hw().getNode("ttc.ctrl.enable").write(enable);
+    hw().dispatch();
 }
 
 void
-IpbusTTC::enableBC0() {
-    cout << "enable BC0" << endl;
+IpbusTTC::generateInternalOrbit(bool generate /* = true */) {
+    hw().getNode("ttc.ctrl.genBC0").write(generate);
+    hw().dispatch();
 }
 
 void
 IpbusTTC::sendSingleL1A() {
-    cout << "Sending a single L1A" << endl;
-    sleep(1);
+    uhal::ValWord<uint32_t> evc  = hw().getNode("ttc.counters1.eventCntr").read();
+    hw().dispatch();
+    hw().getNode("ttc.counters1.eventCntr").write((uint32_t)evc+1);
+    hw().dispatch();
 }
 
 void
@@ -193,21 +215,26 @@ IpbusTTC::sendMultipleL1A() {
 
 void
 IpbusTTC::clearCounters() {
-    cout << "Clear all the counters" << endl;
+    hw().getNode("ttc.counters").write(0);
+    hw().getNode("ttc.counters1").write(0);
+    hw().getNode("ttc.counters2").write(0);
+    hw().getNode("ttc.counters3").write(0);
+    hw().dispatch();
 }
 
 void
 IpbusTTC::clearErrCounters() {
-    cout << "Clear the error counters" << endl;
+    hw().getNode("ttc.counters3").write(0x0);
+    hw().dispatch();
 }
 
 void
-IpbusTTC::maskBC0fromTTC() {
+IpbusTTC::maskBC0Spy(bool mask /* = true */) {
     cout << "Mask BC0 from TTC history" << endl;
 }
 
 void
-IpbusTTC::captureTTC() {
+IpbusTTC::spy() {
     cout << "Capturing TTC..." << endl;
 }
 
@@ -216,87 +243,98 @@ IpbusTTC::sendBGo(uint32_t command = 0) {
     cout << "Sending BGo with command: " << command << endl;
 }
 
+bool IpbusTTC::isEnabled() const {
+    uhal::ValWord<uint32_t> enabled = hw().getNode("ttc.ctrl.enable").read();
+    hw().dispatch();
+    return (bool)enabled;
+}
+
+bool IpbusTTC::isGeneratingInternalBC0() const {
+    uhal::ValWord<uint32_t> enabled = hw().getNode("ttc.ctrl.genBC0").read();
+    hw().dispatch();
+    return (bool)enabled;
+}
+
+bool IpbusTTC::isBC0SpyMasked() const {
+    return false;
+}
+
+
 uint32_t
-IpbusTTC::getBunchCount() {
-    cout << "Getting bunch count..." << endl;
-    uint32_t bunchCount = 0;
-    return bunchCount;
+IpbusTTC::getBunchCount() const {
+    uhal::ValWord<uint32_t> bxctr = hw().getNode("ttc.counters.bunchCntr").read();
+    hw().dispatch();
+    return (uint32_t)bxctr;
 }
 
 uint32_t
-IpbusTTC::getEvtCount() {
-    cout << "Getting event count..." << endl;
-    uint32_t eventCount = 0;
-    return eventCount;
+IpbusTTC::getEvtCount() const {
+    uhal::ValWord<uint32_t> evctr = hw().getNode("ttc.counters1.eventCntr").read();
+    hw().dispatch();
+    return (uint32_t)evctr;
 }
 
 uint32_t
-IpbusTTC::getOrbitCount() {
-    cout << "Getting orbit count..." << endl;
-    uint32_t orbitCount = 0;
-    return orbitCount;
+IpbusTTC::getOrbitCount() const {
+    uhal::ValWord<uint32_t> octr = hw().getNode("ttc.counters2.orbitCntr").read();
+    hw().dispatch();
+    return (uint32_t)octr;
 }
 
 uint32_t
-IpbusTTC::getSingleBitErrorCounter() {
-    cout << "Getting single bit error count..." << endl;
-    uint32_t SBECount = 0;
-    return SBECount;
+IpbusTTC::getSingleBitErrorCounter() const {
+        uhal::ValWord<uint32_t> sbec = hw().getNode("ttc.counters3.singleBitErrCntr").read();
+        hw().dispatch();
+        return (uint32_t) sbec;
 }
 
 uint32_t
-IpbusTTC::getDoubleBitErrorCounter() {
-    cout << "Getting double bit error count..." << endl;
-    uint32_t DBECount = 0;
-    return DBECount;
+IpbusTTC::getDoubleBitErrorCounter() const {
+        uhal::ValWord<uint32_t> dbec = hw().getNode("ttc.counters3.singleBitErrCntr").read();
+        hw().dispatch();
+        return (uint32_t) dbec;
 }
 
 //void 
-//DummyTTC::getTTChistory() {
+//DummyTTC::getTTChistory() const {
 //
 //    cout << "Getting TTC history" << endl;
 //
 //}
 
-//void 
-//DummyTTC::getTTShistory() {
-//
-//    cout << "Getting TTC history" << endl;
-//
-//}
 
-uint32_t
-IpbusTTC::getClk40lock() {
+bool
+IpbusTTC::isClock40Locked() const {
 
     cout << "Getting clock 40 lock..." << endl;
-    uint32_t clk40lock = 0;
+    bool clk40lock = 0;
     return clk40lock;
 
 }
 
-uint32_t
-IpbusTTC::getClk40stopped() {
+bool
+IpbusTTC::hasClock40Stopped() const {
 
     cout << "Getting clock 40 stopped..." << endl;
-    uint32_t clk40stopped = 0;
+    bool clk40stopped = 0;
     return clk40stopped;
 
 }
 
-uint32_t
-IpbusTTC::getBC0lock() {
+bool
+IpbusTTC::isBC0Locked() const {
 
     cout << "Getting BC0 lock..." << endl;
-    uint32_t BC0lock = 0;
+    bool BC0lock = 0;
     return BC0lock;
 
 }
 
-uint32_t
-IpbusTTC::getBC0stopped() {
+bool
+IpbusTTC::hasBC0Stopped() const {
 
     cout << "Getting BC0 stopped..." << endl;
-    uint32_t BC0stopped = 0;
+    bool BC0stopped = 0;
     return BC0stopped;
 
 }
@@ -357,7 +395,7 @@ IpbusChanCtrl::getCRCErrcounts() {
 }
 
 bool
-IpbusChanCtrl::isPLLlock() {
+IpbusChanCtrl::isPLLLocked() {
     cout << "getting PLL lock status" << endl;
     bool PLLlock = true;
     return PLLlock;
@@ -383,10 +421,10 @@ IpbusChanCtrl::configure(const swatch::core::ParameterSet& pset) {
 IpbusChanBuffer::IpbusChanBuffer(swatch::processor::Connection* connection) : AbstractChanBuffer(connection) {
     cout << "this is a very dummy channel buffer interface" << endl;
 
-    uhal::HwInterface& dummyhw = this->connection()->get<uhal::HwInterface>();
+//    uhal::HwInterface dummyhw = he;
 
-    uhal::ValWord<uint32_t> bsize = dummyhw.getNode("buffer.stat.size").read();
-    dummyhw.dispatch();
+    uhal::ValWord<uint32_t> bsize = hw().getNode("buffer.stat.size").read();
+    hw().dispatch();
     
     bufferSize_ = bsize;
         

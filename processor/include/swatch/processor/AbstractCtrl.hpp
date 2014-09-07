@@ -34,7 +34,7 @@ public:
      */
     virtual ~AbstractCtrl() {}
 
-    virtual std::vector<std::string> clockConfigurations() const = 0;
+    virtual std::set<std::string> clockConfigurations() const = 0;
 
     virtual void hardReset() = 0;
     virtual void softReset() = 0;

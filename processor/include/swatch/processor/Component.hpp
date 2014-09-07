@@ -19,7 +19,7 @@ class Component {
 public:
     virtual ~Component() {}
 
-    virtual Connection* connection() { return connection_; }
+    virtual const Connection* connection() const { return connection_; }
 protected:
     Component(Connection* aConnection) : connection_(aConnection) {}
 

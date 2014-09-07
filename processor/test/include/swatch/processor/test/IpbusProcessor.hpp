@@ -23,6 +23,9 @@ namespace swatch {
 namespace processor {
 namespace test {
 
+typedef boost::unordered_map<std::string,uint32_t> RegisterMap;
+
+
 //----------------------------------------------------------------------------//
 class IpbusProcessor : public swatch::processor::Processor {
 public:
@@ -37,6 +40,7 @@ private:
     uint32_t slot_;
     std::string crate_;
     
+    //!
 };
 
 //----------------------------------------------------------------------------//
@@ -48,6 +52,9 @@ public:
     
     virtual uint32_t getFwVersion();
 
+private:
+    uhal::HwInterface hw() { return connection()->get<uhal::HwInterface>(); }
+
 };
 
 //----------------------------------------------------------------------------//
@@ -56,40 +63,53 @@ public:
     IpbusTTC(swatch::processor::Connection* connection);
     virtual ~IpbusTTC();
 
+    virtual std::set<std::string> configurations() const { return configs_; } 
+    virtual void configure(const std::string& config);
+
     //functionality
-    virtual void enableTTC();
-    virtual void enableBC0();
+    virtual void enable(bool enable = true);
+    virtual void generateInternalOrbit(bool generate = true);
     virtual void sendSingleL1A();
     virtual void sendMultipleL1A();
     virtual void clearCounters();
     virtual void clearErrCounters();
-    virtual void maskBC0fromTTC();
-    virtual void captureTTC();
-
+    virtual void spy();
+    virtual void maskBC0Spy(bool mask = true);
     virtual void sendBGo(uint32_t command);
 
+    virtual bool isEnabled() const;
+    virtual bool isGeneratingInternalBC0() const;
+    virtual bool isBC0SpyMasked() const;
+
+    
     //monitoring
-    uint32_t getBunchCount();
-    uint32_t getEvtCount();
-    uint32_t getOrbitCount();
-    uint32_t getSingleBitErrorCounter();
-    uint32_t getDoubleBitErrorCounter();
-    //void getTTChistory();
-    //void getTTShistory();
-    uint32_t getClk40lock();
-    uint32_t getClk40stopped();
-    uint32_t getBC0lock();
-    uint32_t getBC0stopped();
+    virtual uint32_t getBunchCount() const;
+    virtual uint32_t getEvtCount() const;
+    virtual uint32_t getOrbitCount() const;
+    virtual uint32_t getSingleBitErrorCounter() const;
+    virtual uint32_t getDoubleBitErrorCounter() const;
+    
+    // virtual void getTTChistory() const;
+    virtual bool isClock40Locked() const;
+    virtual bool hasClock40Stopped() const;
+    virtual bool isBC0Locked() const;
+    virtual bool hasBC0Stopped() const;
+
+private:
+    uhal::HwInterface hw() const { return connection()->get<uhal::HwInterface>(); }
+
+    std::set<std::string> configs_;
 
 };
 
 //----------------------------------------------------------------------------//
 class IpbusCtrl : public swatch::processor::AbstractCtrl {
 public:
-    IpbusCtrl(swatch::processor::Connection* connection);
+    IpbusCtrl(swatch::processor::Connection* connection, const swatch::core::Arguments& args);
     virtual ~IpbusCtrl();
 
-    virtual std::vector<std::string> clockConfigurations() const;
+    virtual std::set<std::string> clockConfigurations() const { return configs_; } 
+    virtual void configureClock(const std::string& config);
     
     virtual void hardReset();
     virtual void softReset();
@@ -97,10 +117,14 @@ public:
 //    virtual void clk40Reset();
 //    virtual void configureClk(const swatch::core::ParameterSet& pset);
 
-    virtual void configureClock(const std::string& config);
 
 private:
+    uhal::HwInterface hw()  { return connection()->get<uhal::HwInterface>(); }
     std::set<std::string> configs_;
+
+    //! poweron values to fake resets
+    RegisterMap poweron_;
+
 };
 
 //----------------------------------------------------------------------------//
@@ -124,7 +148,7 @@ public:
     //monitoring
     virtual uint32_t getCRCcounts();
     virtual uint32_t getCRCErrcounts();
-    virtual bool isPLLlock();
+    virtual bool isPLLLocked();
     virtual bool isSync();
 
     virtual void configure(const swatch::core::ParameterSet& pset);
@@ -143,6 +167,7 @@ public:
     virtual void upload(const std::vector<uint64_t>& aPayload);
     
 private:
+    uhal::HwInterface hw()  { return connection()->get<uhal::HwInterface>(); }
     
     uint32_t bufferSize_;
     std::vector<uint64_t> payload_;

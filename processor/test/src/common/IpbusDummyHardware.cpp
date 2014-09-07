@@ -23,16 +23,20 @@ namespace test {
 
 IpbusDummyHardware::IpbusDummyHardware(const std::string& name, uint32_t port, const std::string& addrtab) :
     name_(name), port_(port), pid_(0), status_(0), started_(false), addrtab_(addrtab), hw_(0x0) {
+        workers_ = new boost::thread_group();
 }
+
 
 pid_t
 IpbusDummyHardware::pid() const {
     return pid_;
 }
 
+
 IpbusDummyHardware::~IpbusDummyHardware() {
     terminate();
 }
+
 
 void
 IpbusDummyHardware::start() {
@@ -50,8 +54,11 @@ IpbusDummyHardware::start() {
     }
 }
 
+
 void
 IpbusDummyHardware::terminate() {
+
+    if ( workers_) delete workers_; workers_ = 0x0;
     // To be cleaned up
     if ( pid_ != 0 ) {
         cout << "Killing subprocess" << endl;
@@ -65,6 +72,7 @@ IpbusDummyHardware::terminate() {
 
     if ( hw_ ) delete hw_; 
 }
+
 
 void
 IpbusDummyHardware::run() {
@@ -125,6 +133,7 @@ IpbusDummyHardware::run() {
     }
 }
 
+
 uhal::HwInterface&
 IpbusDummyHardware::hw() const {
     if ( !hw_ )
@@ -133,6 +142,7 @@ IpbusDummyHardware::hw() const {
     return *hw_;
 }
 
+
 void
 IpbusDummyHardware::load(const IpbusDummyHardware::RegisterMap& map) {
     BOOST_FOREACH(RegisterMap::value_type p, map) {
@@ -140,6 +150,12 @@ IpbusDummyHardware::load(const IpbusDummyHardware::RegisterMap& map) {
     }
 
     hw().dispatch();   
+}
+
+void IpbusDummyHardware::add(WorkLoop* w) {
+   workers_->add_thread( 
+    new boost::thread(&WorkLoop::run, w, hw_)
+   );
 }
 
 }
