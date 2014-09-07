@@ -49,12 +49,15 @@ public:
     void set(const std::string& aKey, const T& aValue);
     
     void set(const std::string& aKey, const char* aValue);
-
-    template<typename T>
-    T get(const std::string& aKey) const;
     
     template<typename T>
-    T get(const std::string& aKey, const T& aDefault ) const;
+    T& get(const std::string& aKey);
+
+    template<typename T>
+    const T& get(const std::string& aKey) const;
+    
+    template<typename T>
+    const T& get(const std::string& aKey, const T& aDefault ) const;
 
     std::string get(const std::string& aKey, const char* aDefault ) const;
     

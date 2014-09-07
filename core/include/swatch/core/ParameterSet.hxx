@@ -8,6 +8,8 @@
 #ifndef __swatch_core_parameterset_hxx__
 #define	__swatch_core_parameterset_hxx__
 
+#include "swatch/core/exception.hpp"
+
 //#include <boost/static_assert.hpp>
 #include <boost/mpl/assert.hpp>
 
@@ -32,20 +34,40 @@ void ParameterSet::set(const std::string& aKey, const T& aValue) {
 }
 
 template<typename T>
-T ParameterSet::get(const std::string& aKey) const {
+T&
+ParameterSet::get(const std::string& aKey) {
+    iterator it = this->find(aKey);
+    //TODO runtime_error -> dedicated error
+    if (it == this->end()) throw std::runtime_error("Parameter not found:" + aKey);
+    if ( typeid(T) != it->second.type() ) {
+        std::stringstream exc;
+        exc << "Cannot cast " << demangleName(it->second.type().name()) << " to " << demangleName(typeid(T).name());
+        throw ParameterNotFound(exc.str());
+    }
+    
+    T* ptr = boost::any_cast<T>(&(it->second));
+    return *ptr;
+}
+
+template<typename T>
+const T&
+ParameterSet::get(const std::string& aKey) const {
     const_iterator it = this->find(aKey);
     //TODO runtime_error -> dedicated error
     if (it == this->end()) throw std::runtime_error("Parameter not found:" + aKey);
     if ( typeid(T) != it->second.type() ) {
-        std::cout << "Cannot cast " << demangleName(it->second.type().name()) << " to " << demangleName(typeid(T).name()) << std::endl;
+        std::stringstream exc;
+        exc << "Cannot cast " << demangleName(it->second.type().name()) << " to " << demangleName(typeid(T).name());
+        throw ParameterNotFound(exc.str());
     }
     
-    return boost::any_cast<T>(it->second);
+    const T* const_ptr = boost::any_cast<T>(&(it->second));
+    return *const_ptr;
 }
 
-
 template<typename T>
-T ParameterSet::get(const std::string& aKey, const T& aDefault ) const {
+const T&
+ParameterSet::get(const std::string& aKey, const T& aDefault ) const {
     const_iterator it = this->find(aKey);
 
     if (it == this->end()) return aDefault;

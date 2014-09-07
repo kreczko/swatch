@@ -82,6 +82,9 @@ BOOST_AUTO_TEST_CASE(ParameterSetTest) {
         BOOST_CHECK( pars.get< boost::shared_ptr<Dummy> >("dummy_shr") == shr_ptr );
 
         BOOST_CHECK( pars.find("eta") != pars.end() );
+        
+        BOOST_CHECK( pars.get("doesntexist","abcd") == std::string("abcd") );
+        BOOST_CHECK( pars.find("doesntexist") == pars.end() );
     }
 }
 

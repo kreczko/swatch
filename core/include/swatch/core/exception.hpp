@@ -1,5 +1,5 @@
-#ifndef CACTUSCORE_SWATCH_CORE_EXCEPTION_H
-#define CACTUSCORE_SWATCH_CORE_EXCEPTION_H
+#ifndef CACTUSCORE_SWATCH_CORE_EXCEPTION_HPP
+#define CACTUSCORE_SWATCH_CORE_EXCEPTION_HPP
 
 // SWATCH HEADERS
 // OTHER HEADERS
@@ -24,76 +24,68 @@
 	};
 
 
-namespace swatch
-{
-namespace core
-{
+namespace swatch {
+namespace core {
 
-class exception : public std::exception
-{
-
+class exception : public std::exception {
 public:
 
-	/**
-	 * Constructor
-	 */
-	exception() throw();
+    /**
+     * Constructor
+     */
+    exception() throw ();
 
-	/**
-	 * Overloaded constructor
-	 */
-	exception(const std::string& what);
+    /**
+     * Overloaded constructor
+     */
+    exception(const std::string& what);
 
-	/**
-	 * Copy constructor
-	 * @param e The to copy to build this exception object
-	 */
-	exception(const exception& e) throw();
+    /**
+     * Copy constructor
+     * @param e The to copy to build this exception object
+     */
+    exception(const exception& e) throw ();
 
-	/**
-	 * Assignment operator
-	 * @param e The exception object to assign to this one
-	 * @return Reference to a new exception object
-	 */
-	exception& operator=(const exception& e) throw();
+    /**
+     * Assignment operator
+     * @param e The exception object to assign to this one
+     * @return Reference to a new exception object
+     */
+    exception& operator=(const exception& e) throw ();
 
-	/**
-	 * Destructor. Destruction delegated to subclasses
-	 */
-	virtual ~exception() throw();
+    /**
+     * Destructor. Destruction delegated to subclasses
+     */
+    virtual ~exception() throw ();
 
-	/**
-	 * Retrieve the reason for throwing the exception
-	 * @return const char* containing the reason the exception was thrown
-	 */
-	virtual const char* what() const throw();
+    /**
+     * Retrieve the reason for throwing the exception
+     * @return const char* containing the reason the exception was thrown
+     */
+    virtual const char* what() const throw ();
 
 
 protected:
 
-	//! Thread ID in which the exception was thrown
-	boost::thread::id exThreadId_;
+    //! Thread ID in which the exception was thrown
+    boost::thread::id exThreadId_;
 
-	//! Time at which the exception was thrown
-	timeval exTime_;
+    //! Time at which the exception was thrown
+    timeval exTime_;
 
-	//! Description of the exception
-	std::string what_;
+    //! Description of the exception
+    std::string what_;
 
 
 private:
-
-
-
-
-
 
 };
 
 
 //! Add here exception derived classes
 DEFINE_SWATCH_EXCEPTION(ConfigureError);
+DEFINE_SWATCH_EXCEPTION(ParameterNotFound);
 
-} // end ns core
-} // end ns swatch
-#endif
+} // namespace core
+} // namespace swatch
+#endif /* CACTUSCORE_SWATCH_CORE_EXCEPTION_HPP */
