@@ -11,10 +11,10 @@ PACKAGES = \
 
 VIRTUAL_PACKAGES = $(addsuffix /.virtual.Makefile,${PACKAGES})
 
-ifeq ($(MAKEFLAGS), "")
-  FLAGS= ""
-else
-  FLAGS= $(MAKEFLAGS)
+FLAGS = $(ifeq $(MAKEFLAGS) "","",-$(MAKEFLAGS))
+
+ifdef jobs
+FLAGS+=-j ${jobs}
 endif
 
 # Makefile targets declared as phony
