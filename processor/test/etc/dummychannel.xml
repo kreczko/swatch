@@ -1,0 +1,11 @@
+<node>
+    <node id="mode" address="0x0">
+        <node id="mode" mask="0x3"/>
+        <node id="datasrc" mask="0xc"/>
+        <node id="trig_bx" mask="0xfff00"/>
+        <node id="max_word" mask="0xfff00000"/>
+    </node>
+    <!-- <node id="data" address="0x1" size="0x800" mode="incremental"/> -->
+    <node id="data" address="0x1" size="0x10" mode="incremental"/>
+</node>
+

@@ -27,11 +27,11 @@ protected:
 public:
     virtual ~AbstractChannel() {}
 
-    AbstractChanCtrl* getCtrl() {
+    AbstractChanCtrl* ctrl() {
         return ctrl_;
     }
 
-    AbstractChanBuffer* getBuffer() {
+    AbstractChanBuffer* buffer() {
         return buffer_;
     }
 };

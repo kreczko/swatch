@@ -27,10 +27,10 @@ typedef boost::unordered_map<std::string,uint32_t> RegisterMap;
 
 
 //----------------------------------------------------------------------------//
-class IpbusProcessor : public swatch::processor::Processor {
+class IPBusProcessor : public swatch::processor::Processor {
 public:
-    IpbusProcessor(const std::string& id, const swatch::core::Arguments& args);
-    virtual ~IpbusProcessor();
+    IPBusProcessor(const std::string& id, const swatch::core::Arguments& args);
+    virtual ~IPBusProcessor();
     
     virtual uint32_t getSlot() const;
     virtual const std::string& getCrateId() const;
@@ -44,13 +44,18 @@ private:
 };
 
 //----------------------------------------------------------------------------//
-class IpbusInfo : public swatch::processor::AbstractInfo {
+class IPBusInfo : public swatch::processor::AbstractInfo {
 public:
     
-    IpbusInfo(swatch::processor::Connection* connection);
-    virtual ~IpbusInfo(); 
+    IPBusInfo(swatch::processor::Connection* connection);
+    virtual ~IPBusInfo(); 
     
     virtual uint32_t getFwVersion();
+
+    virtual uint32_t getNInputs();
+
+    virtual uint32_t getNOutputs();
+
 
 private:
     uhal::HwInterface hw() { return connection()->get<uhal::HwInterface>(); }
@@ -58,10 +63,10 @@ private:
 };
 
 //----------------------------------------------------------------------------//
-class IpbusTTC : public swatch::processor::AbstractTTC {
+class IPBusTTC : public swatch::processor::AbstractTTC {
 public:
-    IpbusTTC(swatch::processor::Connection* connection);
-    virtual ~IpbusTTC();
+    IPBusTTC(swatch::processor::Connection* connection);
+    virtual ~IPBusTTC();
 
     virtual std::set<std::string> configurations() const { return configs_; } 
     virtual void configure(const std::string& config);
@@ -70,7 +75,7 @@ public:
     virtual void enable(bool enable = true);
     virtual void generateInternalOrbit(bool generate = true);
     virtual void sendSingleL1A();
-    virtual void sendMultipleL1A();
+    virtual void sendMultipleL1A(uint32_t nL1A);
     virtual void clearCounters();
     virtual void clearErrCounters();
     virtual void spy();
@@ -92,7 +97,7 @@ public:
     // virtual void getTTChistory() const;
     virtual bool isClock40Locked() const;
     virtual bool hasClock40Stopped() const;
-    virtual bool isBC0Locked() const;
+    virtual bool isOrbitLocked() const;
     virtual bool hasBC0Stopped() const;
 
 private:
@@ -103,10 +108,10 @@ private:
 };
 
 //----------------------------------------------------------------------------//
-class IpbusCtrl : public swatch::processor::AbstractCtrl {
+class IPBusCtrl : public swatch::processor::AbstractCtrl {
 public:
-    IpbusCtrl(swatch::processor::Connection* connection, const swatch::core::Arguments& args);
-    virtual ~IpbusCtrl();
+    IPBusCtrl(swatch::processor::Connection* connection, const swatch::core::Arguments& args);
+    virtual ~IPBusCtrl();
 
     virtual std::set<std::string> clockConfigurations() const { return configs_; } 
     virtual void configureClock(const std::string& config);
@@ -130,34 +135,34 @@ private:
 //----------------------------------------------------------------------------//
 class IpbusChannel : public swatch::processor::AbstractChannel {
 public:
-    IpbusChannel(swatch::processor::Connection* connection);
+    IpbusChannel(swatch::processor::Connection* connection, const swatch::core::Arguments& args);
     virtual ~IpbusChannel();
 };
 
 //----------------------------------------------------------------------------//
-class IpbusChanCtrl : public swatch::processor::AbstractChanCtrl {
+class IPBusChanCtrl : public swatch::processor::AbstractChanCtrl {
 public:
-    IpbusChanCtrl(swatch::processor::Connection* connection);
-    virtual ~IpbusChanCtrl();
+    IPBusChanCtrl(swatch::processor::Connection* connection, const swatch::core::Arguments& args);
+    virtual ~IPBusChanCtrl();
 
     //functionalities
     virtual void reset();
     virtual void setLoopback();
-    virtual void resetCRCcounts();
+    virtual void resetCRCCounts();
 
     //monitoring
-    virtual uint32_t getCRCcounts();
-    virtual uint32_t getCRCErrcounts();
+    virtual uint32_t getCRCCounts();
+    virtual uint32_t getCRCErrCounts();
     virtual bool isPLLLocked();
     virtual bool isSync();
 
     virtual void configure(const swatch::core::ParameterSet& pset);
 };
 //----------------------------------------------------------------------------//
-class IpbusChanBuffer : public swatch::processor::AbstractChanBuffer {
+class IPBusChanBuffer : public swatch::processor::AbstractChanBuffer {
 public:
-    IpbusChanBuffer(swatch::processor::Connection* connection);
-    virtual ~IpbusChanBuffer();
+    IPBusChanBuffer(swatch::processor::Connection* connection, const swatch::core::Arguments& args);
+    virtual ~IPBusChanBuffer();
 
 
     virtual uint32_t getBufferSize() { return bufferSize_; }
@@ -168,9 +173,9 @@ public:
     
 private:
     uhal::HwInterface hw()  { return connection()->get<uhal::HwInterface>(); }
-    
+
+    std::string path_;    
     uint32_t bufferSize_;
-    std::vector<uint64_t> payload_;
 
 };
 

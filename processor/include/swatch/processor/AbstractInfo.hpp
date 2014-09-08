@@ -30,8 +30,16 @@ public:
 
     virtual ~AbstractInfo() {}
     
+    /**
+     * 
+     * @return Firmware version
+     */
     virtual uint32_t getFwVersion() = 0;
 
+    virtual uint32_t getNInputs() = 0;
+    
+    virtual uint32_t getNOutputs() = 0;
+    
 };
 
 } // end ns processor

@@ -56,7 +56,7 @@ public:
     virtual void sendSingleL1A() = 0;
     
     // Send Multiple L1As
-    virtual void sendMultipleL1A() = 0;
+    virtual void sendMultipleL1A(uint32_t nL1A) = 0;
     
     // Clear all counters
     virtual void clearCounters() = 0;
@@ -92,7 +92,7 @@ public:
     
     virtual bool isClock40Locked() const = 0;
     virtual bool hasClock40Stopped() const = 0;
-    virtual bool isBC0Locked() const = 0;
+    virtual bool isOrbitLocked() const = 0;
     virtual bool hasBC0Stopped() const = 0;
 
 };

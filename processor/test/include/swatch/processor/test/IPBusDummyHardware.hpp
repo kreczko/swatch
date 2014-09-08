@@ -25,12 +25,12 @@ namespace swatch {
 namespace processor {
 namespace test {
 
-struct WorkLoop {
-    WorkLoop( uint32_t millisec ) : millisec_(millisec) {}
+struct IPBusWorkLoop {
+    IPBusWorkLoop( uint32_t millisec ) : millisec_(millisec) {}
     virtual void operator()( uhal::HwInterface* hw ) = 0;
 
 private:
-    friend class IpbusDummyHardware;
+    friend class IPBusDummyHardware;
 
     void run( uhal::HwInterface* hw ) {
         while( true ) {
@@ -43,13 +43,13 @@ private:
     uint32_t millisec_;
 };
 
-class IpbusDummyHardware : private boost::noncopyable {
+class IPBusDummyHardware : private boost::noncopyable {
 public:
     
     typedef boost::unordered_map<std::string,uint32_t> RegisterMap;
 
-    IpbusDummyHardware(const std::string& name, uint32_t port, const std::string& addrtab);
-    virtual ~IpbusDummyHardware();
+    IPBusDummyHardware(const std::string& name, uint32_t port, const std::string& addrtab);
+    virtual ~IPBusDummyHardware();
 
     pid_t pid() const;
     void start();
@@ -62,7 +62,7 @@ public:
 
     bool started() const { return started_; }
     
-    void add( WorkLoop* w );
+    void add( IPBusWorkLoop* w );
     
 
 private:

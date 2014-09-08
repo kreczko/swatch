@@ -44,13 +44,29 @@ public:
     AbstractTTC* ttc() {
         return ttc_;
     }
-
-    std::vector<AbstractChannel*> getRx() {
-        return rx_;
+    
+    /**
+     * 
+     * @return the vector of input channel pointers 
+     */
+    const std::vector<AbstractChannel*>& inputChannels() const {
+        return inputChannels_;
     }
-
-    std::vector<AbstractChannel*> getTx() {
-        return tx_;
+    
+    AbstractChannel* inputChannel( uint32_t i ) {
+        return inputChannels_.at(i);
+    }
+    
+    /**
+     * 
+     * @return vector of output channel pointers
+     */
+    const std::vector<AbstractChannel*> outputChannels() const {
+        return outputChannels_;
+    }
+    
+    AbstractChannel* outputChannel( uint32_t i ) {
+        return outputChannels_.at(i);
     }
 
     Connection* connection() {
@@ -59,10 +75,10 @@ public:
 protected:
     AbstractInfo* info_;
     AbstractCtrl* ctrl_;
-    AbstractTTC* ttc_;
+    AbstractTTC*  ttc_;
 
-    std::vector<AbstractChannel*> tx_;
-    std::vector<AbstractChannel*> rx_;
+    std::vector<AbstractChannel*> inputChannels_;
+    std::vector<AbstractChannel*> outputChannels_;
 
     Connection* connection_;
 

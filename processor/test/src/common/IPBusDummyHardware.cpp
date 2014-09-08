@@ -5,7 +5,7 @@
  * @date 
  */
 
-#include "swatch/processor/test/IpbusDummyHardware.hpp"
+#include "swatch/processor/test/IPBusDummyHardware.hpp"
 
 // Swatch Headers
 #include "swatch/core/Utilities.hpp"
@@ -21,27 +21,27 @@ namespace swatch {
 namespace processor {
 namespace test {
 
-IpbusDummyHardware::IpbusDummyHardware(const std::string& name, uint32_t port, const std::string& addrtab) :
+IPBusDummyHardware::IPBusDummyHardware(const std::string& name, uint32_t port, const std::string& addrtab) :
     name_(name), port_(port), pid_(0), status_(0), started_(false), addrtab_(addrtab), hw_(0x0) {
         workers_ = new boost::thread_group();
 }
 
 
 pid_t
-IpbusDummyHardware::pid() const {
+IPBusDummyHardware::pid() const {
     return pid_;
 }
 
 
-IpbusDummyHardware::~IpbusDummyHardware() {
+IPBusDummyHardware::~IPBusDummyHardware() {
     terminate();
 }
 
 
 void
-IpbusDummyHardware::start() {
+IPBusDummyHardware::start() {
     // start the hardware
-    thread_ = boost::thread(&IpbusDummyHardware::run, this);
+    thread_ = boost::thread(&IPBusDummyHardware::run, this);
     
     uint32_t counts(100);
     while( counts-- ) {
@@ -56,7 +56,7 @@ IpbusDummyHardware::start() {
 
 
 void
-IpbusDummyHardware::terminate() {
+IPBusDummyHardware::terminate() {
 
     if ( workers_) delete workers_; workers_ = 0x0;
     // To be cleaned up
@@ -75,7 +75,7 @@ IpbusDummyHardware::terminate() {
 
 
 void
-IpbusDummyHardware::run() {
+IPBusDummyHardware::run() {
     // TODOs:
     // To be turned into parameters:
     // - Verbosity
@@ -135,7 +135,7 @@ IpbusDummyHardware::run() {
 
 
 uhal::HwInterface&
-IpbusDummyHardware::hw() const {
+IPBusDummyHardware::hw() const {
     if ( !hw_ )
         throw std::runtime_error("No uhal hardware interface instantiated");
     
@@ -144,7 +144,7 @@ IpbusDummyHardware::hw() const {
 
 
 void
-IpbusDummyHardware::load(const IpbusDummyHardware::RegisterMap& map) {
+IPBusDummyHardware::load(const IPBusDummyHardware::RegisterMap& map) {
     BOOST_FOREACH(RegisterMap::value_type p, map) {
         hw().getNode(p.first).write(p.second);
     }
@@ -152,9 +152,9 @@ IpbusDummyHardware::load(const IpbusDummyHardware::RegisterMap& map) {
     hw().dispatch();   
 }
 
-void IpbusDummyHardware::add(WorkLoop* w) {
+void IPBusDummyHardware::add(IPBusWorkLoop* w) {
    workers_->add_thread( 
-    new boost::thread(&WorkLoop::run, w, hw_)
+    new boost::thread(&IPBusWorkLoop::run, w, hw_)
    );
 }
 

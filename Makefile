@@ -1,3 +1,14 @@
+# PACKAGES = \
+# 	core \
+# 	core/test \
+# 	processor \
+# 	processor/test \
+# 	system \
+# 	system/test \
+# 	database \
+# 	database/test \
+# 	test
+
 PACKAGES = \
 	core \
 	core/test \
@@ -5,9 +16,8 @@ PACKAGES = \
 	processor/test \
 	system \
 	system/test \
-	database \
-	database/test \
-	test 
+	test
+	
 
 VIRTUAL_PACKAGES = $(addsuffix /.virtual.Makefile,${PACKAGES})
 
