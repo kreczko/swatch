@@ -69,7 +69,7 @@ ${LibraryTarget}: ${LibraryObjectFiles}
 -include $(LibraryObjectFiles:.o=.d)
 	
 # Static Pattern rule for binaries
-${Executables}: bin/%.exe: obj/%.o
+${Executables}: bin/%.exe: obj/%.o ${LibraryTarget}
 	${LD} ${ExecutableLinkFlags} ${ExecutableDependentLibraries} $< -o $@
 
 # Include automatically generated dependencies
