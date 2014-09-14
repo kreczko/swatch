@@ -61,7 +61,7 @@ void register_converters() {
 //                BOOST_PYTHON_MODULE(my_py_binds_module)
 //          Otherwise, will get the error message "ImportError: dynamic module does not define init function (initmy_py_binds_module)
 
-BOOST_PYTHON_MODULE(libcactus_swatch_pyswatch) {
+BOOST_PYTHON_MODULE(_pyswatch) {
     using namespace boost::python;
     wrap_test_functions();
     register_converters();

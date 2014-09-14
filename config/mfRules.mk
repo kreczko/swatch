@@ -27,10 +27,14 @@ DependentLibraries += $(addprefix -l,${Libraries})
 ExecutableDependentLibraries += $(addprefix -L,${LibraryPaths})
 ExecutableDependentLibraries += $(addprefix -l,${ExecutableLibraries})
 
+# LibFolder := lib
+# BinFolder := bin
+# ObjFolder := obj
+
 ifeq ("${Library}","")
-LibraryTarget=
+LibraryTarget :=
 else
-LibraryTarget=lib/lib${Library}.so
+LibraryTarget ?= lib/lib${Library}.so
 endif
 
 .PHONY: default

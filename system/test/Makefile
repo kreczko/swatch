@@ -3,8 +3,8 @@ SWATCH_BACK_TO_ROOT= $(shell pwd)/../..
 include ${SWATCH_BACK_TO_ROOT}/config/mfCommonDefs.mk
 
 Project = cactuscore
-Package = swatch/processor/test
-PackagePath = $(SWATCH_ROOT)/$(Project)/${Package}
+Package = swatch/system/test
+PackagePath = $(SWATCH_ROOT)/system/test
 PackageName = cactuscore-swatch-system-test
 
 Packager = Alessandro Thea

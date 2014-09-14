@@ -2,11 +2,17 @@ SWATCH_BACK_TO_ROOT= $(shell pwd)/..
 
 include ${SWATCH_BACK_TO_ROOT}/config/mfCommonDefs.mk
 
+CxxFlags += \
+		-ftemplate-depth-128 \
+		-O0 -rdynamic -finline-functions \
+		-Wno-inline -DNDEBUG
+
 Project = cactuscore
 Package = swatch/pyswatch
 
 PackagePath = $(SWATCH_ROOT)/pyswatch
 PackageName = cactuscore-swatch-pyswatch
+PythonModule = swatch
 
 Packager = Alessandro Thea
 
@@ -17,7 +23,7 @@ PACKAGE_RELEASE = 0
 
 # The leading undescore is meant to be there
 Library = cactus_swatch_pyswatch
-
+LibraryTarget = lib/_pyswatch.so
 
 Includes =	\
 		include  \
@@ -26,8 +32,8 @@ Includes =	\
 		${CACTUS_ROOT}/include
 
 LibraryPaths =  \
-	        lib \
-	        ${SWATCH_ROOT}/core/lib \
+        lib \
+        ${SWATCH_ROOT}/core/lib \
 		${CACTUS_ROOT}/lib
 
 Libraries =	\
@@ -45,4 +51,4 @@ Libraries =	\
 ExecutableLibraries = ${Libraries} python${PYTHON_VERSION}
 
 include ${SWATCH_ROOT}/config/mfRules.mk
-#include ${SWATCH_ROOT}/config/mfRPMRules.mk
+include ${SWATCH_ROOT}/config/mfPythonRPMRules.mk

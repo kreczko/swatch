@@ -4,7 +4,7 @@ include ${SWATCH_BACK_TO_ROOT}/config/mfCommonDefs.mk
 
 Project = cactuscore
 Package = swatch/processor/test
-PackagePath = $(SWATCH_ROOT)/$(Project)/${Package}
+PackagePath = $(SWATCH_ROOT)/processor/test
 PackageName = cactuscore-swatch-processor-test
 
 Packager = Alessandro Thea

@@ -1,4 +1,3 @@
-
 RPMBUILD_DIR=${PackagePath}/rpm/RPMBUILD
 
 .PHONY: rpm _rpmall
@@ -15,7 +14,7 @@ _rpmbuild: _spec_update
 .PHONY: _spec_update	
 _spec_update:
 	mkdir -p ${PackagePath}/rpm
-	cp ${SWATCH_ROOT}/config/specTemplate.spec ${PackagePath}/rpm/${PackageName}.spec
+	cp ${BUILD_HOME}/config/specTemplate.spec ${PackagePath}/rpm/${PackageName}.spec
 	sed -i 's#__package__#${Package}#' ${PackagePath}/rpm/${PackageName}.spec
 	sed -i 's#__packagename__#${PackageName}#' ${PackagePath}/rpm/${PackageName}.spec
 	sed -i 's#__version__#$(PACKAGE_VER_MAJOR).$(PACKAGE_VER_MINOR).$(PACKAGE_VER_PATCH)#' ${PackagePath}/rpm/${PackageName}.spec
