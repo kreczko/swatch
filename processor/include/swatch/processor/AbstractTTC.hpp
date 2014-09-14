@@ -62,7 +62,7 @@ public:
     virtual void clearCounters() = 0;
     
     // Clear error counters
-    virtual void clearErrCounters() = 0;
+    virtual void clearErrors() = 0;
 
     // Spy on the incoming TTC commands
     virtual void spy() = 0;
@@ -83,11 +83,11 @@ public:
     virtual bool isBC0SpyMasked() const = 0;
 
     //monitoring
-    virtual uint32_t getBunchCount() const = 0;
+    virtual uint32_t getBXCount() const = 0;
     virtual uint32_t getEvtCount() const = 0;
     virtual uint32_t getOrbitCount() const = 0;
-    virtual uint32_t getSingleBitErrorCounter() const = 0;
-    virtual uint32_t getDoubleBitErrorCounter() const = 0;
+    virtual uint32_t getSingleBitErrors() const = 0;
+    virtual uint32_t getDoubleBitErrors() const = 0;
     //virtual void getTTChistory() const   = 0;
     
     virtual bool isClock40Locked() const = 0;

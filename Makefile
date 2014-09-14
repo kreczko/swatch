@@ -16,7 +16,8 @@ PACKAGES = \
 	processor/test \
 	system \
 	system/test \
-	test
+	test \
+	pyswatch
 	
 
 VIRTUAL_PACKAGES = $(addsuffix /.virtual.Makefile,${PACKAGES})

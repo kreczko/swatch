@@ -1,15 +1,14 @@
-#ifndef CACTUSCORE_SWATCH_CORE_EXCEPTION_HPP
-#define CACTUSCORE_SWATCH_CORE_EXCEPTION_HPP
+#ifndef SWATCH_CORE_EXCEPTION_HPP
+#define SWATCH_CORE_EXCEPTION_HPP
 
-// SWATCH HEADERS
-// OTHER HEADERS
-// C++ HEADERS
+// Swatch Headers
+// C++ Headers
 #include <exception>
 #include <string>
 #include <sys/time.h>
 
+// Boost Headers
 #include <boost/thread.hpp>
-
 
 //! MACRO to create definitions for the derived exceptions
 #define DEFINE_SWATCH_EXCEPTION(T) 				\
@@ -83,9 +82,9 @@ private:
 
 
 //! Add here exception derived classes
-DEFINE_SWATCH_EXCEPTION(ConfigureError);
-DEFINE_SWATCH_EXCEPTION(ParameterNotFound);
+// DEFINE_SWATCH_EXCEPTION(ConfigureError);
 
 } // namespace core
 } // namespace swatch
-#endif /* CACTUSCORE_SWATCH_CORE_EXCEPTION_HPP */
+
+#endif /* SWATCH_CORE_EXCEPTION_HPP */

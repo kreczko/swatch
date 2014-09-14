@@ -1,6 +1,6 @@
-SWATCH Control Software Package
+SWATCH Control Software Package {#mainpage}
 ===============================
 
-__Swatch__ = __S__oftWare for __A__utomating con__T__rol of __C__ommon __H__ardware
+__Swatch__ = <b>S</b>oftWare for <b>A</b>utomating con<b>T</b>rol of <b>C</b>ommon <b>H</b>ardware
 
 Documentation of the SWATCH software library

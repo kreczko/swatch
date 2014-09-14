@@ -18,7 +18,8 @@
 #include <boost/type_traits/is_pod.hpp>
 
 
-#include "Utilities.hpp"
+#include "swatch/core/Utilities.hpp"
+#include "swatch/core/exception.hpp"
 
 namespace swatch {
 namespace core {
@@ -93,6 +94,8 @@ public:
 private:
 
 };
+
+DEFINE_SWATCH_EXCEPTION(ParameterNotFound);
 
 typedef ParameterSet Arguments;
 

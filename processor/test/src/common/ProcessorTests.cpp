@@ -10,7 +10,6 @@ using std::endl;
 
 BOOST_AUTO_TEST_SUITE( ProcessorTestSuite )
         
-
 class DummyDriver {
 public:
 
@@ -38,9 +37,9 @@ BOOST_AUTO_TEST_CASE(ConnectionTest) {
     Connection* a = Connection::make(DummyDriver("alpha"));
     Connection* b = Connection::make(new DummyDriver("beta"));
 
-    BOOST_CHECK( i->get<int>() == 5 );
-    BOOST_CHECK( a->get<DummyDriver>().name == "alpha" );
-    BOOST_CHECK( b->get<DummyDriver>().name == "beta" );
+    BOOST_CHECK( *(i->get<int>()) == 5 );
+    BOOST_CHECK( a->get<DummyDriver>()->name == "alpha" );
+    BOOST_CHECK( b->get<DummyDriver>()->name == "beta" );
 
 
 }

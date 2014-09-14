@@ -18,11 +18,17 @@ class Connection;
 class Component {
 public:
     virtual ~Component() {}
-
-    virtual const Connection* connection() const { return connection_; }
+    
 protected:
     Component(Connection* aConnection) : connection_(aConnection) {}
-
+    
+    /**
+     * Retrieves the connection object
+     * @return pointer to connection
+     */
+    const Connection* conn() const { return connection_; }
+    
+private:
     Connection* connection_;
 };
 

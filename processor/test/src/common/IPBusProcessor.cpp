@@ -60,8 +60,8 @@ IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::Argume
         Arguments a, ctrl, buf;
         std::string path = "channels.rx"+boost::lexical_cast<std::string>(k);
         
-        ctrl.insert("path",path+".mode");
-        buf.insert("path",path+".data");
+        ctrl.insert("path",path);
+        buf.insert("path",path);
         a.insert("ctrl",ctrl)("buffer",buf);
 
         inputChannels_.push_back(new IpbusChannel(connection_, a));
@@ -70,10 +70,10 @@ IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::Argume
     outputChannels_.reserve(nOutputs);
     for (size_t k(0); k<nOutputs; ++k) {
         Arguments a, ctrl, buf;
-        std::string path = "channels.rx"+boost::lexical_cast<std::string>(k);
+        std::string path = "channels.tx"+boost::lexical_cast<std::string>(k);
         
-        ctrl.insert("path",path+".mode");
-        buf.insert("path",path+".data");
+        ctrl.insert("path",path); // <- this is wrong
+        buf.insert("path",path);
         a.insert("ctrl",ctrl)("buffer",buf);
 
         outputChannels_.push_back(new IpbusChannel(connection_, a));
@@ -119,22 +119,22 @@ IPBusInfo::~IPBusInfo() {
 
 uint32_t
 IPBusInfo::getFwVersion() {
-    uhal::ValWord<uint32_t> fwv = hw().getNode("ctrl.id.fwrev").read();
-    hw().dispatch();
+    uhal::ValWord<uint32_t> fwv = hw()->getNode("ctrl.id.fwrev").read();
+    hw()->dispatch();
     return fwv.value() ;
 }
 
 uint32_t 
 IPBusInfo::getNInputs() {
-    uhal::ValWord<uint32_t> n_rx = hw().getNode("ctrl.infos.nRx").read();
-    hw().dispatch();
+    uhal::ValWord<uint32_t> n_rx = hw()->getNode("ctrl.infos.nRx").read();
+    hw()->dispatch();
     return (uint32_t) n_rx;
 }
 
 uint32_t 
 IPBusInfo::getNOutputs() {
-    uhal::ValWord<uint32_t> n_tx = hw().getNode("ctrl.infos.nTx").read();
-    hw().dispatch();
+    uhal::ValWord<uint32_t> n_tx = hw()->getNode("ctrl.infos.nTx").read();
+    hw()->dispatch();
     return (uint32_t) n_tx;
 }
 
@@ -162,9 +162,9 @@ IPBusCtrl::hardReset() {
 void
 IPBusCtrl::softReset() {
     BOOST_FOREACH( RegisterMap::value_type& p, poweron_) {
-        hw().getNode(p.first).write(p.second);
+        hw()->getNode(p.first).write(p.second);
     }
-    hw().dispatch();
+    hw()->dispatch();
 }
 
 //void
@@ -175,8 +175,8 @@ IPBusCtrl::softReset() {
 void
 IPBusCtrl::configureClock(const std::string& config ) {
     // Let's assume it works and set
-    hw().getNode("ttc.stat.clk40Locked").write(true);
-    hw().dispatch();
+    hw()->getNode("ttc.stat.clk40Locked").write(true);
+    hw()->dispatch();
 
 }
 
@@ -209,52 +209,52 @@ void IPBusTTC::configure(const std::string& config) {
         this->generateInternalOrbit(false);  
     }
 
-    hw().getNode("ttc.stat.bc0Locked").write(true);
-    hw().dispatch();
+    hw()->getNode("ttc.stat.bc0Locked").write(true);
+    hw()->dispatch();
 }
 
 
 void
 IPBusTTC::enable(bool enable) {
-    hw().getNode("ttc.ctrl.enable").write(enable);
-    hw().dispatch();
+    hw()->getNode("ttc.ctrl.enable").write(enable);
+    hw()->dispatch();
 }
 
 void
 IPBusTTC::generateInternalOrbit(bool generate /* = true */) {
-    hw().getNode("ttc.ctrl.genBC0").write(generate);
-    hw().dispatch();
+    hw()->getNode("ttc.ctrl.genBC0").write(generate);
+    hw()->dispatch();
 }
 
 void
 IPBusTTC::sendSingleL1A() {
-    uhal::ValWord<uint32_t> evc  = hw().getNode("ttc.counters1.eventCntr").read();
-    hw().dispatch();
-    hw().getNode("ttc.counters1.eventCntr").write((uint32_t)evc+1);
-    hw().dispatch();
+    uhal::ValWord<uint32_t> evc  = hw()->getNode("ttc.counters1.eventCntr").read();
+    hw()->dispatch();
+    hw()->getNode("ttc.counters1.eventCntr").write((uint32_t)evc+1);
+    hw()->dispatch();
 }
 
 void
 IPBusTTC::sendMultipleL1A(uint32_t nL1A) {
-    uhal::ValWord<uint32_t> evc  = hw().getNode("ttc.counters1.eventCntr").read();
-    hw().dispatch();
-    hw().getNode("ttc.counters1.eventCntr").write((uint32_t)evc+nL1A);
-    hw().dispatch();
+    uhal::ValWord<uint32_t> evc  = hw()->getNode("ttc.counters1.eventCntr").read();
+    hw()->dispatch();
+    hw()->getNode("ttc.counters1.eventCntr").write((uint32_t)evc+nL1A);
+    hw()->dispatch();
 }
 
 void
 IPBusTTC::clearCounters() {
-    hw().getNode("ttc.counters").write(0);
-    hw().getNode("ttc.counters1").write(0);
-    hw().getNode("ttc.counters2").write(0);
-    hw().getNode("ttc.counters3").write(0);
-    hw().dispatch();
+    hw()->getNode("ttc.counters").write(0);
+    hw()->getNode("ttc.counters1").write(0);
+    hw()->getNode("ttc.counters2").write(0);
+    hw()->getNode("ttc.counters3").write(0);
+    hw()->dispatch();
 }
 
 void
-IPBusTTC::clearErrCounters() {
-    hw().getNode("ttc.counters3").write(0x0);
-    hw().dispatch();
+IPBusTTC::clearErrors() {
+    hw()->getNode("ttc.counters3").write(0x0);
+    hw()->dispatch();
 }
 
 void
@@ -269,18 +269,19 @@ IPBusTTC::spy() {
 
 void
 IPBusTTC::sendBGo(uint32_t command = 0) {
-    cout << "Sending BGo with command: " << command << endl;
+    hw()->getNode("ttc.ctrl.sendBGo").write(command);
+    hw()->dispatch();
 }
 
 bool IPBusTTC::isEnabled() const {
-    uhal::ValWord<uint32_t> enabled = hw().getNode("ttc.ctrl.enable").read();
-    hw().dispatch();
+    uhal::ValWord<uint32_t> enabled = hw()->getNode("ttc.ctrl.enable").read();
+    hw()->dispatch();
     return (bool)enabled;
 }
 
 bool IPBusTTC::isGeneratingInternalBC0() const {
-    uhal::ValWord<uint32_t> enabled = hw().getNode("ttc.ctrl.genBC0").read();
-    hw().dispatch();
+    uhal::ValWord<uint32_t> enabled = hw()->getNode("ttc.ctrl.genBC0").read();
+    hw()->dispatch();
     return (bool)enabled;
 }
 
@@ -290,37 +291,37 @@ bool IPBusTTC::isBC0SpyMasked() const {
 
 
 uint32_t
-IPBusTTC::getBunchCount() const {
-    uhal::ValWord<uint32_t> bxctr = hw().getNode("ttc.counters.bunchCntr").read();
-    hw().dispatch();
+IPBusTTC::getBXCount() const {
+    uhal::ValWord<uint32_t> bxctr = hw()->getNode("ttc.counters.bunchCntr").read();
+    hw()->dispatch();
     return (uint32_t)bxctr;
 }
 
 uint32_t
 IPBusTTC::getEvtCount() const {
-    uhal::ValWord<uint32_t> evctr = hw().getNode("ttc.counters1.eventCntr").read();
-    hw().dispatch();
+    uhal::ValWord<uint32_t> evctr = hw()->getNode("ttc.counters1.eventCntr").read();
+    hw()->dispatch();
     return (uint32_t)evctr;
 }
 
 uint32_t
 IPBusTTC::getOrbitCount() const {
-    uhal::ValWord<uint32_t> octr = hw().getNode("ttc.counters2.orbitCntr").read();
-    hw().dispatch();
+    uhal::ValWord<uint32_t> octr = hw()->getNode("ttc.counters2.orbitCntr").read();
+    hw()->dispatch();
     return (uint32_t)octr;
 }
 
 uint32_t
-IPBusTTC::getSingleBitErrorCounter() const {
-    uhal::ValWord<uint32_t> sbec = hw().getNode("ttc.counters3.singleBitErrCntr").read();
-    hw().dispatch();
+IPBusTTC::getSingleBitErrors() const {
+    uhal::ValWord<uint32_t> sbec = hw()->getNode("ttc.counters3.singleBitErrCntr").read();
+    hw()->dispatch();
     return (uint32_t) sbec;
 }
 
 uint32_t
-IPBusTTC::getDoubleBitErrorCounter() const {
-    uhal::ValWord<uint32_t> dbec = hw().getNode("ttc.counters3.singleBitErrCntr").read();
-    hw().dispatch();
+IPBusTTC::getDoubleBitErrors() const {
+    uhal::ValWord<uint32_t> dbec = hw()->getNode("ttc.counters3.singleBitErrCntr").read();
+    hw()->dispatch();
     return (uint32_t) dbec;
 }
 
@@ -335,8 +336,8 @@ IPBusTTC::getDoubleBitErrorCounter() const {
 bool
 IPBusTTC::isClock40Locked() const {
 
-    uhal::ValWord<uint32_t> locked = hw().getNode("ttc.stat.clk40Locked").read();
-    hw().dispatch();
+    uhal::ValWord<uint32_t> locked = hw()->getNode("ttc.stat.clk40Locked").read();
+    hw()->dispatch();
     return (bool) locked;
 
 }
@@ -353,8 +354,8 @@ IPBusTTC::hasClock40Stopped() const {
 bool
 IPBusTTC::isOrbitLocked() const {
 
-    uhal::ValWord<uint32_t> locked = hw().getNode("ttc.stat.bc0Locked").read();
-    hw().dispatch();
+    uhal::ValWord<uint32_t> locked = hw()->getNode("ttc.stat.bc0Locked").read();
+    hw()->dispatch();
     return (bool) locked;
 
 }
@@ -420,7 +421,7 @@ IPBusChanCtrl::getCRCCounts() {
 }
 
 uint32_t
-IPBusChanCtrl::getCRCErrCounts() {
+IPBusChanCtrl::getCRCErrorCounts() {
     cout << "getting CRC errors counters" << endl;
     uint32_t CRCerrCntr = 1;
     return CRCerrCntr;
@@ -453,10 +454,16 @@ IPBusChanCtrl::configure(const swatch::core::ParameterSet& pset) {
 IPBusChanBuffer::IPBusChanBuffer(swatch::processor::Connection* connection, const swatch::core::Arguments& args) : AbstractChanBuffer(connection) {
 //    cout << "this is a very dummy channel buffer interface" << endl;
     
-    path_ = args.get<std::string>("path");
-    bufferSize_ = hw().getNode(path_).getSize()/2.;
+    std::string path = args.get<std::string>("path");
+    // cout << ">>>>> path: " << path << endl;
+    ctrlpath_ = path+".ctrl";
+    datapath_ = path+".data";
+    bufferSize_ = hw()->getNode(datapath_).getSize()/2.;
         
-    cout << "IPBus buffer was built with a size: " << dec << getBufferSize() << endl;
+    // BOOST_FOREACH( const std::string& n, hw()->getNode(ctrlpath_).getNodes()) {
+    //     cout << " * " << n << endl;
+    // }
+    cout << "IPBus buffer was built with a size: " << dec << size() << endl;
 }
 
 IPBusChanBuffer::~IPBusChanBuffer() {
@@ -465,39 +472,26 @@ IPBusChanBuffer::~IPBusChanBuffer() {
 
 
 void
-IPBusChanBuffer::configure(BufferMode aMode, uint32_t aFirstBx = 0, uint32_t aLastBx = 0) {
-    cout << "Configure the buffer in the following mode: " << endl;
+IPBusChanBuffer::configure(BufferMode mode, uint32_t firstBx = 0, uint32_t frames = 0) {
 
-    switch (aMode) {
-        case 0:
-            cout << "Buffer mode configuration: Latency" << endl;
-            break;
-        case 1:
-            cout << "Buffer mode configuration: Playback" << endl;
-            break;
-        case 2:
-            cout << "Buffer mode configuration: Pattern" << endl;
-            break;
-        case 3:
-            cout << "Buffer mode configuration: Capture" << endl;
-            break;
-        case 4:
-            cout << "Buffer mode configuration: Zeros" << endl;
-            break;
-        default:
-            cout << "Buffer configure with non-valid mode" << endl;
-            break;
-    }
+    // Check for overflows
 
-    cout << "Selected range is: bx = [ "  << std::dec << aFirstBx << " , " << aLastBx << " ]" << endl;
+    cout << "Selected range is: bx = "  << std::dec << firstBx << " , frames = " << frames << endl;
+
+    const uhal::Node& ctrl = hw()->getNode(ctrlpath_);
+    ctrl.getNode("mode").write(mode);
+    ctrl.getNode("firstBx").write(firstBx);
+    ctrl.getNode("nFrames").write(frames);
+
+    hw()->dispatch();
 }
 
 std::vector<uint64_t>
 IPBusChanBuffer::download() {
     std::vector<uint64_t> data(bufferSize_);
     
-    uhal::ValVector<uint32_t> block = hw().getNode(path_).readBlock(2 * bufferSize_);
-    hw().dispatch();
+    uhal::ValVector<uint32_t> block = hw()->getNode(datapath_).readBlock(2 * bufferSize_);
+    hw()->dispatch();
 
     for( size_t k(0); k<data.size(); ++k) {
         data[k] = block[ 2 * k ];
@@ -512,7 +506,7 @@ IPBusChanBuffer::upload(const std::vector<uint64_t>& data) {
     
     // Need to mangle the 64 bits into 2x32 bits words to make it more realistic
     std::vector<uint32_t> block;
-    block.reserve(2 * block.size());
+    block.reserve(2 * data.size());
 
     // std::vector<uint64_t>::const_iterator it;
     BOOST_FOREACH( const uint64_t& x, data ) {
@@ -520,8 +514,8 @@ IPBusChanBuffer::upload(const std::vector<uint64_t>& data) {
         block.push_back( ( x>>32 ) & 0xffffffff );
     } 
 
-    hw().getNode(path_).writeBlock(block);
-    hw().dispatch();
+    hw()->getNode(datapath_).writeBlock(block);
+    hw()->dispatch();
 }
 
 }

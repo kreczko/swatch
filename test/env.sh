@@ -1,4 +1,8 @@
-[[ $_ != $0 ]] && echo "Script is being sourced" || echo "Script is a subshell"
+if [[ $_ == $0 ]]; then  
+  echo "This script is meant to be sourced:"
+  echo "  source $0"
+  exit 0
+fi
 
 #
 function pathadd() {
@@ -14,7 +18,6 @@ function pathadd() {
     # use eval to reset the target
     eval "$PATH_NAME=$PATH_VAL"
   fi
-
 }
 
 CACTUS_ROOT=${CACTUS_ROOT:-"/opt/cactus"}

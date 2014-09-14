@@ -32,6 +32,13 @@ LD:=g++
 # Tools
 MakeDir=mkdir -p
 
+#python
+# PYTHON_VERSION ?= $(shell python -c "import platform;print platform.python_version()")
+PYTHON_VERSION ?= $(shell python -c "import distutils.sysconfig;print distutils.sysconfig.get_python_version()")
+PYTHON_INCLUDE_PREFIX ?= $(shell python -c "import distutils.sysconfig;print distutils.sysconfig.get_python_inc()")
+
+
+
 ifndef DEBUG
 # Compiler flags
 CxxFlags = -g -Wall -O3 -MMD -MP -fPIC -std=c++0x

@@ -1,6 +1,6 @@
 /**
- * @file    Template.cpp
- * @author  Author1, Author2
+ * @file    IPBusDummyHardware.cpp
+ * @author  Alessandro Thea
  * @brief   Brief description
  * @date 
  */

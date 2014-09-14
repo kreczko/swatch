@@ -7,9 +7,14 @@
 #ifndef DUMMYPROCESSOR_HPP
 #define	DUMMYPROCESSOR_HPP
 
-// OTHER HEADERS
+#define IPBUS_DEF(X) \
+    uhal::HwInterface* hw() const { \
+        return conn()->get<uhal::HwInterface>(); \
+    } 
 
-// SWATCH HEADERS
+
+
+// Swatch Headers
 #include "swatch/processor/Processor.hpp"
 #include "swatch/processor/Connection.hpp"
 #include "swatch/core/ParameterSet.hpp"
@@ -20,14 +25,16 @@
 #include "swatch/processor/AbstractChanCtrl.hpp"
 #include "swatch/processor/AbstractChanBuffer.hpp"
 
-// C++ HEADERS
+// C++ Headers
+
+
 
 namespace swatch {
 namespace processor {
 namespace test {
 
+// Typedefs
 typedef boost::unordered_map<std::string,uint32_t> RegisterMap;
-
 
 //----------------------------------------------------------------------------//
 class IPBusProcessor : public swatch::processor::Processor {
@@ -61,8 +68,7 @@ public:
 
 
 private:
-    uhal::HwInterface hw() { return connection()->get<uhal::HwInterface>(); }
-
+    IPBUS_DEF(IPBusInfo);
 };
 
 //----------------------------------------------------------------------------//
@@ -80,7 +86,7 @@ public:
     virtual void sendSingleL1A();
     virtual void sendMultipleL1A(uint32_t nL1A);
     virtual void clearCounters();
-    virtual void clearErrCounters();
+    virtual void clearErrors();
     virtual void spy();
     virtual void maskBC0Spy(bool mask = true);
     virtual void sendBGo(uint32_t command);
@@ -91,11 +97,11 @@ public:
 
     
     //monitoring
-    virtual uint32_t getBunchCount() const;
+    virtual uint32_t getBXCount() const;
     virtual uint32_t getEvtCount() const;
     virtual uint32_t getOrbitCount() const;
-    virtual uint32_t getSingleBitErrorCounter() const;
-    virtual uint32_t getDoubleBitErrorCounter() const;
+    virtual uint32_t getSingleBitErrors() const;
+    virtual uint32_t getDoubleBitErrors() const;
     
     // virtual void getTTChistory() const;
     virtual bool isClock40Locked() const;
@@ -104,7 +110,7 @@ public:
     virtual bool hasBC0Stopped() const;
 
 private:
-    uhal::HwInterface hw() const { return connection()->get<uhal::HwInterface>(); }
+    IPBUS_DEF(IPBusTTC);
 
     std::set<std::string> configs_;
 
@@ -126,12 +132,13 @@ public:
 //    virtual void configureClk(const swatch::core::ParameterSet& pset);
 
 
-private:
-    uhal::HwInterface hw()  { return connection()->get<uhal::HwInterface>(); }
+private:    
     std::set<std::string> configs_;
 
     //! poweron values to fake resets
     RegisterMap poweron_;
+
+    IPBUS_DEF(IPBusCtrl);
 
 };
 
@@ -155,11 +162,15 @@ public:
 
     //monitoring
     virtual uint32_t getCRCCounts();
-    virtual uint32_t getCRCErrCounts();
+    virtual uint32_t getCRCErrorCounts();
     virtual bool isPLLLocked();
     virtual bool isSync();
 
     virtual void configure(const swatch::core::ParameterSet& pset);
+private:
+
+    IPBUS_DEF(IPBusChanCtrl);
+
 };
 //----------------------------------------------------------------------------//
 class IPBusChanBuffer : public swatch::processor::AbstractChanBuffer {
@@ -168,18 +179,19 @@ public:
     virtual ~IPBusChanBuffer();
 
 
-    virtual uint32_t getBufferSize() { return bufferSize_; }
+    virtual uint32_t size() { return bufferSize_; }
     virtual void configure(BufferMode aMode, uint32_t aFirstBx, uint32_t aLastBx);
 
     virtual std::vector<uint64_t> download();
     virtual void upload(const std::vector<uint64_t>& aPayload);
     
 private:
-    uhal::HwInterface hw()  { return connection()->get<uhal::HwInterface>(); }
 
-    std::string path_;    
+    std::string ctrlpath_;
+    std::string datapath_;
     uint32_t bufferSize_;
 
+    IPBUS_DEF(IPBusChanBuffer);
 };
 
 } // namespace test

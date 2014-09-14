@@ -1,5 +1,12 @@
-#ifndef SWATCH_PROCESSOR_ABSTRACTCHANBUFFER_HPP
-#define SWATCH_PROCESSOR_ABSTRACTCHANBUFFER_HPP
+/**
+ * @file    AbstractChanBuffer.cpp
+ * @author  Alessandro Thea
+ * @brief   Brief description
+ * @date    
+ */
+
+#ifndef SWATCH_PROCESSOR_ABSTRACTALGO_HPP
+#define SWATCH_PROCESSOR_ABSTRACTALGO_HPP
 
 // SWATCH Headers
 #include "swatch/processor/Component.hpp"
@@ -32,20 +39,20 @@ public:
     };
 
     /**
-     * Destructor Made virtual to delegate this task to this class's children and avoid potential run time errors
+     * Destructor
      */
     virtual ~AbstractChanBuffer() {}
 
-    virtual void configure(BufferMode aMode, uint32_t aFirstBx = 0, uint32_t aLastBx = 0) = 0;
+    virtual void configure(BufferMode mode, uint32_t firstBx = 0, uint32_t frames = 0) = 0;
 
     virtual std::vector<uint64_t> download() = 0;
-    virtual void upload(const std::vector<uint64_t>& aPayload) = 0;
+    virtual void upload(const std::vector<uint64_t>& data) = 0;
 
-    virtual uint32_t getBufferSize() = 0;
+    virtual uint32_t size() = 0;
 
 };
 
 } // namespace processor
 } // namespace swatch
 
-#endif /* SWATCH_PROCESSOR_ABSTRACTCHANBUFFER_HPP */
+#endif /* SWATCH_PROCESSOR_ABSTRACTALGO_HPP */

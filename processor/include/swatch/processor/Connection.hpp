@@ -30,11 +30,11 @@ public:
     virtual ~Connection() {
     }
 
-    template <class T> T& get() const {
+    template <class T> T* get() const {
         if (typeid (T) != typeId()) {
             throw std::bad_cast();
         };
-        return *(static_cast<T*> (connection_()));
+        return static_cast<T*> (conn_());
     };
 
     template<typename T>
@@ -47,7 +47,7 @@ public:
     virtual const std::string & typeName() const = 0;
 
 protected:
-    virtual void * connection_() const = 0;
+    virtual void * conn_() const = 0;
 
 };
 
@@ -65,19 +65,19 @@ public:
     }
 
     /**
-     * Reference-based constructor
+     * Reference-based constructor. Does it make sense?
+     * 
      * @param data
      */
     ConnectionHolder(const T &data) : obj_(new T(data)) {
-    } //{ std::cout << "Reference constructor (" << typeName() << ", " << this->obj_ << ")" << std::endl; } // copy the object
-
+    } 
     /**
      * Pointer-based constructor
      * @param data
      */
     ConnectionHolder(T* data) : obj_(data) {
-    } //{ std::cout << "Pointer constructor(" << typeName() << ", " << this->obj_ << ")" << std::endl; } // adopt the pointers
-
+    } 
+    
     /**
      * Destructor
      */
@@ -94,7 +94,7 @@ public:
     }
 protected:
 
-    virtual void * connection_() const {
+    virtual void * conn_() const {
         return obj_;
     }
 private:

@@ -11,7 +11,6 @@
 // Swatch Headers
 #include "swatch/core/Device.hpp"
 
-
 namespace swatch {
 
 namespace core
@@ -68,7 +67,7 @@ public:
      * 
      * @return vector of output channel pointers
      */
-    const std::vector<AbstractChannel*> outputChannels() const {
+    const std::vector<AbstractChannel*>& outputChannels() const {
         return outputChannels_;
     }
     
@@ -76,9 +75,6 @@ public:
         return outputChannels_.at(i);
     }
 
-    Connection* connection() {
-        return connection_;
-    }
 
     // Placeholder for RC methods (eventually in Device)
     void halt(const core::Arguments& params = core::Arguments());

@@ -24,7 +24,7 @@ protected:
      * Constructor
      * @param id The name of the processor
      */
-    AbstractChanCtrl(Connection* connection) : Component( connection_ ) {}
+    AbstractChanCtrl(Connection* connection) : Component( connection ) {}
 
 public:
 
@@ -38,7 +38,7 @@ public:
     virtual void resetCRCCounts() = 0;
 
     virtual uint32_t getCRCCounts() = 0;
-    virtual uint32_t getCRCErrCounts() = 0;
+    virtual uint32_t getCRCErrorCounts() = 0;
     virtual bool isPLLLocked() = 0;
     virtual bool isSync() = 0;
 
