@@ -34,6 +34,54 @@ Processor::Processor( const std::string& aId, const core::Arguments& aArguments 
 Processor::~Processor() {
 }
 
+
+void
+Processor::halt(const core::Arguments& params)
+{
+	if (!c_halt())
+	{
+
+	}
+
+	f_halt(params);
+}
+
+void
+Processor::configure(const core::Arguments& params)
+{
+	if (!c_configure())
+	{
+
+	}
+
+	f_configure(params);
+}
+
+bool
+Processor::c_halt()
+{
+	return true;
+}
+
+void
+Processor::f_halt(const core::Arguments& params)
+{
+
+}
+
+bool
+Processor::c_configure()
+{
+	return true;
+}
+
+void
+Processor::f_configure(const core::Arguments& params)
+{
+
+}
+
+
 } // namespace processor
 } // namespace swatch
 

@@ -9,7 +9,6 @@
 #define	__swatch_core_port_hpp__
 
 #include "swatch/core/Object.hpp"
-#include "swatch/core/ParameterSet.hpp"
 
 namespace swatch {
 namespace core {

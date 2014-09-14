@@ -10,6 +10,7 @@
 
 // Swatch Headers
 #include "swatch/system/Service.hpp"
+
 #include <string>
 
 namespace swatch {

@@ -9,13 +9,17 @@
 #define	SWATHC_PROCESSOR_ABSTRACTCHANNEL_HPP
 
 // Swatch Headers
-#include "swatch/processor/AbstractChanBuffer.hpp"
-#include "swatch/processor/AbstractChanCtrl.hpp"
+#include "swatch/processor/Component.hpp"
+
 
 // C++ HEADERS
 
 namespace swatch {
 namespace processor {
+
+class Connection;
+class AbstractChanBuffer;
+class AbstractChanCtrl;
 
 class AbstractChannel : public Component {
 protected:

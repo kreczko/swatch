@@ -12,11 +12,13 @@
 #define	SWATCH_CORE_DEVICE_HPP
 
 #include "swatch/core/Object.hpp"
-#include "swatch/core/Port.hpp"
-#include "swatch/core/ParameterSet.hpp"
+
 
 namespace swatch {
 namespace core {
+
+class InputPort;
+class OutputPort;
 
 /**
  *  Trigger network device
@@ -28,13 +30,17 @@ public:
 
     std::deque<InputPort*>& getInputs() { return inputs_; }
     std::deque<OutputPort*>& getOutputs() { return outputs_; }
+        
+
 protected:
 
     void addInput( InputPort* aInput );
     void addOutput( OutputPort*  aOutput );
-    
+
+        
     std::deque<InputPort*> inputs_;
     std::deque<OutputPort*> outputs_;
+
 
 };
 //typedef boost::shared_ptr<Device> DevicePtr;

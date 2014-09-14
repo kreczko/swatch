@@ -9,7 +9,6 @@
 #define	__swatch_system_crateview_hpp__
 
 #include "swatch/core/Object.hpp"
-#include "swatch/core/ParameterSet.hpp"
 
 namespace swatch {
 

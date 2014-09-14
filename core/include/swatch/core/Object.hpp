@@ -16,7 +16,8 @@
 // Boost Headers
 #include "boost/unordered_map.hpp"
 #include "boost/lexical_cast.hpp"
-#include "ParameterSet.hpp"
+
+#include "swatch/core/ParameterSet.hpp"
 
 namespace swatch {
 namespace core {

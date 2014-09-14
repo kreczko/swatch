@@ -6,6 +6,13 @@
  */
 
 #include "swatch/system/System.hpp"
+#include "swatch/system/Crate.hpp"
+#include "swatch/system/Service.hpp"
+#include "swatch/system/AMC13Service.hpp"
+
+#include "swatch/core/Link.hpp"
+#include "swatch/processor/Processor.hpp"
+
 
 // Swatch Headers
 #include "swatch/core/Utilities.hpp"
@@ -19,7 +26,9 @@ namespace swatch {
 namespace system {
 
 System::System(const std::string& aId, const core::Arguments& aArguments)
-: Device(aId, aArguments) {
+: Device(aId, aArguments),
+  fsm_(System::FsmStates::HALTED)
+{
 }
 
 System::~System() {
@@ -120,7 +129,85 @@ System::getLinks() const {
     return links_;
 }
 
+void
+System::halt(const core::Arguments& params)
+{
 
+	ostringstream msg;
+
+	if (!c_halt())
+	{
+		msg << "c_halt check failed! Could not finish transition to HALTED state from " << fsm_ << endl;
+		throw runtime_error(msg.str());
+	}
+
+	f_halt(params);
+
+	fsm_ = System::FsmStates::HALTED;
+	msg << "FSM set to HALTED" << endl;
 }
+
+void
+System::configure(const core::Arguments& params)
+{
+
+	ostringstream msg;
+
+	if (fsm_ != System::FsmStates::HALTED)
+	{
+		msg << "Transition from state " << fsm_ << " to CONFIGURED not allowed!" << endl;
+		throw runtime_error(msg.str());
+	}
+
+
+	if (!c_configure())
+	{
+		msg << "c_configure check failed! Could not finish transition to CONFIGURED state from " << fsm_ << endl;
+		throw runtime_error(msg.str());
+	}
+
+	f_configure(params);
+
+
+	fsm_ = System::FsmStates::CONFIGURED;
+	msg << "FSM set to CONFIGURED" << endl;
 }
+
+
+bool
+System::c_halt()
+{
+	return true;
+}
+
+void
+System::f_halt(const core::Arguments& params)
+{
+}
+
+bool
+System::c_configure()
+{
+	return true;
+}
+
+void
+System::f_configure(const core::Arguments& params)
+{
+}
+
+System::FsmStates
+System::getFSM()
+{
+	return fsm_;
+}
+
+void
+System::setFSMState(System::FsmStates state)
+{
+	fsm_ = state;
+}
+
+} // end ns system
+} // end ns swatch
 

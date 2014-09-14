@@ -3,13 +3,18 @@
 
 
 // Swatch Headers
-#include "swatch/core/ParameterSet.hpp"
 #include "swatch/processor/Component.hpp"
 
 // C++ Headers
 #include <stdint.h>
 
 namespace swatch {
+
+namespace core
+{
+class ParameterSet;
+}
+
 namespace processor {
 
 class AbstractChanCtrl : public Component {

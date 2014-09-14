@@ -10,15 +10,30 @@
 
 
 // Swatch Headers
-#include "swatch/processor/Processor.hpp"
-#include "swatch/core/Link.hpp"
-#include "swatch/system/Service.hpp"
-#include "swatch/system/AMC13Service.hpp"
-#include "swatch/system/Crate.hpp"
+#include "swatch/core/Device.hpp"
+
+
+// Forward declarations
+namespace swatch {
+
+namespace processor
+{
+	class Processor;
+}
+
+namespace core
+{
+	class Link;
+}
+
+}
 
 namespace swatch {
 namespace system {
 
+class Crate;
+class Service;
+class AMC13Service;
 
 //! Generic class to build a 
 class System : public core::Device {
@@ -36,6 +51,16 @@ public:
     const std::deque<core::Link*>& getLinks() const;
     const boost::unordered_map<std::string, Crate*>& getCrates() const;
     
+
+    // Operations: interface to Run Control
+	void halt(const core::Arguments& params = core::Arguments());
+	void configure(const core::Arguments& params = core::Arguments());
+
+	enum FsmStates {HALTED, CONFIGURED, STOPPED, ENABLED, SUSPENDED};
+
+	FsmStates getFSM();
+	void setFSMState(FsmStates state);
+
     
 protected:
 
@@ -57,6 +82,18 @@ protected:
     //! Map of crates
     boost::unordered_map<std::string, Crate*> cratesMap_;
     
+
+    // Operations checks: might be overriden by descendants
+   virtual bool c_halt();
+   virtual bool c_configure();
+
+   // Operations: something in common in all inherited classes? (e.g., actions with the ParameterSet)
+   virtual void f_halt(const core::Arguments& params);
+   virtual void f_configure(const core::Arguments& params);
+
+   // Implementation for the dummy state machine
+   FsmStates fsm_;
+
 };
 
 }

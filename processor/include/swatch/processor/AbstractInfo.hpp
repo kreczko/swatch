@@ -11,12 +11,21 @@
 
 // Swatch Headers
 #include "swatch/processor/Component.hpp"
-#include "swatch/core/ParameterSet.hpp"
+
 
 // C++ Headers
+#include <cstdint>
 
 namespace swatch {
+
+namespace core
+{
+class ParameterSet;
+}
+
 namespace processor {
+
+class Connection;
 
 class AbstractInfo : public Component {
 protected:

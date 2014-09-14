@@ -9,6 +9,7 @@
 #define	SYSTEMCREATOR_HPP
 
 #include "swatch/system/SystemFactory.hpp"
+
 namespace swatch {
 namespace system {
 namespace test {

@@ -7,6 +7,8 @@
 
 #include "swatch/core/Link.hpp" 
 
+#include "swatch/core/Port.hpp"
+
 namespace swatch {
 namespace core {
 

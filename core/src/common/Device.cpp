@@ -6,6 +6,7 @@
  */
 
 #include "swatch/core/Device.hpp"
+#include "swatch/core/Port.hpp"
 
 using namespace std;
 
@@ -31,5 +32,6 @@ Device::addOutput(OutputPort* aOutput) {
     outputs_.push_back(aOutput);
 }
 
-}
-}
+
+} // end ns core
+} // end ns swatch

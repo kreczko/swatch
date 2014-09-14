@@ -10,15 +10,22 @@
 
 // Swatch Headers
 #include "swatch/core/Device.hpp"
-#include "swatch/core/ParameterSet.hpp"
-#include "swatch/processor/AbstractInfo.hpp"
-#include "swatch/processor/AbstractCtrl.hpp"
-#include "swatch/processor/AbstractTTC.hpp"
-#include "swatch/processor/AbstractChannel.hpp"
 
 
 namespace swatch {
+
+namespace core
+{
+class ParameterSet;
+}
+
 namespace processor {
+
+class Connection;
+class AbstractInfo;
+class AbstractCtrl;
+class AbstractChannel;
+class AbstractTTC;
 
 /**
  *  A port class.
@@ -72,6 +79,11 @@ public:
     Connection* connection() {
         return connection_;
     }
+
+    // Placeholder for RC methods (eventually in Device)
+    void halt(const core::Arguments& params = core::Arguments());
+    void configure(const core::Arguments& params = core::Arguments());
+
 protected:
     AbstractInfo* info_;
     AbstractCtrl* ctrl_;
@@ -81,6 +93,11 @@ protected:
     std::vector<AbstractChannel*> outputChannels_;
 
     Connection* connection_;
+
+    bool c_halt();
+    void f_halt(const core::Arguments& params = core::Arguments());
+    bool c_configure();
+    void f_configure(const core::Arguments& params = core::Arguments());
 
 };
 

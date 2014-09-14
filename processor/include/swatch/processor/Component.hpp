@@ -8,12 +8,12 @@
 
 #ifndef SWATCH_PROCESSOR_COMPONENT_HPP
 #define SWATCH_PROCESSOR_COMPONENT_HPP
-#include "Connection.hpp"
+
 
 namespace swatch {
 namespace processor {
 
-#include "swatch/processor/Connection.hpp"
+class Connection;
 
 class Component {
 public:

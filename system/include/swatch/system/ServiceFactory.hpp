@@ -10,7 +10,6 @@
 
 
 #include "swatch/core/AbstractFactory.hpp"
-#include "swatch/system/Service.hpp"
 
 namespace swatch {
 namespace system {

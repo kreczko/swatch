@@ -11,7 +11,6 @@
 
 // Swatch Headers
 #include "swatch/processor/Component.hpp"
-#include "swatch/processor/Processor.hpp"
 
 // C++ Headers
 namespace swatch {

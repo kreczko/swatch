@@ -16,6 +16,9 @@
 #include "swatch/processor/AbstractInfo.hpp"
 #include "swatch/processor/AbstractTTC.hpp"
 #include "swatch/processor/AbstractCtrl.hpp"
+#include "swatch/processor/AbstractChannel.hpp"
+#include "swatch/processor/AbstractChanCtrl.hpp"
+#include "swatch/processor/AbstractChanBuffer.hpp"
 
 // C++ HEADERS
 

@@ -12,11 +12,16 @@
 #include "swatch/processor/Component.hpp"
 
 // SWATCH HEADERS
-#include "swatch/core/ParameterSet.hpp"
 
 // C++ HEADERS
 
 namespace swatch {
+
+namespace core
+{
+class ParameterSet;
+}
+
 namespace processor {
 
 //! A class derived from swatch::processor::Processor used as a base class for concrete type of uTCA processors

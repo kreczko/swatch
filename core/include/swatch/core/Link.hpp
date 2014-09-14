@@ -10,10 +10,14 @@
 #ifndef SWATCH_CORE_LINK_HPP
 #define	SWATCH_CORE_LINK_HPP
 
-#include "swatch/core/Port.hpp"
+
+#include "swatch/core/Device.hpp"
 
 namespace swatch {
 namespace core {
+
+class InputPort;
+class OutputPort;
 
 class Link : public ObjectView {
 public:

@@ -9,6 +9,8 @@
 
 // Swatch Headers
 #include "swatch/core/Utilities.hpp"
+#include "swatch/core/Port.hpp"
+
 #include "swatch/processor/ProcessorFactory.hpp"
 #include <boost/foreach.hpp>
 
