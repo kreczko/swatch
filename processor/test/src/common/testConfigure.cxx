@@ -153,9 +153,9 @@ private:
 };
 
 //---------------------------------------------------------------------------//
-void reset(swatch::processor::Processor *p, const swatch::core::ParameterSet &pset) {
-    std::string clock = pset.get<std::string>("clock");
-    std::string ttc = pset.get<std::string>("ttc");
+void reset(swatch::processor::Processor *p, const swatch::core::ParameterSet &params) {
+    std::string clock = params.get<std::string>("clock");
+    std::string ttc = params.get<std::string>("ttc");
 
     cout << "Found clock configurations:" << endl;
 
@@ -191,7 +191,7 @@ void reset(swatch::processor::Processor *p, const swatch::core::ParameterSet &ps
 
 }
 
-void configure(swatch::processor::Processor *p, const swatch::core::ParameterSet &pset) {
+void configure(swatch::processor::Processor *p, const swatch::core::ParameterSet &params) {
     using namespace swatch::core;
     using namespace swatch::processor;
     // Claim exclusive use of the board
@@ -339,16 +339,16 @@ int main(int argc, char const *argv[]) {
     std::stringstream ssURI;
     ssURI << "ipbusudp-2.0://127.0.0.1:" << 50010;
 
-    swatch::core::ParameterSet args;
-    args.set("addrtab", addrtab);
-    args.set("uri", ssURI.str());
-    args.set("crate", "s2g20-10");
-    args.set("slot", (uint32_t) 5);
-    args.set("poweron", poweron);
+    swatch::core::ParameterSet params;
+    params.set("addrtab", addrtab);
+    params.set("uri", ssURI.str());
+    params.set("crate", "s2g20-10");
+    params.set("slot", (uint32_t) 5);
+    params.set("poweron", poweron);
 
     Processor *p0 = 0x0;
     try {
-        p0 = new test::IPBusProcessor("test-board0", args);
+        p0 = new test::IPBusProcessor("test-board0", params);
         cout << ">> Processor " << p0->id() << " created" << endl;
 
     } catch (uhal::exception::exception &e) {

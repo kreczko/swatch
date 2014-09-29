@@ -42,7 +42,7 @@ public:
     virtual bool isPLLLocked() = 0;
     virtual bool isSync() = 0;
 
-    virtual void configure(const swatch::core::ParameterSet& pset) = 0;
+    virtual void configure(const swatch::core::ParameterSet& params) = 0;
 };
 
 } // namespace processor

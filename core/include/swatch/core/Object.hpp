@@ -52,7 +52,7 @@ public:
     
     explicit Object( const std::string& aId );
 
-    Object( const std::string& aId, const Arguments& aArguments );
+    Object( const std::string& aId, const ParameterSet& params );
     
     virtual ~Object();
     
@@ -116,7 +116,7 @@ public:
      * @param aId Identifier of this object
      * @param aAttributes 
      */
-    ObjectView( const std::string& aId, const Arguments& Arguments );
+    ObjectView( const std::string& aId, const ParameterSet& ParameterSet );
     /**
      * @brief Destructor
      */

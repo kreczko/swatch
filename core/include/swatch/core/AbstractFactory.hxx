@@ -23,7 +23,7 @@ AbstractFactory<T>* AbstractFactory<T>::get() {
 }
 
 template<typename T>
-T* AbstractFactory<T>::make( const std::string& aCreatorId, const std::string& aId, const swatch::core::ParameterSet& aPSet ) {
+T* AbstractFactory<T>::make( const std::string& aCreatorId, const std::string& aId, const swatch::core::ParameterSet& params ) {
     
     typename boost::unordered_map< std::string , boost::shared_ptr<CreatorInterface> >::const_iterator lIt = creators_.find ( aCreatorId );
 
@@ -31,27 +31,27 @@ T* AbstractFactory<T>::make( const std::string& aCreatorId, const std::string& a
         throw std::runtime_error("Class "+aCreatorId+" not found");
     }
     
-    return (*lIt->second)( aId, aPSet );
+    return (*lIt->second)( aId, params );
 }
 
 template<typename T>
-T* AbstractFactory<T>::make(const core::ParameterSet& aPSet) {
+T* AbstractFactory<T>::make(const core::ParameterSet& params) {
    
-    if ( !aPSet.has("class") ) {
+    if ( !params.has("class") ) {
         throw std::runtime_error("'class' parameter not found in parameter set");
     }
    
-    if ( !aPSet.has("name") ) {
+    if ( !params.has("name") ) {
         throw std::runtime_error("'name' parameter not found in parameter set");
     }
    
-    return this->make( aPSet.get<std::string>("class"), aPSet.get<std::string>("name"), aPSet);
+    return this->make( params.get<std::string>("class"), params.get<std::string>("name"), params);
 }
 
 template<typename T>
 template<typename U>
-T* AbstractFactory<T>::BasicCreator<U>::operator ()(const std::string& aId, const swatch::core::ParameterSet& aPSet) {
-    return new U( aId, aPSet );
+T* AbstractFactory<T>::BasicCreator<U>::operator ()(const std::string& aId, const swatch::core::ParameterSet& params) {
+    return new U( aId, params );
 }
 
 template <typename T>

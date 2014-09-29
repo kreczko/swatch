@@ -25,7 +25,7 @@ class OutputPort;
  */
 class Device : public Object {
 public:
-    Device( const std::string& aId, const Arguments& aArguments  = Arguments() );
+    Device( const std::string& aId, const ParameterSet& params  = ParameterSet() );
     virtual ~Device();
 
     std::deque<InputPort*>& getInputs() { return inputs_; }

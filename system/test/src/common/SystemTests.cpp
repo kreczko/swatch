@@ -41,9 +41,9 @@ BOOST_AUTO_TEST_CASE(BuildSystem) {
     using namespace swatch::system::test;
 
 
-    Arguments a;
+    ParameterSet a;
     a.insert("requires", "ttc;daq")("provides", "trg");
-    Arguments a1 = a, a2 = a, a3 = a;
+    ParameterSet a1 = a, a2 = a, a3 = a;
     a1.insert("crate", "crateA") ("slot", 1);
     a2.insert("crate", "crateA") ("slot", 2);
     a3.insert("crate", "crateB") ("slot", 1);
@@ -100,17 +100,17 @@ BOOST_AUTO_TEST_CASE(BuildCrate) {
     System* lSystem = new System("calol2");
     
     // AMC13 comes first
-    Arguments args13;
-    args13.insert("requires", "")("provides", "ttc;daq")("crate", "s2x3g18");
-    AMC13Service* amc13 = new DummyAMC13Service("amc13xg", args13);
+    ParameterSet params13;
+    params13.insert("requires", "")("provides", "ttc;daq")("crate", "s2x3g18");
+    AMC13Service* amc13 = new DummyAMC13Service("amc13xg", params13);
     BOOST_CHECK(amc13->getCrateId() == "s2x3g18" );
 
     // And a set of boards
-    Arguments args;
-    args.insert("requires", "ttc;daq")("provides", "trg")("crate", "s2x3g18");
+    ParameterSet params;
+    params.insert("requires", "ttc;daq")("provides", "trg")("crate", "s2x3g18");
     std::vector<DummyProcessor*> dummies;
     for (int s(1); s <= 12; ++s) {
-        Arguments a = args; // copy the common attributes
+        ParameterSet a = params; // copy the common attributes
         const std::string slot = boost::lexical_cast<std::string>(s);
         a.insert("slot", s);
         DummyProcessor* p = new DummyProcessor("mp7-" + slot, a);

@@ -18,7 +18,7 @@ namespace system {
 
 class AMC13Service : public Service {
 public:
-    explicit AMC13Service( const std::string& aId, const core::Arguments& aArguments );
+    explicit AMC13Service( const std::string& aId, const core::ParameterSet& params );
     virtual ~AMC13Service();
     
     virtual uint32_t getSlot() const;

@@ -30,15 +30,15 @@ SWATCH_PROCESSOR_REGISTER_CLASS(DummyProcessor);
 using std::cout;
 using std::endl;
 
-DummyProcessor::DummyProcessor(const std::string& aId, const core::Arguments& aArguments) 
-    : processor::Processor(aId, aArguments ) {
+DummyProcessor::DummyProcessor(const std::string& aId, const core::ParameterSet& params)
+    : processor::Processor(aId, params ) {
     
     using namespace uhal;
         
     log(Debug(), "Id:",this->id());
-    log(Debug(), "Arguments:");
-    BOOST_FOREACH( std::string name, aArguments.names() ) {
-        log(Debug(), "   ", name, " : ", core::anyToString(aArguments.get(name)));
+    log(Debug(), "ParameterSet:");
+    BOOST_FOREACH( std::string name, params.names() ) {
+        log(Debug(), "   ", name, " : ", core::anyToString(params.get(name)));
     }
     std::stringstream ss;
     for ( int chan(0); chan < 4 ; ++chan) { 
@@ -54,8 +54,8 @@ DummyProcessor::DummyProcessor(const std::string& aId, const core::Arguments& aA
     }
     
 
-    mSlot = aArguments.get<int>("slot",processor::Processor::NoSlot);
-    mCrateId = aArguments.get<std::string>("crate","");
+    mSlot = params.get<int>("slot",processor::Processor::NoSlot);
+    mCrateId = params.get<std::string>("crate","");
     
 }
 

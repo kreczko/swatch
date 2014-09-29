@@ -31,7 +31,7 @@ class AbstractTTC;
  */
 class Processor : public core::Device {
 public:
-    Processor(const std::string& aId, const core::Arguments& aArguments = core::Arguments());
+    Processor(const std::string& aId, const core::ParameterSet& params = core::ParameterSet());
     virtual ~Processor();
 
     virtual uint32_t getSlot() const = 0;
@@ -77,8 +77,8 @@ public:
 
 
     // Placeholder for RC methods (eventually in Device)
-    void halt(const core::Arguments& params = core::Arguments());
-    void configure(const core::Arguments& params = core::Arguments());
+    void halt(const core::ParameterSet& params = core::ParameterSet());
+    void configure(const core::ParameterSet& params = core::ParameterSet());
 
 protected:
     AbstractInfo* info_;
@@ -91,9 +91,9 @@ protected:
     Connection* connection_;
 
     bool c_halt();
-    void f_halt(const core::Arguments& params = core::Arguments());
+    void f_halt(const core::ParameterSet& params = core::ParameterSet());
     bool c_configure();
-    void f_configure(const core::Arguments& params = core::Arguments());
+    void f_configure(const core::ParameterSet& params = core::ParameterSet());
 
 };
 

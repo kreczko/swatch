@@ -25,14 +25,14 @@ namespace test {
 
 SWATCH_SERVICE_REGISTER_CLASS(DummyAMC13Service);
 
-DummyAMC13Service::DummyAMC13Service( const std::string& aId, const core::Arguments& aArguments ) : system::AMC13Service(aId,aArguments) {
+DummyAMC13Service::DummyAMC13Service( const std::string& aId, const core::ParameterSet& params ) : system::AMC13Service(aId,params) {
 //    using namespace uhal;
     cout << "Building a DummyAMC13Service" << endl;
 
     cout << "Id:" << this->id() << endl;;
-    cout << "Arguments:" << endl;
-    BOOST_FOREACH( std::string name, aArguments.names() ) {
-        cout << "   " << name << " : " << core::anyToString(aArguments.get(name)) << endl;
+    cout << "ParameterSet:" << endl;
+    BOOST_FOREACH( std::string name, params.names() ) {
+        cout << "   " << name << " : " << core::anyToString(params.get(name)) << endl;
     }
 }
 

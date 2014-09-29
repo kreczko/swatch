@@ -13,7 +13,7 @@ using namespace std;
 namespace swatch {
 namespace core {
 
-Device::Device(const std::string& aId, const Arguments& aArguments) :
+Device::Device(const std::string& aId, const ParameterSet& params) :
     Object(aId) {
 }
 

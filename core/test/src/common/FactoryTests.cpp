@@ -30,13 +30,13 @@ swatch::core::CreatorRegistrationHelper< swatch::core::Object, creatorname > cre
 // Dummy Creator interface
 class SimpleCreator : public ObjFactory::CreatorInterface {
 public:
-    virtual swatch::core::Object* operator()(const std::string& aId, const swatch::core::ParameterSet& aPSet);
+    virtual swatch::core::Object* operator()(const std::string& aId, const swatch::core::ParameterSet& params);
 };
 
 
 swatch::core::Object*
-SimpleCreator::operator ()(const std::string& aId, const swatch::core::ParameterSet& aPSet) {
-    swatch::core::test::SimpleObject* so = new swatch::core::test::SimpleObject(aId, aPSet);
+SimpleCreator::operator ()(const std::string& aId, const swatch::core::ParameterSet& params) {
+    swatch::core::test::SimpleObject* so = new swatch::core::test::SimpleObject(aId, params);
     so->setValue(1234.5678);
     return so;
 }
@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE( FactoryTest ) {
     
     ObjFactory* f = ObjFactory::get();
         
-    swatch::core::Arguments none;
+    swatch::core::ParameterSet none;
     swatch::core::Object* obj;
     obj = f->make("SimpleObject","d1", none);
     

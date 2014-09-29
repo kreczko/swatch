@@ -39,7 +39,7 @@ typedef boost::unordered_map<std::string,uint32_t> RegisterMap;
 //----------------------------------------------------------------------------//
 class IPBusProcessor : public swatch::processor::Processor {
 public:
-    IPBusProcessor(const std::string& id, const swatch::core::Arguments& args);
+    IPBusProcessor(const std::string& id, const swatch::core::ParameterSet& params);
     virtual ~IPBusProcessor();
     
     virtual uint32_t getSlot() const;
@@ -119,7 +119,7 @@ private:
 //----------------------------------------------------------------------------//
 class IPBusCtrl : public swatch::processor::AbstractCtrl {
 public:
-    IPBusCtrl(swatch::processor::Connection* connection, const swatch::core::Arguments& args);
+    IPBusCtrl(swatch::processor::Connection* connection, const swatch::core::ParameterSet& params);
     virtual ~IPBusCtrl();
 
     virtual std::set<std::string> clockConfigurations() const { return configs_; } 
@@ -129,7 +129,7 @@ public:
     virtual void softReset();
 
 //    virtual void clk40Reset();
-//    virtual void configureClk(const swatch::core::ParameterSet& pset);
+//    virtual void configureClk(const swatch::core::ParameterSet& params);
 
 
 private:    
@@ -145,14 +145,14 @@ private:
 //----------------------------------------------------------------------------//
 class IpbusChannel : public swatch::processor::AbstractChannel {
 public:
-    IpbusChannel(swatch::processor::Connection* connection, const swatch::core::Arguments& args);
+    IpbusChannel(swatch::processor::Connection* connection, const swatch::core::ParameterSet& params);
     virtual ~IpbusChannel();
 };
 
 //----------------------------------------------------------------------------//
 class IPBusChanCtrl : public swatch::processor::AbstractChanCtrl {
 public:
-    IPBusChanCtrl(swatch::processor::Connection* connection, const swatch::core::Arguments& args);
+    IPBusChanCtrl(swatch::processor::Connection* connection, const swatch::core::ParameterSet& params);
     virtual ~IPBusChanCtrl();
 
     //functionalities
@@ -166,7 +166,7 @@ public:
     virtual bool isPLLLocked();
     virtual bool isSync();
 
-    virtual void configure(const swatch::core::ParameterSet& pset);
+    virtual void configure(const swatch::core::ParameterSet& params);
 private:
 
     IPBUS_DEF(IPBusChanCtrl);
@@ -175,7 +175,7 @@ private:
 //----------------------------------------------------------------------------//
 class IPBusChanBuffer : public swatch::processor::AbstractChanBuffer {
 public:
-    IPBusChanBuffer(swatch::processor::Connection* connection, const swatch::core::Arguments& args);
+    IPBusChanBuffer(swatch::processor::Connection* connection, const swatch::core::ParameterSet& params);
     virtual ~IPBusChanBuffer();
 
 

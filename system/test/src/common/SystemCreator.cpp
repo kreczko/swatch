@@ -18,7 +18,7 @@ namespace test {
 SWATCH_SYSTEM_REGISTER_CREATOR(SystemCreator);
 
 swatch::system::System*
-SystemCreator::operator()(const std::string& aId, const swatch::core::ParameterSet& aPSet) {
+SystemCreator::operator()(const std::string& aId, const swatch::core::ParameterSet& params) {
     using namespace swatch::core;
     using namespace swatch::system;
     using namespace swatch::processor;   
@@ -26,12 +26,12 @@ SystemCreator::operator()(const std::string& aId, const swatch::core::ParameterS
     using namespace uhal;
     
     log(Info(),"Building System ",aId);
-    System* sys = new System(aId, aPSet);
+    System* sys = new System(aId, params);
     
     std::vector<ParameterSet> vPSets;
     
     log(Info(), "Building Processors");
-    vPSets = aPSet.get< std::vector<ParameterSet> >("processors");
+    vPSets = params.get< std::vector<ParameterSet> >("processors");
     log(Debug(), " + Found ",uhal::Integer(vPSets.size())," processors");
     
     BOOST_FOREACH(ParameterSet& ps,vPSets) {
@@ -43,7 +43,7 @@ SystemCreator::operator()(const std::string& aId, const swatch::core::ParameterS
     }
 
     log(Info(), "Building Amc13s");
-    vPSets = aPSet.get< std::vector<ParameterSet> >("amc13s");
+    vPSets = params.get< std::vector<ParameterSet> >("amc13s");
     log(Debug(), " + Found ",uhal::Integer(vPSets.size())," amc13s");
 
     BOOST_FOREACH(ParameterSet& ps,vPSets) {

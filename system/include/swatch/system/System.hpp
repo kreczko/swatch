@@ -39,7 +39,7 @@ class AMC13Service;
 class System : public core::Device {
 public:
 
-    System( const std::string& aId, const core::Arguments& aArgument = core::Arguments() );
+    System( const std::string& aId, const core::ParameterSet& params = core::ParameterSet() );
     virtual ~System();
     
     void add( processor::Processor* aProcessor );
@@ -53,8 +53,8 @@ public:
     
 
     // Operations: interface to Run Control
-	void halt(const core::Arguments& params = core::Arguments());
-	void configure(const core::Arguments& params = core::Arguments());
+	void halt(const core::ParameterSet& params = core::ParameterSet());
+	void configure(const core::ParameterSet& params = core::ParameterSet());
 
 	enum FsmStates {HALTED, CONFIGURED, STOPPED, ENABLED, SUSPENDED};
 
@@ -88,8 +88,8 @@ protected:
    virtual bool c_configure();
 
    // Operations: something in common in all inherited classes? (e.g., actions with the ParameterSet)
-   virtual void f_halt(const core::Arguments& params);
-   virtual void f_configure(const core::Arguments& params);
+   virtual void f_halt(const core::ParameterSet& params);
+   virtual void f_configure(const core::ParameterSet& params);
 
    // Implementation for the dummy state machine
    FsmStates fsm_;

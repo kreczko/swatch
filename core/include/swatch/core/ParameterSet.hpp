@@ -96,9 +96,6 @@ private:
 };
 
 DEFINE_SWATCH_EXCEPTION(ParameterNotFound);
-
-typedef ParameterSet Arguments;
-
 }
 }
 

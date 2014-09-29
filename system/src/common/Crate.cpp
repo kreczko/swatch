@@ -25,7 +25,7 @@ namespace swatch {
 namespace system {
 
 
-Crate::Crate(const std::string aId, const core::Arguments& aArguments)
+Crate::Crate(const std::string aId, const core::ParameterSet& params)
 : ObjectView(aId), mch_(NULL), amc13_(NULL), amcs_(12, NULL), min_(1), max_(12) {
 }
 

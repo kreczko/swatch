@@ -24,7 +24,7 @@ class AMC13Service;
 //! View class map swatch objects in crates. It doesn't own the objects it points to.
 class Crate : public core::ObjectView {
 public:
-    Crate( const std::string id, const core::Arguments& aAttributes = core::Arguments() );
+    Crate( const std::string id, const core::ParameterSet& params = core::ParameterSet() );
     virtual ~Crate();
 
     

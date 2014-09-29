@@ -32,23 +32,23 @@ namespace test {
 /*------------------------------------------------------------------------------
  * Dummy Processor implementation
  */
-IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::Arguments& args) : Processor(id, args) {
+IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::ParameterSet& params) : Processor(id, params) {
     using namespace swatch::core;
-    crate_ = args.get<std::string>("crate");
-    slot_ = args.get<uint32_t>("slot");
+    crate_ = params.get<std::string>("crate");
+    slot_ = params.get<uint32_t>("slot");
 
 
     // Build the objects
     uhal::HwInterface interface = uhal::ConnectionManager::getDevice(
         id,
-        args.get<std::string>("uri"),
-        args.get<std::string>("addrtab")
+        params.get<std::string>("uri"),
+        params.get<std::string>("addrtab")
         );
 
     
     connection_ = swatch::processor::Connection::make(interface);
     info_ = new IPBusInfo( connection_ );
-    ctrl_ = new IPBusCtrl( connection_, args );
+    ctrl_ = new IPBusCtrl( connection_, params );
     ttc_ = new IPBusTTC( connection_ );
     
     // build the list of links based on the firmware informations
@@ -57,7 +57,7 @@ IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::Argume
 
     inputChannels_.reserve(nInputs);
     for (size_t k(0); k<nInputs; ++k) {
-        Arguments a, ctrl, buf;
+        ParameterSet a, ctrl, buf;
         std::string path = "channels.rx"+boost::lexical_cast<std::string>(k);
         
         ctrl.insert("path",path);
@@ -69,7 +69,7 @@ IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::Argume
 
     outputChannels_.reserve(nOutputs);
     for (size_t k(0); k<nOutputs; ++k) {
-        Arguments a, ctrl, buf;
+        ParameterSet a, ctrl, buf;
         std::string path = "channels.tx"+boost::lexical_cast<std::string>(k);
         
         ctrl.insert("path",path); // <- this is wrong
@@ -142,11 +142,11 @@ IPBusInfo::getNOutputs() {
 /*------------------------------------------------------------------------------
  * Dummy Ctrl
  */
-IPBusCtrl::IPBusCtrl(swatch::processor::Connection* connection, const swatch::core::Arguments& args) : AbstractCtrl(connection) {
+IPBusCtrl::IPBusCtrl(swatch::processor::Connection* connection, const swatch::core::ParameterSet& params) : AbstractCtrl(connection) {
     using namespace boost::assign;
     configs_ += "internal","external";
 
-    poweron_ = args.get<RegisterMap>("poweron");
+    poweron_ = params.get<RegisterMap>("poweron");
 }
 
 IPBusCtrl::~IPBusCtrl() {
@@ -372,12 +372,12 @@ IPBusTTC::hasBC0Stopped() const {
 /*------------------------------------------------------------------------------
  * IPBus Channel
  */
-IpbusChannel::IpbusChannel(swatch::processor::Connection* connection, const swatch::core::Arguments& args) : AbstractChannel(connection) {
+IpbusChannel::IpbusChannel(swatch::processor::Connection* connection, const swatch::core::ParameterSet& params) : AbstractChannel(connection) {
     using namespace swatch::core;
-    const Arguments& chanArgs = args.get<Arguments>("ctrl");
-    ctrl_ = new IPBusChanCtrl(connection, chanArgs);
-    const Arguments& bufArgs = args.get<Arguments>("buffer");
-    buffer_ = new IPBusChanBuffer(connection, bufArgs);
+    const ParameterSet& chanParams = params.get<ParameterSet>("ctrl");
+    ctrl_ = new IPBusChanCtrl(connection, chanParams);
+    const ParameterSet& bufParams = params.get<ParameterSet>("buffer");
+    buffer_ = new IPBusChanBuffer(connection, bufParams);
 }
 
 IpbusChannel::~IpbusChannel() {
@@ -389,7 +389,7 @@ IpbusChannel::~IpbusChannel() {
 /*------------------------------------------------------------------------------
  * Dummy Channel Control
  */
-IPBusChanCtrl::IPBusChanCtrl(swatch::processor::Connection* connection, const swatch::core::Arguments& args) : AbstractChanCtrl(connection) {
+IPBusChanCtrl::IPBusChanCtrl(swatch::processor::Connection* connection, const swatch::core::ParameterSet& params) : AbstractChanCtrl(connection) {
     cout << "this is a very dummy channel control interface" << endl;
 }
 
@@ -444,17 +444,17 @@ IPBusChanCtrl::isSync() {
 }
 
 void
-IPBusChanCtrl::configure(const swatch::core::ParameterSet& pset) {
+IPBusChanCtrl::configure(const swatch::core::ParameterSet& params) {
     cout << "configure the channel control with a given set of parameters " << endl;
 }
 
 /*------------------------------------------------------------------------------
  * Dummy Channel Buffer 
  */
-IPBusChanBuffer::IPBusChanBuffer(swatch::processor::Connection* connection, const swatch::core::Arguments& args) : AbstractChanBuffer(connection) {
+IPBusChanBuffer::IPBusChanBuffer(swatch::processor::Connection* connection, const swatch::core::ParameterSet& params) : AbstractChanBuffer(connection) {
 //    cout << "this is a very dummy channel buffer interface" << endl;
     
-    std::string path = args.get<std::string>("path");
+    std::string path = params.get<std::string>("path");
     // cout << ">>>>> path: " << path << endl;
     ctrlpath_ = path+".ctrl";
     datapath_ = path+".data";

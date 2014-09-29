@@ -16,7 +16,7 @@ namespace test {
 
 class DummyProcessor : public processor::Processor {
 public:
-    DummyProcessor( const std::string& aId, const core::Arguments& aArguments );
+    DummyProcessor( const std::string& aId, const core::ParameterSet& params );
     virtual ~DummyProcessor();
     
     virtual uint32_t getSlot() const { return mSlot; }

@@ -16,7 +16,7 @@ namespace test {
 
 class SystemCreator : public swatch::system::SystemFactory::CreatorInterface {
 public:
-    virtual swatch::system::System* operator()(const std::string& aId, const swatch::core::ParameterSet& aPSet);
+    virtual swatch::system::System* operator()(const std::string& aId, const swatch::core::ParameterSet& params);
 };
 
 

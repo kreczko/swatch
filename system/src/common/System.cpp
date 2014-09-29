@@ -25,8 +25,8 @@ using namespace std;
 namespace swatch {
 namespace system {
 
-System::System(const std::string& aId, const core::Arguments& aArguments)
-: Device(aId, aArguments),
+System::System(const std::string& aId, const core::ParameterSet& params)
+: Device(aId, params),
   fsm_(System::FsmStates::HALTED)
 {
 }
@@ -130,7 +130,7 @@ System::getLinks() const {
 }
 
 void
-System::halt(const core::Arguments& params)
+System::halt(const core::ParameterSet& params)
 {
 
 	ostringstream msg;
@@ -148,7 +148,7 @@ System::halt(const core::Arguments& params)
 }
 
 void
-System::configure(const core::Arguments& params)
+System::configure(const core::ParameterSet& params)
 {
 
 	ostringstream msg;
@@ -181,7 +181,7 @@ System::c_halt()
 }
 
 void
-System::f_halt(const core::Arguments& params)
+System::f_halt(const core::ParameterSet& params)
 {
 }
 
@@ -192,7 +192,7 @@ System::c_configure()
 }
 
 void
-System::f_configure(const core::Arguments& params)
+System::f_configure(const core::ParameterSet& params)
 {
 }
 

@@ -26,8 +26,8 @@ namespace processor {
 const uint32_t Processor::NoSlot =  0x7fffffffL;
 
 ///---
-Processor::Processor( const std::string& aId, const core::Arguments& aArguments ) :
-    Device(aId, aArguments) {
+Processor::Processor( const std::string& aId, const core::ParameterSet& params ) :
+    Device(aId, params) {
     
 }
 
@@ -36,7 +36,7 @@ Processor::~Processor() {
 
 
 void
-Processor::halt(const core::Arguments& params)
+Processor::halt(const core::ParameterSet& params)
 {
 	if (!c_halt())
 	{
@@ -47,7 +47,7 @@ Processor::halt(const core::Arguments& params)
 }
 
 void
-Processor::configure(const core::Arguments& params)
+Processor::configure(const core::ParameterSet& params)
 {
 	if (!c_configure())
 	{
@@ -64,7 +64,7 @@ Processor::c_halt()
 }
 
 void
-Processor::f_halt(const core::Arguments& params)
+Processor::f_halt(const core::ParameterSet& params)
 {
 
 }
@@ -76,7 +76,7 @@ Processor::c_configure()
 }
 
 void
-Processor::f_configure(const core::Arguments& params)
+Processor::f_configure(const core::ParameterSet& params)
 {
 
 }

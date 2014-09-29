@@ -16,7 +16,7 @@ namespace system {
 // just to fill the spot
 class Service : public core::Object {
 public:
-    Service( const std::string &aId, const core::Arguments& aArguments );
+    Service( const std::string &aId, const core::ParameterSet& params );
     virtual ~Service();
 };
 }

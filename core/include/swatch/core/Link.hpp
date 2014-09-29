@@ -21,7 +21,7 @@ class OutputPort;
 
 class Link : public ObjectView {
 public:
-    explicit Link( const std::string& aId, OutputPort* aSrc, InputPort* aDst, const Arguments& aArguments  = Arguments() );
+    explicit Link( const std::string& aId, OutputPort* aSrc, InputPort* aDst, const ParameterSet& params  = ParameterSet() );
     ~Link();
     
     OutputPort* getSrc() { return src_; }

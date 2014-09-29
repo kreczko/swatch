@@ -16,7 +16,7 @@ namespace test {
 
 class DummyAMC13Service : public system::AMC13Service {
 public:
-    DummyAMC13Service( const std::string& aId, const core::Arguments& aArguments );
+    DummyAMC13Service( const std::string& aId, const core::ParameterSet& params );
     virtual ~DummyAMC13Service();
     
     /// Enables ttc commands on the given slots

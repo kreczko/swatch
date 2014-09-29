@@ -35,13 +35,13 @@ public:
     
     static AbstractFactory* get();
 
-    T* make( const std::string& aCreatorId, const std::string& aId, const swatch::core::ParameterSet& aPSet );
+    T* make( const std::string& aCreatorId, const std::string& aId, const swatch::core::ParameterSet& params );
 
-    T* make( const swatch::core::ParameterSet& aPSet );
+    T* make( const swatch::core::ParameterSet& params );
 
     class CreatorInterface {
     public:
-        virtual T* operator()( const std::string& aId, const swatch::core::ParameterSet& aPSet ) = 0;
+        virtual T* operator()( const std::string& aId, const swatch::core::ParameterSet& params ) = 0;
     };
     
 
@@ -49,7 +49,7 @@ private:
     template<typename U>
     class BasicCreator : public CreatorInterface {
     public:
-        virtual T* operator() ( const std::string& aId, const swatch::core::ParameterSet& aPSet );
+        virtual T* operator() ( const std::string& aId, const swatch::core::ParameterSet& params );
     };
     
     template<typename K>

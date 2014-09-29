@@ -60,9 +60,9 @@ namespace test {
 //        digits++;
 //    } while (number != 0);
 //
-//    Arguments a;
+//    ParameterSet a;
 //    a.insert("requires", "ttc;daq")("provides", "trg");
-//    Arguments a1 = a, a2 = a, a3 = a;
+//    ParameterSet a1 = a, a2 = a, a3 = a;
 //    a1.insert("crate", "crateA") ("slot", 1);
 //    a2.insert("crate", "crateA") ("slot", 2);
 //    a3.insert("crate", "crateB") ("slot", 1);
@@ -119,7 +119,7 @@ namespace test {
 //bool
 //SystemBuildFullCrate::run() {
 //    using namespace boost::assign;
-//    Arguments args, args13;
+//    ParameterSet args, args13;
 //    args.insert("requires", "ttc;daq")("provides", "trg")("crate", "s2x3g18");
 //    args13.insert("requires", "")("provides", "ttc;daq")("crate", "s2x3g18");
 //    
@@ -138,7 +138,7 @@ namespace test {
 //    // And a set of boards
 //    std::vector<DummyProcessor*> dummies;
 //    for (int s(0); s < 12; ++s) {
-//        Arguments a = args; // copy the common attributes
+//        ParameterSet a = args; // copy the common attributes
 //        const string slot = boost::lexical_cast<std::string>(s);
 //        a.insert("slot", s);
 //        DummyProcessor* p = new DummyProcessor("mp7-" + slot, a);
@@ -181,9 +181,9 @@ SystemExploreTest::run() {
 
     using namespace boost::assign;
 
-    Arguments a;
+    ParameterSet a;
     a.insert("requires", "ttc;daq")("provides", "trigger")("class","DummyProcessor");
-    Arguments a1 = a, a2 = a, a3 = a;
+    ParameterSet a1 = a, a2 = a, a3 = a;
 
     System* lSystem = new System("calol2");
 
