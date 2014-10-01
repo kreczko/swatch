@@ -159,24 +159,6 @@ System::f_configure(const core::ParameterSet& params)
 	// (*pIt)->configure(params);
     }
 
-
-    // TODO: Prepare parameter set
-    for (deque<Service*>::iterator sIt = services_.begin();
-	sIt != services_.end();
-	++sIt)
-    {
-        Device* d = dynamic_cast<Device*>(*sIt);
-	d->configure();
-    }
-
-    // TODO: Prepare parameter set
-    for (deque<AMC13Service*>::iterator amc13It = amc13s_.begin();
-	amc13It != amc13s_.end();
-	++amc13It)
-    {
-	Device* d = dynamic_cast<Device*>(*amc13It);
-	d->configure();
-    }
 }
 
 
