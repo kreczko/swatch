@@ -52,15 +52,6 @@ public:
     const boost::unordered_map<std::string, Crate*>& getCrates() const;
     
 
-    // Operations: interface to Run Control
-	void halt(const core::ParameterSet& params = core::ParameterSet());
-	void configure(const core::ParameterSet& params = core::ParameterSet());
-
-	enum FsmStates {HALTED, CONFIGURED, STOPPED, ENABLED, SUSPENDED};
-
-	FsmStates getFSM();
-	void setFSMState(FsmStates state);
-
     
 protected:
 
@@ -91,8 +82,6 @@ protected:
    virtual void f_halt(const core::ParameterSet& params);
    virtual void f_configure(const core::ParameterSet& params);
 
-   // Implementation for the dummy state machine
-   FsmStates fsm_;
 
 };
 

@@ -26,8 +26,7 @@ namespace swatch {
 namespace system {
 
 System::System(const std::string& aId, const core::ParameterSet& params)
-: Device(aId, params),
-  fsm_(System::FsmStates::HALTED)
+: Device(aId, params)
 {
 }
 
@@ -129,50 +128,6 @@ System::getLinks() const {
     return links_;
 }
 
-void
-System::halt(const core::ParameterSet& params)
-{
-
-	ostringstream msg;
-
-	if (!c_halt())
-	{
-		msg << "c_halt check failed! Could not finish transition to HALTED state from " << fsm_ << endl;
-		throw runtime_error(msg.str());
-	}
-
-	f_halt(params);
-
-	fsm_ = System::FsmStates::HALTED;
-	msg << "FSM set to HALTED" << endl;
-}
-
-void
-System::configure(const core::ParameterSet& params)
-{
-
-	ostringstream msg;
-
-	if (fsm_ != System::FsmStates::HALTED)
-	{
-		msg << "Transition from state " << fsm_ << " to CONFIGURED not allowed!" << endl;
-		throw runtime_error(msg.str());
-	}
-
-
-	if (!c_configure())
-	{
-		msg << "c_configure check failed! Could not finish transition to CONFIGURED state from " << fsm_ << endl;
-		throw runtime_error(msg.str());
-	}
-
-	f_configure(params);
-
-
-	fsm_ = System::FsmStates::CONFIGURED;
-	msg << "FSM set to CONFIGURED" << endl;
-}
-
 
 bool
 System::c_halt()
@@ -194,19 +149,36 @@ System::c_configure()
 void
 System::f_configure(const core::ParameterSet& params)
 {
+    // TODO: Prepare parameter set
+    for (deque<processor::Processor*>::iterator pIt = processors_.begin();
+	 pIt != processors_.end();
+	 ++pIt)
+    {
+	Device* d = dynamic_cast<Device*>(*pIt);
+	d->configure();
+	// (*pIt)->configure(params);
+    }
+
+
+    // TODO: Prepare parameter set
+    for (deque<Service*>::iterator sIt = services_.begin();
+	sIt != services_.end();
+	++sIt)
+    {
+        Device* d = dynamic_cast<Device*>(*sIt);
+	d->configure();
+    }
+
+    // TODO: Prepare parameter set
+    for (deque<AMC13Service*>::iterator amc13It = amc13s_.begin();
+	amc13It != amc13s_.end();
+	++amc13It)
+    {
+	Device* d = dynamic_cast<Device*>(*amc13It);
+	d->configure();
+    }
 }
 
-System::FsmStates
-System::getFSM()
-{
-	return fsm_;
-}
-
-void
-System::setFSMState(System::FsmStates state)
-{
-	fsm_ = state;
-}
 
 } // end ns system
 } // end ns swatch

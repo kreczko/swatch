@@ -30,6 +30,14 @@ public:
 
     std::deque<InputPort*>& getInputs() { return inputs_; }
     std::deque<OutputPort*>& getOutputs() { return outputs_; }
+
+    void halt(const ParameterSet& params = ParameterSet());
+    void configure(const ParameterSet& params = ParameterSet());
+
+    enum FsmStates {HALTED, CONFIGURED, STOPPED, ENABLED, SUSPENDED};
+
+    FsmStates getFSM();
+    void setFSMState(FsmStates state);
         
 
 protected:
@@ -37,9 +45,17 @@ protected:
     void addInput( InputPort* aInput );
     void addOutput( OutputPort*  aOutput );
 
+    virtual bool c_halt();
+    virtual void f_halt(const ParameterSet& params = ParameterSet());
+    virtual bool c_configure();
+    virtual void f_configure(const ParameterSet& params = ParameterSet());
+
         
     std::deque<InputPort*> inputs_;
     std::deque<OutputPort*> outputs_;
+
+    // Implementation for the dummy state machine
+    FsmStates fsm_;
 
 
 };
