@@ -10,6 +10,7 @@
 
 
 #include "swatch/core/AbstractFactory.hpp"
+#include "swatch/processor/Processor.hpp"
 
 namespace swatch {
 namespace processor {

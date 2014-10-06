@@ -48,6 +48,7 @@ public:
     void add( system::Service* aService );
     
     const std::deque<processor::Processor*>& getProcessors() const;
+    const std::deque<Service*>& getServices() const;
     const std::deque<core::Link*>& getLinks() const;
     const boost::unordered_map<std::string, Crate*>& getCrates() const;
     

@@ -123,6 +123,11 @@ System::getProcessors() const {
     return processors_;
 }
 
+const std::deque<Service*>&
+System::getServices() const {
+    return services_;
+}
+
 const std::deque<core::Link*>&
 System::getLinks() const {
     return links_;

@@ -31,16 +31,79 @@
 
 
 #include <boost/test/unit_test.hpp>
+using namespace boost::assign;
+using namespace swatch::core;
+using namespace swatch::system;
+using namespace swatch::system::test;
+
+struct Params {
+		Params() : ps_system(), ps_processors(), ps_services() {
+			// based on swatch/test/etc/testdb.json
+			ps_system.insert("name", "calol2");
+
+			ParameterSet p1, p2, p3;
+			p1.insert("PROCESSOR NAME", "MP-1")("PROCESSOR TYPE", "MP7");
+			p1.insert("PROCESSOR CREATOR", "DummyProcessor")("ADDRESS TABLE", "/address/table/location");
+			p1.insert("IP ADDRESS", "192.168.0.1")("crate", "crateA");
+			p1.insert("slot", 1)("CRATE LOCATION", "MyLocation");
+			p1.insert("CRATE DESCRIPTION", "MyCrateDescription")("PROCESSOR TYPE", "MP7");
+			// unclear:
+			// p1.insert("PORTS NAMES", ""Port#1", "Port#2", "Port#3", "Port#144"");
+			p2 = p1;
+			p2.set("PROCESSOR NAME", "MP-2");
+			p2.set("IP ADDRESS", "192.168.0.2");
+			p2.set("slot", 2);
+
+			p3 = p1;
+			p3.set("PROCESSOR NAME", "MP-3");
+			p3.set("IP ADDRESS", "192.168.0.3");
+			p3.set("crate", "crateB");
+
+			ps_processors.push_back(p1);
+			ps_processors.push_back(p2);
+			ps_processors.push_back(p3);
+
+			ParameterSet s1, s2;
+			s1.insert("SERVICE NAME", "AMC13-1")("SERVICE TYPE", "AMC13");
+			s1.insert("SERVICE CREATOR", "DummyAMC13Service")("ADDRESS TABLE", "/address/table/location");
+			s1.insert("crate", "S2G17-01")("slot", 13);
+			s1.insert("CRATE LOCATION", "MyCrateLocation")("CRATE DESCRIPTION", "MyCrateDescription");
+			s1.insert("IP ADDRESS #1", "192.168.0.13")("IP ADDRESS #2", "192.168.0.14");
+
+			s2.insert("SERVICE NAME", "MCH")("SERVICE TYPE", "MCH");
+			s2.insert("SERVICE CREATOR", "DummyAMC13Service")("ADDRESS TABLE",
+					"/address/table/location");
+			s2.insert("crate", "S2G17-01")("slot", 14);
+			s2.insert("CRATE LOCATION", "MyCrateLocation")("CRATE DESCRIPTION",
+					"MyCrateDescription");
+			s2.insert("IP ADDRESS", "192.168.0.15");
+			ps_services.push_back(s1);
+			ps_services.push_back(s2);
+
+			ps_system.insert("processors", ps_processors);
+			ps_system.insert("services", ps_services);
+		}
+		~Params(){
+
+		}
+
+		ParameterSet ps_system;
+		std::vector<ParameterSet> ps_processors;
+		std::vector<ParameterSet> ps_services;
+};
 
 BOOST_AUTO_TEST_SUITE( SystemTestSuite )
 
+BOOST_FIXTURE_TEST_CASE(BuildSystemWithDefaultCreator, Params){
+	System * system = SystemFactory::get()->make("SystemLoggingCreator", ps_system.get<std::string>("name"), ps_system);
+	BOOST_CHECK_EQUAL(system->id(), "calol2");
+	BOOST_CHECK_EQUAL(system->getProcessors().size(), 3);
+	BOOST_CHECK_EQUAL(system->getServices().size(), 2);
+	// detailed tests for the content of processors and services
+	// should be done in the respective Creator tests.
+}
+
 BOOST_AUTO_TEST_CASE(BuildSystem) {
-    using namespace boost::assign;
-    using namespace swatch::core;
-    using namespace swatch::system;
-    using namespace swatch::system::test;
-
-
     ParameterSet a;
     a.insert("requires", "ttc;daq")("provides", "trg");
     ParameterSet a1 = a, a2 = a, a3 = a;
@@ -87,11 +150,6 @@ BOOST_AUTO_TEST_CASE(BuildSystem) {
 }
 
 BOOST_AUTO_TEST_CASE(BuildCrate) {
-    // Local Namespace Resolution
-    using namespace swatch::core;
-    using namespace swatch::system;
-    using namespace swatch::system::test;
-    
     using std::cout;
     using std::endl;
 
