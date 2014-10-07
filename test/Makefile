@@ -27,6 +27,7 @@ Includes = 	\
 LibraryPaths =	\
 		lib \
 		${SWATCH_ROOT}/core/lib \
+		${SWATCH_ROOT}/core/test/lib \
 		${SWATCH_ROOT}/processor/lib \
 		${SWATCH_ROOT}/system/lib \
 		${SWATCH_ROOT}/system/test/lib \
@@ -42,6 +43,7 @@ Libraries =	\
 		cactus_uhal_uhal \
 		cactus_uhal_log \
 		cactus_swatch_core \
+		cactus_swatch_core_test \
 		cactus_swatch_processor \
 		cactus_swatch_system \
 		cactus_swatch_system_test \

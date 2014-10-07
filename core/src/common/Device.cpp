@@ -14,7 +14,7 @@ namespace swatch {
 namespace core {
 
 Device::Device(const std::string& aId, const ParameterSet& params) :
-    Object(aId),
+    Object(aId, params),
     fsm_(FsmStates::HALTED)
 {
 }
