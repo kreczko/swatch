@@ -297,7 +297,7 @@ int main(int argc, char const *argv[]) {
 
     // Inject some data
 
-    uint32_t nRx(4), nTx(4);
+    uint32_t nRx(4), nTx(2);
 
     test::IPBusDummyHardware::RegisterMap poweron;
     

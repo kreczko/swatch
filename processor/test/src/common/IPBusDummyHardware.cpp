@@ -10,6 +10,9 @@
 // Swatch Headers
 #include "swatch/core/Utilities.hpp"
 
+// uHAL Headers
+#include "uhal/tests/UDPDummyHardware.hpp"
+
 // C++ Headers
 #include <sys/prctl.h>
 
@@ -73,64 +76,24 @@ IPBusDummyHardware::terminate() {
     if ( hw_ ) delete hw_; 
 }
 
+void IPBusDummyHardware::run() {
 
-void
-IPBusDummyHardware::run() {
-    // TODOs:
-    // To be turned into parameters:
-    // - Verbosity
+    // Create the hw interface
+    uhal::setLogLevelTo(uhal::WarningLevel());
+    std::stringstream ssURI;
+    ssURI << "ipbusudp-2.0://127.0.0.1:" << port_;
+    hw_ = new uhal::HwInterface( uhal::ConnectionManager::getDevice(
+            name_,
+            ssURI.str().c_str(),
+            addrtab_
+            )
+    );
 
-    const char* udpexe = "/opt/cactus/bin/uhal/tests/DummyHardwareUdp.exe";
+    started_ = true;
 
-    pid_ = fork();
-    if (pid_ == 0) {
-        /* This is the child process.  Execute the shell command. */
-        // But first 
-        ::prctl(PR_SET_PDEATHSIG, SIGHUP);
-        
-        std::string logfile = "udp-" + name_ + ".log";
-        // Redirect stdout and stderr to logfile
-        int fd = open(logfile.c_str(), O_CREAT | O_WRONLY);
-        dup2(fd, 1);
-        dup2(fd, 2);
-
-        std::stringstream ssPort;
-        ssPort << "-p" << port_;
-        execl(udpexe, udpexe, ssPort.str().c_str(), "-v2", "-V", NULL);
-        _exit(EXIT_FAILURE);
-        
-    } else if (pid_ < 0) {
-        /* The fork failed.  Report failure.  */
-        status_ = -1;
-    } else {
-        // It forked. Incredible.
-        cout << "Started server with pid " << pid_ << endl;
-        try {
-            cout << "Wait a sec for " << name_ << " to start" << endl;
-            sleep(1);
-
-            uhal::setLogLevelTo(uhal::WarningLevel());
-            std::stringstream ssURI;
-            ssURI << "ipbusudp-2.0://127.0.0.1:" << port_;
-            hw_ = new uhal::HwInterface( uhal::ConnectionManager::getDevice(
-                    name_,
-                    ssURI.str().c_str(),
-                    addrtab_
-                    )
-            );
-
-            started_ = true;
-
-            // waits until the process finishes
-            ::waitpid(pid_, &status_, 0);
-
-            cout << name_ << " is dead!" << endl;
-
-        } catch (...) {
-            // Any problem? Shoot the server
-            terminate();
-        }
-    }
+    // And then start the interface
+    uhal::tests::UDPDummyHardware<2,0> hardware(port_, 0, false);
+    hardware.run();
 }
 
 

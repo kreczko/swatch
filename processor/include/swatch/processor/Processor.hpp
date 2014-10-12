@@ -76,10 +76,6 @@ public:
     }
 
 
-    // Placeholder for RC methods (eventually in Device)
-    void halt(const core::ParameterSet& params = core::ParameterSet());
-    void configure(const core::ParameterSet& params = core::ParameterSet());
-
 protected:
     AbstractInfo* info_;
     AbstractCtrl* ctrl_;
@@ -90,10 +86,10 @@ protected:
 
     Connection* connection_;
 
-    bool c_halt();
-    void f_halt(const core::ParameterSet& params = core::ParameterSet());
-    bool c_configure();
-    void f_configure(const core::ParameterSet& params = core::ParameterSet());
+    virtual bool c_halt();
+    virtual void f_halt(const core::ParameterSet& params = core::ParameterSet());
+    virtual bool c_configure();
+    virtual void f_configure(const core::ParameterSet& params = core::ParameterSet());
 
 };
 

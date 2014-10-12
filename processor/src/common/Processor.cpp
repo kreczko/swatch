@@ -34,50 +34,23 @@ Processor::Processor( const std::string& aId, const core::ParameterSet& params )
 Processor::~Processor() {
 }
 
-
-void
-Processor::halt(const core::ParameterSet& params)
-{
-	if (!c_halt())
-	{
-
-	}
-
-	f_halt(params);
-}
-
-void
-Processor::configure(const core::ParameterSet& params)
-{
-	if (!c_configure())
-	{
-
-	}
-
-	f_configure(params);
-}
-
 bool
-Processor::c_halt()
-{
+Processor::c_halt() {
 	return true;
 }
 
 void
-Processor::f_halt(const core::ParameterSet& params)
-{
+Processor::f_halt(const core::ParameterSet& params) {
 
 }
 
 bool
-Processor::c_configure()
-{
+Processor::c_configure() {
 	return true;
 }
 
 void
-Processor::f_configure(const core::ParameterSet& params)
-{
+Processor::f_configure(const core::ParameterSet& params) {
 
 }
 

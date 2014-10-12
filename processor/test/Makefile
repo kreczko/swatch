@@ -32,6 +32,7 @@ Libraries =	\
 		boost_system \
 		boost_unit_test_framework \
 		cactus_uhal_uhal \
+		cactus_uhal_tests \
 		cactus_swatch_core \
 		cactus_swatch_processor
 

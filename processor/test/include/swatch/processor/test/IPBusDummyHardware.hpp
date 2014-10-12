@@ -64,7 +64,6 @@ public:
     
     void add( IPBusWorkLoop* w );
     
-
 private:
     // uhal::HwInterface getHwInterface( const std::string& addrtab );
 

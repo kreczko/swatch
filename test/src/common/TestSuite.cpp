@@ -45,133 +45,6 @@ using swatch::system::test::DummyAMC13Service;
 namespace swatch {
 namespace test {
 
-//SystemBuildTest::SystemBuildTest(unsigned int iterations) :
-//TestUnit("sys_build"), mIterations(iterations) {
-//}
-//
-//bool
-//SystemBuildTest::run() {
-//    using namespace boost::assign;
-//
-//    // for pretty printing, calculate how many digits to use
-//    int digits(0), number(mIterations);
-//    do {
-//        number /= 10;
-//        digits++;
-//    } while (number != 0);
-//
-//    ParameterSet a;
-//    a.insert("requires", "ttc;daq")("provides", "trg");
-//    ParameterSet a1 = a, a2 = a, a3 = a;
-//    a1.insert("crate", "crateA") ("slot", 1);
-//    a2.insert("crate", "crateA") ("slot", 2);
-//    a3.insert("crate", "crateB") ("slot", 1);
-//
-//    for (unsigned int i(0); i < mIterations; ++i) {
-//
-//        stringstream ss;
-//        ss << "[" << std::setw(digits) << std::setfill('0') << i << "] --> ";
-//
-////        cout << ss.str() << "Constructor" << endl;
-//        uhal::log( uhal::Info(), ss.str(), "Constructor");
-//        System* s = new System("calol2");
-//
-//        DummyProcessor* p1 = new DummyProcessor("calol2-10", a1);
-//        DummyProcessor* p2 = new DummyProcessor("calol2-13", a2);
-//        DummyProcessor* p3 = new DummyProcessor("demux", a3);
-//
-//        uhal::log( uhal::Info(), ss.str(), "Adoption" );
-//        s->add(p1);
-//        s->add(p2);
-//        s->add(p3);
-//        
-//        vector< pair<string,string> > links;
-//        push_back(links) 
-//                ("calol2-10.tx00", "demux.rx01")
-//                ("calol2-13.tx01", "demux.rx00");
-//        unsigned int lid;
-//        vector< pair<string,string> >::iterator it;
-//        for ( it = links.begin(), lid=0; it != links.end(); ++it, ++lid ) {
-//            OutputPort* src = s->getObj<OutputPort>(it->first);
-//            InputPort* dst = s->getObj<InputPort>(it->second);
-//            
-//            stringstream lname;
-//            lname << "link" << std::setw(3) << std::setfill('0') << lid;
-//            Link* lLink = new Link( lname.str(), src, dst );
-//            s->add(lLink);
-//        }
-//
-//        
-//
-////        cout << ss.str() << "Destructor" << endl;
-//        uhal::log( uhal::Info(), ss.str(), "Destructor" );
-//        
-//        delete s;
-//    }
-//
-//    return true;
-//}
-
-//SystemBuildFullCrate::SystemBuildFullCrate() :
-//TestUnit("sys_build_crate") {
-//}
-//
-//bool
-//SystemBuildFullCrate::run() {
-//    using namespace boost::assign;
-//    ParameterSet args, args13;
-//    args.insert("requires", "ttc;daq")("provides", "trg")("crate", "s2x3g18");
-//    args13.insert("requires", "")("provides", "ttc;daq")("crate", "s2x3g18");
-//    
-//
-//    stringstream ss;
-//    ss << "[CrateTest] --> ";
-//
-//    // Create a System
-//    cout << ss.str() << "Constructor" << endl;
-//    System* lSystem = new System("calol2");
-//    
-//
-//    // AMC13 comes first
-//    AMC13Service* amc13 = new DummyAMC13Service("amc13xg", args13);
-//    
-//    // And a set of boards
-//    std::vector<DummyProcessor*> dummies;
-//    for (int s(0); s < 12; ++s) {
-//        ParameterSet a = args; // copy the common attributes
-//        const string slot = boost::lexical_cast<std::string>(s);
-//        a.insert("slot", s);
-//        DummyProcessor* p = new DummyProcessor("mp7-" + slot, a);
-//        dummies.push_back(p);
-//    }
-//    cout << endl;
-//    
-//    // Don't forget the services
-//    cout << ss.str() << "Adoption" << endl;
-//    lSystem->add( amc13 );
-//    
-//    std::vector<DummyProcessor*>::iterator dIt;
-//    for (dIt = dummies.begin(); dIt != dummies.end(); ++dIt) {
-//        lSystem->add(*dIt);
-//    }
-//    cout << endl;
-//
-//    Crate* crate = lSystem->getObj<Crate>("s2x3g18");
-//    cout << *(crate) << endl;
-//    
-//    cout << "Crate " << crate->id() << ", populated slots: "; 
-//    BOOST_FOREACH( uint32_t i, crate->getPopulatedSlots() ) {
-//        cout << i << " ";
-//    }
-//    cout << endl;
-//    
-//    cout << ss.str() << "Destructor" << endl;
-//    delete lSystem;
-//
-//    return true;
-//
-//}
-
 SystemExploreTest::SystemExploreTest() :
 TestUnit("sys_explore") {
 }
@@ -274,7 +147,7 @@ SystemExploreTest::run() {
     std::vector<std::string>::iterator it;
 
     cout << "And these their Paths" << endl;
-    cout << "====================" << endl;
+    cout << "=====================" << endl;
     objects = lSystem->getPaths();
     for (it = objects.begin(); it != objects.end(); ++it) {
         cout << *it << endl;
