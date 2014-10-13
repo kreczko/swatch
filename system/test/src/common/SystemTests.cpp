@@ -34,6 +34,7 @@
 using namespace boost::assign;
 using namespace swatch::core;
 using namespace swatch::system;
+using namespace swatch::processor;
 using namespace swatch::system::test;
 
 struct Params {
@@ -97,13 +98,80 @@ BOOST_AUTO_TEST_SUITE( SystemTestSuite )
 BOOST_FIXTURE_TEST_CASE(BuildSystemWithDefaultCreator, Params){
 	System * system = SystemFactory::get()->make("SystemLoggingCreator", ps_system.get<std::string>("name"), ps_system);
 	BOOST_CHECK_EQUAL(system->id(), "calol2");
-	BOOST_CHECK_EQUAL(system->getProcessors().size(), 3);
-	BOOST_CHECK_EQUAL(system->getServices().size(), 2);
+	BOOST_CHECK_EQUAL(system->getProcessors().size(), size_t(3));
+	BOOST_CHECK_EQUAL(system->getServices().size(), size_t(2));
 	// detailed tests for the content of processors and services
 	// should be done in the respective Creator tests.
 }
 
-BOOST_AUTO_TEST_CASE(BuildSystem) {
+BOOST_AUTO_TEST_CASE(AddCrate) {
+	Crate * crate = new Crate("myCrate");
+	System * system = new System("mySystem");
+	system->add(crate);
+	Crate * stored_crate = system->getObj<Crate>("myCrate");
+	BOOST_CHECK_EQUAL(crate->id(), stored_crate->id() );
+}
+
+BOOST_AUTO_TEST_CASE(AddCrateToMap) {
+	Crate * crate = new Crate("myCrate");
+	System * system = new System("mySystem");
+	system->add(crate);
+	boost::unordered_map<std::string, Crate*> crates = system->getCrates();
+	// check if map contains the object ID
+	bool is_crate_in_map = crates.find(crate->id()) != crates.end();
+	BOOST_CHECK_EQUAL(is_crate_in_map, true );
+}
+
+BOOST_AUTO_TEST_CASE(AddCrateShouldNotOverwrite) {
+	Crate * crateA = new Crate("myCrateA");
+	Crate * crateAprime = new Crate("myCrateA");
+
+	ParameterSet params;
+	params.insert("requires", "ttc;daq")("provides", "trg");
+	params.insert("crate", "crateA") ("slot", 1);
+	DummyProcessor* p = new DummyProcessor("calol2-10", params);
+	crateA->add(p);
+	BOOST_CHECK_EQUAL(crateA->getPopulatedSlots().size(), size_t(1));
+
+	System * system = new System("mySystem");
+	system->add(crateA);
+	BOOST_CHECK_THROW(system->add(crateAprime), std::runtime_error);
+}
+
+BOOST_AUTO_TEST_CASE(AddCrateNULLPointerShouldThrowException) {
+	System * system = new System("mySystem");
+	BOOST_CHECK_THROW(system->add((Crate*) NULL), std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(AddProcessorNULLPointerShouldThrowException) {
+	System * system = new System("mySystem");
+	BOOST_CHECK_THROW(system->add((Processor*) NULL), std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(AddServiceNULLPointerShouldThrowException) {
+	System * system = new System("mySystem");
+	BOOST_CHECK_THROW(system->add((Service*) NULL), std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(AddAMC13NULLPointerShouldThrowException) {
+	System * system = new System("mySystem");
+	BOOST_CHECK_THROW(system->add((AMC13Service*) NULL), std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(AddLinkNULLPointerShouldThrowException) {
+	System * system = new System("mySystem");
+	BOOST_CHECK_THROW(system->add((Link*) NULL), std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_CASE(HasCrate) {
+	Crate * crate = new Crate("myCrate");
+	System * system = new System("mySystem");
+	system->add(crate);
+	BOOST_CHECK_EQUAL(system->hasCrate("myCrate"), true );
+	BOOST_CHECK_EQUAL(system->hasCrate("MyImaginaryCrate"), false );
+}
+
+BOOST_AUTO_TEST_CASE(BuildSystem) {// this is not a test
     ParameterSet a;
     a.insert("requires", "ttc;daq")("provides", "trg");
     ParameterSet a1 = a, a2 = a, a3 = a;
@@ -113,6 +181,11 @@ BOOST_AUTO_TEST_CASE(BuildSystem) {
 
     BOOST_TEST_MESSAGE("Constructor");
     System* s = new System("calol2");
+
+    Crate* crateA = new Crate("crateA");
+    Crate* crateB = new Crate("crateB");
+    s->add(crateA);
+    s->add(crateB);
 
     DummyProcessor* p1 = new DummyProcessor("calol2-10", a1);
     DummyProcessor* p2 = new DummyProcessor("calol2-13", a2);
@@ -156,8 +229,10 @@ BOOST_AUTO_TEST_CASE(BuildCrate) {
     // Create a System
     BOOST_TEST_MESSAGE("Constructor");
     System* lSystem = new System("calol2");
-    
-    // AMC13 comes first
+    // crate comes first
+    Crate* the_crate = new Crate("s2x3g18");
+    lSystem->add(the_crate);
+    // AMC13
     ParameterSet params13;
     params13.insert("requires", "")("provides", "ttc;daq")("crate", "s2x3g18");
     AMC13Service* amc13 = new DummyAMC13Service("amc13xg", params13);

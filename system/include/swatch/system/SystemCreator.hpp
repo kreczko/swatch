@@ -27,6 +27,8 @@ protected:
     virtual swatch::system::System* create_system(const std::string& aId, const swatch::core::ParameterSet& params);
     virtual void add_processors(swatch::system::System* system, const swatch::core::ParameterSet& params);
     virtual void add_services(swatch::system::System* system, const swatch::core::ParameterSet& params);
+    virtual void add_crates(swatch::system::System* system, const swatch::core::ParameterSet& params);
+    virtual void add_crate(swatch::system::System* system, const swatch::core::ParameterSet& params);
 };
 
 

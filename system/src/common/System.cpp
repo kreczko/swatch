@@ -40,18 +40,11 @@ System::getCrates() const {
 
 void
 System::add(processor::Processor* aProcessor) {
-
+    if (aProcessor == NULL)
+        throw std::invalid_argument("Processor pointer is NULL!");
     // check if slot and crate attribute are present
     if (aProcessor->getCrateId().empty() || aProcessor->getSlot() == processor::Processor::NoSlot) {
         throw runtime_error("No crate, no slot, no party");
-    }
-
-    // check the slot number
-    uint32_t slot = aProcessor->getSlot();
-    if (slot < 1 || slot > 12) {
-        stringstream ss;
-        ss << "Slot " << slot << " out of range (card " << aProcessor->id() << ")";
-        throw std::out_of_range(ss.str());
     }
 
     // build a family
@@ -61,26 +54,22 @@ System::add(processor::Processor* aProcessor) {
     processors_.push_back(aProcessor);
 
     // and give it a different view
-    Crate* cptr;
     std::string crateId = aProcessor->getCrateId();
-
-    boost::unordered_map<std::string, Crate*>::iterator cit = cratesMap_.find(crateId);
-    if (cit != cratesMap_.end()) {
-        cptr = cit->second;
-    } else {
-        cptr = new Crate(crateId);
-        this->addObj(cptr);
-
-        cratesMap_[crateId] = cptr;
+    if (!hasCrate(crateId)){
+    	stringstream ss;
+    	ss << "Cannot find Crate " << crateId;
+    	throw runtime_error(ss.str());
     }
-
-    cptr->add(aProcessor);
+    else
+    	cratesMap_[crateId]->add(aProcessor);
     
     uhal::log(uhal::Debug(),aProcessor->id(), " added (path = ", aProcessor->path(), ")");
 }
 
 void
 System::add(system::AMC13Service* aAMC13) {
+    if (aAMC13 == NULL)
+        throw std::invalid_argument("AMC13 pointer is NULL!");
     // build a family
     this->addObj(aAMC13);
     
@@ -88,34 +77,38 @@ System::add(system::AMC13Service* aAMC13) {
     amc13s_.push_back(aAMC13);
     
     // and give it a different view
-    Crate* cptr;
     std::string crateId = aAMC13->getCrateId();
 
     boost::unordered_map<std::string, Crate*>::iterator cit = cratesMap_.find(crateId);
-    if (cit != cratesMap_.end()) {
-        cptr = cit->second;
-    } else {
-        cptr = new Crate(crateId);
-        this->addObj(cptr);
-
-        cratesMap_[crateId] = cptr;
-    }
-
-    cptr->add(aAMC13);
-    
+    if (!hasCrate(crateId)) {
+    	stringstream ss;
+    	ss << "Cannot find Crate " << crateId;
+    	throw runtime_error(ss.str());
+    } else
+    	cratesMap_[crateId]->add(aAMC13);
     
 }
 void
 System::add(Service* aService) {
+    if (aService == NULL)
+        throw std::invalid_argument("AMC13 pointer is NULL!");
     this->addObj(aService);
     services_.push_back(aService);
 }
 
 void
 System::add(core::Link* aLink) {
+    if (aLink == NULL)
+        throw std::invalid_argument("Link pointer is NULL!");
     this->addObj(aLink);
-
     links_.push_back(aLink);
+}
+
+void System::add( Crate* crate ){
+    if (crate == NULL)
+        throw std::invalid_argument ("Crate pointer is NULL!");
+	this->addObj(crate);
+	cratesMap_[crate->id()] = crate;
 }
 
 const std::deque<processor::Processor*>&
@@ -166,6 +159,9 @@ System::f_configure(const core::ParameterSet& params)
 
 }
 
+bool System::hasCrate(const std::string& crate_id) const{
+	return cratesMap_.find(crate_id) != cratesMap_.end();
+}
 
 } // end ns system
 } // end ns swatch

@@ -46,12 +46,15 @@ public:
     void add( system::AMC13Service* aAMC13 );
     void add( core::Link* aLink );
     void add( system::Service* aService );
+    void add( system::Crate* crate );
     
     const std::deque<processor::Processor*>& getProcessors() const;
     const std::deque<Service*>& getServices() const;
     const std::deque<core::Link*>& getLinks() const;
     const boost::unordered_map<std::string, Crate*>& getCrates() const;
     
+    bool hasCrate(const std::string& crate_id) const;
+
 
     
 protected:

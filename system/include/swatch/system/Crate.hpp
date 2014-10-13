@@ -36,6 +36,7 @@ public:
     system::AMC13Service* amc13() { return amc13_; }
     
     std::vector<uint32_t> getPopulatedSlots() const;
+    bool isSlotTaken( uint32_t slot ) const;
     
 private:
     Service* mch_;

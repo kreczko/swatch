@@ -24,6 +24,9 @@ swatch::system::System*
 SystemLoggingCreator::operator()(const std::string& aId, const swatch::core::ParameterSet& params) {
     log(Info(),"Building System ",aId);
     System* sys = create_system(aId, params);
+
+    log(Info(), "Building Crates");
+    add_crates(sys, params);
     
     log(Info(), "Building Processors");
     add_processors(sys, params);

@@ -26,7 +26,7 @@ namespace system {
 
 
 Crate::Crate(const std::string aId, const core::ParameterSet& params)
-: ObjectView(aId), mch_(NULL), amc13_(NULL), amcs_(12, NULL), min_(1), max_(12) {
+: ObjectView(aId, params), mch_(NULL), amc13_(NULL), amcs_(12, NULL), min_(1), max_(12) {
 }
 
 Crate::~Crate() {
@@ -50,10 +50,10 @@ Crate::add(processor::Processor* aProcessor) {
     }    
 
     // Check if the slot is available
-    if ( amcs_[slot]) {
+    if ( isSlotTaken(slot) ) {
         stringstream ss;
         ss << "Cannot add card " << this->id() << " to slot " << slot
-                << ". Slot already assigned to card " << this->amcs_[slot]->id();
+                << ". Slot already assigned to card " << this->amcs_[slot-min_]->id();
         throw runtime_error(ss.str());
     }
     
@@ -91,6 +91,10 @@ operator<<(std::ostream& os, const Crate& cv) {
         os << " amc[" << (int)i << "](" << cv.amcs_[i] << ")"; 
     }
     return os;
+}
+
+bool Crate::isSlotTaken( uint32_t slot ) const {
+	return amcs_[slot - min_] != NULL;
 }
 
 
