@@ -25,15 +25,20 @@ namespace processor {
 namespace test {
 
 IPBusDummyHardware::IPBusDummyHardware(const std::string& name, uint32_t port, const std::string& addrtab) :
-    name_(name), port_(port), pid_(0), status_(0), started_(false), addrtab_(addrtab), hw_(0x0) {
+    name_(name), port_(port),
+    // pid_(0),
+    status_(0),
+    started_(false),
+    addrtab_(addrtab),
+    hw_(0x0) {
         workers_ = new boost::thread_group();
 }
 
 
-pid_t
-IPBusDummyHardware::pid() const {
-    return pid_;
-}
+// pid_t
+// IPBusDummyHardware::pid() const {
+//     return pid_;
+// }
 
 
 IPBusDummyHardware::~IPBusDummyHardware() {
@@ -63,15 +68,15 @@ IPBusDummyHardware::terminate() {
 
     if ( workers_) delete workers_; workers_ = 0x0;
     // To be cleaned up
-    if ( pid_ != 0 ) {
-        cout << "Killing subprocess" << endl;
-        int code = ::kill(pid_, SIGTERM);
-        cout << "Killing code: " << code << endl;
-        // Fix logfile permissions
-        std::string logfile = "udp-" + name_ + ".log";
-        chmod(logfile.c_str(), S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH );
-        pid_ = 0;
-    }
+    // if ( pid_ != 0 ) {
+    //     cout << "Killing subprocess" << endl;
+    //     int code = ::kill(pid_, SIGTERM);
+    //     cout << "Killing code: " << code << endl;
+    //     // Fix logfile permissions
+    //     std::string logfile = "udp-" + name_ + ".log";
+    //     chmod(logfile.c_str(), S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH );
+    //     pid_ = 0;
+    // }
 
     if ( hw_ ) delete hw_; 
 }
