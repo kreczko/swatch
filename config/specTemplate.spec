@@ -64,12 +64,12 @@ fi
 
 if [ -d %{_packagedir}/lib ]; then
   cd %{_packagedir}/lib; \
-  find . -name "*" -exec install -D -m 644 {} $RPM_BUILD_ROOT/%{_prefix}/lib/{} \;
+  find . -name ".svn" -prune -o -name "*" -exec install -D -m 644 {} $RPM_BUILD_ROOT/%{_prefix}/lib/{} \;
 fi
 
 if [ -d %{_packagedir}/etc ]; then
   cd %{_packagedir}/etc; \
-  find . -name "*" -exec install -D -m 644 {} $RPM_BUILD_ROOT/%{_prefix}/etc/{} \;
+  find . -name ".svn" -prune -o -name "*" -exec install -D -m 644 {} $RPM_BUILD_ROOT/%{_prefix}/etc/{} \;
 fi
 
 #cp -rp %{_sources_dir}/* $RPM_BUILD_ROOT%{_prefix}/.

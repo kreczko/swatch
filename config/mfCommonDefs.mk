@@ -13,21 +13,37 @@ CACTUS_OS="unknown.os"
 
 UNAME=$(strip $(shell uname -s))
 ifeq ($(UNAME),Linux)
-	ifneq ($(findstring redhat-5,$(CACTUS_PLATFORM)),)
-	        CACTUS_OS=slc5
-	else ifneq ($(findstring redhat-6,$(CACTUS_PLATFORM)),)
-	        CACTUS_OS=slc6
-	else ifneq ($(findstring centos-7,$(CACTUS_PLATFORM)),)
-			CACTUS_OS=cc7
-	endif
+
+ifneq ($(findstring redhat-5,$(CACTUS_PLATFORM)),)
+CACTUS_OS=slc5
+
+else ifneq ($(findstring redhat-6,$(CACTUS_PLATFORM)),)
+CACTUS_OS=slc6
+
+else ifneq ($(findstring centos-7,$(CACTUS_PLATFORM)),)
+CACTUS_OS=cc7
 endif
-ifeq ($(UNAME),Darwin)
-    CACTUS_OS=osx
+
+else ifeq ($(UNAME),Darwin)
+CACTUS_OS=osx
 endif
 
 $(info OS Detected: $(CACTUS_OS))
 # end of Cactus config
 
+## Environment
+# Make sure $CACTUS_ROOT/lib is present in LD_LIBRARY_PATH
+
+ifeq ($(findstring $(CACTUS_ROOT)/lib,$(LD_LIBRARY_PATH)),)
+$(info CACTUS_ROOT/lib added to LD_LIBRARY_PATH)
+LD_LIBRARY_PATH:="$(CACTUS_ROOT)/lib:$(LD_LIBRARY_PATH)"
+else
+$(info CACTUS_ROOT already in LD_LIBRARY_PATH)
+endif
+
+export LD_LIBRARY_PATH
+
+$(info Linker path: $(LD_LIBRARY_PATH))
 
 # Compilers
 CPP:=g++
