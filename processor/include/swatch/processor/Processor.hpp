@@ -10,21 +10,22 @@
 
 // Swatch Headers
 #include "swatch/core/Device.hpp"
+#include "InputChannel.hpp"
 
 namespace swatch {
 
-namespace core
-{
+namespace core {
 class ParameterSet;
 }
 
 namespace processor {
 
-class Connection;
-class AbstractInfo;
-class AbstractCtrl;
-class AbstractChannel;
-class AbstractTTC;
+class Controls;
+class TTCInterface;
+class InputChannel;
+class OutputChannel;
+class ReadoutInterface;
+class AlgoInterface;
 
 /**
  *  A port class.
@@ -34,62 +35,99 @@ public:
     Processor(const std::string& aId, const core::ParameterSet& params = core::ParameterSet());
     virtual ~Processor();
 
+    /**
+     * Return the board slot number
+     * @return 
+     */
     virtual uint32_t getSlot() const = 0;
+    
+    /**
+     * Returns the Processor crate id
+     * @return 
+     */
     virtual const std::string& getCrateId() const = 0;
 
     static const uint32_t NoSlot;
 
-    AbstractInfo* info() {
-        return info_;
-    }
+    
+    Controls* ctrl();
 
-    AbstractCtrl* ctrl() {
-        return ctrl_;
-    }
+    TTCInterface* ttc();
+    
+    ReadoutInterface* readout();
+    
+    AlgoInterface* algo();
 
-    AbstractTTC* ttc() {
-        return ttc_;
-    }
-    
     /**
-     * 
-     * @return the vector of input channel pointers 
+     * Returns the vector of input channel pointers 
+     * @return vector of input channel pointers 
      */
-    const std::vector<AbstractChannel*>& inputChannels() const {
-        return inputChannels_;
-    }
-    
-    AbstractChannel* inputChannel( uint32_t i ) {
-        return inputChannels_.at(i);
-    }
-    
+    const std::vector<InputChannel*>& inputChannels() const;
+
+    InputChannel* inputChannel(uint32_t i);
+
     /**
-     * 
-     * @return vector of output channel pointers
+     * Returns the vector of output channel pointers
+     * @return output channel pointers
      */
-    const std::vector<AbstractChannel*>& outputChannels() const {
-        return outputChannels_;
-    }
-    
-    AbstractChannel* outputChannel( uint32_t i ) {
-        return outputChannels_.at(i);
-    }
+    const std::vector<OutputChannel*>& outputChannels() const;
+
+    OutputChannel* outputChannel(uint32_t i);
+
+    // Basic control methods
+
+    virtual std::vector<std::string> clockModes() const = 0;
+
+    virtual void reset( const std::string& mode ) = 0;
 
 
 protected:
-    AbstractInfo* info_;
-    AbstractCtrl* ctrl_;
-    AbstractTTC*  ttc_;
 
-    std::vector<AbstractChannel*> inputChannels_;
-    std::vector<AbstractChannel*> outputChannels_;
+    //! Master control interface
+    Controls* ctrl_;
 
-    Connection* connection_;
+    //! TTC control interface
+    TTCInterface* ttc_;
 
-    virtual bool c_halt();
-    virtual void f_halt(const core::ParameterSet& params = core::ParameterSet());
-    virtual bool c_configure();
-    virtual void f_configure(const core::ParameterSet& params = core::ParameterSet());
+    //! Readout control interface
+    ReadoutInterface* readout_;
+    
+    //!
+    AlgoInterface* algo_;
+
+    //! 
+    std::vector<InputChannel*> inputChannels_;
+    
+    //!
+    std::vector<OutputChannel*> outputChannels_;
+
+    /**
+     * @brief Assess whether the pre-conditions to Halt are satisfied.
+     * @details Runs the checks to guarantee that the Halt transition can take place.
+     * @return True if the Processor can be Halted.
+     */
+    virtual bool canHalt();
+
+    /**
+     * Perform configuration action
+     * @param params
+     */
+    virtual void doHalt(const core::ParameterSet& params = core::ParameterSet());
+
+    /**
+     * @brief Assess whether the pre-conditions to Configure are satisfied.
+     * @details Runs the checks to guarantee that the Configure transition can take place.
+     * @return True if the Processor can be configured.
+     */
+    virtual bool canConfigure();
+
+    /**
+     * @brief Execute the configure transition
+     * @details [long description]
+     * 
+     * @param params [description]
+     */
+    virtual void doConfigure(const core::ParameterSet& params = core::ParameterSet());
 
 };
 

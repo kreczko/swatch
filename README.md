@@ -9,17 +9,27 @@ Documentation of the SWATCH software library
 ## Boost unit tests 
 You can run tests either for all of swatch, per subsystem or individually
  - all:
+
 ```
 ./test/bin/boostTest.exe --log_level=message
 ```
+
  - per subsystem (library)
+
 ```
 ./test/bin/console_test_runner.exe --test system/test/lib/libcactus_swatch_system_test.so
 ```
- - individual: ```./test/bin/boostTest.exe --log_level=message --run_test=SystemTestSuite/BuildSystem```
+
+ - individual:
+
+```
+ ./test/bin/boostTest.exe --log_level=message --run_test=SystemTestSuite/BuildSystem
+ ```
+
 
 ## Other
 Other tests can be run via
+
 ```
 ./bin/SwatchTest.exe json_build
 ./bin/SwatchTest.exe sys_explore

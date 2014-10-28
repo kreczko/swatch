@@ -42,13 +42,13 @@ Device::halt(const ParameterSet& params)
 	// lock
 	// FSM check
 
-	if (!c_halt())
+	if (!canHalt())
 	{
 		msg << "c_halt check failed! Could not finish transition to HALTED state from " << fsm_ << endl;
 		throw runtime_error(msg.str());
 	}
 
-	f_halt();
+	doHalt();
 
 	fsm_ = Device::FsmStates::HALTED;
 	msg << "FSM set to HALTED" << endl;
@@ -68,13 +68,13 @@ Device::configure(const ParameterSet& params)
 		throw runtime_error(msg.str());
 	}
 
-	if (!c_configure())
+	if (!canConfigure())
 	{
 		msg << "c_configure check failed! Could not finish transition to CONFIGURED state from " << fsm_ << endl;
 		throw runtime_error(msg.str());
 	}
 
-	c_configure();
+	canConfigure();
 
 	fsm_ = Device::FsmStates::CONFIGURED;
 	msg << "FSM set to CONFIGURED" << endl;
@@ -83,26 +83,26 @@ Device::configure(const ParameterSet& params)
 
 
 bool
-Device::c_halt()
+Device::canHalt()
 {
 	return true;
 }
 
 
 void
-Device::f_halt(const ParameterSet& params)
+Device::doHalt(const ParameterSet& params)
 {
 
 }
 
 bool
-Device::c_configure()
+Device::canConfigure()
 {
 	return true;
 }
 
 void
-Device::f_configure(const ParameterSet& params)
+Device::doConfigure(const ParameterSet& params)
 {
 
 }

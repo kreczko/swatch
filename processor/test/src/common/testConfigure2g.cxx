@@ -16,6 +16,7 @@ test configuration
 #include "swatch/core/ParameterSet.hpp"
 #include "swatch/processor/test/IPBusDummyHardware.hpp"
 #include "swatch/processor/test/IPBusProcessor.hpp"
+#include "swatch/processor/TTCInterface.hpp"
 
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
@@ -152,6 +153,7 @@ private:
     boost::random::uniform_int_distribution<uint32_t> flatDistribution_;
 };
 
+/*
 //---------------------------------------------------------------------------//
 void reset(swatch::processor::Processor *p, const swatch::core::ParameterSet &params) {
     std::string clock = params.get<std::string>("clock");
@@ -190,49 +192,51 @@ void reset(swatch::processor::Processor *p, const swatch::core::ParameterSet &pa
 
 
 }
-
+*/
 void configure(swatch::processor::Processor *p, const swatch::core::ParameterSet &params) {
     using namespace swatch::core;
     using namespace swatch::processor;
     // Claim exclusive use of the board
     // TODO
 
-    // Based on reset
-    // Standard soft reset procedure
-    p->ctrl()->softReset();
+    // // Based on reset
+    // // Standard soft reset procedure
+    // p->ctrl()->softReset();
 
-    // Change clock configuration
-    // Every board must have 'internal' and 'external' modes
-    p->ctrl()->configureClock("internal");
+    // // Change clock configuration
+    // // Every board must have 'internal' and 'external' modes
+    // p->ctrl()->configureClock("internal");
 
-    // Enable/disable ttc
-    p->ttc()->configure("internal");
+    // // Enable/disable ttc
+    // p->ttc()->configure("internal");
 
-    // Check presence of TTC clock and signals
-    if ( not p->ttc()->isClock40Locked() ) {
-        cout << "Clock 40 NOT locked!" << endl;
-    }
-    if ( not p->ttc()->isOrbitLocked() ) {
-        cout << "Orbit (BC0) NOT locked!" << endl;
-    }
+    // // Check presence of TTC clock and signals
+    // if ( not p->ttc()->isClock40Locked() ) {
+    //     cout << "Clock 40 NOT locked!" << endl;
+    // }
+    // if ( not p->ttc()->isOrbitLocked() ) {
+    //     cout << "Orbit (BC0) NOT locked!" << endl;
+    // }
 
-    // And clear all counters
-    p->ttc()->clearCounters();
+    // // And clear all counters
+    // p->ttc()->clearCounters();
+
+    p->reset("internal");
 
     // Configure input and output channels and buffers
 
     // Set MGTs up first
     // Rx channels
-    BOOST_FOREACH( AbstractChannel* c, p->inputChannels() ) {
+    BOOST_FOREACH( InputChannel* c, p->inputChannels() ) {
         // Reset
         // c->ctrl()->reset();
         // Configure
         // c->ctrl()->configure();
         // Clear
-        // c->ctrl()->clearCRCs();
+        c->clearErrors();
     }
     // Tx Channels 
-    BOOST_FOREACH( AbstractChannel* c, p->outputChannels() ) {
+    BOOST_FOREACH( OutputChannel* c, p->outputChannels() ) {
         // Reset
         // c->ctrl()->reset();
         // Configure
@@ -240,11 +244,11 @@ void configure(swatch::processor::Processor *p, const swatch::core::ParameterSet
     }
     
     // And then buffers
-    BOOST_FOREACH( AbstractChannel* c, p->inputChannels() ) {
-        c->buffer()->configure(AbstractChanBuffer::Latency);
+    BOOST_FOREACH( InputChannel* c, p->inputChannels() ) {
+        c->configureBuffer(ChannelBase::Latency);
     }
-    BOOST_FOREACH( AbstractChannel* c, p->outputChannels() ) {
-        c->buffer()->configure(AbstractChanBuffer::Latency);
+    BOOST_FOREACH( OutputChannel* c, p->outputChannels() ) {
+        c->configureBuffer(ChannelBase::Latency);
     }
 
 
@@ -261,18 +265,18 @@ void configure(swatch::processor::Processor *p, const swatch::core::ParameterSet
 }
 
 //----------------------------------------------------------------------------//
-void printStatus( std::ostream& out, swatch::processor::AbstractInfo* info ) {
-    out << "Firmware version : 0x"  << std::hex << info->firmwareVersion() << std::dec << endl;
-    out << "Inputs  : " << info->numberOfInputs() << endl;
-    out << "Outputs : " << info->numberOfOutputs() << endl;
+void printStatus( std::ostream& out, swatch::processor::Controls* ctrl ) {
+    out << "Firmware version : 0x"  << std::hex << ctrl->firmwareVersion() << std::dec << endl;
+    out << "Inputs  : " << ctrl->numberOfInputs() << endl;
+    out << "Outputs : " << ctrl->numberOfOutputs() << endl;
 } 
 
 void printStatus( std::ostream& out, swatch::processor::TTCInterface* ttc ) {
     out << "Clock40 Locked: " << (ttc->isClock40Locked() ? "True" : "False")  << endl;
     out << "Orbit Locked:   " << (ttc->isOrbitLocked() ? "True" : "False" )<< endl;
-    out << "Event counter:  " << ttc->getEvtCount() << endl;
-    out << "Bunch counter:  " << ttc->getBXCount() << endl;
-    out << "Orbit counter:  " << ttc->getOrbitCount() << endl;
+    out << "Event counter:  " << ttc->getEventCounter() << endl;
+    out << "Bunch counter:  " << ttc->getBunchCounter() << endl;
+    out << "Orbit counter:  " << ttc->getOrbitCounter() << endl;
     out << "SBEC  counter:  " << ttc->getSingleBitErrors() << endl;
     out << "DBEC  counter:  " << ttc->getDoubleBitErrors() << endl;
 } 
@@ -280,10 +284,11 @@ void printStatus( std::ostream& out, swatch::processor::TTCInterface* ttc ) {
 void printStatus( std::ostream& out, swatch::processor::Processor* p ) {
     out << "Processor " << p->id() << endl;
     out << ">> Info" << endl;
-    printStatus(cout,  p->info() );
+    printStatus(cout,  p->ctrl() );
     out << ">> TTC" << endl;
     printStatus(cout,  p->ttc() );
 }
+
 
 //----------------------------------------------------------------------------//
 int main(int argc, char const *argv[]) {
@@ -346,6 +351,8 @@ int main(int argc, char const *argv[]) {
     params.set("slot", (uint32_t) 5);
     params.set("poweron", poweron);
 
+
+    // Fun starts here
     Processor *p0 = 0x0;
     try {
         p0 = new test::IPBusProcessor("test-board0", params);
@@ -361,48 +368,54 @@ int main(int argc, char const *argv[]) {
 
     cout << "Input channels scan" << endl;
     // Test rx upload and download
-    BOOST_FOREACH( AbstractChannel* in, p0->inputChannels() ) {        
+    BOOST_FOREACH( InputChannel* in, p0->inputChannels() ) {        
 
-        std::vector<uint64_t> v(in->buffer()->size(),0x5555);
+        std::vector<uint64_t> v(in->getBufferSize(),0x5555);
         // cout << "v.size() = " << v.size() << endl;
-        in->buffer()->upload(v);   
+        in->upload(v);   
 
         // Download and check
-        std::vector<uint64_t> data = in->buffer()->download();   
+        std::vector<uint64_t> data = in->download();   
     
         cout << "v == data? : " << (v == data) << endl;
     }
 
     cout << "Output channels scan" << endl;
     // Test tx channels injection and 
-    BOOST_FOREACH( AbstractChannel* out, p0->outputChannels() ) {        
+    BOOST_FOREACH( OutputChannel* out, p0->outputChannels() ) {        
 
-        std::vector<uint64_t> v(out->buffer()->size(),0x5555);
+        std::vector<uint64_t> v(out->getBufferSize(),0x5555);
         // cout << "v.size() = " << v.size() << endl;
-        out->buffer()->upload(v);   
+        out->upload(v);   
 
         // Download and check
-        std::vector<uint64_t> data = out->buffer()->download();   
+        std::vector<uint64_t> data = out->download();   
     
         cout << "v == data? : " << (v == data) << endl;
     }
 
-
     cout << "//_ Step 1 ___ Testing resets __________________________________" << endl;
     swatch::core::ParameterSet mode;
-    mode.insert("clock", "internal")("ttc", "internal");
-
     
+    std::cout << p0->id() << " Clock modes:" << std::endl;
+    BOOST_FOREACH( const std::string& c, p0->clockModes() ) {
+        std::cout << "  + " << c << std::endl;
+    }
+
     cout << ">> Resetting on internal clock" << endl;
-    reset(p0, mode);
+    // reset(p0, mode);
+    p0->reset("internal");
+
     cout << ">> Take a nap (1 sec)" << endl;
     sleep(1);
     printStatus( cout, p0->ttc() );
 
-    cout << ">> Sending 5 L1s" << endl;
-    p0->ttc()->sendMultipleL1A(5);
-    printStatus( cout, p0->ttc() );
+    // cout << ">> Sending 5 L1s" << endl;
+    // p0->ttc()->sendMultipleL1A(5);
+    // printStatus( cout, p0->ttc() );
+    
 
+    
     cout << "//_ Step 2 ___ Testing config __________________________________" << endl;
     swatch::core::ParameterSet config;
     configure(p0, config);
@@ -416,10 +429,10 @@ int main(int argc, char const *argv[]) {
     cout << ">> Take a nap (1 sec)" << endl;
     sleep(1);
 
-    const std::vector<swatch::processor::AbstractChannel*>& rxs = p0->inputChannels();
+    const std::vector<swatch::processor::InputChannel*>& rxs = p0->inputChannels();
     std::vector< std::vector<uint64_t> > data(rxs.size());
     for ( size_t k(0); k < rxs.size(); ++k ) {
-        data[k].swap(p0->inputChannel(k)->buffer()->download());
+        data[k].swap(p0->inputChannel(k)->download());
     }
 
     for ( size_t j(0); j<data[0].size(); ++j ) {
@@ -435,4 +448,5 @@ int main(int argc, char const *argv[]) {
     cout << "//_ Destruction ________________________________________________" << endl;
     // delete p0;
     return 0;
+
 }

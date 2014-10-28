@@ -21,6 +21,13 @@ public:
     
     virtual uint32_t getSlot() const { return mSlot; }
     virtual const std::string& getCrateId() const { return mCrateId; }
+    
+
+    virtual std::vector<std::string> clockModes() const;
+
+    virtual void reset(const std::string& mode);
+
+
 protected:
     uint32_t mSlot;
     std::string mCrateId;

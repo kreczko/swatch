@@ -79,12 +79,12 @@ protected:
     
 
     // Operations checks: might be overriden by descendants
-   virtual bool c_halt();
-   virtual bool c_configure();
+   virtual bool canHalt();
+   virtual bool canConfigure();
 
    // Operations: something in common in all inherited classes? (e.g., actions with the ParameterSet)
-   virtual void f_halt(const core::ParameterSet& params);
-   virtual void f_configure(const core::ParameterSet& params);
+   virtual void doHalt(const core::ParameterSet& params);
+   virtual void doConfigure(const core::ParameterSet& params);
 
 
 };

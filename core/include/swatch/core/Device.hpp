@@ -45,10 +45,11 @@ protected:
     void addInput( InputPort* aInput );
     void addOutput( OutputPort*  aOutput );
 
-    virtual bool c_halt();
-    virtual void f_halt(const ParameterSet& params = ParameterSet());
-    virtual bool c_configure();
-    virtual void f_configure(const ParameterSet& params = ParameterSet());
+    virtual bool canHalt();
+    virtual bool canConfigure();
+    
+    virtual void doHalt(const ParameterSet& params = ParameterSet());
+    virtual void doConfigure(const ParameterSet& params = ParameterSet());
 
         
     std::deque<InputPort*> inputs_;

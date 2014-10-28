@@ -62,6 +62,16 @@ DummyProcessor::DummyProcessor(const std::string& aId, const core::ParameterSet&
 DummyProcessor::~DummyProcessor() {
 }
 
+std::vector<std::string> DummyProcessor::clockModes() const {
+    return std::vector<std::string>();
+}
+
+void DummyProcessor::reset(const std::string& mode) {
+
+}
+
+
+
 
 } // namespace test
 } // namespace system

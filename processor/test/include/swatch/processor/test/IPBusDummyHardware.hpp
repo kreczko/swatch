@@ -72,7 +72,7 @@ private:
     uint32_t port_;
 
     //! process id
-    // pid_t pid_;
+    pid_t pid_;
 
     //! udp hw return status (do we need it?)
     int status_;

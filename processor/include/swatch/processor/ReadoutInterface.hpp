@@ -5,8 +5,8 @@
  * @date 
  */
 
-#ifndef SWATCH_PROCESSOR_READOUTCTRL_HPP
-#define SWATCH_PROCESSOR_READOUTCTRL_HPP
+#ifndef SWATCH_PROCESSOR_READOUTINTERFACE_HPP
+#define SWATCH_PROCESSOR_READOUTINTERFACE_HPP
 
 
 // Swatch Headers
@@ -18,23 +18,23 @@ namespace processor {
 
 //! A class derived from swatch::processor::Processor used as a base class for concrete type of uTCA processors
 
-class AbstractReadoutCtrl : public Component {
+class ReadoutInterface : public Component {
 protected:
 
     /**
      * Constructor
      * @param id The name of the processor
      */
-    AbstractReadoutCtrl(Connection* connection) : Component(connection) {}
+    ReadoutInterface(Connection* connection) : Component(connection) {}
 
 public:
 
     /**
      * Destructor Made virtual to delegate this task to this class's children and avoid potential run time errors
      */
-    ~AbstractReadoutCtrl() {}
+    ~ReadoutInterface() {}
 };
 
 } // namespace processor
 } // namespace swatch
-#endif /* SWATCH_PROCESSOR_READOUTCTRL_HPP */
+#endif /* SWATCH_PROCESSOR_READOUTINTERFACE_HPP */

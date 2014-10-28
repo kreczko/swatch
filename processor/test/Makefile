@@ -39,5 +39,9 @@ Libraries =	\
 
 ExecutableLibraries = ${Libraries} ${Library}
 
+IgnoreSources = \
+	src/common/testConfigure.cxx
+
+
 include ${SWATCH_ROOT}/config/mfRules.mk
 include ${SWATCH_ROOT}/config/mfRPMRules.mk

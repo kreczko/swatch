@@ -128,24 +128,24 @@ System::getLinks() const {
 
 
 bool
-System::c_halt()
+System::canHalt()
 {
 	return true;
 }
 
 void
-System::f_halt(const core::ParameterSet& params)
+System::doHalt(const core::ParameterSet& params)
 {
 }
 
 bool
-System::c_configure()
+System::canConfigure()
 {
 	return true;
 }
 
 void
-System::f_configure(const core::ParameterSet& params)
+System::doConfigure(const core::ParameterSet& params)
 {
     // TODO: Prepare parameter set
     for (deque<processor::Processor*>::iterator pIt = processors_.begin();

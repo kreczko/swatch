@@ -10,12 +10,17 @@
 
 // Swatch Headers
 #include "swatch/core/Utilities.hpp"
-#include "swatch/core/Device.hpp"
 
 // Boost Headers
 #include <boost/detail/container_fwd.hpp>
 #include <boost/unordered/unordered_map.hpp>
-#include "boost/foreach.hpp"
+#include <boost/foreach.hpp>
+
+#include "swatch/processor/AbstractInfo.hpp"
+#include "swatch/processor/Controls.hpp"
+#include "swatch/processor/TTCInterface.hpp"
+#include "swatch/processor/ReadoutInterface.hpp"
+#include "swatch/processor/OutputChannel.hpp"
 
 
 using namespace std;
@@ -27,30 +32,79 @@ const uint32_t Processor::NoSlot =  0x7fffffffL;
 
 ///---
 Processor::Processor( const std::string& aId, const core::ParameterSet& params ) :
-    Device(aId, params) {
+    Device(aId, params),
+    ctrl_(0x0),
+    ttc_(0x0),
+    readout_(0x0),
+    algo_(0x0) {
     
 }
 
 Processor::~Processor() {
 }
 
+
+Controls*
+Processor::ctrl() {
+    return ctrl_;
+}
+
+
+TTCInterface*
+Processor::ttc() {
+    return ttc_;
+}
+
+
+ReadoutInterface*
+Processor::readout() {
+    return readout_;
+}
+
+
+AlgoInterface*
+Processor::algo() {
+    return algo_;
+}
+
+const std::vector<InputChannel*>&
+Processor::inputChannels() const {
+    return inputChannels_;
+}
+
+const std::vector<OutputChannel*>&
+Processor::outputChannels() const {
+    return outputChannels_;
+}
+
+InputChannel*
+Processor::inputChannel(uint32_t i) {
+    return inputChannels_.at(i);
+}
+
+OutputChannel*
+Processor::outputChannel(uint32_t i) {
+    return outputChannels_.at(i);
+}
+
+// Standard state machine operations
 bool
-Processor::c_halt() {
+Processor::canHalt() {
 	return true;
 }
 
 void
-Processor::f_halt(const core::ParameterSet& params) {
+Processor::doHalt(const core::ParameterSet& params) {
 
 }
 
 bool
-Processor::c_configure() {
+Processor::canConfigure() {
 	return true;
 }
 
 void
-Processor::f_configure(const core::ParameterSet& params) {
+Processor::doConfigure(const core::ParameterSet& params) {
 
 }
 
