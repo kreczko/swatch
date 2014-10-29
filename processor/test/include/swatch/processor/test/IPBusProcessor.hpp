@@ -10,7 +10,6 @@
 
 // Swatch Headers
 #include "swatch/processor/Processor.hpp"
-#include "swatch/processor/Connection.hpp"
 #include "swatch/core/ParameterSet.hpp"
 
 #include "swatch/processor/Controls.hpp"
@@ -18,10 +17,6 @@
 #include "swatch/processor/InputChannel.hpp"
 #include "swatch/processor/OutputChannel.hpp"
 
-
-#include "swatch/processor/AbstractChannel.hpp"
-#include "swatch/processor/AbstractChanCtrl.hpp"
-#include "swatch/processor/AbstractChanBuffer.hpp"
 
 #include "swatch/processor/test/IPBusComponent.hpp"
 

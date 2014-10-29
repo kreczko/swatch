@@ -10,22 +10,22 @@
 
 
 // Swatch Headers
-#include "swatch/processor/Component.hpp"
 
 // C++ Headers
+
+
 namespace swatch {
 namespace processor {
 
 //! A class derived from swatch::processor::Processor used as a base class for concrete type of uTCA processors
 
-class ReadoutInterface : public Component {
+class ReadoutInterface {
 protected:
 
     /**
      * Constructor
-     * @param id The name of the processor
      */
-    ReadoutInterface(Connection* connection) : Component(connection) {}
+    ReadoutInterface() {}
 
 public:
 

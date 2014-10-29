@@ -133,7 +133,7 @@ private:
         hw->dispatch();
 
         BOOST_FOREACH(ValMap::value_type& m, modes) {
-            if ( m.second == swatch::processor::AbstractChanBuffer::Capture ) {
+            if ( m.second == swatch::processor::ChannelBase::Capture ) {
                 // cout << m.first << " : " << m.second << endl;
 
                 uint32_t bsize = hw->getNode(m.first).getNode("data").getSize();

@@ -16,7 +16,6 @@
 #include <boost/unordered/unordered_map.hpp>
 #include <boost/foreach.hpp>
 
-#include "swatch/processor/AbstractInfo.hpp"
 #include "swatch/processor/Controls.hpp"
 #include "swatch/processor/TTCInterface.hpp"
 #include "swatch/processor/ReadoutInterface.hpp"
