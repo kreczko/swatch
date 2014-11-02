@@ -25,11 +25,19 @@ public:
     ~SillyFSM();
 
     void setInitialState( State s) { initialState_ = s; }
-    State getInitialState() { return initialState_; }
-    State getCurrentState() { return currentState_; }
+    const State& getInitialState() const { return initialState_; }
+    const State& getCurrentState() const { return currentState_; }
     void reset();
     
     void addState( State s );
+    const std::set<State>& getStates() const { return states_; }
+
+    const std::set<Input>& getInputs() const { return inputs_; }
+
+    void addStateTransition (const State& from, const State& to, const Input &input);
+
+    void execute( const Input& input ); 
+
 private:
 
     //
@@ -40,7 +48,9 @@ private:
 
     std::set<State> states_;
     
-    std::map< State, std::map<std::string, State> > stateTransitionTable_;
+    std::set<State> inputs_;
+
+    std::map< State, std::map<Input, State> > stateTransitionTable_;
 
 
 };
@@ -48,5 +58,7 @@ private:
 } // namespace test
 } // namespace processor
 } // namespace swatch
+
+#include "swatch/processor/test/SillyFSM.hxx"
 
 #endif /* SWATCH_PROCESSOR_TEST_SILLYFSM_HPP */
