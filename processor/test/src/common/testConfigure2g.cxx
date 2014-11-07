@@ -398,7 +398,7 @@ int main(int argc, char const *argv[]) {
     swatch::core::ParameterSet mode;
     
     std::cout << p0->id() << " Clock modes:" << std::endl;
-    BOOST_FOREACH( const std::string& c, p0->clockModes() ) {
+    BOOST_FOREACH( const std::string& c, p0->getModes() ) {
         std::cout << "  + " << c << std::endl;
     }
 

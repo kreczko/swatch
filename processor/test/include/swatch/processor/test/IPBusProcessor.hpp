@@ -41,7 +41,7 @@ public:
 
     uhal::HwInterface* hw() const;
 
-    virtual std::vector<std::string> clockModes() const;
+    virtual std::set<std::string> getModes() const;
 
     virtual void reset( const std::string& mode );
 private:
@@ -49,7 +49,7 @@ private:
     uint32_t slot_;
     std::string crate_;
 
-    std::vector<std::string> clockConfigs_;
+    std::set<std::string> clockModes_;
     //! 
     uhal::HwInterface* hw_;
 };

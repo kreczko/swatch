@@ -62,8 +62,8 @@ DummyProcessor::DummyProcessor(const std::string& aId, const core::ParameterSet&
 DummyProcessor::~DummyProcessor() {
 }
 
-std::vector<std::string> DummyProcessor::clockModes() const {
-    return std::vector<std::string>();
+std::set<std::string> DummyProcessor::getModes() const {
+    return std::set<std::string>();
 }
 
 void DummyProcessor::reset(const std::string& mode) {

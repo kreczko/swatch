@@ -15,7 +15,7 @@
 
 
 // Boost Headers
-#include <boost/algorithm/string/predicate.hpp>
+#include <boost/assign.hpp>
 
 // C++ Headers
 
@@ -27,19 +27,38 @@ SWATCH_PROCESSOR_REGISTER_CLASS(MP7Processor);
 MP7Processor::MP7Processor(const std::string& id, const swatch::core::ParameterSet& params) :
     Processor(id, params) {
 
-    std::string deviceID = "";
-    std::string uri = "";
-    std::string addrTable = "";
+    using namespace boost::assign;
+    std::string uri;
+    std::string addrTable;
     
+    // Extract parameters
+    try {
+        crate_ = params.get<std::string>("crate");
+        slot_ = params.get<uint32_t>("slot");
+    
+        uri = params.get<std::string>("uri");
+        addrTable = params.get<std::string>("addrtab");
+    } catch ( swatch::core::ParameterNotFound& e ) {
+        // Don't proceed any further
+        return;
+    }
+
     uhal::setLogLevelTo(uhal::Warning());
-    uhal::HwInterface board = uhal::ConnectionManager::getDevice(deviceID, uri, addrTable) ;
+    uhal::HwInterface board = uhal::ConnectionManager::getDevice(id, uri, addrTable) ;
     
     
     // The following lines must be moved into the mp7 package 
     if ( dynamic_cast<const mp7::ClockingXENode*>( &(board.getNode("ctrl.clocking")) ) != 0x0 ) {
         driver_ = new mp7::MP7XEController(board);
+
+        clockModes_ ["internal"] = { "si570", false, true };
+        clockModes_ ["external"] = { "si570", true, false };
+        clockModes_ ["external_si5326"] = { "si5326", true, false };
     } else if ( dynamic_cast<const mp7::ClockingNode*>( &(board.getNode("ctrl.clocking")) ) != 0x0 ) {
         driver_ = new mp7::MP7R1Controller(board); 
+
+        clockModes_ ["internal"] = { "", false, true };
+        clockModes_ ["external"] = { "", true, false };
     } else {
         // Need a dedicated exception
         throw std::runtime_error("Could not detect the MP7 model. Check your address table");
@@ -59,12 +78,31 @@ uint32_t MP7Processor::getSlot() const {
     return slot_;
 }
 
-std::vector<std::string> MP7Processor::clockModes() const {
-    return clockModes_;
+std::set<std::string> MP7Processor::getModes() const {
+
+    std::set<std::string> modes;
+   
+    boost::unordered_map<std::string, MP7ClockMode>::const_iterator it;
+    for ( it = clockModes_.begin(); it != clockModes_.end(); ++it)
+        modes.insert(it->first);
+//    boost::copy( clockModes_ | map_keys, modes.begin() );
+    
+    return modes;
 }
 
 void MP7Processor::reset(const std::string& mode) {
-    
+
+    boost::unordered_map<std::string, MP7ClockMode>::const_iterator it;
+
+    if ( (it = clockModes_.find(mode)) == clockModes_.end() ) {
+        throw std::runtime_error("Clock mode "+mode+" not found");
+    }
+
+    driver_->reset(
+        it->second.clkOpt, 
+        it->second.extClk40Src, 
+        it->second.bc0Internal
+        );
 }
 
 

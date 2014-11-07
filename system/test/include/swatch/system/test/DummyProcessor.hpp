@@ -23,7 +23,7 @@ public:
     virtual const std::string& getCrateId() const { return mCrateId; }
     
 
-    virtual std::vector<std::string> clockModes() const;
+    virtual std::set<std::string> getModes() const;
 
     virtual void reset(const std::string& mode);
 

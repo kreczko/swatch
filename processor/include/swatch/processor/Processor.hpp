@@ -76,7 +76,7 @@ public:
 
     // Basic control methods
 
-    virtual std::vector<std::string> clockModes() const = 0;
+    virtual std::set<std::string> getModes() const = 0;
 
     virtual void reset( const std::string& mode ) = 0;
 

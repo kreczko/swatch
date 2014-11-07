@@ -40,7 +40,7 @@ IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::Parame
     using namespace swatch::core;
     using namespace boost::assign;
     
-    clockConfigs_ += "internal","external";
+    clockModes_ += "internal","external";
     
     crate_ = params.get<std::string>("crate");
     slot_ = params.get<uint32_t>("slot");
@@ -190,8 +190,8 @@ void IPBusProcessor::reset(const std::string& config) {
 
 }
 
-std::vector<std::string> IPBusProcessor::clockModes() const {
-    return clockConfigs_;
+std::set<std::string> IPBusProcessor::getModes() const {
+    return clockModes_;
 }
 
 /*------------------------------------------------------------------------------
