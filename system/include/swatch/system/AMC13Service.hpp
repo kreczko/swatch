@@ -17,8 +17,9 @@ namespace swatch {
 namespace system {
 
 class AMC13Service : public Service {
-public:
+protected:
     explicit AMC13Service( const std::string& aId, const core::ParameterSet& params );
+public:
     virtual ~AMC13Service();
     
     virtual uint32_t getSlot() const;
