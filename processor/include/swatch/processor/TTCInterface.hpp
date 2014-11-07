@@ -1,3 +1,10 @@
+/**
+ * @file    TTCInterface.hpp
+ * @author  Maxime Guilbaud
+ * @brief   Brief description
+ * @date    24/07/2014
+ */
+
 #ifndef SWATCH_PROCESSOR_TTCINTERFACE_HPP
 #define SWATCH_PROCESSOR_TTCINTERFACE_HPP
 

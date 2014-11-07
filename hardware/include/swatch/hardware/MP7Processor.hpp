@@ -40,8 +40,6 @@ private:
     uint32_t slot_;
     
     std::string crate_;
-
-    // std::vector<std::string> clockModes_;
     
     mp7::MP7Controller* driver_;
 

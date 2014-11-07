@@ -1,5 +1,5 @@
 /**
- * @file    AbstractChannel.hpp
+ * @file    Controls.hpp
  * @author  Maxime Guilbaud
  * @brief   Brief description
  * @date    24/07/2014

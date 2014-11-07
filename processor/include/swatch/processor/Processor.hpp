@@ -1,8 +1,8 @@
-/* 
- * File:   Processor.hpp
- * Author: ale
- *
- * Created on July 11, 2014, 10:55 AM
+/**
+ * @file    Processor.hpp
+ * @author  Alessandro Thea
+ * @brief   Brief description
+ * @date    11/07/2014
  */
 
 #ifndef _swatch_test_processor_hpp_
