@@ -56,18 +56,18 @@ public:
     
     virtual ~Object();
     
-    virtual iterator begin();
-    virtual iterator end();
+    iterator begin();
+    iterator end();
     
-    virtual const std::type_info& type();
-    virtual std::string typeName();
+    const std::type_info& type();
+    std::string typeName();
     
-    virtual const std::string& id() const; 
-    virtual const std::string path() const;
+    const std::string& id() const; 
+    const std::string path() const;
 
     std::vector<std::string> getPaths() const;
 
-    virtual std::vector<std::string> getChildren();
+    std::vector<std::string> getChildren();
 
     Object* getObj(const std::string& aId);
     
