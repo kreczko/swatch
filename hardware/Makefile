@@ -24,7 +24,7 @@ Includes = \
 	${SWATCH_ROOT}/system/include \
 	${CACTUS_ROOT}/include
 	
-LibraryPaths = \ 
+LibraryPaths = \
 	lib \
 	${SWATCH_ROOT}/core/lib \
 	${SWATCH_ROOT}/processor/lib \

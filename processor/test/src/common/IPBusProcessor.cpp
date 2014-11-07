@@ -8,6 +8,7 @@
 #include "uhal/ConnectionManager.hpp"
 
 // Swatch Headers
+#include "swatch/processor/ProcessorFactory.hpp"
 #include "swatch/processor/test/IPBusProcessor.hpp"
 #include "swatch/processor/test/IPBusControls.hpp"
 #include "swatch/processor/test/IPBusTTC.hpp"
@@ -32,7 +33,10 @@ namespace swatch {
 namespace processor {
 namespace test {
 
-IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::ParameterSet& params) : Processor(id, params) {
+SWATCH_PROCESSOR_REGISTER_CLASS(IPBusProcessor);
+
+IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::ParameterSet& params) :
+    Processor(id, params) {
     using namespace swatch::core;
     using namespace boost::assign;
     

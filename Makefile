@@ -16,6 +16,7 @@ PACKAGES = \
 	processor/test \
 	system \
 	system/test \
+	hardware \
 	test \
 	pyswatch
 	
