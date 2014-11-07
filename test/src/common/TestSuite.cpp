@@ -59,7 +59,12 @@ SystemExploreTest::run() {
     ParameterSet a1 = a, a2 = a, a3 = a;
 
     System* lSystem = new System("calol2");
-
+	Crate * crateC = new Crate("crateC");
+    Crate * crateD = new Crate("crateD");
+	lSystem->add(crateC);
+	lSystem->add(crateD);
+    
+    
     // Use 3 different methods to build the dummy processors
     // 1. explicit  constructor call
     a1.insert("crate", "crateC")("slot", 1);
