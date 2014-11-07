@@ -14,7 +14,7 @@ PACKAGE_VER_MINOR = 1
 PACKAGE_VER_PATCH = 0
 PACKAGE_RELEASE = 0
 
-Library = cactus_swatch_core_test
+#Library = cactus_swatch_hardware_test
 
 Includes = 	\
 		include \
@@ -35,13 +35,16 @@ LibraryPaths =	\
 Libraries =	\
 		boost_system \
 		boost_unit_test_framework \
+		cactus_uhal_uhal \
+		cactus_uhal_log \
+		cactus_mp7_mp7 \
 		cactus_swatch_core \
 		cactus_swatch_processor \
 		cactus_swatch_system \
-		cactus_swatch_core \
+		cactus_swatch_hardware
 
 
-ExecutableLibraries = ${Libraries} ${Library}
+ExecutableLibraries = ${Libraries}
 
 include ${SWATCH_ROOT}/config/mfRules.mk
 include ${SWATCH_ROOT}/config/mfRPMRules.mk
