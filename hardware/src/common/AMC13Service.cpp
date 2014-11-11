@@ -7,61 +7,40 @@
 
 #include "swatch/hardware/AMC13Service.hpp"
 
+// Swatch Headers
+#include "swatch/system/AMC13ServiceDescriptor.hpp"
+#include "swatch/system/ServiceFactory.hpp"
+
 // AMC13 Headers
 #include "amc13/AMC13.hh"
 
+// Boost Headers
+#include <boost/assign.hpp>
 
 namespace swatch {
 namespace hardware {
+SWATCH_SERVICE_REGISTER_CLASS(AMC13Service)
 
 AMC13Service::AMC13Service(const std::string& aId, const core::ParameterSet& params) :
     swatch::system::AMC13Service(aId, params),
     driver_(0x0) {
+    
+    using namespace boost::assign;
+    modes_ += "ttsloopback", "external";
+            
+    const system::AMC13ServiceDescriptor& desc = params.get<system::AMC13ServiceDescriptor>("descriptor");
+    
+    crate_ = desc.crateId;
+    slot_  = desc.slot;
 
-    std::string uriT1, uriT2;
-    std::string addrTableT1, addrTableT2;
+    driver_ = new amc13::AMC13(desc.t1Uri, desc.t1AddressTable.substr(7),
+                        desc.t2Uri, desc.t2AddressTable.substr(7) );
+    
 
-    try {
-        crate_ = params.get<std::string>("crate");
-        slot_ = params.get<uint32_t>("slot");
-
-        uriT1 = params.get<std::string>("uriT1");
-        addrTableT1 = params.get<std::string>("addrtabT1");
-        uriT2 = params.get<std::string>("uriT2");
-        addrTableT2 = params.get<std::string>("addrtabT2");
-
-    } catch ( swatch::core::ParameterNotFound& e ) {
-        // Don't proceed any further
-        // TODO: Throw here
-        return;
-    }
-
-    std::cout << addrTableT1.substr(7) << std::endl;
-    std::cout << addrTableT2.substr(7) << std::endl;
-
-    driver_ = new amc13::AMC13(uriT1, addrTableT1.substr(7),
-                        uriT2, addrTableT2.substr(7) );
-
-    driver_->getStatus()->Report(2);
+    driver_->getStatus()->Report(1);
 }
 
 AMC13Service::~AMC13Service() {
-
-}
-
-void
-AMC13Service::enableTTC(const std::vector<uint32_t>& slots) {
-    uint32_t mask(0x0);
-    BOOST_FOREACH( uint32_t s, slots ) {
-        mask |= 1 << (s-1);
-    }
-    std::cout << "AMC mask: 0x" << std::hex <<  mask << std::endl;
-    // apply mask
-    driver_->AMCInputEnable(mask);
-
-    // and check the status
-    driver_->getStatus()->Report(2);
-
 
 }
 
@@ -75,6 +54,48 @@ AMC13Service::getCrateId() const {
     return crate_;
 }
 
+void
+AMC13Service::enableTTC(const std::vector<uint32_t>& slots) {
+    uint32_t mask(0x0);
+    BOOST_FOREACH( uint32_t s, slots ) {
+        mask |= 1 << (s-1);
+    }
+    std::cout << "AMC mask: 0x" << std::hex <<  mask << std::endl;
+    // apply mask
+    driver_->AMCInputEnable(mask);
+
+    // and check the status
+    driver_->getStatus()->Report(1);
+
+
+}
+
+std::set<std::string> AMC13Service::getModes() const {
+    return modes_;            
+}
+
+void AMC13Service::reset(const std::string& mode) {
+    if ( modes_.count(mode) == 0 ) {
+        throw std::runtime_error("Invalid AMC13 mode "+mode );
+    }
+    
+    if ( mode == "ttsloopback" ) {
+        driver_->reset(amc13::AMC13Simple::T1);
+        driver_->reset(amc13::AMC13Simple::T2);
+        std::cout << "Enabling local TTC" << std::endl;
+        driver_->localTtcSignalEnable(true);
+        
+    } else {
+//        std::cout << "Mode " << mode << "not supported yet" << std::endl;
+        driver_->reset(amc13::AMC13Simple::T1);
+        driver_->reset(amc13::AMC13Simple::T2);
+        std::cout << "Enabling local TTC" << std::endl;
+        driver_->localTtcSignalEnable(false);
+    }
+    
+    // and check the status
+    driver_->getStatus()->Report(1);
+}
 
 } // namespace hardware
 } // namespace swatch

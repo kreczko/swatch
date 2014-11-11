@@ -52,6 +52,16 @@ DummyAMC13Service::getCrateId() const {
     return crate_;
 }
 
+std::set<std::string>
+DummyAMC13Service::getModes() const {
+    return std::set<std::string>();
+}
+
+void
+DummyAMC13Service::reset(const std::string& mode) {
+}
+
+
 void
 DummyAMC13Service::enableTTC(const std::vector<uint32_t>& aSlots) {
     

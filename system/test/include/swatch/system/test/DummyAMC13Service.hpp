@@ -23,6 +23,11 @@ public:
 
     virtual const std::string& getCrateId() const;
     
+    virtual std::set<std::string> getModes() const;
+    
+    virtual void reset(const std::string& mode);
+
+    
     /// Enables ttc commands on the given slots
     virtual void enableTTC( const std::vector<uint32_t> & aSlots );
 
