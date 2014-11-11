@@ -7,7 +7,6 @@
 
 #include <cstdlib>
 
-#include "swatch/hardware/test/JsonReader.hpp"
 // Swatch Headers
 #include "swatch/core/ParameterSet.hpp"
 #include "swatch/processor/ProcessorDescriptor.hpp"
@@ -23,10 +22,11 @@
  #include "uhal/log/log.hpp"
 #include "swatch/system/SystemFactory.hpp"
 #include "swatch/system/ServiceFactory.hpp"
+#include "swatch/system/Utilities.hpp"
 
 // Boost Headers
 #include <boost/foreach.hpp>
-// #include <boost/adding.hpp>
+ #include <boost/property_tree/json_parser.hpp>
 
 using namespace std;
 using namespace swatch::core;
@@ -35,12 +35,19 @@ using namespace swatch::core;
  * 
  */
 int main(int argc, char** argv) {
-
+    using boost::property_tree::ptree;
+    using boost::property_tree::json_parser::read_json;
+    using swatch::core::ParameterSet;
+    using swatch::core::shellExpandPath;
 
     uhal::setLogLevelTo(uhal::Warning());
 
-    ParameterSet pset = swatch::hardware::test::readJson("${SWATCH_ROOT}/hardware/test/cfg/firstsys.json");
+    // Build the property tree
+    ptree pt;
+    read_json(shellExpandPath("${SWATCH_ROOT}/hardware/test/cfg/firstsys.json"), pt);
 
+    // And then turn it into parameters
+    ParameterSet pset = swatch::system::treeToSystemPSet(pt);
     ParameterSet amc13params = pset.get< std::deque<ParameterSet> >("services").front();
     ParameterSet mp7params = pset.get< std::deque<ParameterSet> >("processors").front();
     
