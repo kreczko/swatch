@@ -13,6 +13,7 @@
 #include "swatch/processor/ProcessorDescriptor.hpp"
 #include "swatch/system/AMC13ServiceDescriptor.hpp"
 #include "swatch/processor/Utilities.hpp"
+#include "swatch/system/Utilities.hpp"
 
 // Boost Headers
 #include <boost/property_tree/json_parser.hpp>
@@ -47,23 +48,7 @@ swatch::core::ParameterSet readJson( const std::string path ) {
     std::deque<ParameterSet> amc13Sets;
     BOOST_FOREACH(ptree::value_type &v, pt_system.get_child("SERVICES")) {
         if ( v.second.get<std::string>("SERVICE TYPE","") != "AMC13" ) continue;
-        ParameterSet amc13Set;
-        swatch::system::AMC13ServiceDescriptor sd;
-
-        sd.name           = v.second.get<std::string>("SERVICE NAME");
-        sd.creator        = v.second.get<std::string>("SERVICE CREATOR");
-        sd.t1Uri          = v.second.get<std::string>("URI T1");
-        sd.t1AddressTable = v.second.get<std::string>("ADDRESS TABLE T1"); // FIXME
-        sd.t2Uri          = v.second.get<std::string>("URI T2");
-        sd.t2AddressTable = v.second.get<std::string>("ADDRESS TABLE T2"); // FIXME
-        sd.crateId        = v.second.get<std::string>("CRATE NAME");
-        sd.slot           = v.second.get<uint32_t>("CRATE SLOT");
-
-
-        std::cout << sd << std::endl;
-        amc13Set.set("name", sd.name);
-        amc13Set.set("class", sd.creator);
-        amc13Set.set("descriptor", sd);
+        ParameterSet amc13Set = swatch::system::treeToAMC13PSet(v.second);
         amc13Sets.push_back(amc13Set);
     }
     pset.set("services",amc13Sets);
