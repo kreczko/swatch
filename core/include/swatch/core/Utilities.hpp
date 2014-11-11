@@ -1,15 +1,17 @@
-/* 
- * File:   Utilities.hpp
- * Author: ale
- *
- * Created on July 22, 2014, 5:18 PM
+/**
+ * @file    Utilities.hpp
+ * @author  Alessandro Thea
+ * @brief   Brief description
+ * @date    22/07/14
  */
 
-#ifndef __swatch_mp7_utilities_hpp__
-#define	__swatch_mp7_utilities_hpp__
+
+#ifndef SWATCH_CORE_UTILITIES_HPP
+#define	SWATCH_CORE_UTILITIES_HPP
 
 // C++ Headers
 #include <string>
+#include <vector>
 
 // Boost Headers
 #include <boost/any.hpp>
@@ -44,9 +46,28 @@ std::string strPrintf(const char* aFmt, ...);
  */
 void millisleep( const double& millisec );
 
-}
-}
+/**
+ * @brief [brief description]
+ * @details [long description]
+ * 
+ * @param aPath [description]
+ * @return [description]
+ */
+std::vector<std::string> shellExpandPaths ( const std::string& aPath );
 
 
-#endif	/* __swatch_mp7_utilities_hpp__ */
+/**
+ * @brief [brief description]
+ * @details [long description]
+ * 
+ * @param aPath [description]
+ * @return [description]
+ */
+std::string shellExpandPath(const std::string& aPath);
+
+} // namespace core
+} // namespace swatch
+
+
+#endif	/* SWATCH_CORE_UTILITIES_HPP */
 

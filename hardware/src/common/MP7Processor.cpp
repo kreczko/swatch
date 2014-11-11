@@ -1,9 +1,10 @@
-/* 
- * File:   MP7Controls.hpp
- * Author: Alessandro Thea
- *
- * Created on November 6, 2014, 4:50 PM
+/**
+ * @file    MP7Processor.hpp
+ * @author  Alessandro Thea
+ * @brief   MP7 board processor implementation
+ * @date    06/11/14
  */
+
 
 #include "swatch/hardware/MP7Processor.hpp"
 #include "swatch/processor/ProcessorFactory.hpp"

@@ -6,6 +6,8 @@
 #include <sstream>
 #include <stdio.h>
 #include <cstdarg>
+#include <wordexp.h>
+#include <stdexcept>
 
 namespace swatch {
 namespace core {
@@ -63,6 +65,34 @@ millisleep( const double& millisec ) {
     sleepTime.tv_nsec = ( long ) (fracPart * 1e9);
     //  log ( Notice() , "Sleeping " , Integer ( uint32_t ( sleepTime.tv_sec ) ) , "s " , Integer ( uint32_t ( sleepTime.tv_nsec ) ) , "ns" );
     nanosleep(&sleepTime, &returnTime);
+}
+
+//---
+std::vector<std::string>
+shellExpandPaths ( const std::string& aPath ) {
+    
+    std::vector<std::string> lPaths;
+    wordexp_t lSubstitutedPath;
+    int code = wordexp(aPath.c_str(), &lSubstitutedPath, WRDE_NOCMD );
+    if ( code ) throw std::runtime_error("Failed expanding path: "+aPath);
+
+    for ( std::size_t i = 0 ; i != lSubstitutedPath.we_wordc ; i++ )
+        lPaths.push_back(lSubstitutedPath.we_wordv[i]);
+
+    wordfree(&lSubstitutedPath);
+    
+    return lPaths;
+}
+
+
+//---
+std::string
+shellExpandPath(const std::string& aPath) {
+    std::vector<std::string> lPaths = shellExpandPaths( aPath );
+    
+    if ( lPaths.size() > 1 ) throw std::runtime_error("Failed to expand: multiple matches found");
+    
+    return lPaths[0];
 }
 
 } // namespace core

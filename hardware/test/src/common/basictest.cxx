@@ -7,10 +7,11 @@
 
 #include <cstdlib>
 
-
-
+#include "swatch/hardware/test/JsonReader.hpp"
 // Swatch Headers
 #include "swatch/core/ParameterSet.hpp"
+#include "swatch/processor/ProcessorDescriptor.hpp"
+#include "swatch/processor/ProcessorFactory.hpp"
 
 // MP7 Processor
 #include "swatch/hardware/MP7Processor.hpp"
@@ -26,6 +27,7 @@
 // #include <boost/adding.hpp>
 
 using namespace std;
+using namespace swatch::core;
 
 /*
  * 
@@ -34,6 +36,12 @@ int main(int argc, char** argv) {
 
 
     uhal::setLogLevelTo(uhal::Warning());
+
+    ParameterSet pset = swatch::hardware::test::readJson("${SWATCH_TESTS}/etc/testdb.json");
+
+    ParameterSet amc13params = pset.get< std::deque<ParameterSet> >("services").front();
+    ParameterSet mp7params = pset.get< std::deque<ParameterSet> >("processors").front();
+    
     // Create an amc13
     swatch::core::ParameterSet params_amc13;
     params_amc13.set("addrtabT1", "file:///opt/cactus/etc/amc13/AMC13XG_T1_v0x4002.xml");
@@ -59,18 +67,21 @@ int main(int argc, char** argv) {
     // exit(0);
     
     // Create an MP7
-    const std::string addrtab = "file:///opt/cactus/etc/mp7/addrtab/mp7fw_v1_4_0_xe/mp7xe_infra.xml";
-    const std::string uri = "chtcp-2.0://127.0.0.1:20304?target=192.168.2.95:50001";
+//    const std::string addrtab = "file:///opt/cactus/etc/mp7/addrtab/mp7fw_v1_4_0_xe/mp7xe_infra.xml";
+//    const std::string uri = "chtcp-2.0://127.0.0.1:20304?target=192.168.2.95:50001";
 
-    swatch::core::ParameterSet params_mp7;
-    params_mp7.set("addrtab", addrtab);
-    params_mp7.set("uri", uri);
-    params_mp7.set("crate", "s2g20-10");
-    params_mp7.set("slot", (uint32_t) 10);
+//    swatch::core::ParameterSet params_mp7;
+//    params_mp7.set("addrtab", addrtab);
+//    params_mp7.set("uri", uri);
+//    params_mp7.set("crate", "s2g20-10");
+//    params_mp7.set("slot", (uint32_t) 10);
 
     swatch::hardware::MP7Processor* mp7_A=0x0;
     try {
-        mp7_A = new swatch::hardware::MP7Processor("myfirstmp7", params_mp7);
+//        mp7_A = new swatch::hardware::MP7Processor("myfirstmp7", params_mp7);
+        mp7_A = dynamic_cast<swatch::hardware::MP7Processor*>(swatch::processor::ProcessorFactory::get()->make(mp7params));
+    } catch ( const std::exception& e ) {
+        std::cout << "ERROR: " << e.what() << std::endl;
     } catch (...) {
         std::cout << "Crap..." << std::endl;
     }
