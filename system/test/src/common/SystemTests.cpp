@@ -9,8 +9,10 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/property_tree/json_parser.hpp>
 
-// Std Headers
+// C++ Headers
 #include <iomanip>
+#include <vector>
+#include <map>
 
 // Swatch Headers
 
@@ -234,7 +236,7 @@ BOOST_AUTO_TEST_CASE(BuildCrate) {
     lSystem->add(the_crate);
     // AMC13
     ParameterSet params13;
-    params13.insert("requires", "")("provides", "ttc;daq")("crate", "s2x3g18");
+    params13.insert("requires", "")("provides", "ttc;daq")("crate", "s2x3g18")("slot",13);
     AMC13Service* amc13 = new DummyAMC13Service("amc13xg", params13);
     BOOST_CHECK(amc13->getCrateId() == "s2x3g18" );
 
@@ -288,5 +290,117 @@ BOOST_AUTO_TEST_CASE(BuildCrate) {
     BOOST_TEST_MESSAGE("Destructor");
     delete lSystem;
 }
+
+BOOST_AUTO_TEST_CASE(ExploreSystem) {
+    using namespace boost::assign;
+    using namespace std;
+
+    ParameterSet a;
+    a.insert("requires", "ttc;daq")("provides", "trigger")("class","DummyProcessor");
+    ParameterSet a1 = a, a2 = a, a3 = a;
+
+    System* lSystem = new System("calol2");
+    Crate * crateC = new Crate("crateC");
+    Crate * crateD = new Crate("crateD");
+    lSystem->add(crateC);
+    lSystem->add(crateD);
+    
+    
+    // Use 3 different methods to build the dummy processors
+    // 1. explicit  constructor call
+    a1.insert("crate", "crateC")("slot", 1);
+    Processor* p1 = new DummyProcessor("mp7-10", a1);
+    lSystem->add(p1);
+    
+    // 2. Using ProcessorFactory, low level creator
+    a2.insert("crate", "crateD") ("slot", 2);
+    Processor* p2 = ProcessorFactory::get()->make("DummyProcessor","mp7-13", a2);
+    lSystem->add(p2);
+    
+    // 3. Using ProcessorFactory, PSet based compact creator
+    a3.insert("name","mp_4")("crate", "crateD") ("slot", 10);
+    Processor* p3 = ProcessorFactory::get()->make(a3);
+    lSystem->add(p3);
+    
+    vector< pair<string, string> > links;
+    push_back(links)
+            ("mp7-10.tx00", "mp7-13.rx01")
+            ("mp7-10.tx01", "mp7-13.rx00");
+    unsigned int lid;
+    vector< pair<string, string> >::iterator lIt;
+    for (lIt = links.begin(), lid = 0; lIt != links.end(); ++lIt, ++lid) {
+        OutputPort* src = lSystem->getObj<OutputPort>(lIt->first);
+        InputPort* dst = lSystem->getObj<InputPort>(lIt->second);
+
+        stringstream lname;
+        lname << "link" << std::setw(3) << std::setfill('0') << lid;
+        Link* lLink = new Link(lname.str(), src, dst);
+        lSystem->add(lLink);
+    }
+    
+    cout << "Here we test iterators" << endl;
+    cout << "======================" << endl;
+    Object::iterator itObj;
+    for (itObj = lSystem->begin(); itObj != lSystem->end(); ++itObj) {
+        cout << " * " << itObj->path() << endl;
+    }
+    cout << endl;
+    
+    cout << "These are subsystem children" << endl;
+    cout << "============================" << endl;
+    
+    BOOST_FOREACH( const std::string& name, lSystem->getChildren()) {
+        cout << name << endl; 
+    }
+    cout << endl;
+    
+    
+    cout << endl;
+    cout << "Testing getters and aliases" << endl;
+    cout << "===========================" << endl;
+    vector<string> names;
+    names += "mp7-10.tx00", "link000.src", "crateC.amc01.tx00";
+    vector< string >::const_iterator itN;
+    BOOST_FOREACH( string name, names ) {
+        Object* o = lSystem->getObj(name);
+        cout << "Found " << name << " : " << o->path() << " of type " << o->typeName() << endl;
+    }
+    cout << "Multi-hop getter" << endl;
+    cout << "================" << endl;
+    Object* o = lSystem->getObj("crateC")->getObj("amc01")->getObj("tx00");
+    cout << "Testing  crate1 + mp7-13 + tx00: " << o->path() << " of type " << o->typeName() << endl;
+   
+    cout << endl;
+    cout << "Processors in the system" << endl;
+    cout << "========================" << endl;
+    
+    BOOST_FOREACH( Processor* p, lSystem->getProcessors() ) {
+        cout << p->id() << " of type " << p->typeName() << ": crate=" << p->getCrateId() << endl;
+    }
+    cout << endl;
+    
+    cout << "Printing crate views" << endl;
+    cout << "====================" << endl;
+
+    boost::unordered_map<std::string, Crate*>::const_iterator cit;
+    for (cit = lSystem->getCrates().begin(); cit != lSystem->getCrates().end(); ++cit) {
+        cout << "crate '" << cit->first << "' : " << *(cit->second) << endl;
+    }
+    cout << endl;
+    
+    std::vector<std::string> objects;
+
+    std::vector<std::string>::iterator it;
+
+    cout << "And these their Paths" << endl;
+    cout << "=====================" << endl;
+    objects = lSystem->getPaths();
+    for (it = objects.begin(); it != objects.end(); ++it) {
+        cout << *it << endl;
+    }
+    cout << endl;
+    
+    delete lSystem;
+} 
 
 BOOST_AUTO_TEST_SUITE_END()
