@@ -153,46 +153,7 @@ private:
     boost::random::uniform_int_distribution<uint32_t> flatDistribution_;
 };
 
-/*
-//---------------------------------------------------------------------------//
-void reset(swatch::processor::Processor *p, const swatch::core::ParameterSet &params) {
-    std::string clock = params.get<std::string>("clock");
-    std::string ttc = params.get<std::string>("ttc");
 
-    cout << "Found clock configurations:" << endl;
-
-    BOOST_FOREACH(std::string c, p->ctrl()->clockConfigurations()) {
-        cout << " - " << c << endl;
-    }
-
-    cout << "Found ttc configurations:" << endl;
-
-    BOOST_FOREACH(std::string c, p->ttc()->configurations()) {
-        cout << " - " << c << endl;
-    }
-
-    // Standard soft reset procedure
-    p->ctrl()->softReset();
-
-    // Change clock configuration
-    // Every board must have 'internal' and 'external' modes
-    p->ctrl()->configureClock(clock);
-
-    // Enable/Disable TTC?
-    // Doesn't this pertain to configuration?
-    // Maybe not... hard to do anything w/o orbit signal configured
-    // Should this be related to the clock mode?
-    // Anyway, extrnal TTC signals are incompatible with internally generated orbits.
-    p->ttc()->configure(ttc);
-
-    std::cout << ">> Is TTC enabled? " << p->ttc()->isEnabled() << std::endl;
-    p->ttc()->clearCounters();
-
-    // Check clock locked, BC0 lock
-
-
-}
-*/
 void configure(swatch::processor::Processor *p, const swatch::core::ParameterSet &params) {
     using namespace swatch::core;
     using namespace swatch::processor;

@@ -64,63 +64,6 @@ public:
 
 };
 
-// Old classes here
-//----------------------------------------------------------------------------//
-/*
-class IpbusChannel : public swatch::processor::AbstractChannel, public IPBusComponent {
-public:
-    IpbusChannel(uhal::HwInterface* hw, const swatch::core::ParameterSet& params);
-    virtual ~IpbusChannel();
-};
-
-//----------------------------------------------------------------------------//
-
-class IPBusChanCtrl : public swatch::processor::AbstractChanCtrl, public IPBusComponent {
-public:
-    IPBusChanCtrl(uhal::HwInterface* hw, const swatch::core::ParameterSet& params);
-    virtual ~IPBusChanCtrl();
-
-    //functionalities
-    virtual void reset();
-    virtual void setLoopback();
-    virtual void resetCRCCounts();
-
-    //monitoring
-    virtual uint32_t getCRCCounts();
-    virtual uint32_t getCRCErrorCounts();
-    virtual bool isPLLLocked();
-    virtual bool isSync();
-
-    virtual void configure(const swatch::core::ParameterSet& params);
-private:
-
-//    IPBUS_DEF(IPBusChanCtrl);
-
-};
-//----------------------------------------------------------------------------//
-
-class IPBusChanBuffer : public swatch::processor::AbstractChanBuffer, public IPBusComponent {
-public:
-    IPBusChanBuffer(uhal::HwInterface* hw, const swatch::core::ParameterSet& params);
-    virtual ~IPBusChanBuffer();
-
-    virtual uint32_t size() {
-        return bufferSize_;
-    }
-    virtual void configure(BufferMode aMode, uint32_t aFirstBx, uint32_t aLastBx);
-
-    virtual std::vector<uint64_t> download();
-    virtual void upload(const std::vector<uint64_t>& aPayload);
-
-private:
-
-    std::string ctrlpath_;
-    std::string datapath_;
-    uint32_t bufferSize_;
-
-//    IPBUS_DEF(IPBusChanBuffer);
-};
-*/
         
 } // namespace test
 } // namespace processor

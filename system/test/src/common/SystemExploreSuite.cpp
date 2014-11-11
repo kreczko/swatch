@@ -96,6 +96,7 @@ struct SystemSetupA {
 
 BOOST_FIXTURE_TEST_SUITE(SystemExploreTestSuite, SystemSetupA)
 
+// TODO
 BOOST_AUTO_TEST_CASE(ExploreSystem) {
     using namespace boost::assign;
     using namespace swatch::core;
