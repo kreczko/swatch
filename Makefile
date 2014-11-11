@@ -1,5 +1,5 @@
-Set?=base
-ifeq ($(Set), base)
+Set?=devel
+ifeq ($(Set), devel)
 PACKAGES = \
 	core \
 	core/test \
@@ -9,7 +9,15 @@ PACKAGES = \
 	system/test \
 	test \
 	pyswatch
-else ifeq ($(Set), hardware)
+else ifeq ($(Set), pro)
+PACKAGES = \
+	core \
+	processor \
+	system \
+	hardware \
+	test \
+	pyswatch
+else ifeq ($(Set), hwdevel)
 PACKAGES = \
 	core \
 	core/test \
@@ -22,8 +30,6 @@ PACKAGES = \
 	test \
 	pyswatch
 endif
-
-	
 
 VIRTUAL_PACKAGES = $(addsuffix /.virtual.Makefile,${PACKAGES})
 

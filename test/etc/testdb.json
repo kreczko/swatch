@@ -7,49 +7,51 @@
           {
             "PROCESSOR NAME": "MP-1",
             "PROCESSOR TYPE": "CALO2 PROCESSOR",
+            "PROCESSOR CREATOR": "DummyProcessor",
             "HARDWARE TYPE": "MP7",
             "CRATE NAME": "S2G17-01",
             "CRATE SLOT": 1,
             "CRATE LOCATION": "MyLocation",
             "CRATE DESCRIPTION": "MyCrateDescription",
-            "PORTS NAMES": ["Port#1", "Port#2", "Port#3", "Port#144"]
-	    "IP ADDRESS" : "192.168.0.2", 
- 	    "PORTS": [  
-			{"PORT NAME" : "port#1", "PORT NUMBER" : "33", "TYPE" : "TX"},
-			{"PORT NAME" : "port#2", "PORT NUMBER" : "12", "TYPE" : "TX"},
-			{"PORT NAME" : "port#144", "PORT NUMBER" : "99", "TYPE" : "RX"},
-		     ]
+            "PORTS NAMES": ["Port#1", "Port#2", "Port#3", "Port#144"],
+	          "IP ADDRESS": "192.168.0.2", 
+ 	          "PORTS": [  
+			       {"PORT NAME" : "port#1", "PORT NUMBER" : "33", "TYPE" : "TX"},
+			       {"PORT NAME" : "port#2", "PORT NUMBER" : "12", "TYPE" : "TX"},
+			       {"PORT NAME" : "port#144", "PORT NUMBER" : "99", "TYPE" : "RX"}
+		        ]
           },
           {
             "PROCESSOR NAME": "MP-2",
             "PROCESSOR TYPE": "CALO2 PROCESSOR",
+            "PROCESSOR CREATOR": "DummyProcessor",
             "HARDWARE TYPE": "MP7",
             "CRATE NAME": "S2G17-01",
             "CRATE SLOT": 2,
             "CRATE LOCATION": "MyLocation",
             "CRATE DESCRIPTION": "MyCrateDescription",
             "IP ADDRESS": "192.168.0.3",
- 	    "PORTS": [  
-			{"PORT NAME" : "port#1", "PORT NUMBER" : "33", "TYPE" : "TX"},
-			{"PORT NAME" : "port#2", "PORT NUMBER" : "12", "TYPE" : "RX"},
-			{"PORT NAME" : "port#144", "PORT NUMBER" : "99", "TYPE" : "RX"},
-		     ]
+ 	          "PORTS": [  
+              {"PORT NAME" : "port#1", "PORT NUMBER" : "33", "TYPE" : "TX"},
+              {"PORT NAME" : "port#2", "PORT NUMBER" : "12", "TYPE" : "RX"},
+              {"PORT NAME" : "port#144", "PORT NUMBER" : "99", "TYPE" : "RX"}
+		        ]
           },
           {
             "PROCESSOR NAME": "MP-3",
             "PROCESSOR TYPE": "CALO2 PROCESSOR",
+            "PROCESSOR CREATOR": "DummyProcessor",
             "HARDWARE TYPE": "MP7",
             "CRATE NAME": "S2G17-01",
             "CRATE SLOT": 3,
             "CRATE LOCATION": "MyLocation",
             "CRATE DESCRIPTION": "MyCrateDescription",
             "IP ADDRESS": "192.168.0.21",
- 	    "PORTS": [  
-			{"PORT NAME" : "port#1", "PORT NUMBER" : "33", "TYPE" : "TX"},
-			{"PORT NAME" : "port#2", "PORT NUMBER" : "12", "TYPE" : "RX"},
-			{"PORT NAME" : "port#144", "PORT NUMBER" : "99", "TYPE" : "RX"},
-		     ]
-
+ 	          "PORTS": [  
+              {"PORT NAME" : "port#1", "PORT NUMBER" : "33", "TYPE" : "TX"},
+              {"PORT NAME" : "port#2", "PORT NUMBER" : "12", "TYPE" : "RX"},
+              {"PORT NAME" : "port#144", "PORT NUMBER" : "99", "TYPE" : "RX"}
+      		  ]
           }
         ],
       "SERVICES":
@@ -57,7 +59,8 @@
           {
             "SERVICE NAME": "AMC13-1",
             "SERVICE TYPE": "AMC13",
-            "CRATE ID": "S2G17-01",
+            "SERVICE CREATOR": "DummyAMC13Service",
+            "CRATE NAME": "S2G17-01",
             "CRATE SLOT": 13,
             "CRATE LOCATION": "MyCrateLocation",
             "CRATE DESCRIPTION": "MyCrateDescription",
