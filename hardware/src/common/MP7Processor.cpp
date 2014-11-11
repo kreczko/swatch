@@ -8,6 +8,7 @@
 
 #include "swatch/hardware/MP7Processor.hpp"
 #include "swatch/processor/ProcessorFactory.hpp"
+#include "swatch/processor/ProcessorDescriptor.hpp"
 
 // Hardware Headers
 #include "swatch/hardware/MP7Controls.hpp"
@@ -38,25 +39,14 @@ SWATCH_PROCESSOR_REGISTER_CLASS(MP7Processor);
 MP7Processor::MP7Processor(const std::string& id, const swatch::core::ParameterSet& params) :
     Processor(id, params),
     driver_(0x0) {
-
     using namespace boost::assign;
-    std::string uri;
-    std::string addrTable;
-    
-    // Extract parameters
-    try {
-        crate_ = params.get<std::string>("crate");
-        slot_ = params.get<uint32_t>("slot");
-    
-        uri = params.get<std::string>("uri");
-        addrTable = params.get<std::string>("addrtab");
-    } catch ( swatch::core::ParameterNotFound& e ) {
-        // Don't proceed any further
-        // TODO: Throw here
-        return;
-    }
 
-    uhal::HwInterface board = uhal::ConnectionManager::getDevice(id, uri, addrTable) ;
+    const processor::ProcessorDescriptor& descriptor = params.get<processor::ProcessorDescriptor>("descriptor");
+
+    crate_ = descriptor.crateId;
+    slot_ = descriptor.slot;
+
+    uhal::HwInterface board = uhal::ConnectionManager::getDevice(id, descriptor.uri, descriptor.addressTable) ;
     
     
     // The following lines must be moved into the mp7 package 

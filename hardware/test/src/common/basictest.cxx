@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
 
     uhal::setLogLevelTo(uhal::Warning());
 
-    ParameterSet pset = swatch::hardware::test::readJson("${SWATCH_TESTS}/etc/testdb.json");
+    ParameterSet pset = swatch::hardware::test::readJson("${SWATCH_ROOT}/hardware/test/cfg/firstsys.json");
 
     ParameterSet amc13params = pset.get< std::deque<ParameterSet> >("services").front();
     ParameterSet mp7params = pset.get< std::deque<ParameterSet> >("processors").front();

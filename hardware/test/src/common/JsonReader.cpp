@@ -32,7 +32,7 @@ swatch::core::ParameterSet readJson( const std::string path ) {
     ParameterSet pset;
     ptree pt;
 
-    read_json(shellExpandPath("${SWATCH_TESTS}/etc/testdb.json"), pt);
+    read_json(shellExpandPath(path), pt);
 
     ptree &pt_system = pt.get_child("SYSTEM");
 
@@ -49,7 +49,8 @@ swatch::core::ParameterSet readJson( const std::string path ) {
         pd.slot         = v.second.get<uint32_t>("CRATE SLOT");
 
         std::cout << pd << std::endl;
-        procSet.set("id", pd.name);
+        procSet.set("name", pd.name);
+        procSet.set("class", pd.creator);
         procSet.set("descriptor", pd);
         processorSets.push_back(procSet);
     }
@@ -72,7 +73,8 @@ swatch::core::ParameterSet readJson( const std::string path ) {
 
 
         std::cout << sd << std::endl;
-        amc13Set.set("id", sd.name);
+        amc13Set.set("name", sd.name);
+        amc13Set.set("class", sd.creator);
         amc13Set.set("descriptor", sd);
         amc13Sets.push_back(amc13Set);
     }
