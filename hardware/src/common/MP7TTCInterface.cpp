@@ -60,23 +60,23 @@ uint32_t MP7TTCInterface::getDoubleBitErrors() const {
 
 
 bool MP7TTCInterface::isClock40Locked() const {
-
+    return driver_->getCtrl().clock40Locked();
 }
 
 bool MP7TTCInterface::hasClock40Stopped() const {
-
+    return driver_->getCtrl().clock40Stopped();
 }
 
 bool MP7TTCInterface::isOrbitLocked() const {
-
+    return driver_->getTTC().bc0Locked();
 }
 
 bool MP7TTCInterface::hasBC0Stopped() const {
-
+    return driver_->getTTC().bc0Error();
 }
 
 bool MP7TTCInterface::isBC0SpyMasked() const {
-
+    return false;
 }
 
 void MP7TTCInterface::maskBC0Spy(bool mask) {

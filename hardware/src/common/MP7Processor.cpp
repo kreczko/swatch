@@ -22,7 +22,6 @@
 // uHAL Headers
 #include "uhal/HwInterface.hpp"
 #include "uhal/ConnectionManager.hpp"
-#include "uhal/log/log.hpp"
 
 
 // Boost Headers
@@ -36,7 +35,8 @@ namespace hardware {
 SWATCH_PROCESSOR_REGISTER_CLASS(MP7Processor);
 
 MP7Processor::MP7Processor(const std::string& id, const swatch::core::ParameterSet& params) :
-    Processor(id, params) {
+    Processor(id, params),
+    driver_(0x0) {
 
     using namespace boost::assign;
     std::string uri;
@@ -51,10 +51,10 @@ MP7Processor::MP7Processor(const std::string& id, const swatch::core::ParameterS
         addrTable = params.get<std::string>("addrtab");
     } catch ( swatch::core::ParameterNotFound& e ) {
         // Don't proceed any further
+        // TODO: Throw here
         return;
     }
 
-    uhal::setLogLevelTo(uhal::Warning());
     uhal::HwInterface board = uhal::ConnectionManager::getDevice(id, uri, addrTable) ;
     
     
@@ -83,7 +83,7 @@ MP7Processor::MP7Processor(const std::string& id, const swatch::core::ParameterS
     
     // Build subcomponents
     ctrl_ = new MP7Controls( driver_ );
-    ttc_ = new MP7TTCInterface( driver_ ); 
+    ttc_  = new MP7TTCInterface( driver_ ); 
     
     std::cout << "MP7 Processor built: firmware 0x" << std::hex << ctrl_->firmwareVersion() << std::endl;
     

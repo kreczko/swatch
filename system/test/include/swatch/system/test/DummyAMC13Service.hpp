@@ -18,11 +18,19 @@ class DummyAMC13Service : public system::AMC13Service {
 public:
     DummyAMC13Service( const std::string& aId, const core::ParameterSet& params );
     virtual ~DummyAMC13Service();
+
+    virtual uint32_t getSlot() const;
+
+    virtual const std::string& getCrateId() const;
     
     /// Enables ttc commands on the given slots
     virtual void enableTTC( const std::vector<uint32_t> & aSlots );
 
 private:
+
+    uint32_t slot_;
+    
+    std::string crate_;
 
 };
 } // namespace test

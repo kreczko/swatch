@@ -22,15 +22,13 @@ protected:
 public:
     virtual ~AMC13Service();
     
-    virtual uint32_t getSlot() const;
-    virtual const std::string& getCrateId() const;
+    virtual uint32_t getSlot() const = 0;
+
+    virtual const std::string& getCrateId() const = 0;
     
     /// Enables ttc commands on the given slots
     virtual void enableTTC( const std::vector<uint32_t> & aSlots ) = 0;
     
-protected:
-    uint32_t slot_;
-    std::string crateId_;
 };
 
 } // namespace system

@@ -34,11 +34,23 @@ DummyAMC13Service::DummyAMC13Service( const std::string& aId, const core::Parame
     BOOST_FOREACH( std::string name, params.names() ) {
         cout << "   " << name << " : " << core::anyToString(params.get(name)) << endl;
     }
+
+    crate_ = params.get<std::string>("crate");
+    slot_ = params.get<int>("slot");
 }
 
 DummyAMC13Service::~DummyAMC13Service() {
 }
 
+uint32_t
+DummyAMC13Service::getSlot() const {
+    return slot_;
+}
+
+const std::string&
+DummyAMC13Service::getCrateId() const {
+    return crate_;
+}
 
 void
 DummyAMC13Service::enableTTC(const std::vector<uint32_t>& aSlots) {
@@ -50,6 +62,8 @@ DummyAMC13Service::enableTTC(const std::vector<uint32_t>& aSlots) {
     cout << endl;
     
 }
+
+
 
 } // namespace test
 } // namespace system

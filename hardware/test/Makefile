@@ -38,6 +38,7 @@ Libraries =	\
 		cactus_uhal_uhal \
 		cactus_uhal_log \
 		cactus_mp7_mp7 \
+		cactus_amc13_amc13 \
 		cactus_swatch_core \
 		cactus_swatch_processor \
 		cactus_swatch_system \
