@@ -1,5 +1,5 @@
 /**
- * @file    MP7Processor.hpp
+ * @file    MP7Processor.cpp
  * @author  Alessandro Thea
  * @brief   MP7 board processor implementation
  * @date    06/11/14

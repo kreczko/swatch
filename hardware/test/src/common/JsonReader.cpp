@@ -12,6 +12,7 @@
 #include "swatch/core/ParameterSet.hpp"
 #include "swatch/processor/ProcessorDescriptor.hpp"
 #include "swatch/system/AMC13ServiceDescriptor.hpp"
+#include "swatch/processor/Utilities.hpp"
 
 // Boost Headers
 #include <boost/property_tree/json_parser.hpp>
@@ -38,20 +39,7 @@ swatch::core::ParameterSet readJson( const std::string path ) {
 
     std::deque<ParameterSet> processorSets;
     BOOST_FOREACH(ptree::value_type &v, pt_system.get_child("PROCESSORS")) {
-        ParameterSet procSet;
-        swatch::processor::ProcessorDescriptor pd;
-
-        pd.name         = v.second.get<std::string>("PROCESSOR NAME");
-        pd.creator      = v.second.get<std::string>("PROCESSOR CREATOR");
-        pd.uri          = v.second.get<std::string>("URI");
-        pd.addressTable = v.second.get<std::string>("ADDRESS TABLE"); // FIXME
-        pd.crateId      = v.second.get<std::string>("CRATE NAME");
-        pd.slot         = v.second.get<uint32_t>("CRATE SLOT");
-
-        std::cout << pd << std::endl;
-        procSet.set("name", pd.name);
-        procSet.set("class", pd.creator);
-        procSet.set("descriptor", pd);
+        ParameterSet procSet = swatch::processor::treeToProcessorPSet(v.second);
         processorSets.push_back(procSet);
     }
     pset.set("processors",processorSets);
