@@ -327,10 +327,6 @@ int main(int argc, char const *argv[]) {
     params.set("name", "Processor 0");
     params.set("class", p0stub.creator);
     params.set("descriptor",p0stub);
-//    params.set("addrtab", addrtab);
-//    params.set("uri", ssURI.str());
-//    params.set("crate", "s2g20-10");
-//    params.set("slot", (uint32_t) 5);
     params.set("poweron", poweron);
 
 
@@ -348,7 +344,7 @@ int main(int argc, char const *argv[]) {
     LOG(swlog::kNotice) << "//_ Step 0 ___ Testing object __________________________________";
     printStatus(p0);
 
-    cout << "Input channels scan" << endl;
+    LOG(swlog::kDebug) << "Input channels scan";
     // Test rx upload and download
     BOOST_FOREACH( swpro::InputChannel* in, p0->inputChannels() ) {        
 
@@ -359,10 +355,10 @@ int main(int argc, char const *argv[]) {
         // Download and check
         std::vector<uint64_t> data = in->download();   
     
-        cout << "v == data? : " << (v == data) << endl;
+        LOG(swlog::kDebug) << "v == data? : " << (v == data);
     }
 
-    cout << "Output channels scan" << endl;
+    LOG(swlog::kDebug) << "Output channels scan";
     // Test tx channels injection and 
     BOOST_FOREACH( swpro::OutputChannel* out, p0->outputChannels() ) {        
 
@@ -373,15 +369,15 @@ int main(int argc, char const *argv[]) {
         // Download and check
         std::vector<uint64_t> data = out->download();   
     
-        cout << "v == data? : " << (v == data) << endl;
+        LOG(swlog::kDebug) << "v == data? : " << (v == data);
     }
 
     LOG(swlog::kNotice) << "//_ Step 1 ___ Testing resets __________________________________";
     swatch::core::ParameterSet mode;
     
-    std::cout << p0->id() << " Clock modes:" << std::endl;
+    LOG(swlog::kDebug) << p0->id() << " Clock modes:";
     BOOST_FOREACH( const std::string& c, p0->getModes() ) {
-        std::cout << "  + " << c << std::endl;
+        LOG(swlog::kDebug) << "  + " << c;
     }
 
     LOG(swlog::kNotice) << ">> Resetting on internal clock";
