@@ -7,6 +7,7 @@
 
 
 #include "swatch/hardware/MP7Processor.hpp"
+#include "swatch/logger/Log.hpp"
 #include "swatch/processor/ProcessorFactory.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
 
@@ -30,6 +31,10 @@
 #include <boost/assign.hpp>
 
 // C++ Headers
+
+namespace swco = swatch::core;
+namespace swlog = swatch::logger;
+namespace swhw = swatch::hardware;
 
 namespace swatch {
 namespace hardware {
@@ -57,7 +62,7 @@ MP7Processor::MP7Processor(const std::string& id, const swatch::core::ParameterS
         clockModes_ ["external"] = { "si570", true, false };
         clockModes_ ["external_si5326"] = { "si5326", true, false };
 
-        std::cout << "MP7XEController built" << std::endl;
+        LOG(swlog::kNotice) << "MP7XEController built";
 
     } else if ( dynamic_cast<const mp7::ClockingNode*>( &(board.getNode("ctrl.clocking")) ) != 0x0 ) {
         driver_ = new mp7::MP7R1Controller(board); 
@@ -65,7 +70,7 @@ MP7Processor::MP7Processor(const std::string& id, const swatch::core::ParameterS
         clockModes_ ["internal"] = { "", false, true };
         clockModes_ ["external"] = { "", true, false };
         
-        std::cout << "MP7R1Controller built" << std::endl;
+        LOG(swlog::kNotice) << "MP7R1Controller built";
     } else {
         // Need a dedicated exception
         throw std::runtime_error("Could not detect the MP7 model. Check your address table");
@@ -76,7 +81,7 @@ MP7Processor::MP7Processor(const std::string& id, const swatch::core::ParameterS
     ctrl_ = new MP7Controls( driver_ );
     ttc_  = new MP7TTCInterface( driver_ ); 
     
-    std::cout << "MP7 Processor built: firmware 0x" << std::hex << ctrl_->firmwareVersion() << std::endl;
+    LOG(swlog::kNotice) << "MP7 Processor built: firmware 0x" << std::hex << ctrl_->firmwareVersion() << std::endl;
     
 }
 

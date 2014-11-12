@@ -30,7 +30,7 @@
  #include <boost/property_tree/json_parser.hpp>
 
 using namespace std;
-namespace swcore = swatch::core;
+namespace swco = swatch::core;
 namespace swlog = swatch::logger;
 namespace swhw = swatch::hardware;
 /*
@@ -39,8 +39,8 @@ namespace swhw = swatch::hardware;
 int main(int argc, char** argv) {
     using boost::property_tree::ptree;
     using boost::property_tree::json_parser::read_json;
-    using swcore::ParameterSet;
-    using swcore::shellExpandPath;
+    using swco::ParameterSet;
+    using swco::shellExpandPath;
 
     uhal::setLogLevelTo(uhal::Warning());
 
