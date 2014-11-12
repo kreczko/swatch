@@ -13,7 +13,9 @@ test configuration
  */
 
 
+#include "swatch/logger/Log.hpp"
 #include "swatch/core/ParameterSet.hpp"
+#include "swatch/processor/ProcessorStub.hpp"
 #include "swatch/processor/test/IPBusDummyHardware.hpp"
 #include "swatch/processor/test/IPBusProcessor.hpp"
 #include "swatch/processor/TTCInterface.hpp"
@@ -25,8 +27,11 @@ test configuration
 using std::cout;
 using std::endl;
 
+namespace swlog = swatch::logger;
+namespace swpro = swatch::processor;
+
 //---
-struct TTCCountersIncrementer : public swatch::processor::test::IPBusWorkLoop {
+struct TTCCountersIncrementer : public swpro::test::IPBusWorkLoop {
 
     TTCCountersIncrementer(uint32_t millisec, uint32_t orbitsPerCycle = 10) :
         IPBusWorkLoop(millisec),
@@ -66,7 +71,7 @@ private:
 };
 
 //---
-struct TTCErrorGenerator : public swatch::processor::test::IPBusWorkLoop {
+struct TTCErrorGenerator : public swpro::test::IPBusWorkLoop {
 
     TTCErrorGenerator(uint32_t millisec) : IPBusWorkLoop(millisec){
     }
@@ -91,7 +96,7 @@ struct TTCErrorGenerator : public swatch::processor::test::IPBusWorkLoop {
 };
 
 //---
-struct BufferCaptureEmulator : public swatch::processor::test::IPBusWorkLoop {
+struct BufferCaptureEmulator : public swpro::test::IPBusWorkLoop {
 
     typedef boost::unordered_map<std::string, uhal::ValWord<uint32_t> > ValMap;
 
@@ -133,7 +138,7 @@ private:
         hw->dispatch();
 
         BOOST_FOREACH(ValMap::value_type& m, modes) {
-            if ( m.second == swatch::processor::ChannelBase::Capture ) {
+            if ( m.second == swpro::ChannelBase::Capture ) {
                 // cout << m.first << " : " << m.second << endl;
 
                 uint32_t bsize = hw->getNode(m.first).getNode("data").getSize();
@@ -154,9 +159,9 @@ private:
 };
 
 
-void configure(swatch::processor::Processor *p, const swatch::core::ParameterSet &params) {
+void configure(swpro::Processor *p, const swatch::core::ParameterSet &params) {
     using namespace swatch::core;
-    using namespace swatch::processor;
+    // using namespace swpro;
     // Claim exclusive use of the board
     // TODO
 
@@ -188,7 +193,7 @@ void configure(swatch::processor::Processor *p, const swatch::core::ParameterSet
 
     // Set MGTs up first
     // Rx channels
-    BOOST_FOREACH( InputChannel* c, p->inputChannels() ) {
+    BOOST_FOREACH( swpro::InputChannel* c, p->inputChannels() ) {
         // Reset
         // c->ctrl()->reset();
         // Configure
@@ -197,7 +202,7 @@ void configure(swatch::processor::Processor *p, const swatch::core::ParameterSet
         c->clearErrors();
     }
     // Tx Channels 
-    BOOST_FOREACH( OutputChannel* c, p->outputChannels() ) {
+    BOOST_FOREACH( swpro::OutputChannel* c, p->outputChannels() ) {
         // Reset
         // c->ctrl()->reset();
         // Configure
@@ -205,11 +210,11 @@ void configure(swatch::processor::Processor *p, const swatch::core::ParameterSet
     }
     
     // And then buffers
-    BOOST_FOREACH( InputChannel* c, p->inputChannels() ) {
-        c->configureBuffer(ChannelBase::Latency);
+    BOOST_FOREACH( swpro::InputChannel* c, p->inputChannels() ) {
+        c->configureBuffer(swpro::ChannelBase::Latency);
     }
-    BOOST_FOREACH( OutputChannel* c, p->outputChannels() ) {
-        c->configureBuffer(ChannelBase::Latency);
+    BOOST_FOREACH( swpro::OutputChannel* c, p->outputChannels() ) {
+        c->configureBuffer(swpro::ChannelBase::Latency);
     }
 
 
@@ -226,46 +231,46 @@ void configure(swatch::processor::Processor *p, const swatch::core::ParameterSet
 }
 
 //----------------------------------------------------------------------------//
-void printStatus( std::ostream& out, swatch::processor::Controls* ctrl ) {
-    out << "Firmware version : 0x"  << std::hex << ctrl->firmwareVersion() << std::dec << endl;
-    out << "Inputs  : " << ctrl->numberOfInputs() << endl;
-    out << "Outputs : " << ctrl->numberOfOutputs() << endl;
+void printStatus( swpro::Controls* ctrl ) {
+    LOG(swlog::kInfo) << "Firmware version : 0x"  << std::hex << ctrl->firmwareVersion() << std::dec;
+    LOG(swlog::kInfo) << "Inputs  : " << ctrl->numberOfInputs();
+    LOG(swlog::kInfo) << "Outputs : " << ctrl->numberOfOutputs();
 } 
 
-void printStatus( std::ostream& out, swatch::processor::TTCInterface* ttc ) {
-    out << "Clock40 Locked: " << (ttc->isClock40Locked() ? "True" : "False")  << endl;
-    out << "Orbit Locked:   " << (ttc->isOrbitLocked() ? "True" : "False" )<< endl;
-    out << "Event counter:  " << ttc->getEventCounter() << endl;
-    out << "Bunch counter:  " << ttc->getBunchCounter() << endl;
-    out << "Orbit counter:  " << ttc->getOrbitCounter() << endl;
-    out << "SBEC  counter:  " << ttc->getSingleBitErrors() << endl;
-    out << "DBEC  counter:  " << ttc->getDoubleBitErrors() << endl;
+void printStatus( swpro::TTCInterface* ttc ) {
+    LOG(swlog::kInfo) << "Clock40 Locked: " << (ttc->isClock40Locked() ? "True" : "False");
+    LOG(swlog::kInfo) << "Orbit Locked:   " << (ttc->isOrbitLocked() ? "True" : "False" );
+    LOG(swlog::kInfo) << "Event counter:  " << ttc->getEventCounter();
+    LOG(swlog::kInfo) << "Bunch counter:  " << ttc->getBunchCounter();
+    LOG(swlog::kInfo) << "Orbit counter:  " << ttc->getOrbitCounter();
+    LOG(swlog::kInfo) << "SBEC  counter:  " << ttc->getSingleBitErrors();
+    LOG(swlog::kInfo) << "DBEC  counter:  " << ttc->getDoubleBitErrors();
 } 
 
-void printStatus( std::ostream& out, swatch::processor::Processor* p ) {
-    out << "Processor " << p->id() << endl;
-    out << ">> Info" << endl;
-    printStatus(cout,  p->ctrl() );
-    out << ">> TTC" << endl;
-    printStatus(cout,  p->ttc() );
+void printStatus( swpro::Processor* p ) {
+    LOG(swlog::kInfo) << "Processor " << p->id();
+    LOG(swlog::kInfo) << ">> Info";
+    printStatus( p->ctrl() );
+    LOG(swlog::kInfo) << ">> TTC";
+    printStatus( p->ttc() );
 }
 
 
 //----------------------------------------------------------------------------//
 int main(int argc, char const *argv[]) {
-    using namespace swatch::processor;
+    // using namespace swatch::processor;
 
     const std::string addrtab = "file://${SWATCH_ROOT}/processor/test/etc/dummy.xml";
     /* code */
-    test::IPBusDummyHardware x("board-0", 50010, addrtab);
+    swpro::test::IPBusDummyHardware x("board-0", 50010, addrtab);
     x.start();
-    std::cout << "Started? " << x.started() << std::endl;
+    LOG(swlog::kNotice) << "Started? " << x.started();
 
     // Inject some data
 
     uint32_t nRx(4), nTx(2);
 
-    test::IPBusDummyHardware::RegisterMap poweron;
+    swpro::test::IPBusDummyHardware::RegisterMap poweron;
     
     // 'Scalars'
     poweron["ctrl.id.fwrev"] = 0x44332211;
@@ -301,35 +306,51 @@ int main(int argc, char const *argv[]) {
     // Add error generator
     // x.add(new TTCErrorGenerator(10) );
 
+    
+    swpro::ProcessorStub stubTemplate;
+    stubTemplate.name = "";
+    stubTemplate.creator = "IPBusProcessor";
+    stubTemplate.addressTable = addrtab;
+    stubTemplate.uri = "";
+    stubTemplate.crate = "s2g20-10";
+    stubTemplate.slot = 0;
+    
+    
     // x is ready for testing
+    swpro::ProcessorStub p0stub = stubTemplate;
+    
     std::stringstream ssURI;
     ssURI << "ipbusudp-2.0://127.0.0.1:" << 50010;
+    p0stub.uri = ssURI.str();
 
     swatch::core::ParameterSet params;
-    params.set("addrtab", addrtab);
-    params.set("uri", ssURI.str());
-    params.set("crate", "s2g20-10");
-    params.set("slot", (uint32_t) 5);
+    params.set("name", "Processor 0");
+    params.set("class", p0stub.creator);
+    params.set("descriptor",p0stub);
+//    params.set("addrtab", addrtab);
+//    params.set("uri", ssURI.str());
+//    params.set("crate", "s2g20-10");
+//    params.set("slot", (uint32_t) 5);
     params.set("poweron", poweron);
 
 
     // Fun starts here
-    Processor *p0 = 0x0;
+    swpro::Processor *p0 = 0x0;
     try {
-        p0 = new test::IPBusProcessor("test-board0", params);
-        cout << ">> Processor " << p0->id() << " created" << endl;
+        p0 = new swpro::test::IPBusProcessor(p0stub.name, params);
+        LOG(swlog::kNotice) << ">> Processor " << p0->id() << " created";
 
     } catch (uhal::exception::exception &e) {
         // Crap, let's get out here
         return -1;
     }
 
-    cout << "//_ Step 0 ___ Testing object __________________________________" << endl;
-    printStatus(cout, p0);
+    LOG(swlog::kNotice) << "//_ Step 0 ___ Testing object __________________________________";
+    printStatus(p0);
 
     cout << "Input channels scan" << endl;
     // Test rx upload and download
-    BOOST_FOREACH( InputChannel* in, p0->inputChannels() ) {        
+    BOOST_FOREACH( swpro::InputChannel* in, p0->inputChannels() ) {        
 
         std::vector<uint64_t> v(in->getBufferSize(),0x5555);
         // cout << "v.size() = " << v.size() << endl;
@@ -343,7 +364,7 @@ int main(int argc, char const *argv[]) {
 
     cout << "Output channels scan" << endl;
     // Test tx channels injection and 
-    BOOST_FOREACH( OutputChannel* out, p0->outputChannels() ) {        
+    BOOST_FOREACH( swpro::OutputChannel* out, p0->outputChannels() ) {        
 
         std::vector<uint64_t> v(out->getBufferSize(),0x5555);
         // cout << "v.size() = " << v.size() << endl;
@@ -355,7 +376,7 @@ int main(int argc, char const *argv[]) {
         cout << "v == data? : " << (v == data) << endl;
     }
 
-    cout << "//_ Step 1 ___ Testing resets __________________________________" << endl;
+    LOG(swlog::kNotice) << "//_ Step 1 ___ Testing resets __________________________________";
     swatch::core::ParameterSet mode;
     
     std::cout << p0->id() << " Clock modes:" << std::endl;
@@ -363,13 +384,13 @@ int main(int argc, char const *argv[]) {
         std::cout << "  + " << c << std::endl;
     }
 
-    cout << ">> Resetting on internal clock" << endl;
+    LOG(swlog::kNotice) << ">> Resetting on internal clock";
     // reset(p0, mode);
     p0->reset("internal");
 
-    cout << ">> Take a nap (1 sec)" << endl;
+    LOG(swlog::kNotice) << ">> Take a nap (1 sec)";
     sleep(1);
-    printStatus( cout, p0->ttc() );
+    printStatus( p0->ttc() );
 
     // cout << ">> Sending 5 L1s" << endl;
     // p0->ttc()->sendMultipleL1A(5);
@@ -377,17 +398,17 @@ int main(int argc, char const *argv[]) {
     
 
     
-    cout << "//_ Step 2 ___ Testing config __________________________________" << endl;
+    LOG(swlog::kNotice) << "//_ Step 2 ___ Testing config __________________________________";
     swatch::core::ParameterSet config;
     configure(p0, config);
 
     // p0->inputChannel(0)->buffer()->configure(swatch::processor::AbstractChanBuffer::Capture, 0, 1);
     // p0->inputChannel(2)->buffer()->configure(swatch::processor::AbstractChanBuffer::Capture, 0, 1);
 
-    cout << ">> Sending test BGo" << endl;
+    LOG(swlog::kNotice) << ">> Sending test BGo";
     p0->ttc()->sendBGo(0xc);
 
-    cout << ">> Take a nap (1 sec)" << endl;
+    LOG(swlog::kNotice) << ">> Take a nap (1 sec)";
     sleep(1);
 
     const std::vector<swatch::processor::InputChannel*>& rxs = p0->inputChannels();
@@ -397,16 +418,17 @@ int main(int argc, char const *argv[]) {
     }
 
     for ( size_t j(0); j<data[0].size(); ++j ) {
-        cout << "Frame " <<  std::dec << std::setfill('0') << std::setw(4) << j << " : ";
+        std::ostringstream msg;
+        msg << "Frame " <<  std::dec << std::setfill('0') << std::setw(4) << j << " : ";
         for ( size_t k(0); k<data.size(); ++k )
-            cout << "0x" << std::hex << std::setfill('0') << std::setw(8) << data[k][j] << "   ";
-        cout << endl;
+            msg << "0x" << std::hex << std::setfill('0') << std::setw(8) << data[k][j] << "   ";
+        LOG(swlog::kInfo) << msg.str();
     }
-    cout << endl << std::dec;
+//    cout << endl << std::dec;
 
     // std::vector<uint64_t> data = p0->inputChannel(2)->buffer()->download();
 
-    cout << "//_ Destruction ________________________________________________" << endl;
+    LOG(swlog::kNotice) << "//_ Destruction ________________________________________________";
     // delete p0;
     return 0;
 

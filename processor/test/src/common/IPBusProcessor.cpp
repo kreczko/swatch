@@ -8,7 +8,9 @@
 #include "uhal/ConnectionManager.hpp"
 
 // Swatch Headers
+#include "swatch/logger/Log.hpp"
 #include "swatch/processor/ProcessorFactory.hpp"
+#include "swatch/processor/ProcessorStub.hpp"
 #include "swatch/processor/test/IPBusProcessor.hpp"
 #include "swatch/processor/test/IPBusControls.hpp"
 #include "swatch/processor/test/IPBusTTC.hpp"
@@ -28,6 +30,8 @@ using std::endl;
 using std::hex;
 using std::dec;
 
+namespace swlog = swatch::logger;
+namespace swpro = swatch::processor;
 
 namespace swatch {
 namespace processor {
@@ -42,31 +46,34 @@ IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::Parame
     
     clockModes_ += "internal","external";
     
-    crate_ = params.get<std::string>("crate");
-    slot_ = params.get<uint32_t>("slot");
+    // crate_ = params.get<std::string>("crate");
+    // slot_ = params.get<uint32_t>("slot");
 
+    const swpro::ProcessorStub& desc = params.get<swpro::ProcessorStub>("descriptor");
+
+    crate_ = desc.crate;
+    slot_ = desc.slot;
 
     // Build the objects
     hw_ = new uhal::HwInterface(
             uhal::ConnectionManager::getDevice(
-            id,
-            params.get<std::string>("uri"),
-            params.get<std::string>("addrtab")
-            )
+                id,
+                desc.uri,
+                desc.addressTable)
             );
 
 
 
     //    connection_ = swatch::processor::Connection::make(interface);
     ctrl_ = new IPBusControls(hw(), params);
-    ttc_ = new IPBusTTC(hw());
+    ttc_  = new IPBusTTC(hw());
     algo_ = new IPBusFakeAlgos(hw());
 
     // build the list of links based on the firmware informations
     uint32_t nInputs = ctrl()->numberOfInputs();
     uint32_t nOutputs = ctrl()->numberOfOutputs();
 
-    cout << "Detected " << nInputs << " rx and " << nOutputs << " tx channels." << endl;
+    LOG(swlog::kDebug) << "Detected " << nInputs << " rx and " << nOutputs << " tx channels.";
 
     inputChannels_.reserve(nInputs);
     for (size_t k(0); k < nInputs; ++k) {
@@ -77,7 +84,7 @@ IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::Parame
 
         inputChannels_.push_back(new IPBusRxChannel(hw(), a));
 
-        cout << "rx ch[" << k << "]: size " << inputChannels_[k]->getBufferSize() << endl;
+        LOG(swlog::kDebug) << "rx ch[" << k << "]: size " << inputChannels_[k]->getBufferSize();
     }
 
     outputChannels_.reserve(nOutputs);
@@ -89,7 +96,7 @@ IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::Parame
 
         outputChannels_.push_back(new IPBusTxChannel(hw(), a));
 
-        cout << "tx ch[" << k << "]: size " << outputChannels_[k]->getBufferSize() << endl;
+        LOG(swlog::kDebug) << "tx ch[" << k << "]: size " << outputChannels_[k]->getBufferSize();
     }
 
 }
@@ -175,7 +182,7 @@ IPBusFakeAlgos::~IPBusFakeAlgos() {
 
 void
 IPBusFakeAlgos::reset() {
-     cout << "Algorithms were reset" << endl;
+     LOG(swlog::kDebug) << "Algorithms were reset";
 }
 
 }

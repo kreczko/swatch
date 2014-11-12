@@ -46,12 +46,12 @@ MP7Processor::MP7Processor(const std::string& id, const swatch::core::ParameterS
     driver_(0x0) {
     using namespace boost::assign;
 
-    const processor::ProcessorStub& descriptor = params.get<processor::ProcessorStub>("descriptor");
+    const processor::ProcessorStub& desc = params.get<processor::ProcessorStub>("descriptor");
 
-    crate_ = descriptor.crate;
-    slot_ = descriptor.slot;
+    crate_ = desc.crate;
+    slot_ = desc.slot;
 
-    uhal::HwInterface board = uhal::ConnectionManager::getDevice(id, descriptor.uri, descriptor.addressTable) ;
+    uhal::HwInterface board = uhal::ConnectionManager::getDevice(id, desc.uri, desc.addressTable) ;
     
     
     // The following lines must be moved into the mp7 package 

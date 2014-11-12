@@ -39,7 +39,7 @@ T&
 ParameterSet::get(const std::string& aKey) {
     iterator it = this->find(aKey);
     //TODO runtime_error -> dedicated error
-    if (it == this->end()) throw std::runtime_error("Parameter not found:" + aKey);
+    if (it == this->end()) throw std::runtime_error("Parameter not found: '" + aKey + "'");
     if ( typeid(T) != it->second.type() ) {
         std::stringstream exc;
         exc << "Cannot cast " << demangleName(it->second.type().name()) << " to " << demangleName(typeid(T).name());
