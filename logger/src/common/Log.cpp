@@ -34,8 +34,6 @@ Log::~Log() {
     if (messageLevel_ <= logThreshold()) {
         os_ << std::endl;
         push(messageLevel_, "swatch", os_.str().c_str());
-        // fprintf(stderr, "%s", os_.str().c_str());
-        // fflush(stderr);
     }
 }
 
@@ -45,14 +43,13 @@ Log::~Log() {
 
 std::ostringstream&
 Log::get(LogLevel level) {
-    // os_ << toString(level) << " : ";
     messageLevel_ = level;
     return os_;
 }
 
 void
 Log::push(LogLevel level, const std::string& source, const std::string& message) {
-    fprintf(stderr, "%s %8s |  %s", source.c_str(), toString(level).c_str(), message.c_str());
+    fprintf(stderr, "%s %-7s |  %s", source.c_str(), toString(level).c_str(), message.c_str());
     fflush(stderr);
 }
 

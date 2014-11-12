@@ -20,7 +20,7 @@
 #include "swatch/hardware/AMC13Service.hpp"
 
 // uHAL Headers
- #include "uhal/log/log.hpp"
+#include "uhal/log/log.hpp"
 #include "swatch/system/SystemFactory.hpp"
 #include "swatch/system/ServiceFactory.hpp"
 #include "swatch/system/Utilities.hpp"
@@ -30,26 +30,27 @@
  #include <boost/property_tree/json_parser.hpp>
 
 using namespace std;
-using namespace swatch::core;
-
+namespace swcore = swatch::core;
+namespace swlog = swatch::logger;
+namespace swhw = swatch::hardware;
 /*
  * 
  */
 int main(int argc, char** argv) {
     using boost::property_tree::ptree;
     using boost::property_tree::json_parser::read_json;
-    using swatch::core::ParameterSet;
-    using swatch::core::shellExpandPath;
+    using swcore::ParameterSet;
+    using swcore::shellExpandPath;
 
     uhal::setLogLevelTo(uhal::Warning());
 
-    LOG(swatch::logger::kError) << "sticazzi";
-    LOG(swatch::logger::kWarning) << "sticazzi";
-    LOG(swatch::logger::kInfo) << "sticazzi";
-    LOG(swatch::logger::kDebug) << "sticazzi";
-    LOG(swatch::logger::kDebug1) << "sticazzi";
+    LOG(swlog::kError) << "sticazzi";
+    LOG(swlog::kWarning) << "sticazzi";
+    LOG(swlog::kInfo) << "sticazzi";
+    LOG(swlog::kDebug) << "sticazzi";
+    LOG(swlog::kDebug1) << "sticazzi";
     
-    exit(0);
+//    exit(0);
     
     // Build the property tree
     ptree pt;
@@ -64,9 +65,9 @@ int main(int argc, char** argv) {
     try {
         amc13_A = dynamic_cast<swatch::hardware::AMC13Service*>(swatch::system::ServiceFactory::get()->make(amc13params));
     } catch ( const std::exception& e ) {
-        std::cout << "ERROR: " << e.what() << std::endl;
+        LOG(swlog::kError) << e.what();
     } catch (...) {
-        std::cout << "Crap..." << std::endl;
+        LOG(swlog::kError) << "Crap...";
     }
     
     // TODO: Add amc13 reset
@@ -86,13 +87,13 @@ int main(int argc, char** argv) {
     try {
         mp7_A = dynamic_cast<swatch::hardware::MP7Processor*>(swatch::processor::ProcessorFactory::get()->make(mp7params));
     } catch ( const std::exception& e ) {
-        std::cout << "ERROR: " << e.what() << std::endl;
+        LOG(swlog::kError) << e.what();
     } catch (...) {
-        std::cout << "Crap..." << std::endl;
+        LOG(swlog::kError) << "Crap...";
     }
     
     BOOST_FOREACH( const std::string& mode, mp7_A->getModes() ) {
-        std::cout << " - " << mode << std::endl;
+        LOG(swlog::kNotice) << " - " << mode;
     }
     
 //    exit(0);
@@ -102,17 +103,17 @@ int main(int argc, char** argv) {
     
     mp7_A->ttc()->clearCounters();
     
-    std::cout << "Checking TTC Status" << std::endl;
-    std::cout << "clock 40 locked:   " << mp7_A->ttc()->isClock40Locked() << std::endl;
-    std::cout << "clock 40 error:   " << mp7_A->ttc()->hasClock40Stopped() << std::endl;
-    std::cout << "bc0 locked:   " << mp7_A->ttc()->isOrbitLocked() << std::endl;
-    std::cout << "bc0 error:   " << mp7_A->ttc()->hasBC0Stopped() << std::endl;
+    LOG(swlog::kNotice) << "Checking TTC Status";
+    LOG(swlog::kNotice) << "clock 40 locked:   " << mp7_A->ttc()->isClock40Locked();
+    LOG(swlog::kNotice) << "clock 40 error:   " << mp7_A->ttc()->hasClock40Stopped();
+    LOG(swlog::kNotice) << "bc0 locked:   " << mp7_A->ttc()->isOrbitLocked();
+    LOG(swlog::kNotice) << "bc0 error:   " << mp7_A->ttc()->hasBC0Stopped();
     
-    std::cout << "bx count:   " << mp7_A->ttc()->getBunchCounter() << std::endl;
-    std::cout << "orb count:  " << mp7_A->ttc()->getOrbitCounter() << std::endl;
-    std::cout << "ev count:   " << mp7_A->ttc()->getEventCounter() << std::endl;
-    std::cout << "sbe counts: " << mp7_A->ttc()->getSingleBitErrors() << std::endl;
-    std::cout << "sbe counts: " << mp7_A->ttc()->getDoubleBitErrors() << std::endl;
+    LOG(swlog::kNotice) << "bx count:   " << mp7_A->ttc()->getBunchCounter();
+    LOG(swlog::kNotice) << "orb count:  " << mp7_A->ttc()->getOrbitCounter();
+    LOG(swlog::kNotice) << "ev count:   " << mp7_A->ttc()->getEventCounter();
+    LOG(swlog::kNotice) << "sbe counts: " << mp7_A->ttc()->getSingleBitErrors();
+    LOG(swlog::kNotice) << "sbe counts: " << mp7_A->ttc()->getDoubleBitErrors();
 
     return 0;
 }

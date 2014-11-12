@@ -41,7 +41,7 @@ int main(int argc, char const *argv[]) {
         pd.creator      = v.second.get<std::string>("PROCESSOR CREATOR");
         pd.uri          = v.second.get<std::string>("URI");
         pd.addressTable = v.second.get<std::string>("ADDRESS TABLE"); // FIXME
-        pd.crate      = v.second.get<std::string>("CRATE NAME");
+        pd.crate        = v.second.get<std::string>("CRATE NAME");
         pd.slot         = v.second.get<uint32_t>("CRATE SLOT");
 
         std::cout << pd << std::endl;
@@ -62,7 +62,7 @@ int main(int argc, char const *argv[]) {
         sd.addressTableT1 = v.second.get<std::string>("ADDRESS TABLE T1"); // FIXME
         sd.uriT2          = v.second.get<std::string>("URI T2");
         sd.addressTableT2 = v.second.get<std::string>("ADDRESS TABLE T2"); // FIXME
-        sd.crate        = v.second.get<std::string>("CRATE NAME");
+        sd.crate          = v.second.get<std::string>("CRATE NAME");
         sd.slot           = v.second.get<uint32_t>("CRATE SLOT");
 
 
