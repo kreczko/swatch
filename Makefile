@@ -14,11 +14,11 @@ PACKAGES = \
 	core \
 	processor \
 	system \
-	hardware \
 	test \
 	pyswatch
 else ifeq ($(Set), hwdevel)
 PACKAGES = \
+	logger\
 	core \
 	core/test \
 	processor \

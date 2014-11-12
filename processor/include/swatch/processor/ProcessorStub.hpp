@@ -1,13 +1,13 @@
 /**
- * @file    ProcessorDescriptor.hpp
+ * @file    ProcessorStub.hpp
  * @author  Alessandro Thea
  * @brief   Brief description
  * @date    09/11/14
  */
 
 
-#ifndef SWATCH_PROCESSOR_PROCESSORDESCRIPTOR
-#define SWATCH_PROCESSOR_PROCESSORDESCRIPTOR
+#ifndef SWATCH_PROCESSOR_PROCESSORSTUB_HPP
+#define SWATCH_PROCESSOR_PROCESSORSTUB_HPP
 
 // C++ Headers
 #include <ostream>
@@ -19,11 +19,11 @@ namespace swatch {
 namespace processor {
 
 /**
- * @class ProcessorPortDescriptor
+ * @class ProcessorPortStub
  * @brief Structure to hold data to build a Processor port.
  * 
  */
-class ProcessorPortDescriptor {
+class ProcessorPortStub {
 public:
     //! Name of the port
     std::string  name;
@@ -34,11 +34,11 @@ public:
 
 
 /**
- * @class ProcessorDescriptor
+ * @class ProcessorStub
  * @brief Struct to hold the data to construct a processor
  */
 
-class ProcessorDescriptor {
+class ProcessorStub {
 public:
     //! Name of the Processor
     std::string name;
@@ -53,21 +53,21 @@ public:
     std::string addressTable;
 
     //! Id of the uTCA crate where the Processor is installed 
-    std::string crateId;
+    std::string crate;
 
     //! Slot where the board is installed 
     uint32_t slot;
 
     //! List of receiver port bags
-    std::vector<ProcessorPortDescriptor> rxPorts;
+    std::vector<ProcessorPortStub> rxPorts;
 
     //! List of transmitter port bags
-    std::vector<ProcessorPortDescriptor> txPorts;
+    std::vector<ProcessorPortStub> txPorts;
 };
 
-std::ostream& operator<<(std::ostream& os, const ProcessorDescriptor& pd );
+std::ostream& operator<<(std::ostream& os, const ProcessorStub& pd );
 
 } // namespace processor
 } // namespace swatch
 
-#endif
+#endif /* SWATCH_PROCESSOR_PROCESSORSTUB_HPP */

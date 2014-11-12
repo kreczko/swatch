@@ -7,22 +7,22 @@
 
 #include "swatch/processor/Utilities.hpp"
 
-#include "swatch/processor/ProcessorDescriptor.hpp"
+#include "swatch/processor/ProcessorStub.hpp"
 
 
 namespace swatch {
 namespace processor {
 
 swatch::core::ParameterSet
-treeToProcessorPSet(const boost::property_tree::ptree& t) {
+treeToProcessorPars(const boost::property_tree::ptree& t) {
 
     swatch::core::ParameterSet procSet;
-    swatch::processor::ProcessorDescriptor pd;
+    swatch::processor::ProcessorStub pd;
     pd.name         = t.get<std::string>("PROCESSOR NAME");
     pd.creator      = t.get<std::string>("PROCESSOR CREATOR");
     pd.uri          = t.get<std::string>("URI");
     pd.addressTable = t.get<std::string>("ADDRESS TABLE");
-    pd.crateId      = t.get<std::string>("CRATE NAME");
+    pd.crate      = t.get<std::string>("CRATE NAME");
     pd.slot         = t.get<uint32_t>("CRATE SLOT");
 
     procSet.set("name", pd.name);

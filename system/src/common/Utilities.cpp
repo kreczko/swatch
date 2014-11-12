@@ -10,7 +10,7 @@
 
 // Swatch Headers
 #include "swatch/processor/Utilities.hpp"
-#include "swatch/system/AMC13ServiceDescriptor.hpp"
+#include "swatch/system/AMC13ServiceStub.hpp"
 
 // Boost Headers
 #include <boost/foreach.hpp>
@@ -19,17 +19,17 @@ namespace swatch {
 namespace system {
 
 swatch::core::ParameterSet
-treeToAMC13PSet(const boost::property_tree::ptree& t) {
+treeToAMC13Pars(const boost::property_tree::ptree& t) {
     swatch::core::ParameterSet amc13Set;
-    swatch::system::AMC13ServiceDescriptor sd;
+    swatch::system::AMC13ServiceStub sd;
 
     sd.name           = t.get<std::string>("SERVICE NAME");
     sd.creator        = t.get<std::string>("SERVICE CREATOR");
-    sd.t1Uri          = t.get<std::string>("URI T1");
-    sd.t1AddressTable = t.get<std::string>("ADDRESS TABLE T1"); // FIXME
-    sd.t2Uri          = t.get<std::string>("URI T2");
-    sd.t2AddressTable = t.get<std::string>("ADDRESS TABLE T2"); // FIXME
-    sd.crateId        = t.get<std::string>("CRATE NAME");
+    sd.uriT1          = t.get<std::string>("URI T1");
+    sd.addressTableT1 = t.get<std::string>("ADDRESS TABLE T1"); // FIXME
+    sd.uriT2          = t.get<std::string>("URI T2");
+    sd.addressTableT2 = t.get<std::string>("ADDRESS TABLE T2"); // FIXME
+    sd.crate        = t.get<std::string>("CRATE NAME");
     sd.slot           = t.get<uint32_t>("CRATE SLOT");
 
     // std::cout << sd << std::endl;
@@ -40,7 +40,7 @@ treeToAMC13PSet(const boost::property_tree::ptree& t) {
 }
 
 swatch::core::ParameterSet 
-treeToSystemPSet( const boost::property_tree::ptree& t ) {
+treeToSystemPars( const boost::property_tree::ptree& t ) {
 
     using boost::property_tree::ptree;
     using boost::property_tree::json_parser::read_json;
@@ -56,7 +56,7 @@ treeToSystemPSet( const boost::property_tree::ptree& t ) {
 
     std::deque<ParameterSet> processorSets;
     BOOST_FOREACH( const ptree::value_type &v, pt_system.get_child("PROCESSORS")) {
-        core::ParameterSet procSet = swatch::processor::treeToProcessorPSet(v.second);
+        core::ParameterSet procSet = swatch::processor::treeToProcessorPars(v.second);
         processorSets.push_back(procSet);
     }
     sysPars.set("processors",processorSets);
@@ -64,7 +64,7 @@ treeToSystemPSet( const boost::property_tree::ptree& t ) {
     std::deque<ParameterSet> amc13Sets;
     BOOST_FOREACH( const ptree::value_type &v, pt_system.get_child("SERVICES")) {
         if ( v.second.get<std::string>("SERVICE TYPE","") != "AMC13" ) continue;
-        core::ParameterSet amc13Set = swatch::system::treeToAMC13PSet(v.second);
+        core::ParameterSet amc13Set = swatch::system::treeToAMC13Pars(v.second);
         amc13Sets.push_back(amc13Set);
     }
     sysPars.set("services",amc13Sets);

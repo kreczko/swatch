@@ -8,7 +8,7 @@
 #include "swatch/hardware/AMC13Service.hpp"
 
 // Swatch Headers
-#include "swatch/system/AMC13ServiceDescriptor.hpp"
+#include "swatch/system/AMC13ServiceStub.hpp"
 #include "swatch/system/ServiceFactory.hpp"
 
 // AMC13 Headers
@@ -28,13 +28,13 @@ AMC13Service::AMC13Service(const std::string& aId, const core::ParameterSet& par
     using namespace boost::assign;
     modes_ += "ttsloopback", "external";
             
-    const system::AMC13ServiceDescriptor& desc = params.get<system::AMC13ServiceDescriptor>("descriptor");
+    const system::AMC13ServiceStub& desc = params.get<system::AMC13ServiceStub>("descriptor");
     
-    crate_ = desc.crateId;
+    crate_ = desc.crate;
     slot_  = desc.slot;
 
-    driver_ = new amc13::AMC13(desc.t1Uri, desc.t1AddressTable.substr(7),
-                        desc.t2Uri, desc.t2AddressTable.substr(7) );
+    driver_ = new amc13::AMC13(desc.uriT1, desc.addressTableT1.substr(7),
+                        desc.uriT2, desc.addressTableT2.substr(7) );
     
 
     driver_->getStatus()->Report(1);

@@ -8,8 +8,9 @@
 #include <cstdlib>
 
 // Swatch Headers
+#include "swatch/logger/Log.hpp"
 #include "swatch/core/ParameterSet.hpp"
-#include "swatch/processor/ProcessorDescriptor.hpp"
+#include "swatch/processor/ProcessorStub.hpp"
 #include "swatch/processor/ProcessorFactory.hpp"
 
 // MP7 Processor
@@ -42,12 +43,20 @@ int main(int argc, char** argv) {
 
     uhal::setLogLevelTo(uhal::Warning());
 
+    LOG(swatch::logger::kError) << "sticazzi";
+    LOG(swatch::logger::kWarning) << "sticazzi";
+    LOG(swatch::logger::kInfo) << "sticazzi";
+    LOG(swatch::logger::kDebug) << "sticazzi";
+    LOG(swatch::logger::kDebug1) << "sticazzi";
+    
+    exit(0);
+    
     // Build the property tree
     ptree pt;
     read_json(shellExpandPath("${SWATCH_ROOT}/hardware/test/cfg/firstsys.json"), pt);
 
     // And then turn it into parameters
-    ParameterSet pset = swatch::system::treeToSystemPSet(pt);
+    ParameterSet pset = swatch::system::treeToSystemPars(pt);
     ParameterSet amc13params = pset.get< std::deque<ParameterSet> >("services").front();
     ParameterSet mp7params = pset.get< std::deque<ParameterSet> >("processors").front();
     

@@ -29,6 +29,7 @@ pathadd PYTHONPATH "${SWATCH_ROOT}/pyswatch/lib"
 
 pathadd PATH "${SWATCH_ROOT}/test/bin"
 
+pathadd LD_LIBRARY_PATH "${SWATCH_ROOT}/logger/lib"
 pathadd LD_LIBRARY_PATH "${SWATCH_ROOT}/core/lib"
 pathadd LD_LIBRARY_PATH "${SWATCH_ROOT}/processor/lib"
 pathadd LD_LIBRARY_PATH "${SWATCH_ROOT}/system/lib"

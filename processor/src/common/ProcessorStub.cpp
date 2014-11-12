@@ -6,19 +6,19 @@
  */
 
 
-#include "swatch/processor/ProcessorDescriptor.hpp"
+#include "swatch/processor/ProcessorStub.hpp"
 
 
 namespace swatch {
 namespace processor {
 
-std::ostream& operator<<(std::ostream& os, const ProcessorDescriptor& pd ) {
+std::ostream& operator<<(std::ostream& os, const ProcessorStub& pd ) {
     
     os << "ProcessorDescriptor[" << pd.name << "]:\n"
        << "   - Uses creator = " << pd.creator << "\n"
        << "   - Uri = " << pd.uri << "\n"
        << "   - Address Table = " << pd.addressTable << "\n"
-       << "   - Crate ID = " << pd.crateId << "\n"
+       << "   - Crate ID = " << pd.crate << "\n"
        << "   - Crate Slot = " << pd.slot 
        << std::flush;
 

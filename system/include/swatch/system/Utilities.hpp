@@ -15,8 +15,8 @@
 namespace swatch {
 namespace system {
 
-swatch::core::ParameterSet treeToAMC13PSet( const boost::property_tree::ptree& t );
-swatch::core::ParameterSet treeToSystemPSet( const boost::property_tree::ptree& t );
+swatch::core::ParameterSet treeToAMC13Pars( const boost::property_tree::ptree& t );
+swatch::core::ParameterSet treeToSystemPars( const boost::property_tree::ptree& t );
 
 } // namespace processor
 } // namespace swatch

@@ -4,8 +4,8 @@
 #include "swatch/core/Utilities.hpp"
 // #include "swatch/test/Descriptors.hpp"
 #include "swatch/core/ParameterSet.hpp"
-#include "swatch/processor/ProcessorDescriptor.hpp"
-#include "swatch/system/AMC13ServiceDescriptor.hpp"
+#include "swatch/processor/ProcessorStub.hpp"
+#include "swatch/system/AMC13ServiceStub.hpp"
 
 // Boost Headers
 #include <boost/property_tree/json_parser.hpp>
@@ -35,13 +35,13 @@ int main(int argc, char const *argv[]) {
     std::deque<ParameterSet> processorSets;
     BOOST_FOREACH(ptree::value_type &v, pt_system.get_child("PROCESSORS")) {
         ParameterSet procSet;
-        swatch::processor::ProcessorDescriptor pd;
+        swatch::processor::ProcessorStub pd;
 
         pd.name         = v.second.get<std::string>("PROCESSOR NAME");
         pd.creator      = v.second.get<std::string>("PROCESSOR CREATOR");
         pd.uri          = v.second.get<std::string>("URI");
         pd.addressTable = v.second.get<std::string>("ADDRESS TABLE"); // FIXME
-        pd.crateId      = v.second.get<std::string>("CRATE NAME");
+        pd.crate      = v.second.get<std::string>("CRATE NAME");
         pd.slot         = v.second.get<uint32_t>("CRATE SLOT");
 
         std::cout << pd << std::endl;
@@ -54,15 +54,15 @@ int main(int argc, char const *argv[]) {
     BOOST_FOREACH(ptree::value_type &v, pt_system.get_child("SERVICES")) {
         if ( v.second.get<std::string>("SERVICE TYPE","") != "AMC13" ) continue;
         ParameterSet amc13Set;
-        swatch::system::AMC13ServiceDescriptor sd;
+        swatch::system::AMC13ServiceStub sd;
 
         sd.name           = v.second.get<std::string>("SERVICE NAME");
         sd.creator        = v.second.get<std::string>("SERVICE CREATOR");
-        sd.t1Uri          = v.second.get<std::string>("URI T1");
-        sd.t1AddressTable = v.second.get<std::string>("ADDRESS TABLE T1"); // FIXME
-        sd.t2Uri          = v.second.get<std::string>("URI T2");
-        sd.t2AddressTable = v.second.get<std::string>("ADDRESS TABLE T2"); // FIXME
-        sd.crateId        = v.second.get<std::string>("CRATE NAME");
+        sd.uriT1          = v.second.get<std::string>("URI T1");
+        sd.addressTableT1 = v.second.get<std::string>("ADDRESS TABLE T1"); // FIXME
+        sd.uriT2          = v.second.get<std::string>("URI T2");
+        sd.addressTableT2 = v.second.get<std::string>("ADDRESS TABLE T2"); // FIXME
+        sd.crate        = v.second.get<std::string>("CRATE NAME");
         sd.slot           = v.second.get<uint32_t>("CRATE SLOT");
 
 

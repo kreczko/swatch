@@ -8,7 +8,7 @@
 
 #include "swatch/hardware/MP7Processor.hpp"
 #include "swatch/processor/ProcessorFactory.hpp"
-#include "swatch/processor/ProcessorDescriptor.hpp"
+#include "swatch/processor/ProcessorStub.hpp"
 
 // Hardware Headers
 #include "swatch/hardware/MP7Controls.hpp"
@@ -41,9 +41,9 @@ MP7Processor::MP7Processor(const std::string& id, const swatch::core::ParameterS
     driver_(0x0) {
     using namespace boost::assign;
 
-    const processor::ProcessorDescriptor& descriptor = params.get<processor::ProcessorDescriptor>("descriptor");
+    const processor::ProcessorStub& descriptor = params.get<processor::ProcessorStub>("descriptor");
 
-    crate_ = descriptor.crateId;
+    crate_ = descriptor.crate;
     slot_ = descriptor.slot;
 
     uhal::HwInterface board = uhal::ConnectionManager::getDevice(id, descriptor.uri, descriptor.addressTable) ;

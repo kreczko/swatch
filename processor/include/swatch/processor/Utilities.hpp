@@ -15,7 +15,7 @@
 namespace swatch {
 namespace processor {
 
-swatch::core::ParameterSet treeToProcessorPSet(const boost::property_tree::ptree& t);
+swatch::core::ParameterSet treeToProcessorPars(const boost::property_tree::ptree& t);
 
 } // namespace processor
 } // namespace swatch
