@@ -1,6 +1,7 @@
 Set?=devel
 ifeq ($(Set), devel)
 PACKAGES = \
+	logger\
 	core \
 	core/test \
 	processor \
@@ -11,6 +12,7 @@ PACKAGES = \
 	pyswatch
 else ifeq ($(Set), pro)
 PACKAGES = \
+	logger\
 	core \
 	processor \
 	system \
