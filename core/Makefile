@@ -19,9 +19,33 @@ Library = cactus_swatch_core
 
 Includes = \
 	include \
-	${CACTUS_ROOT}/include
+	${CACTUS_ROOT}/include \
+	$(XDAQ_ROOT)/include \
+	$(XDAQ_ROOT)/include/linux
+
+LibraryPaths = lib \
+	$(XDAQ_ROOT)/lib\
+	/lib64
+
+Libraries =	\
+	toolbox \
+	xcept \
+	log4cplus \
+	config \
+	asyncresolv \
+	tcpla \
+	xdaq \
+	xdata \
+	xerces-c \
+	xoap \
+	mimetic \
+	cgicc \
+	xgi\
+	uuid \
+	logxmlappender \
+	logudpappender \
+	peer
 	
-LibraryPaths = lib
 
 include ${SWATCH_ROOT}/config/mfRules.mk
 include ${SWATCH_ROOT}/config/mfRPMRules.mk

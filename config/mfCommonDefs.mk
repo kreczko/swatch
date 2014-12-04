@@ -10,6 +10,8 @@ $(info Using SWATCH_ROOT=${SWATCH_ROOT})
 CACTUS_ROOT ?= /opt/cactus
 CACTUS_PLATFORM=$(shell /usr/bin/python -c "import platform; print platform.platform()")
 CACTUS_OS="unknown.os"
+# XDAQ config
+XDAQ_ROOT ?= /opt/xdaq
 
 UNAME=$(strip $(shell uname -s))
 ifeq ($(UNAME),Linux)

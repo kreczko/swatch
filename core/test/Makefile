@@ -19,18 +19,24 @@ Library = cactus_swatch_core_test
 Includes = 	\
 		include \
 		${SWATCH_ROOT}/core/include \
-		${CACTUS_ROOT}/include
+		${SWATCH_ROOT}/logger/include \
+		${CACTUS_ROOT}/include \
+	    $(XDAQ_ROOT)/include \
+	    $(XDAQ_ROOT)/include/linux
 
 LibraryPaths =	\
 		lib \
 		${SWATCH_ROOT}/core/lib \
-		${CACTUS_ROOT}/lib
+		${SWATCH_ROOT}/logger/lib \
+		${CACTUS_ROOT}/lib \
+		$(XDAQ_ROOT)/lib
 
 Libraries =	\
 		boost_system \
 		boost_unit_test_framework \
 		cactus_swatch_core \
-
+		cactus_swatch_logger \
+		toolbox
 
 ExecutableLibraries = ${Libraries} ${Library}
 
