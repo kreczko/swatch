@@ -9,6 +9,9 @@
 
 // Swatch Headers
 #include "swatch/core/ParameterSet.hpp"
+
+// Boost Headers
+#include <boost/foreach.hpp>
  
 namespace swatch {
 namespace processor {

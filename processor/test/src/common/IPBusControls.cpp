@@ -10,6 +10,8 @@
 
 // Boost Headers
 #include <boost/assign.hpp>
+#include <boost/foreach.hpp>
+
 
 // C++ Headers
 #include <iostream>
