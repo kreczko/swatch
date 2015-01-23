@@ -13,7 +13,7 @@ namespace swatch {
 namespace core {
 
 template<class OBJECT> void FSM::addStateTransition(const State& from, const State& to, const Input& input, OBJECT * obj,
-            void (OBJECT::*func)(toolbox::Event::Reference)) throw (swatch::core::exception){
+            void (OBJECT::*func)(toolbox::Event::Reference)) {
       if (!hasState(from))
             throw exception("'from' State " + from + " is undeclared");
         if (!hasState(to))

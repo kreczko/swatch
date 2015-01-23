@@ -23,19 +23,19 @@ public:
 	FSM();
 	virtual ~FSM();
 
-	void addState(const State s) throw (swatch::core::exception);
-	void addInput(const Input i) throw (swatch::core::exception);
+	void addState(const State s);
+	void addInput(const Input i);
 
-	void addStateTransition(const State& from, const State& to, const Input &input) throw (swatch::core::exception);
+	void addStateTransition(const State& from, const State& to, const Input &input);
 	template<class OBJECT> void addStateTransition(const State& from, const State& to, const Input& input, OBJECT * obj,
-			void (OBJECT::*func)(toolbox::Event::Reference)) throw (swatch::core::exception);
+			void (OBJECT::*func)(toolbox::Event::Reference));
 
 	/**
 	 * sets the initial state for the FSM. The state has to exist (previously
 	 * added via addState()) otherwise an exception is thrown;
 	 */
-	void setInitialState(State s) throw (swatch::core::exception);
-	const State& getInitialState() const throw (swatch::core::exception);
+	void setInitialState(State s);
+	const State& getInitialState() const;
 
 	void changeState(const State& from, const State& to);
 
@@ -47,13 +47,13 @@ public:
 
 	static const std::string XDAQ_STATES;
 
-	const XDAQState getNextXDAQState() throw (swatch::core::exception);
-	const XDAQState getXDAQState(const State& s) const throw (swatch::core::exception);
+	const XDAQState getNextXDAQState();
+	const XDAQState getXDAQState(const State& s) const;
 
 
-	void fireEvent(toolbox::Event::Reference event) throw (swatch::core::exception);
+	void fireEvent(toolbox::Event::Reference event);
 
-	void reset() throw (swatch::core::exception);
+	void reset();
 
 	State getCurrentState() const;
 
@@ -70,7 +70,7 @@ private:
 
 	unsigned int xdaq_state_index_;
 
-	const State getState(const XDAQState& s) const throw (swatch::core::exception);
+	const State getState(const XDAQState& s) const;
 };
 
 } /* namespace core */
