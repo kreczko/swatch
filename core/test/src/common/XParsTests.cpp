@@ -1,6 +1,17 @@
 // Boost Unit Test includes
 #include <boost/test/unit_test.hpp>
 
+// Class under test
+// Make everything public
+#define private public
+#define protected public
+#include "swatch/core/XParameterSet.hpp"
+#undef private
+#undef public
+
+// Swatch Headers
+
+
 // Xdaq Headers
 #include <xdata/Integer.h>
 #include <xdata/Float.h>
@@ -9,8 +20,7 @@
 #include <xdata/Table.h>
 #include <xdata/Bag.h>
 
-// Swatch Headers
-#include "swatch/core/XParameterSet.hpp"
+
 
 // C++ Header
 #include <iterator> //for std::ostream_iterator
@@ -172,7 +182,7 @@ BOOST_AUTO_TEST_CASE(XParameterSetTest) {
   pars.add("pippo", xdata::String("pluto"));
   
   xdata::Bag<MyBag>* b = new xdata::Bag<MyBag>();
-  pars.insert("danulo", b);
+  pars.adopt("danulo", b);
 
   std::cout << "Count entries after create/insert" << pars.size() << std::endl;
   std::cout << "Count 'pippo' again: " << pars.count("pippo") << std::endl;

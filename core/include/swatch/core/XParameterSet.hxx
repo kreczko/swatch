@@ -11,7 +11,7 @@ namespace core {
 
 //---
 template<typename T>
-void XParameterSet::insert( const std::string& name , T* data ) {
+void XParameterSet::adopt( const std::string& name , T* data ) {
     BOOST_STATIC_ASSERT( (boost::is_base_of<xdata::Serializable,T>::value) ); 
 
     if ( entries_.count(name) ) {

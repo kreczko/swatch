@@ -48,7 +48,7 @@ public:
 
 
   template<typename T>
-  void insert( const std::string& name , T* data );
+  void adopt( const std::string& name , T* data );
 
   template<typename T>
   void add( const std::string& name , T data );
@@ -69,7 +69,7 @@ public:
   template<typename T>
   T& get( const std::string& name );
   
-//private:
+private:
 
   template<typename T>
   static xdata::Serializable* cloner_( const xdata::Serializable* other ) {
