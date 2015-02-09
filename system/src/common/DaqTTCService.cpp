@@ -5,7 +5,7 @@
  * Created on July 28, 2014, 12:13 AM
  */
 
-#include "swatch/system/AMC13Service.hpp"
+#include "swatch/system/DaqTTCService.hpp"
 
 #include "swatch/system/ServiceFactory.hpp"
 
@@ -21,12 +21,12 @@ namespace system {
 
 //SWATCH_SERVICE_REGISTER_CLASS(AMC13Service)
 
-AMC13Service::AMC13Service(const std::string& aId, const core::ParameterSet& params) : Service(aId, params) {
+DaqTTCService::DaqTTCService(const std::string& aId, const core::ParameterSet& params) : Service(aId, params) {
 
 }
 
 
-AMC13Service::~AMC13Service() {
+DaqTTCService::~DaqTTCService() {
 }
 
 

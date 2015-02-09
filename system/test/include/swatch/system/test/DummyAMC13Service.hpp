@@ -8,13 +8,13 @@
 #ifndef __swatch_system_dummyamc13service_hpp__
 #define	__swatch_system_dummyamc13service_hpp__
 
-#include "swatch/system/AMC13Service.hpp"
+#include "swatch/system/DaqTTCService.hpp"
 
 namespace swatch {
 namespace system {
 namespace test {
 
-class DummyAMC13Service : public system::AMC13Service {
+class DummyAMC13Service : public system::DaqTTCService {
 public:
     DummyAMC13Service( const std::string& aId, const core::ParameterSet& params );
     virtual ~DummyAMC13Service();

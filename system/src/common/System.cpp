@@ -8,7 +8,7 @@
 #include "swatch/system/System.hpp"
 #include "swatch/system/Crate.hpp"
 #include "swatch/system/Service.hpp"
-#include "swatch/system/AMC13Service.hpp"
+#include "swatch/system/DaqTTCService.hpp"
 
 #include "swatch/core/Link.hpp"
 #include "swatch/processor/Processor.hpp"
@@ -67,7 +67,7 @@ System::add(processor::Processor* aProcessor) {
 }
 
 void
-System::add(system::AMC13Service* aAMC13) {
+System::add(system::DaqTTCService* aAMC13) {
     if (aAMC13 == NULL)
         throw std::invalid_argument("AMC13 pointer is NULL!");
     // build a family

@@ -9,7 +9,7 @@
 // Swatch Headers
 #include "swatch/logger/Log.hpp"
 #include "swatch/processor/ProcessorFactory.hpp"
-#include "swatch/system/AMC13Service.hpp"
+#include "swatch/system/DaqTTCService.hpp"
 #include "swatch/system/ServiceFactory.hpp"
 
 namespace swlog = swatch::logger;

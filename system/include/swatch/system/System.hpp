@@ -33,7 +33,7 @@ namespace system {
 
 class Crate;
 class Service;
-class AMC13Service;
+class DaqTTCService;
 
 //! Generic class to build a 
 class System : public core::Device {
@@ -43,7 +43,7 @@ public:
     virtual ~System();
     
     void add( processor::Processor* aProcessor );
-    void add( system::AMC13Service* aAMC13 );
+    void add( system::DaqTTCService* aAMC13 );
     void add( core::Link* aLink );
     void add( system::Service* aService );
     void add( system::Crate* crate );
@@ -63,7 +63,7 @@ protected:
     std::deque<processor::Processor*> processors_;
     
     //! List of AMC13s
-    std::deque<AMC13Service*> amc13s_;
+    std::deque<DaqTTCService*> amc13s_;
     
     //! List of services
     std::deque<Service*> services_;

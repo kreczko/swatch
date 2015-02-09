@@ -10,7 +10,7 @@
 #define SWATCH_HARDWARE_AMC13SERVICE_HPP
 
 // Swatch Headers
-#include "swatch/system/AMC13Service.hpp"
+#include "swatch/system/DaqTTCService.hpp"
 
 // Forward declaration
 namespace amc13 {
@@ -20,7 +20,7 @@ class AMC13;
 namespace swatch {
 namespace hardware {
 
-class AMC13Service : public swatch::system::AMC13Service {
+class AMC13Service : public swatch::system::DaqTTCService {
 public:
     AMC13Service( const std::string& aId, const core::ParameterSet& params );
     ~AMC13Service();

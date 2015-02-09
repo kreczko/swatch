@@ -5,8 +5,8 @@
  * Created on July 28, 2014, 12:13 AM
  */
 
-#ifndef __swatch_system_amc13service_hpp__
-#define	__swatch_system_amc13service_hpp__
+#ifndef SWATCH_SYSTEM_DAQTTCSERVICE_HPP
+#define	SWATCH_SYSTEM_DAQTTCSERVICE_HPP
 
 // Swatch Headers
 #include "swatch/system/Service.hpp"
@@ -16,11 +16,11 @@
 namespace swatch {
 namespace system {
 
-class AMC13Service : public Service {
+class DaqTTCService : public Service {
 protected:
-    explicit AMC13Service( const std::string& aId, const core::ParameterSet& params );
+    explicit DaqTTCService( const std::string& aId, const core::ParameterSet& params );
 public:
-    virtual ~AMC13Service();
+    virtual ~DaqTTCService();
     
     virtual uint32_t getSlot() const = 0;
 
@@ -42,5 +42,5 @@ public:
 
 
 
-#endif	/* __swatch_system_amc13service_hpp__ */
+#endif	/* SWATCH_SYSTEM_DAQTTCSERVICE_HPP */
 

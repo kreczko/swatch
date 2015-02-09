@@ -22,7 +22,7 @@ namespace hardware {
 SWATCH_SERVICE_REGISTER_CLASS(AMC13Service)
 
 AMC13Service::AMC13Service(const std::string& aId, const core::ParameterSet& params) :
-    swatch::system::AMC13Service(aId, params),
+    swatch::system::DaqTTCService(aId, params),
     driver_(0x0) {
     
     using namespace boost::assign;

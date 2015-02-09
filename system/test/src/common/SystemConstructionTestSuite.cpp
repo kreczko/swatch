@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE(BuildFullCrate) {
     // AMC13
     ParameterSet params13;
     params13.insert("requires", "")("provides", "ttc;daq")("crate", "s2x3g18")("slot",13);
-    AMC13Service* amc13 = new DummyAMC13Service("amc13xg", params13);
+    DaqTTCService* amc13 = new DummyAMC13Service("amc13xg", params13);
     BOOST_CHECK(amc13->getCrateId() == "s2x3g18" );
 
     // And a set of boards

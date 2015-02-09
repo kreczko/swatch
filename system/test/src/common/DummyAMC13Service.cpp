@@ -31,7 +31,7 @@ namespace test {
 
 SWATCH_SERVICE_REGISTER_CLASS(DummyAMC13Service);
 
-DummyAMC13Service::DummyAMC13Service( const std::string& aId, const core::ParameterSet& params ) : system::AMC13Service(aId,params) {
+DummyAMC13Service::DummyAMC13Service( const std::string& aId, const core::ParameterSet& params ) : system::DaqTTCService(aId,params) {
 //    using namespace uhal;
     LOG(swlog::kNotice) << "Building a DummyAMC13Service";
 

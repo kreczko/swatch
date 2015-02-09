@@ -250,7 +250,7 @@ BOOST_AUTO_TEST_CASE(AddServiceNULLPointerShouldThrowException) {
 
 BOOST_AUTO_TEST_CASE(AddAMC13NULLPointerShouldThrowException) {
 	swsys::System * system = new swsys::System("mySystem");
-	BOOST_CHECK_THROW(system->add((swsys::AMC13Service*) NULL), std::invalid_argument);
+	BOOST_CHECK_THROW(system->add((swsys::DaqTTCService*) NULL), std::invalid_argument);
 }
 
 BOOST_AUTO_TEST_CASE(AddLinkNULLPointerShouldThrowException) {
