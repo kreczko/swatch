@@ -170,9 +170,8 @@ BOOST_AUTO_TEST_CASE(CloneBagTest) {
 
 
 //---
-BOOST_AUTO_TEST_CASE(XParameterSetTest) {
+BOOST_AUTO_TEST_CASE(SetGetTest) {
   using namespace swatch::core;
-
   
   XParameterSet pars;
 
@@ -184,7 +183,7 @@ BOOST_AUTO_TEST_CASE(XParameterSetTest) {
   xdata::Bag<MyBag>* b = new xdata::Bag<MyBag>();
   pars.adopt("danulo", b);
 
-  std::cout << "Count entries after create/insert" << pars.size() << std::endl;
+  std::cout << "Count entries after add/adopt: " << pars.size() << std::endl;
   std::cout << "Count 'pippo' again: " << pars.count("pippo") << std::endl;
 
   std::cout << "Get 'pippo' from pars: " << pars.get<xdata::String>("pippo").toString() << std::endl;
@@ -217,8 +216,16 @@ BOOST_AUTO_TEST_CASE(XParameterSetTest) {
   
   std::cout << " 'pippo': " << s->toString() << std::endl;
   std::cout << "Check pars2 size " << pars2.size() << std::endl;
-
-
   
+}
+
+//---
+BOOST_AUTO_TEST_CASE(InsertTest) {
+  using namespace swatch::core;
+  
+  XParameterSet pars;
+  pars.insert("pippo",  xdata::String("pluto"))("aaa", xdata::Float(5.));
+  std::cout << "Count entries after add/insert: " << pars.size() << std::endl;
+
 }
 BOOST_AUTO_TEST_SUITE_END() // XParsTestSuite

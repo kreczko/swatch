@@ -68,6 +68,26 @@ public:
   
   template<typename T>
   T& get( const std::string& name );
+
+  class Inserter {
+  public:
+
+    template<typename T>
+    Inserter& operator()(const std::string& aKey, const T& aValue);
+    
+  private:
+
+    Inserter(XParameterSet* ps);
+
+    XParameterSet *xps_;
+
+    friend class XParameterSet;
+
+  };
+
+  template<typename T>
+  Inserter insert(const std::string& aKey, const T& aValue);
+
   
 private:
 

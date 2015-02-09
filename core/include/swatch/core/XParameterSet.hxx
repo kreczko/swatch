@@ -75,6 +75,28 @@ T* XParameterSet::pop( const std::string& name ) {
   return t;
 }
 
+
+//---
+template<typename T>
+XParameterSet::Inserter&
+XParameterSet::Inserter::operator()(const std::string& aKey, const T& aValue) {
+    BOOST_STATIC_ASSERT( (boost::is_base_of<xdata::Serializable,T>::value) ); 
+    xps_->add(aKey, aValue);
+    return *this;
+}
+
+
+//---
+template<typename T>
+XParameterSet::Inserter
+XParameterSet::insert(const std::string& aKey, const T& aValue) {
+  BOOST_STATIC_ASSERT( (boost::is_base_of<xdata::Serializable,T>::value) ); 
+    this->add(aKey, aValue);
+    return Inserter(this);
+}
+
+
+
 } // namespace core
 } // namespace swatch
 

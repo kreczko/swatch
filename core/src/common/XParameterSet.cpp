@@ -198,8 +198,12 @@ XParameterSet::XEntry::operator==(const XEntry& other) const {
   } else {
     return this->object->equals(*other.object);
   }
-  
 }
+
+XParameterSet::Inserter::Inserter(XParameterSet* ps) {
+    xps_ = ps;
+}
+
 
 } // core
 } // swatch
