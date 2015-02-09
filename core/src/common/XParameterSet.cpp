@@ -8,6 +8,9 @@
 #include <boost/foreach.hpp>
 #include <boost/bind.hpp>
 
+// XDAQ Headers
+#include "xdata/String.h"
+
 namespace swatch {
 namespace core {
 
@@ -22,28 +25,17 @@ entries_() {
 //---
 XParameterSet::XParameterSet(const XParameterSet& other) :
 entries_() {
-
-//  BOOST_FOREACH( const EntryMap::value_type& it, orig.entries_) {
-//    entries_.emplace(it.first, it.second);
-//  }
-  
   (*this) = other;
-   
 }
 
 
 //---
 XParameterSet::~XParameterSet() {
-  
   clear();
-//  BOOST_FOREACH( EntryMap::value_type& p, entries_) {
-//    delete p.second.object;
-//  }
 }
 
 //---
 XParameterSet& XParameterSet::operator=(const XParameterSet& other) {
-  
   clear();
   BOOST_FOREACH( const EntryMap::value_type& it, other.entries_) {
     entries_.emplace(it.first, it.second);
@@ -65,7 +57,7 @@ XParameterSet::clear() {
 
 //---
 std::set<std::string>
-XParameterSet::names() const {
+XParameterSet::keys() const {
   std::set<std::string> names;
 
  std::transform(entries_.begin(), entries_.end(), std::inserter(names, names.end()), boost::bind(&EntryMap::value_type::first, _1));
@@ -74,7 +66,7 @@ XParameterSet::names() const {
 
 
 //---
-size_t XParameterSet::count(const std::string& name) const {
+bool XParameterSet::has(const std::string& name) const {
   return entries_.count(name);
 }
 
@@ -107,7 +99,25 @@ int XParameterSet::equals(const xdata::Serializable& other) {
 
 //---
 std::string XParameterSet::toString() throw (xdata::exception::Exception) {
-  return "";
+  std::ostringstream oss;
+  BOOST_FOREACH( const std::string& name, keys() ) {
+    const XEntry& e = entries_.at(name);
+    oss << ( oss.tellp() == 0 ? '{' : ',' );
+
+    oss << "\"" << name << "\":(<" << demangleName(e.typeinfo->name()) << ">, ";
+
+    if ( e.object == 0x0 ) {
+      oss << "0x0";
+    } else if ( *(e.typeinfo) == typeid(xdata::String) ) {
+      oss << "\"" << e.object->toString() << "\"";
+    } else {
+      oss << e.object->toString();
+    }
+    oss << ")";
+  }
+  oss << '}';
+
+  return oss.str();
 }
 
 
@@ -143,8 +153,23 @@ XParameterSet::get( const std::string& name ) const {
 
 
 //---
+xdata::Serializable&
+XParameterSet::operator[](const std::string& name) {
+  return get(name);
+}
+
+
+//---
+//---
+const xdata::Serializable&
+XParameterSet::operator[](const std::string& name) const {
+  return get(name);
+}
+
+
+//---
 void
-XParameterSet::set(const std::string& name, const xdata::Serializable& data) {
+XParameterSet::update(const std::string& name, const xdata::Serializable& data) {
   // Type check?
   get(name).setValue(data);
 }

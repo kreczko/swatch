@@ -26,14 +26,15 @@ void XParameterSet::adopt( const std::string& name , T* data ) {
 //---
 template<typename T>
 void
-XParameterSet::add( const std::string& name , T data ) {
+XParameterSet::set( const std::string& name , const T& data ) {
     BOOST_STATIC_ASSERT( (boost::is_base_of<xdata::Serializable,T>::value) ); 
 
     if ( entries_.count(name) ) {
       throw XParameterExists(name +" is already defined");
     }
 
-    entries_.emplace( name, &typeid(T), static_cast<XCloner>(cloner_<T>), new T(data) );
+    XCloner cloner = static_cast<XCloner>(cloner_<T>);
+    entries_.emplace( name, &typeid(T), cloner, static_cast<xdata::Serializable*>(cloner(&data)) );
 
 }
 
@@ -42,12 +43,6 @@ XParameterSet::add( const std::string& name , T data ) {
 template<typename T>
 T&
 XParameterSet::get( const std::string& name ) {
-    // EntryMap::iterator it = entries_.find(name);
-    // if ( it == entries_.end() ) {
-      // throw XParameterNotFound(name +" not found");
-    // }
-    
-    // return dynamic_cast<T&>(*(it->second.object));
     return dynamic_cast<T&>( get(name) );
 }
 
@@ -70,9 +65,16 @@ T* XParameterSet::pop( const std::string& name ) {
     throw XParameterFailedCast("Failed to cast "+name+" to "+demangleName(entryIt->second.typeinfo->name() ) );
   }
 
-  
   entries_.erase(entryIt);
   return t;
+}
+
+//---
+template<typename T>
+xdata::Serializable*
+XParameterSet::cloner_( const xdata::Serializable* other ) {
+  const T* xother = dynamic_cast<const T*>(other); 
+  return new T(*xother);
 }
 
 
@@ -81,7 +83,7 @@ template<typename T>
 XParameterSet::Inserter&
 XParameterSet::Inserter::operator()(const std::string& aKey, const T& aValue) {
     BOOST_STATIC_ASSERT( (boost::is_base_of<xdata::Serializable,T>::value) ); 
-    xps_->add(aKey, aValue);
+    xps_->set(aKey, aValue);
     return *this;
 }
 
@@ -91,7 +93,7 @@ template<typename T>
 XParameterSet::Inserter
 XParameterSet::insert(const std::string& aKey, const T& aValue) {
   BOOST_STATIC_ASSERT( (boost::is_base_of<xdata::Serializable,T>::value) ); 
-    this->add(aKey, aValue);
+    this->set(aKey, aValue);
     return Inserter(this);
 }
 
