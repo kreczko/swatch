@@ -19,6 +19,12 @@ namespace swatch {
 namespace system {
 
 swatch::core::ParameterSet
+treeToCratePars(const boost::property_tree::ptree& t) {
+    swatch::core::ParameterSet cratePars;
+    return cratePars;
+}
+  
+swatch::core::ParameterSet
 treeToAMC13Pars(const boost::property_tree::ptree& t) {
     swatch::core::ParameterSet amc13Set;
     swatch::system::AMC13ServiceStub sd;
@@ -29,7 +35,7 @@ treeToAMC13Pars(const boost::property_tree::ptree& t) {
     sd.addressTableT1 = t.get<std::string>("ADDRESS TABLE T1"); // FIXME
     sd.uriT2          = t.get<std::string>("URI T2");
     sd.addressTableT2 = t.get<std::string>("ADDRESS TABLE T2"); // FIXME
-    sd.crate        = t.get<std::string>("CRATE NAME");
+    sd.crate          = t.get<std::string>("CRATE NAME");
     sd.slot           = t.get<uint32_t>("CRATE SLOT");
 
     // std::cout << sd << std::endl;
@@ -71,6 +77,8 @@ treeToSystemPars( const boost::property_tree::ptree& t ) {
 
     return sysPars;
 }
+
+      
 
 } // namespace system
 } // namespace swatch

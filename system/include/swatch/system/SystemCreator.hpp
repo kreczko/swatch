@@ -24,11 +24,11 @@ public:
     virtual swatch::system::System* operator()(const std::string& aId, const swatch::core::ParameterSet& params);
 
 protected:
-    virtual swatch::system::System* create_system(const std::string& aId, const swatch::core::ParameterSet& params);
-    virtual void add_processors(swatch::system::System* system, const swatch::core::ParameterSet& params);
-    virtual void add_services(swatch::system::System* system, const swatch::core::ParameterSet& params);
-    virtual void add_crates(swatch::system::System* system, const swatch::core::ParameterSet& params);
-    virtual void add_crate(swatch::system::System* system, const swatch::core::ParameterSet& params);
+    virtual swatch::system::System* createSystem(const std::string& aId, const swatch::core::ParameterSet& params);
+    virtual void addProcessors(swatch::system::System* system, const swatch::core::ParameterSet& params);
+    virtual void addServices(swatch::system::System* system, const swatch::core::ParameterSet& params);
+    virtual void addCrates(swatch::system::System* system, const swatch::core::ParameterSet& params);
+    virtual void addCrate(swatch::system::System* system, const swatch::core::ParameterSet& params);
 };
 
 

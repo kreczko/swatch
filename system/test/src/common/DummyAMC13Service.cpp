@@ -14,10 +14,16 @@
 //#include "uhal/log/log.hpp"
 
 // Swatch Headers
+#include "swatch/logger/Log.hpp"
 #include "swatch/system/ServiceFactory.hpp"
+#include "swatch/system/AMC13ServiceStub.hpp"
 
 // Namespace resolution
 using namespace std;
+
+namespace swlog = swatch::logger;
+namespace swsys = swatch::system;
+
 
 namespace swatch {
 namespace system {
@@ -27,16 +33,18 @@ SWATCH_SERVICE_REGISTER_CLASS(DummyAMC13Service);
 
 DummyAMC13Service::DummyAMC13Service( const std::string& aId, const core::ParameterSet& params ) : system::AMC13Service(aId,params) {
 //    using namespace uhal;
-    cout << "Building a DummyAMC13Service" << endl;
+    LOG(swlog::kNotice) << "Building a DummyAMC13Service";
 
-    cout << "Id:" << this->id() << endl;;
-    cout << "ParameterSet:" << endl;
+    LOG(swlog::kInfo) << "Id:" << this->id();;
+    LOG(swlog::kInfo) << "ParameterSet:";
     BOOST_FOREACH( std::string name, params.names() ) {
-        cout << "   " << name << " : " << core::anyToString(params.get(name)) << endl;
+        LOG(swlog::kInfo) << "   " << name << " : " << core::anyToString(params.get(name));
     }
 
-    crate_ = params.get<std::string>("crate");
-    slot_ = params.get<int>("slot");
+    const swsys::AMC13ServiceStub& stub = params.get<swsys::AMC13ServiceStub>("descriptor");
+
+    crate_ = stub.crate;
+    slot_ = stub.slot;
 }
 
 DummyAMC13Service::~DummyAMC13Service() {

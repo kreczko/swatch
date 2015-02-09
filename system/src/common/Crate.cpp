@@ -52,7 +52,7 @@ Crate::add(processor::Processor* aProcessor) {
     // Check if the slot is available
     if ( isSlotTaken(slot) ) {
         stringstream ss;
-        ss << "Cannot add card " << this->id() << " to slot " << slot
+        ss << this->id() << ": Cannot add card " << aProcessor->id() << " to slot " << slot
                 << ". Slot already assigned to card " << this->amcs_[slot-min_]->id();
         throw runtime_error(ss.str());
     }

@@ -41,7 +41,7 @@ public:
 public:
     static LogLevel& logThreshold();
     static void setLogThreshold( LogLevel level ); 
-    static const std::string& toString(LogLevel level);
+    // static const std::string& toString(LogLevel level);
 
 protected:
     void push( LogLevel level, const std::string& source, const std::string& message );
@@ -57,7 +57,8 @@ private:
 
     static LogLevel logThreshold_;
 
-    static const std::map<LogLevel, std::string> logNames_;
+    // static const std::map<LogLevel, std::string> logNames_;
+    static const char* logNames_[];
 };
 
 

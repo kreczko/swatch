@@ -18,6 +18,7 @@ PACKAGE_RELEASE = 0
 
 Includes = 	\
 		include/ \
+		${SWATCH_ROOT}/logger/include \
 		${SWATCH_ROOT}/core/include \
 		${SWATCH_ROOT}/processor/include \
 		${SWATCH_ROOT}/system/include \
@@ -26,6 +27,7 @@ Includes = 	\
 
 LibraryPaths =	\
 		lib \
+		${SWATCH_ROOT}/logger/lib \
 		${SWATCH_ROOT}/core/lib \
 		${SWATCH_ROOT}/core/test/lib \
 		${SWATCH_ROOT}/processor/lib \
@@ -42,6 +44,7 @@ Libraries =	\
 		cactus_extern_pugixml \
 		cactus_uhal_uhal \
 		cactus_uhal_log \
+		cactus_swatch_logger \
 		cactus_swatch_core \
 		cactus_swatch_core_test \
 		cactus_swatch_processor \

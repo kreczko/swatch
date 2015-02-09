@@ -19,8 +19,8 @@ public:
     DummyProcessor( const std::string& aId, const core::ParameterSet& params );
     virtual ~DummyProcessor();
     
-    virtual uint32_t getSlot() const { return mSlot; }
-    virtual const std::string& getCrateId() const { return mCrateId; }
+    virtual uint32_t getSlot() const { return slot_; }
+    virtual const std::string& getCrateId() const { return crate_; }
     
 
     virtual std::set<std::string> getModes() const;
@@ -29,8 +29,8 @@ public:
 
 
 protected:
-    uint32_t mSlot;
-    std::string mCrateId;
+    uint32_t slot_;
+    std::string crate_;
     
 };
 

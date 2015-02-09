@@ -8,77 +8,70 @@
 #include "swatch/system/ServiceFactory.hpp"
 #include "swatch/system/Crate.hpp"
 
-using namespace swatch::core;
-using namespace swatch::system;
-using namespace swatch::processor;
+#include "swatch/system/CrateStub.hpp"
+
+namespace swco = swatch::core;
+//namespace swsys = swatch::system;
+namespace swpro = swatch::processor;
+
+
+namespace swatch {
+namespace system {
 
 SWATCH_SYSTEM_REGISTER_CREATOR(SystemCreator);
 
+
 swatch::system::System*
-SystemCreator::operator()(const std::string& aId, const ParameterSet& params) {
+SystemCreator::operator()(const std::string& aId, const swatch::core::ParameterSet& params) {
 	// validity check should go here
-	System* sys = create_system(aId, params);
-	add_crates(sys, params);
-	add_processors(sys, params);
-	add_services(sys, params);
+	System* sys = createSystem(aId, params);
+	addCrates(sys, params);
+	addProcessors(sys, params);
+	addServices(sys, params);
 
 	return sys;
 }
 
 swatch::system::System*
-SystemCreator::create_system(const std::string& aId, const ParameterSet& params){
+SystemCreator::createSystem(const std::string& aId, const swatch::core::ParameterSet& params){
 	System* sys = new System(aId, params);
 	return sys;
 }
 
-void SystemCreator::add_crates(System* system, const ParameterSet& params) {
-	std::vector<ParameterSet> vPSets;
-	// currently one needs to loop over all services and processors to get the crates
-	vPSets = params.get<std::vector<ParameterSet> >("services");
-	BOOST_FOREACH(ParameterSet& ps,vPSets) {
-		std::string crate_id = ps.get<std::string>("crate");
-		if(!system->hasCrate(crate_id)){
-			add_crate(system, ps);
-		}
-	}
-	vPSets = params.get<std::vector<ParameterSet> >("processors");
-	BOOST_FOREACH(ParameterSet& ps,vPSets) {
-		std::string crate_id = ps.get<std::string>("crate");
-		if (!system->hasCrate(crate_id)) {
-			add_crate(system, ps);
-		}
-	}
+void SystemCreator::addCrates(System* system, const swatch::core::ParameterSet& params) {
+	std::vector<swco::ParameterSet> vPSets;
+    
+	vPSets = params.get<std::vector<swco::ParameterSet> >("crates");
+    BOOST_FOREACH(swco::ParameterSet& ps,vPSets) {
+        addCrate(system, ps);
+    }
+
 }
 
-void SystemCreator::add_crate(System* system, const ParameterSet& params) {
-	ParameterSet crate_params;
-	std::string crate_id = params.get<std::string>("crate");
-	std::string crate_loc = params.get<std::string>("CRATE LOCATION");
-	std::string crate_desc = params.get<std::string>("CRATE DESCRIPTION");
-	crate_params.insert("name", crate_id);
-	crate_params.insert("location", crate_loc);
-	crate_params.insert("description", crate_desc);
-	Crate * crate = new Crate(crate_id, crate_params);
+void SystemCreator::addCrate(System* system, const swatch::core::ParameterSet& params) {
+    const CrateStub& stub = params.get<CrateStub>("stub");
+	Crate * crate = new Crate(stub.name, params);
 	system->add(crate);
 }
-void SystemCreator::add_processors(System* system, const ParameterSet& params) {
-	std::vector<ParameterSet> vPSets;
-	vPSets = params.get<std::vector<ParameterSet> >("processors");
-	BOOST_FOREACH(ParameterSet& ps,vPSets) {
-		Processor* p = ProcessorFactory::get()->make(
-				ps.get<std::string>("PROCESSOR CREATOR"),
-				ps.get<std::string>("PROCESSOR NAME"), ps);
+void SystemCreator::addProcessors(System* system, const swatch::core::ParameterSet& params) {
+	std::vector<swco::ParameterSet> vPSets;
+	vPSets = params.get<std::vector<swco::ParameterSet> >("processors");
+	BOOST_FOREACH(swco::ParameterSet& ps,vPSets) {
+		swpro::Processor* p = swpro::ProcessorFactory::get()->make(
+                ps);
 		system->add(p);
 	}
 }
 
-void SystemCreator::add_services(System* system, const ParameterSet& params) {
-	std::vector<ParameterSet> vPSets;
-	vPSets = params.get<std::vector<ParameterSet> >("services");
-	BOOST_FOREACH(ParameterSet& ps,vPSets) {
+void SystemCreator::addServices(System* system, const swatch::core::ParameterSet& params) {
+	std::vector<swco::ParameterSet> vPSets;
+	vPSets = params.get<std::vector<swco::ParameterSet> >("services");
+	BOOST_FOREACH(swco::ParameterSet& ps,vPSets) {
 		Service* a = static_cast<Service*>(ServiceFactory::get()->make(
-				ps.get<std::string>("SERVICE CREATOR"),
-				ps.get<std::string>("SERVICE NAME"), ps));
+                ps));
 		system->add(a);
 	}
 }
+
+} // namespace system
+} // namespace swatch

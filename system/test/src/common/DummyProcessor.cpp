@@ -8,8 +8,10 @@
 #include "swatch/system/test/DummyProcessor.hpp"
 
 // Swatch Headers
+#include "swatch/logger/Log.hpp"
 #include "swatch/core/Utilities.hpp"
 #include "swatch/core/Port.hpp"
+#include "swatch/processor/ProcessorStub.hpp"
 
 #include "swatch/processor/ProcessorFactory.hpp"
 #include <boost/foreach.hpp>
@@ -18,8 +20,8 @@
 #include <iomanip>
 
 // TOREMOVE
-#include "uhal/log/log.hpp"
-
+namespace swlog = swatch::logger;
+namespace swpro = swatch::processor;
 
 namespace swatch {
 namespace system {
@@ -33,12 +35,10 @@ using std::endl;
 DummyProcessor::DummyProcessor(const std::string& aId, const core::ParameterSet& params)
     : processor::Processor(aId, params ) {
     
-    using namespace uhal;
-        
-    log(Debug(), "Id:",this->id());
-    log(Debug(), "ParameterSet:");
+    LOG(swlog::kDebug) <<  "Id:" << this->id();
+    LOG(swlog::kDebug) <<  "ParameterSet:";
     BOOST_FOREACH( std::string name, params.names() ) {
-        log(Debug(), "   ", name, " : ", core::anyToString(params.get(name)));
+        LOG(swlog::kDebug) <<  "   " << name << " : " << core::anyToString(params.get(name));
     }
     std::stringstream ss;
     for ( int chan(0); chan < 4 ; ++chan) { 
@@ -53,9 +53,10 @@ DummyProcessor::DummyProcessor(const std::string& aId, const core::ParameterSet&
         this->addOutput(new core::OutputPort(ss.str()));
     }
     
+    const swpro::ProcessorStub& stub = params.get<swpro::ProcessorStub>("descriptor");
 
-    mSlot = params.get<int>("slot",processor::Processor::NoSlot);
-    mCrateId = params.get<std::string>("crate","");
+    slot_ = stub.slot;
+    crate_ = stub.crate;
     
 }
 

@@ -15,12 +15,12 @@
 
 
 // Swatch Headers
+#include "swatch/logger/Log.hpp"
 #include "swatch/core/Utilities.hpp"
 
-// uHAL Headers
-#include "uhal/log/log.hpp"
-
 using namespace std;
+
+namespace swlog = swatch::logger;
 
 namespace swatch {
 namespace system {
@@ -63,7 +63,7 @@ System::add(processor::Processor* aProcessor) {
     else
     	cratesMap_[crateId]->add(aProcessor);
     
-    uhal::log(uhal::Debug(),aProcessor->id(), " added (path = ", aProcessor->path(), ")");
+    LOG(swlog::kDebug) <<  aProcessor->id() <<  " added (path = " << aProcessor->path() <<  ")";
 }
 
 void

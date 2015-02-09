@@ -19,16 +19,19 @@ Library = cactus_swatch_system
 
 Includes =	\
 		include  \
+		${SWATCH_ROOT}/logger/include \
 		${SWATCH_ROOT}/core/include \
 		${SWATCH_ROOT}/processor/include \
 		${CACTUS_ROOT}/include
 
 LibraryPaths = \
+		${SWATCH_ROOT}/logger/lib \
 		${SWATCH_ROOT}/core/lib \
 		${SWATCH_ROOT}/processor/lib \
 		${CACTUS_ROOT}/lib
 
 Libraries =	\
+		cactus_swatch_logger \
 		cactus_swatch_core \
 		cactus_swatch_processor \
 
