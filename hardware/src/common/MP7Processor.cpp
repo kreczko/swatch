@@ -53,24 +53,20 @@ MP7Processor::MP7Processor(const std::string& id, const swatch::core::ParameterS
 
     uhal::HwInterface board = uhal::ConnectionManager::getDevice(id, desc.uri, desc.addressTable) ;
     
+    driver_ = new mp7::MP7Controller(board);
     
     // The following lines must be moved into the mp7 package 
-    if ( dynamic_cast<const mp7::ClockingXENode*>( &(board.getNode("ctrl.clocking")) ) != 0x0 ) {
-        driver_ = new mp7::MP7XEController(board);
+    if ( driver_->kind() == mp7::MP7Controller::kMP7XE ) {
 
-        clockModes_ ["internal"] = { "si570", false, true };
-        clockModes_ ["external"] = { "si570", true, false };
-        clockModes_ ["external_si5326"] = { "si5326", true, false };
+        clockModes_ ["internal"] = { "internal", "internal", "internal" };
+        clockModes_ ["external"] = { "external", "external", "external" };
+//        clockModes_ ["external_si5326"] = { "si5326", true, false };
 
-        LOG(swlog::kNotice) << "MP7XEController built";
+    } else if ( driver_->kind() == mp7::MP7Controller::kMP7R1 ) {
 
-    } else if ( dynamic_cast<const mp7::ClockingNode*>( &(board.getNode("ctrl.clocking")) ) != 0x0 ) {
-        driver_ = new mp7::MP7R1Controller(board); 
-
-        clockModes_ ["internal"] = { "", false, true };
-        clockModes_ ["external"] = { "", true, false };
+        clockModes_ ["internal"] = { "internal", "internal", "internal" };
+        clockModes_ ["external"] = { "external", "external", "external" };
         
-        LOG(swlog::kNotice) << "MP7R1Controller built";
     } else {
         // Need a dedicated exception
         throw std::runtime_error("Could not detect the MP7 model. Check your address table");
@@ -125,9 +121,9 @@ MP7Processor::reset(const std::string& mode) {
     }
 
     driver_->reset(
-        it->second.clkOpt, 
-        it->second.extClk40Src, 
-        it->second.bc0Internal
+        it->second.clkCfg, 
+        it->second.clk40Src, 
+        it->second.ttcCfg
         );
 }
 

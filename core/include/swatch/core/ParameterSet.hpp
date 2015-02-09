@@ -5,8 +5,8 @@
  * Created on July 20, 2014, 9:50 AM
  */
 
-#ifndef __swatch_core_parameterset_hpp__
-#define	__swatch_core_parameterset_hpp__
+#ifndef __SWATCH_CORE_PARAMETERSET_HPP__
+#define	__SWATCH_CORE_PARAMETERSET_HPP__
 
 // C++ Headers
 #include <set>
@@ -101,5 +101,5 @@ DEFINE_SWATCH_EXCEPTION(ParameterNotFound);
 
 #include "swatch/core/ParameterSet.hxx"
 
-#endif	/* __swatch_core_parameterset_hpp__ */
+#endif	/* __SWATCH_CORE_PARAMETERSET_HPP__ */
 

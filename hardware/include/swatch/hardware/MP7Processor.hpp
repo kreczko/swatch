@@ -17,9 +17,9 @@ namespace hardware {
 
 // Temporary class
 struct MP7ClockMode {
-    std::string clkOpt;
-    bool extClk40Src;
-    bool bc0Internal;
+    std::string clkCfg;
+    std::string clk40Src;
+    std::string ttcCfg;
 };
 
 class MP7Processor: public processor::Processor {

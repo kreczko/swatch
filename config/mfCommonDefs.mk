@@ -13,6 +13,7 @@ CACTUS_OS="unknown.os"
 # XDAQ config
 XDAQ_ROOT ?= /opt/xdaq
 
+# OS Identification
 UNAME=$(strip $(shell uname -s))
 ifeq ($(UNAME),Linux)
 
@@ -38,9 +39,16 @@ $(info OS Detected: $(CACTUS_OS))
 
 ifeq ($(findstring $(CACTUS_ROOT)/lib,$(LD_LIBRARY_PATH)),)
 $(info CACTUS_ROOT/lib added to LD_LIBRARY_PATH)
-LD_LIBRARY_PATH:="$(CACTUS_ROOT)/lib:$(LD_LIBRARY_PATH)"
+LD_LIBRARY_PATH:=$(CACTUS_ROOT)/lib:$(LD_LIBRARY_PATH)
 else
 $(info CACTUS_ROOT already in LD_LIBRARY_PATH)
+endif
+
+ifeq ($(findstring $(XDAQ_ROOT)/lib,$(LD_LIBRARY_PATH)),)
+$(info XDAQ_ROOT/lib added to LD_LIBRARY_PATH)
+LD_LIBRARY_PATH:=$(XDAQ_ROOT)/lib:$(LD_LIBRARY_PATH)
+else
+$(info XDAQ_ROOT already in LD_LIBRARY_PATH)
 endif
 
 export LD_LIBRARY_PATH
