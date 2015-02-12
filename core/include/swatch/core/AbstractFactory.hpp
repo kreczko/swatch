@@ -5,8 +5,8 @@
  * Created on July 31, 2014, 4:50 PM
  */
 
-#ifndef SWATCH_CORE_ABSTRACTFACTORY_HPP
-#define	SWATCH_CORE_ABSTRACTFACTORY_HPP
+#ifndef __SWATCH_CORE_ABSTRACTFACTORY_HPP__
+#define	__SWATCH_CORE_ABSTRACTFACTORY_HPP__
 
 // C++ Headers
 #include <string>
@@ -83,5 +83,5 @@ struct CreatorRegistrationHelper {
 #include "AbstractFactory.hxx"
 
 
-#endif	/* SWATCH_CORE_ABSTRACTFACTORY_HPP */
+#endif	/* __SWATCH_CORE_ABSTRACTFACTORY_HPP__ */
 

@@ -5,8 +5,8 @@
  * Created on July 31, 2014, 4:51 PM
  */
 
-#ifndef SWATCH_CORE_ABSTRACTFACTORY_HXX
-#define	SWATCH_CORE_ABSTRACTFACTORY_HXX
+#ifndef SW__ATCH_CORE_ABSTRACTFACTORY_HXX__
+#define	SW__ATCH_CORE_ABSTRACTFACTORY_HXX__
 
 namespace swatch {
 namespace core {
@@ -71,5 +71,5 @@ bool AbstractFactory<T>::add(const std::string& aName) {
 } // namespace swatch
 
 
-#endif	/* SWATCH_CORE_ABSTRACTFACTORY_HXX */
+#endif	/* __SWATCH_CORE_ABSTRACTFACTORY_HXX__ */
 

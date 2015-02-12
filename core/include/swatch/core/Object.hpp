@@ -7,8 +7,8 @@
  * Detailed description
  */
 
-#ifndef _swatch_test_object_hpp_
-#define	_swatch_test_object_hpp_
+#ifndef __SWATCH_TEST_OBJECT_HPP__
+#define	__SWATCH_TEST_OBJECT_HPP__
 
 // Standard Headers
 #include <typeinfo>
@@ -149,5 +149,5 @@ T* Object::getObj(const std::string& aId) {
 } // namespace core
 } // namespace swatch
 
-#endif	/* _swatch_test_object_hpp_ */
+#endif	/* __SWATCH_TEST_OBJECT_HPP__ */
 

@@ -7,8 +7,8 @@
  * Detailed description
  */
 
-#ifndef SWATCH_CORE_LINK_HPP
-#define	SWATCH_CORE_LINK_HPP
+#ifndef __SWATCH_CORE_LINK_HPP__
+#define	__SWATCH_CORE_LINK_HPP__
 
 
 #include "swatch/core/Device.hpp"
@@ -36,5 +36,5 @@ protected:
 } // namespace core
 } // namespace swatch
 
-#endif	/* SWATCH_CORE_LINK_HPP */
+#endif	/* __SWATCH_CORE_LINK_HPP__ */
 

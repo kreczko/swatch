@@ -5,8 +5,8 @@
  *      Author: kreczko
  */
 
-#ifndef FSM_H_
-#define FSM_H_
+#ifndef __SWATCH_CORE_FSM_HPP__
+#define __SWATCH_CORE_FSM_HPP__
 #include "swatch/core/exception.hpp"
 #include "toolbox/fsm/FiniteStateMachine.h"
 #include "toolbox/Event.h"
@@ -78,4 +78,4 @@ private:
 
 #include "swatch/core/FSM.hxx"
 
-#endif /* FSM_H_ */
+#endif /* __SWATCH_CORE_FSM_HPP__ */

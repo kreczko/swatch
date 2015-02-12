@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef SWATCH_CORE_DEVICE_HPP
-#define	SWATCH_CORE_DEVICE_HPP
+#ifndef __SWATCH_CORE_DEVICE_HPP__
+#define	__SWATCH_CORE_DEVICE_HPP__
 
 #include "swatch/core/Object.hpp"
 
@@ -65,5 +65,5 @@ protected:
 }
 }
 
-#endif	/* SWATCH_CORE_DEVICE_HPP */
+#endif	/* __SWATCH_CORE_DEVICE_HPP__ */
 

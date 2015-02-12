@@ -1,5 +1,5 @@
-#ifndef SWATCH_CORE_EXCEPTION_HPP
-#define SWATCH_CORE_EXCEPTION_HPP
+#ifndef __SWATCH_CORE_EXCEPTION_HPP__
+#define __SWATCH_CORE_EXCEPTION_HPP__
 
 // Swatch Headers
 // C++ Headers
@@ -87,4 +87,4 @@ private:
 } // namespace core
 } // namespace swatch
 
-#endif /* SWATCH_CORE_EXCEPTION_HPP */
+#endif /* __SWATCH_CORE_EXCEPTION_HPP__ */

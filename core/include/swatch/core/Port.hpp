@@ -5,8 +5,8 @@
  * Created on July 21, 2014, 9:57 AM
  */
 
-#ifndef __swatch_core_port_hpp__
-#define	__swatch_core_port_hpp__
+#ifndef __SWATCH_CORE_PORT_HPP__
+#define	__SWATCH_CORE_PORT_HPP__
 
 #include "swatch/core/Object.hpp"
 
@@ -41,5 +41,5 @@ public:
 }
 }
 
-#endif	/* __swatch_core_port_hpp__ */
+#endif	/* __SWATCH_CORE_PORT_HPP__ */
 

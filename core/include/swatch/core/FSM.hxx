@@ -5,8 +5,8 @@
  * Created on August 1, 2014, 12:30 PM
  */
 
-#ifndef __swatch_core_fsm_hxx__
-#define	__swatch_core_fsm_hxx__
+#ifndef __SWATCH_CORE_FSM_HXX__
+#define	__SWATCH_CORE_FSM_HXX__
 #include "swatch/core/exception.hpp"
 
 namespace swatch {
@@ -27,4 +27,4 @@ template<class OBJECT> void FSM::addStateTransition(const State& from, const Sta
 } // namespace swatch
 
 
-#endif	/* __swatch_core_fsm_hxx__ */
+#endif	/* __SWATCH_CORE_FSM_HXX__ */

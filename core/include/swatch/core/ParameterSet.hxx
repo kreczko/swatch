@@ -5,8 +5,8 @@
  * Created on August 1, 2014, 12:30 PM
  */
 
-#ifndef __swatch_core_parameterset_hxx__
-#define	__swatch_core_parameterset_hxx__
+#ifndef __SWATCH_CORE_PARAMETERSET_HXX__
+#define	__SWATCH_CORE_PARAMETERSET_HXX__
 
 #include "swatch/core/exception.hpp"
 
@@ -100,5 +100,5 @@ ParameterSet::Inserter ParameterSet::insert(const std::string& aKey, const T& aV
 } // namespace swatch
 
 
-#endif	/* __swatch_core_parameterset_hxx__ */
+#endif	/* __SWATCH_CORE_PARAMETERSET_HXX__ */
 

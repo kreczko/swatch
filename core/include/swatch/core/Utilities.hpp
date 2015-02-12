@@ -6,8 +6,8 @@
  */
 
 
-#ifndef SWATCH_CORE_UTILITIES_HPP
-#define	SWATCH_CORE_UTILITIES_HPP
+#ifndef __SWATCH_CORE_UTILITIES_HPP__
+#define	__SWATCH_CORE_UTILITIES_HPP__
 
 // C++ Headers
 #include <string>
@@ -69,5 +69,5 @@ std::string shellExpandPath(const std::string& aPath);
 } // namespace swatch
 
 
-#endif	/* SWATCH_CORE_UTILITIES_HPP */
+#endif	/* __SWATCH_CORE_UTILITIES_HPP__ */
 
