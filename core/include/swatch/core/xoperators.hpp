@@ -6,7 +6,7 @@
 #include "xdata/String.h"
 #include "Utilities.hpp"
 
-
+namespace xdata {
 std::ostream& operator<< (std::ostream& stream, const xdata::Serializable& ser);
 
 /*
@@ -47,5 +47,7 @@ int operator==(const xdata::String & a, const char* b);
 int operator==(const std::string & a, const xdata::String & b);
 
 int operator==(const char* & a, const xdata::String b);
+
+}
 
 #endif /* __SWATCH_CORE_XOPERATORS_HPP__ */

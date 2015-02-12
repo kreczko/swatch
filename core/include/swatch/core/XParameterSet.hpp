@@ -23,6 +23,12 @@
 // Swatch Headers
 #include "swatch/core/exception.hpp"
 
+/*
+
+namespace xdata {
+  class Serializable;
+}
+*/
 
 namespace swatch {
 namespace core {

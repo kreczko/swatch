@@ -20,7 +20,8 @@
 #include <xdata/Table.h>
 #include <xdata/Bag.h>
 
-
+// Boost Headers
+#include "boost/foreach.hpp"
 
 // C++ Header
 #include <iterator> //for std::ostream_iterator
@@ -136,6 +137,55 @@ BOOST_AUTO_TEST_CASE(AddXPsetTest) {
 
 }
 
+
+//---
+BOOST_AUTO_TEST_CASE(OStreamXPsetTest) {
+  using namespace swatch::core;
+
+  std::ostringstream oss;
+  
+  oss.str("");
+  const xdata::Integer aInt(5);
+  oss << aInt;
+  BOOST_CHECK_EQUAL(oss.str(),"5");
+  
+  oss.str("");
+  const xdata::String aStr("dummy");
+  oss << aStr;
+  BOOST_CHECK_EQUAL(oss.str(),"dummy");
+
+  oss.str("");
+  const xdata::Bag<MyBag> aBag;
+  oss << aBag;
+  BOOST_CHECK_EQUAL(oss.str(),"<xdata::Bag<MyBag>>");
+
+  oss.str("");
+  const xdata::Serializable& aSer = aInt;
+  oss << aSer;
+  BOOST_CHECK_EQUAL(oss.str(),"5");
+  
+  XParameterSet xps;
+  xps.set("aInt",aInt);
+  xps.set("aString",aStr);
+  xps.set("aBag",aBag);
+
+  oss.str("");
+  oss << xps.get("aInt");
+  BOOST_CHECK_EQUAL(oss.str(),"5");
+  
+  oss.str("");
+  oss << xps.get("aString");
+  BOOST_CHECK_EQUAL(oss.str(),"dummy");
+
+
+
+  const XParameterSet& cps = xps;
+  BOOST_FOREACH( const std::string& k, xps.keys() ) {
+    oss.str("");
+    oss << k << " : " << cps[k];
+    BOOST_TEST_MESSAGE(oss.str());
+  }
+}
 
 
 //---
@@ -282,13 +332,5 @@ BOOST_AUTO_TEST_CASE(CloneXPsetTest) {
 }
 
 
-BOOST_AUTO_TEST_CASE(OStreamXPsetTest) {
-  
-  std::ostringstream oss;
-  const xdata::Integer aInt(5);
-  oss << aInt;
-  BOOST_CHECK_EQUAL(oss.str(),"5");
-  
-}
 
 BOOST_AUTO_TEST_SUITE_END() // XParsTestSuite

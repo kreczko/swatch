@@ -148,7 +148,8 @@ XParameterSet::get( const std::string& name ) {
 //---
 const xdata::Serializable&
 XParameterSet::get( const std::string& name ) const {
-  return const_cast<const xdata::Serializable&>(const_cast<const XParameterSet*>(this)->get(name));
+  return const_cast<XParameterSet*>(this)->get(name);
+  // return const_cast<const xdata::Serializable&>(const_cast<const XParameterSet*>(this)->get(name));
 }
 
 

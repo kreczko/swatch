@@ -5,11 +5,12 @@
  * Created on August 3, 2014, 7:42 PM
  */
 
-#ifndef __swatch_system_servicefactory_hpp__
-#define	__swatch_system_servicefactory_hpp__
+#ifndef __SWATCH_SYSTEM_SERVICEFACTORY_HPP__
+#define	__SWATCH_SYSTEM_SERVICEFACTORY_HPP__
 
 
 #include "swatch/core/AbstractFactory.hpp"
+#include "swatch/system/Service.hpp"
 
 namespace swatch {
 namespace system {
@@ -26,5 +27,5 @@ swatch::core::ClassRegistrationHelper< swatch::system::Service, classname > clas
 swatch::core::CreatorRegistrationHelper< swatch::system::Service, creatorname > creatorname##ObjCreatorRegistrationHelper( #creatorname );
 
 
-#endif	/* __swatch_system_servicefactory_hpp__ */
+#endif	/* __SWATCH_SYSTEM_SERVICEFACTORY_HPP__ */
 

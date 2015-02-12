@@ -9,11 +9,13 @@
 
 // Swatch Headers
 #include "swatch/logger/Log.hpp"
+#include "swatch/core/xoperators.hpp"
 #include "swatch/core/Utilities.hpp"
 #include "swatch/core/Port.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
-
 #include "swatch/processor/ProcessorFactory.hpp"
+
+// Boost Headers
 #include <boost/foreach.hpp>
 
 // C++ Headers
@@ -37,8 +39,8 @@ DummyProcessor::DummyProcessor(const std::string& aId, const core::XParameterSet
     
     LOG(swlog::kDebug) <<  "Id:" << this->id();
     LOG(swlog::kDebug) <<  "XParameterSet:";
-    BOOST_FOREACH( std::string name, aPars.keys() ) {
-//        LOG(swlog::kDebug) <<  "   " << name << " : " << core::anyToString(aPars.get(name));
+    BOOST_FOREACH( std::string k, aPars.keys() ) {
+       LOG(swlog::kDebug) <<  "   " << k << " : " << aPars[k];
     }
     std::stringstream ss;
     for ( int chan(0); chan < 4 ; ++chan) { 

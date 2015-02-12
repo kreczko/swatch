@@ -1,5 +1,6 @@
 #include "swatch/core/xoperators.hpp"
 
+namespace xdata {
 
 std::ostream& operator<< (std::ostream& stream, const xdata::Serializable& ser) {
 
@@ -37,4 +38,6 @@ int operator==(const std::string & a, const xdata::String & b) {
 
 int operator==(const char* & a, const xdata::String b) {
     return const_cast<xdata::String &>(b).operator ==(a);
+}
+
 }
