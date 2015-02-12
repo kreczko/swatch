@@ -8,6 +8,8 @@
 
 #include "swatch/system/CrateStub.hpp"
 
+// XDAQ Headers
+#include "swatch/core/xoperators.hpp"
 
 namespace swatch {
 namespace system {

@@ -38,7 +38,7 @@ treeToAMC13Pars(const boost::property_tree::ptree& t) {
     astub.crate          = t.get<std::string>("CRATE NAME");
     astub.slot           = t.get<uint32_t>("CRATE SLOT");
 
-    xdata::Bag<AMC13ServiceStub> abag;
+    AMC13ServiceBag abag;
     abag.bag = astub;
 
     amc13Set.set("name", abag.bag.name);

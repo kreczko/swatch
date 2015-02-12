@@ -31,9 +31,7 @@ AMC13Service::AMC13Service(const std::string& aId, const core::XParameterSet& aP
     using namespace boost::assign;
     modes_ += "ttsloopback", "external";
             
-    // XPARS_FIX
-    //    const system::AMC13ServiceStub& desc = params.get<system::AMC13ServiceStub>("descriptor");
-    system::AMC13ServiceStub desc; // DELETEME
+    system::AMC13ServiceStub& desc = aPars.get<system::AMC13ServiceBag>("descriptor").bag;
 
     crate_ = desc.crate;
     slot_  = desc.slot;

@@ -25,10 +25,10 @@ Includes =	\
 		$(XDAQ_ROOT)/include \
 
 LibraryPaths =  \
-	        lib \
-	        ${SWATCH_ROOT}/core/lib \
+        lib \
+        ${SWATCH_ROOT}/core/lib \
 		${CACTUS_ROOT}/lib \
-		$(XDAQ_ROOT)/lib
+		$(XDAQ_ROOT)/lib \ 
 	
 Libraries =	\
 		cactus_swatch_core

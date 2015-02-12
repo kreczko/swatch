@@ -41,6 +41,8 @@ struct ProcessorPortStub {
 };
 
 
+typedef xdata::Bag<ProcessorPortStub> ProcessorPortBag;
+
 /**
  * @class ProcessorStub
  * @brief Struct to hold the data to construct a processor
@@ -83,6 +85,8 @@ struct ProcessorStub {
     //! List of transmitter port bags
     xdata::Vector<xdata::Bag<ProcessorPortStub> > txPorts;
 };
+
+typedef xdata::Bag<ProcessorStub> ProcessorBag;
 
 std::ostream& operator<<(std::ostream& os, const ProcessorStub& pd );
 

@@ -29,7 +29,7 @@ treeToProcessorPars(const boost::property_tree::ptree& t) {
     pstub.slot         = t.get<uint32_t>("CRATE SLOT");
 
     // Then make a bag
-    xdata::Bag<ProcessorStub> pbag;
+    ProcessorBag pbag;
     pbag.bag = pstub;
 
     // Store the bag in the set

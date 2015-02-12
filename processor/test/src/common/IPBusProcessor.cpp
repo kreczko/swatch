@@ -51,19 +51,17 @@ IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::XParam
     
     clockModes_ += "internal","external";
 
-    /*
-     * XPARS_FIX
-    const swpro::ProcessorStub& desc = params.get<swpro::ProcessorStub>("descriptor");
+    swpro::ProcessorBag& stub = params.get<swpro::ProcessorBag>("stub");
 
-    crate_ = desc.crate;
-    slot_ = desc.slot;
+    crate_ = stub.bag.crate;
+    slot_ = stub.bag.slot;
 
     // Build the objects
     hw_ = new uhal::HwInterface(
             uhal::ConnectionManager::getDevice(
                 id,
-                desc.uri,
-                desc.addressTable)
+                stub.bag.uri,
+                stub.bag.addressTable)
             );
 
 
@@ -103,7 +101,7 @@ IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::XParam
         LOG(swlog::kDebug) << "tx ch[" << k << "]: size " << outputChannels_[k]->getBufferSize();
     }
     
-    */
+    
 }
 
 

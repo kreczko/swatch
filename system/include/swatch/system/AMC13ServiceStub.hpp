@@ -67,6 +67,8 @@ struct AMC13ServiceStub {
 
 std::ostream& operator<<(std::ostream& os, const AMC13ServiceStub& sd );
 
+typedef xdata::Bag<AMC13ServiceStub> AMC13ServiceBag;
+
 } // namespace system
 } // namespace swatch
 

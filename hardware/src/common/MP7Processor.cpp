@@ -46,13 +46,11 @@ MP7Processor::MP7Processor(const std::string& id, const swatch::core::XParameter
     driver_(0x0) {
     using namespace boost::assign;
 
-    // XPARS_FIXX
-//    const processor::ProcessorStub& desc = params.get<processor::ProcessorStub>("descriptor");
-    processor::ProcessorStub desc; // DELETEME
-    crate_ = desc.crate;
-    slot_ = desc.slot;
+    processor::ProcessorBag& desc = aPars.get<processor::ProcessorBag>("descriptor");
+    crate_ = desc.bag.crate;
+    slot_ = desc.bag.slot;
 
-    uhal::HwInterface board = uhal::ConnectionManager::getDevice(id, desc.uri, desc.addressTable) ;
+    uhal::HwInterface board = uhal::ConnectionManager::getDevice(id, desc.bag.uri, desc.bag.addressTable) ;
     
     driver_ = new mp7::MP7Controller(board);
     

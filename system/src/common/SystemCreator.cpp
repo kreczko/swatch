@@ -39,6 +39,7 @@ SystemCreator::createSystem(const std::string& aId, const swatch::core::XParamet
 	return sys;
 }
 
+//---
 void SystemCreator::addCrates(System* system, const swatch::core::XParameterSet& aPars) {
 	xdata::Vector<swco::XParameterSet> vPSets;
     
@@ -49,15 +50,18 @@ void SystemCreator::addCrates(System* system, const swatch::core::XParameterSet&
 
 }
 
+
+//---
 void SystemCreator::addCrate(System* system, const swatch::core::XParameterSet& aPars) {
-  //XPARS_FIX
-  //const CrateStub& stub = aPars.get<CrateStub>("stub");
-  CrateStub stub;
-	Crate * crate = new Crate(stub.name, aPars);
+  CrateBag& stub = aPars.get<CrateBag>("stub");
+	Crate * crate = new Crate(stub.bag.name, aPars);
 	system->add(crate);
 }
+
+
+//---
 void SystemCreator::addProcessors(System* system, const swatch::core::XParameterSet& aPars) {
-	std::vector<swco::XParameterSet> vPSets;
+	xdata::Vector<swco::XParameterSet> vPSets;
 	vPSets = aPars.get<xdata::Vector<swco::XParameterSet> >("processors");
 	BOOST_FOREACH(swco::XParameterSet& ps,vPSets) {
 		swpro::Processor* p = swpro::ProcessorFactory::get()->make(ps);
@@ -65,6 +69,8 @@ void SystemCreator::addProcessors(System* system, const swatch::core::XParameter
 	}
 }
 
+
+//---
 void SystemCreator::addServices(System* system, const swatch::core::XParameterSet& aPars) {
 	xdata::Vector<swco::XParameterSet> vPSets;
 	vPSets = aPars.get<xdata::Vector<swco::XParameterSet> >("services");

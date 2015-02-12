@@ -10,9 +10,10 @@
 
 // C++ Headers
 #include <ostream>
-#include <string>
-#include <stdint.h>
-#include <vector>
+
+// XDAQ Headers
+#include "xdata/String.h"
+#include "xdata/Bag.h"
 
 namespace swatch {
 namespace system {
@@ -23,16 +24,26 @@ namespace system {
  */
 class CrateStub {
 public:
+
+    void registerFields(xdata::Bag<CrateStub> *bag) {
+        bag->addField("name", &name);
+        bag->addField("description", &description);
+        bag->addField("location", &location);
+    }
+
     //! Name of the Crate
-    std::string name;
+    xdata::String name;
 
     //! Description of the crate
-    std::string description;
+    xdata::String description;
 
     //! Geo location of the crate
-    std::string location;
+    xdata::String location;
 
 };
+
+
+typedef xdata::Bag<CrateStub> CrateBag;
 
 std::ostream& operator<<(std::ostream& os, const CrateStub& sd );
 
