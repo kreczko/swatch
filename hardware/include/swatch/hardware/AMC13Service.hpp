@@ -22,7 +22,7 @@ namespace hardware {
 
 class AMC13Service : public swatch::system::DaqTTCService {
 public:
-    AMC13Service( const std::string& aId, const core::ParameterSet& params );
+    AMC13Service( const std::string& aId, const core::XParameterSet& params );
     ~AMC13Service();
 
     virtual uint32_t getSlot() const;

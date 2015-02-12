@@ -10,9 +10,14 @@
 
 // C++ Headers
 #include <ostream>
-#include <string>
 #include <stdint.h>
 #include <vector>
+
+// XDAQ Headers
+#include "xdata/String.h"
+#include "xdata/Vector.h"
+#include "xdata/UnsignedInteger.h"
+#include "xdata/Bag.h"
 
 namespace swatch {
 namespace system {
@@ -21,31 +26,42 @@ namespace system {
  * @class AMC13Stub
  * @brief Struct to hold the data to construct an AMC13
  */
-class AMC13ServiceStub {
-public:
+struct AMC13ServiceStub {
+
+    void registerFields(xdata::Bag<AMC13ServiceStub> *bag) {
+        bag->addField("name", &name);
+        bag->addField("creator", &creator);
+        bag->addField("crate", &crate);
+        bag->addField("slot", &slot);
+        bag->addField("uriT1", &uriT1);
+        bag->addField("addressTableT1", &addressTableT1);
+        bag->addField("uriT2", &uriT2);
+        bag->addField("addressTableT2", &addressTableT2);
+    }
+
     //! Name of the Processor
-    std::string name;
+    xdata::String name;
 
     //! Class to create the Processor object
-    std::string creator;
+    xdata::String creator;
 
     //! Id of the uTCA crate where the Processor is installed 
-    std::string crate;
+    xdata::String crate;
 
     //! Slot where the board is installed 
-    uint32_t slot;
+    xdata::UnsignedInteger slot;
 
     //! Uri to access the hardware resource
-    std::string uriT1;
+    xdata::String uriT1;
 
     //! Address table
-    std::string addressTableT1;
+    xdata::String addressTableT1;
 
     //! Uri to access the hardware resource
-    std::string uriT2;
+    xdata::String uriT2;
 
     //! Address table
-    std::string addressTableT2;
+    xdata::String addressTableT2;
 
 };
 

@@ -6,7 +6,7 @@
  */
 
 // Swatch Headers
-#include "swatch/core/ParameterSet.hpp"
+#include "swatch/core/XParameterSet.hpp"
 
 // Boost Headers
 #include <boost/property_tree/json_parser.hpp>
@@ -15,7 +15,7 @@
 namespace swatch {
 namespace processor {
 
-swatch::core::ParameterSet treeToProcessorPars(const boost::property_tree::ptree& t);
+swatch::core::XParameterSet treeToProcessorPars(const boost::property_tree::ptree& t);
 
 } // namespace processor
 } // namespace swatch

@@ -11,6 +11,9 @@
 #include "swatch/system/AMC13ServiceStub.hpp"
 #include "swatch/system/ServiceFactory.hpp"
 
+// XDAQ Headers
+#include "xdata/String.h"
+
 // AMC13 Headers
 #include "amc13/AMC13.hh"
 
@@ -21,20 +24,23 @@ namespace swatch {
 namespace hardware {
 SWATCH_SERVICE_REGISTER_CLASS(AMC13Service)
 
-AMC13Service::AMC13Service(const std::string& aId, const core::ParameterSet& params) :
-    swatch::system::DaqTTCService(aId, params),
+AMC13Service::AMC13Service(const std::string& aId, const core::XParameterSet& aPars) :
+    swatch::system::DaqTTCService(aId, aPars),
     driver_(0x0) {
     
     using namespace boost::assign;
     modes_ += "ttsloopback", "external";
             
-    const system::AMC13ServiceStub& desc = params.get<system::AMC13ServiceStub>("descriptor");
-    
+    // XPARS_FIX
+    //    const system::AMC13ServiceStub& desc = params.get<system::AMC13ServiceStub>("descriptor");
+    system::AMC13ServiceStub desc; // DELETEME
+
     crate_ = desc.crate;
     slot_  = desc.slot;
-
-    driver_ = new amc13::AMC13(desc.uriT1, desc.addressTableT1.substr(7),
-                        desc.uriT2, desc.addressTableT2.substr(7) );
+    
+    //TODO: Switch to HwInterface based constructor
+    driver_ = new amc13::AMC13(desc.uriT1, static_cast<std::string>(desc.addressTableT1).substr(7),
+                        desc.uriT2, static_cast<std::string>(desc.addressTableT2).substr(7) );
     
 
     driver_->getStatus()->Report(1);

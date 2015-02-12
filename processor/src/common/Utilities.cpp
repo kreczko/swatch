@@ -7,27 +7,35 @@
 
 #include "swatch/processor/Utilities.hpp"
 
+// Swatch Headers
 #include "swatch/processor/ProcessorStub.hpp"
+
 
 
 namespace swatch {
 namespace processor {
 
-swatch::core::ParameterSet
+swatch::core::XParameterSet
 treeToProcessorPars(const boost::property_tree::ptree& t) {
 
-    swatch::core::ParameterSet procSet;
-    swatch::processor::ProcessorStub pd;
-    pd.name         = t.get<std::string>("PROCESSOR NAME");
-    pd.creator      = t.get<std::string>("PROCESSOR CREATOR");
-    pd.uri          = t.get<std::string>("URI");
-    pd.addressTable = t.get<std::string>("ADDRESS TABLE");
-    pd.crate      = t.get<std::string>("CRATE NAME");
-    pd.slot         = t.get<uint32_t>("CRATE SLOT");
+    swatch::core::XParameterSet procSet;
+    // Fill the stub first (faster)
+    ProcessorStub pstub;
+    pstub.name         = t.get<std::string>("PROCESSOR NAME");
+    pstub.creator      = t.get<std::string>("PROCESSOR CREATOR");
+    pstub.uri          = t.get<std::string>("URI");
+    pstub.addressTable = t.get<std::string>("ADDRESS TABLE");
+    pstub.crate        = t.get<std::string>("CRATE NAME");
+    pstub.slot         = t.get<uint32_t>("CRATE SLOT");
 
-    procSet.set("name", pd.name);
-    procSet.set("class", pd.creator);
-    procSet.set("descriptor", pd);
+    // Then make a bag
+    xdata::Bag<ProcessorStub> pbag;
+    pbag.bag = pstub;
+
+    // Store the bag in the set
+    procSet.set("name", pbag.bag.name);
+    procSet.set("class", pbag.bag.creator);
+    procSet.set("descriptor", pbag);
     return procSet;
 }
 

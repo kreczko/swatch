@@ -41,13 +41,14 @@ namespace hardware {
 
 SWATCH_PROCESSOR_REGISTER_CLASS(MP7Processor);
 
-MP7Processor::MP7Processor(const std::string& id, const swatch::core::ParameterSet& params) :
-    Processor(id, params),
+MP7Processor::MP7Processor(const std::string& id, const swatch::core::XParameterSet& aPars) :
+    Processor(id, aPars),
     driver_(0x0) {
     using namespace boost::assign;
 
-    const processor::ProcessorStub& desc = params.get<processor::ProcessorStub>("descriptor");
-
+    // XPARS_FIXX
+//    const processor::ProcessorStub& desc = params.get<processor::ProcessorStub>("descriptor");
+    processor::ProcessorStub desc; // DELETEME
     crate_ = desc.crate;
     slot_ = desc.slot;
 

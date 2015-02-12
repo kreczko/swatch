@@ -6,15 +6,18 @@
  */
 
 
-#ifndef SWATCH_PROCESSOR_PROCESSORSTUB_HPP
-#define SWATCH_PROCESSOR_PROCESSORSTUB_HPP
+#ifndef __SWATCH_PROCESSOR_PROCESSORSTUB_HPP__
+#define __SWATCH_PROCESSOR_PROCESSORSTUB_HPP__
 
 // C++ Headers
 #include <ostream>
-#include <string>
-#include <stdint.h>
-#include <vector>
  
+// XDAQ Headers
+#include "xdata/String.h"
+#include "xdata/Vector.h"
+#include "xdata/UnsignedInteger.h"
+#include "xdata/Bag.h"
+
 namespace swatch {
 namespace processor {
 
@@ -23,13 +26,18 @@ namespace processor {
  * @brief Structure to hold data to build a Processor port.
  * 
  */
-class ProcessorPortStub {
-public:
+struct ProcessorPortStub {
+
+    void registerFields(xdata::Bag<ProcessorPortStub> *bag) {
+        bag->addField("name", &name);
+        bag->addField("number", &number);
+    }
+
     //! Name of the port
-    std::string  name;
+    xdata::String  name;
 
     //! Port number
-    uint32_t number;
+    xdata::UnsignedInteger number;
 };
 
 
@@ -38,31 +46,42 @@ public:
  * @brief Struct to hold the data to construct a processor
  */
 
-class ProcessorStub {
-public:
+struct ProcessorStub {
+
+    void registerFields(xdata::Bag<ProcessorStub> *bag) {
+        bag->addField("name", &name);
+        bag->addField("creator", &creator);
+        bag->addField("crate", &crate);
+        bag->addField("slot", &slot);
+        bag->addField("uri", &uri);
+        bag->addField("addressTable", &addressTable);
+        bag->addField("rxPorts", &rxPorts);
+        bag->addField("txPorts", &txPorts);
+    }
+
     //! Name of the Processor
-    std::string name;
+    xdata::String name;
 
     //! Class to create the Processor object
-    std::string creator;
-
-    //! Uri to access the hardware resource
-    std::string uri;
-
-    //! Address table
-    std::string addressTable;
+    xdata::String creator;
 
     //! Id of the uTCA crate where the Processor is installed 
-    std::string crate;
+    xdata::String crate;
 
     //! Slot where the board is installed 
-    uint32_t slot;
+    xdata::UnsignedInteger slot;
+
+    //! Uri to access the hardware resource
+    xdata::String uri;
+
+    //! Address table
+    xdata::String addressTable;
 
     //! List of receiver port bags
-    std::vector<ProcessorPortStub> rxPorts;
+    xdata::Vector<xdata::Bag<ProcessorPortStub> > rxPorts;
 
     //! List of transmitter port bags
-    std::vector<ProcessorPortStub> txPorts;
+    xdata::Vector<xdata::Bag<ProcessorPortStub> > txPorts;
 };
 
 std::ostream& operator<<(std::ostream& os, const ProcessorStub& pd );
@@ -70,4 +89,4 @@ std::ostream& operator<<(std::ostream& os, const ProcessorStub& pd );
 } // namespace processor
 } // namespace swatch
 
-#endif /* SWATCH_PROCESSOR_PROCESSORSTUB_HPP */
+#endif /* __SWATCH_PROCESSOR_PROCESSORSTUB_HPP__ */

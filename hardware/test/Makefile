@@ -17,35 +17,37 @@ PACKAGE_RELEASE = 0
 # Library = cactus_swatch_hardware_test
 
 Includes = 	\
-		include \
-		${SWATCH_ROOT}/logger/include \
-		${SWATCH_ROOT}/core/include \
-		${SWATCH_ROOT}/processor/include \
-		${SWATCH_ROOT}/system/include \
-		${SWATCH_ROOT}/hardware/include \
-		${CACTUS_ROOT}/include
+	include \
+	${SWATCH_ROOT}/logger/include \
+	${SWATCH_ROOT}/core/include \
+	${SWATCH_ROOT}/processor/include \
+	${SWATCH_ROOT}/system/include \
+	${SWATCH_ROOT}/hardware/include \
+	${CACTUS_ROOT}/include \
+	$(XDAQ_ROOT)/include
 
 LibraryPaths =	\
-		lib \
-		${SWATCH_ROOT}/logger/lib \
-		${SWATCH_ROOT}/core/lib \
-		${SWATCH_ROOT}/processor/lib \
-		${SWATCH_ROOT}/system/lib \
-		${SWATCH_ROOT}/hardware/lib \
-		${CACTUS_ROOT}/lib
+	lib \
+	${SWATCH_ROOT}/logger/lib \
+	${SWATCH_ROOT}/core/lib \
+	${SWATCH_ROOT}/processor/lib \
+	${SWATCH_ROOT}/system/lib \
+	${SWATCH_ROOT}/hardware/lib \
+	${CACTUS_ROOT}/lib \
+	$(XDAQ_ROOT)/lib
 
 Libraries =	\
-		boost_system \
-		boost_unit_test_framework \
-		cactus_uhal_uhal \
-		cactus_uhal_log \
-		cactus_mp7_mp7 \
-		cactus_amc13_amc13 \
-		cactus_swatch_logger \
-		cactus_swatch_core \
-		cactus_swatch_processor \
-		cactus_swatch_system \
-		cactus_swatch_hardware
+	boost_system \
+	boost_unit_test_framework \
+	cactus_uhal_uhal \
+	cactus_uhal_log \
+	cactus_mp7_mp7 \
+	cactus_amc13_amc13 \
+	cactus_swatch_logger \
+	cactus_swatch_core \
+	cactus_swatch_processor \
+	cactus_swatch_system \
+	cactus_swatch_hardware
 
 
 ExecutableLibraries = ${Libraries} ${Library}

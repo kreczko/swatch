@@ -9,7 +9,7 @@
 
 // Swatch Headers
 #include "swatch/logger/Log.hpp"
-#include "swatch/core/ParameterSet.hpp"
+#include "swatch/core/XParameterSet.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
 #include "swatch/processor/ProcessorFactory.hpp"
 
@@ -25,6 +25,9 @@
 #include "swatch/system/ServiceFactory.hpp"
 #include "swatch/system/Utilities.hpp"
 
+// XDAQ Headers
+#include "xdata/Vector.h"
+
 // Boost Headers
 #include <boost/foreach.hpp>
  #include <boost/property_tree/json_parser.hpp>
@@ -39,16 +42,10 @@ namespace swhw = swatch::hardware;
 int main(int argc, char** argv) {
     using boost::property_tree::ptree;
     using boost::property_tree::json_parser::read_json;
-    using swco::ParameterSet;
+    using swco::XParameterSet;
     using swco::shellExpandPath;
 
     uhal::setLogLevelTo(uhal::Warning());
-
-    LOG(swlog::kError) << "sticazzi";
-    LOG(swlog::kWarning) << "sticazzi";
-    LOG(swlog::kInfo) << "sticazzi";
-    LOG(swlog::kDebug) << "sticazzi";
-    LOG(swlog::kDebug1) << "sticazzi";
     
 //    exit(0);
     
@@ -57,9 +54,9 @@ int main(int argc, char** argv) {
     read_json(shellExpandPath("${SWATCH_ROOT}/hardware/test/cfg/firstsys.json"), pt);
 
     // And then turn it into parameters
-    ParameterSet pset = swatch::system::treeToSystemPars(pt);
-    ParameterSet amc13params = pset.get< std::deque<ParameterSet> >("services").front();
-    ParameterSet mp7params = pset.get< std::deque<ParameterSet> >("processors").front();
+    XParameterSet pset = swatch::system::treeToSystemPars(pt);
+    XParameterSet amc13params = pset.get< xdata::Vector<XParameterSet> >("services").front();
+    XParameterSet mp7params = pset.get< xdata::Vector<XParameterSet> >("processors").front();
     
     swatch::hardware::AMC13Service* amc13_A = 0x0;
     try {

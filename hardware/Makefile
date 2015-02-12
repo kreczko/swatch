@@ -23,7 +23,8 @@ Includes = \
 	${SWATCH_ROOT}/core/include \
 	${SWATCH_ROOT}/processor/include \
 	${SWATCH_ROOT}/system/include \
-	${CACTUS_ROOT}/include
+	${CACTUS_ROOT}/include \
+	$(XDAQ_ROOT)/include
 	
 LibraryPaths = \
 	lib \
@@ -31,7 +32,8 @@ LibraryPaths = \
 	${SWATCH_ROOT}/core/lib \
 	${SWATCH_ROOT}/processor/lib \
 	${SWATCH_ROOT}/system/lib \
-	${CACTUS_ROOT}/lib
+	${CACTUS_ROOT}/lib \
+	$(XDAQ_ROOT)/lib
 
 Libraries = \
 	cactus_uhal_uhal \

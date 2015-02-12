@@ -8,6 +8,8 @@
 
 #include "swatch/system/AMC13ServiceStub.hpp"
 
+// Swatch Headers
+#include "swatch/core/xoperators.hpp"
 
 namespace swatch {
 namespace system {

@@ -23,7 +23,8 @@ Includes = 	\
 		${SWATCH_ROOT}/processor/include \
 		${SWATCH_ROOT}/system/include \
 		${SWATCH_ROOT}/system/test/include \
-		${CACTUS_ROOT}/include
+		${CACTUS_ROOT}/include \
+		$(XDAQ_ROOT)/include \
 
 LibraryPaths =	\
 		lib \
@@ -33,7 +34,8 @@ LibraryPaths =	\
 		${SWATCH_ROOT}/processor/lib \
 		${SWATCH_ROOT}/system/lib \
 		${SWATCH_ROOT}/system/test/lib \
-		${CACTUS_ROOT}/lib
+		${CACTUS_ROOT}/lib \
+		$(XDAQ_ROOT)/lib \
 
 Libraries =	\
 		boost_system \

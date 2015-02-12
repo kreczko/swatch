@@ -5,9 +5,10 @@
  * @date    11/11/14
  */
 
-
 #include "swatch/processor/ProcessorStub.hpp"
 
+// XDAQ Headers
+#include "swatch/core/xoperators.hpp"
 
 namespace swatch {
 namespace processor {
