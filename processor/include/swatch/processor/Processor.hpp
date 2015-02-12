@@ -5,8 +5,8 @@
  * @date    11/07/2014
  */
 
-#ifndef _swatch_test_processor_hpp_
-#define	_swatch_test_processor_hpp_
+#ifndef _SWATCH_TEST_PROCESSOR_HPP_
+#define	_SWATCH_TEST_PROCESSOR_HPP_
 
 // Swatch Headers
 #include "swatch/core/Device.hpp"
@@ -15,7 +15,7 @@
 namespace swatch {
 
 namespace core {
-class ParameterSet;
+class XParameterSet;
 }
 
 namespace processor {
@@ -32,7 +32,7 @@ class AlgoInterface;
  */
 class Processor : public core::Device {
 public:
-    Processor(const std::string& aId, const core::ParameterSet& params = core::ParameterSet());
+    Processor(const std::string& aId, const core::XParameterSet& params = core::XParameterSet());
     virtual ~Processor();
 
     /**
@@ -112,7 +112,7 @@ protected:
      * Perform configuration action
      * @param params
      */
-    virtual void doHalt(const core::ParameterSet& params = core::ParameterSet());
+    virtual void doHalt(const core::XParameterSet& params = core::XParameterSet());
 
     /**
      * @brief Assess whether the pre-conditions to Configure are satisfied.
@@ -127,12 +127,12 @@ protected:
      * 
      * @param params [description]
      */
-    virtual void doConfigure(const core::ParameterSet& params = core::ParameterSet());
+    virtual void doConfigure(const core::XParameterSet& params = core::XParameterSet());
 
 };
 
 }
 }
 
-#endif	/* _swatch_test_processor_hpp_ */
+#endif	/* _SWATCH_TEST_PROCESSOR_HPP_ */
 

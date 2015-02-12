@@ -21,13 +21,15 @@ Library = cactus_swatch_processor
 Includes =	\
 		include  \
 		${SWATCH_ROOT}/core/include \
-		${CACTUS_ROOT}/include
+		${CACTUS_ROOT}/include \
+		$(XDAQ_ROOT)/include \
 
 LibraryPaths =  \
 	        lib \
 	        ${SWATCH_ROOT}/core/lib \
-		${CACTUS_ROOT}/lib
-
+		${CACTUS_ROOT}/lib \
+		$(XDAQ_ROOT)/lib
+	
 Libraries =	\
 		cactus_swatch_core
 

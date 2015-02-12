@@ -11,7 +11,7 @@ namespace swatch {
 namespace system {
 
 
-Service::Service( const std::string &aId, const core::ParameterSet& params ) : core::Object(aId, params) {
+Service::Service( const std::string &aId, const core::XParameterSet& aPars ) : core::Object(aId, aPars) {
 }
 
 Service::~Service() {

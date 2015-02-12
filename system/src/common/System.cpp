@@ -25,7 +25,7 @@ namespace swlog = swatch::logger;
 namespace swatch {
 namespace system {
 
-System::System(const std::string& aId, const core::ParameterSet& params)
+System::System(const std::string& aId, const core::XParameterSet& params)
 : Device(aId, params)
 {
 }
@@ -134,7 +134,7 @@ System::canHalt()
 }
 
 void
-System::doHalt(const core::ParameterSet& params)
+System::doHalt(const core::XParameterSet& params)
 {
 }
 
@@ -145,7 +145,7 @@ System::canConfigure()
 }
 
 void
-System::doConfigure(const core::ParameterSet& params)
+System::doConfigure(const core::XParameterSet& params)
 {
     // TODO: Prepare parameter set
     for (deque<processor::Processor*>::iterator pIt = processors_.begin();

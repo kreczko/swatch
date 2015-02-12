@@ -5,8 +5,8 @@
  * Created on July 21, 2014, 10:12 AM
  */
 
-#ifndef __swatch_system_crateview_hpp__
-#define	__swatch_system_crateview_hpp__
+#ifndef __SWATCH_SYSTEM_CRATEVIEW_HPP__
+#define	__SWATCH_SYSTEM_CRATEVIEW_HPP__
 
 #include "swatch/core/Object.hpp"
 
@@ -24,7 +24,7 @@ class DaqTTCService;
 //! View class map swatch objects in crates. It doesn't own the objects it points to.
 class Crate : public core::ObjectView {
 public:
-    Crate( const std::string id, const core::ParameterSet& params = core::ParameterSet() );
+    Crate( const std::string id, const core::XParameterSet& aPars = core::XParameterSet() );
     virtual ~Crate();
 
     
@@ -54,5 +54,5 @@ private:
 }
 }
 
-#endif	/* __swatch_system_crateview_hpp__ */
+#endif	/* __SWATCH_SYSTEM_CRATEVIEW_HPP__ */
 

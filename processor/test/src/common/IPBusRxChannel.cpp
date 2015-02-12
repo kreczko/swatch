@@ -17,7 +17,7 @@ namespace swatch {
 namespace processor {
 namespace test {
 
-IPBusRxChannel::IPBusRxChannel(uhal::HwInterface* hwif, const swatch::core::ParameterSet& params) : IPBusComponent(hwif) {
+IPBusRxChannel::IPBusRxChannel(uhal::HwInterface* hwif, const swatch::core::XParameterSet& params) : IPBusComponent(hwif) {
     // cout << "Create Rx Channels" << endl;
     
     std::string path = params.get<std::string>("path");

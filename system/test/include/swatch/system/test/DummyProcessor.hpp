@@ -5,8 +5,8 @@
  * Created on July 27, 2014, 9:19 PM
  */
 
-#ifndef __swatch_test_dummyprocessor_hpp__
-#define	__swatch_test_dummyprocessor_hpp__
+#ifndef __SWATCH_TEST_DUMMYPROCESSOR_HPP__
+#define	__SWATCH_TEST_DUMMYPROCESSOR_HPP__
 
 #include "swatch/processor/Processor.hpp"
 
@@ -16,7 +16,7 @@ namespace test {
 
 class DummyProcessor : public processor::Processor {
 public:
-    DummyProcessor( const std::string& aId, const core::ParameterSet& params );
+    DummyProcessor( const std::string& aId, const core::XParameterSet& aPars );
     virtual ~DummyProcessor();
     
     virtual uint32_t getSlot() const { return slot_; }
@@ -38,5 +38,5 @@ protected:
 } // namespace system
 } // namespace swatch
 
-#endif	/* __swatch_test_dummyprocessor_hpp__ */
+#endif	/* __SWATCH_TEST_DUMMYPROCESSOR_HPP__ */
 

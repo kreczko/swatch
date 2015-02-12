@@ -21,7 +21,7 @@ namespace system {
 
 //SWATCH_SERVICE_REGISTER_CLASS(AMC13Service)
 
-DaqTTCService::DaqTTCService(const std::string& aId, const core::ParameterSet& params) : Service(aId, params) {
+DaqTTCService::DaqTTCService(const std::string& aId, const core::XParameterSet& aPars) : Service(aId, aPars) {
 
 }
 

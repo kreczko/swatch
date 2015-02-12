@@ -5,8 +5,8 @@
  * Created on August 3, 2014, 9:18 PM
  */
 
-#ifndef __swatch_system_dummyamc13service_hpp__
-#define	__swatch_system_dummyamc13service_hpp__
+#ifndef __SWATCH_SYSTEM_DUMMYAMC13SERVICE_HPP__
+#define	__SWATCH_SYSTEM_DUMMYAMC13SERVICE_HPP__
 
 #include "swatch/system/DaqTTCService.hpp"
 
@@ -16,7 +16,7 @@ namespace test {
 
 class DummyAMC13Service : public system::DaqTTCService {
 public:
-    DummyAMC13Service( const std::string& aId, const core::ParameterSet& params );
+    DummyAMC13Service( const std::string& aId, const core::XParameterSet& aPars );
     virtual ~DummyAMC13Service();
 
     virtual uint32_t getSlot() const;
@@ -43,5 +43,5 @@ private:
 } // namespace swatch
 
 
-#endif	/* __swatch_system_dummyamc13service_hpp__ */
+#endif	/* __SWATCH_SYSTEM_DUMMYAMC13SERVICE_HPP__ */
 

@@ -5,8 +5,8 @@
  * Created on July 13, 2014, 11:20 AM
  */
 
-#ifndef _swatch_test_system_hpp_
-#define	_swatch_test_system_hpp_
+#ifndef __SWATCH_TEST_SYSTEM_HPP__
+#define	__SWATCH_TEST_SYSTEM_HPP__
 
 
 // Swatch Headers
@@ -39,7 +39,7 @@ class DaqTTCService;
 class System : public core::Device {
 public:
 
-    System( const std::string& aId, const core::ParameterSet& params = core::ParameterSet() );
+    System( const std::string& aId, const core::XParameterSet& params = core::XParameterSet() );
     virtual ~System();
     
     void add( processor::Processor* aProcessor );
@@ -82,9 +82,9 @@ protected:
    virtual bool canHalt();
    virtual bool canConfigure();
 
-   // Operations: something in common in all inherited classes? (e.g., actions with the ParameterSet)
-   virtual void doHalt(const core::ParameterSet& params);
-   virtual void doConfigure(const core::ParameterSet& params);
+   // Operations: something in common in all inherited classes? (e.g., actions with the XParameterSet)
+   virtual void doHalt(const core::XParameterSet& params);
+   virtual void doConfigure(const core::XParameterSet& params);
 
 
 };
@@ -92,5 +92,5 @@ protected:
 }
 }
 
-#endif	/* _swatch_test_system_hpp_ */
+#endif	/* __SWATCH_TEST_SYSTEM_HPP__ */
 

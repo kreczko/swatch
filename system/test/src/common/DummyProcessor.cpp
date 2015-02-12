@@ -32,13 +32,13 @@ SWATCH_PROCESSOR_REGISTER_CLASS(DummyProcessor);
 using std::cout;
 using std::endl;
 
-DummyProcessor::DummyProcessor(const std::string& aId, const core::ParameterSet& params)
-    : processor::Processor(aId, params ) {
+DummyProcessor::DummyProcessor(const std::string& aId, const core::XParameterSet& aPars)
+    : processor::Processor(aId, aPars ) {
     
     LOG(swlog::kDebug) <<  "Id:" << this->id();
-    LOG(swlog::kDebug) <<  "ParameterSet:";
-    BOOST_FOREACH( std::string name, params.names() ) {
-        LOG(swlog::kDebug) <<  "   " << name << " : " << core::anyToString(params.get(name));
+    LOG(swlog::kDebug) <<  "XParameterSet:";
+    BOOST_FOREACH( std::string name, aPars.keys() ) {
+//        LOG(swlog::kDebug) <<  "   " << name << " : " << core::anyToString(aPars.get(name));
     }
     std::stringstream ss;
     for ( int chan(0); chan < 4 ; ++chan) { 
@@ -53,7 +53,7 @@ DummyProcessor::DummyProcessor(const std::string& aId, const core::ParameterSet&
         this->addOutput(new core::OutputPort(ss.str()));
     }
     
-    const swpro::ProcessorStub& stub = params.get<swpro::ProcessorStub>("descriptor");
+    const swpro::ProcessorStub& stub = aPars.get<swpro::ProcessorStub>("descriptor");
 
     slot_ = stub.slot;
     crate_ = stub.crate;

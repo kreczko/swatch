@@ -5,8 +5,8 @@
  * Created on July 28, 2014, 12:13 AM
  */
 
-#ifndef SWATCH_SYSTEM_DAQTTCSERVICE_HPP
-#define	SWATCH_SYSTEM_DAQTTCSERVICE_HPP
+#ifndef __SWATCH_SYSTEM_DAQTTCSERVICE_HPP__
+#define	__SWATCH_SYSTEM_DAQTTCSERVICE_HPP__
 
 // Swatch Headers
 #include "swatch/system/Service.hpp"
@@ -18,7 +18,7 @@ namespace system {
 
 class DaqTTCService : public Service {
 protected:
-    explicit DaqTTCService( const std::string& aId, const core::ParameterSet& params );
+    explicit DaqTTCService( const std::string& aId, const core::XParameterSet& params );
 public:
     virtual ~DaqTTCService();
     
@@ -42,5 +42,5 @@ public:
 
 
 
-#endif	/* SWATCH_SYSTEM_DAQTTCSERVICE_HPP */
+#endif	/* __SWATCH_SYSTEM_DAQTTCSERVICE_HPP__ */
 

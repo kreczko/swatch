@@ -8,7 +8,7 @@
 #include "swatch/processor/test/IPBusTxChannel.hpp"
 
 // Swatch Headers
-#include "swatch/core/ParameterSet.hpp"
+#include "swatch/core/XParameterSet.hpp"
 
 // Boost Headers
 #include <boost/foreach.hpp>
@@ -17,7 +17,7 @@ namespace swatch {
 namespace processor {
 namespace test {
 
-IPBusTxChannel::IPBusTxChannel(uhal::HwInterface* hwif, const swatch::core::ParameterSet& params) :
+IPBusTxChannel::IPBusTxChannel(uhal::HwInterface* hwif, const swatch::core::XParameterSet& params) :
     IPBusComponent(hwif) {
     std::string path = params.get<std::string>("path");
 

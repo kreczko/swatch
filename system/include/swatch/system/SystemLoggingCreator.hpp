@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef SYSTEMLOGGINGCREATOR_HPP
-#define SYSTEMLOGGINGCREATOR_HPP
+#ifndef __SWATCH_SYSTEM_SYSTEMLOGGINGCREATOR_HPP__
+#define __SWATCH_SYSTEM_SYSTEMLOGGINGCREATOR_HPP__
 
 #include "swatch/system/SystemCreator.hpp"
 
@@ -22,7 +22,7 @@ namespace system {
 
 class SystemLoggingCreator : public swatch::system::SystemCreator {
 public:
-    virtual swatch::system::System* operator()(const std::string& aId, const swatch::core::ParameterSet& params);
+    virtual swatch::system::System* operator()(const std::string& aId, const swatch::core::XParameterSet& params);
 };
 
 
@@ -30,4 +30,4 @@ public:
 } // namespace swatch
 
 
-#endif /* SYSTEMCREATOR_HPP_ */
+#endif /* __SWATCH_SYSTEM_SYSTEMLOGGINGCREATOR_HPP__ */

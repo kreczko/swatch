@@ -1,7 +1,7 @@
 #include <boost/test/unit_test.hpp>
 
 // Swatch Headers
-#include "swatch/core/ParameterSet.hpp"
+#include "swatch/core/XParameterSet.hpp"
 #include "swatch/core/Object.hpp"
 #include "swatch/core/Utilities.hpp"
 #include "swatch/core/Link.hpp"
@@ -15,6 +15,10 @@
 #include "swatch/system/Crate.hpp"
 #include "swatch/system/test/DummyProcessor.hpp"
 #include "swatch/system/test/DummyAMC13Service.hpp"
+
+// XDAQ Headers
+#include "xdata/Integer.h"
+#include "xdata/String.h"
 
 // Boost Headers
 #include <boost/assign.hpp>
@@ -36,9 +40,11 @@ struct SystemSetupA {
         using namespace swatch::system::test;
         using namespace std;
 
-        ParameterSet a;
-        a.insert("requires", "ttc;daq")("provides", "trigger")("class","DummyProcessor");
-        ParameterSet a1 = a, a2 = a, a3 = a;
+        XParameterSet a;
+        a.insert("requires", xdata::String("ttc;daq"))
+            ("provides", xdata::String("trigger"))
+            ("class",xdata::String("DummyProcessor"));
+        XParameterSet a1 = a, a2 = a, a3 = a;
 
         system = new System("calol2");
         crateC = new Crate("crateC");
@@ -49,17 +55,21 @@ struct SystemSetupA {
         
         // Use 3 different methods to build the dummy processors
         // 1. explicit  constructor call
-        a1.insert("crate", "crateC")("slot", 1);
+        a1.insert("crate", xdata::String("crateC"))
+          ("slot", xdata::Integer(1));
         Processor* p1 = new DummyProcessor("mp7-10", a1);
         system->add(p1);
         
         // 2. Using ProcessorFactory, low level creator
-        a2.insert("crate", "crateD") ("slot", 2);
+        a2.insert("crate", xdata::String("crateD"))
+          ("slot", xdata::Integer(2));
         Processor* p2 = ProcessorFactory::get()->make("DummyProcessor","mp7-13", a2);
         system->add(p2);
         
         // 3. Using ProcessorFactory, PSet based compact creator
-        a3.insert("name","mp_4")("crate", "crateD") ("slot", 10);
+        a3.insert("name",xdata::String("mp_4"))
+            ("crate", xdata::String("crateD"))
+            ("slot", xdata::Integer(10));
         Processor* p3 = ProcessorFactory::get()->make(a3);
         system->add(p3);
         

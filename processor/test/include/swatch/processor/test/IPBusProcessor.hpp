@@ -10,7 +10,7 @@
 
 // Swatch Headers
 #include "swatch/processor/Processor.hpp"
-#include "swatch/core/ParameterSet.hpp"
+#include "swatch/core/XParameterSet.hpp"
 
 #include "swatch/processor/Controls.hpp"
 #include "swatch/processor/AlgoInterface.hpp"
@@ -33,7 +33,7 @@ namespace test {
 
 class IPBusProcessor : public swatch::processor::Processor {
 public:
-    IPBusProcessor(const std::string& id, const swatch::core::ParameterSet& params);
+    IPBusProcessor(const std::string& id, const swatch::core::XParameterSet& params);
     virtual ~IPBusProcessor();
 
     virtual uint32_t getSlot() const;

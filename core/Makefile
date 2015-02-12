@@ -24,7 +24,7 @@ Includes = \
 	$(XDAQ_ROOT)/include/linux
 
 LibraryPaths = lib \
-	$(XDAQ_ROOT)/lib\
+	$(XDAQ_ROOT)/lib \
 	/lib64
 
 Libraries =	\

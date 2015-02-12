@@ -30,7 +30,7 @@ namespace processor {
 const uint32_t Processor::NoSlot =  0x7fffffffL;
 
 ///---
-Processor::Processor( const std::string& aId, const core::ParameterSet& params ) :
+Processor::Processor( const std::string& aId, const core::XParameterSet& params ) :
     Device(aId, params),
     ctrl_(0x0),
     ttc_(0x0),
@@ -93,7 +93,7 @@ Processor::canHalt() {
 }
 
 void
-Processor::doHalt(const core::ParameterSet& params) {
+Processor::doHalt(const core::XParameterSet& params) {
 
 }
 
@@ -103,7 +103,7 @@ Processor::canConfigure() {
 }
 
 void
-Processor::doConfigure(const core::ParameterSet& params) {
+Processor::doConfigure(const core::XParameterSet& params) {
 
 }
 

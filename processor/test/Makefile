@@ -21,14 +21,16 @@ Includes = 	\
 		${SWATCH_ROOT}/logger/include \
 		${SWATCH_ROOT}/core/include \
 		${SWATCH_ROOT}/processor/include \
-		${CACTUS_ROOT}/include
+		${CACTUS_ROOT}/include \
+		${XDAQ_ROOT}/include
 
 LibraryPaths =	\
 		lib \
 		${SWATCH_ROOT}/logger/lib \
 		${SWATCH_ROOT}/core/lib \
 		${SWATCH_ROOT}/processor/lib \
-		${CACTUS_ROOT}/lib
+		${CACTUS_ROOT}/lib \
+		${XDAQ_ROOT}/lib
 
 Libraries =	\
 		boost_system \

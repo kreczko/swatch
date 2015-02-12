@@ -10,7 +10,7 @@
 #undef public
 
 // Swatch Headers
-
+#include "swatch/core/xoperators.hpp"
 
 // Xdaq Headers
 #include <xdata/Integer.h>
@@ -261,9 +261,34 @@ BOOST_AUTO_TEST_CASE(CloneBagTest) {
 
 //---
 BOOST_AUTO_TEST_CASE(CloneXPsetTest) {
+  using namespace swatch::core;
+
+  // xdata::Bag
+  XParameterSet::XCloner cpars = XParameterSet::cloner_< XParameterSet >;
+
+  XParameterSet* xpars = new XParameterSet();
+  xpars->set("a", xdata::Integer(3));
+  xpars->set("b", xdata::Float(11));
+
+  XParameterSet* opars = static_cast<XParameterSet*>( cpars(xpars) );
+  
+  std::cout << "XPset       : " << xpars << " " << xpars->get("a").toString() << " " << xpars->get("b").toString() << std::endl;
+  std::cout << "Other XPset : " << opars << " " << opars->get("a").toString() << " " << opars->get("b").toString() << std::endl;
+
+  BOOST_CHECK( opars->equals(*xpars) );
+
+  delete opars;
+  delete xpars;
 }
 
 
-
+BOOST_AUTO_TEST_CASE(OStreamXPsetTest) {
+  
+  std::ostringstream oss;
+  const xdata::Integer aInt(5);
+  oss << aInt;
+  BOOST_CHECK_EQUAL(oss.str(),"5");
+  
+}
 
 BOOST_AUTO_TEST_SUITE_END() // XParsTestSuite

@@ -1,5 +1,4 @@
-// Swatch Headers
-
+#include <boost/test/unit_test.hpp>
 
 // Boost Headers
 #include <boost/assign.hpp>
@@ -15,7 +14,7 @@
 #include <map>
 
 // Swatch Headers
-#include "swatch/core/ParameterSet.hpp"
+#include "swatch/core/XParameterSet.hpp"
 #include "swatch/core/Object.hpp"
 #include "swatch/core/Utilities.hpp"
 #include "swatch/core/Link.hpp"
@@ -33,8 +32,10 @@
 #include "swatch/system/test/DummyProcessor.hpp"
 #include "swatch/system/test/DummyAMC13Service.hpp"
 
+// XDAQ Headers
+#include "xdata/String.h"
+#include "xdata/Integer.h"
 
-#include <boost/test/unit_test.hpp>
 using namespace boost::assign;
 //using namespace swatch::core;
 //using namespace swatch::system;
@@ -48,6 +49,7 @@ namespace swsys = swatch::system;
 struct Params {
 		Params() : ps_system(), ps_processors(), ps_services() {
 
+      /*
 			// based on swatch/test/etc/testdb.json
 			ps_system.insert("name", "calol2");
 
@@ -62,7 +64,7 @@ struct Params {
             crtBStub.location = "AnotherLocation";
             crtBStub.description = "AnotherDescription";
 
-            swco::ParameterSet cA, cB;
+            swco::XParameterSet cA, cB;
             cA.set("name",crtAStub.name);
             cA.set("stub", crtAStub);
 
@@ -83,7 +85,7 @@ struct Params {
     		proStubTmpl.crate = "crateA";
     		proStubTmpl.slot = 0;
     
-            swco::ParameterSet p1, p2, p3;
+            swco::XParameterSet p1, p2, p3;
 		    swpro::ProcessorStub st1(proStubTmpl), st2(proStubTmpl), st3(proStubTmpl);
 
             st1.name = "MP-1";
@@ -110,28 +112,6 @@ struct Params {
             p3.set("descriptor",st3);
             p3.set("class",st3.creator);
             
-			// swco::ParameterSet p1, p2, p3;
-			// p1.insert("PROCESSOR NAME", "MP-1")("PROCESSOR TYPE", "MP7");
-			// p1.insert("PROCESSOR CREATOR", "DummyProcessor")("ADDRESS TABLE", "/address/table/location");
-			// p1.insert("IP ADDRESS", "192.168.0.1")("crate", "crateA");
-			// p1.insert("slot", 1)("CRATE LOCATION", "MyLocation");
-			// p1.insert("CRATE DESCRIPTION", "MyCrateDescription")("PROCESSOR TYPE", "MP7");
-			// // unclear:
-			// // p1.insert("PORTS NAMES", ""Port#1", "Port#2", "Port#3", "Port#144"");
-			// p2 = p1;
-			// p2.set("PROCESSOR NAME", "MP-2");
-			// p2.set("IP ADDRESS", "192.168.0.2");
-			// p2.set("slot", 2);
-
-			// p3 = p1;
-			// p3.set("PROCESSOR NAME", "MP-3");
-			// p3.set("IP ADDRESS", "192.168.0.3");
-			// p3.set("crate", "crateB");
-
-//			ps_processors.push_back(p1);
-//			ps_processors.push_back(p2);
-//			ps_processors.push_back(p3);
-            
             ps_processors += p1,p2,p3;
 
             swsys::AMC13ServiceStub amc13Stub, fakeMCHStub;
@@ -145,17 +125,11 @@ struct Params {
 			amc13Stub.crate   = "crateA";     
 			amc13Stub.slot    = 13;       
             
-			swco::ParameterSet srv1, srv2;
+			swco::XParameterSet srv1, srv2;
             srv1.set("name", amc13Stub.name);
             srv1.set("class", amc13Stub.creator);
             srv1.set("descriptor", amc13Stub);
             
-//			srv1.insert("SERVICE NAME", "AMC13-1")("SERVICE TYPE", "AMC13");
-//			srv1.insert("SERVICE CREATOR", "DummyAMC13Service")("ADDRESS TABLE", "/address/table/location");
-//			srv1.insert("crate", "S2G17-01")("slot", 13);
-//			srv1.insert("CRATE LOCATION", "MyCrateLocation")("CRATE DESCRIPTION", "MyCrateDescription");
-//			srv1.insert("IP ADDRESS #1", "192.168.0.13")("IP ADDRESS #2", "192.168.0.14");
-
             fakeMCHStub = amc13Stub;
             fakeMCHStub.name = "MCH-1";
             fakeMCHStub.slot = 14;
@@ -164,28 +138,22 @@ struct Params {
             srv2.set("class", fakeMCHStub.creator);
             srv2.set("descriptor", fakeMCHStub);
 
-            //			srv2.insert("SERVICE NAME", "MCH")("SERVICE TYPE", "MCH");
-//			srv2.insert("SERVICE CREATOR", "DummyAMC13Service")("ADDRESS TABLE",
-//					"/address/table/location");
-//			srv2.insert("crate", "S2G17-01")("slot", 14);
-//			srv2.insert("CRATE LOCATION", "MyCrateLocation")("CRATE DESCRIPTION",
-//					"MyCrateDescription");
-//			srv2.insert("IP ADDRESS", "192.168.0.15");
 			ps_services.push_back(srv1);
 			ps_services.push_back(srv2);
 
 			ps_system.insert("crates", ps_crates);
 			ps_system.insert("processors", ps_processors);
 			ps_system.insert("services", ps_services);
+      */
 		}
 		~Params(){
 
 		}
 
-		swco::ParameterSet ps_system;
-        std::vector<swco::ParameterSet> ps_crates;
-		std::vector<swco::ParameterSet> ps_processors;
-		std::vector<swco::ParameterSet> ps_services;
+		swco::XParameterSet ps_system;
+    std::vector<swco::XParameterSet> ps_crates;
+		std::vector<swco::XParameterSet> ps_processors;
+		std::vector<swco::XParameterSet> ps_services;
 };
 
 BOOST_AUTO_TEST_SUITE( SystemTestSuite )
@@ -221,9 +189,11 @@ BOOST_AUTO_TEST_CASE(AddCrateShouldNotOverwrite) {
 	swsys::Crate * crateA = new swsys::Crate("myCrateA");
 	swsys::Crate * crateAprime = new swsys::Crate("myCrateA");
 
-	swco::ParameterSet params;
-	params.insert("requires", "ttc;daq")("provides", "trg");
-	params.insert("crate", "crateA") ("slot", 1);
+	swco::XParameterSet params;
+	params.insert("requires", xdata::String("ttc;daq"))
+        ("provides", xdata::String("trg"));
+	params.insert("crate", xdata::String("crateA"))
+        ("slot", xdata::Integer(1));
 	DummyProcessor* p = new DummyProcessor("calol2-10", params);
 	crateA->add(p);
 	BOOST_CHECK_EQUAL(crateA->getPopulatedSlots().size(), size_t(1));

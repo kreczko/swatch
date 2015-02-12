@@ -3,9 +3,6 @@
 // Boost Headers
 #include <boost/foreach.hpp>
 
-// uHAL Headers
-//#include "uhal/log/log.hpp"
-
 // Swatch Headers
 #include "swatch/logger/Log.hpp"
 #include "swatch/processor/ProcessorFactory.hpp"
@@ -16,7 +13,6 @@ namespace swlog = swatch::logger;
 namespace swco = swatch::core;
 namespace swsys = swatch::system;
 namespace swpro = swatch::processor;
-//using namespace uhal;
 
 namespace swatch {
 namespace system {
@@ -24,18 +20,18 @@ namespace system {
 SWATCH_SYSTEM_REGISTER_CREATOR(SystemLoggingCreator);
 
 swatch::system::System*
-SystemLoggingCreator::operator()(const std::string& aId, const swatch::core::ParameterSet& params) {
+SystemLoggingCreator::operator()(const std::string& aId, const swatch::core::XParameterSet& aPars) {
     LOG(swlog::kInfo) << "Building System " << aId;
-    System* sys = createSystem(aId, params);
+    System* sys = createSystem(aId, aPars);
 
     LOG(swlog::kNotice) << "Building Crates";
-    addCrates(sys, params);
+    addCrates(sys, aPars);
     
     LOG(swlog::kNotice) << "Building Processors";
-    addProcessors(sys, params);
+    addProcessors(sys, aPars);
 
     LOG(swlog::kNotice) << "Building Services";
-    addServices(sys, params);
+    addServices(sys, aPars);
 
     return sys;
 }

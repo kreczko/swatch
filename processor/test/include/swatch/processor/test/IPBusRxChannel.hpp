@@ -12,7 +12,7 @@
 #include "swatch/processor/test/IPBusComponent.hpp"
 
 // Swatch Headers
-#include "swatch/core/ParameterSet.hpp"
+#include "swatch/core/XParameterSet.hpp"
 
 namespace swatch {
 namespace processor {
@@ -20,7 +20,7 @@ namespace test {
 
 class IPBusRxChannel : public swatch::processor::InputChannel, public IPBusComponent {
 public:
-    IPBusRxChannel(uhal::HwInterface* hw, const swatch::core::ParameterSet& params);
+    IPBusRxChannel(uhal::HwInterface* hw, const swatch::core::XParameterSet& params);
     virtual ~IPBusRxChannel();
     
     // Basic methods

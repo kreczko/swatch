@@ -7,11 +7,11 @@
 
 #include "swatch/system/test/DummyAMC13Service.hpp"
 
+// Swatch Headers
+#include <swatch/core/xoperators.hpp>
+
 // Boost Headers
 #include <boost/foreach.hpp>
-
-// uHAL Headers
-//#include "uhal/log/log.hpp"
 
 // Swatch Headers
 #include "swatch/logger/Log.hpp"
@@ -31,17 +31,20 @@ namespace test {
 
 SWATCH_SERVICE_REGISTER_CLASS(DummyAMC13Service);
 
-DummyAMC13Service::DummyAMC13Service( const std::string& aId, const core::ParameterSet& params ) : system::DaqTTCService(aId,params) {
+DummyAMC13Service::DummyAMC13Service( const std::string& aId, const core::XParameterSet& aPars ) : system::DaqTTCService(aId,aPars) {
 //    using namespace uhal;
     LOG(swlog::kNotice) << "Building a DummyAMC13Service";
 
     LOG(swlog::kInfo) << "Id:" << this->id();;
-    LOG(swlog::kInfo) << "ParameterSet:";
-    BOOST_FOREACH( std::string name, params.names() ) {
-        LOG(swlog::kInfo) << "   " << name << " : " << core::anyToString(params.get(name));
+    LOG(swlog::kInfo) << "XParameterSet:";
+    BOOST_FOREACH( const std::string& name, aPars.keys() ) {
+//      const xdata::Serializable& s = aPars[name];
+      std::ostringstream oss;
+//      oss << aPars[name];
+//        LOG(swlog::kInfo) << "   " << name << " : " << s << aPars[name];
     }
 
-    const swsys::AMC13ServiceStub& stub = params.get<swsys::AMC13ServiceStub>("descriptor");
+    const swsys::AMC13ServiceStub& stub = aPars.get<swsys::AMC13ServiceStub>("descriptor");
 
     crate_ = stub.crate;
     slot_ = stub.slot;

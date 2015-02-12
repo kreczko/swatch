@@ -10,6 +10,7 @@
 
 #include "swatch/processor/Controls.hpp"
 #include "swatch/processor/test/IPBusComponent.hpp"
+#include "swatch/core/XParameterSet.hpp"
 
 // C++ Headers
 #include <string>
@@ -22,7 +23,7 @@ namespace test {
 
 class IPBusControls : public swatch::processor::Controls, public IPBusComponent {
 public:
-    IPBusControls(uhal::HwInterface* hw, const swatch::core::ParameterSet& params);
+    IPBusControls(uhal::HwInterface* hw, const swatch::core::XParameterSet& params);
     virtual ~IPBusControls();
 
     virtual uint32_t firmwareVersion();

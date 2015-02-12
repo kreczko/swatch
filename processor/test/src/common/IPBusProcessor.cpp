@@ -17,12 +17,17 @@
 #include "swatch/processor/test/IPBusRxChannel.hpp"
 #include "swatch/processor/test/IPBusTxChannel.hpp"
  
+
+// XDAQ Headers
+#include "xdata/String.h"
+
 // Boost Headers
 #include <boost/assign.hpp>
 #include <boost/foreach.hpp>
 
 // C++ Headers
 #include <iomanip>
+
 
 // Namespace Resolution
 using std::cout;
@@ -39,7 +44,7 @@ namespace test {
 
 SWATCH_PROCESSOR_REGISTER_CLASS(IPBusProcessor);
 
-IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::ParameterSet& params) :
+IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::XParameterSet& params) :
     Processor(id, params) {
     using namespace swatch::core;
     using namespace boost::assign;
@@ -77,10 +82,10 @@ IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::Parame
 
     inputChannels_.reserve(nInputs);
     for (size_t k(0); k < nInputs; ++k) {
-        ParameterSet a;
+        XParameterSet a;
         std::string path = "channels.rx" + boost::lexical_cast<std::string>(k);
 
-        a.insert("path", path);
+        a.insert("path", xdata::String(path));
 
         inputChannels_.push_back(new IPBusRxChannel(hw(), a));
 
@@ -89,10 +94,10 @@ IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::Parame
 
     outputChannels_.reserve(nOutputs);
     for (size_t k(0); k < nOutputs; ++k) {
-        ParameterSet a, ctrl, buf;
+        XParameterSet a, ctrl, buf;
         std::string path = "channels.tx" + boost::lexical_cast<std::string>(k);
 
-        a.insert("path", path);
+        a.insert("path", xdata::String(path));
 
         outputChannels_.push_back(new IPBusTxChannel(hw(), a));
 
