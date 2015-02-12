@@ -5,9 +5,10 @@
  * Created on July 31, 2014, 4:51 PM
  */
 
-#ifndef SW__ATCH_CORE_ABSTRACTFACTORY_HXX__
-#define	SW__ATCH_CORE_ABSTRACTFACTORY_HXX__
+#ifndef __SWATCH_CORE_ABSTRACTFACTORY_HXX__
+#define	__SWATCH_CORE_ABSTRACTFACTORY_HXX__
 
+#include "xdata/String.h"
 namespace swatch {
 namespace core {
 
@@ -23,7 +24,7 @@ AbstractFactory<T>* AbstractFactory<T>::get() {
 }
 
 template<typename T>
-T* AbstractFactory<T>::make( const std::string& aCreatorId, const std::string& aId, const swatch::core::XParameterSet& params ) {
+T* AbstractFactory<T>::make( const std::string& aCreatorId, const std::string& aId, const swatch::core::XParameterSet& aPars ) {
     
     typename boost::unordered_map< std::string , boost::shared_ptr<CreatorInterface> >::const_iterator lIt = creators_.find ( aCreatorId );
 
@@ -31,27 +32,27 @@ T* AbstractFactory<T>::make( const std::string& aCreatorId, const std::string& a
         throw std::runtime_error("Class "+aCreatorId+" not found");
     }
     
-    return (*lIt->second)( aId, params );
+    return (*lIt->second)( aId, aPars );
 }
 
 template<typename T>
-T* AbstractFactory<T>::make(const core::XParameterSet& params) {
+T* AbstractFactory<T>::make(const core::XParameterSet& aPars) {
    
-    if ( !params.has("class") ) {
+    if ( !aPars.has("class") ) {
         throw std::runtime_error("'class' parameter not found in parameter set");
     }
    
-    if ( !params.has("name") ) {
+    if ( !aPars.has("name") ) {
         throw std::runtime_error("'name' parameter not found in parameter set");
     }
    
-    return this->make( params.get<std::string>("class"), params.get<std::string>("name"), params);
+    return this->make( aPars.get<xdata::String>("class"), aPars.get<xdata::String>("name"), aPars);
 }
 
 template<typename T>
 template<typename U>
-T* AbstractFactory<T>::BasicCreator<U>::operator ()(const std::string& aId, const swatch::core::XParameterSet& params) {
-    return new U( aId, params );
+T* AbstractFactory<T>::BasicCreator<U>::operator ()(const std::string& aId, const swatch::core::XParameterSet& aPars) {
+    return new U( aId, aPars );
 }
 
 template <typename T>

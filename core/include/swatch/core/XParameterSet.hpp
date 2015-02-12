@@ -106,7 +106,7 @@ public:
   T& get( const std::string& name );
 
   template<typename T>
-  const T& get( const std::string& name ) const;
+  T& get( const std::string& name ) const;
 
   void update( const std::string& name, const xdata::Serializable& data );
   

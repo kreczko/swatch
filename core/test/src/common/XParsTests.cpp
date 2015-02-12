@@ -139,7 +139,7 @@ BOOST_AUTO_TEST_CASE(AddXPsetTest) {
 
 
 //---
-BOOST_AUTO_TEST_CASE(OStreamXPsetTest) {
+BOOST_AUTO_TEST_CASE(OStreamTest) {
   using namespace swatch::core;
 
   std::ostringstream oss;
@@ -187,7 +187,16 @@ BOOST_AUTO_TEST_CASE(OStreamXPsetTest) {
   }
 }
 
+BOOST_AUTO_TEST_CASE(CastTest) {
+  using namespace swatch::core;
 
+  XParameterSet xps;
+  xps.set("aString",xdata::String("aaa"));
+  
+  
+  std::string s = xps.get<xdata::String>("aString");
+
+}
 //---
 BOOST_AUTO_TEST_CASE(CloneIntTest) {
   using namespace swatch::core;

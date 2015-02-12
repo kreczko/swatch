@@ -50,10 +50,9 @@ IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::XParam
     using namespace boost::assign;
     
     clockModes_ += "internal","external";
-    
-    // crate_ = params.get<std::string>("crate");
-    // slot_ = params.get<uint32_t>("slot");
 
+    /*
+     * XPARS_FIX
     const swpro::ProcessorStub& desc = params.get<swpro::ProcessorStub>("descriptor");
 
     crate_ = desc.crate;
@@ -103,7 +102,8 @@ IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::XParam
 
         LOG(swlog::kDebug) << "tx ch[" << k << "]: size " << outputChannels_[k]->getBufferSize();
     }
-
+    
+    */
 }
 
 

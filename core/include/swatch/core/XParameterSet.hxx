@@ -43,14 +43,16 @@ XParameterSet::set( const std::string& name , const T& data ) {
 template<typename T>
 T&
 XParameterSet::get( const std::string& name ) {
+     BOOST_STATIC_ASSERT( (boost::is_base_of<xdata::Serializable,T>::value) ); 
     return dynamic_cast<T&>( get(name) );
 }
 
 //---
 template<typename T>
-const T&
+T&
 XParameterSet::get( const std::string& name ) const {
-    return dynamic_cast<const T&>( get(name) );
+     BOOST_STATIC_ASSERT( (boost::is_base_of<xdata::Serializable,T>::value) ); 
+    return dynamic_cast<T&>( const_cast<xdata::Serializable&>(get(name)) );
 }
 
 //---

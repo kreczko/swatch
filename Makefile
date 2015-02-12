@@ -8,8 +8,7 @@ PACKAGES = \
 	processor/test \
 	system \
 	system/test \
-	test \
-	pyswatch
+	test 
 else ifeq ($(Set), pro)
 PACKAGES = \
 	logger\
@@ -29,8 +28,7 @@ PACKAGES = \
 	system/test \
 	hardware \
 	hardware/test \
-	test \
-	pyswatch
+	test
 endif
 
 VIRTUAL_PACKAGES = $(addsuffix /.virtual.Makefile,${PACKAGES})

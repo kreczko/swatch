@@ -159,7 +159,7 @@ struct Params {
 BOOST_AUTO_TEST_SUITE( SystemTestSuite )
 
 BOOST_FIXTURE_TEST_CASE(BuildSystemWithDefaultCreator, Params){
-	swsys::System * system = swsys::SystemFactory::get()->make("SystemLoggingCreator", ps_system.get<std::string>("name"), ps_system);
+	swsys::System * system = swsys::SystemFactory::get()->make("SystemLoggingCreator", ps_system.get<xdata::String>("name"), ps_system);
 	BOOST_CHECK_EQUAL(system->id(), "calol2");
 	BOOST_CHECK_EQUAL(system->getProcessors().size(), size_t(3));
 	BOOST_CHECK_EQUAL(system->getServices().size(), size_t(2));

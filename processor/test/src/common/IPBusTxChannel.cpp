@@ -12,6 +12,9 @@
 
 // Boost Headers
 #include <boost/foreach.hpp>
+
+// XDAQ Headers
+#include <xdata/String.h>
  
 namespace swatch {
 namespace processor {
@@ -19,7 +22,8 @@ namespace test {
 
 IPBusTxChannel::IPBusTxChannel(uhal::HwInterface* hwif, const swatch::core::XParameterSet& params) :
     IPBusComponent(hwif) {
-    std::string path = params.get<std::string>("path");
+  
+    std::string path = params.get<xdata::String>("path");
 
     ctrlpath_ = path + ".ctrl";
     datapath_ = path + ".data";

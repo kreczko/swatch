@@ -34,7 +34,8 @@ IPBusControls::IPBusControls(uhal::HwInterface* hwif, const swatch::core::XParam
     using namespace boost::assign;
     configs_ += "internal", "external";
 
-    poweron_ = params.get<RegisterMap>("poweron");
+    // XPARS_FIX
+    // poweron_ = params.get<RegisterMap>("poweron");
 }
 
 IPBusControls::~IPBusControls() {

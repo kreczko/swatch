@@ -55,8 +55,10 @@ DummyProcessor::DummyProcessor(const std::string& aId, const core::XParameterSet
         this->addOutput(new core::OutputPort(ss.str()));
     }
     
-    const swpro::ProcessorStub& stub = aPars.get<swpro::ProcessorStub>("descriptor");
-
+    
+    // XPARS_FIX
+    //    const swpro::ProcessorStub& stub = aPars.get<swpro::ProcessorStub>("descriptor");
+    swpro::ProcessorStub stub; // DELETEME
     slot_ = stub.slot;
     crate_ = stub.crate;
     
