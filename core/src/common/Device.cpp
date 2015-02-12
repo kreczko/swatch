@@ -13,7 +13,7 @@ using namespace std;
 namespace swatch {
 namespace core {
 
-Device::Device(const std::string& aId, const ParameterSet& params) :
+Device::Device(const std::string& aId, const XParameterSet& params) :
     Object(aId, params),
     fsm_(FsmStates::HALTED)
 {
@@ -35,7 +35,7 @@ Device::addOutput(OutputPort* aOutput) {
 }
 
 void
-Device::halt(const ParameterSet& params)
+Device::halt(const XParameterSet& params)
 {
 	ostringstream msg;
 
@@ -55,7 +55,7 @@ Device::halt(const ParameterSet& params)
 }
 
 void
-Device::configure(const ParameterSet& params)
+Device::configure(const XParameterSet& params)
 {
 	ostringstream msg;
 
@@ -90,7 +90,7 @@ Device::canHalt()
 
 
 void
-Device::doHalt(const ParameterSet& params)
+Device::doHalt(const XParameterSet& params)
 {
 
 }
@@ -102,7 +102,7 @@ Device::canConfigure()
 }
 
 void
-Device::doConfigure(const ParameterSet& params)
+Device::doConfigure(const XParameterSet& params)
 {
 
 }

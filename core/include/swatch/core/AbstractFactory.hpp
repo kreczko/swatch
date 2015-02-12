@@ -10,7 +10,7 @@
 
 // C++ Headers
 #include <string>
-#include "swatch/core/ParameterSet.hpp"
+#include "swatch/core/XParameterSet.hpp"
 
 // Boost Headers
 #include <boost/noncopyable.hpp>
@@ -35,13 +35,13 @@ public:
     
     static AbstractFactory* get();
 
-    T* make( const std::string& aCreatorId, const std::string& aId, const swatch::core::ParameterSet& params );
+    T* make( const std::string& aCreatorId, const std::string& aId, const swatch::core::XParameterSet& params );
 
-    T* make( const swatch::core::ParameterSet& params );
+    T* make( const swatch::core::XParameterSet& params );
 
     class CreatorInterface {
     public:
-        virtual T* operator()( const std::string& aId, const swatch::core::ParameterSet& params ) = 0;
+        virtual T* operator()( const std::string& aId, const swatch::core::XParameterSet& params ) = 0;
     };
     
 
@@ -49,7 +49,7 @@ private:
     template<typename U>
     class BasicCreator : public CreatorInterface {
     public:
-        virtual T* operator() ( const std::string& aId, const swatch::core::ParameterSet& params );
+        virtual T* operator() ( const std::string& aId, const swatch::core::XParameterSet& params );
     };
     
     template<typename K>

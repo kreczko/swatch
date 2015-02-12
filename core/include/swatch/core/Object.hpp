@@ -17,7 +17,7 @@
 #include "boost/unordered_map.hpp"
 #include "boost/lexical_cast.hpp"
 
-#include "swatch/core/ParameterSet.hpp"
+#include "swatch/core/XParameterSet.hpp"
 
 namespace swatch {
 namespace core {
@@ -52,7 +52,7 @@ public:
     
     explicit Object( const std::string& aId );
 
-    Object( const std::string& aId, const ParameterSet& params );
+    Object( const std::string& aId, const XParameterSet& params );
     
     virtual ~Object();
     
@@ -74,7 +74,7 @@ public:
     template<typename T>
     T* getObj(const std::string& aId);
     
-    const ParameterSet& pset() { return pSet_; }
+    const XParameterSet& pset() { return pSet_; }
     
 protected:
 
@@ -98,7 +98,7 @@ private:
     
     Object* parent_;
     
-    const ParameterSet pSet_;
+    const XParameterSet pSet_;
 
     friend class iterator;
     friend class ObjectView;
@@ -116,7 +116,7 @@ public:
      * @param aId Identifier of this object
      * @param aAttributes 
      */
-    ObjectView( const std::string& aId, const ParameterSet& ParameterSet );
+    ObjectView( const std::string& aId, const XParameterSet& aSet );
     /**
      * @brief Destructor
      */

@@ -11,7 +11,7 @@ namespace core {
 Object::Object(const std::string& aId ): id_(aId), parent_(0x0) {
 }
 
-Object::Object(const std::string& aId,const ParameterSet& params ) :
+Object::Object(const std::string& aId,const XParameterSet& params ) :
     id_(aId), parent_(0x0), pSet_(params) {
 }
 
@@ -207,7 +207,7 @@ ObjectView::ObjectView(const std::string& aId) :
     Object( aId ) {
 }
 
-ObjectView::ObjectView(const std::string& aId, const ParameterSet& params) :
+ObjectView::ObjectView(const std::string& aId, const XParameterSet& params) :
     Object( aId, params ) {
 }
 

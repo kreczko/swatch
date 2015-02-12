@@ -1,7 +1,7 @@
 #include <boost/test/unit_test.hpp>
 
 // Swatch Headers
-#include "swatch/core/ParameterSet.hpp"
+#include "swatch/core/XParameterSet.hpp"
 #include "swatch/core/Object.hpp"
 #include "swatch/core/AbstractFactory.hpp"
 #include "swatch/core/test/SimpleObject.hpp"
@@ -30,12 +30,12 @@ swatch::core::CreatorRegistrationHelper< swatch::core::Object, creatorname > cre
 // Dummy Creator interface
 class SimpleCreator : public ObjFactory::CreatorInterface {
 public:
-    virtual swatch::core::Object* operator()(const std::string& aId, const swatch::core::ParameterSet& params);
+    virtual swatch::core::Object* operator()(const std::string& aId, const swatch::core::XParameterSet& params);
 };
 
 
 swatch::core::Object*
-SimpleCreator::operator ()(const std::string& aId, const swatch::core::ParameterSet& params) {
+SimpleCreator::operator ()(const std::string& aId, const swatch::core::XParameterSet& params) {
     swatch::core::test::SimpleObject* so = new swatch::core::test::SimpleObject(aId, params);
     so->setValue(1234.5678);
     return so;
@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE( FactoryTest ) {
     
     ObjFactory* f = ObjFactory::get();
         
-    swatch::core::ParameterSet none;
+    swatch::core::XParameterSet none;
     swatch::core::Object* obj;
     obj = f->make("SimpleObject","d1", none);
     

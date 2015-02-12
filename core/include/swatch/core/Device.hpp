@@ -25,14 +25,14 @@ class OutputPort;
  */
 class Device : public Object {
 public:
-    Device( const std::string& aId, const ParameterSet& params  = ParameterSet() );
+    Device( const std::string& aId, const XParameterSet& params  = XParameterSet() );
     virtual ~Device();
 
     std::deque<InputPort*>& getInputs() { return inputs_; }
     std::deque<OutputPort*>& getOutputs() { return outputs_; }
 
-    void halt(const ParameterSet& params = ParameterSet());
-    void configure(const ParameterSet& params = ParameterSet());
+    void halt(const XParameterSet& params = XParameterSet());
+    void configure(const XParameterSet& params = XParameterSet());
 
     enum FsmStates {HALTED, CONFIGURED, STOPPED, ENABLED, SUSPENDED};
 
@@ -48,8 +48,8 @@ protected:
     virtual bool canHalt();
     virtual bool canConfigure();
     
-    virtual void doHalt(const ParameterSet& params = ParameterSet());
-    virtual void doConfigure(const ParameterSet& params = ParameterSet());
+    virtual void doHalt(const XParameterSet& params = XParameterSet());
+    virtual void doConfigure(const XParameterSet& params = XParameterSet());
 
         
     std::deque<InputPort*> inputs_;

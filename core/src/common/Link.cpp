@@ -12,7 +12,7 @@
 namespace swatch {
 namespace core {
 
-Link::Link(const std::string& aId, OutputPort* aSrc, InputPort* aDst, const ParameterSet& params) :
+Link::Link(const std::string& aId, OutputPort* aSrc, InputPort* aDst, const XParameterSet& params) :
     ObjectView( aId ), src_(aSrc), dst_(aDst) {
     this->addObj(src_, "src");
     this->addObj(dst_, "dst");

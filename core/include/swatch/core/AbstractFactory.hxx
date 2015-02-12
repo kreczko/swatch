@@ -23,7 +23,7 @@ AbstractFactory<T>* AbstractFactory<T>::get() {
 }
 
 template<typename T>
-T* AbstractFactory<T>::make( const std::string& aCreatorId, const std::string& aId, const swatch::core::ParameterSet& params ) {
+T* AbstractFactory<T>::make( const std::string& aCreatorId, const std::string& aId, const swatch::core::XParameterSet& params ) {
     
     typename boost::unordered_map< std::string , boost::shared_ptr<CreatorInterface> >::const_iterator lIt = creators_.find ( aCreatorId );
 
@@ -35,7 +35,7 @@ T* AbstractFactory<T>::make( const std::string& aCreatorId, const std::string& a
 }
 
 template<typename T>
-T* AbstractFactory<T>::make(const core::ParameterSet& params) {
+T* AbstractFactory<T>::make(const core::XParameterSet& params) {
    
     if ( !params.has("class") ) {
         throw std::runtime_error("'class' parameter not found in parameter set");
@@ -50,7 +50,7 @@ T* AbstractFactory<T>::make(const core::ParameterSet& params) {
 
 template<typename T>
 template<typename U>
-T* AbstractFactory<T>::BasicCreator<U>::operator ()(const std::string& aId, const swatch::core::ParameterSet& params) {
+T* AbstractFactory<T>::BasicCreator<U>::operator ()(const std::string& aId, const swatch::core::XParameterSet& params) {
     return new U( aId, params );
 }
 

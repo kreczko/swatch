@@ -28,6 +28,7 @@ public:
 
 uint32_t Dummy::counts = 0;
 
+
 //____________________________________________________________________________//
 BOOST_AUTO_TEST_CASE(ParameterSetTest) {
 
