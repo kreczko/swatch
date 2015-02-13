@@ -9,9 +9,11 @@
 
 // Swatch Headers
 #include "swatch/core/Utilities.hpp"
+#include "swatch/core/XParameterSet.hpp"
 
 // C++ Headers
 #include <sys/prctl.h>
+#include <xdata/UnsignedInteger.h>
 
 // Namespace resolution
 using std::cout;
@@ -138,10 +140,10 @@ IPBusDummyHardware::hw() const {
 }
 
 void
-IPBusDummyHardware::load(const IPBusDummyHardware::RegisterMap& map) {
+IPBusDummyHardware::load(const swatch::core::XParameterSet& map) {
 
-    BOOST_FOREACH(RegisterMap::value_type p, map) {
-        hw().getNode(p.first).write(p.second);
+    BOOST_FOREACH(const std::string& p, map.keys()) {
+        hw().getNode(p).write(map.get<xdata::UnsignedInteger>(p));
     }
 
     hw().dispatch();

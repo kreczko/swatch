@@ -17,12 +17,15 @@ PACKAGE_RELEASE = 0
 Library = cactus_swatch_processor_test
 
 Includes = 	\
-		include \
-		${SWATCH_ROOT}/logger/include \
-		${SWATCH_ROOT}/core/include \
-		${SWATCH_ROOT}/processor/include \
-		${CACTUS_ROOT}/include \
-		${XDAQ_ROOT}/include
+	include \
+	${SWATCH_ROOT}/logger/include \
+	${SWATCH_ROOT}/core/include \
+	${SWATCH_ROOT}/processor/include \
+	${CACTUS_ROOT}/include \
+	${XDAQ_ROOT}/include \
+	${XDAQ_ROOT}/include \
+	$(XDAQ_ROOT)/include/linux
+		
 
 LibraryPaths =	\
 		lib \
@@ -44,7 +47,7 @@ Libraries =	\
 
 ExecutableLibraries = ${Libraries} ${Library}
 
-IgnoreSources = \
+#IgnoreSources = \
 	src/common/testConfigure.cxx
 
 

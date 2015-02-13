@@ -23,18 +23,55 @@
 // Swatch Headers
 #include "swatch/core/exception.hpp"
 
-/*
-
-namespace xdata {
-  class Serializable;
-}
-*/
-
 namespace swatch {
 namespace core {
       
 class XParameterSet : public xdata::Serializable {
 public:
+
+  // class pair {
+  // public:
+  //   pair( const std::string& key, xdata::Serializable& value ) :
+  //   key_(key), value_(value)
+  //   {
+  //   }
+  //   const std::string& key() const {
+  //     return key_;
+  //   }
+
+  //   xdata::Serializable& value() {
+  //     return value_;
+  //   }
+
+  //   template<typename T>
+  //   T& value() {
+  //     return dynamic_cast<T&>(value_);
+  //   }
+
+  // private:
+  //   std::string key_;
+  //   xdata::Serializable& value_;
+  // };
+
+
+
+  // template<typename T> 
+  // class iterator_base : public std::iterator< std::forward_iterator_tag , T >{
+  //   friend class XParameterSet;
+
+  //   iterator();
+  //   virtual ~iterator();
+  //   iterator_base ( T* aBegin );
+  //   iterator_base ( iterator_base& aOrig );
+  // public:
+  // private:
+  //   XParameterSet::EntryMap::iterator iter_;
+  // };
+
+  // typedef iterator_base<XParameterSet> iterator;
+  // typedef iterator_base<const XParameterSet> const_iterator;
+
+
   XParameterSet();
   XParameterSet(const XParameterSet& orig);
   virtual ~XParameterSet();

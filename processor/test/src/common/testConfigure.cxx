@@ -13,6 +13,7 @@ test configuration
  */
 
 
+// Swatch Headers
 #include "swatch/logger/Log.hpp"
 #include "swatch/core/ParameterSet.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
@@ -20,15 +21,23 @@ test configuration
 #include "swatch/processor/test/IPBusProcessor.hpp"
 #include "swatch/processor/TTCInterface.hpp"
 
+// Boost Headers
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
+
+// XDAQ Headers
+#include "xdata/Table.h"
+#include "xdata/TableIterator.h"
+
+
 // Namespace resolution
 using std::cout;
 using std::endl;
 
 namespace swlog = swatch::logger;
 namespace swpro = swatch::processor;
+namespace swco = swatch::core;
 
 //---
 struct TTCCountersIncrementer : public swpro::test::IPBusWorkLoop {
@@ -159,7 +168,7 @@ private:
 };
 
 
-void configure(swpro::Processor *p, const swatch::core::ParameterSet &params) {
+void configure(swpro::Processor *p, const swatch::core::XParameterSet &params) {
     using namespace swatch::core;
     // using namespace swpro;
     // Claim exclusive use of the board
@@ -269,7 +278,41 @@ int main(int argc, char const *argv[]) {
     // Inject some data
 
     uint32_t nRx(4), nTx(2);
+    
+    swco::XParameterSet xpoweron;
 
+   // 'Scalars'
+    xpoweron["ctrl.id.fwrev"] = xdata::UnsignedInteger(0x44332211);
+    xpoweron["ctrl.id.magic"] = xdata::UnsignedInteger(0xdeadc0de);
+    xpoweron["ctrl.infos.nRx"] = xdata::UnsignedInteger(nRx);
+    xpoweron["ctrl.infos.nTx"] = xdata::UnsignedInteger(nTx);
+    xpoweron["ttc.ctrl"] = xdata::UnsignedInteger(0);
+    xpoweron["ttc.stat"] = xdata::UnsignedInteger(0);
+    xpoweron["ttc.counters"] = xdata::UnsignedInteger(0);
+    xpoweron["ttc.counters1"] = xdata::UnsignedInteger(0);
+    xpoweron["ttc.counters2"] = xdata::UnsignedInteger(0);
+    xpoweron["ttc.counters3"] = xdata::UnsignedInteger(0);
+
+    // Channel's array
+    for ( size_t i(0); i<nRx; ++i) {
+        std::string chpath = "channels.rx" + boost::lexical_cast<std::string>(i);
+        xpoweron[chpath+".ctrl.mode"] = xdata::UnsignedInteger(0);
+        xpoweron[chpath+".ctrl.firstBx"] = xdata::UnsignedInteger(0);
+        xpoweron[chpath+".ctrl.nFrames"] = xdata::UnsignedInteger(0);
+    }
+    for ( size_t i(0); i<nTx; ++i) {
+        std::string chpath = "channels.tx" + boost::lexical_cast<std::string>(i);
+        xpoweron[chpath+".ctrl.mode"] = xdata::UnsignedInteger(0);
+        xpoweron[chpath+".ctrl.firstBx"] = xdata::UnsignedInteger(0);
+        xpoweron[chpath+".ctrl.nFrames"] = xdata::UnsignedInteger(0);
+    }    
+
+
+    x.load(xpoweron);
+
+    
+
+    /*    
     swpro::test::IPBusDummyHardware::RegisterMap poweron;
     
     // 'Scalars'
@@ -299,7 +342,7 @@ int main(int argc, char const *argv[]) {
     }
 
     x.load(poweron);
-
+    */
     // Increment ttc counters
     x.add(new TTCCountersIncrementer(10, 10));
     x.add(new BufferCaptureEmulator(10));
@@ -317,23 +360,24 @@ int main(int argc, char const *argv[]) {
     
     
     // x is ready for testing
-    swpro::ProcessorStub p0stub = stubTemplate;
+    swpro::ProcessorBag p0bag;
+    p0bag.bag= stubTemplate;
     
     std::stringstream ssURI;
     ssURI << "ipbusudp-2.0://127.0.0.1:" << 50010;
-    p0stub.uri = ssURI.str();
+    p0bag.bag.uri = ssURI.str();
 
-    swatch::core::ParameterSet params;
-    params.set("name", "Processor 0");
-    params.set("class", p0stub.creator);
-    params.set("descriptor",p0stub);
-    params.set("poweron", poweron);
+    swatch::core::XParameterSet params;
+    params.set("name", xdata::String("Processor 0"));
+    params.set("class", p0bag.bag.creator);
+    params.set("stub",p0bag);
+    params.set("poweron", xpoweron);
 
 
     // Fun starts here
     swpro::Processor *p0 = 0x0;
     try {
-        p0 = new swpro::test::IPBusProcessor(p0stub.name, params);
+        p0 = new swpro::test::IPBusProcessor(p0bag.bag.name, params);
         LOG(swlog::kNotice) << ">> Processor " << p0->id() << " created";
 
     } catch (uhal::exception::exception &e) {
@@ -373,7 +417,7 @@ int main(int argc, char const *argv[]) {
     }
 
     LOG(swlog::kNotice) << "//_ Step 1 ___ Testing resets __________________________________";
-    swatch::core::ParameterSet mode;
+    swatch::core::XParameterSet mode;
     
     LOG(swlog::kDebug) << p0->id() << " Clock modes:";
     BOOST_FOREACH( const std::string& c, p0->getModes() ) {
@@ -395,7 +439,7 @@ int main(int argc, char const *argv[]) {
 
     
     LOG(swlog::kNotice) << "//_ Step 2 ___ Testing config __________________________________";
-    swatch::core::ParameterSet config;
+    swatch::core::XParameterSet config;
     configure(p0, config);
 
     // p0->inputChannel(0)->buffer()->configure(swatch::processor::AbstractChanBuffer::Capture, 0, 1);

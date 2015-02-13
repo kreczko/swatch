@@ -15,7 +15,7 @@
  #include "uhal/HwInterface.hpp"
 
 // Typedefs
-typedef boost::unordered_map<std::string, uint32_t> RegisterMap;
+//typedef boost::unordered_map<std::string, uint32_t> RegisterMap;
 
 namespace swatch {
 namespace processor {

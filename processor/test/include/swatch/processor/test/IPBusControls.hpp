@@ -48,7 +48,7 @@ private:
     std::set<std::string> configs_;
 
     //! poweron values to fake resets
-    RegisterMap poweron_;
+    core::XParameterSet poweron_;
 
 };
 

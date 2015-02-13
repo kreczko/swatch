@@ -187,6 +187,8 @@ BOOST_AUTO_TEST_CASE(OStreamTest) {
   }
 }
 
+
+//---
 BOOST_AUTO_TEST_CASE(CastTest) {
   using namespace swatch::core;
 
@@ -197,6 +199,23 @@ BOOST_AUTO_TEST_CASE(CastTest) {
   std::string s = xps.get<xdata::String>("aString");
 
 }
+
+
+
+//---
+BOOST_AUTO_TEST_CASE(IterTest) {
+  using namespace swatch::core;
+
+  XParameterSet xps;
+  xps.set("z",xdata::Integer(5));
+  xps.set("f",xdata::String("dummy"));
+  xps.set("a",xdata::Bag<MyBag>());
+
+  BOOST_FOREACH( const std::string& k, xps.keys() ) {
+    std::cout << k << " = "  << xps[k] <<  std::endl;
+  }
+}
+
 //---
 BOOST_AUTO_TEST_CASE(CloneIntTest) {
   using namespace swatch::core;

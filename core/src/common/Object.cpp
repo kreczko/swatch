@@ -84,32 +84,6 @@ Object::path() const {
   return lRet;
 }
 
-//bool
-//Object::hasAttr(const std::string& aKey) const {
-//    return ( mAttributes.find( aKey ) != mAttributes.end());
-//}
-//
-//void
-//Object::setAttr(const std::string& aKey, const std::string& aValue) {
-//    mAttributes.operator [](aKey) = aValue;
-//}
-//
-//const std::string&
-//Object::getAttr(const std::string& aKey) const {
-//    Attributes::const_iterator it = mAttributes.find( aKey );
-//    //TODO runtime_error -> dedicated error
-//    if ( it == mAttributes.end() ) throw std::runtime_error("Attribute not found");
-//
-//    return it->second;
-//}
-//
-//void
-//Object::setAttrs(const Attributes& attrs) {
-//    Attributes::const_iterator it;
-//    for( it = attrs.begin(); it != attrs.end(); ++it)
-//        mAttributes[it->first] = it->second;
-//}
-
 void
 Object::getAncestors(std::deque<const Object*>& aGenealogy) const {
      aGenealogy.push_front ( this );

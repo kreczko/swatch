@@ -21,6 +21,9 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+// Swatch Headers
+#include "swatch/core/XParameterSet.hpp"
+
 namespace swatch {
 namespace processor {
 namespace test {
@@ -46,7 +49,7 @@ private:
 class IPBusDummyHardware : private boost::noncopyable {
 public:
     
-    typedef boost::unordered_map<std::string,uint32_t> RegisterMap;
+//    typedef boost::unordered_map<std::string,uint32_t> RegisterMap;
 
     IPBusDummyHardware(const std::string& name, uint32_t port, const std::string& addrtab);
     virtual ~IPBusDummyHardware();
@@ -58,7 +61,7 @@ public:
 
     uhal::HwInterface& hw() const;
     
-    void load( const RegisterMap& map );
+    void load( const swatch::core::XParameterSet& map );
 
     bool started() const { return started_; }
     

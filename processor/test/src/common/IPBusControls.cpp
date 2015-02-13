@@ -71,10 +71,10 @@ IPBusControls::reloadFirmware(std::string version) {
 void
 IPBusControls::softReset() {
 
-    BOOST_FOREACH(RegisterMap::value_type& p, poweron_) {
-        hw()->getNode(p.first).write(p.second);
-    }
-    hw()->dispatch();
+//    BOOST_FOREACH(RegisterMap::value_type& p, poweron_) {
+//        hw()->getNode(p.first).write(p.second);
+//    }
+//    hw()->dispatch();
 }
 
 //void
