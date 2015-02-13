@@ -2,7 +2,7 @@
  * @file    Object.hpp
  * @author  Alessandro Thea
  * @brief   Base class to exercise the Object interface
- * @date    20.08.2014
+ * @date    August 2014
  *
  * Detailed description
  */

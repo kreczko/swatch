@@ -28,21 +28,21 @@ Includes = 	\
 		
 
 LibraryPaths =	\
-		lib \
-		${SWATCH_ROOT}/logger/lib \
-		${SWATCH_ROOT}/core/lib \
-		${SWATCH_ROOT}/processor/lib \
-		${CACTUS_ROOT}/lib \
-		${XDAQ_ROOT}/lib
+	lib \
+	${SWATCH_ROOT}/logger/lib \
+	${SWATCH_ROOT}/core/lib \
+	${SWATCH_ROOT}/processor/lib \
+	${CACTUS_ROOT}/lib \
+	${XDAQ_ROOT}/lib
 
 Libraries =	\
-		boost_system \
-		boost_unit_test_framework \
-		cactus_uhal_uhal \
-		cactus_uhal_tests \
-		cactus_swatch_logger \
-		cactus_swatch_core \
-		cactus_swatch_processor
+	boost_system \
+	boost_unit_test_framework \
+	cactus_uhal_uhal \
+	cactus_uhal_tests \
+	cactus_swatch_logger \
+	cactus_swatch_core \
+	cactus_swatch_processor
 
 
 ExecutableLibraries = ${Libraries} ${Library}

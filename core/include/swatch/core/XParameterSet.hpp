@@ -29,49 +29,6 @@ namespace core {
 class XParameterSet : public xdata::Serializable {
 public:
 
-  // class pair {
-  // public:
-  //   pair( const std::string& key, xdata::Serializable& value ) :
-  //   key_(key), value_(value)
-  //   {
-  //   }
-  //   const std::string& key() const {
-  //     return key_;
-  //   }
-
-  //   xdata::Serializable& value() {
-  //     return value_;
-  //   }
-
-  //   template<typename T>
-  //   T& value() {
-  //     return dynamic_cast<T&>(value_);
-  //   }
-
-  // private:
-  //   std::string key_;
-  //   xdata::Serializable& value_;
-  // };
-
-
-
-  // template<typename T> 
-  // class iterator_base : public std::iterator< std::forward_iterator_tag , T >{
-  //   friend class XParameterSet;
-
-  //   iterator();
-  //   virtual ~iterator();
-  //   iterator_base ( T* aBegin );
-  //   iterator_base ( iterator_base& aOrig );
-  // public:
-  // private:
-  //   XParameterSet::EntryMap::iterator iter_;
-  // };
-
-  // typedef iterator_base<XParameterSet> iterator;
-  // typedef iterator_base<const XParameterSet> const_iterator;
-
-
   XParameterSet();
   XParameterSet(const XParameterSet& orig);
   virtual ~XParameterSet();
@@ -112,18 +69,30 @@ public:
   virtual void fromString(const std::string&) throw (xdata::exception::Exception);
 
   /**
-   * Imports a parameter in the set. 
+   * Adopt a parameter in the set. 
    * The parameter set takes the ownership of the pointer. The pointer must be a derived from xdata::Serializable
    * 
    * @param name Parameter name
-   * @param data [description]
+   * @param data Pointer to import in the set
    */
   template<typename T>
   void adopt( const std::string& name , T* data );
 
+  /**
+   * Add a parameter to the set, copying data into the data
+   * 
+   * @param name Parameter name
+   * @param data Value to copy in the set.
+   */
   template<typename T>
   void set( const std::string& name , const T& data );
 
+  /**
+   * Pot an entry from the set
+   * 
+   * @param name Parameter to pop.
+   * @return Pointer to the entry removed.
+   */
   template<typename T>
   T* pop( const std::string& name );  
   
