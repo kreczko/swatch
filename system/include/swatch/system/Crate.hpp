@@ -51,6 +51,9 @@ private:
     
 };
 
+DEFINE_SWATCH_EXCEPTION(CrateSlotTaken);
+DEFINE_SWATCH_EXCEPTION(CrateSlotOutOfRange);
+
 }
 }
 

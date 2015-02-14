@@ -1,6 +1,8 @@
 #include <boost/test/unit_test.hpp>
 
 // Swatch Headers
+#include "swatch/logger/Log.hpp"
+
 #include "swatch/core/XParameterSet.hpp"
 #include "swatch/core/Object.hpp"
 #include "swatch/core/Utilities.hpp"
@@ -17,8 +19,9 @@
 #include "swatch/system/test/DummyAMC13Service.hpp"
 
 // XDAQ Headers
-#include "xdata/Integer.h"
+#include "xdata/UnsignedInteger.h"
 #include "xdata/String.h"
+#include "swatch/processor/ProcessorStub.hpp"
 
 // Boost Headers
 #include <boost/assign.hpp>
@@ -55,21 +58,32 @@ struct SystemSetupA {
         
         // Use 3 different methods to build the dummy processors
         // 1. explicit  constructor call
-        a1.insert("crate", xdata::String("crateC"))
-          ("slot", xdata::Integer(1));
+        ProcessorBag b1;
+        b1.bag.crate = xdata::String("crateC");
+        b1.bag.slot = xdata::UnsignedInteger(1);
+        a1.set("stub", b1);
+
         Processor* p1 = new DummyProcessor("mp7-10", a1);
         system->add(p1);
         
         // 2. Using ProcessorFactory, low level creator
-        a2.insert("crate", xdata::String("crateD"))
-          ("slot", xdata::Integer(2));
+        ProcessorBag b2;
+        b2.bag.crate = xdata::String("crateD");
+        b2.bag.slot = xdata::UnsignedInteger(2);
+        a2.set("stub", b2);
+        
+        // a2.insert("crate", xdata::String("crateD"))
+          // ("slot", xdata::Integer(2));
         Processor* p2 = ProcessorFactory::get()->make("DummyProcessor","mp7-13", a2);
         system->add(p2);
         
         // 3. Using ProcessorFactory, PSet based compact creator
-        a3.insert("name",xdata::String("mp_4"))
-            ("crate", xdata::String("crateD"))
-            ("slot", xdata::Integer(10));
+        a3.insert("name",xdata::String("mp_4"));
+        ProcessorBag b3;
+        b3.bag.crate = xdata::String("crateD");
+        b3.bag.slot = xdata::UnsignedInteger(3);
+        a3.set("stub", b3);
+        
         Processor* p3 = ProcessorFactory::get()->make(a3);
         system->add(p3);
         
@@ -109,76 +123,76 @@ BOOST_FIXTURE_TEST_SUITE(SystemExploreTestSuite, SystemSetupA)
 // TODO
 BOOST_AUTO_TEST_CASE(ExploreSystem) {
     using namespace boost::assign;
+    using namespace swatch::logger;
     using namespace swatch::core;
     using namespace swatch::system;
     using namespace swatch::processor;
     using namespace swatch::system::test;
     using namespace std;
 
-    cout << "Here we test iterators" << endl;
-    cout << "======================" << endl;
+    LOG(kDebug) << "Here we test iterators";
+    LOG(kDebug) << "======================";
     Object::iterator itObj;
     for (itObj = system->begin(); itObj != system->end(); ++itObj) {
-        cout << " * " << itObj->path() << endl;
+        LOG(kDebug) << " * " << itObj->path();
     }
-    cout << endl;
+    LOG(kDebug) << "";
     
-    cout << "These are subsystem children" << endl;
-    cout << "============================" << endl;
+    LOG(kDebug) << "These are subsystem children";
+    LOG(kDebug) << "============================";
     
     BOOST_FOREACH( const std::string& name, system->getChildren()) {
-        cout << name << endl; 
+        LOG(kDebug) << name; 
     }
-    cout << endl;
+    LOG(kDebug) << "";
     
     
-    cout << endl;
-    cout << "Testing getters and aliases" << endl;
-    cout << "===========================" << endl;
+    LOG(kDebug) << "Testing getters and aliases";
+    LOG(kDebug) << "===========================";
     vector<string> names;
     names += "mp7-10.tx00", "link000.src", "crateC.amc01.tx00";
     vector< string >::const_iterator itN;
     BOOST_FOREACH( string name, names ) {
         Object* o = system->getObj(name);
-        cout << "Found " << name << " : " << o->path() << " of type " << o->typeName() << endl;
+        LOG(kDebug) << "Found " << name << " : " << o->path() << " of type " << o->typeName();
     }
-    cout << "Multi-hop getter" << endl;
-    cout << "================" << endl;
+    LOG(kDebug) << "Multi-hop getter";
+    LOG(kDebug) << "================";
     Object* o = system->getObj("crateC")->getObj("amc01")->getObj("tx00");
-    cout << "Testing  crate1 + mp7-13 + tx00: " << o->path() << " of type " << o->typeName() << endl;
+    LOG(kDebug) << "Testing  crate1 + mp7-13 + tx00: " << o->path() << " of type " << o->typeName();
     BOOST_CHECK_EQUAL(o->path(),"calol2.mp7-10.tx00");
     BOOST_CHECK_EQUAL(o->typeName(),"swatch::core::OutputPort");
 
 
-    cout << endl;
-    cout << "Processors in the system" << endl;
-    cout << "========================" << endl;
+    LOG(kDebug) << "";
+    LOG(kDebug) << "Processors in the system";
+    LOG(kDebug) << "========================";
     
     BOOST_FOREACH( Processor* p, system->getProcessors() ) {
-        cout << p->id() << " of type " << p->typeName() << ": crate=" << p->getCrateId() << endl;
+        LOG(kDebug) << p->id() << " of type " << p->typeName() << ": crate=" << p->getCrateId();
     }
-    cout << endl;
+    LOG(kDebug) << "";
     
-    cout << "Printing crate views" << endl;
-    cout << "====================" << endl;
+    LOG(kDebug) << "Printing crate views";
+    LOG(kDebug) << "====================";
 
     boost::unordered_map<std::string, Crate*>::const_iterator cit;
     for (cit = system->getCrates().begin(); cit != system->getCrates().end(); ++cit) {
-        cout << "crate '" << cit->first << "' : " << *(cit->second) << endl;
+        LOG(kDebug) << "crate '" << cit->first << "' : " << *(cit->second);
     }
-    cout << endl;
+    LOG(kDebug) << "";
     
     std::vector<std::string> objects;
 
     std::vector<std::string>::iterator it;
 
-    cout << "And these their Paths" << endl;
-    cout << "=====================" << endl;
+    LOG(kDebug) << "And these their Paths";
+    LOG(kDebug) << "=====================";
     objects = system->getPaths();
     for (it = objects.begin(); it != objects.end(); ++it) {
-        cout << *it << endl;
+        LOG(kDebug) << *it;
     }
-    cout << endl;
+    LOG(kDebug) << "";
     
 } 
 

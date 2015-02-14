@@ -16,6 +16,7 @@
 // Swatch Headers
 #include "swatch/core/XParameterSet.hpp"
 #include "swatch/processor/Processor.hpp"
+#include "swatch/processor/ProcessorStub.hpp"
 #include "swatch/system/Crate.hpp"
 #include "swatch/system/test/DummyProcessor.hpp"
 #include "swatch/system/test/DummyAMC13Service.hpp"
@@ -28,6 +29,7 @@
 using namespace boost::assign;
 using namespace swatch::core;
 using namespace swatch::system;
+using namespace swatch::processor;
 using namespace swatch::system::test;
 using namespace std;
 
@@ -37,24 +39,32 @@ BOOST_AUTO_TEST_CASE(SlotCanOnlyBeTakenOnce) {
 	Crate* crate = new Crate("myCrate");
 
 	XParameterSet a1, a2;
-	a1.insert("myCrate", xdata::String("crateA")) ("slot", xdata::Integer(1));
-	a2.insert("myCrate", xdata::String("crateA")) ("slot", xdata::Integer(1));
+	ProcessorBag b;
+	b.bag.crate = xdata::String("crateA");
+	b.bag.slot =  xdata::UnsignedInteger(1);
+
+	a1.set("stub", b);
+	a2.set("stub", b);
+
 	DummyProcessor* p1 = new DummyProcessor("calol2-10", a1);
 	DummyProcessor* p2 = new DummyProcessor("calol2-13", a2);
 
 	crate->add(p1);
 	BOOST_CHECK_EQUAL(crate->isSlotTaken(1), true);
-	BOOST_CHECK_THROW(crate->add(p2), std::runtime_error);
+	BOOST_CHECK_THROW(crate->add(p2), CrateSlotTaken);
 }
 
 BOOST_AUTO_TEST_CASE(SlotOutOfRange) {
 	Crate* crate = new Crate("myCrate");
 
-	XParameterSet a1, a2;
-	a1.insert("myCrate", xdata::String("crateA")) ("slot", xdata::Integer(99999));
+	XParameterSet a1;
+	ProcessorBag b;
+	b.bag.crate = xdata::String("crateA");
+	b.bag.slot =  xdata::UnsignedInteger(999999);
+	a1.set("stub", b);
 	DummyProcessor* p1 = new DummyProcessor("calol2-10", a1);
 
-	BOOST_CHECK_THROW(crate->add(p1), std::out_of_range);
+	BOOST_CHECK_THROW(crate->add(p1), CrateSlotOutOfRange);
 }
 
 BOOST_AUTO_TEST_CASE(PassesParamsToObject) {

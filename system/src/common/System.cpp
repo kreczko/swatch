@@ -57,7 +57,7 @@ System::add(processor::Processor* aProcessor) {
     std::string crateId = aProcessor->getCrateId();
     if (!hasCrate(crateId)){
     	stringstream ss;
-    	ss << "Cannot find Crate " << crateId;
+    	ss << "System '" << this->id() << ";: Cannot find Crate " << crateId;
     	throw runtime_error(ss.str());
     }
     else
@@ -82,7 +82,7 @@ System::add(system::DaqTTCService* aAMC13) {
     boost::unordered_map<std::string, Crate*>::iterator cit = cratesMap_.find(crateId);
     if (!hasCrate(crateId)) {
     	stringstream ss;
-    	ss << "Cannot find Crate " << crateId;
+    	ss << "System '" << this->id() << "': Cannot find Crate " << crateId;
     	throw runtime_error(ss.str());
     } else
     	cratesMap_[crateId]->add(aAMC13);

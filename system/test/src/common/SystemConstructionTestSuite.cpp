@@ -8,11 +8,13 @@
 #include "swatch/core/Port.hpp"
 
 #include "swatch/processor/Processor.hpp"
+#include "swatch/processor/ProcessorStub.hpp"
 #include "swatch/processor/ProcessorFactory.hpp"
 
 #include "swatch/system/System.hpp"
 #include "swatch/system/SystemFactory.hpp"
 #include "swatch/system/Crate.hpp"
+#include "swatch/system/AMC13ServiceStub.hpp"
 #include "swatch/system/test/DummyProcessor.hpp"
 #include "swatch/system/test/DummyAMC13Service.hpp"
 
@@ -28,6 +30,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/property_tree/json_parser.hpp>
 
+
 BOOST_AUTO_TEST_SUITE( SystemConstructionTestSuite )
 
 BOOST_AUTO_TEST_CASE(BuildMiniSystem) {// this is not a test
@@ -40,9 +43,22 @@ BOOST_AUTO_TEST_CASE(BuildMiniSystem) {// this is not a test
     XParameterSet a;
     a.insert("requires", xdata::String("ttc;daq"))("provides", xdata::String("trg"));
     XParameterSet a1 = a, a2 = a, a3 = a;
-    a1.insert("crate", xdata::String("crateA")) ("slot", xdata::Integer(1));
-    a2.insert("crate", xdata::String("crateA")) ("slot", xdata::Integer(2));
-    a3.insert("crate", xdata::String("crateB")) ("slot", xdata::Integer(1));
+    
+    ProcessorBag b1, b2, b3;
+    b1.bag.crate = xdata::String("crateA");
+    b1.bag.slot = xdata::UnsignedInteger(1);
+    a1.set("stub", b1);
+
+    b2.bag.crate = xdata::String("crateA");
+    b2.bag.slot = xdata::UnsignedInteger(2);
+    a2.set("stub", b2);
+
+    b3.bag.crate = xdata::String("crateB");
+    b3.bag.slot = xdata::UnsignedInteger(1);
+    a3.set("stub", b3);
+
+
+
 
     BOOST_TEST_MESSAGE("Constructor");
     System* s = new System("calol2");
@@ -98,29 +114,42 @@ BOOST_AUTO_TEST_CASE(BuildFullCrate) {
 
     // Create a System
     BOOST_TEST_MESSAGE("Constructor");
+
     System* lSystem = new System("calol2");
+    
     // crate comes first
     Crate* the_crate = new Crate("s2x3g18");
+    
     lSystem->add(the_crate);
+    
     // AMC13
     XParameterSet params13;
+
+    AMC13ServiceBag bag13;
+    bag13.bag.crate = xdata::String("s2x3g18");
+    bag13.bag.slot = xdata::UnsignedInteger(13);
+
     params13.insert("requires", xdata::String(""))
         ("provides", xdata::String("ttc;daq"))
-        ("crate", xdata::String("s2x3g18"))
-        ("slot",xdata::Integer(13));
+        ("stub", bag13);
+
     DaqTTCService* amc13 = new DummyAMC13Service("amc13xg", params13);
+    BOOST_TEST_MESSAGE("amc13 crate = "+amc13->getCrateId());
     BOOST_CHECK(amc13->getCrateId() == "s2x3g18" );
 
     // And a set of boards
-    XParameterSet params;
-    params.insert("requires", xdata::String("ttc;daq"))
+    XParameterSet paramsP;
+    ProcessorBag bagP;
+    bagP.bag.crate = xdata::String("s2x3g18");
+    paramsP.insert("requires", xdata::String("ttc;daq"))
         ("provides", xdata::String("trg"))
-        ("crate", xdata::String("s2x3g18"));
+        ("stub", bagP);
+
     std::vector<DummyProcessor*> dummies;
     for (int s(1); s <= 12; ++s) {
-        XParameterSet a = params; // copy the common attributes
+        XParameterSet a = paramsP; // copy the common attributes
         const std::string slot = boost::lexical_cast<std::string>(s);
-        a.insert("slot", xdata::Integer(s));
+        a.get<ProcessorBag>("stub").bag.slot = xdata::UnsignedInteger(s);
         DummyProcessor* p = new DummyProcessor("mp7-" + slot, a);
         dummies.push_back(p);
         BOOST_CHECK(p->getCrateId() == "s2x3g18" );

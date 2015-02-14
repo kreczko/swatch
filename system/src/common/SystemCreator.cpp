@@ -53,7 +53,7 @@ void SystemCreator::addCrates(System* system, const swatch::core::XParameterSet&
 
 //---
 void SystemCreator::addCrate(System* system, const swatch::core::XParameterSet& aPars) {
-  CrateBag& stub = aPars.get<CrateBag>("stub");
+  	CrateBag& stub = aPars.get<CrateBag>("stub");
 	Crate * crate = new Crate(stub.bag.name, aPars);
 	system->add(crate);
 }

@@ -30,23 +30,23 @@ namespace swatch {
 namespace system {
 namespace test {
 
-//SWATCH_SERVICE_REGISTER_CLASS(DummyAMC13Service);
+SWATCH_SERVICE_REGISTER_CLASS(DummyAMC13Service);
 
 DummyAMC13Service::DummyAMC13Service( const std::string& aId, const core::XParameterSet& aPars ) : system::DaqTTCService(aId,aPars) {
-    LOG(swlog::kNotice) << "Building a DummyAMC13Service";
+    LOG(swlog::kInfo) << "Building a DummyAMC13Service";
     
-    LOG(swlog::kInfo) << "Id:" << this->id();;
-    LOG(swlog::kInfo) << "XParameterSet:";
+    LOG(swlog::kDebug) << "Id:" << this->id();;
+    LOG(swlog::kDebug) << "XParameterSet:";
     
     BOOST_FOREACH( const std::string& k, aPars.keys() ) {
 
-        LOG(swlog::kInfo) << "   " << k << " : " << aPars[k];
+        LOG(swlog::kDebug) << "   " << k << " : " << aPars[k];
     }
 
-    // const swsys::AMC13ServiceStub& stub = aPars.get<swsys::AMC13ServiceStub>("descriptor");
+    swsys::AMC13ServiceBag& stub = aPars.get<swsys::AMC13ServiceBag>("stub");
 
-    // crate_ = stub.crate;
-    // slot_ = stub.slot;
+    crate_ = stub.bag.crate;
+    slot_ = stub.bag.slot;
 }
 
 DummyAMC13Service::~DummyAMC13Service() {

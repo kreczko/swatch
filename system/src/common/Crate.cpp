@@ -45,8 +45,8 @@ Crate::add(processor::Processor* aProcessor) {
     uint32_t slot = aProcessor->getSlot();
     if (slot < min_ || slot > max_) {
         stringstream ss;
-        ss << "Slot " << slot << " out of range";
-        throw std::out_of_range(ss.str());
+        ss << "Crate '"<< id() << "': Slot " << slot << " out of range";
+        throw CrateSlotOutOfRange(ss.str());
     }    
 
     // Check if the slot is available
@@ -54,7 +54,7 @@ Crate::add(processor::Processor* aProcessor) {
         stringstream ss;
         ss << this->id() << ": Cannot add card " << aProcessor->id() << " to slot " << slot
                 << ". Slot already assigned to card " << this->amcs_[slot-min_]->id();
-        throw runtime_error(ss.str());
+        throw CrateSlotTaken(ss.str());
     }
     
     // All clear, add the processor
@@ -67,8 +67,9 @@ Crate::amc(uint32_t slot) {
 
     if (slot < min_ || slot > max_) {
         stringstream ss;
-        ss << "Slot " << slot << " out of range";
-        throw std::out_of_range(ss.str());
+        ss << "Crate '"<< id() << "': Slot " << slot << " out of range";
+        
+        throw CrateSlotOutOfRange(ss.str());
     }
     return amcs_[slot-min_];
 }

@@ -190,6 +190,8 @@ int main( int argc, char* argv[] )
     }
     catch( rt::logic_error const& ex ) {
         std::cout << "Fail to parse command line arguments: " << ex.msg() << std::endl;
+        std::cout << " Usage: console_test_runner.exe --test <library> " << std::endl;
+
         return -1;
     }
 }
