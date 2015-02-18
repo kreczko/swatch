@@ -26,7 +26,7 @@ private:
     AbstractFactory() {}
 
 public:
-    template< typename A, typename U > friend struct ClassRegistrationHelper;
+    template< typename A, typename D > friend struct ClassRegistrationHelper;
     template< typename A, typename K > friend struct CreatorRegistrationHelper;
     
     typedef T Product;
@@ -46,7 +46,12 @@ public:
     
 
 private:
-    template<typename U>
+    /**
+     * Basic creator class
+     * 
+     * @tparam D Product type, must be derived from T
+     */
+    template<typename D>
     class BasicCreator : public CreatorInterface {
     public:
         virtual T* operator() ( const std::string& aId, const swatch::core::XParameterSet& params );
@@ -62,18 +67,29 @@ private:
 
 };
 
-template< typename A, typename U >
+/**
+ * Factory helper class
+ * 
+ * @tparam A Base product type
+ * @tparam D Derived product type
+ */
+template< typename A, typename D >
 struct ClassRegistrationHelper {
     ClassRegistrationHelper(const std::string& aClassName) {
-//        AbstractFactory<T>::get()->add< AbstractFactory<T>::BasicCreator<U> >(aClassName);
-        AbstractFactory<A>::get()->template add< typename AbstractFactory<A>::template BasicCreator<U> > (aClassName );
+        AbstractFactory<A>::get()->template add< typename AbstractFactory<A>::template BasicCreator<D> > (aClassName );
     }
 };
 
-template< typename T, typename K >
+/**
+ * Factory helper class
+ * 
+ * @tparam A Base product type
+ * @tparam K Creator type
+ */
+template< typename A, typename K >
 struct CreatorRegistrationHelper {
     CreatorRegistrationHelper(const std::string& aCreatorName) {
-        AbstractFactory<T>::get()->template add< K >(aCreatorName);
+        AbstractFactory<A>::get()->template add< K >(aCreatorName);
     }
 };
 

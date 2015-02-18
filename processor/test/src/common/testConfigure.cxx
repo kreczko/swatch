@@ -282,67 +282,34 @@ int main(int argc, char const *argv[]) {
     swco::XParameterSet xpoweron;
 
    // 'Scalars'
-    xpoweron["ctrl.id.fwrev"] = xdata::UnsignedInteger(0x44332211);
-    xpoweron["ctrl.id.magic"] = xdata::UnsignedInteger(0xdeadc0de);
-    xpoweron["ctrl.infos.nRx"] = xdata::UnsignedInteger(nRx);
-    xpoweron["ctrl.infos.nTx"] = xdata::UnsignedInteger(nTx);
-    xpoweron["ttc.ctrl"] = xdata::UnsignedInteger(0);
-    xpoweron["ttc.stat"] = xdata::UnsignedInteger(0);
-    xpoweron["ttc.counters"] = xdata::UnsignedInteger(0);
-    xpoweron["ttc.counters1"] = xdata::UnsignedInteger(0);
-    xpoweron["ttc.counters2"] = xdata::UnsignedInteger(0);
-    xpoweron["ttc.counters3"] = xdata::UnsignedInteger(0);
+    xpoweron.set("ctrl.id.fwrev", xdata::UnsignedInteger(0x44332211) );
+    xpoweron.set("ctrl.id.magic", xdata::UnsignedInteger(0xdeadc0de) );
+    xpoweron.set("ctrl.infos.nRx", xdata::UnsignedInteger(nRx) );
+    xpoweron.set("ctrl.infos.nTx", xdata::UnsignedInteger(nTx) );
+    xpoweron.set("ttc.ctrl", xdata::UnsignedInteger(0) );
+    xpoweron.set("ttc.stat", xdata::UnsignedInteger(0) );
+    xpoweron.set("ttc.counters", xdata::UnsignedInteger(0) );
+    xpoweron.set("ttc.counters1", xdata::UnsignedInteger(0) );
+    xpoweron.set("ttc.counters2", xdata::UnsignedInteger(0) );
+    xpoweron.set("ttc.counters3", xdata::UnsignedInteger(0) );
 
     // Channel's array
     for ( size_t i(0); i<nRx; ++i) {
         std::string chpath = "channels.rx" + boost::lexical_cast<std::string>(i);
-        xpoweron[chpath+".ctrl.mode"] = xdata::UnsignedInteger(0);
-        xpoweron[chpath+".ctrl.firstBx"] = xdata::UnsignedInteger(0);
-        xpoweron[chpath+".ctrl.nFrames"] = xdata::UnsignedInteger(0);
+        xpoweron.set( chpath+".ctrl.mode", xdata::UnsignedInteger(0) );
+        xpoweron.set( chpath+".ctrl.firstBx", xdata::UnsignedInteger(0) );
+        xpoweron.set( chpath+".ctrl.nFrames", xdata::UnsignedInteger(0) );
     }
     for ( size_t i(0); i<nTx; ++i) {
         std::string chpath = "channels.tx" + boost::lexical_cast<std::string>(i);
-        xpoweron[chpath+".ctrl.mode"] = xdata::UnsignedInteger(0);
-        xpoweron[chpath+".ctrl.firstBx"] = xdata::UnsignedInteger(0);
-        xpoweron[chpath+".ctrl.nFrames"] = xdata::UnsignedInteger(0);
+        xpoweron.set( chpath+".ctrl.mode", xdata::UnsignedInteger(0) );
+        xpoweron.set( chpath+".ctrl.firstBx", xdata::UnsignedInteger(0) );
+        xpoweron.set( chpath+".ctrl.nFrames", xdata::UnsignedInteger(0) );
     }    
 
 
     x.load(xpoweron);
 
-    
-
-    /*    
-    swpro::test::IPBusDummyHardware::RegisterMap poweron;
-    
-    // 'Scalars'
-    poweron["ctrl.id.fwrev"] = 0x44332211;
-    poweron["ctrl.id.magic"] = 0xdeadc0de;
-    poweron["ctrl.infos.nRx"] = nRx;
-    poweron["ctrl.infos.nTx"] = nTx;
-    poweron["ttc.ctrl"] = 0;
-    poweron["ttc.stat"] = 0;
-    poweron["ttc.counters"] = 0;
-    poweron["ttc.counters1"] = 0;
-    poweron["ttc.counters2"] = 0;
-    poweron["ttc.counters3"] = 0;
-
-    // Channel's array
-    for ( size_t i(0); i<nRx; ++i) {
-        std::string chpath = "channels.rx" + boost::lexical_cast<std::string>(i);
-        poweron[chpath+".ctrl.mode"] = 0;
-        poweron[chpath+".ctrl.firstBx"] = 0;
-        poweron[chpath+".ctrl.nFrames"] = 0;
-    }
-    for ( size_t i(0); i<nTx; ++i) {
-        std::string chpath = "channels.tx" + boost::lexical_cast<std::string>(i);
-        poweron[chpath+".ctrl.mode"] = 0;
-        poweron[chpath+".ctrl.firstBx"] = 0;
-        poweron[chpath+".ctrl.nFrames"] = 0;
-    }
-
-    x.load(poweron);
-    */
     // Increment ttc counters
     x.add(new TTCCountersIncrementer(10, 10));
     x.add(new BufferCaptureEmulator(10));

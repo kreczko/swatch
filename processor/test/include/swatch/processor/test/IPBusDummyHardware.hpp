@@ -29,28 +29,30 @@ namespace processor {
 namespace test {
 
 struct IPBusWorkLoop {
-    IPBusWorkLoop( uint32_t millisec ) : millisec_(millisec) {}
+    IPBusWorkLoop( uint32_t millisec ) : millisec_(millisec), terminate_(false) {}
     virtual void operator()( uhal::HwInterface* hw ) = 0;
 
+    void terminate() { terminate_ = true; }
 private:
     friend class IPBusDummyHardware;
 
     void run( uhal::HwInterface* hw ) {
         while( true ) {
-            (*this)(hw);
-            boost::this_thread::sleep_for(boost::chrono::milliseconds(millisec_));
+          if ( terminate_ ) break;
+
+          (*this)(hw);
+          boost::this_thread::sleep_for(boost::chrono::milliseconds(millisec_));
         }
     }
 
     //!
     uint32_t millisec_;
+    bool terminate_;
 };
 
 class IPBusDummyHardware : private boost::noncopyable {
 public:
     
-//    typedef boost::unordered_map<std::string,uint32_t> RegisterMap;
-
     IPBusDummyHardware(const std::string& name, uint32_t port, const std::string& addrtab);
     virtual ~IPBusDummyHardware();
 
@@ -92,8 +94,9 @@ private:
     //!
     uhal::HwInterface* hw_;
 
-
-    boost::thread_group* workers_;
+    std::vector<IPBusWorkLoop*> workers_;
+    
+    boost::thread_group* threads_;
 
 };
 

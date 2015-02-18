@@ -31,16 +31,19 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/property_tree/json_parser.hpp>
 
+// Namespace Resolution
+using namespace swatch::logger;
+using namespace swatch::core;
+using namespace swatch::system;
+using namespace swatch::processor;
+using namespace swatch::system::test;
+
 struct SystemSetupA {
     SystemSetupA() :
         system(0x0),
         crateC(0x0),
         crateD(0x0) {
         using namespace boost::assign;
-        using namespace swatch::core;
-        using namespace swatch::system;
-        using namespace swatch::processor;
-        using namespace swatch::system::test;
         using namespace std;
 
         XParameterSet a;
@@ -123,11 +126,7 @@ BOOST_FIXTURE_TEST_SUITE(SystemExploreTestSuite, SystemSetupA)
 // TODO
 BOOST_AUTO_TEST_CASE(ExploreSystem) {
     using namespace boost::assign;
-    using namespace swatch::logger;
-    using namespace swatch::core;
-    using namespace swatch::system;
-    using namespace swatch::processor;
-    using namespace swatch::system::test;
+
     using namespace std;
 
     LOG(kDebug) << "Here we test iterators";
