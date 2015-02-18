@@ -309,14 +309,14 @@ int main(int argc, char const *argv[]) {
 
 
     x.load(xpoweron);
-
-    // Increment ttc counters
+    
+     // Increment ttc counters
     x.add(new TTCCountersIncrementer(10, 10));
     x.add(new BufferCaptureEmulator(10));
     // Add error generator
     // x.add(new TTCErrorGenerator(10) );
 
-    
+        
     swpro::ProcessorStub stubTemplate;
     stubTemplate.name = "";
     stubTemplate.creator = "IPBusProcessor";
@@ -431,12 +431,15 @@ int main(int argc, char const *argv[]) {
             msg << "0x" << std::hex << std::setfill('0') << std::setw(8) << data[k][j] << "   ";
         LOG(swlog::kInfo) << msg.str();
     }
-//    cout << endl << std::dec;
+   // cout << endl << std::dec;
 
     // std::vector<uint64_t> data = p0->inputChannel(2)->buffer()->download();
 
     LOG(swlog::kNotice) << "//_ Destruction ________________________________________________";
-    // delete p0;
+    
+
+    delete p0;
+    
     return 0;
 
 }

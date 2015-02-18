@@ -24,7 +24,13 @@ namespace processor {
 namespace test {
 
 IPBusDummyHardware::IPBusDummyHardware(const std::string& name, uint32_t port, const std::string& addrtab) :
-  name_(name), port_(port), pid_(0), status_(0), started_(false), addrtab_(addrtab), hw_(0x0) {
+  name_(name), 
+  port_(port),
+  pid_(0),
+  status_(0),
+  started_(false),
+  addrtab_(addrtab),
+  hw_(0x0) {
   threads_ = new boost::thread_group();
 }
 
@@ -39,8 +45,8 @@ IPBusDummyHardware::~IPBusDummyHardware() {
 
 void
 IPBusDummyHardware::start() {
-  // start the hardware
-  thread_ = boost::thread(&IPBusDummyHardware::run, this);
+
+  run();
 
   uint32_t counts(100);
   while (counts--) {
@@ -69,6 +75,7 @@ IPBusDummyHardware::terminate() {
   workers_.clear();
 
   if (threads_) delete threads_;
+  
   threads_ = 0x0;
   // To be cleaned up
   if (pid_ != 0) {
@@ -82,8 +89,11 @@ IPBusDummyHardware::terminate() {
   }
 
   if (hw_) delete hw_;
+  cout << "Deleted hw interface" << endl;
 }
 
+
+//---
 void
 IPBusDummyHardware::run() {
   // TODOs:
@@ -106,7 +116,8 @@ IPBusDummyHardware::run() {
 
     std::stringstream ssPort;
     ssPort << "-p" << port_;
-    execl(udpexe, udpexe, ssPort.str().c_str(), "-v2", "-V", NULL);
+    // execl(udpexe, udpexe, ssPort.str().c_str(), "-v2", "-V", NULL);
+   execl(udpexe, udpexe, ssPort.str().c_str(), "-v2", NULL);
     _exit(EXIT_FAILURE);
 
   } else if (pid_ < 0) {
@@ -115,6 +126,7 @@ IPBusDummyHardware::run() {
   } else {
     // It forked. Incredible.
     cout << "Started server with pid " << pid_ << endl;
+    
     try {
       cout << "Wait a sec for " << name_ << " to start" << endl;
       sleep(1);
@@ -131,15 +143,11 @@ IPBusDummyHardware::run() {
 
       started_ = true;
 
-      // waits until the process finishes
-      ::waitpid(pid_, &status_, 0);
-
-      cout << name_ << " is dead!" << endl;
-
     } catch (...) {
       // Any problem? Shoot the server
       terminate();
     }
+    
   }
 }
 

@@ -43,6 +43,8 @@ private:
           (*this)(hw);
           boost::this_thread::sleep_for(boost::chrono::milliseconds(millisec_));
         }
+        
+        std::cout << "Workloop terminated" << std::endl;
     }
 
     //!
@@ -70,7 +72,6 @@ public:
     void add( IPBusWorkLoop* w );
     
 private:
-    // uhal::HwInterface getHwInterface( const std::string& addrtab );
 
     std::string name_;
 
@@ -87,9 +88,6 @@ private:
 
     //!
     std::string addrtab_;
-
-    //!
-    boost::thread thread_;
 
     //!
     uhal::HwInterface* hw_;
