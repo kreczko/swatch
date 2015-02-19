@@ -281,7 +281,7 @@ int main(int argc, char const *argv[]) {
     
     swco::XParameterSet xpoweron;
 
-   // 'Scalars'
+    // 'Scalars'
     xpoweron.set("ctrl.id.fwrev", xdata::UnsignedInteger(0x44332211) );
     xpoweron.set("ctrl.id.magic", xdata::UnsignedInteger(0xdeadc0de) );
     xpoweron.set("ctrl.infos.nRx", xdata::UnsignedInteger(nRx) );
@@ -431,7 +431,7 @@ int main(int argc, char const *argv[]) {
             msg << "0x" << std::hex << std::setfill('0') << std::setw(8) << data[k][j] << "   ";
         LOG(swlog::kInfo) << msg.str();
     }
-   // cout << endl << std::dec;
+    // cout << endl << std::dec;
 
     // std::vector<uint64_t> data = p0->inputChannel(2)->buffer()->download();
 

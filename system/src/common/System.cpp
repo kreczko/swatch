@@ -25,19 +25,25 @@ namespace swlog = swatch::logger;
 namespace swatch {
 namespace system {
 
+
+//---
 System::System(const std::string& aId, const core::XParameterSet& params)
 : Device(aId, params)
 {
 }
 
+
+//---
 System::~System() {
 }
 
+//---
 const boost::unordered_map<std::string, Crate*>&
 System::getCrates() const {
     return cratesMap_;
 }
 
+//---
 void
 System::add(processor::Processor* aProcessor) {
     if (aProcessor == NULL)
@@ -66,6 +72,7 @@ System::add(processor::Processor* aProcessor) {
     LOG(swlog::kDebug) <<  aProcessor->id() <<  " added (path = " << aProcessor->path() <<  ")";
 }
 
+//---
 void
 System::add(system::DaqTTCService* aAMC13) {
     if (aAMC13 == NULL)
@@ -88,6 +95,9 @@ System::add(system::DaqTTCService* aAMC13) {
     	cratesMap_[crateId]->add(aAMC13);
     
 }
+
+
+//---
 void
 System::add(Service* aService) {
     if (aService == NULL)
@@ -96,6 +106,8 @@ System::add(Service* aService) {
     services_.push_back(aService);
 }
 
+
+//---
 void
 System::add(core::Link* aLink) {
     if (aLink == NULL)
@@ -104,6 +116,7 @@ System::add(core::Link* aLink) {
     links_.push_back(aLink);
 }
 
+//---
 void System::add( Crate* crate ){
     if (crate == NULL)
         throw std::invalid_argument ("Crate pointer is NULL!");
@@ -111,53 +124,26 @@ void System::add( Crate* crate ){
 	cratesMap_[crate->id()] = crate;
 }
 
+//---
 const std::deque<processor::Processor*>&
 System::getProcessors() const {
     return processors_;
 }
 
+
+//---
 const std::deque<Service*>&
 System::getServices() const {
     return services_;
 }
 
+
+//---
 const std::deque<core::Link*>&
 System::getLinks() const {
     return links_;
 }
 
-
-bool
-System::canHalt()
-{
-	return true;
-}
-
-void
-System::doHalt(const core::XParameterSet& params)
-{
-}
-
-bool
-System::canConfigure()
-{
-	return true;
-}
-
-void
-System::doConfigure(const core::XParameterSet& params)
-{
-    // TODO: Prepare parameter set
-    for (deque<processor::Processor*>::iterator pIt = processors_.begin();
-	 pIt != processors_.end();
-	 ++pIt)
-    {
-	Device* d = dynamic_cast<Device*>(*pIt);
-	d->configure();
-	// (*pIt)->configure(params);
-    }
-
-}
 
 bool System::hasCrate(const std::string& crate_id) const{
 	return cratesMap_.find(crate_id) != cratesMap_.end();

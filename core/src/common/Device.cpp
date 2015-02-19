@@ -14,8 +14,7 @@ namespace swatch {
 namespace core {
 
 Device::Device(const std::string& aId, const XParameterSet& params) :
-    Object(aId, params),
-    fsm_(FsmStates::HALTED)
+    Object(aId, params)
 {
 }
 
@@ -34,78 +33,6 @@ Device::addOutput(OutputPort* aOutput) {
     outputs_.push_back(aOutput);
 }
 
-void
-Device::halt(const XParameterSet& params)
-{
-	ostringstream msg;
-
-	// lock
-	// FSM check
-
-	if (!canHalt())
-	{
-		msg << "c_halt check failed! Could not finish transition to HALTED state from " << fsm_ << endl;
-		throw runtime_error(msg.str());
-	}
-
-	doHalt();
-
-	fsm_ = Device::FsmStates::HALTED;
-	msg << "FSM set to HALTED" << endl;
-}
-
-void
-Device::configure(const XParameterSet& params)
-{
-	ostringstream msg;
-
-	// lock
-
-	// FSM check
-	if (fsm_ != Device::FsmStates::HALTED)
-	{
-		msg << "Transition from state " << fsm_ << " to CONFIGURED not allowed!" << endl;
-		throw runtime_error(msg.str());
-	}
-
-	if (!canConfigure())
-	{
-		msg << "c_configure check failed! Could not finish transition to CONFIGURED state from " << fsm_ << endl;
-		throw runtime_error(msg.str());
-	}
-
-	canConfigure();
-
-	fsm_ = Device::FsmStates::CONFIGURED;
-	msg << "FSM set to CONFIGURED" << endl;
-
-}
-
-
-bool
-Device::canHalt()
-{
-	return true;
-}
-
-
-void
-Device::doHalt(const XParameterSet& params)
-{
-
-}
-
-bool
-Device::canConfigure()
-{
-	return true;
-}
-
-void
-Device::doConfigure(const XParameterSet& params)
-{
-
-}
 
 } // end ns core
 } // end ns swatch

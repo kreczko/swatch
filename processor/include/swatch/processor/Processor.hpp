@@ -101,34 +101,6 @@ protected:
     //!
     std::vector<OutputChannel*> outputChannels_;
 
-    /**
-     * @brief Assess whether the pre-conditions to Halt are satisfied.
-     * @details Runs the checks to guarantee that the Halt transition can take place.
-     * @return True if the Processor can be Halted.
-     */
-    virtual bool canHalt();
-
-    /**
-     * Perform configuration action
-     * @param params
-     */
-    virtual void doHalt(const core::XParameterSet& params = core::XParameterSet());
-
-    /**
-     * @brief Assess whether the pre-conditions to Configure are satisfied.
-     * @details Runs the checks to guarantee that the Configure transition can take place.
-     * @return True if the Processor can be configured.
-     */
-    virtual bool canConfigure();
-
-    /**
-     * @brief Execute the configure transition
-     * @details [long description]
-     * 
-     * @param params [description]
-     */
-    virtual void doConfigure(const core::XParameterSet& params = core::XParameterSet());
-
 };
 
 }

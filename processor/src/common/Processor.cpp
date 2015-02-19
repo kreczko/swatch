@@ -86,27 +86,6 @@ Processor::outputChannel(uint32_t i) {
     return outputChannels_.at(i);
 }
 
-// Standard state machine operations
-bool
-Processor::canHalt() {
-	return true;
-}
-
-void
-Processor::doHalt(const core::XParameterSet& params) {
-
-}
-
-bool
-Processor::canConfigure() {
-	return true;
-}
-
-void
-Processor::doConfigure(const core::XParameterSet& params) {
-
-}
-
 
 } // namespace processor
 } // namespace swatch

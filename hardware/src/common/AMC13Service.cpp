@@ -22,6 +22,7 @@
 
 namespace swatch {
 namespace hardware {
+    
 SWATCH_SERVICE_REGISTER_CLASS(AMC13Service)
 
 AMC13Service::AMC13Service(const std::string& aId, const core::XParameterSet& aPars) :

@@ -76,15 +76,7 @@ protected:
     
     //! Map of crates
     boost::unordered_map<std::string, Crate*> cratesMap_;
-    
 
-    // Operations checks: might be overriden by descendants
-   virtual bool canHalt();
-   virtual bool canConfigure();
-
-   // Operations: something in common in all inherited classes? (e.g., actions with the XParameterSet)
-   virtual void doHalt(const core::XParameterSet& params);
-   virtual void doConfigure(const core::XParameterSet& params);
 
 
 };
