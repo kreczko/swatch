@@ -55,6 +55,14 @@ ActionHandler::getCommand(const std::string& aName) {
   return cmd;
 }
 
+//---
+std::set<std::string>
+ActionHandler::getCommands() const {
+  std::set<std::string> names;
+
+ std::transform(commands_.begin(), commands_.end(), std::inserter(names, names.end()), boost::bind(&CommandMap::value_type::first, _1));
+ return names;
+}
 
 } // namespace core
 } // namespace swatch

@@ -6,8 +6,8 @@
  *
  */
 
-#ifndef __SWATCH_CORE_TEST_COMMANDMANAGER__
-#define __SWATCH_CORE_TEST_COMMANDMANAGER__ 
+#ifndef __SWATCH_CORE_TEST_ACTIONHANDLER__
+#define __SWATCH_CORE_TEST_ACTIONHANDLER__ 
 
 #include "swatch/core/Command.hpp"
 
@@ -19,7 +19,7 @@ namespace core {
 
 /**
  * @class ActionHandler
- * @details Abstract interface 
+ * @details Interface that provides support to commands and operations
  */
 class ActionHandler {
 public:
@@ -28,6 +28,12 @@ public:
     void registerCommand(std::string aName, Command * aCmd  );
 
     Command* getCommand( const std::string& aName );
+
+    /**
+     * List of parameters names stored.
+     * @return vector of parameter names
+     */
+    std::set<std::string> getCommands() const;
 
 protected:
     ActionHandler();
@@ -43,4 +49,4 @@ private:
 } // namespace core
 } // namespace swatch
 
-#endif /* __SWATCH_CORE_TEST_COMMANDMANAGER__ */
+#endif /* __SWATCH_CORE_TEST_ACTIONHANDLER__ */

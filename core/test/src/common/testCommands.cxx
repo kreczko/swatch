@@ -104,6 +104,11 @@ int main(int argc, char const *argv[]) {
 
   handler.registerCommand("dummy", new DummyCommand(&handler));
 
+  LOG(swlo::kNotice) << "Registered commands ";
+  BOOST_FOREACH( const std::string& cmdname, handler.getCommands() ) {
+    LOG(swlo::kInfo) << " * " << cmdname << ": result type = " << handler.getCommand("dummy")->result().type();
+  }
+  
   LOG(swlo::kInfo) << "dummy: " << handler.getCommand("dummy");
 
   swco::Command* cmd = handler.getCommand("dummy");
