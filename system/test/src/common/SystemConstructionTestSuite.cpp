@@ -47,15 +47,15 @@ BOOST_AUTO_TEST_CASE(BuildMiniSystem) {// this is not a test
     ProcessorBag b1, b2, b3;
     b1.bag.crate = xdata::String("crateA");
     b1.bag.slot = xdata::UnsignedInteger(1);
-    a1.set("stub", b1);
+    a1.add("stub", b1);
 
     b2.bag.crate = xdata::String("crateA");
     b2.bag.slot = xdata::UnsignedInteger(2);
-    a2.set("stub", b2);
+    a2.add("stub", b2);
 
     b3.bag.crate = xdata::String("crateB");
     b3.bag.slot = xdata::UnsignedInteger(1);
-    a3.set("stub", b3);
+    a3.add("stub", b3);
 
 
 

@@ -10,6 +10,7 @@
 // Swatch Headers
 #include "swatch/system/AMC13ServiceStub.hpp"
 #include "swatch/system/ServiceFactory.hpp"
+#include "swatch/hardware/AMC13Commands.hpp"
 
 // XDAQ Headers
 #include "xdata/String.h"
@@ -28,10 +29,9 @@ SWATCH_SERVICE_REGISTER_CLASS(AMC13Service)
 AMC13Service::AMC13Service(const std::string& aId, const core::XParameterSet& aPars) :
     swatch::system::DaqTTCService(aId, aPars),
     driver_(0x0) {
+  
+    registerCommand<AMC13ResetCommand>("reset");
     
-    using namespace boost::assign;
-    modes_ += "ttsloopback", "external";
-            
     system::AMC13ServiceStub& desc = aPars.get<system::AMC13ServiceBag>("descriptor").bag;
 
     crate_ = desc.crate;
@@ -75,10 +75,7 @@ AMC13Service::enableTTC(const std::vector<uint32_t>& slots) {
 
 }
 
-std::set<std::string> AMC13Service::getModes() const {
-    return modes_;            
-}
-
+/*
 void AMC13Service::reset(const std::string& mode) {
     if ( modes_.count(mode) == 0 ) {
         throw std::runtime_error("Invalid AMC13 mode "+mode );
@@ -101,6 +98,7 @@ void AMC13Service::reset(const std::string& mode) {
     // and check the status
     driver_->getStatus()->Report(1);
 }
+*/
 
 } // namespace hardware
 } // namespace swatch

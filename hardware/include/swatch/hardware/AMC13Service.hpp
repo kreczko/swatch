@@ -28,22 +28,17 @@ public:
     virtual uint32_t getSlot() const;
 
     virtual const std::string& getCrateId() const;
-
-
-    virtual std::set<std::string> getModes() const;
-    
-    virtual void reset(const std::string& mode);
     
     virtual void enableTTC(const std::vector<uint32_t>& aSlots);
 
+    amc13::AMC13* driver() { return driver_; }
+    
 private:
 
     uint32_t slot_;
     
     std::string crate_;
     
-    std::set<std::string> modes_;
-
     amc13::AMC13* driver_;
 };
 

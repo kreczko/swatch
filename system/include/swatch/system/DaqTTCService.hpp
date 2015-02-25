@@ -1,8 +1,8 @@
 /* 
- * File:   AMC13.hpp
- * Author: ale
+ * @file    AMC13.hpp
+ * @author  Alessandro Thea
+ * @date    July 2014
  *
- * Created on July 28, 2014, 12:13 AM
  */
 
 #ifndef __SWATCH_SYSTEM_DAQTTCSERVICE_HPP__
@@ -10,13 +10,14 @@
 
 // Swatch Headers
 #include "swatch/system/Service.hpp"
+#include "swatch/core/ActionHandler.hpp"
 
 #include <string>
 
 namespace swatch {
 namespace system {
 
-class DaqTTCService : public Service {
+class DaqTTCService : public Service, public core::ActionHandler {
 protected:
     explicit DaqTTCService( const std::string& aId, const core::XParameterSet& params );
 public:
@@ -26,12 +27,6 @@ public:
 
     virtual const std::string& getCrateId() const = 0;
     
-    /// List the operation modes available
-    virtual std::set<std::string> getModes() const = 0;
-
-    ///
-    virtual void reset( const std::string& mode ) = 0;
-
     /// Enables ttc commands on the given slots
     virtual void enableTTC( const std::vector<uint32_t> & aSlots ) = 0;
     

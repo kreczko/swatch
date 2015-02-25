@@ -142,39 +142,6 @@ uhal::HwInterface* IPBusProcessor::hw() const {
     return hw_;
 }
 
-void IPBusProcessor::reset(const std::string& config) {
-    
-    // do a soft reset
-    this->ctrl()->softReset();
-
-    // p->ctrl()->configureClock(clock); 
-    hw()->getNode("ttc.stat.clk40Locked").write(true);
-    hw()->dispatch();
-
-    // p->ttc()->configure(ttc);
-    
-    if ( config == "internal" ) {
-        // Disable ttc, enable internal generator
-        hw()->getNode("ttc.ctrl.enable").write(0x0);
-        hw()->getNode("ttc.ctrl.genBC0").write(0x1);
-    } else if ( config == "extenal" ) {
-        // Disable ttc, enable internal generator
-        hw()->getNode("ttc.ctrl.enable").write(0x0);
-        hw()->getNode("ttc.ctrl.genBC0").write(0x1); 
-    }
-
-    hw()->getNode("ttc.stat.bc0Locked").write(true);
-    hw()->dispatch();
-
-
-    this->ttc()->clearErrors();
-    this->ttc()->clearCounters();
-
-}
-
-std::set<std::string> IPBusProcessor::getModes() const {
-    return clockModes_;
-}
 
 /*------------------------------------------------------------------------------
  * IPBus Algos

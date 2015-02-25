@@ -211,29 +211,29 @@ int main(int argc, char const *argv[]) {
     swco::XParameterSet xpoweron;
 
     // 'Scalars'
-    xpoweron.set("ctrl.id.fwrev", xdata::UnsignedInteger(0x44332211) );
-    xpoweron.set("ctrl.id.magic", xdata::UnsignedInteger(0xdeadc0de) );
-    xpoweron.set("ctrl.infos.nRx", xdata::UnsignedInteger(nRx) );
-    xpoweron.set("ctrl.infos.nTx", xdata::UnsignedInteger(nTx) );
-    xpoweron.set("ttc.ctrl", xdata::UnsignedInteger(0) );
-    xpoweron.set("ttc.stat", xdata::UnsignedInteger(0) );
-    xpoweron.set("ttc.counters", xdata::UnsignedInteger(0) );
-    xpoweron.set("ttc.counters1", xdata::UnsignedInteger(0) );
-    xpoweron.set("ttc.counters2", xdata::UnsignedInteger(0) );
-    xpoweron.set("ttc.counters3", xdata::UnsignedInteger(0) );
+    xpoweron.add("ctrl.id.fwrev", xdata::UnsignedInteger(0x44332211) );
+    xpoweron.add("ctrl.id.magic", xdata::UnsignedInteger(0xdeadc0de) );
+    xpoweron.add("ctrl.infos.nRx", xdata::UnsignedInteger(nRx) );
+    xpoweron.add("ctrl.infos.nTx", xdata::UnsignedInteger(nTx) );
+    xpoweron.add("ttc.ctrl", xdata::UnsignedInteger(0) );
+    xpoweron.add("ttc.stat", xdata::UnsignedInteger(0) );
+    xpoweron.add("ttc.counters", xdata::UnsignedInteger(0) );
+    xpoweron.add("ttc.counters1", xdata::UnsignedInteger(0) );
+    xpoweron.add("ttc.counters2", xdata::UnsignedInteger(0) );
+    xpoweron.add("ttc.counters3", xdata::UnsignedInteger(0) );
 
     // Channel's array
     for ( size_t i(0); i<nRx; ++i) {
         std::string chpath = "channels.rx" + boost::lexical_cast<std::string>(i);
-        xpoweron.set( chpath+".ctrl.mode", xdata::UnsignedInteger(0) );
-        xpoweron.set( chpath+".ctrl.firstBx", xdata::UnsignedInteger(0) );
-        xpoweron.set( chpath+".ctrl.nFrames", xdata::UnsignedInteger(0) );
+        xpoweron.add( chpath+".ctrl.mode", xdata::UnsignedInteger(0) );
+        xpoweron.add( chpath+".ctrl.firstBx", xdata::UnsignedInteger(0) );
+        xpoweron.add( chpath+".ctrl.nFrames", xdata::UnsignedInteger(0) );
     }
     for ( size_t i(0); i<nTx; ++i) {
         std::string chpath = "channels.tx" + boost::lexical_cast<std::string>(i);
-        xpoweron.set( chpath+".ctrl.mode", xdata::UnsignedInteger(0) );
-        xpoweron.set( chpath+".ctrl.firstBx", xdata::UnsignedInteger(0) );
-        xpoweron.set( chpath+".ctrl.nFrames", xdata::UnsignedInteger(0) );
+        xpoweron.add( chpath+".ctrl.mode", xdata::UnsignedInteger(0) );
+        xpoweron.add( chpath+".ctrl.firstBx", xdata::UnsignedInteger(0) );
+        xpoweron.add( chpath+".ctrl.nFrames", xdata::UnsignedInteger(0) );
     }    
 
 
@@ -264,10 +264,10 @@ int main(int argc, char const *argv[]) {
     p0bag.bag.uri = ssURI.str();
 
     swatch::core::XParameterSet params;
-    params.set("name", xdata::String("Processor 0"));
-    params.set("class", p0bag.bag.creator);
-    params.set("stub",p0bag);
-    params.set("poweron", xpoweron);
+    params.add("name", xdata::String("Processor 0"));
+    params.add("class", p0bag.bag.creator);
+    params.add("stub",p0bag);
+    params.add("poweron", xpoweron);
 
 
     // Fun starts here
@@ -316,9 +316,9 @@ int main(int argc, char const *argv[]) {
     swatch::core::XParameterSet mode;
     
     LOG(swlog::kDebug) << p0->id() << " Clock modes:";
-    BOOST_FOREACH( const std::string& c, p0->getModes() ) {
-        LOG(swlog::kDebug) << "  + " << c;
-    }
+//    BOOST_FOREACH( const std::string& c, p0->getModes() ) {
+//        LOG(swlog::kDebug) << "  + " << c;
+//    }
 
     LOG(swlog::kNotice) << ">> Resetting on internal clock";
     

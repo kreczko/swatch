@@ -85,7 +85,16 @@ public:
    * @param data Value to copy in the set.
    */
   template<typename T>
-  void set( const std::string& name , const T& data );
+  void add( const std::string& name , const T& data );
+
+
+  /**
+   * Sets the value of a parameter in the set. The parameter must exist.
+   * 
+   * @param name Parameter name
+   * @param data Value to copy in the set.
+   */
+  void set( const std::string& name , const xdata::Serializable& data );
 
   /**
    * Pot an entry from the set

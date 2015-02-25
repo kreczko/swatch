@@ -65,11 +65,11 @@ struct Params {
         crtBBag.bag.description = xdata::String("AnotherDescription");
 
         swco::XParameterSet cA, cB;
-        cA.set("name",crtABag.bag.name);
-        cA.set("stub", crtABag);
+        cA.add("name",crtABag.bag.name);
+        cA.add("stub", crtABag);
 
-        cB.set("name",crtBBag.bag.name);
-        cB.set("stub", crtBBag);
+        cB.add("name",crtBBag.bag.name);
+        cB.add("stub", crtBBag);
         
         ps_crates += cA, cB;
         
@@ -96,25 +96,25 @@ struct Params {
         st1.bag.slot = xdata::UnsignedInteger(1);
         st1.bag.uri = xdata::String("ipbusudp-2.0://127.0.0.1:50001");
         
-        p1.set("name",st1.bag.name);
-        p1.set("class",st1.bag.creator);
-        p1.set("stub",st1);
+        p1.add("name",st1.bag.name);
+        p1.add("class",st1.bag.creator);
+        p1.add("stub",st1);
 
         st2.bag.name = xdata::String("MP-2");
         st2.bag.slot = xdata::UnsignedInteger(2);
         st2.bag.uri = xdata::String("ipbusudp-2.0://127.0.0.1:50002");
 
-        p2.set("name",st2.bag.name);
-        p2.set("class",st2.bag.creator);
-        p2.set("stub",st2);
+        p2.add("name",st2.bag.name);
+        p2.add("class",st2.bag.creator);
+        p2.add("stub",st2);
 
         st3.bag.name = xdata::String("MP-3");
         st3.bag.slot = xdata::UnsignedInteger(3);
         st3.bag.uri = xdata::String("ipbusudp-2.0://127.0.0.1:50003");
 
-        p3.set("name",st3.bag.name);
-        p3.set("stub",st3);
-        p3.set("class",st3.bag.creator);
+        p3.add("name",st3.bag.name);
+        p3.add("stub",st3);
+        p3.add("class",st3.bag.creator);
         
         ps_processors += p1,p2,p3;
 
@@ -130,17 +130,17 @@ struct Params {
         amc13Bag.bag.slot    = xdata::UnsignedInteger(13);       
         
         swco::XParameterSet srv1, srv2;
-        srv1.set("name", amc13Bag.bag.name);
-        srv1.set("class", amc13Bag.bag.creator);
-        srv1.set("stub", amc13Bag);
+        srv1.add("name", amc13Bag.bag.name);
+        srv1.add("class", amc13Bag.bag.creator);
+        srv1.add("stub", amc13Bag);
         
         fakeMCHBag = amc13Bag;
         fakeMCHBag.bag.name = xdata::String("MCH-1");
         fakeMCHBag.bag.slot = xdata::UnsignedInteger(14);
         
-        srv2.set("name", fakeMCHBag.bag.name);
-        srv2.set("class", fakeMCHBag.bag.creator);
-        srv2.set("stub", fakeMCHBag);
+        srv2.add("name", fakeMCHBag.bag.name);
+        srv2.add("class", fakeMCHBag.bag.creator);
+        srv2.add("stub", fakeMCHBag);
 
         ps_services.push_back(srv1);
         ps_services.push_back(srv2);

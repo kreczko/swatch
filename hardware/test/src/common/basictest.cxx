@@ -10,6 +10,7 @@
 // Swatch Headers
 #include "swatch/logger/Log.hpp"
 #include "swatch/core/XParameterSet.hpp"
+#include "swatch/core/xoperators.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
 #include "swatch/processor/ProcessorFactory.hpp"
 
@@ -67,36 +68,51 @@ int main(int argc, char** argv) {
         LOG(swlog::kError) << "Crap...";
     }
     
-    // TODO: Add amc13 reset
-    amc13_A->reset("ttsloopback");
-    // TODO: add a check that the communication is established
-    
-    // Mimic what System configure will need to do
-    std::vector<uint32_t> slots;
-    // enable slot 10
-    slots.push_back(10);
-    amc13_A->enableTTC(slots);
-
-//     exit(0);
-    
     // Create an MP7
     swatch::hardware::MP7Processor* mp7_A=0x0;
     try {
         mp7_A = dynamic_cast<swatch::hardware::MP7Processor*>(swatch::processor::ProcessorFactory::get()->make(mp7params));
     } catch ( const std::exception& e ) {
         LOG(swlog::kError) << e.what();
+        exit(-1);
     } catch (...) {
         LOG(swlog::kError) << "Crap...";
+        exit(-1);
     }
+
+    // TODO: Add amc13 reset
+    swco::Command* reset = amc13_A->getCommand("reset");
+    reset->getParameters().set("mode", xdata::String("ttsloopback"));
+
+    LOG(swlog::kNotice) << " -- AMC13 reset parameters";
+
+    BOOST_FOREACH( const std::string& k, reset->getParameters().keys()) {
+        LOG(swlog::kNotice) << k << " : " << reset->getParameters()[k];
+    }
+    reset->exec();
+    // TODO: add a check that the communication is established
     
-    BOOST_FOREACH( const std::string& mode, mp7_A->getModes() ) {
-        LOG(swlog::kNotice) << " - " << mode;
-    }
+
+    // Mimic what System configure will need to do
+    std::vector<uint32_t> slots;
+    // enable slot 10
+    slots.push_back(mp7_A->getSlot());
+    amc13_A->enableTTC(slots);
+
+    // exit(0);
+    
+
+    
+//    BOOST_FOREACH( const std::string& mode, mp7_A->getModes() ) {
+//        LOG(swlog::kNotice) << " - " << mode;
+//    }
     
 //    exit(0);
-    mp7_A->reset("external");
+//    mp7_A->reset("external");
 
     // mp7_A->reset("internal");
+
+    mp7_A->getCommand("reset")->exec();
     
     mp7_A->ttc()->clearCounters();
     

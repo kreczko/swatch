@@ -26,7 +26,7 @@ void XParameterSet::adopt( const std::string& name , T* data ) {
 //---
 template<typename T>
 void
-XParameterSet::set( const std::string& name , const T& data ) {
+XParameterSet::add( const std::string& name , const T& data ) {
     BOOST_STATIC_ASSERT( (boost::is_base_of<xdata::Serializable,T>::value) ); 
 
     if ( entries_.count(name) ) {
@@ -92,7 +92,7 @@ template<typename T>
 XParameterSet::Inserter&
 XParameterSet::Inserter::operator()(const std::string& aKey, const T& aValue) {
     BOOST_STATIC_ASSERT( (boost::is_base_of<xdata::Serializable,T>::value) ); 
-    xps_->set(aKey, aValue);
+    xps_->add(aKey, aValue);
     return *this;
 }
 
@@ -102,7 +102,7 @@ template<typename T>
 XParameterSet::Inserter
 XParameterSet::insert(const std::string& aKey, const T& aValue) {
   BOOST_STATIC_ASSERT( (boost::is_base_of<xdata::Serializable,T>::value) ); 
-    this->set(aKey, aValue);
+    this->add(aKey, aValue);
     return Inserter(this);
 }
 

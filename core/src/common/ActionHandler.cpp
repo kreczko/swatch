@@ -1,3 +1,10 @@
+/**
+ * @file    ActionHandler.cpp
+ * @author  Alessandro Thea
+ * @date    February 2015
+ *
+ */
+
 #include "swatch/core/ActionHandler.hpp"
 
 // Boost Headers
@@ -10,7 +17,9 @@ namespace core {
 
 
 //---
-ActionHandler::ActionHandler() {
+ActionHandler::ActionHandler() : commands_() {
+  // Make sure the map is correctly initialised
+  commands_.clear();
 }
 
 //---

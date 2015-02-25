@@ -146,10 +146,22 @@ XParameterSet::get( const std::string& name ) {
 
 
 //---
+void
+XParameterSet::set(const std::string& name, const xdata::Serializable& data) {
+  
+  EntryMap::iterator it = entries_.find(name);
+  if ( it == entries_.end() ) {
+    throw XParameterNotFound(name +" not found");
+  }
+
+  it->second.object->setValue(data);
+
+}
+
+//---
 const xdata::Serializable&
 XParameterSet::get( const std::string& name ) const {
   return const_cast<XParameterSet*>(this)->get(name);
-  // return const_cast<const xdata::Serializable&>(const_cast<const XParameterSet*>(this)->get(name));
 }
 
 

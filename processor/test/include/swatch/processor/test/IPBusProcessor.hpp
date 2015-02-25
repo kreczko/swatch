@@ -30,7 +30,6 @@ namespace processor {
 namespace test {
 
 //----------------------------------------------------------------------------//
-
 class IPBusProcessor : public swatch::processor::Processor {
 public:
     IPBusProcessor(const std::string& id, const swatch::core::XParameterSet& params);
@@ -41,9 +40,6 @@ public:
 
     uhal::HwInterface* hw() const;
 
-    virtual std::set<std::string> getModes() const;
-
-    virtual void reset( const std::string& mode );
 private:
 
     uint32_t slot_;

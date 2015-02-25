@@ -64,7 +64,7 @@ struct SystemSetupA {
         ProcessorBag b1;
         b1.bag.crate = xdata::String("crateC");
         b1.bag.slot = xdata::UnsignedInteger(1);
-        a1.set("stub", b1);
+        a1.add("stub", b1);
 
         Processor* p1 = new DummyProcessor("mp7-10", a1);
         system->add(p1);
@@ -73,7 +73,7 @@ struct SystemSetupA {
         ProcessorBag b2;
         b2.bag.crate = xdata::String("crateD");
         b2.bag.slot = xdata::UnsignedInteger(2);
-        a2.set("stub", b2);
+        a2.add("stub", b2);
         
         // a2.insert("crate", xdata::String("crateD"))
           // ("slot", xdata::Integer(2));
@@ -85,7 +85,7 @@ struct SystemSetupA {
         ProcessorBag b3;
         b3.bag.crate = xdata::String("crateD");
         b3.bag.slot = xdata::UnsignedInteger(3);
-        a3.set("stub", b3);
+        a3.add("stub", b3);
         
         Processor* p3 = ProcessorFactory::get()->make(a3);
         system->add(p3);

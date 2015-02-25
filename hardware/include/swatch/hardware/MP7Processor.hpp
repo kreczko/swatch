@@ -30,11 +30,8 @@ public:
     virtual uint32_t getSlot() const;
 
     virtual const std::string& getCrateId() const;
-    
-    virtual std::set<std::string> getModes() const;
 
-    virtual void reset(const std::string& mode);
-
+    mp7::MP7Controller& driver() { return *driver_; } 
 private:
     
     uint32_t slot_;
@@ -42,9 +39,6 @@ private:
     std::string crate_;
     
     mp7::MP7Controller* driver_;
-
-    boost::unordered_map<std::string, MP7ClockMode> clockModes_;
-
 
 };
 

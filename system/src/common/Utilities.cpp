@@ -41,9 +41,9 @@ treeToAMC13Pars(const boost::property_tree::ptree& t) {
     AMC13ServiceBag abag;
     abag.bag = astub;
 
-    amc13Set.set("name", abag.bag.name);
-    amc13Set.set("class", abag.bag.creator);
-    amc13Set.set("descriptor", abag);
+    amc13Set.add("name", abag.bag.name);
+    amc13Set.add("class", abag.bag.creator);
+    amc13Set.add("descriptor", abag);
     return amc13Set;
 }
 
@@ -64,7 +64,7 @@ treeToSystemPars( const boost::property_tree::ptree& t ) {
         core::XParameterSet procSet = swatch::processor::treeToProcessorPars(v.second);
         processorSets.push_back(procSet);
     }
-    sysPars.set("processors",processorSets);
+    sysPars.add("processors",processorSets);
 
     xdata::Vector<XParameterSet> amc13Sets;
     BOOST_FOREACH( const ptree::value_type &v, pt_system.get_child("SERVICES")) {
@@ -72,7 +72,7 @@ treeToSystemPars( const boost::property_tree::ptree& t ) {
         core::XParameterSet amc13Set = swatch::system::treeToAMC13Pars(v.second);
         amc13Sets.push_back(amc13Set);
     }
-    sysPars.set("services",amc13Sets);
+    sysPars.add("services",amc13Sets);
 
     return sysPars;
 }

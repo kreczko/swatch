@@ -49,7 +49,7 @@ struct MyBag {
 BOOST_AUTO_TEST_SUITE( XParsTestSuite )
 
 //---
-BOOST_AUTO_TEST_CASE(SetGetTest) {
+BOOST_AUTO_TEST_CASE(AddAdoptSetGetTest) {
   using namespace swatch::core;
   
   XParameterSet pars;
@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(SetGetTest) {
   std::cout << "Count entries: " << pars.size() << std::endl;
   std::cout << "Count 'aString': " << pars.has("aString") << std::endl;
   
-  pars.set("aString", xdata::String("aString"));
+  pars.add("aString", xdata::String("aString"));
   
   xdata::Bag<MyBag>* b = new xdata::Bag<MyBag>();
   pars.adopt("aBag", b);
@@ -69,8 +69,16 @@ BOOST_AUTO_TEST_CASE(SetGetTest) {
 
   // Assign aString
   pars.get<xdata::String>("aString") = "dummy";
-  std::cout << "Check pars size " << pars.size() << std::endl;
 
+  std::cout << "Check pars size " << pars.size() << std::endl;
+  
+  BOOST_CHECK_EQUAL(pars.get<xdata::String>("aString").toString(), "dummy");
+  BOOST_CHECK_EQUAL(pars.get("aString").toString(), "dummy");
+  BOOST_CHECK_EQUAL(pars["aString"].toString(), "dummy");
+  
+  pars["aString"].setValue(xdata::String("dummier"));
+  BOOST_CHECK_EQUAL(pars.get<xdata::String>("aString").toString(), "dummier");
+  
   std::cout << "Get <templated>" << pars.get<xdata::String>("aString").toString() << std::endl;
   std::cout << "Get " << pars.get("aString").toString() << std::endl;
   std::cout << "Get (operator[])" << pars["aString"].toString() << std::endl;
@@ -101,6 +109,20 @@ BOOST_AUTO_TEST_CASE(SetGetTest) {
 }
 
 //---
+BOOST_AUTO_TEST_CASE(FindTest) {
+  using namespace swatch::core;
+
+  XParameterSet pars;
+  
+  BOOST_CHECK_EQUAL(pars.has("any"),false);
+  
+  BOOST_CHECK_THROW(pars.get("any"), XParameterNotFound);
+
+  BOOST_CHECK_THROW(pars["any"], XParameterNotFound);
+  
+}
+
+//---
 BOOST_AUTO_TEST_CASE(InsertTest) {
   using namespace swatch::core;
   
@@ -119,9 +141,9 @@ BOOST_AUTO_TEST_CASE(AddXPsetTest) {
   using namespace swatch::core;
 
   XParameterSet* child = new XParameterSet();
-  child->set("1st", xdata::String("my first par"));
-  child->set("2nd", xdata::Integer(99));
-  child->set("3rd", xdata::Vector<xdata::Integer>());
+  child->add("1st", xdata::String("my first par"));
+  child->add("2nd", xdata::Integer(99));
+  child->add("3rd", xdata::Vector<xdata::Integer>());
 
   std::cout << "Child content: " << child->toString() << std::endl;
 
@@ -165,9 +187,9 @@ BOOST_AUTO_TEST_CASE(OStreamTest) {
   BOOST_CHECK_EQUAL(oss.str(),"5");
   
   XParameterSet xps;
-  xps.set("aInt",aInt);
-  xps.set("aString",aStr);
-  xps.set("aBag",aBag);
+  xps.add("aInt",aInt);
+  xps.add("aString",aStr);
+  xps.add("aBag",aBag);
 
   oss.str("");
   oss << xps.get("aInt");
@@ -193,7 +215,7 @@ BOOST_AUTO_TEST_CASE(CastTest) {
   using namespace swatch::core;
 
   XParameterSet xps;
-  xps.set("aString",xdata::String("aaa"));
+  xps.add("aString",xdata::String("aaa"));
   
   
   std::string s = xps.get<xdata::String>("aString");
@@ -207,9 +229,9 @@ BOOST_AUTO_TEST_CASE(IterTest) {
   using namespace swatch::core;
 
   XParameterSet xps;
-  xps.set("z",xdata::Integer(5));
-  xps.set("f",xdata::String("dummy"));
-  xps.set("a",xdata::Bag<MyBag>());
+  xps.add("z",xdata::Integer(5));
+  xps.add("f",xdata::String("dummy"));
+  xps.add("a",xdata::Bag<MyBag>());
 
   BOOST_FOREACH( const std::string& k, xps.keys() ) {
     std::cout << k << " = "  << xps[k] <<  std::endl;
@@ -345,8 +367,8 @@ BOOST_AUTO_TEST_CASE(CloneXPsetTest) {
   XParameterSet::XCloner cpars = XParameterSet::cloner_< XParameterSet >;
 
   XParameterSet* xpars = new XParameterSet();
-  xpars->set("a", xdata::Integer(3));
-  xpars->set("b", xdata::Float(11));
+  xpars->add("a", xdata::Integer(3));
+  xpars->add("b", xdata::Float(11));
 
   XParameterSet* opars = static_cast<XParameterSet*>( cpars(xpars) );
   

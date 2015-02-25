@@ -31,8 +31,9 @@ class AlgoInterface;
  *  A port class.
  */
 class Processor : public core::Device, public core::ActionHandler {
+protected:
+  Processor(const std::string& aId, const core::XParameterSet& params = core::XParameterSet());
 public:
-    Processor(const std::string& aId, const core::XParameterSet& params = core::XParameterSet());
     virtual ~Processor();
 
     /**
@@ -73,12 +74,6 @@ public:
     const std::vector<OutputChannel*>& outputChannels() const;
 
     OutputChannel* outputChannel(uint32_t i);
-
-    // Basic control methods
-
-    virtual std::set<std::string> getModes() const = 0;
-
-    virtual void reset( const std::string& mode ) = 0;
 
 
 protected:

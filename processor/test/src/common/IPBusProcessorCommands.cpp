@@ -31,7 +31,7 @@ namespace test {
 IPBusResetCommand::IPBusResetCommand(core::ActionHandler* aHandler) :
   Command(aHandler, xdata::Integer()) {
   
-  getParameters().set("mode",xdata::String());
+  getParameters().add("mode",xdata::String());
   
 
 }

@@ -43,8 +43,8 @@ BOOST_AUTO_TEST_CASE(SlotCanOnlyBeTakenOnce) {
 	b.bag.crate = xdata::String("crateA");
 	b.bag.slot =  xdata::UnsignedInteger(1);
 
-	a1.set("stub", b);
-	a2.set("stub", b);
+	a1.add("stub", b);
+	a2.add("stub", b);
 
 	DummyProcessor* p1 = new DummyProcessor("calol2-10", a1);
 	DummyProcessor* p2 = new DummyProcessor("calol2-13", a2);
@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_CASE(SlotOutOfRange) {
 	ProcessorBag b;
 	b.bag.crate = xdata::String("crateA");
 	b.bag.slot =  xdata::UnsignedInteger(999999);
-	a1.set("stub", b);
+	a1.add("stub", b);
 	DummyProcessor* p1 = new DummyProcessor("calol2-10", a1);
 
 	BOOST_CHECK_THROW(crate->add(p1), CrateSlotOutOfRange);
