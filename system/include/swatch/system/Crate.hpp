@@ -36,6 +36,8 @@ public:
     system::DaqTTCService* amc13() { return amc13_; }
     
     std::vector<uint32_t> getPopulatedSlots() const;
+    
+    std::vector<uint32_t> getAMCSlots() const;
     bool isSlotTaken( uint32_t slot ) const;
     
 private:

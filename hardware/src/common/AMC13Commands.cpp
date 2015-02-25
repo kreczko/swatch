@@ -64,7 +64,7 @@ void AMC13ResetCommand::exec() {
     }
     
     // and check the status
-    amc13->driver()->getStatus()->Report(1);
+    // amc13->driver()->getStatus()->Report(1);
 }
 
 

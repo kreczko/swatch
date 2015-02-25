@@ -60,7 +60,7 @@ MP7Processor::MP7Processor(const std::string& id, const swatch::core::XParameter
     ctrl_ = new MP7Controls( driver_ );
     ttc_  = new MP7TTCInterface( driver_ ); 
     
-    LOG(swlog::kNotice) << "MP7 Processor built: firmware 0x" << std::hex << ctrl_->firmwareVersion() << std::endl;
+    LOG(swlog::kNotice) << "MP7 Processor '" << this->id() << "' built: firmware 0x" << std::hex << ctrl_->firmwareVersion() << std::endl;
     
 }
 

@@ -11,6 +11,7 @@
 // Swatch Headers
 #include "swatch/processor/Utilities.hpp"
 #include "swatch/system/AMC13ServiceStub.hpp"
+#include "swatch/system/CrateStub.hpp"
 
 // Boost Headers
 #include <boost/foreach.hpp>
@@ -20,7 +21,18 @@ namespace system {
 
 swatch::core::XParameterSet
 treeToCratePars(const boost::property_tree::ptree& t) {
+
     swatch::core::XParameterSet cratePars;
+    CrateStub astub;
+    
+    astub.name = t.get<std::string>("CRATE NAME");
+    astub.location = t.get<std::string>("CRATE LOCATION");
+    astub.description = t.get<std::string>("CRATE DESCRIPTION");
+    
+    CrateBag abag;
+    abag.bag = astub;
+    cratePars.add("name", abag.bag.name);
+    cratePars.add("stub", abag );
     return cratePars;
 }
   
@@ -43,7 +55,7 @@ treeToAMC13Pars(const boost::property_tree::ptree& t) {
 
     amc13Set.add("name", abag.bag.name);
     amc13Set.add("class", abag.bag.creator);
-    amc13Set.add("descriptor", abag);
+    amc13Set.add("stub", abag);
     return amc13Set;
 }
 
@@ -58,7 +70,15 @@ treeToSystemPars( const boost::property_tree::ptree& t ) {
     XParameterSet sysPars;
 
     const ptree &pt_system = t.get_child("SYSTEM");
+    sysPars.add("name", xdata::String(pt_system.get<std::string>("NAME")));
 
+    xdata::Vector<XParameterSet> crateSets;
+    BOOST_FOREACH( const ptree::value_type &v, pt_system.get_child("CRATES")) {
+      core::XParameterSet crateSet = swatch::system::treeToCratePars(v.second);
+      crateSets.push_back(crateSet);
+    }
+    sysPars.add("crates", crateSets);
+    
     xdata::Vector<XParameterSet> processorSets;
     BOOST_FOREACH( const ptree::value_type &v, pt_system.get_child("PROCESSORS")) {
         core::XParameterSet procSet = swatch::processor::treeToProcessorPars(v.second);

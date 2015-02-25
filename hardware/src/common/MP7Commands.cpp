@@ -22,6 +22,8 @@ namespace hardware {
 MP7ResetCommand::MP7ResetCommand(core::ActionHandler* aHandler) : 
     Command(aHandler, xdata::Integer() ) {
 
+    // Integer result?
+
 }
 
 //---
@@ -37,6 +39,7 @@ void MP7ResetCommand::exec() {
   std::string mode = "external";
   p->driver().reset(mode, mode, mode);
 
+  setDone("Reset completed");
 }
 
 

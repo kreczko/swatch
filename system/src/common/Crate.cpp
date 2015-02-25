@@ -76,12 +76,19 @@ Crate::amc(uint32_t slot) {
 
 std::vector<uint32_t>
 Crate::getPopulatedSlots() const {
+    std::vector<uint32_t> slots = getAMCSlots();
+    
+    if ( amc13_ ) slots.push_back(amc13_->getSlot());
+    return slots;
+}
+
+std::vector<uint32_t>
+Crate::getAMCSlots() const {
     std::vector<uint32_t> slots;
     BOOST_FOREACH( processor::Processor* p, amcs_ ) {
         if (p) slots.push_back(p->getSlot());
     }
     
-    if ( amc13_ ) slots.push_back(amc13_->getSlot());
     return slots;
 }
 

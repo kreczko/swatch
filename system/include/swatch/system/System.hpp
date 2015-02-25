@@ -38,6 +38,8 @@ class DaqTTCService;
 //! Generic class to build a 
 class System : public core::Device {
 public:
+  
+  typedef boost::unordered_map<std::string, Crate*> CratesMap;
 
     System( const std::string& aId, const core::XParameterSet& params = core::XParameterSet() );
     virtual ~System();
@@ -48,10 +50,10 @@ public:
     void add( system::Service* aService );
     void add( system::Crate* crate );
     
-    const std::deque<processor::Processor*>& getProcessors() const;
-    const std::deque<Service*>& getServices() const;
-    const std::deque<core::Link*>& getLinks() const;
-    const boost::unordered_map<std::string, Crate*>& getCrates() const;
+    std::deque<processor::Processor*>& getProcessors() ;
+    std::deque<Service*>& getServices();
+    std::deque<core::Link*>& getLinks();
+    CratesMap& getCrates();
     
     bool hasCrate(const std::string& crate_id) const;
 
@@ -75,7 +77,7 @@ protected:
     // std::deque<SysPorts*> mPorts;
     
     //! Map of crates
-    boost::unordered_map<std::string, Crate*> cratesMap_;
+    CratesMap cratesMap_;
 
 
 

@@ -8,6 +8,7 @@
 #include "swatch/hardware/AMC13Service.hpp"
 
 // Swatch Headers
+#include "swatch/logger/Log.hpp"
 #include "swatch/system/AMC13ServiceStub.hpp"
 #include "swatch/system/ServiceFactory.hpp"
 #include "swatch/hardware/AMC13Commands.hpp"
@@ -21,6 +22,10 @@
 // Boost Headers
 #include <boost/assign.hpp>
 
+namespace swco = swatch::core;
+namespace swlog = swatch::logger;
+namespace swhw = swatch::hardware;
+
 namespace swatch {
 namespace hardware {
     
@@ -32,7 +37,7 @@ AMC13Service::AMC13Service(const std::string& aId, const core::XParameterSet& aP
   
     registerCommand<AMC13ResetCommand>("reset");
     
-    system::AMC13ServiceStub& desc = aPars.get<system::AMC13ServiceBag>("descriptor").bag;
+    system::AMC13ServiceStub& desc = aPars.get<system::AMC13ServiceBag>("stub").bag;
 
     crate_ = desc.crate;
     slot_  = desc.slot;
@@ -42,7 +47,7 @@ AMC13Service::AMC13Service(const std::string& aId, const core::XParameterSet& aP
                         desc.uriT2, static_cast<std::string>(desc.addressTableT2).substr(7) );
     
 
-    driver_->getStatus()->Report(1);
+    LOG(swlog::kNotice) << "AMC13 Service '" << id() << "' built";
 }
 
 AMC13Service::~AMC13Service() {
@@ -68,10 +73,6 @@ AMC13Service::enableTTC(const std::vector<uint32_t>& slots) {
     std::cout << "AMC mask: 0x" << std::hex <<  mask << std::endl;
     // apply mask
     driver_->AMCInputEnable(mask);
-
-    // and check the status
-    driver_->getStatus()->Report(1);
-
 
 }
 

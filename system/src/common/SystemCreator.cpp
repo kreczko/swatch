@@ -77,6 +77,7 @@ void SystemCreator::addServices(System* system, const swatch::core::XParameterSe
 	BOOST_FOREACH(swco::XParameterSet& ps,vPSets) {
 		Service* a = static_cast<Service*>(ServiceFactory::get()->make(
                 ps));
+
 		system->add(a);
 	}
 }

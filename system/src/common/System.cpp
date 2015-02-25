@@ -38,8 +38,8 @@ System::~System() {
 }
 
 //---
-const boost::unordered_map<std::string, Crate*>&
-System::getCrates() const {
+System::CratesMap&
+System::getCrates() {
     return cratesMap_;
 }
 
@@ -100,10 +100,18 @@ System::add(system::DaqTTCService* aAMC13) {
 //---
 void
 System::add(Service* aService) {
+  
+  //TODO: This is a bit disgusting, to be revised along with the ServiceFactory interface.  
+  system::DaqTTCService* daqttc = 0x0;
+  
+  if ( (daqttc = dynamic_cast<system::DaqTTCService*>(aService) ) != 0x0 ) {
+    this->add(daqttc);
+  } else {
     if (aService == NULL)
-        throw std::invalid_argument("AMC13 pointer is NULL!");
+        throw std::invalid_argument("Service pointer is NULL!");
     this->addObj(aService);
     services_.push_back(aService);
+  }
 }
 
 
@@ -117,7 +125,8 @@ System::add(core::Link* aLink) {
 }
 
 //---
-void System::add( Crate* crate ){
+void
+System::add( Crate* crate ){
     if (crate == NULL)
         throw std::invalid_argument ("Crate pointer is NULL!");
 	this->addObj(crate);
@@ -125,22 +134,22 @@ void System::add( Crate* crate ){
 }
 
 //---
-const std::deque<processor::Processor*>&
-System::getProcessors() const {
+std::deque<processor::Processor*>&
+System::getProcessors() {
     return processors_;
 }
 
 
 //---
-const std::deque<Service*>&
-System::getServices() const {
+std::deque<Service*>&
+System::getServices() {
     return services_;
 }
 
 
 //---
-const std::deque<core::Link*>&
-System::getLinks() const {
+std::deque<core::Link*>&
+System::getLinks() {
     return links_;
 }
 

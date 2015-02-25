@@ -2,14 +2,15 @@
  * @file    Logger.hpp
  * @author  Alessandro Thea
  * @brief   MP7 board processor implementation
- * @date    06/11/14
+ * @date    June 2014
  */
 
-#ifndef SWATCH_LOGGER_LOG_HPP
-#define SWATCH_LOGGER_LOG_HPP
+#ifndef __SWATCH_LOGGER_LOG_HPP__
+#define __SWATCH_LOGGER_LOG_HPP__
 
 #include <sstream>
 #include <map>
+#include <vector>
 
 // Macro Declaration
 #define LOG(level) \
@@ -61,8 +62,14 @@ private:
     static const char* logNames_[];
 };
 
+template<typename T>
+extern std::string vecFmt(const std::vector<T>& aVec);
+
+template<typename T>
+extern std::string shortVecFmt(const std::vector<T>& aVec);
+
 
 } // swatch
 } // logger
 
-#endif /* SWATCH_LOGGER_LOG_HPP */
+#endif /* __SWATCH_LOGGER_LOG_HPP__ */

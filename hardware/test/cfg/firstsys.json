@@ -2,6 +2,14 @@
   "SYSTEM":
           {
             "NAME": "CALOL2",
+            "CRATES": 
+                [
+                  {
+                    "CRATE NAME": "B14 Crate",
+                    "CRATE LOCATION": "Electronics lab @ B14",
+                    "CRATE DESCRIPTION": "MyCrateDescription"
+                  }
+                ],
             "PROCESSORS":
                     [
                       {
@@ -39,7 +47,7 @@
                         "SERVICE NAME": "AMC13-1",
                         "SERVICE TYPE": "AMC13",
                         "SERVICE CREATOR": "AMC13Service",
-                        "CRATE NAME": "S2G17-01",
+                        "CRATE NAME": "B14 Crate",
                         "CRATE SLOT": 13,
                         "URI T1": "chtcp-2.0://127.0.0.1:20304?target=192.168.1.73:50001",
                         "ADDRESS TABLE T1": "file://${CACTUS_ROOT}/etc/amc13/AMC13XG_T1_v0x4002.xml",
