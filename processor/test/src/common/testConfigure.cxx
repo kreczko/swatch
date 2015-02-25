@@ -168,77 +168,6 @@ private:
 };
 
 
-void configure(swpro::Processor *p, const swatch::core::XParameterSet &params) {
-    using namespace swatch::core;
-    // using namespace swpro;
-    // Claim exclusive use of the board
-    // TODO
-
-    // // Based on reset
-    // // Standard soft reset procedure
-    // p->ctrl()->softReset();
-
-    // // Change clock configuration
-    // // Every board must have 'internal' and 'external' modes
-    // p->ctrl()->configureClock("internal");
-
-    // // Enable/disable ttc
-    // p->ttc()->configure("internal");
-
-    // // Check presence of TTC clock and signals
-    // if ( not p->ttc()->isClock40Locked() ) {
-    //     cout << "Clock 40 NOT locked!" << endl;
-    // }
-    // if ( not p->ttc()->isOrbitLocked() ) {
-    //     cout << "Orbit (BC0) NOT locked!" << endl;
-    // }
-
-    // // And clear all counters
-    // p->ttc()->clearCounters();
-
-    p->reset("internal");
-
-    // Configure input and output channels and buffers
-
-    // Set MGTs up first
-    // Rx channels
-    BOOST_FOREACH( swpro::InputChannel* c, p->inputChannels() ) {
-        // Reset
-        // c->ctrl()->reset();
-        // Configure
-        // c->ctrl()->configure();
-        // Clear
-        c->clearErrors();
-    }
-    // Tx Channels 
-    BOOST_FOREACH( swpro::OutputChannel* c, p->outputChannels() ) {
-        // Reset
-        // c->ctrl()->reset();
-        // Configure
-        // c->ctrl()->configure();
-    }
-    
-    // And then buffers
-    BOOST_FOREACH( swpro::InputChannel* c, p->inputChannels() ) {
-        c->configureBuffer(swpro::ChannelBase::Latency);
-    }
-    BOOST_FOREACH( swpro::OutputChannel* c, p->outputChannels() ) {
-        c->configureBuffer(swpro::ChannelBase::Latency);
-    }
-
-
-    // Configure board DAQ block
-    
-
-    // Configure board’s algorithm block with scalers and LUTs
-    
-
-    // Post-configuration checks (if needed)
-    
-
-    // Check links alignment (?)
-}
-
 //----------------------------------------------------------------------------//
 void printStatus( swpro::Controls* ctrl ) {
     LOG(swlog::kInfo) << "Firmware version : 0x"  << std::hex << ctrl->firmwareVersion() << std::dec;
@@ -351,7 +280,7 @@ int main(int argc, char const *argv[]) {
         // Crap, let's get out here
         return -1;
     }
-
+    
     LOG(swlog::kNotice) << "//_ Step 0 ___ Testing object __________________________________";
     printStatus(p0);
 
@@ -392,48 +321,25 @@ int main(int argc, char const *argv[]) {
     }
 
     LOG(swlog::kNotice) << ">> Resetting on internal clock";
-    // reset(p0, mode);
-    p0->reset("internal");
+    
+    swco::Command* reset = p0->getCommand("reset");
+    BOOST_FOREACH( const std::string& s, reset->getParameters().keys() ) {
+      LOG(swlog::kInfo) << " - " << s;
+    }
+
+    reset->getParameters()["mode"] = xdata::String("internal");
+    reset->exec();
 
     LOG(swlog::kNotice) << ">> Take a nap (1 sec)";
     sleep(1);
     printStatus( p0->ttc() );
 
-    // cout << ">> Sending 5 L1s" << endl;
-    // p0->ttc()->sendMultipleL1A(5);
-    // printStatus( cout, p0->ttc() );
-    
-
     
     LOG(swlog::kNotice) << "//_ Step 2 ___ Testing config __________________________________";
-    swatch::core::XParameterSet config;
-    configure(p0, config);
 
-    // p0->inputChannel(0)->buffer()->configure(swatch::processor::AbstractChanBuffer::Capture, 0, 1);
-    // p0->inputChannel(2)->buffer()->configure(swatch::processor::AbstractChanBuffer::Capture, 0, 1);
-
-    LOG(swlog::kNotice) << ">> Sending test BGo";
-    p0->ttc()->sendBGo(0xc);
-
-    LOG(swlog::kNotice) << ">> Take a nap (1 sec)";
-    sleep(1);
-
-    const std::vector<swatch::processor::InputChannel*>& rxs = p0->inputChannels();
-    std::vector< std::vector<uint64_t> > data(rxs.size());
-    for ( size_t k(0); k < rxs.size(); ++k ) {
-        data[k].swap(p0->inputChannel(k)->download());
-    }
-
-    for ( size_t j(0); j<data[0].size(); ++j ) {
-        std::ostringstream msg;
-        msg << "Frame " <<  std::dec << std::setfill('0') << std::setw(4) << j << " : ";
-        for ( size_t k(0); k<data.size(); ++k )
-            msg << "0x" << std::hex << std::setfill('0') << std::setw(8) << data[k][j] << "   ";
-        LOG(swlog::kInfo) << msg.str();
-    }
-    // cout << endl << std::dec;
-
-    // std::vector<uint64_t> data = p0->inputChannel(2)->buffer()->download();
+    p0->getCommand("configure")->exec();
+    
+    p0->getCommand("capture")->exec();
 
     LOG(swlog::kNotice) << "//_ Destruction ________________________________________________";
     

@@ -27,52 +27,6 @@ IPBusTTC::~IPBusTTC() {
 }
 
 
-//void IPBusTTC::configure(const std::string& config) {
-//    // Kind of an overkill, but let's try to do things properly
-//    if ( configs_.find(config) == configs_.end() )
-//        throw std::logic_error("Configuration "+config+" not found.");
-//
-//    if ( config == "internal" ) {
-//        this->enable(false);
-//        this->generateInternalOrbit(true);
-//    } else if ( config == "extenal" ) {
-//        this->enable(true);
-//        this->generateInternalOrbit(false);  
-//    }
-//
-//    hw()->getNode("ttc.stat.bc0Locked").write(true);
-//    hw()->dispatch();
-//}
-
-
-//void
-//IPBusTTC::enable(bool enable) {
-//    hw()->getNode("ttc.ctrl.enable").write(enable);
-//    hw()->dispatch();
-//}
-//
-//void
-//IPBusTTC::generateInternalOrbit(bool generate /* = true */) {
-//    hw()->getNode("ttc.ctrl.genBC0").write(generate);
-//    hw()->dispatch();
-//}
-
-//void
-//IPBusTTC::sendSingleL1A() {
-//    uhal::ValWord<uint32_t> evc  = hw()->getNode("ttc.counters1.eventCntr").read();
-//    hw()->dispatch();
-//    hw()->getNode("ttc.counters1.eventCntr").write((uint32_t)evc+1);
-//    hw()->dispatch();
-//}
-//
-//void
-//IPBusTTC::sendMultipleL1A(uint32_t nL1A) {
-//    uhal::ValWord<uint32_t> evc  = hw()->getNode("ttc.counters1.eventCntr").read();
-//    hw()->dispatch();
-//    hw()->getNode("ttc.counters1.eventCntr").write((uint32_t)evc+nL1A);
-//    hw()->dispatch();
-//}
-
 void
 IPBusTTC::clearCounters() {
     hw()->getNode("ttc.counters").write(0);

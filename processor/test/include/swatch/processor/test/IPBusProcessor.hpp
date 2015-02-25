@@ -2,7 +2,7 @@
  * @file    IPBusProcessor.hpp
  * @author  Alessandro Thea
  * @brief   Brief description
- * @date    
+ * @date    2014
  */
 
 #ifndef SWATCH_PROCESSOR_TEST_IPBUSPROCESSOR_HPP

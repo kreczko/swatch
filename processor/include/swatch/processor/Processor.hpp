@@ -10,7 +10,7 @@
 
 // Swatch Headers
 #include "swatch/core/Device.hpp"
-#include "InputChannel.hpp"
+#include "swatch/core/ActionHandler.hpp"
 
 namespace swatch {
 
@@ -30,7 +30,7 @@ class AlgoInterface;
 /**
  *  A port class.
  */
-class Processor : public core::Device {
+class Processor : public core::Device, public core::ActionHandler {
 public:
     Processor(const std::string& aId, const core::XParameterSet& params = core::XParameterSet());
     virtual ~Processor();

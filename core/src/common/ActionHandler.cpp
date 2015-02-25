@@ -28,21 +28,6 @@ ActionHandler::~ActionHandler() {
 
 
 //---
-void
-ActionHandler::registerCommand(std::string aName, Command* aCmd) {
-
-  // Check if aCmd has already been registered
-  if ( commands_.count(aName) ) {
-    // Make it an exception, because the command already exists
-    return;
-  }
-  
-  commands_.emplace(aName, aCmd);
-    
-}
-
-
-//---
 Command*
 ActionHandler::getCommand(const std::string& aName) {
 

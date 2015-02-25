@@ -25,7 +25,17 @@ class ActionHandler {
 public:
     virtual ~ActionHandler();
     
-    void registerCommand(std::string aName, Command * aCmd  );
+    template<typename C>
+    void registerCommand(std::string aName ) {
+
+        // Check if aCmd has already been registered
+        if ( commands_.count(aName) ) {
+            // Make it an exception, because the command already exists
+            return;
+        }
+  
+        commands_.emplace(aName, new C(this) ) ;
+    }
 
     Command* getCommand( const std::string& aName );
 

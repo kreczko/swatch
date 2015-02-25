@@ -102,7 +102,7 @@ int main(int argc, char const *argv[]) {
 
   LOG(swlo::kInfo) << "resource : smthg = " << handler.something() << " - num = " << handler.number(); 
 
-  handler.registerCommand("dummy", new DummyCommand(&handler));
+  handler.registerCommand<DummyCommand>("dummy");
 
   LOG(swlo::kNotice) << "Registered commands ";
   BOOST_FOREACH( const std::string& cmdname, handler.getCommands() ) {

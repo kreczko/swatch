@@ -16,6 +16,7 @@
 #include "swatch/processor/test/IPBusTTC.hpp"
 #include "swatch/processor/test/IPBusRxChannel.hpp"
 #include "swatch/processor/test/IPBusTxChannel.hpp"
+#include "swatch/processor/test/IPBusProcessorCommands.hpp"
  
 
 // XDAQ Headers
@@ -48,6 +49,10 @@ IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::XParam
     Processor(id, params) {
     using namespace swatch::core;
     using namespace boost::assign;
+    
+    registerCommand<IPBusResetCommand>("reset");
+    registerCommand<IPBusConfigureCommand>("configure");
+    registerCommand<IPBusCapture>("capture");
     
     clockModes_ += "internal","external";
 
