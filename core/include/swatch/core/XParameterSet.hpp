@@ -1,10 +1,11 @@
 /**
  * @file    XParameterSet.hpp
  * @author  Alessandro Thea
- * @brief   Device, class representing the trigger network node.
+ * @brief   Generic contailer for xdata::Serializable objects
  * @date    February 2015
  *
  */
+
 #ifndef __SWATCH_CORE_XPARAMETERSET_HPP__
 #define __SWATCH_CORE_XPARAMETERSET_HPP__
 

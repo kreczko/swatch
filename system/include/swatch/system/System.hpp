@@ -11,6 +11,7 @@
 
 // Swatch Headers
 #include "swatch/core/Device.hpp"
+#include "swatch/core/ActionHandler.hpp"
 
 
 // Forward declarations
@@ -36,10 +37,10 @@ class Service;
 class DaqTTCService;
 
 //! Generic class to build a 
-class System : public core::Device {
+class System : public core::Device, public core::ActionHandler {
 public:
   
-  typedef boost::unordered_map<std::string, Crate*> CratesMap;
+  typedef boost::container::map<std::string, Crate*> CratesMap;
 
     System( const std::string& aId, const core::XParameterSet& params = core::XParameterSet() );
     virtual ~System();

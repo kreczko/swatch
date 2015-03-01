@@ -16,8 +16,6 @@
 // C++ Headers
 #include <iostream>
 
-// Swatch Headers
-#include "swatch/core/ParameterSet.hpp"
 
 // Namespace resolution
 using namespace std;

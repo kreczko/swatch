@@ -60,6 +60,19 @@ MP7Processor::MP7Processor(const std::string& id, const swatch::core::XParameter
     ctrl_ = new MP7Controls( driver_ );
     ttc_  = new MP7TTCInterface( driver_ ); 
     
+    uint32_t nRx = driver_->getChannelIDs(mp7::kLinkIDs).channels().size();
+    uint32_t nTx = driver_->getChannelIDs(mp7::kLinkIDs).channels().size();
+    
+    // Instantiate Rx ports
+    for( uint32_t k(0); k<nRx; ++k) {
+      
+    }
+    
+    // Instantiate Tx ports
+    for( uint32_t k(0); k<nTx; ++k) {
+      
+    }
+    
     LOG(swlog::kNotice) << "MP7 Processor '" << this->id() << "' built: firmware 0x" << std::hex << ctrl_->firmwareVersion() << std::endl;
     
 }

@@ -183,7 +183,7 @@ BOOST_AUTO_TEST_CASE(AddCrateToMap) {
     swsys::Crate * crate = new swsys::Crate("myCrate");
     swsys::System * system = new swsys::System("mySystem");
     system->add(crate);
-    boost::unordered_map<std::string, swsys::Crate*> crates = system->getCrates();
+    swsys::System::CratesMap crates = system->getCrates();
     // check if map contains the object ID
     bool is_crate_in_map = crates.find(crate->id()) != crates.end();
     BOOST_CHECK_EQUAL(is_crate_in_map, true );

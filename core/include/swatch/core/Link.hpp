@@ -4,7 +4,6 @@
  * @brief   Connection between Devices in the trigger network
  * @date    20.08.2014
  *
- * Detailed description
  */
 
 #ifndef __SWATCH_CORE_LINK_HPP__

@@ -11,7 +11,8 @@
 
 #include "swatch/core/Command.hpp"
 
-#include <boost/unordered_map.hpp>
+//#include <boost/unordered_map.hpp>
+#include <boost/container/map.hpp>
 
 namespace swatch {
 namespace core {
@@ -19,7 +20,7 @@ namespace core {
 
 /**
  * @class ActionHandler
- * @details Interface that provides support to commands and operations
+ * @brief Interface that provides support to commands and operations
  */
 class ActionHandler {
 public:
@@ -50,8 +51,8 @@ protected:
     
 private:
 
-    typedef boost::unordered_map<std::string, Command*> CommandMap;
-    
+    typedef boost::container::map<std::string, Command*> CommandMap;
+
     CommandMap commands_;
 
 };            

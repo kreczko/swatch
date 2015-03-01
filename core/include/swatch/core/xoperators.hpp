@@ -1,3 +1,10 @@
+/**
+ * @file    xoperators.hpp
+ * @author  Alessandro Thea
+ * @brief   Streamers for xdata classes
+ * @date    January 2015
+ *
+ */
 #ifndef __SWATCH_CORE_XOPERATORS_HPP__
 #define __SWATCH_CORE_XOPERATORS_HPP__
 

@@ -16,24 +16,32 @@ namespace core {
 /**
  *  Trigger network port class.
  */
-class Port : public Object {
-public:
-    explicit Port( const std::string& aId, const XParameterSet& params = XParameterSet() );
-    virtual ~Port();
+// class Port : public Object {
+// public:
+//     explicit Port( const std::string& aId, const XParameterSet& params = XParameterSet() );
+//     virtual ~Port();
     
-    /// add here methods to do things with a Port
-};
+//     /// add here methods to do things with a Port
+// };
 
 
-class InputPort : public Port {
+class InputPort : public Object {
+protected:
+    explicit InputPort( const std::string& aId) : Object(aId) {}
+    explicit InputPort( const std::string& aId, const XParameterSet& params ) : Object(aId, params) {}
 public:
-    explicit InputPort( const std::string& aId, const XParameterSet& params = XParameterSet() ) : Port(aId, params) {}
     virtual ~InputPort() {}
+
+    virtual uint32_t getErrors() const = 0;
+    virtual bool isOperating() const = 0;
+//    virtual void enable( bool aEnable = true) = 0;
+    virtual bool isEnabled() const = 0;
 };
 
-class OutputPort : public Port {
+class OutputPort : public Object {
 public:
-    explicit OutputPort( const std::string& aId, const XParameterSet& params = XParameterSet() ) : Port(aId, params) {}
+    explicit OutputPort( const std::string& aId ) : Object(aId ) {}
+    explicit OutputPort( const std::string& aId, const XParameterSet& params ) : Object(aId, params) {}
     virtual ~OutputPort() {}
 };
 

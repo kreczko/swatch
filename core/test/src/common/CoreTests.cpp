@@ -2,9 +2,9 @@
 #include <boost/test/unit_test.hpp>
 
 // Swatch Headers
-#include "swatch/core/ParameterSet.hpp"
 #include "swatch/core/Object.hpp"
 #include "swatch/core/test/SimpleObject.hpp"
+
 // Boost Headers
 #include <boost/assign.hpp>
 #include <boost/foreach.hpp>
@@ -28,7 +28,7 @@ public:
 
 uint32_t Dummy::counts = 0;
 
-
+/*
 //____________________________________________________________________________//
 BOOST_AUTO_TEST_CASE(ParameterSetTest) {
 
@@ -89,7 +89,7 @@ BOOST_AUTO_TEST_CASE(ParameterSetTest) {
     }
 }
 
-
+*/
 BOOST_AUTO_TEST_CASE(ObjectTest) {
     using namespace boost::assign;
     using namespace swatch::core;
@@ -97,8 +97,6 @@ BOOST_AUTO_TEST_CASE(ObjectTest) {
     
     SimpleObject* granpa = new SimpleObject("granpa");
     
-    ParameterSet pset;
-
     SimpleObject* daddy = new SimpleObject("daddy");
     
     granpa->add(daddy);

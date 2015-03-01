@@ -7,9 +7,6 @@
 
 #include "swatch/processor/test/IPBusRxChannel.hpp"
 
-// Swatch Headers
-#include "swatch/core/ParameterSet.hpp"
- 
 // Boost Headers
 #include <boost/foreach.hpp>
 

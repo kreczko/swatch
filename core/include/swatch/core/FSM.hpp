@@ -1,8 +1,9 @@
-/*
- * Finite State Machine (FSM) for swatch.
+/**
+ * @file    FSM.hpp
+ * @author  kreczko
+ * @brief   Finite State Machine (FSM) for swatch.
+ * @date    November 2014
  *
- *  Created on: 18 Nov 2014
- *      Author: kreczko
  */
 
 #ifndef __SWATCH_CORE_FSM_HPP__

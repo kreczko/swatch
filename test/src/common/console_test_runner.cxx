@@ -21,6 +21,9 @@ namespace cla = boost::runtime::cla;
 // STL
 #include <iostream>
 
+#  ifndef BOOST_HAS_UNISTD_H
+#     define BOOST_HAS_UNISTD_H
+#  endif
 //_________________________________________________________________//
 
 // System API

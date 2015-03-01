@@ -8,15 +8,19 @@
 
 #include <xdata/Integer.h>
 
+// Swatch Headers
 #include "swatch/processor/test/IPBusProcessorCommands.hpp"
 #include "swatch/processor/test/IPBusProcessor.hpp"
 #include "swatch/processor/test/IPBusTTC.hpp"
 #include "swatch/processor/test/IPBusRxChannel.hpp"
 #include "swatch/processor/test/IPBusTxChannel.hpp"
-
 #include "swatch/logger/Log.hpp"
 
+// XDAQ Headers
 #include "xdata/String.h"
+
+// Boost Headers
+#include <boost/foreach.hpp>
 
 namespace swlog = swatch::logger;
 namespace swpro = swatch::processor;
@@ -132,21 +136,21 @@ void IPBusConfigureCommand::exec() {
 
     // Set MGTs up first
     // Rx channels
-    BOOST_FOREACH( swpro::InputChannel* c, p->inputChannels() ) {
+//    BOOST_FOREACH( swpro::InputChannel* c, p->inputChannels() ) {
         // Reset
         // c->ctrl()->reset();
         // Configure
         // c->ctrl()->configure();
         // Clear
-        c->clearErrors();
-    }
+//        c->clearErrors();
+//    }
     // Tx Channels 
-    BOOST_FOREACH( swpro::OutputChannel* c, p->outputChannels() ) {
+//    BOOST_FOREACH( swpro::OutputChannel* c, p->outputChannels() ) {
         // Reset
         // c->ctrl()->reset();
         // Configure
         // c->ctrl()->configure();
-    }
+//    }
     
     // And then buffers
     BOOST_FOREACH( swpro::InputChannel* c, p->inputChannels() ) {

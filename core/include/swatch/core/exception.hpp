@@ -1,3 +1,11 @@
+/**
+ * @file    exception.hpp
+ * @author  Alessandro Thea
+ * @brief   Implementation of the templated methods
+ * @date    July 2014
+ *
+ */
+
 #ifndef __SWATCH_CORE_EXCEPTION_HPP__
 #define __SWATCH_CORE_EXCEPTION_HPP__
 

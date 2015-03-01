@@ -28,8 +28,7 @@ namespace system {
 
 //---
 System::System(const std::string& aId, const core::XParameterSet& params)
-: Device(aId, params)
-{
+: Device(aId, params) {
 }
 
 
@@ -86,7 +85,7 @@ System::add(system::DaqTTCService* aAMC13) {
     // and give it a different view
     std::string crateId = aAMC13->getCrateId();
 
-    boost::unordered_map<std::string, Crate*>::iterator cit = cratesMap_.find(crateId);
+    CratesMap::iterator cit = cratesMap_.find(crateId);
     if (!hasCrate(crateId)) {
     	stringstream ss;
     	ss << "System '" << this->id() << "': Cannot find Crate " << crateId;

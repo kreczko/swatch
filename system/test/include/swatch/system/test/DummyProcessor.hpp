@@ -9,10 +9,26 @@
 #define	__SWATCH_TEST_DUMMYPROCESSOR_HPP__
 
 #include "swatch/processor/Processor.hpp"
+#include "swatch/core/Port.hpp"
 
 namespace swatch {
 namespace system {
 namespace test {
+
+class DummyRxPort : public core::InputPort {
+public:
+  DummyRxPort(const std::string& aId);
+
+  virtual ~DummyRxPort();
+
+
+  virtual bool isOperating() const;
+
+  virtual bool isEnabled() const;
+
+  virtual uint32_t getErrors() const;
+
+};
 
 class DummyProcessor : public processor::Processor {
 public:

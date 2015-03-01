@@ -1,8 +1,9 @@
-/* 
- * File:   ParameterSet.hxx
- * Author: ale
+/**
+ * @file    FSM.hxx
+ * @author  kreczko
+ * @brief   Finite State Machine (FSM) for swatch.
+ * @date    November 2014
  *
- * Created on August 1, 2014, 12:30 PM
  */
 
 #ifndef __SWATCH_CORE_FSM_HXX__

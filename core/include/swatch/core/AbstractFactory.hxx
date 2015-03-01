@@ -1,8 +1,9 @@
-/* 
- * File:   AbstractFactory.hxx
- * Author: ale
+/**
+ * @file    AbstractFactory.hxx
+ * @author  Alessandro Thea
+ * @brief   Implementation of the templated methods
+ * @date    July 2014
  *
- * Created on July 31, 2014, 4:51 PM
  */
 
 #ifndef __SWATCH_CORE_ABSTRACTFACTORY_HXX__

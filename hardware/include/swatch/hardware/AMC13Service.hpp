@@ -29,6 +29,10 @@ public:
 
     virtual const std::string& getCrateId() const;
     
+    virtual void reset();
+    
+    virtual void configureClock(const std::string& mode);
+
     virtual void enableTTC(const std::vector<uint32_t>& aSlots);
 
     amc13::AMC13* driver() { return driver_; }

@@ -1,8 +1,9 @@
-/* 
- * File:   AbstractFactory.hpp
- * Author: ale
+/**
+ * @file    AbstractFactory.hpp
+ * @author  Alessandro Thea
+ * @brief   Template class to provide support for abstract classes
+ * @date    July 2014
  *
- * Created on July 31, 2014, 4:50 PM
  */
 
 #ifndef __SWATCH_CORE_ABSTRACTFACTORY_HPP__

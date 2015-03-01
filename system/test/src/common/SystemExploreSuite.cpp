@@ -175,7 +175,7 @@ BOOST_AUTO_TEST_CASE(ExploreSystem) {
     LOG(kDebug) << "Printing crate views";
     LOG(kDebug) << "====================";
 
-    boost::unordered_map<std::string, Crate*>::const_iterator cit;
+    System::CratesMap::const_iterator cit;
     for (cit = system->getCrates().begin(); cit != system->getCrates().end(); ++cit) {
         LOG(kDebug) << "crate '" << cit->first << "' : " << *(cit->second);
     }

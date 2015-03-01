@@ -4,7 +4,6 @@
  * @brief   Base class to exercise the Object interface
  * @date    August 2014
  *
- * Detailed description
  */
 
 #ifndef __SWATCH_TEST_OBJECT_HPP__

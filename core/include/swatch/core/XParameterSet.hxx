@@ -1,3 +1,11 @@
+/**
+ * @file    XParameterSet.hxx
+ * @author  Alessandro Thea
+ * @brief   Generic contailer for xdata::Serializable objects
+ * @date    February 2015
+ *
+ */
+
 #ifndef __SWATCH_CORE_XPARAMETERSET_HXX__
 #define __SWATCH_CORE_XPARAMETERSET_HXX__
 

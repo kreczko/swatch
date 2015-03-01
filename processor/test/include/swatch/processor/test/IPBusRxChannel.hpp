@@ -1,8 +1,8 @@
 /**
  * @file    IPBusRxChannel.hpp
  * @author  Alessandro Thea
- * @brief   Brief description
- * @date    
+ * @brief   Object to simulate a Processor input channels
+ * @date    Some time ago
  */
 
 #ifndef SWATCH_PROCESSOR_TEST_IPBUXRXCHANNEL_HPP

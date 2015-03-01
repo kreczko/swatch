@@ -29,6 +29,26 @@ namespace swatch {
 namespace system {
 namespace test {
 
+DummyRxPort::DummyRxPort(const std::string& aId) :
+  InputPort(aId) {
+}
+
+DummyRxPort::~DummyRxPort() {
+}
+
+bool DummyRxPort::isOperating() const {
+  return true;
+}
+
+bool DummyRxPort::isEnabled() const {
+  return true;
+}
+
+uint32_t DummyRxPort::getErrors() const {
+  return 0;
+}
+
+
 SWATCH_PROCESSOR_REGISTER_CLASS(DummyProcessor);
 
 using std::cout;
@@ -46,7 +66,7 @@ DummyProcessor::DummyProcessor(const std::string& aId, const core::XParameterSet
     for ( int chan(0); chan < 4 ; ++chan) { 
         ss.str(std::string());
         ss << "rx" << std::setw(2) << std::setfill('0') << chan;
-        this->addInput(new core::InputPort(ss.str()));
+        this->addInput(new DummyRxPort(ss.str()));
     }
     
     for ( int chan(0); chan < 2 ; ++chan) { 

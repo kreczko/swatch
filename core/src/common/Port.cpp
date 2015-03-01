@@ -11,11 +11,11 @@
 namespace swatch {
 namespace core {
 
-Port::Port(const std::string& aId, const XParameterSet& params) : Object(aId) {
-}
+// Port::Port(const std::string& aId, const XParameterSet& params) : Object(aId) {
+// }
 
-Port::~Port() {
-}
+// Port::~Port() {
+// }
 
 }
 }

@@ -15,7 +15,6 @@ test configuration
 
 // Swatch Headers
 #include "swatch/logger/Log.hpp"
-#include "swatch/core/ParameterSet.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
 #include "swatch/processor/test/IPBusDummyHardware.hpp"
 #include "swatch/processor/test/IPBusProcessor.hpp"

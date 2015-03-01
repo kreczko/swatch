@@ -1,8 +1,8 @@
 /**
  * @file    Processor.hpp
  * @author  Alessandro Thea
- * @brief   Brief description
- * @date    11/07/2014
+ * @brief   Processor abstract interface
+ * @date    1July 2014
  */
 
 #ifndef _SWATCH_TEST_PROCESSOR_HPP_

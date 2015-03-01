@@ -46,7 +46,7 @@ public:
 
     Status status() const;
 
-    virtual float progress() const;
+    float progress() const;
 
     xdata::Serializable& result();
 
@@ -57,9 +57,9 @@ public:
         return dynamic_cast<T&>(result());
     }
 
-    virtual const std::string& progressMsg() const;
+    const std::string& progressMsg() const;
 
-    virtual const std::string& statusMsg() const { return statusMsg_; }
+    const std::string& statusMsg() const { return statusMsg_; }
 
 protected:
 
