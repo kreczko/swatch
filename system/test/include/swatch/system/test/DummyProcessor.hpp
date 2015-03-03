@@ -21,12 +21,14 @@ public:
 
   virtual ~DummyRxPort();
 
+  virtual bool isEnabled() const;
 
   virtual bool isOperating() const;
 
-  virtual bool isEnabled() const;
-
-  virtual uint32_t getErrors() const;
+  virtual bool isAligned() const;
+  
+  
+  virtual uint32_t getCRCErrors() const;
 
 };
 
@@ -38,9 +40,6 @@ public:
     virtual uint32_t getSlot() const { return slot_; }
     virtual const std::string& getCrateId() const { return crate_; }
     
-
-    virtual std::set<std::string> getModes() const;
-
     virtual void reset(const std::string& mode);
 
 

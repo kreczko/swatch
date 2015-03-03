@@ -20,8 +20,24 @@ Command::~Command() {
 
 
 //---
+void 
+Command::exec() {
+  // Reset the status before doing anything
+  reset();
+
+  // Execute the command protected by a very generic try/catch
+  try {
+    this->code();
+  } catch ( const std::exception& e ) {
+    // TODO: log the error to error msg (or not?)
+    // Then rethrow the exception on to the higher layers of code.
+    throw;
+  }
+}
+
+//---
 XParameterSet&
-Command::getParameters() {
+Command::getParams() {
   return parameters_;
 }
 

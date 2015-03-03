@@ -35,7 +35,7 @@ namespace test {
 IPBusResetCommand::IPBusResetCommand(core::ActionHandler* aHandler) :
   Command(aHandler, xdata::Integer()) {
   
-  getParameters().add("mode",xdata::String());
+  getParams().add("mode",xdata::String());
   
 
 }
@@ -47,16 +47,16 @@ IPBusResetCommand::~IPBusResetCommand() {
 
 
 //---
-void IPBusResetCommand::exec() {
+void IPBusResetCommand::code() {
 
     IPBusProcessor* p = getHandler<IPBusProcessor>();
     
-    if ( !getParameters().has("mode") ) {
+    if ( !getParams().has("mode") ) {
       setError("Configuration not found!");
       return;
     }
     
-    std::string config = getParameters().get<xdata::String>("mode");
+    std::string config = getParams().get<xdata::String>("mode");
 
     // do a soft reset
     p->ctrl()->softReset();
@@ -98,7 +98,7 @@ IPBusConfigureCommand::~IPBusConfigureCommand() {
   
 }
 
-void IPBusConfigureCommand::exec() {
+void IPBusConfigureCommand::code() {
   
     using namespace swatch::core;
     // using namespace swpro;
@@ -180,7 +180,7 @@ IPBusCapture::IPBusCapture(core::ActionHandler* aHandler) :
 IPBusCapture::~IPBusCapture() {
 }
 
-void IPBusCapture::exec() {
+void IPBusCapture::code() {
 
     IPBusProcessor* p = getHandler<IPBusProcessor>();
 

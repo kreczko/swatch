@@ -38,11 +38,15 @@ public:
 
     virtual ~Command();
 
-    virtual void exec() = 0;
-    
+    void exec();
+   
+protected:
+    virtual void code() = 0;
+
+public:
     virtual void reset();
 
-    XParameterSet & getParameters();
+    XParameterSet & getParams();
 
     Status status() const;
 

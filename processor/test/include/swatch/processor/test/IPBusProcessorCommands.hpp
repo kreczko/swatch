@@ -24,7 +24,7 @@ public:
 
   virtual ~IPBusResetCommand();
 
-  virtual void exec();
+  virtual void code();
 
 };
 
@@ -34,7 +34,7 @@ public:
 
   virtual ~IPBusConfigureCommand();
 
-  virtual void exec();
+  virtual void code();
 
 };
 
@@ -45,7 +45,7 @@ public:
 
   virtual ~IPBusCapture();
 
-  virtual void exec();
+  virtual void code();
 
 };
 

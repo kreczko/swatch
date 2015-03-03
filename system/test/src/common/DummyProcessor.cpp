@@ -36,15 +36,19 @@ DummyRxPort::DummyRxPort(const std::string& aId) :
 DummyRxPort::~DummyRxPort() {
 }
 
-bool DummyRxPort::isOperating() const {
-  return true;
-}
-
 bool DummyRxPort::isEnabled() const {
   return true;
 }
 
-uint32_t DummyRxPort::getErrors() const {
+bool DummyRxPort::isOperating() const {
+  return true;
+}
+
+bool DummyRxPort::isAligned() const {
+
+}
+
+uint32_t DummyRxPort::getCRCErrors() const {
   return 0;
 }
 
@@ -83,10 +87,6 @@ DummyProcessor::DummyProcessor(const std::string& aId, const core::XParameterSet
 }
 
 DummyProcessor::~DummyProcessor() {
-}
-
-std::set<std::string> DummyProcessor::getModes() const {
-    return std::set<std::string>();
 }
 
 void DummyProcessor::reset(const std::string& mode) {
