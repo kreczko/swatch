@@ -18,11 +18,21 @@ public:
   MP7ResetCommand( core::ActionHandler* aHandler );
   virtual ~MP7ResetCommand();
 
-  virtual void exec();
-
-private:
+  virtual void code();
 
 };
+
+
+class MP7ConfigureLoopback : public core::Command{
+public:
+  MP7ConfigureLoopback( core::ActionHandler* aHandler );
+
+  virtual ~MP7ConfigureLoopback();
+
+  virtual void code();
+
+};
+
 
 } /* namespace hardware */
 } /* namespace swatch */

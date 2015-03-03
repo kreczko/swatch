@@ -1,7 +1,7 @@
 {
   "SYSTEM":
           {
-            "NAME": "CALOL2",
+            "NAME": "calol2",
             "CRATES": 
                 [
                   {
@@ -13,14 +13,14 @@
             "PROCESSORS":
                     [
                       {
-                        "PROCESSOR NAME": "MP-1",
+                        "PROCESSOR NAME": "mp01",
                         "PROCESSOR TYPE": "CALO2 PROCESSOR",
                         "PROCESSOR CREATOR": "MP7Processor",
-                        "HARDWARE TYPE": "MP7 B14",
-                        "URI": "chtcp-2.0://127.0.0.1:20304?target=192.168.2.104:50001",
+                        "HARDWARE TYPE": "MP7",
+                        "URI": "chtcp-2.0://127.0.0.1:20304?target=192.168.2.115:50001",
                         "ADDRESS TABLE": "file://${CACTUS_ROOT}/etc/mp7/addrtab/xe_v1_5_2/mp7xe_infra.xml",
                         "CRATE NAME": "B14 Crate",
-                        "CRATE SLOT": 3,
+                        "CRATE SLOT": 12,
                         "RX PORTS": [
                             {
                               "NAME" : "Rx1",

@@ -37,6 +37,7 @@
 
 // AMC13 Headers
 #include "amc13/AMC13.hh"
+#include "swatch/core/Port.hpp"
 
 using namespace std;
 namespace swco = swatch::core;
@@ -55,7 +56,7 @@ public:
   }
 
 
-  virtual void exec() {
+  virtual void code() {
     
     swsys::System* sys = getHandler<swsys::System>();
     
@@ -74,7 +75,6 @@ public:
 
         crate->amc13()->configureClock("ttsloopback");
         
-        // dynamic_cast<swhw::AMC13Service*>(crate->amc13())->driver()->getStatus()->Report(3);
     }
     
     
@@ -127,11 +127,12 @@ public:
         }
 
     }
-    setDone("AMC13 & MP7(s) configured");
+    setDone("AMC13 & MP7(s) reset and locked on TTC Clock/BC0");
 
   }
 
 };
+
 
 /*
  * 
@@ -144,8 +145,6 @@ int main(int argc, char** argv) {
 
     uhal::setLogLevelTo(uhal::Warning());
     
-//    exit(0);
-    
     // Build the property tree
     ptree pt;
     read_json(shellExpandPath("${SWATCH_ROOT}/hardware/test/cfg/firstsys.json"), pt);
@@ -156,6 +155,25 @@ int main(int argc, char** argv) {
     mysys->registerCommand<ResetClockCommand>("resetClocks");
     
     mysys->getCommand("resetClocks")->exec();
+    
+    BOOST_FOREACH( swpro::Processor* p, mysys->getProcessors() ) {
+      p->getCommand("loopback")->exec();
+      
+      LOG(swlo::kInfo) << left 
+                       << setw(15) << "id" << " | "
+                       << setw(7) << "enabled" <<  " | " 
+                       << setw(9) << "operating" << " | "
+                       << setw(7) << "aligned" << " | "
+                       << setw(6) << "crcs" ;
+      BOOST_FOREACH( swco::InputPort* ip, p->getInputs() ){
+        LOG(swlo::kInfo) << left 
+            << setw(15) << ip->path() << " | "
+            << setw(7) << ip->isEnabled() << " | "
+            << setw(9) << ip->isOperating() << " | "
+            << setw(7) << ip->isAligned() << " | "
+            << setw(6) << ip->getCRCErrors() ;
+      } 
+    }
 
     return 0;
 }

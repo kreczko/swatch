@@ -322,11 +322,11 @@ int main(int argc, char const *argv[]) {
     LOG(swlog::kNotice) << ">> Resetting on internal clock";
     
     swco::Command* reset = p0->getCommand("reset");
-    BOOST_FOREACH( const std::string& s, reset->getParameters().keys() ) {
+    BOOST_FOREACH( const std::string& s, reset->getParams().keys() ) {
       LOG(swlog::kInfo) << " - " << s;
     }
 
-    reset->getParameters()["mode"] = xdata::String("internal");
+    reset->getParams()["mode"] = xdata::String("internal");
     reset->exec();
 
     LOG(swlog::kNotice) << ">> Take a nap (1 sec)";

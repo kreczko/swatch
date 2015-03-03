@@ -5,16 +5,17 @@
  * @date    06/11/14
  */
 
-
 #include "swatch/hardware/MP7Processor.hpp"
-#include "swatch/logger/Log.hpp"
-#include "swatch/processor/ProcessorFactory.hpp"
-#include "swatch/processor/ProcessorStub.hpp"
 
 // Hardware Headers
 #include "swatch/hardware/MP7Controls.hpp"
 #include "swatch/hardware/MP7TTCInterface.hpp"
 #include "swatch/hardware/MP7Commands.hpp"
+
+// Swatch Headers
+#include "swatch/logger/Log.hpp"
+#include "swatch/processor/ProcessorFactory.hpp"
+#include "swatch/processor/ProcessorStub.hpp"
 
 // MP7 Headers
 #include "mp7/MP7Controller.hpp"
@@ -26,7 +27,9 @@
 // uHAL Headers
 #include "uhal/HwInterface.hpp"
 #include "uhal/ConnectionManager.hpp"
+#include "swatch/hardware/MP7Ports.hpp"
 
+#include <iomanip>
 
 // Boost Headers
 #include <boost/assign.hpp>
@@ -46,8 +49,9 @@ MP7Processor::MP7Processor(const std::string& id, const swatch::core::XParameter
     Processor(id, aPars),
     driver_(0x0) {
   
-  registerCommand<MP7ResetCommand>("reset");
-  
+    registerCommand<MP7ResetCommand>("reset");
+    registerCommand<MP7ConfigureLoopback>("loopback");
+    
     processor::ProcessorBag& desc = aPars.get<processor::ProcessorBag>("descriptor");
     crate_ = desc.bag.crate;
     slot_ = desc.bag.slot;
@@ -65,7 +69,9 @@ MP7Processor::MP7Processor(const std::string& id, const swatch::core::XParameter
     
     // Instantiate Rx ports
     for( uint32_t k(0); k<nRx; ++k) {
-      
+      std::ostringstream oss;
+      oss << "rx" << std::setw(2) << std::setfill('0') << k;
+      addInput( new MP7RxPort(oss.str(), k, driver_) );
     }
     
     // Instantiate Tx ports

@@ -32,10 +32,11 @@ protected:
 public:
     virtual ~InputPort() {}
 
-    virtual uint32_t getErrors() const = 0;
-    virtual bool isOperating() const = 0;
-//    virtual void enable( bool aEnable = true) = 0;
     virtual bool isEnabled() const = 0;
+    virtual bool isOperating() const = 0;
+    virtual bool isAligned() const = 0;
+    virtual uint32_t getCRCErrors() const = 0;
+
 };
 
 class OutputPort : public Object {

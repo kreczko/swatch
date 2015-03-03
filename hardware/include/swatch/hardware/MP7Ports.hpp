@@ -11,7 +11,10 @@
 #include "swatch/core/Port.hpp"
 
 namespace  mp7 {
-class MP7Controller;    
+class MP7Controller;
+class MGTRegionNode;
+class CtrlNode;
+class AlignMonNode;
 }
 
 namespace swatch {
@@ -22,16 +25,22 @@ class MP7Processor;
 class MP7RxPort : public core::InputPort {
 public:
 
-  MP7RxPort(const std::string& aId, mp7::MP7Controller* aProcessor );
+  MP7RxPort(const std::string& aId, uint32_t aChannelID, mp7::MP7Controller* aProcessor );
   virtual ~MP7RxPort();
   
-  virtual uint32_t getErrors() const;
-  virtual bool isOperating() const;
   virtual bool isEnabled() const;
+  virtual bool isOperating() const;
+  virtual bool isAligned() const;
+  virtual uint32_t getCRCErrors() const;
+
 
 private:
   //! Pointer to the main resource
+  uint32_t channelID_;
   mp7::MP7Controller* driver_;
+  const mp7::CtrlNode& ctrl_;
+  const mp7::MGTRegionNode& mgt_;
+  const mp7::AlignMonNode& align_;
 
 };
     

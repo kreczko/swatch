@@ -20,7 +20,7 @@ public:
     virtual ~AMC13ResetCommand();
     
 
-    virtual void exec();
+    virtual void code();
 
     
 };
