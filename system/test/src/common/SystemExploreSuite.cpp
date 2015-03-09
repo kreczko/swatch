@@ -160,7 +160,7 @@ BOOST_AUTO_TEST_CASE(ExploreSystem) {
     Object* o = system->getObj("crateC")->getObj("amc01")->getObj("tx00");
     LOG(kDebug) << "Testing  crate1 + mp7-13 + tx00: " << o->path() << " of type " << o->typeName();
     BOOST_CHECK_EQUAL(o->path(),"calol2.mp7-10.tx00");
-    BOOST_CHECK_EQUAL(o->typeName(),"swatch::core::OutputPort");
+    BOOST_CHECK_EQUAL(o->typeName(),"swatch::system::test::DummyTxPort");
 
 
     LOG(kDebug) << "";

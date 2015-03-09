@@ -53,6 +53,7 @@ public:
     
     std::deque<processor::Processor*>& getProcessors() ;
     std::deque<Service*>& getServices();
+    std::deque<DaqTTCService*>& getDaqTTC();
     std::deque<core::Link*>& getLinks();
     CratesMap& getCrates();
     
@@ -66,7 +67,7 @@ protected:
     std::deque<processor::Processor*> processors_;
     
     //! List of AMC13s
-    std::deque<DaqTTCService*> amc13s_;
+    std::deque<DaqTTCService*> daqTtc_;
     
     //! List of services
     std::deque<Service*> services_;

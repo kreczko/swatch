@@ -88,7 +88,8 @@ using std::endl;
 
 DummyProcessor::DummyProcessor(const std::string& aId, const core::XParameterSet& aPars)
     : processor::Processor(aId, aPars ) {
-    
+    LOG(swlog::kInfo) << "Building a DummyProcessor";
+
     LOG(swlog::kDebug) <<  "Id:" << this->id();
     LOG(swlog::kDebug) <<  "XParameterSet:";
     BOOST_FOREACH( std::string k, aPars.keys() ) {

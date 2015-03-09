@@ -80,9 +80,11 @@ System::add(system::DaqTTCService* aAMC13) {
     this->addObj(aAMC13);
     
     // but keep it aside
-    amc13s_.push_back(aAMC13);
+    daqTtc_.push_back(aAMC13);
+    // Is this still a service?
+    services_.push_back(aAMC13);
     
-    // and give it a different view
+        // and give it a different view
     std::string crateId = aAMC13->getCrateId();
 
     CratesMap::iterator cit = cratesMap_.find(crateId);
@@ -136,6 +138,11 @@ System::add( Crate* crate ){
 std::deque<processor::Processor*>&
 System::getProcessors() {
     return processors_;
+}
+
+std::deque<DaqTTCService*>&
+System::getDaqTTC() {
+    return daqTtc_;
 }
 
 
