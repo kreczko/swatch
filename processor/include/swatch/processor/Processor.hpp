@@ -20,13 +20,12 @@ class XParameterSet;
 
 namespace processor {
 
-class Controls;
 class TTCInterface;
 class ReadoutInterface;
 class AlgoInterface;
 
 /**
- *  A port class.
+ *  @class Processor
  */
 class Processor : public core::Device, public core::ActionHandler {
 protected:
@@ -53,17 +52,15 @@ public:
      * Firmware version getter
      * @return 64 bit word
      */
-    uint64_t firmwareVersion() const;
+    virtual uint64_t firmwareVersion() const = 0;
 
     /**
-     * Additional firmware infos
+     * Additional firmware information.
+     * The string is meant to be informative for the user
      * @details [long description]
-     * @return [description]
+     * @return String containing additional firmware informations
      */
-    const std::string firmwareInfo() const; 
-
-
-    Controls* ctrl();
+    virtual std::string firmwareInfo() const = 0; 
 
     TTCInterface* ttc();
     
@@ -72,9 +69,6 @@ public:
     AlgoInterface* algo();
 
 protected:
-
-    //! Master control interface
-    Controls* ctrl_;
 
     //! TTC control interface
     TTCInterface* ttc_;

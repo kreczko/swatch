@@ -34,7 +34,6 @@ public:
   virtual bool isAligned() const;
   virtual uint32_t getCRCErrors() const;
 
-
 private:
   //! Pointer to the main resource
   uint32_t channelID_;
@@ -53,7 +52,6 @@ public:
     MP7TxPort( const std::string& aId, uint32_t aChannelID, MP7Processor& aProcessor );
     virtual ~MP7TxPort();
     
-
     virtual bool isEnabled() const;
 
     virtual bool isOperating() const;

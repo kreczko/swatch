@@ -12,7 +12,6 @@
 #include "swatch/processor/Processor.hpp"
 #include "swatch/core/XParameterSet.hpp"
 
-#include "swatch/processor/Controls.hpp"
 #include "swatch/processor/AlgoInterface.hpp"
 
 #include "swatch/processor/test/IPBusComponent.hpp"
@@ -33,9 +32,16 @@ public:
     virtual ~IPBusProcessor();
 
     virtual uint32_t getSlot() const;
+    
     virtual const std::string& getCrateId() const;
+    
+    virtual uint64_t firmwareVersion() const;
 
-    uhal::HwInterface& hw() ;
+    virtual std::string firmwareInfo() const;
+
+    
+    
+    uhal::HwInterface& hw() const;
 
 private:
 

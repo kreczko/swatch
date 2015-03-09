@@ -132,6 +132,15 @@ DummyProcessor::getSlot() const {
   return slot_;
 }
 
+uint64_t
+DummyProcessor::firmwareVersion() const {
+  return 0xdeadbeef;
+}
+
+std::string
+DummyProcessor::firmwareInfo() const {
+  return "dummy infos";
+}
 
 
 } // namespace test

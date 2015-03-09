@@ -17,7 +17,6 @@
 
 // Swatch Hardware Headers
 #include "swatch/hardware/MP7Processor.hpp"
-#include "swatch/hardware/MP7Controls.hpp"
 #include "swatch/hardware/MP7TTCInterface.hpp"
 #include "swatch/hardware/AMC13Service.hpp"
 

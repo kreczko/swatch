@@ -173,13 +173,6 @@ private:
 };
 
 
-//----------------------------------------------------------------------------//
-void printStatus( swpro::Controls* ctrl ) {
-    LOG(swlog::kInfo) << "Firmware version : 0x"  << std::hex << ctrl->firmwareVersion() << std::dec;
-    LOG(swlog::kInfo) << "Inputs  : " << ctrl->numberOfInputs();
-    LOG(swlog::kInfo) << "Outputs : " << ctrl->numberOfOutputs();
-} 
-
 void printStatus( swpro::TTCInterface* ttc ) {
     LOG(swlog::kInfo) << "Clock40 Locked: " << (ttc->isClock40Locked() ? "True" : "False");
     LOG(swlog::kInfo) << "Orbit Locked:   " << (ttc->isOrbitLocked() ? "True" : "False" );
@@ -193,7 +186,9 @@ void printStatus( swpro::TTCInterface* ttc ) {
 void printStatus( swpro::Processor* p ) {
     LOG(swlog::kInfo) << "Processor " << p->id();
     LOG(swlog::kInfo) << ">> Info";
-    printStatus( p->ctrl() );
+    LOG(swlog::kInfo) << "Firmware version : 0x"  << std::hex << p->firmwareVersion() << std::dec;
+    LOG(swlog::kInfo) << "Inputs  : " << p->getNumInputs();
+    LOG(swlog::kInfo) << "Outputs : " << p->getNumOutputs();
     LOG(swlog::kInfo) << ">> TTC";
     printStatus( p->ttc() );
 }

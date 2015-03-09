@@ -12,7 +12,6 @@
 #include "swatch/processor/ProcessorFactory.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
 #include "swatch/processor/test/IPBusProcessor.hpp"
-#include "swatch/processor/test/IPBusControls.hpp"
 #include "swatch/processor/test/IPBusTTC.hpp"
 #include "swatch/processor/test/IPBusRxChannel.hpp"
 #include "swatch/processor/test/IPBusTxChannel.hpp"
@@ -70,13 +69,17 @@ IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::XParam
 
 
     //    connection_ = swatch::processor::Connection::make(interface);
-    ctrl_ = new IPBusControls(hw(), params);
     ttc_  = new IPBusTTC(hw());
     algo_ = new IPBusFakeAlgos(hw());
 
+
+    uhal::ValWord<uint32_t> n_rx = hw().getNode("ctrl.infos.nRx").read();
+    uhal::ValWord<uint32_t> n_tx = hw().getNode("ctrl.infos.nTx").read();
+    hw().dispatch();
+    
     // build the list of links based on the firmware informations
-    uint32_t nInputs = ctrl()->numberOfInputs();
-    uint32_t nOutputs = ctrl()->numberOfOutputs();
+    uint32_t nInputs = n_rx;
+    uint32_t nOutputs = n_tx;
 
     LOG(swlog::kDebug) << "Detected " << nInputs << " rx and " << nOutputs << " tx channels.";
 
@@ -115,7 +118,6 @@ IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::XParam
 
 IPBusProcessor::~IPBusProcessor() {
 
-    delete ctrl_;
     delete ttc_;
 
     delete hw_;
@@ -132,8 +134,20 @@ uint32_t IPBusProcessor::getSlot() const {
     return slot_;
 }
 
+uint64_t
+IPBusProcessor::firmwareVersion() const {
+    uhal::ValWord<uint32_t> fwv = hw().getNode("ctrl.id.fwrev").read();
+    hw().dispatch();
+    return fwv.value();
+}
 
-uhal::HwInterface& IPBusProcessor::hw() {
+std::string
+IPBusProcessor::firmwareInfo() const {
+  return "Some useful informations";
+}
+
+
+uhal::HwInterface& IPBusProcessor::hw() const {
     return *hw_;
 }
 

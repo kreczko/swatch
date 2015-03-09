@@ -16,7 +16,6 @@
 #include <boost/unordered/unordered_map.hpp>
 #include <boost/foreach.hpp>
 
-#include "swatch/processor/Controls.hpp"
 #include "swatch/processor/TTCInterface.hpp"
 #include "swatch/processor/ReadoutInterface.hpp"
 
@@ -31,7 +30,6 @@ const uint32_t Processor::NoSlot =  0x7fffffffL;
 ///---
 Processor::Processor( const std::string& aId, const core::XParameterSet& params ) :
     Device(aId, params),
-    ctrl_(0x0),
     ttc_(0x0),
     readout_(0x0),
     algo_(0x0) {
@@ -39,12 +37,6 @@ Processor::Processor( const std::string& aId, const core::XParameterSet& params 
 }
 
 Processor::~Processor() {
-}
-
-
-Controls*
-Processor::ctrl() {
-    return ctrl_;
 }
 
 

@@ -8,7 +8,6 @@
 #include "swatch/hardware/MP7Processor.hpp"
 
 // Hardware Headers
-#include "swatch/hardware/MP7Controls.hpp"
 #include "swatch/hardware/MP7TTCInterface.hpp"
 #include "swatch/hardware/MP7Commands.hpp"
 
@@ -61,7 +60,6 @@ MP7Processor::MP7Processor(const std::string& id, const swatch::core::XParameter
     driver_ = new mp7::MP7Controller(board);
     
     // Build subcomponents
-    ctrl_ = new MP7Controls( driver_ );
     ttc_  = new MP7TTCInterface( driver_ ); 
     
     uint32_t nRx = driver_->getChannelIDs(mp7::kLinkIDs).channels().size();
@@ -81,7 +79,7 @@ MP7Processor::MP7Processor(const std::string& id, const swatch::core::XParameter
       addOutput( new MP7TxPort(oss.str(), k, *this) );  
     }
     
-    LOG(swlog::kNotice) << "MP7 Processor '" << this->id() << "' built: firmware 0x" << std::hex << ctrl_->firmwareVersion() << std::endl;
+    LOG(swlog::kNotice) << "MP7 Processor '" << this->id() << "' built: firmware 0x" << std::hex << firmwareVersion() << std::endl;
     
 }
 
@@ -100,6 +98,20 @@ uint32_t
 MP7Processor::getSlot() const {
     return slot_;
 }
+
+uint64_t
+MP7Processor::firmwareVersion() const {
+    uhal::ValWord<uint32_t> v = driver_->getCtrl().getNode("id.fwrev").read();
+    driver_->hwInterface().dispatch();
+    
+    return v.value();
+}
+
+std::string
+MP7Processor::firmwareInfo() const {
+  return "";
+}
+
 
 } // namespace hardware
 } // namespace swatch

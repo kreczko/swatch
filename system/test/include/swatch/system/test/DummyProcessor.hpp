@@ -64,6 +64,11 @@ public:
     virtual uint32_t getSlot() const;
     virtual const std::string& getCrateId() const;
     
+
+    virtual uint64_t firmwareVersion() const;
+
+    virtual std::string firmwareInfo() const;
+
     virtual void reset(const std::string& mode);
 
 
