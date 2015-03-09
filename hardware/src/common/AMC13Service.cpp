@@ -96,6 +96,9 @@ AMC13Service::enableTTC(const std::vector<uint32_t>& slots) {
 
 //---
 void AMC13Service::reset() {
+
+  // Stopping the run sounds like a good idea
+  driver_->endRun();
   
   // Reset T2 first
   driver_->reset(amc13::AMC13::T2);
@@ -103,9 +106,9 @@ void AMC13Service::reset() {
   // Disable all AMC13 links
   driver_->AMCInputEnable(0x0);
 
-  // Enable all TTS inputs
+  // Clear the TTS inputs mask
   driver_->write(amc13::AMC13Simple::T1, "CONF.AMC.TTS_DISABLE_MASK", 0x0);
-  
+
   // Disable fake data generator
   driver_->fakeDataEnable(false);
   
@@ -126,11 +129,16 @@ void AMC13Service::reset() {
   
   // Then move onto T1
   driver_->reset(amc13::AMC13::T1);
-  
+
+  // Just in case  
+  driver_->resetDAQ();
+
   // Necessary?
   driver_->resetCounters();
   
-  driver_->resetDAQ();
+  // TODO: Do we want this here? Doesn't sound like a bad idea.
+  // Enable TTC all
+  driver_->enableAllTTC();
 }
 
 
@@ -177,11 +185,11 @@ AMC13Service::configureClock(const std::string& mode) {
   LOG(swlo::kInfo) << " * Double Bit errors: " << mbit_err;
 
   if ( bc0count == 0 or bcnt_err != 0) {
-        throw std::runtime_error("AMC13 Clock error BC0 not locked/in error");    
+      throw std::runtime_error("AMC13 Clock error BC0 not locked/in error");    
   }
 
   if ( sbit_err != 0 or mbit_err != 0 ) {
-
+      throw std::runtime_error("TTC Bit errors detected!");
   }
   
 }

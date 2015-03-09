@@ -14,18 +14,20 @@
 #include "mp7/MGTRegionNode.hpp"
 #include "mp7/ChannelIDSet.hpp"
 #include "mp7/AlignMonNode.hpp"
+#include "mp7/Utilities.hpp"
 
 namespace swatch {
 namespace hardware {
 
 //---
-MP7RxPort::MP7RxPort( const std::string& aId, uint32_t aChannelID, mp7::MP7Controller* aDriver ) :
+MP7RxPort::MP7RxPort( const std::string& aId, uint32_t aChannelID, MP7Processor& aProcessor ) :
   InputPort(aId),
   channelID_(aChannelID),
-  driver_(aDriver),
-  ctrl_(aDriver->getCtrl()),
-  mgt_(driver_->hwInterface().getNode<mp7::MGTRegionNode>("datapath.region.mgt")),
-  align_(driver_->hwInterface().getNode<mp7::AlignMonNode>("datapath.region.align")){
+  processor_(aProcessor),
+  driver_(aProcessor.driver()),
+  ctrl_(aProcessor.driver().getCtrl()),
+  mgt_(driver_.hwInterface().getNode<mp7::MGTRegionNode>("datapath.region.mgt")),
+  align_(driver_.hwInterface().getNode<mp7::AlignMonNode>("datapath.region.align")) {
 }
 
 
@@ -33,6 +35,8 @@ MP7RxPort::MP7RxPort( const std::string& aId, uint32_t aChannelID, mp7::MP7Contr
 MP7RxPort::~MP7RxPort() {
 }
 
+
+//---
 bool
 MP7RxPort::isEnabled() const {
   // Where to store the information if the port is enabled or not?
@@ -42,22 +46,88 @@ MP7RxPort::isEnabled() const {
   
 }
 
+
+//---
 bool
-MP7RxPort::isOperating() const {
+MP7RxPort::isLocked() const {
   ctrl_.selectLink(channelID_);
   
-  return ( mgt_.crcChecked(mp7::ChannelIDSet::channelToLocal(channelID_)) != 0 );
+  // Calculate the channel local id
+  uint32_t l = mp7::ChannelIDSet::channelToLocal(channelID_);
+
+  // Point to the right node
+  std::string path = mp7::strprintf("ro_regs.ch%d.status", l);
+
+  // Get all subregisters
+  mp7::Snapshot s =  mp7::snapshot(mgt_.getNode(path));
+
+  return (
+    // Not in reset
+    !s["rxusrrst"] and
+    // Reset completed
+    s["rx_fsm_reset_done"] and
+    // And no crcs
+    s["crc_checked"] != 0x0
+  );
 }
 
+
+//---
 bool MP7RxPort::isAligned() const {
   ctrl_.selectLink(channelID_);
   return ( align_.errors() == 0  );
 }
 
+
+//---
 uint32_t
 MP7RxPort::getCRCErrors() const {
   ctrl_.selectLink(channelID_);
   return mgt_.crcErrors(mp7::ChannelIDSet::channelToLocal(channelID_));
+}
+
+
+//---
+MP7TxPort::MP7TxPort(const std::string& aId, uint32_t aChannelID, MP7Processor& aProcessor) :
+  OutputPort(aId),
+  channelID_(aChannelID),
+  processor_(aProcessor),
+  driver_(aProcessor.driver()),
+  ctrl_(aProcessor.driver().getCtrl()),
+  mgt_(driver_.hwInterface().getNode<mp7::MGTRegionNode>("datapath.region.mgt")) {
+
+}
+
+//---
+MP7TxPort::~MP7TxPort() {
+}
+
+
+//---
+bool MP7TxPort::isEnabled() const {
+  return true;
+}
+
+
+//---
+bool MP7TxPort::isOperating() const {
+  ctrl_.selectLink(channelID_);
+  
+  // Calculate the channel local id
+  uint32_t l = mp7::ChannelIDSet::channelToLocal(channelID_);
+
+  // Point to the right node
+  std::string path = mp7::strprintf("ro_regs.ch%d.status", l);
+
+  // Get all subregisters
+  mp7::Snapshot s =  mp7::snapshot(mgt_.getNode(path));
+
+  return (
+    // Not in reset
+    !s["txusrrst"] and
+    // Reset completed
+    s["tx_fsm_reset_done"]
+  );
 }
 
 

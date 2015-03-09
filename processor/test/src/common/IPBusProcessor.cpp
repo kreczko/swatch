@@ -54,8 +54,6 @@ IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::XParam
     registerCommand<IPBusConfigureCommand>("configure");
     registerCommand<IPBusCapture>("capture");
     
-    clockModes_ += "internal","external";
-
     swpro::ProcessorBag& stub = params.get<swpro::ProcessorBag>("stub");
 
     crate_ = stub.bag.crate;
@@ -82,28 +80,33 @@ IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::XParam
 
     LOG(swlog::kDebug) << "Detected " << nInputs << " rx and " << nOutputs << " tx channels.";
 
-    inputChannels_.reserve(nInputs);
+//    inputChannels_.reserve(nInputs);
     for (size_t k(0); k < nInputs; ++k) {
         XParameterSet a;
         std::string path = "channels.rx" + boost::lexical_cast<std::string>(k);
 
         a.insert("path", xdata::String(path));
 
-        inputChannels_.push_back(new IPBusRxChannel(hw(), a));
+        IPBusRxChannel* rx = new IPBusRxChannel(strPrintf("rx%02d", k), hw(), a);
+        addInput(rx);
+//        inputChannels_.push_back(new IPBusRxChannel(hw(), a));
 
-        LOG(swlog::kDebug) << "rx ch[" << k << "]: size " << inputChannels_[k]->getBufferSize();
+        LOG(swlog::kDebug) << "rx ch[" << k << "]: size " << rx->getBufferSize();
     }
 
-    outputChannels_.reserve(nOutputs);
+//    outputChannels_.reserve(nOutputs);
     for (size_t k(0); k < nOutputs; ++k) {
         XParameterSet a, ctrl, buf;
         std::string path = "channels.tx" + boost::lexical_cast<std::string>(k);
 
         a.insert("path", xdata::String(path));
 
-        outputChannels_.push_back(new IPBusTxChannel(hw(), a));
+        
+        IPBusTxChannel* tx = new IPBusTxChannel(strPrintf("tx%02d", k), hw(), a);
+        addOutput(tx);
+//        outputChannels_.push_back(new IPBusTxChannel(hw(), a));
 
-        LOG(swlog::kDebug) << "tx ch[" << k << "]: size " << outputChannels_[k]->getBufferSize();
+        LOG(swlog::kDebug) << "tx ch[" << k << "]: size " << tx->getBufferSize();
     }
     
     
@@ -114,14 +117,6 @@ IPBusProcessor::~IPBusProcessor() {
 
     delete ctrl_;
     delete ttc_;
-
-    std::vector<InputChannel*>::iterator itTx;
-    for (itTx = inputChannels_.begin(); itTx != inputChannels_.end(); ++itTx) delete (*itTx);
-    inputChannels_.clear();
-
-    std::vector<OutputChannel*>::iterator itRx;
-    for (itRx = outputChannels_.begin(); itRx != outputChannels_.end(); ++itRx) delete (*itRx);
-    outputChannels_.clear();
 
     delete hw_;
 
@@ -138,8 +133,8 @@ uint32_t IPBusProcessor::getSlot() const {
 }
 
 
-uhal::HwInterface* IPBusProcessor::hw() const {
-    return hw_;
+uhal::HwInterface& IPBusProcessor::hw() {
+    return *hw_;
 }
 
 
@@ -147,7 +142,7 @@ uhal::HwInterface* IPBusProcessor::hw() const {
  * IPBus Algos
  */
 
-IPBusFakeAlgos::IPBusFakeAlgos(uhal::HwInterface* hwif) : IPBusComponent(hwif) {
+IPBusFakeAlgos::IPBusFakeAlgos(uhal::HwInterface& hwif) : IPBusComponent(hwif) {
 
 }
 

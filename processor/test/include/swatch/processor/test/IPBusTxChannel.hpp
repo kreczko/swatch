@@ -5,10 +5,11 @@
  * @date    
  */
 
-#ifndef SWATCH_PROCESSOR_TEST_IPBUXTXCHANNEL_HPP
-#define SWATCH_PROCESSOR_TEST_IPBUXTXCHANNEL_HPP
+#ifndef __SWATCH_PROCESSOR_TEST_IPBUXTXCHANNEL_HPP__
+#define __SWATCH_PROCESSOR_TEST_IPBUXTXCHANNEL_HPP__
 
-#include "swatch/processor/OutputChannel.hpp"
+#include "swatch/core/Port.hpp"
+#include "swatch/processor/test/BufferInterface.hpp"
 #include "swatch/processor/test/IPBusComponent.hpp"
 
 // Swatch Headers
@@ -18,26 +19,18 @@ namespace swatch {
 namespace processor {
 namespace test {
 
-class IPBusTxChannel : public swatch::processor::OutputChannel, public IPBusComponent {
+class IPBusTxChannel : public core::OutputPort, public IPBusComponent {
 public:
-    IPBusTxChannel(uhal::HwInterface* hw, const swatch::core::XParameterSet& params);
+    IPBusTxChannel(std::string aId, uhal::HwInterface& hw, const swatch::core::XParameterSet& params);
     virtual ~IPBusTxChannel();
     
     virtual uint32_t getBufferSize() const;
 
-    virtual bool isMasked();
+    virtual bool isEnabled() const;
     
-    virtual ChannelBase::State state() const;
+    virtual bool isOperating() const;
 
-    virtual std::string stateMessage() const;
-
-    virtual void configureBuffer(ChannelBase::BufferMode mode, uint32_t firstBx, uint32_t frames);
-
-    // virtual void setBufferMode(ChannelBase::BufferMode mode);
-
-    // virtual void setBufferBxRange(uint32_t startbx, uint32_t stopbx);
-
-    virtual void mask(bool mask);
+    virtual void configureBuffer(BufferInterface::BufferMode mode, uint32_t firstBx = 0x0, uint32_t frames = 0x0);
     
     virtual std::vector<uint64_t> download();
     
@@ -54,4 +47,4 @@ private:
 } // namespace processor
 } // namespace swatch
 
-#endif  /* SWATCH_PROCESSOR_TEST_IPBUXTXCHANNEL_HPP */
+#endif  /* __SWATCH_PROCESSOR_TEST_IPBUXTXCHANNEL_HPP__ */

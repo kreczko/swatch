@@ -28,15 +28,30 @@ public:
     Device( const std::string& aId, const XParameterSet& params  = XParameterSet() );
     virtual ~Device();
 
+
+    /**
+     * Number of input channels
+     * @return Number of input channels
+     */
+    uint32_t getNumInputs() const { return inputs_.size(); }
+
+    /**
+     * Number of output channels
+     * @return Number of output channels
+     */
+    uint32_t getNumOutputs() const { return outputs_.size(); }
+
     std::deque<InputPort*>& getInputs() { return inputs_; }
+
     std::deque<OutputPort*>& getOutputs() { return outputs_; }
 
 protected:
 
     void addInput( InputPort* aInput );
     void addOutput( OutputPort*  aOutput );
-        
+
     std::deque<InputPort*> inputs_;
+    
     std::deque<OutputPort*> outputs_;
 
 };

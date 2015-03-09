@@ -28,7 +28,7 @@ namespace test {
 /*------------------------------------------------------------------------------
  * Dummy Controls
  */
-IPBusControls::IPBusControls(uhal::HwInterface* hwif, const swatch::core::XParameterSet& params) : IPBusComponent(hwif) {
+IPBusControls::IPBusControls(uhal::HwInterface& hwif, const swatch::core::XParameterSet& params) : IPBusComponent(hwif) {
     using namespace boost::assign;
     configs_ += "internal", "external";
 

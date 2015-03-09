@@ -5,8 +5,8 @@
  * @date    1July 2014
  */
 
-#ifndef _SWATCH_TEST_PROCESSOR_HPP_
-#define	_SWATCH_TEST_PROCESSOR_HPP_
+#ifndef __SWATCH_TEST_PROCESSOR_HPP__
+#define	__SWATCH_TEST_PROCESSOR_HPP__
 
 // Swatch Headers
 #include "swatch/core/Device.hpp"
@@ -22,8 +22,6 @@ namespace processor {
 
 class Controls;
 class TTCInterface;
-class InputChannel;
-class OutputChannel;
 class ReadoutInterface;
 class AlgoInterface;
 
@@ -43,14 +41,28 @@ public:
     virtual uint32_t getSlot() const = 0;
     
     /**
-     * Returns the Processor crate id
-     * @return 
+     * Processor crate id getter
+     * @return String with the name of the crate
      */
     virtual const std::string& getCrateId() const = 0;
 
+    //! Constant corresponing to no slot being assigned
     static const uint32_t NoSlot;
 
-    
+    /**
+     * Firmware version getter
+     * @return 64 bit word
+     */
+    uint64_t firmwareVersion() const;
+
+    /**
+     * Additional firmware infos
+     * @details [long description]
+     * @return [description]
+     */
+    const std::string firmwareInfo() const; 
+
+
     Controls* ctrl();
 
     TTCInterface* ttc();
@@ -58,23 +70,6 @@ public:
     ReadoutInterface* readout();
     
     AlgoInterface* algo();
-
-    /**
-     * Returns the vector of input channel pointers 
-     * @return vector of input channel pointers 
-     */
-    const std::vector<InputChannel*>& inputChannels() const;
-
-    InputChannel* inputChannel(uint32_t i);
-
-    /**
-     * Returns the vector of output channel pointers
-     * @return output channel pointers
-     */
-    const std::vector<OutputChannel*>& outputChannels() const;
-
-    OutputChannel* outputChannel(uint32_t i);
-
 
 protected:
 
@@ -90,16 +85,10 @@ protected:
     //!
     AlgoInterface* algo_;
 
-    //! 
-    std::vector<InputChannel*> inputChannels_;
-    
-    //!
-    std::vector<OutputChannel*> outputChannels_;
-
 };
 
 }
 }
 
-#endif	/* _SWATCH_TEST_PROCESSOR_HPP_ */
+#endif	/* __SWATCH_TEST_PROCESSOR_HPP__ */
 

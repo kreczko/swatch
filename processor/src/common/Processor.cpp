@@ -19,7 +19,6 @@
 #include "swatch/processor/Controls.hpp"
 #include "swatch/processor/TTCInterface.hpp"
 #include "swatch/processor/ReadoutInterface.hpp"
-#include "swatch/processor/OutputChannel.hpp"
 
 
 using namespace std;
@@ -64,26 +63,6 @@ Processor::readout() {
 AlgoInterface*
 Processor::algo() {
     return algo_;
-}
-
-const std::vector<InputChannel*>&
-Processor::inputChannels() const {
-    return inputChannels_;
-}
-
-const std::vector<OutputChannel*>&
-Processor::outputChannels() const {
-    return outputChannels_;
-}
-
-InputChannel*
-Processor::inputChannel(uint32_t i) {
-    return inputChannels_.at(i);
-}
-
-OutputChannel*
-Processor::outputChannel(uint32_t i) {
-    return outputChannels_.at(i);
 }
 
 

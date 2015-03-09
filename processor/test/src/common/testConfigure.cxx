@@ -13,11 +13,14 @@ test configuration
  */
 
 
+// IPBusProcessor Headers
+#include "swatch/processor/test/IPBusDummyHardware.hpp"
+#include "swatch/processor/test/IPBusProcessor.hpp"
+#include "swatch/processor/test/BufferInterface.hpp"
+
 // Swatch Headers
 #include "swatch/logger/Log.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
-#include "swatch/processor/test/IPBusDummyHardware.hpp"
-#include "swatch/processor/test/IPBusProcessor.hpp"
 #include "swatch/processor/TTCInterface.hpp"
 
 // Boost Headers
@@ -28,6 +31,8 @@ test configuration
 // XDAQ Headers
 #include "xdata/Table.h"
 #include "xdata/TableIterator.h"
+#include "swatch/processor/test/IPBusRxChannel.hpp"
+#include "swatch/processor/test/IPBusTxChannel.hpp"
 
 
 // Namespace resolution
@@ -146,7 +151,7 @@ private:
         hw->dispatch();
 
         BOOST_FOREACH(ValMap::value_type& m, modes) {
-            if ( m.second == swpro::ChannelBase::Capture ) {
+            if ( m.second == swpro::test::BufferInterface::Capture ) {
                 // cout << m.first << " : " << m.second << endl;
 
                 uint32_t bsize = hw->getNode(m.first).getNode("data").getSize();
@@ -285,28 +290,29 @@ int main(int argc, char const *argv[]) {
 
     LOG(swlog::kDebug) << "Input channels scan";
     // Test rx upload and download
-    BOOST_FOREACH( swpro::InputChannel* in, p0->inputChannels() ) {        
-
-        std::vector<uint64_t> v(in->getBufferSize(),0x5555);
+    BOOST_FOREACH( swco::InputPort* in, p0->getInputs() ) {        
+        swpro::test::IPBusRxChannel* rx = dynamic_cast<swpro::test::IPBusRxChannel*>(in);
+        std::vector<uint64_t> v(rx->getBufferSize(),0x5555);
         // cout << "v.size() = " << v.size() << endl;
-        in->upload(v);   
+        rx->upload(v);   
 
         // Download and check
-        std::vector<uint64_t> data = in->download();   
+        std::vector<uint64_t> data = rx->download();   
     
         LOG(swlog::kDebug) << "v == data? : " << (v == data);
     }
 
     LOG(swlog::kDebug) << "Output channels scan";
     // Test tx channels injection and 
-    BOOST_FOREACH( swpro::OutputChannel* out, p0->outputChannels() ) {        
+    BOOST_FOREACH( swco::OutputPort* out, p0->getOutputs() ) {        
+        swpro::test::IPBusTxChannel* tx = dynamic_cast<swpro::test::IPBusTxChannel*>(out);
 
-        std::vector<uint64_t> v(out->getBufferSize(),0x5555);
+        std::vector<uint64_t> v(tx->getBufferSize(),0x5555);
         // cout << "v.size() = " << v.size() << endl;
-        out->upload(v);   
+        tx->upload(v);   
 
         // Download and check
-        std::vector<uint64_t> data = out->download();   
+        std::vector<uint64_t> data = tx->download();   
     
         LOG(swlog::kDebug) << "v == data? : " << (v == data);
     }

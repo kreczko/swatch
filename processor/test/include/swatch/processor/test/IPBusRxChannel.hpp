@@ -8,7 +8,8 @@
 #ifndef SWATCH_PROCESSOR_TEST_IPBUXRXCHANNEL_HPP
 #define SWATCH_PROCESSOR_TEST_IPBUXRXCHANNEL_HPP
 
-#include "swatch/processor/InputChannel.hpp"
+#include "swatch/core/Port.hpp"
+#include "swatch/processor/test/BufferInterface.hpp"
 #include "swatch/processor/test/IPBusComponent.hpp"
 
 // Swatch Headers
@@ -18,43 +19,35 @@ namespace swatch {
 namespace processor {
 namespace test {
 
-class IPBusRxChannel : public swatch::processor::InputChannel, public IPBusComponent {
+class IPBusRxChannel : public core::InputPort, public BufferInterface, public IPBusComponent {
 public:
-    IPBusRxChannel(uhal::HwInterface* hw, const swatch::core::XParameterSet& params);
+    IPBusRxChannel(std::string aId, uhal::HwInterface& hw, const swatch::core::XParameterSet& params);
     virtual ~IPBusRxChannel();
     
-    // Basic methods
+    // Input Port interface
+    
+    virtual bool isEnabled() const;
+        
+    virtual bool isLocked() const;
+    
+    virtual bool isAligned() const;
+
+    virtual uint32_t getCRCErrors() const;
+    
+    virtual void clearErrors();
 
     virtual uint32_t getBufferSize() const;
-
-    virtual bool isMasked();
     
-    virtual ChannelBase::State state() const;
+    virtual void configureBuffer(BufferInterface::BufferMode mode, uint32_t firstBx = 0x0, uint32_t frames = 0x0);
 
-    virtual std::string stateMessage() const;
-
-    virtual void configureBuffer(ChannelBase::BufferMode mode, uint32_t firstBx, uint32_t frames);
-
-//    virtual void setBufferMode(BufferMode mode);
-
-//    virtual void setBufferBxRange(uint32_t startbx, uint32_t stopbx);
-
-    virtual void mask(bool mask);
-    
     virtual std::vector<uint64_t> download();
     
     virtual void upload(const std::vector<uint64_t>& data);
 
    
-    // InputChannel speific methods
-    
-    virtual bool isLocked() const;
+    // InputChannel specific methods
+        
 
-    virtual bool isOperating() const;
-    
-    virtual bool hasTranmissionErrors() const;
-    
-    virtual void clearErrors();
 
 private:
     std::string ctrlpath_;

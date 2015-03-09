@@ -5,8 +5,8 @@
  * @date    
  */
 
-#ifndef SWATCH_PROCESSOR_TEST_IPBUSTTC_HPP
-#define SWATCH_PROCESSOR_TEST_IPBUSTTC_HPP
+#ifndef __SWATCH_PROCESSOR_TEST_IPBUSTTC_HPP__
+#define __SWATCH_PROCESSOR_TEST_IPBUSTTC_HPP__
 
 #include "swatch/processor/TTCInterface.hpp"
 #include "swatch/processor/test/IPBusComponent.hpp"
@@ -21,7 +21,7 @@ namespace test {
 
 class IPBusTTC : public swatch::processor::TTCInterface, public IPBusComponent {
 public:
-    IPBusTTC(uhal::HwInterface* hw);
+    IPBusTTC(uhal::HwInterface& hw);
     virtual ~IPBusTTC();
 
 //    virtual std::set<std::string> configurations() const {
@@ -68,4 +68,4 @@ private:
 } // namespace processor
 } // namespace swatch
 
-#endif  /* SWATCH_PROCESSOR_TEST_IPBUSTTC_HPP */
+#endif  /* __SWATCH_PROCESSOR_TEST_IPBUSTTC_HPP__ */

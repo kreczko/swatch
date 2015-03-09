@@ -29,27 +29,55 @@ namespace swatch {
 namespace system {
 namespace test {
 
+
+//---
 DummyRxPort::DummyRxPort(const std::string& aId) :
   InputPort(aId) {
 }
 
+//---
 DummyRxPort::~DummyRxPort() {
 }
 
+//---
 bool DummyRxPort::isEnabled() const {
   return true;
 }
 
-bool DummyRxPort::isOperating() const {
+
+//---
+bool DummyRxPort::isLocked() const {
   return true;
 }
 
+//---
 bool DummyRxPort::isAligned() const {
-
+  return true;
 }
 
+//---
 uint32_t DummyRxPort::getCRCErrors() const {
   return 0;
+}
+
+
+//---
+DummyTxPort::DummyTxPort(const std::string& aId) :
+OutputPort(aId){
+}
+
+//---
+DummyTxPort::~DummyTxPort() {
+}
+
+//--
+bool DummyTxPort::isEnabled() const {
+  return true;
+}
+
+//--
+bool DummyTxPort::isOperating() const {
+  return true;
 }
 
 
@@ -76,7 +104,7 @@ DummyProcessor::DummyProcessor(const std::string& aId, const core::XParameterSet
     for ( int chan(0); chan < 2 ; ++chan) { 
         ss.str(std::string());
         ss << "tx" << std::setw(2) << std::setfill('0') << chan;
-        this->addOutput(new core::OutputPort(ss.str()));
+        this->addOutput(new DummyTxPort(ss.str()));
     }
     
     
@@ -89,10 +117,20 @@ DummyProcessor::DummyProcessor(const std::string& aId, const core::XParameterSet
 DummyProcessor::~DummyProcessor() {
 }
 
-void DummyProcessor::reset(const std::string& mode) {
+void
+DummyProcessor::reset(const std::string& mode) {
 
 }
 
+const std::string&
+DummyProcessor::getCrateId() const {
+  return crate_;
+}
+
+uint32_t
+DummyProcessor::getSlot() const {
+  return slot_;
+}
 
 
 

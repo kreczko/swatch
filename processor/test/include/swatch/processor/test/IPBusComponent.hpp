@@ -5,8 +5,8 @@
  * @date    
  */
 
-#ifndef SWATCH_PROCESSOR_TEST_IPBUSCOMPONENT_HPP
-#define SWATCH_PROCESSOR_TEST_IPBUSCOMPONENT_HPP
+#ifndef __SWATCH_PROCESSOR_TEST_IPBUSCOMPONENT_HPP__
+#define __SWATCH_PROCESSOR_TEST_IPBUSCOMPONENT_HPP__
 
 // Boost Headers
 #include <boost/unordered_map.hpp>
@@ -24,11 +24,11 @@ namespace test {
 // Helper class
 class IPBusComponent {
 private:
-    uhal::HwInterface* hw_;
+    uhal::HwInterface& hw_;
 protected:
-    IPBusComponent( uhal::HwInterface* hw ) : hw_(hw) {};
+    IPBusComponent( uhal::HwInterface& hw ) : hw_(hw) {};
     uhal::HwInterface* hw() const {
-        return hw_;
+        return &hw_;
     }
 };
 
@@ -36,4 +36,4 @@ protected:
 } // namespace processor
 } // namespace swatch
 
-#endif  /* SWATCH_PROCESSOR_TEST_IPBUSCOMPONENT_HPP */
+#endif  /* __SWATCH_PROCESSOR_TEST_IPBUSCOMPONENT_HPP__ */

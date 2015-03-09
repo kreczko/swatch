@@ -59,26 +59,26 @@ void IPBusResetCommand::code() {
     std::string config = getParams().get<xdata::String>("mode");
 
     // do a soft reset
-    p->ctrl()->softReset();
+//    p->ctrl()->softReset();
 
     // p->ctrl()->configureClock(clock); 
-    p->hw()->getNode("ttc.stat.clk40Locked").write(true);
-    p->hw()->dispatch();
+    p->hw().getNode("ttc.stat.clk40Locked").write(true);
+    p->hw().dispatch();
 
     // p->ttc()->configure(ttc);
     
     if ( config == "internal" ) {
         // Disable ttc, enable internal generator
-        p->hw()->getNode("ttc.ctrl.enable").write(0x0);
-        p->hw()->getNode("ttc.ctrl.genBC0").write(0x1);
+        p->hw().getNode("ttc.ctrl.enable").write(0x0);
+        p->hw().getNode("ttc.ctrl.genBC0").write(0x1);
     } else if ( config == "extenal" ) {
         // Disable ttc, enable internal generator
-        p->hw()->getNode("ttc.ctrl.enable").write(0x0);
-        p->hw()->getNode("ttc.ctrl.genBC0").write(0x1); 
+        p->hw().getNode("ttc.ctrl.enable").write(0x0);
+        p->hw().getNode("ttc.ctrl.genBC0").write(0x1); 
     }
 
-    p->hw()->getNode("ttc.stat.bc0Locked").write(true);
-    p->hw()->dispatch();
+    p->hw().getNode("ttc.stat.bc0Locked").write(true);
+    p->hw().dispatch();
 
 
     p->ttc()->clearErrors();
@@ -153,11 +153,11 @@ void IPBusConfigureCommand::code() {
 //    }
     
     // And then buffers
-    BOOST_FOREACH( swpro::InputChannel* c, p->inputChannels() ) {
-        c->configureBuffer(swpro::ChannelBase::Latency);
+    BOOST_FOREACH(swco::InputPort* in, p->getInputs() ) {
+        dynamic_cast<IPBusRxChannel*>(in)->configureBuffer(BufferInterface::Latency);
     }
-    BOOST_FOREACH( swpro::OutputChannel* c, p->outputChannels() ) {
-        c->configureBuffer(swpro::ChannelBase::Latency);
+    BOOST_FOREACH( swco::OutputPort* out, p->getOutputs() ) {
+        dynamic_cast<IPBusTxChannel*>(out)->configureBuffer(BufferInterface::Latency);
     }
 
 
@@ -189,12 +189,17 @@ void IPBusCapture::code() {
 
     LOG(swlog::kNotice) << ">> Take a nap (1 sec)";
     sleep(1);
-
-    const std::vector<swatch::processor::InputChannel*>& rxs = p->inputChannels();
-    std::vector< std::vector<uint64_t> > data(rxs.size());
-    for ( size_t k(0); k < rxs.size(); ++k ) {
-        data[k].swap(p->inputChannel(k)->download());
+    
+    std::vector< std::vector<uint64_t> > data(p->getNumInputs());
+    BOOST_FOREACH(swco::InputPort* in, p->getInputs() ) {
+      IPBusRxChannel* rx = dynamic_cast<IPBusRxChannel*>(in);
+      data.push_back(rx->download());
     }
+//    const std::vector<swatch::processor::InputChannel*>& rxs = p->inputChannels();
+//    std::vector< std::vector<uint64_t> > data(rxs.size());
+//    for ( size_t k(0); k < rxs.size(); ++k ) {
+//        data[k].swap(p->inputChannel(k)->download());
+//    }
 
     for ( size_t j(0); j<data[0].size(); ++j ) {
         std::ostringstream msg;

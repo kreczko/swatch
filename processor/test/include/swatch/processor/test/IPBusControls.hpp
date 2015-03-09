@@ -5,8 +5,8 @@
  * @date    
  */
 
-#ifndef SWATCH_PROCESSOR_TEST_IPBUSCONTROLS_HPP
-#define SWATCH_PROCESSOR_TEST_IPBUSCONTROLS_HPP
+#ifndef __SWATCH_PROCESSOR_TEST_IPBUSCONTROLS_HPP__
+#define __SWATCH_PROCESSOR_TEST_IPBUSCONTROLS_HPP__
 
 #include "swatch/processor/Controls.hpp"
 #include "swatch/processor/test/IPBusComponent.hpp"
@@ -23,7 +23,7 @@ namespace test {
 
 class IPBusControls : public swatch::processor::Controls, public IPBusComponent {
 public:
-    IPBusControls(uhal::HwInterface* hw, const swatch::core::XParameterSet& params);
+    IPBusControls(uhal::HwInterface& hw, const swatch::core::XParameterSet& params);
     virtual ~IPBusControls();
 
     virtual uint32_t firmwareVersion();
@@ -56,4 +56,4 @@ private:
 } // namespace processor
 } // namespace swatch
 
-#endif  /* SWATCH_PROCESSOR_TEST_IPBUSCONTROLS_HPP */
+#endif  /* __SWATCH_PROCESSOR_TEST_IPBUSCONTROLS_HPP__ */

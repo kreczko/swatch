@@ -5,8 +5,8 @@
  * @date    
  */
 
-#ifndef SWATCH_PROCESSOR_CHANNELBASE_HPP
-#define	SWATCH_PROCESSOR_CHANNELBASE_HPP
+#ifndef __SWATCH_PROCESSOR_TEST_BUFFERINTERFACE_HPP__
+#define	__SWATCH_PROCESSOR_TEST_BUFFERINTERFACE_HPP__
 
 
 // C++ HEADERS
@@ -19,23 +19,23 @@
 // OTHER HEADERS
 
 namespace swatch {
-
 namespace processor {
+namespace test {
 
-class ChannelBase {
+class BufferInterface {
 protected:
 
     /**
      * Constructor
      */
-    ChannelBase() {}
+    BufferInterface() {}
 
     public:
         
     /**
      * Destructor
      */
-    virtual ~ChannelBase() {}
+    virtual ~BufferInterface() {}
     /**
      * Common buffer modes
      */
@@ -46,38 +46,9 @@ protected:
     };
 
     /**
-     * Channel 
-     */
-    enum State {
-        OK,
-        Warning,
-        Error
-    };
-    
-    /**
      * @brief Returns the size of the buffer associated with the channel
      */
     virtual uint32_t getBufferSize() const = 0;
-
-    /**
-     * @brief returns the masking state of the channel
-     * @return True if the channel is masked, False otherwise
-     */
-    virtual bool isMasked() = 0;
-
-    /**
-     * @brief State of the channel
-     * @details Returns the overall state of the channel.
-     * @return State of the channel. Can be OK, Warning, Error
-     */
-    virtual State state() const = 0;
-
-    /**
-     * @brief [brief description]
-     * @details [long description]
-     * @return [description]
-     */
-    virtual std::string stateMessage() const = 0;
 
     /**
      * @brief Configure the buffer operation mode and bunch crossing range, whenever relevant
@@ -98,14 +69,6 @@ protected:
 //    virtual void setBufferBxRange( uint32_t startbx, uint32_t length=0 ) = 0;
 
     /**
-     * @brief Mask the channel
-     * @details [long description]
-     * 
-     * @param mask [description]
-     */
-    virtual void mask( bool mask = true ) = 0;
-
-    /**
      * @brief Download the buffer content.
      * @return Vector of 64-bits words as large as the channel buffer
      */
@@ -122,8 +85,9 @@ private:
 
 };
 
+} // namespace test
 } // namespace processor
 } // namespace swatch
 
-#endif	/* SWATCH_PROCESSOR_CHANNELBASE_HPP */
+#endif	/* __SWATCH_PROCESSOR_TEST_BUFFERINTERFACE_HPP__ */
 

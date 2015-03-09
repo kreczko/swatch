@@ -20,7 +20,8 @@ namespace swatch {
 namespace processor {
 namespace test {
 
-IPBusTxChannel::IPBusTxChannel(uhal::HwInterface* hwif, const swatch::core::XParameterSet& params) :
+IPBusTxChannel::IPBusTxChannel(std::string aId, uhal::HwInterface& hwif, const swatch::core::XParameterSet& params) :
+    core::OutputPort(aId),
     IPBusComponent(hwif) {
   
     std::string path = params.get<xdata::String>("path");
@@ -40,48 +41,21 @@ IPBusTxChannel::getBufferSize() const {
 }
 
 bool
-IPBusTxChannel::isMasked() {
-    return false;
+IPBusTxChannel::isEnabled() const {
+    return true;
 }
 
-ChannelBase::State
-IPBusTxChannel::state() const {
-    return ChannelBase::OK;
-}
-
-std::string
-IPBusTxChannel::stateMessage() const {
-    return "";
+bool IPBusTxChannel::isOperating() const {
+    return true;
 }
 
 void
-IPBusTxChannel::configureBuffer(ChannelBase::BufferMode mode, uint32_t firstBx, uint32_t frames) {
+IPBusTxChannel::configureBuffer(BufferInterface::BufferMode mode, uint32_t firstBx, uint32_t frames) {
     const uhal::Node& ctrl = hw()->getNode(ctrlpath_);
     ctrl.getNode("mode").write(mode);
     ctrl.getNode("firstBx").write(firstBx);
     ctrl.getNode("nFrames").write(frames);
     hw()->dispatch();
-}
-
-//void
-//IPBusTxChannel::setBufferMode(ChannelBase::BufferMode mode) {
-//    const uhal::Node& ctrl = hw()->getNode(ctrlpath_);
-//    ctrl.getNode("mode").write(mode);
-//    hw()->dispatch();
-//}
-//
-//void
-//IPBusTxChannel::setBufferBxRange(uint32_t startbx, uint32_t length) {
-//    const uhal::Node& ctrl = hw()->getNode(ctrlpath_);
-//    ctrl.getNode("firstBx").write(startbx);
-//    ctrl.getNode("nFrames").write(length);
-//
-//    hw()->dispatch();
-//}
-
-void
-IPBusTxChannel::mask(bool mask) {
-
 }
 
 std::vector<uint64_t>

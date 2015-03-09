@@ -15,7 +15,7 @@
 #include "swatch/processor/ProcessorFactory.hpp"
 #include "swatch/system/Crate.hpp"
 
-// MP7 Processor
+// Swatch Hardware Headers
 #include "swatch/hardware/MP7Processor.hpp"
 #include "swatch/hardware/MP7Controls.hpp"
 #include "swatch/hardware/MP7TTCInterface.hpp"
@@ -87,19 +87,6 @@ public:
         swhw::AMC13Service* amc13 = dynamic_cast<swhw::AMC13Service*>(crate->amc13());
         LOG(swlo::kInfo) << "populated slots: " << swlo::shortVecFmt(crate->getPopulatedSlots());
 
-        /*
-        swco::Command* reset = amc13->getCommand("reset");
-        reset->getParameters().set("mode", xdata::String("ttsloopback"));
-
-        LOG(swlo::kInfo) << " -- AMC13 reset parameters";
-
-        BOOST_FOREACH( const std::string& k, reset->getParameters().keys()) {
-          LOG(swlo::kInfo) << k << " : " << reset->getParameters()[k];
-        }
-
-        reset->exec();
-        */
-
         // 
         std::vector<uint32_t> slots = crate->getAMCSlots();
         LOG(swlo::kInfo) << "Enabling slots " << swlo::shortVecFmt(slots);
@@ -169,7 +156,7 @@ int main(int argc, char** argv) {
         LOG(swlo::kInfo) << left 
             << setw(15) << ip->path() << " | "
             << setw(7) << ip->isEnabled() << " | "
-            << setw(9) << ip->isOperating() << " | "
+            << setw(9) << ip->isLocked() << " | "
             << setw(7) << ip->isAligned() << " | "
             << setw(6) << ip->getCRCErrors() ;
       } 

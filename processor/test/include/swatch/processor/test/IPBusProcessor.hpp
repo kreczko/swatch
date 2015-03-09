@@ -5,8 +5,8 @@
  * @date    2014
  */
 
-#ifndef SWATCH_PROCESSOR_TEST_IPBUSPROCESSOR_HPP
-#define	SWATCH_PROCESSOR_TEST_IPBUSPROCESSOR_HPP
+#ifndef __SWATCH_PROCESSOR_TEST_IPBUSPROCESSOR_HPP__
+#define	__SWATCH_PROCESSOR_TEST_IPBUSPROCESSOR_HPP__
 
 // Swatch Headers
 #include "swatch/processor/Processor.hpp"
@@ -14,9 +14,6 @@
 
 #include "swatch/processor/Controls.hpp"
 #include "swatch/processor/AlgoInterface.hpp"
-#include "swatch/processor/InputChannel.hpp"
-#include "swatch/processor/OutputChannel.hpp"
-
 
 #include "swatch/processor/test/IPBusComponent.hpp"
 
@@ -38,14 +35,13 @@ public:
     virtual uint32_t getSlot() const;
     virtual const std::string& getCrateId() const;
 
-    uhal::HwInterface* hw() const;
+    uhal::HwInterface& hw() ;
 
 private:
 
     uint32_t slot_;
     std::string crate_;
 
-    std::set<std::string> clockModes_;
     //! 
     uhal::HwInterface* hw_;
 };
@@ -53,7 +49,7 @@ private:
 
 class IPBusFakeAlgos : public swatch::processor::AlgoInterface, public IPBusComponent {
 public:
-    IPBusFakeAlgos(uhal::HwInterface* hw);
+    IPBusFakeAlgos(uhal::HwInterface& hw);
     virtual ~IPBusFakeAlgos();
     
     virtual void reset();
@@ -65,5 +61,5 @@ public:
 } // namespace processor
 } // namespace swatch
 
-#endif	/* SWATCH_PROCESSOR_TEST_IPBUSPROCESSOR_HPP */
+#endif	/* __SWATCH_PROCESSOR_TEST_IPBUSPROCESSOR_HPP__ */
 

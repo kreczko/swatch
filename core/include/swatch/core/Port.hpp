@@ -13,18 +13,6 @@
 namespace swatch {
 namespace core {
 
-/**
- *  Trigger network port class.
- */
-// class Port : public Object {
-// public:
-//     explicit Port( const std::string& aId, const XParameterSet& params = XParameterSet() );
-//     virtual ~Port();
-    
-//     /// add here methods to do things with a Port
-// };
-
-
 class InputPort : public Object {
 protected:
     explicit InputPort( const std::string& aId) : Object(aId) {}
@@ -33,7 +21,7 @@ public:
     virtual ~InputPort() {}
 
     virtual bool isEnabled() const = 0;
-    virtual bool isOperating() const = 0;
+    virtual bool isLocked() const = 0;
     virtual bool isAligned() const = 0;
     virtual uint32_t getCRCErrors() const = 0;
 
@@ -44,6 +32,9 @@ public:
     explicit OutputPort( const std::string& aId ) : Object(aId ) {}
     explicit OutputPort( const std::string& aId, const XParameterSet& params ) : Object(aId, params) {}
     virtual ~OutputPort() {}
+
+    virtual bool isEnabled() const = 0;
+    virtual bool isOperating() const = 0;
 };
 
 

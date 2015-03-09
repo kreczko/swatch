@@ -13,7 +13,7 @@ namespace swatch {
 namespace processor {
 namespace test {
 
-IPBusTTC::IPBusTTC(uhal::HwInterface* hwif) :
+IPBusTTC::IPBusTTC(uhal::HwInterface& hwif) :
 IPBusComponent(hwif) {
     using namespace boost::assign;
     configs_ += "internal", "external";

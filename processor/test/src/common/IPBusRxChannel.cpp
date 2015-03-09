@@ -17,7 +17,7 @@ namespace swatch {
 namespace processor {
 namespace test {
 
-IPBusRxChannel::IPBusRxChannel(uhal::HwInterface* hwif, const swatch::core::XParameterSet& params) : IPBusComponent(hwif) {
+IPBusRxChannel::IPBusRxChannel(std::string aId, uhal::HwInterface& hwif, const swatch::core::XParameterSet& params) : InputPort(aId), IPBusComponent(hwif) {
     // cout << "Create Rx Channels" << endl;
     
     std::string path = params.get<xdata::String>("path");
@@ -37,22 +37,23 @@ IPBusRxChannel::getBufferSize() const {
 }
 
 bool
-IPBusRxChannel::isMasked() {
-    return false;
+IPBusRxChannel::isEnabled() const {
+    return true;
 }
 
-ChannelBase::State
-IPBusRxChannel::state() const {
-    return ChannelBase::OK;
+bool
+IPBusRxChannel::isAligned() const {
+  return true;
 }
 
-std::string
-IPBusRxChannel::stateMessage() const {
-    return "";
+uint32_t
+IPBusRxChannel::getCRCErrors() const {
+  return true;
 }
+
 
 void
-IPBusRxChannel::configureBuffer(ChannelBase::BufferMode mode, uint32_t firstBx, uint32_t frames) {
+IPBusRxChannel::configureBuffer(BufferInterface::BufferMode mode, uint32_t firstBx, uint32_t frames) {
     const uhal::Node& ctrl = hw()->getNode(ctrlpath_);
     ctrl.getNode("mode").write(mode);
     ctrl.getNode("firstBx").write(firstBx);
@@ -84,11 +85,6 @@ IPBusRxChannel::configureBuffer(ChannelBase::BufferMode mode, uint32_t firstBx, 
 
 //     hw()->dispatch();
 // }
-
-void
-IPBusRxChannel::mask(bool mask) {
-
-}
 
 
 std::vector<uint64_t>
@@ -129,15 +125,6 @@ IPBusRxChannel::isLocked() const {
     return true;
 }
 
-bool
-IPBusRxChannel::isOperating() const {
-    return true;
-}
-
-bool
-IPBusRxChannel::hasTranmissionErrors() const {
-    return false;
-}
 
 void
 IPBusRxChannel::clearErrors() {

@@ -50,13 +50,10 @@ public:
     
     virtual uint32_t numberOfOutputs() = 0;
 
-//    virtual std::set<std::string> clockConfigs() const = 0;
 
-    virtual void reloadFirmware(std::string version) = 0;
-    virtual void softReset() = 0;
+    // virtual void reloadFirmware(std::string version) = 0;
+    // virtual void softReset() = 0;
 
-//    virtual void clk40Reset() = 0;
-//    virtual void configureClock( const std::string& config ) = 0;
 
 };
 

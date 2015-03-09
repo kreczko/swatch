@@ -15,6 +15,10 @@ namespace swatch {
 namespace system {
 namespace test {
 
+/**
+ * @class DummyRxPort
+ * @brief Dummy input port implementation
+ */
 class DummyRxPort : public core::InputPort {
 public:
   DummyRxPort(const std::string& aId);
@@ -23,7 +27,7 @@ public:
 
   virtual bool isEnabled() const;
 
-  virtual bool isOperating() const;
+  virtual bool isLocked() const;
 
   virtual bool isAligned() const;
   
@@ -32,13 +36,33 @@ public:
 
 };
 
+/**
+ * @class DummyTxPort
+ * @brief Dummy ouput port implementation
+ */
+class DummyTxPort : public core::OutputPort {
+public:
+  DummyTxPort ( const std::string& aId);
+  virtual ~DummyTxPort ();
+
+  virtual bool isEnabled() const;
+
+  virtual bool isOperating() const;
+
+};
+
+
+/**
+ * @class DummyProcessor
+ * @brief Dummy processor implementation
+ */
 class DummyProcessor : public processor::Processor {
 public:
     DummyProcessor( const std::string& aId, const core::XParameterSet& aPars );
     virtual ~DummyProcessor();
     
-    virtual uint32_t getSlot() const { return slot_; }
-    virtual const std::string& getCrateId() const { return crate_; }
+    virtual uint32_t getSlot() const;
+    virtual const std::string& getCrateId() const;
     
     virtual void reset(const std::string& mode);
 
