@@ -19,6 +19,7 @@ test configuration
 #include "swatch/processor/test/BufferInterface.hpp"
 
 // Swatch Headers
+#include "swatch/core/xoperators.hpp"
 #include "swatch/logger/Log.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
 #include "swatch/processor/TTCInterface.hpp"
@@ -201,7 +202,9 @@ void printStatus( swpro::Processor* p ) {
 //----------------------------------------------------------------------------//
 int main(int argc, char const *argv[]) {
     // using namespace swatch::processor;
-
+  
+    swlog::Log::setLogThreshold(swlog::kDebug);
+    
     const std::string addrtab = "file://${SWATCH_ROOT}/processor/test/etc/dummy.xml";
     /* code */
     swpro::test::IPBusDummyHardware x("board-0", 50010, addrtab);
@@ -320,21 +323,21 @@ int main(int argc, char const *argv[]) {
     LOG(swlog::kNotice) << "//_ Step 1 ___ Testing resets __________________________________";
     swatch::core::XParameterSet mode;
     
-    LOG(swlog::kDebug) << p0->id() << " Clock modes:";
-//    BOOST_FOREACH( const std::string& c, p0->getModes() ) {
-//        LOG(swlog::kDebug) << "  + " << c;
-//    }
-
     LOG(swlog::kNotice) << ">> Resetting on internal clock";
     
     swco::Command* reset = p0->getCommand("reset");
+    reset->getParams().set( "mode", xdata::String("internal") );
+
     BOOST_FOREACH( const std::string& s, reset->getParams().keys() ) {
-      LOG(swlog::kInfo) << " - " << s;
+      LOG(swlog::kInfo) << " - " << s << ": " << reset->getParams()[s];
     }
 
-    reset->getParams()["mode"] = xdata::String("internal");
     reset->exec();
-
+    if ( reset->status() == swco::Command::kError ) {  
+      LOG(swlog::kError) << reset->statusMsg();
+      return -1;
+    }
+    
     LOG(swlog::kNotice) << ">> Take a nap (1 sec)";
     sleep(1);
     printStatus( p0->ttc() );
@@ -342,7 +345,17 @@ int main(int argc, char const *argv[]) {
     
     LOG(swlog::kNotice) << "//_ Step 2 ___ Testing config __________________________________";
 
-    p0->getCommand("configure")->exec();
+    
+    swco::Command* cfgCmd = p0->getCommand("configure");
+    cfgCmd->getParams().set("mode", xdata::String("capture") ); 
+    BOOST_FOREACH( const std::string& s, cfgCmd->getParams().keys() ) {
+      LOG(swlog::kInfo) << " - " << s << ": " << cfgCmd->getParams()[s];
+    }
+    cfgCmd->exec();
+    if ( cfgCmd->status() == swco::Command::kError ) {  
+      LOG(swlog::kError) << cfgCmd->statusMsg();
+      return -1;
+    }
     
     p0->getCommand("capture")->exec();
 
