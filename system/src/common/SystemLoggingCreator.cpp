@@ -21,16 +21,16 @@ SWATCH_SYSTEM_REGISTER_CREATOR(SystemLoggingCreator);
 
 swatch::system::System*
 SystemLoggingCreator::operator()(const std::string& aId, const swatch::core::XParameterSet& aPars) {
-    LOG(swlog::kInfo) << "Building System " << aId;
+    LOG(swlog::kNotice) << "SystemLoggingCreator: Building System " << aId;
     System* sys = createSystem(aId, aPars);
 
-    LOG(swlog::kNotice) << "Building Crates";
+    LOG(swlog::kNotice) << "SystemLoggingCreator: Building Crates";
     addCrates(sys, aPars);
     
-    LOG(swlog::kNotice) << "Building Processors";
+    LOG(swlog::kNotice) << "SystemLoggingCreator: Building Processors";
     addProcessors(sys, aPars);
 
-    LOG(swlog::kNotice) << "Building Services";
+    LOG(swlog::kNotice) << "SystemLoggingCreator: Building Services";
     addServices(sys, aPars);
 
     return sys;

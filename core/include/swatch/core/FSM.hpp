@@ -15,63 +15,105 @@
 namespace swatch {
 namespace core {
 
-typedef std::string State;
-typedef toolbox::fsm::State XDAQState;
-typedef std::string Input;
+typedef std::pair<std::string, std::string> StateTransition;
 
 class FSM {
 public:
-	FSM();
-	virtual ~FSM();
+  FSM();
+  virtual ~FSM();
 
-	void addState(const State s);
-	void addInput(const Input i);
+  // Execute transition with a given name
+  void executeTransition(const std::string& transition);
 
-	void addStateTransition(const State& from, const State& to, const Input &input);
-	template<class OBJECT> void addStateTransition(const State& from, const State& to, const Input& input, OBJECT * obj,
-			void (OBJECT::*func)(toolbox::Event::Reference));
+  void addState(const std::string s);
+//  void addInput(const std::string i);
 
-	/**
-	 * sets the initial state for the FSM. The state has to exist (previously
-	 * added via addState()) otherwise an exception is thrown;
-	 */
-	void setInitialState(State s);
-	const State& getInitialState() const;
+  void addStateTransition(const std::string& from, const std::string& to,
+      const std::string& input);
+  template<class OBJECT> void addStateTransition(const std::string& from,
+      const std::string& to, const std::string& input, OBJECT * obj,
+      void (OBJECT::*func)(toolbox::Event::Reference));
 
-	void changeState(const State& from, const State& to);
+  template <class OBJECT>
+  void addTransition(const std::string& from, const std::string& to,
+      const std::string& event, OBJECT* object, bool (OBJECT::*condition)(),
+      void (OBJECT::*function)());
 
-	// useful function mostly used internally
-	bool hasState(State s) const;
+  // for a simple FSM without function calls
+  void addTransition ( const std::string& from, const std::string& to, const std::string& event);
 
-	const std::vector<State>& getStates() const;
-	const std::map<Input, State> getStateTransitions(const State& s) const;
+  /**
+   * sets the initial state for the FSM. The state has to exist (previously
+   * added via addState()) otherwise an exception is thrown;
+   */
+  void setInitialState(const std::string s);
+  const std::string& getInitialState() const;
 
-	static const std::string XDAQ_STATES;
+// useful function mostly used internally
+  bool hasState(const std::string& s) const;
 
-	const XDAQState getNextXDAQState();
-	const XDAQState getXDAQState(const State& s) const;
+  const std::vector<std::string>& getStates() const;
+  const std::map<std::string, std::string> getStateTransitions(
+      const std::string& s) const;
 
+  const toolbox::fsm::State getNextXDAQState();
+  const toolbox::fsm::State getXDAQState(const std::string& s) const;
 
-	void fireEvent(toolbox::Event::Reference event);
+  // Resets the FSM (sets state == initial state)
+  void reset();
 
-	void reset();
+  // All existing transitions and states are removed
+  void clear();
 
-	State getCurrentState() const;
+  const std::string& getCurrentState() const;
+
+  std::string getRollbackTransition ( const std::string& from, const std::string& transition );
 
 private:
-	State initialState_;
-	State currentState_;
-	std::vector<State> states_;
-	std::map<State, XDAQState> state_map_;
-	std::map<State, std::map<Input, State> > stateTransitionTable_;
-	toolbox::fsm::FiniteStateMachine fsm_;
-	// xdaq FSM works with chars as States (don't ask why). We need something
-	// to create them automatically for us
-	// the following two variables are designed to do this
+  class StateMethodSignature {
+    public:
 
-	unsigned int xdaq_state_index_;
+      virtual ~StateMethodSignature() {
+      }
 
-	const State getState(const XDAQState& s) const;
+      virtual bool condition() = 0;
+
+      virtual void method() = 0;
+    };
+
+    template <class OBJECT> class StateMethod: public StateMethodSignature {
+    public:
+      StateMethod ( OBJECT* object, bool ( OBJECT::*condition ) (), void ( OBJECT::*method ) () );
+      bool condition();
+      void method();
+
+    private:
+      OBJECT* obj_;
+
+      bool (OBJECT::*condition_)();
+
+      void (OBJECT::*method_)();
+    };
+
+  std::string initialState_;
+  std::string currentState_;
+  std::vector<std::string> states_;
+  std::map<std::string, toolbox::fsm::State> state_map_;
+  std::map<std::string, std::map<std::string, std::string> > stateTransitionTable_;
+  toolbox::fsm::FiniteStateMachine fsm_;
+  // xdaq FSM works with chars as States (don't ask why). We need something
+  // to create them automatically for us
+  // the following two variables are designed to do this
+
+  unsigned int xdaq_state_index_;
+  toolbox::fsm::State highestState_;
+  std::map<std::string,StateMethodSignature*> stateMethods_;
+
+  const std::string getState(const toolbox::fsm::State& s) const;
+
+  void doNothing ( toolbox::Event::Reference e );
+  void moveForward ( toolbox::fsm::FiniteStateMachine& fsm );
+  void fireEvent(toolbox::Event::Reference event);
 };
 
 } /* namespace core */

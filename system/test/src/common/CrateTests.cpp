@@ -18,8 +18,9 @@
 #include "swatch/processor/Processor.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
 #include "swatch/system/Crate.hpp"
-#include "swatch/system/test/DummyProcessor.hpp"
+#include "swatch/processor/test/DummyProcessor.hpp"
 #include "swatch/system/test/DummyAMC13Service.hpp"
+#include "swatch/logger/Log.hpp"
 
 // XDAQ Headers
 #include "xdata/String.h"
@@ -28,14 +29,18 @@
 #include <boost/test/unit_test.hpp>
 using namespace boost::assign;
 using namespace swatch::core;
+using namespace swatch::logger;
 using namespace swatch::system;
 using namespace swatch::processor;
 using namespace swatch::system::test;
 using namespace std;
 
+using swatch::processor::test::DummyProcessor;
+
 BOOST_AUTO_TEST_SUITE( CrateTestSuite )
 
 BOOST_AUTO_TEST_CASE(SlotCanOnlyBeTakenOnce) {
+  LOG(kInfo) << "Running CrateTestSuite/SlotCanOnlyBeTakenOnce";
 	Crate* crate = new Crate("myCrate");
 
 	XParameterSet a1, a2;
@@ -55,6 +60,7 @@ BOOST_AUTO_TEST_CASE(SlotCanOnlyBeTakenOnce) {
 }
 
 BOOST_AUTO_TEST_CASE(SlotOutOfRange) {
+  LOG(kInfo) << "Running CrateTestSuite/SlotOutOfRange";
 	Crate* crate = new Crate("myCrate");
 
 	XParameterSet a1;
@@ -68,6 +74,7 @@ BOOST_AUTO_TEST_CASE(SlotOutOfRange) {
 }
 
 BOOST_AUTO_TEST_CASE(PassesParamsToObject) {
+  LOG(kInfo) << "Running CrateTestSuite/PassesParamsToObject";
 	XParameterSet params  = XParameterSet();
 	params.insert("name", xdata::String("crate1"));
 	params.insert("type", xdata::String("test-crate"));

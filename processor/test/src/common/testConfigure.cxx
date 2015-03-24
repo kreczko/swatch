@@ -321,10 +321,10 @@ int main(int argc, char const *argv[]) {
     LOG(swlog::kNotice) << ">> Resetting on internal clock";
     
     swco::Command* reset = p0->getCommand("reset");
-    reset->getParams().set( "mode", xdata::String("internal") );
+    reset->parameters().set( "mode", xdata::String("internal") );
 
-    BOOST_FOREACH( const std::string& s, reset->getParams().keys() ) {
-      LOG(swlog::kInfo) << " - " << s << ": " << reset->getParams()[s];
+    BOOST_FOREACH( const std::string& s, reset->parameters().keys() ) {
+      LOG(swlog::kInfo) << " - " << s << ": " << reset->parameters()[s];
     }
 
     reset->exec();
@@ -342,9 +342,9 @@ int main(int argc, char const *argv[]) {
 
     
     swco::Command* cfgCmd = p0->getCommand("configure");
-    cfgCmd->getParams().set("mode", xdata::String("capture") ); 
-    BOOST_FOREACH( const std::string& s, cfgCmd->getParams().keys() ) {
-      LOG(swlog::kInfo) << " - " << s << ": " << cfgCmd->getParams()[s];
+    cfgCmd->parameters().set("mode", xdata::String("capture") );
+    BOOST_FOREACH( const std::string& s, cfgCmd->parameters().keys() ) {
+      LOG(swlog::kInfo) << " - " << s << ": " << cfgCmd->parameters()[s];
     }
     cfgCmd->exec();
     if ( cfgCmd->status() == swco::Command::kError ) {  

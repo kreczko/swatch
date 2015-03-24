@@ -19,6 +19,7 @@ Library = cactus_swatch_core_test
 Includes = 	\
 	include \
 	${SWATCH_ROOT}/core/include \
+	${SWATCH_ROOT}/core/test/include \
 	${SWATCH_ROOT}/logger/include \
 	${CACTUS_ROOT}/include \
 	$(XDAQ_ROOT)/include \

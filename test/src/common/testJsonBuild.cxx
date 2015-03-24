@@ -20,7 +20,7 @@
 #include "swatch/system/System.hpp"
 #include "swatch/system/Crate.hpp"
 #include "swatch/system/SystemFactory.hpp"
-#include "swatch/system/test/DummyProcessor.hpp"
+#include "swatch/processor/test/DummyProcessor.hpp"
 #include "swatch/system/test/DummyAMC13Service.hpp"
 #include "swatch/system/Utilities.hpp"
 
@@ -34,7 +34,7 @@ namespace swco  = swatch::core;
 namespace swpro = swatch::processor;
 namespace swsys = swatch::system;
 
-using swatch::system::test::DummyProcessor;
+using swatch::processor::test::DummyProcessor;
 using swatch::system::test::DummyAMC13Service;
 
 int main(int argc, char const *argv[])

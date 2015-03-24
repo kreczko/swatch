@@ -26,11 +26,13 @@
 
 #include "swatch/system/System.hpp"
 #include "swatch/system/SystemFactory.hpp"
+#include "swatch/system/ServiceFactory.hpp"
 #include "swatch/system/Crate.hpp"
 #include "swatch/system/CrateStub.hpp"
 #include "swatch/system/AMC13ServiceStub.hpp"
-#include "swatch/system/test/DummyProcessor.hpp"
+#include "swatch/processor/test/DummyProcessor.hpp"
 #include "swatch/system/test/DummyAMC13Service.hpp"
+#include "swatch/logger/Log.hpp"
 
 // XDAQ Headers
 #include "xdata/String.h"
@@ -40,14 +42,27 @@ using namespace boost::assign;
 //using namespace swatch::core;
 //using namespace swatch::system;
 // using namespace swatch::processor;
+using namespace swatch::logger;
 using namespace swatch::system::test;
 
 namespace swco  = swatch::core;
 namespace swpro = swatch::processor;
 namespace swsys = swatch::system;
 
+using swatch::processor::test::DummyProcessor;
+
 struct Params {
-    Params() : ps_system(), ps_processors(), ps_services() {
+    Params() :
+      ps_system(),
+      p1(),
+      p2(),
+      p3(),
+      cA(),
+      cB(),
+      srv1(),
+      srv2(),
+      ps_processors(),
+      ps_services() {
 
       
         // based on swatch/test/etc/testdb.json
@@ -64,7 +79,7 @@ struct Params {
         crtBBag.bag.location = xdata::String("AnotherLocation");
         crtBBag.bag.description = xdata::String("AnotherDescription");
 
-        swco::XParameterSet cA, cB;
+//        swco::XParameterSet cA, cB;
         cA.add("name",crtABag.bag.name);
         cA.add("stub", crtABag);
 
@@ -85,7 +100,7 @@ struct Params {
         proStubTmpl.crate = xdata::String("crateA");
         proStubTmpl.slot = xdata::UnsignedInteger(0);
 
-        swco::XParameterSet p1, p2, p3;
+//        swco::XParameterSet p1, p2, p3;
 
         swpro::ProcessorBag st1, st2, st3;
         st1.bag = proStubTmpl;
@@ -129,7 +144,7 @@ struct Params {
         amc13Bag.bag.crate   = xdata::String("crateA");     
         amc13Bag.bag.slot    = xdata::UnsignedInteger(13);       
         
-        swco::XParameterSet srv1, srv2;
+//        swco::XParameterSet srv1, srv2;
         srv1.add("name", amc13Bag.bag.name);
         srv1.add("class", amc13Bag.bag.creator);
         srv1.add("stub", amc13Bag);
@@ -155,7 +170,7 @@ struct Params {
 
     }
 
-    swco::XParameterSet ps_system;
+    swco::XParameterSet ps_system, p1, p2, p3, cA, cB, srv1, srv2;
     xdata::Vector<swco::XParameterSet> ps_crates;
     xdata::Vector<swco::XParameterSet> ps_processors;
     xdata::Vector<swco::XParameterSet> ps_services;
@@ -164,24 +179,27 @@ struct Params {
 BOOST_AUTO_TEST_SUITE( SystemTestSuite )
 
 BOOST_FIXTURE_TEST_CASE(BuildSystemWithDefaultCreator, Params){
+  LOG(kInfo) << "Running SystemTestSuite/BuildSystemWithDefaultCreator";
     swsys::System * system = swsys::SystemFactory::get()->make("SystemLoggingCreator", ps_system.get<xdata::String>("name"), ps_system);
     BOOST_CHECK_EQUAL(system->id(), "calol2");
     BOOST_CHECK_EQUAL(system->getProcessors().size(), size_t(3));
-    BOOST_CHECK_EQUAL(system->getServices().size(), size_t(2));
+    BOOST_CHECK_EQUAL(system->getDaqTTC().size(), size_t(2));
     // detailed tests for the content of processors and services
     // should be done in the respective Creator tests.
 }
 
-BOOST_AUTO_TEST_CASE(AddCrate) {
-    swsys::Crate * crate = new swsys::Crate("myCrate");
+BOOST_FIXTURE_TEST_CASE(AddCrate, Params) {
+  LOG(kInfo) << "Running SystemTestSuite/AddCrate";
+    swsys::Crate * crate = new swsys::Crate(cA.get("name").toString(), cA);
     swsys::System * system = new swsys::System("mySystem");
     system->add(crate);
-    swsys::Crate * stored_crate = system->getObj<swsys::Crate>("myCrate");
+    swsys::Crate * stored_crate = system->getObj<swsys::Crate>("crateA");
     BOOST_CHECK_EQUAL(crate->id(), stored_crate->id() );
 }
 
-BOOST_AUTO_TEST_CASE(AddCrateToMap) {
-    swsys::Crate * crate = new swsys::Crate("myCrate");
+BOOST_FIXTURE_TEST_CASE(AddCrateToMap, Params) {
+  LOG(kInfo) << "Running SystemTestSuite/AddCrateToMap";
+    swsys::Crate * crate = new swsys::Crate(cA.get("name").toString(), cA);
     swsys::System * system = new swsys::System("mySystem");
     system->add(crate);
     swsys::System::CratesMap crates = system->getCrates();
@@ -190,9 +208,9 @@ BOOST_AUTO_TEST_CASE(AddCrateToMap) {
     BOOST_CHECK_EQUAL(is_crate_in_map, true );
 }
 
-BOOST_AUTO_TEST_CASE(AddCrateShouldNotOverwrite) {
-    swsys::Crate * crateA = new swsys::Crate("myCrateA");
-    swsys::Crate * crateAprime = new swsys::Crate("myCrateA");
+BOOST_FIXTURE_TEST_CASE(AddCrateShouldNotOverwrite, Params) {
+    swsys::Crate * crateA = new swsys::Crate(cA.get("name").toString(), cA);
+    swsys::Crate * crateAprime = new swsys::Crate(cA.get("name").toString(), cA);
 
 
     swpro::ProcessorBag pBag;
@@ -247,6 +265,25 @@ BOOST_AUTO_TEST_CASE(HasCrate) {
     system->add(crate);
     BOOST_CHECK_EQUAL(system->hasCrate("myCrate"), true );
     BOOST_CHECK_EQUAL(system->hasCrate("MyImaginaryCrate"), false );
+}
+
+BOOST_FIXTURE_TEST_CASE(AddAMC13Service, Params) {
+  LOG(kInfo) << "Running SystemTestSuite/AddAMC13Service";
+  swsys::Service * service = static_cast<swsys::Service*>(swsys::ServiceFactory::get()->make(
+        srv1));
+  std::string service_name = srv1.get("name").toString();
+  swsys::System * system = new swsys::System("mySystem");
+  // before we can add service we need to add crateA
+  swsys::Crate * crateA = new swsys::Crate(cA.get("name").toString(), cA);
+  system->add(crateA);
+  BOOST_CHECK_EQUAL(system->getServices().size(), size_t(0));
+  BOOST_CHECK_EQUAL(system->getDaqTTC().size(), size_t(0));
+  system->add(service);
+  BOOST_CHECK_EQUAL(system->getServices().size(), size_t(1));
+  BOOST_CHECK_EQUAL(system->getDaqTTC().size(), size_t(1));
+
+  swsys::Service * stored_service = system->getObj<swsys::Service>(service_name);
+  BOOST_CHECK_EQUAL(service->id(), stored_service->id() );
 }
 
 BOOST_AUTO_TEST_SUITE_END()

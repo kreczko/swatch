@@ -23,6 +23,7 @@ Includes =	\
 		${SWATCH_ROOT}/core/include \
 		${CACTUS_ROOT}/include \
 		$(XDAQ_ROOT)/include \
+		$(XDAQ_ROOT)/include/linux
 
 LibraryPaths =  \
         lib \

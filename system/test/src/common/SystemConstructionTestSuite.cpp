@@ -15,8 +15,9 @@
 #include "swatch/system/SystemFactory.hpp"
 #include "swatch/system/Crate.hpp"
 #include "swatch/system/AMC13ServiceStub.hpp"
-#include "swatch/system/test/DummyProcessor.hpp"
+#include "swatch/processor/test/DummyProcessor.hpp"
 #include "swatch/system/test/DummyAMC13Service.hpp"
+#include "swatch/logger/Log.hpp"
 
 // XDAQ Headers
 #include "xdata/String.h"
@@ -30,10 +31,14 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/property_tree/json_parser.hpp>
 
+using namespace swatch::logger;
+using swatch::processor::test::DummyProcessor;
 
 BOOST_AUTO_TEST_SUITE( SystemConstructionTestSuite )
 
 BOOST_AUTO_TEST_CASE(BuildMiniSystem) {// this is not a test
+    LOG(kInfo) << "Running SystemConstructionTestSuite/BuildMiniSystem";
+    // TODO: add actual tests
     using namespace boost::assign;
     using namespace swatch::core;
     using namespace swatch::system;
@@ -104,6 +109,7 @@ BOOST_AUTO_TEST_CASE(BuildMiniSystem) {// this is not a test
 }
 
 BOOST_AUTO_TEST_CASE(BuildFullCrate) {
+  LOG(kInfo) << "Running SystemConstructionTestSuite/BuildFullCrate";
     using namespace boost::assign;
     using namespace swatch::core;
     using namespace swatch::system;

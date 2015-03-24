@@ -6,12 +6,6 @@
 namespace swatch {
 namespace core {
 
-// Command::Command(CommandManager* aMgr, xdata::Serializable* aResult) : 
-//   progress_(0.), 
-//   result_(aResult),
-//   manager_(aMgr) {
-// }
-
 //---
 Command::~Command() {
   if ( result_ ) delete result_;
@@ -37,7 +31,7 @@ Command::exec() {
 
 //---
 XParameterSet&
-Command::getParams() {
+Command::parameters() {
   return parameters_;
 }
 
@@ -120,6 +114,22 @@ Command::setProgress(float aProgress, const std::string& aMsg ) {
 //---
 void Command::setStatusMsg(const std::string& aMsg) {
   statusMsg_ = aMsg;
+}
+
+void Command::setResult( const xdata::Serializable& aResult ){
+  result_->setValue(aResult);
+}
+
+xdata::Serializable& Command::defaultResult(){
+  return *default_;
+}
+
+const std::string& Command::statusMsg() const {
+  return statusMsg_;
+}
+
+void Command::setStatus( Status aStatus ) {
+  status_ = aStatus;
 }
 
 } // namespace core

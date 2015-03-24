@@ -1,18 +1,19 @@
 /**
- * @file    CommandManager.hpp
+ * @file    ActionHandler.hpp
  * @author  Alessandro Thea
  * @brief   ActionHandler class
  * @date    February 2015
  *
  */
 
-#ifndef __SWATCH_CORE_TEST_ACTIONHANDLER__
-#define __SWATCH_CORE_TEST_ACTIONHANDLER__ 
+#ifndef __SWATCH_CORE_ACTIONHANDLER_HPP__
+#define __SWATCH_CORE_ACTIONHANDLER_HPP__
 
 #include "swatch/core/Command.hpp"
-
-//#include <boost/unordered_map.hpp>
 #include <boost/container/map.hpp>
+
+#include <string>
+#include "Operation.hpp"
 
 namespace swatch {
 namespace core {
@@ -27,37 +28,39 @@ public:
     virtual ~ActionHandler();
     
     template<typename C>
-    void registerCommand(std::string aName ) {
+    void registerCommand(const std::string aName );
 
-        // Check if aCmd has already been registered
-        if ( commands_.count(aName) ) {
-            // Make it an exception, because the command already exists
-            return;
-        }
-  
-        commands_.emplace(aName, new C(this) ) ;
-    }
+    template<typename C>
+        void registerOperation(const std::string name );
 
     Command* getCommand( const std::string& aName );
+    Operation* getOperation( const std::string& name );
 
     /**
-     * List of parameters names stored.
-     * @return vector of parameter names
+     * List of command names stored.
+     * @return vector of command names
      */
     std::set<std::string> getCommands() const;
+
+    /**
+   * List of oepration names stored.
+   * @return vector of oepration names
+   */
+  std::set<std::string> getOperations() const;
 
 protected:
     ActionHandler();
     
 private:
 
-    typedef boost::container::map<std::string, Command*> CommandMap;
-
     CommandMap commands_;
+    OperationMap operations_;
 
-};            
+};
+
 
 } // namespace core
 } // namespace swatch
+#include "swatch/core/ActionHandler.hxx"
 
-#endif /* __SWATCH_CORE_TEST_ACTIONHANDLER__ */
+#endif /* __SWATCH_CORE_ACTIONHANDLER_HPP__ */

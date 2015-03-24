@@ -21,10 +21,12 @@ Includes = 	\
 		${SWATCH_ROOT}/logger/include \
 		${SWATCH_ROOT}/core/include \
 		${SWATCH_ROOT}/processor/include \
+		${SWATCH_ROOT}/processor/test/include \
 		${SWATCH_ROOT}/system/include \
 		${SWATCH_ROOT}/system/test/include \
 		${CACTUS_ROOT}/include \
 		$(XDAQ_ROOT)/include \
+		$(XDAQ_ROOT)/include/linux
 
 LibraryPaths =	\
 		lib \
@@ -32,6 +34,7 @@ LibraryPaths =	\
 		${SWATCH_ROOT}/core/lib \
 		${SWATCH_ROOT}/core/test/lib \
 		${SWATCH_ROOT}/processor/lib \
+		${SWATCH_ROOT}/processor/test/lib \
 		${SWATCH_ROOT}/system/lib \
 		${SWATCH_ROOT}/system/test/lib \
 		${CACTUS_ROOT}/lib \
@@ -50,6 +53,7 @@ Libraries =	\
 		cactus_swatch_core \
 		cactus_swatch_core_test \
 		cactus_swatch_processor \
+		cactus_swatch_processor_test \
 		cactus_swatch_system \
 		cactus_swatch_system_test \
 

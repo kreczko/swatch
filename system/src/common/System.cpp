@@ -101,6 +101,8 @@ System::add(system::DaqTTCService* aAMC13) {
 //---
 void
 System::add(Service* aService) {
+  if (aService == NULL)
+    throw std::invalid_argument("Service pointer is NULL!");
   
   //TODO: This is a bit disgusting, to be revised along with the ServiceFactory interface.  
   system::DaqTTCService* daqttc = 0x0;
@@ -108,8 +110,6 @@ System::add(Service* aService) {
   if ( (daqttc = dynamic_cast<system::DaqTTCService*>(aService) ) != 0x0 ) {
     this->add(daqttc);
   } else {
-    if (aService == NULL)
-        throw std::invalid_argument("Service pointer is NULL!");
     this->addObj(aService);
     services_.push_back(aService);
   }

@@ -27,11 +27,11 @@ This section introduces the core team members.
 # Bug triage
 This sections explains how bug triaging is done for your project. Help beginners by including examples to good bug reports and providing them questions they should look to answer. 
 
-* You can help report bugs by filing them here: 
-* You can look through the existing bugs here: 
+* You can help report bugs by filing them here: https://svnweb.cern.ch/trac/cactus/newticket
+* You can look through the existing bugs here: https://svnweb.cern.ch/trac/cactus/query?status=accepted&status=assigned&status=new&status=reopened&group=component&component=swatch&order=priority
 
 * Look at existing bugs and help us understand if
- * The bug is reproducible? Is it reproducible in other environments (browsers)? What are the steps to reproduce? 
+** The bug is reproducible? Is it reproducible in other environments (browsers)? What are the steps to reproduce? 
 
 * You can close fixed bugs by testing old tickets to see if they are
 happening
@@ -68,8 +68,8 @@ This section includes ideas on how non-developers can help with the project. Her
 
 * Create an example of the project in real world by building something or
 showing what others have built. 
-* Write about other peopleâ€™s projects based on this project. Show how
-itâ€™s used in daily life. Take screenshots and make videos!
+* Write about other people’s projects based on this project. Show how
+it’s used in daily life. Take screenshots and make videos!
 
 
 # Your first bugfix
@@ -132,11 +132,11 @@ Do your work.
 Once everything is done and the tests are all passing create the SVN branch:
 
 ```
-svn mkdir ^/branches/$branchname
+svn mkdir ^/branches/$branchname -m "Creating branch for ticket Refs #$ticketnumber"
 svn cp -m "Creating branch for ticket Refs #$ticketnumber" ^/trunk/cactuscore/swatch ^/branches/$branchname
 git config --add svn-remote.svn-${branchname}.url svn+ssh://$cern_username@svn.cern.ch/reps/cactus/branches/$branchname/swatch
 git config --add svn-remote.svn-${branchname}.fetch :refs/remotes/svn-${branchname}
-git svn fetch svn-${branchname} # it is faster if you add '-r <revision>'
+git svn fetch svn-${branchname} # it is faster if you add '-r <revision>' where revision == from branch creation
 # git branch -a should now show your new git-svn branch
 ```
 
@@ -180,7 +180,7 @@ git branch -D -r svn-${branchname}
 git branch -D ${branchname}
 git branch -D ${branchname}_merging
 rm -rf .git/svn/refs/remotes/svn-${branchname}
-svn rm ^/branches/${branchname} 
+svn rm ^/branches/${branchname} -m "Deleting merged branch for Refs #$ticketnumber"
 ```
 and make sure that your master is up-to-date (includes the merge)
 

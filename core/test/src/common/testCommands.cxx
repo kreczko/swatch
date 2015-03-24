@@ -54,8 +54,8 @@ class DummyCommand : public swco::Command {
 public:
 
   DummyCommand(swco::ActionHandler* mgr) : Command(mgr, xdata::Integer(-33)) {
-    getParams().adopt("aa", new xdata::Integer(15));
-    getParams().adopt("todo", new xdata::String(""));
+    parameters().adopt("aa", new xdata::Integer(15));
+    parameters().adopt("todo", new xdata::String(""));
   }
 
   ~DummyCommand() {
@@ -125,7 +125,7 @@ int main(int argc, char const *argv[]) {
 
   LOG(swlo::kNotice) << " --- --- --- ";  
   cmd->reset();
-  cmd->getParams().get<xdata::String>("todo") = "print";
+  cmd->parameters().get<xdata::String>("todo") = "print";
 
   cmd->exec();
 
@@ -137,7 +137,7 @@ int main(int argc, char const *argv[]) {
 
   LOG(swlo::kNotice) << " --- --- --- ";
   cmd->reset();
-  cmd->getParams().get<xdata::String>("todo") = "error";
+  cmd->parameters().get<xdata::String>("todo") = "error";
   cmd->exec();
 
   LOG(swlo::kInfo) << "progress: " << cmd->progress() << " - " << cmd->progressMsg();

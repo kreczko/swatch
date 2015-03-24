@@ -15,7 +15,7 @@
 #include "swatch/system/System.hpp"
 #include "swatch/system/SystemFactory.hpp"
 #include "swatch/system/Crate.hpp"
-#include "swatch/system/test/DummyProcessor.hpp"
+#include "swatch/processor/test/DummyProcessor.hpp"
 #include "swatch/system/test/DummyAMC13Service.hpp"
 
 // XDAQ Headers
@@ -37,6 +37,8 @@ using namespace swatch::core;
 using namespace swatch::system;
 using namespace swatch::processor;
 using namespace swatch::system::test;
+
+using swatch::processor::test::DummyProcessor;
 
 struct SystemSetupA {
     SystemSetupA() :
@@ -125,6 +127,7 @@ BOOST_FIXTURE_TEST_SUITE(SystemExploreTestSuite, SystemSetupA)
 
 // TODO
 BOOST_AUTO_TEST_CASE(ExploreSystem) {
+  LOG(kInfo) << "Running SystemExploreTestSuite/ExploreSystem";
     using namespace boost::assign;
 
     using namespace std;
@@ -160,7 +163,7 @@ BOOST_AUTO_TEST_CASE(ExploreSystem) {
     Object* o = system->getObj("crateC")->getObj("amc01")->getObj("tx00");
     LOG(kDebug) << "Testing  crate1 + mp7-13 + tx00: " << o->path() << " of type " << o->typeName();
     BOOST_CHECK_EQUAL(o->path(),"calol2.mp7-10.tx00");
-    BOOST_CHECK_EQUAL(o->typeName(),"swatch::system::test::DummyTxPort");
+    BOOST_CHECK_EQUAL(o->typeName(),"swatch::processor::test::DummyTxPort");
 
 
     LOG(kDebug) << "";

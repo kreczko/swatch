@@ -6,8 +6,8 @@
  *
  */
 
-#ifndef __SWATCH_CORE_TEST_COMMAND__
-#define __SWATCH_CORE_TEST_COMMAND__
+#ifndef __SWATCH_CORE_COMMAND_HPP__
+#define __SWATCH_CORE_COMMAND_HPP__
 
 // C++ Headers
 #include <string>
@@ -46,7 +46,7 @@ protected:
 public:
     virtual void reset();
 
-    XParameterSet & getParams();
+    XParameterSet & parameters();
 
     Status status() const;
 
@@ -54,36 +54,20 @@ public:
 
     xdata::Serializable& result();
 
-    template<typename T>
-    T& result() {
-        // T must be derived from xdata::Serializable 
-        BOOST_STATIC_ASSERT( (boost::is_base_of<xdata::Serializable,T>::value) ); 
-        return dynamic_cast<T&>(result());
-    }
+    template<typename T> T& result();
 
     const std::string& progressMsg() const;
 
-    const std::string& statusMsg() const { return statusMsg_; }
+    const std::string& statusMsg() const;
 
 protected:
 
     template<typename T>
-    Command( ActionHandler* aHandler, const T& aDefault ) :
-        default_(new T(aDefault)), 
-        result_(new T()),
-        handler_(aHandler) {
-        // T must be derived from xdata::Serializable 
-        BOOST_STATIC_ASSERT( (boost::is_base_of<xdata::Serializable,T>::value) ); 
-
-        reset();
-    }
+    Command( ActionHandler* aHandler, const T& aDefault );
     
-    template<typename H>
-    H* getHandler() {
-        return dynamic_cast<H*>(handler_);
-    }
+    template<typename H> H* getHandler();
 
-    xdata::Serializable& defaultResult() { return *default_; }
+    xdata::Serializable& defaultResult();
 
     void setDone( const std::string& aMsg );
 
@@ -91,15 +75,13 @@ protected:
 
     void setError( const std::string& aMsg );
 
-    void setStatus( Status aStatus ) { status_ = aStatus; }
+    void setStatus( Status aStatus );
     
     void setProgress( float aProgress );
     
     void setProgress( float aProgress, const std::string& aMsg );
 
-    void setResult( const xdata::Serializable& aResult ) {
-        result_->setValue(aResult);
-    }
+    void setResult( const xdata::Serializable& aResult );
 
     void setStatusMsg( const std::string& aMsg );
 
@@ -121,9 +103,12 @@ private:
 
     ActionHandler* handler_;
 
-};            
+};
+
+typedef boost::unordered_map<std::string, Command*> CommandMap;
 
 } // namespace core
 } // namespace swatch
+#include "swatch/core/Command.hxx"
 
-#endif
+#endif /* __SWATCH_CORE_COMMAND_HPP__ */
