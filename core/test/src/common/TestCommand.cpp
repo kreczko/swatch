@@ -35,9 +35,9 @@ struct CommandTestSetup {
     nothing = handler.getCommand("dummy_nada");
 //    get_crate = handler.getCommand("dummy_getcrate");
 
-    print->parameters().get<xdata::String>("todo") = "print";
-    error->parameters().get<xdata::String>("todo") = "error";
-    nothing->parameters().get<xdata::String>("todo") = "nothing";
+    print->getParams().get<xdata::String>("todo") = "print";
+    error->getParams().get<xdata::String>("todo") = "error";
+    nothing->getParams().get<xdata::String>("todo") = "nothing";
 //    get_crate->parameters().get<xdata::String>("todo") = "getCrateId";
   }
   ~CommandTestSetup(){
@@ -54,14 +54,14 @@ BOOST_AUTO_TEST_SUITE( CommandTestSuite)
 BOOST_AUTO_TEST_CASE(TestConstructor) {
   DummyHandler handler = DummyHandler();
   swatch::core::Command* test = new DummyCommand(&handler);
-  BOOST_CHECK(test->parameters().get<xdata::Integer>("aa").equals(xdata::Integer(15)));
+  BOOST_CHECK(test->getParams().get<xdata::Integer>("aa").equals(xdata::Integer(15)));
 }
 
 BOOST_FIXTURE_TEST_CASE(TestTodo,  CommandTestSetup) {
   LOG(kInfo) << "Running CommandTestSuite/TestTodo";
-  BOOST_CHECK(print->parameters().get<xdata::String>("todo") == "print");
-  BOOST_CHECK(error->parameters().get<xdata::String>("todo") == "error");
-  BOOST_CHECK(nothing->parameters().get<xdata::String>("todo") == "nothing");
+  BOOST_CHECK(print->getParams().get<xdata::String>("todo") == "print");
+  BOOST_CHECK(error->getParams().get<xdata::String>("todo") == "error");
+  BOOST_CHECK(nothing->getParams().get<xdata::String>("todo") == "nothing");
 //  BOOST_CHECK(get_crate->parameters().get<xdata::String>("todo") == "getCrateId");
 }
 
@@ -69,10 +69,10 @@ BOOST_FIXTURE_TEST_CASE(TestRunPrint,  CommandTestSetup) {
   LOG(kInfo) << "Running CommandTestSuite/TestRunPrint";
   print->exec();
 
-  BOOST_CHECK_EQUAL(print->progress(), 100.0);
-  BOOST_CHECK_EQUAL(print->status(), Command::kDone);
-  BOOST_CHECK_EQUAL(print->result().type(), "int");
-  BOOST_CHECK(print->result<xdata::Integer>().equals(xdata::Integer(99)));
+  BOOST_CHECK_EQUAL(print->getProgress(), 100.0);
+  BOOST_CHECK_EQUAL(print->getStatus(), Command::kDone);
+  BOOST_CHECK_EQUAL(print->getResult().type(), "int");
+  BOOST_CHECK(print->getResult<xdata::Integer>().equals(xdata::Integer(99)));
 }
 
 // TODO: move this to Processor
@@ -92,18 +92,18 @@ BOOST_FIXTURE_TEST_CASE(TestRunNothing,  CommandTestSetup) {
   LOG(kInfo) << "Running CommandTestSuite/TestRunNothing";
   nothing->exec();
 
-  BOOST_CHECK_EQUAL(nothing->progress(), 0);
-  BOOST_CHECK_EQUAL(nothing->status(), Command::kWarning);
-  BOOST_CHECK_EQUAL(nothing->statusMsg(), "Nothing was done");
+  BOOST_CHECK_EQUAL(nothing->getProgress(), 0);
+  BOOST_CHECK_EQUAL(nothing->getStatus(), Command::kWarning);
+  BOOST_CHECK_EQUAL(nothing->getStatusMsg(), "Nothing was done");
 }
 
 BOOST_FIXTURE_TEST_CASE(TestRunError,  CommandTestSetup) {
   LOG(kInfo) << "Running CommandTestSuite/TestRunError";
   error->exec();
 
-  BOOST_CHECK_CLOSE(error->progress(), 50.49, 0.1);
-  BOOST_CHECK_EQUAL(error->status(), Command::kError);
-  BOOST_CHECK_EQUAL(error->statusMsg(), "But ended up in error");
+  BOOST_CHECK_CLOSE(error->getProgress(), 50.49, 0.1);
+  BOOST_CHECK_EQUAL(error->getStatus(), Command::kError);
+  BOOST_CHECK_EQUAL(error->getStatusMsg(), "But ended up in error");
 }
 
 BOOST_AUTO_TEST_SUITE_END() // CommandTestSuite

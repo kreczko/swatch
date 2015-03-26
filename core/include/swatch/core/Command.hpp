@@ -46,19 +46,19 @@ protected:
 public:
     virtual void reset();
 
-    XParameterSet & parameters();
+    XParameterSet & getParams();
 
-    Status status() const;
+    Status getStatus() const;
 
-    float progress() const;
+    float getProgress() const;
 
-    xdata::Serializable& result();
+    xdata::Serializable& getResult();
 
-    template<typename T> T& result();
+    template<typename T> T& getResult();
 
-    const std::string& progressMsg() const;
+    const std::string& getProgressMsg() const;
 
-    const std::string& statusMsg() const;
+    const std::string& getStatusMsg() const;
 
 protected:
 

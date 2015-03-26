@@ -19,7 +19,7 @@ namespace test {
 DummyOperation::DummyOperation(swatch::core::ActionHandler* handler) :
     swatch::core::Operation(handler) {
   assert(handler != 0);
-  parameters().adopt("todo", new xdata::String(""));
+  getParams().adopt("todo", new xdata::String(""));
 
   std::string halted("HALTED");
   std::string configured("CONFIGURED");

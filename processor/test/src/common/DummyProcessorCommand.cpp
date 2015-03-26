@@ -13,8 +13,8 @@ namespace processor {
 namespace test {
 DummyProcessorCommand::DummyProcessorCommand(swatch::core::ActionHandler* handler) :
         core::Command(handler, xdata::String("")) {
-  parameters().adopt("aa", new xdata::Integer(15));
-  parameters().adopt("todo", new xdata::String(""));
+  getParams().adopt("aa", new xdata::Integer(15));
+  getParams().adopt("todo", new xdata::String(""));
 }
 
 DummyProcessorCommand::~DummyProcessorCommand() {

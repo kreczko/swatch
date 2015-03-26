@@ -24,7 +24,8 @@ Includes = \
 	${SWATCH_ROOT}/processor/include \
 	${SWATCH_ROOT}/system/include \
 	${CACTUS_ROOT}/include \
-	$(XDAQ_ROOT)/include
+	$(XDAQ_ROOT)/include \
+	$(XDAQ_ROOT)/include/linux
 	
 LibraryPaths = \
 	lib \

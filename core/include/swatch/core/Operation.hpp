@@ -51,15 +51,17 @@ public:
   void executeTransition(const std::string);
   std::string getCurrentState() const;
 
-  XParameterSet & parameters();
+  XParameterSet & getParams();
 
   const std::vector<std::string>& getStates() const;
+  
   const std::map<std::string, std::string> getStateTransitions(const std::string& s) const;
 
-  float progress() const;
+  float getProgress() const;
+  
   std::string progressMsg() const;
 
-  std::string status() const;
+  std::string getStatus() const;
 
 protected:
   Operation(ActionHandler* resource);

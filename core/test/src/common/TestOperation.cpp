@@ -30,9 +30,9 @@ struct OperationTestSetup {
     custom = handler.getOperation("custom");
     test = handler.getOperation("test");
 
-    common->parameters().get<xdata::String>("todo") = "common";
-    custom->parameters().get<xdata::String>("todo") = "custom";
-    test->parameters().get<xdata::String>("todo") = "test";
+    common->getParams().get<xdata::String>("todo") = "common";
+    custom->getParams().get<xdata::String>("todo") = "custom";
+    test->getParams().get<xdata::String>("todo") = "test";
   }
   ~OperationTestSetup(){
   }
@@ -54,9 +54,9 @@ BOOST_AUTO_TEST_CASE(TestConstructor) {
 
 BOOST_FIXTURE_TEST_CASE(TestTodo,  OperationTestSetup) {
   LOG(kInfo) << "Running OperationTestSuite/TestTodo";
-  BOOST_CHECK(common->parameters().get<xdata::String>("todo") == "common");
-  BOOST_CHECK(custom->parameters().get<xdata::String>("todo") == "custom");
-  BOOST_CHECK(test->parameters().get<xdata::String>("todo") == "test");
+  BOOST_CHECK(common->getParams().get<xdata::String>("todo") == "common");
+  BOOST_CHECK(custom->getParams().get<xdata::String>("todo") == "custom");
+  BOOST_CHECK(test->getParams().get<xdata::String>("todo") == "test");
 }
 
 

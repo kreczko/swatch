@@ -54,8 +54,8 @@ class DummyCommand : public swco::Command {
 public:
 
   DummyCommand(swco::ActionHandler* mgr) : Command(mgr, xdata::Integer(-33)) {
-    parameters().adopt("aa", new xdata::Integer(15));
-    parameters().adopt("todo", new xdata::String(""));
+    getParams().adopt("aa", new xdata::Integer(15));
+    getParams().adopt("todo", new xdata::String(""));
   }
 
   ~DummyCommand() {
@@ -106,7 +106,7 @@ int main(int argc, char const *argv[]) {
 
   LOG(swlo::kNotice) << "Registered commands ";
   BOOST_FOREACH( const std::string& cmdname, handler.getCommands() ) {
-    LOG(swlo::kInfo) << " * " << cmdname << ": result type = " << handler.getCommand("dummy")->result().type();
+    LOG(swlo::kInfo) << " * " << cmdname << ": result type = " << handler.getCommand("dummy")->getResult().type();
   }
   
   LOG(swlo::kInfo) << "dummy: " << handler.getCommand("dummy");
@@ -117,32 +117,32 @@ int main(int argc, char const *argv[]) {
   cmd->exec();
 
 
-  LOG(swlo::kInfo) << "progress: " << cmd->progress() << " - " << cmd->progressMsg();
-  LOG(swlo::kInfo) << "status: " << cmd->status() << " - " << cmd->statusMsg();
-  LOG(swlo::kInfo) << "result: " << cmd->result<xdata::Integer>();
+  LOG(swlo::kInfo) << "progress: " << cmd->getProgress() << " - " << cmd->getProgressMsg();
+  LOG(swlo::kInfo) << "status: " << cmd->getStatus() << " - " << cmd->getStatusMsg();
+  LOG(swlo::kInfo) << "result: " << cmd->getResult<xdata::Integer>();
 
   LOG(swlo::kInfo) << "resource : smthg = " << handler.something() << " - num = " << handler.number();
 
   LOG(swlo::kNotice) << " --- --- --- ";  
   cmd->reset();
-  cmd->parameters().get<xdata::String>("todo") = "print";
+  cmd->getParams().get<xdata::String>("todo") = "print";
 
   cmd->exec();
 
-  LOG(swlo::kInfo) << "progress: " << cmd->progress() << " - " << cmd->progressMsg();
-  LOG(swlo::kInfo) << "status: " << cmd->status() << " - " << cmd->statusMsg();
-  LOG(swlo::kInfo) << "result: " << cmd->result<xdata::Integer>();
+  LOG(swlo::kInfo) << "progress: " << cmd->getProgress() << " - " << cmd->getProgressMsg();
+  LOG(swlo::kInfo) << "status: " << cmd->getStatus() << " - " << cmd->getStatusMsg();
+  LOG(swlo::kInfo) << "result: " << cmd->getResult<xdata::Integer>();
   
   LOG(swlo::kInfo) << "resource : smthg = " << handler.something() << " - num = " << handler.number();
 
   LOG(swlo::kNotice) << " --- --- --- ";
   cmd->reset();
-  cmd->parameters().get<xdata::String>("todo") = "error";
+  cmd->getParams().get<xdata::String>("todo") = "error";
   cmd->exec();
 
-  LOG(swlo::kInfo) << "progress: " << cmd->progress() << " - " << cmd->progressMsg();
-  LOG(swlo::kInfo) << "status: " << cmd->status() << " - " << cmd->statusMsg();
-  LOG(swlo::kInfo) << "result: " << cmd->result<xdata::Integer>();
+  LOG(swlo::kInfo) << "progress: " << cmd->getProgress() << " - " << cmd->getProgressMsg();
+  LOG(swlo::kInfo) << "status: " << cmd->getStatus() << " - " << cmd->getStatusMsg();
+  LOG(swlo::kInfo) << "result: " << cmd->getResult<xdata::Integer>();
   
   LOG(swlo::kInfo) << "resource : smthg = " << handler.something() << " - num = " << handler.number();
 

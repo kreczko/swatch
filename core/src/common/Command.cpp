@@ -31,7 +31,7 @@ Command::exec() {
 
 //---
 XParameterSet&
-Command::parameters() {
+Command::getParams() {
   return parameters_;
 }
 
@@ -45,18 +45,18 @@ void Command::reset() {
 
 //---
 Command::Status
-Command::status() const {
+Command::getStatus() const {
   return status_;
 }
 
 //---
-float Command::progress() const {
+float Command::getProgress() const {
   return progress_;
 }
 
 
 //---
-xdata::Serializable& Command::result() {
+xdata::Serializable& Command::getResult() {
   return *result_;
 }
 
@@ -87,7 +87,7 @@ Command::setError(const std::string& aMsg) {
 
 
 //---
-const std::string& Command::progressMsg() const {
+const std::string& Command::getProgressMsg() const {
   return progressMsg_;
 }
 
@@ -124,7 +124,7 @@ xdata::Serializable& Command::defaultResult(){
   return *default_;
 }
 
-const std::string& Command::statusMsg() const {
+const std::string& Command::getStatusMsg() const {
   return statusMsg_;
 }
 

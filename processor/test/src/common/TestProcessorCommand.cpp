@@ -27,7 +27,7 @@ struct ProcessorCommandTestSetup {
 
     get_crate = handler.getCommand("dummy_getcrate");
 
-    get_crate->parameters().get<xdata::String>("todo") = "getCrateId";
+    get_crate->getParams().get<xdata::String>("todo") = "getCrateId";
   }
   ~ProcessorCommandTestSetup(){
   }
@@ -42,19 +42,19 @@ BOOST_AUTO_TEST_SUITE( ProcessorCommandTestSuite)
 // we want to make sure that the factory can use this
 BOOST_FIXTURE_TEST_CASE(TestTodo,  ProcessorCommandTestSetup) {
   LOG(kInfo) << "Running ProcessorCommandTestSuite/TestTodo";
-  BOOST_CHECK_EQUAL(get_crate->parameters().get<xdata::String>("todo").toString(), "getCrateId");
+  BOOST_CHECK_EQUAL(get_crate->getParams().get<xdata::String>("todo").toString(), "getCrateId");
 }
 
 BOOST_FIXTURE_TEST_CASE(TestRunGetCrate,  ProcessorCommandTestSetup) {
   LOG(kInfo) << "Running ProcessorCommandTestSuite/TestRunGetCrate";
   get_crate->exec();
 
-  BOOST_CHECK_EQUAL(get_crate->progress(), 100.0);
-  BOOST_CHECK_EQUAL(get_crate->status(), swatch::core::Command::kDone);
-  BOOST_CHECK_EQUAL(get_crate->result().type(), "string");
-  BOOST_CHECK_EQUAL(get_crate->statusMsg(), "Dummy command successfully completed");
-  BOOST_CHECK(get_crate->result<xdata::String>().equals(xdata::String("s2g20-10")));
-  BOOST_CHECK_EQUAL(get_crate->result<xdata::String>().toString(), "s2g20-10");
+  BOOST_CHECK_EQUAL(get_crate->getProgress(), 100.0);
+  BOOST_CHECK_EQUAL(get_crate->getStatus(), swatch::core::Command::kDone);
+  BOOST_CHECK_EQUAL(get_crate->getResult().type(), "string");
+  BOOST_CHECK_EQUAL(get_crate->getStatusMsg(), "Dummy command successfully completed");
+  BOOST_CHECK(get_crate->getResult<xdata::String>().equals(xdata::String("s2g20-10")));
+  BOOST_CHECK_EQUAL(get_crate->getResult<xdata::String>().toString(), "s2g20-10");
 }
 
 

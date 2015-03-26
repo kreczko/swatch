@@ -27,7 +27,7 @@ struct ProcessorOperationTestSetup {
 
     testing = handler.getOperation("testing");
 
-    testing->parameters().get<xdata::String>("todo") = "test";
+    testing->getParams().get<xdata::String>("todo") = "test";
   }
   ~ProcessorOperationTestSetup(){
   }
@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_SUITE( ProcessorOperationTestSuite)
 // we want to make sure that the factory can use this
 BOOST_FIXTURE_TEST_CASE(TestTodo,  ProcessorOperationTestSetup) {
   LOG(kInfo) << "Running ProcessorOperationTestSuite/TestTodo";
-  BOOST_CHECK(testing->parameters().get<xdata::String>("todo") == "test");
+  BOOST_CHECK(testing->getParams().get<xdata::String>("todo") == "test");
 }
 
 BOOST_FIXTURE_TEST_CASE(TestOperation,  ProcessorOperationTestSetup) {

@@ -14,8 +14,8 @@ namespace test {
 
 DummyCommand::DummyCommand(core::ActionHandler* handler) :
         core::Command(handler, xdata::Integer(-33)) {
-  parameters().adopt("aa", new xdata::Integer(15));
-  parameters().adopt("todo", new xdata::String(""));
+  getParams().adopt("aa", new xdata::Integer(15));
+  getParams().adopt("todo", new xdata::String(""));
 }
 
 DummyCommand::~DummyCommand() {

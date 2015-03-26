@@ -35,7 +35,7 @@ namespace test {
 IPBusResetCommand::IPBusResetCommand(core::ActionHandler* aHandler) :
   Command(aHandler, xdata::Integer()) {
   
-  parameters().add("mode",xdata::String());
+  getParams().add("mode",xdata::String());
   
 
 }
@@ -51,12 +51,12 @@ void IPBusResetCommand::code() {
 
     IPBusProcessor* p = getHandler<IPBusProcessor>();
     
-    if ( !parameters().has("mode") ) {
+    if ( !getParams().has("mode") ) {
       setError("Configuration not found!");
       return;
     }
     
-    std::string config = parameters().get<xdata::String>("mode");
+    std::string config = getParams().get<xdata::String>("mode");
 
     // p->ctrl()->configureClock(clock); 
     p->hw().getNode("ttc.stat.clk40Locked").write(true);
@@ -92,7 +92,7 @@ void IPBusResetCommand::code() {
 IPBusConfigureCommand::IPBusConfigureCommand(core::ActionHandler* aHandler) :
   Command(aHandler, xdata::String()) {
   
-  parameters().add("mode",xdata::String());
+  getParams().add("mode",xdata::String());
 }
 
 IPBusConfigureCommand::~IPBusConfigureCommand() {
@@ -102,12 +102,12 @@ IPBusConfigureCommand::~IPBusConfigureCommand() {
 void IPBusConfigureCommand::code() {
   
     using namespace swatch::core;
-    if ( !parameters().has("mode") ) {
+    if ( !getParams().has("mode") ) {
       setError("Configuration not found!");
       return;
     }
     
-    std::string config = parameters().get<xdata::String>("mode");
+    std::string config = getParams().get<xdata::String>("mode");
 
     IPBusProcessor* p = getHandler<IPBusProcessor>();
 

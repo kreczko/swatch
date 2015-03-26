@@ -23,7 +23,7 @@ Operation::~Operation() {
 }
 
 XParameterSet&
-Operation::parameters() {
+Operation::getParams() {
   return parameters_;
 }
 
