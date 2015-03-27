@@ -21,6 +21,11 @@ function pathadd() {
 }
 
 CACTUS_ROOT=${CACTUS_ROOT:-"/opt/cactus"}
+XDAQ_ROOT=${XDAQ_ROOT:-"/opt/xdaq"}
+
+pathadd LD_LIBRARY_PATH "${XDAQ_ROOT}/lib"
+pathadd LD_LIBRARY_PATH "${CACTUS_ROOT}/lib"
+
 SWATCH_TESTS=$( readlink -f $(dirname $BASH_SOURCE)/ )
 SWATCH_ROOT=$( readlink -f ${SWATCH_TESTS}/.. )
 

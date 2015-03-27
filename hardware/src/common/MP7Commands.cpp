@@ -48,15 +48,21 @@ void MP7ResetCommand::code() {
   setDone("Reset completed");
 }
 
+
+//---
 MP7ConfigureLoopback::MP7ConfigureLoopback(core::ActionHandler* aHandler) :
   Command(aHandler, xdata::Integer() ){
 
 }
 
+
+//---
 MP7ConfigureLoopback::~MP7ConfigureLoopback() {
 
 }
 
+
+//---
 void MP7ConfigureLoopback::code() {
   MP7Processor* p = getHandler<MP7Processor>();
   mp7::ChannelsManager mgr = p->driver().channelMgr();

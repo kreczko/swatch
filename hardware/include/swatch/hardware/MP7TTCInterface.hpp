@@ -39,27 +39,12 @@ public:
 
     virtual uint32_t getDoubleBitErrors() const;
 
-    virtual void sendBGo(uint32_t command);
-
     virtual bool hasClock40Stopped() const;
     
     virtual bool isClock40Locked() const;
 
-    virtual bool isOrbitLocked() const;
+    virtual bool isBC0Locked() const;
 
-    virtual bool hasBC0Stopped() const;
-
-    virtual void maskBC0Spy(bool mask);
-
-    virtual bool isBC0SpyMasked() const;
-
-    virtual void spy();
-
-
-
-
-
-    
     private:
     
     mp7::MP7Controller* driver_;

@@ -178,7 +178,9 @@ AMC13Service::configureClock(const std::string& mode) {
   uint32_t sbit_err = driver_->read(amc13::AMC13::T2,"STATUS.TTC.SBIT_ERROR");
   uint32_t mbit_err = driver_->read(amc13::AMC13::T2,"STATUS.TTC.MBIT_ERROR");
   
-  LOG(swlo::kInfo) << " * Clk40 Freq: " << (double)clkfreq*50 << " Hz";
+
+  LOG(swlo::kInfo) << "AMC13 TTC Status";
+  LOG(swlo::kInfo) << " * Clk40 frequency: " << (double)clkfreq*50 << " Hz";
   LOG(swlo::kInfo) << " * BC0 counter: " << bc0count;
   LOG(swlo::kInfo) << " * BC errors: " << bcnt_err;
   LOG(swlo::kInfo) << " * Single Bit errors: " << sbit_err;

@@ -25,6 +25,7 @@ namespace swlo = swatch::logger;
 namespace swatch {
 namespace hardware {
 
+//---
 AMC13ResetCommand::AMC13ResetCommand(core::ActionHandler* aHandler) :
   Command(aHandler, xdata::Integer()) {
   
@@ -32,10 +33,14 @@ AMC13ResetCommand::AMC13ResetCommand(core::ActionHandler* aHandler) :
 
 }
 
+
+//---
 AMC13ResetCommand::~AMC13ResetCommand() {
 
 }
 
+
+//---
 void AMC13ResetCommand::code() {
   
 

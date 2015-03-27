@@ -24,26 +24,8 @@ public:
     IPBusTTC(uhal::HwInterface& hw);
     virtual ~IPBusTTC();
 
-//    virtual std::set<std::string> configurations() const {
-//        return configs_;
-//    }
-//    virtual void configure(const std::string& config);
-
-    //functionality
-//    virtual void enable(bool enable = true);
-//    virtual void generateInternalOrbit(bool generate = true);
-//    virtual void sendSingleL1A();
-//    virtual void sendMultipleL1A(uint32_t nL1A);
     virtual void clearCounters();
     virtual void clearErrors();
-    virtual void spy();
-    virtual void maskBC0Spy(bool mask = true);
-    virtual void sendBGo(uint32_t command);
-
-//    virtual bool isEnabled() const;
-//    virtual bool isGeneratingInternalBC0() const;
-    virtual bool isBC0SpyMasked() const;
-
 
     //monitoring
     virtual uint32_t getBunchCounter() const;
@@ -55,8 +37,7 @@ public:
     // virtual void getTTChistory() const;
     virtual bool isClock40Locked() const;
     virtual bool hasClock40Stopped() const;
-    virtual bool isOrbitLocked() const;
-    virtual bool hasBC0Stopped() const;
+    virtual bool isBC0Locked() const;
 
 private:
 

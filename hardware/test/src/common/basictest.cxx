@@ -109,7 +109,7 @@ public:
           
           p->getCommand("reset")->exec();
           
-          LOG(swlo::kInfo) << "BC0 Locked" << p->ttc()->isOrbitLocked();
+          LOG(swlo::kInfo) << "BC0 Locked" << p->ttc()->isBC0Locked();
         }
 
     }

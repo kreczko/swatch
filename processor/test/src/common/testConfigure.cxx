@@ -175,7 +175,7 @@ private:
 
 void printStatus( swpro::TTCInterface* ttc ) {
     LOG(swlog::kInfo) << "Clock40 Locked: " << (ttc->isClock40Locked() ? "True" : "False");
-    LOG(swlog::kInfo) << "Orbit Locked:   " << (ttc->isOrbitLocked() ? "True" : "False" );
+    LOG(swlog::kInfo) << "Orbit Locked:   " << (ttc->isBC0Locked() ? "True" : "False" );
     LOG(swlog::kInfo) << "Event counter:  " << ttc->getEventCounter();
     LOG(swlog::kInfo) << "Bunch counter:  " << ttc->getBunchCounter();
     LOG(swlog::kInfo) << "Orbit counter:  " << ttc->getOrbitCounter();

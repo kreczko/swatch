@@ -33,43 +33,13 @@ IPBusTTC::clearCounters() {
     hw()->dispatch();
 }
 
+
 void
 IPBusTTC::clearErrors() {
     hw()->getNode("ttc.counters3").write(0x0);
     hw()->dispatch();
 }
 
-void
-IPBusTTC::maskBC0Spy(bool mask /* = true */) {
-    cout << "Mask BC0 from TTC history" << endl;
-}
-
-void
-IPBusTTC::spy() {
-    cout << "Capturing TTC..." << endl;
-}
-
-void
-IPBusTTC::sendBGo(uint32_t command = 0) {
-    hw()->getNode("ttc.ctrl.sendBGo").write(command);
-    hw()->dispatch();
-}
-
-//bool IPBusTTC::isEnabled() const {
-//    uhal::ValWord<uint32_t> enabled = hw()->getNode("ttc.ctrl.enable").read();
-//    hw()->dispatch();
-//    return (bool)enabled;
-//}
-//
-//bool IPBusTTC::isGeneratingInternalBC0() const {
-//    uhal::ValWord<uint32_t> enabled = hw()->getNode("ttc.ctrl.genBC0").read();
-//    hw()->dispatch();
-//    return (bool)enabled;
-//}
-
-bool IPBusTTC::isBC0SpyMasked() const {
-    return false;
-}
 
 uint32_t
 IPBusTTC::getBunchCounter() const {
@@ -78,12 +48,14 @@ IPBusTTC::getBunchCounter() const {
     return (uint32_t) bxctr;
 }
 
+
 uint32_t
 IPBusTTC::getEventCounter() const {
     uhal::ValWord<uint32_t> evctr = hw()->getNode("ttc.counters1.eventCntr").read();
     hw()->dispatch();
     return (uint32_t) evctr;
 }
+
 
 uint32_t
 IPBusTTC::getOrbitCounter() const {
@@ -92,12 +64,14 @@ IPBusTTC::getOrbitCounter() const {
     return (uint32_t) octr;
 }
 
+
 uint32_t
 IPBusTTC::getSingleBitErrors() const {
     uhal::ValWord<uint32_t> sbec = hw()->getNode("ttc.counters3.singleBitErrCntr").read();
     hw()->dispatch();
     return (uint32_t) sbec;
 }
+
 
 uint32_t
 IPBusTTC::getDoubleBitErrors() const {
@@ -106,12 +80,6 @@ IPBusTTC::getDoubleBitErrors() const {
     return (uint32_t) dbec;
 }
 
-//void 
-//DummyTTC::getTTChistory() const {
-//
-//    cout << "Getting TTC history" << endl;
-//
-//}
 
 bool
 IPBusTTC::isClock40Locked() const {
@@ -132,7 +100,7 @@ IPBusTTC::hasClock40Stopped() const {
 }
 
 bool
-IPBusTTC::isOrbitLocked() const {
+IPBusTTC::isBC0Locked() const {
 
     uhal::ValWord<uint32_t> locked = hw()->getNode("ttc.stat.bc0Locked").read();
     hw()->dispatch();
@@ -140,14 +108,6 @@ IPBusTTC::isOrbitLocked() const {
 
 }
 
-bool
-IPBusTTC::hasBC0Stopped() const {
-
-    // cout << "Getting BC0 stopped..." << endl;
-    bool BC0stopped = 0;
-    return BC0stopped;
-
-}
 
 } // namespace test
 } // namespace processor

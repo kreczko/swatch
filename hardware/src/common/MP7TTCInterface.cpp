@@ -67,28 +67,8 @@ bool MP7TTCInterface::hasClock40Stopped() const {
     return driver_->getCtrl().clock40Stopped();
 }
 
-bool MP7TTCInterface::isOrbitLocked() const {
+bool MP7TTCInterface::isBC0Locked() const {
     return driver_->getTTC().bc0Locked();
-}
-
-bool MP7TTCInterface::hasBC0Stopped() const {
-    return driver_->getTTC().bc0Error();
-}
-
-bool MP7TTCInterface::isBC0SpyMasked() const {
-    return false;
-}
-
-void MP7TTCInterface::maskBC0Spy(bool mask) {
-
-}
-
-void MP7TTCInterface::sendBGo(uint32_t command) {
-
-}
-
-void MP7TTCInterface::spy() {
-
 }
 
 } // namespace hardware

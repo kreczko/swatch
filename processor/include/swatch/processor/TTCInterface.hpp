@@ -40,18 +40,6 @@ public:
     // Clear error counters
     virtual void clearErrors() = 0;
 
-    // Spy on the incoming TTC commands
-    virtual void spy() = 0;
-    
-    // TTC Spy
-    virtual void maskBC0Spy(bool mask = true) = 0;
-
-    // Send specific BGO command throught the TTC logic
-    virtual void sendBGo(uint32_t command) = 0;
-
-    //
-    virtual bool isBC0SpyMasked() const = 0;
-
     /**
      * @brief Bunch counter getter.
      * @return Current value of the bunch counter.
@@ -84,8 +72,7 @@ public:
     
     virtual bool isClock40Locked() const = 0;
     virtual bool hasClock40Stopped() const = 0;
-    virtual bool isOrbitLocked() const = 0;
-    virtual bool hasBC0Stopped() const = 0;
+    virtual bool isBC0Locked() const = 0;
 
 };
 

@@ -115,7 +115,7 @@ void IPBusConfigureCommand::code() {
      if ( not p->ttc()->isClock40Locked() ) {
          LOG(swlog::kError) << "Clock 40 NOT locked!";
      }
-     if ( not p->ttc()->isOrbitLocked() ) {
+     if ( not p->ttc()->isBC0Locked() ) {
          LOG(swlog::kError) << "Orbit (BC0) NOT locked!";
      }
 
@@ -160,11 +160,11 @@ void IPBusCapture::code() {
 
     IPBusProcessor* p = getHandler<IPBusProcessor>();
 
-    LOG(swlog::kNotice) << ">> Sending test BGo";
-    p->ttc()->sendBGo(0xc);
-
-    LOG(swlog::kNotice) << ">> Take a nap (1 sec)";
-    sleep(1);
+//    LOG(swlog::kNotice) << ">> Sending test BGo";
+//    p->ttc()->sendBGo(0xc);
+//
+//    LOG(swlog::kNotice) << ">> Take a nap (1 sec)";
+//    sleep(1);
     
     std::vector< std::vector<uint64_t> > data;
     data.reserve(p->getNumOutputs());
