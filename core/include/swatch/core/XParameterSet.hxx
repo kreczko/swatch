@@ -9,8 +9,10 @@
 #ifndef __SWATCH_CORE_XPARAMETERSET_HXX__
 #define __SWATCH_CORE_XPARAMETERSET_HXX__
 
-#include "XParameterSet.hpp"
-#include "Utilities.hpp"
+#include "swatch/core/checkgccversion.hpp"
+
+#include "swatch/core/XParameterSet.hpp"
+#include "swatch/core/Utilities.hpp"
 
 
 namespace swatch {
