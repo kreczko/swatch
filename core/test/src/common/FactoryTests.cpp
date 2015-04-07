@@ -19,19 +19,13 @@ typedef swatch::core::AbstractFactory<swatch::core::Object> ObjFactory;
 typedef swatch::core::test::SimpleObject SimpleObject;
 
 // Standard factory registration macros
-#define SWATCH_TEST_REGISTER_OBJ( classname ) \
-template<> bool swatch::core::ClassRegistrationHelper<swatch::core::Object, classname >::initialised_= \
-  swatch::core::ClassRegistrationHelper<swatch::core::Object, classname >::init(#classname);
-
-#define SWATCH_TEST_REGISTER_OBJCREATOR( creatorname ) \
-template<> bool swatch::core::CreatorRegistrationHelper< swatch::core::Object, creatorname >::initialised_= \
-  swatch::core::CreatorRegistrationHelper< swatch::core::Object, creatorname >::init(#creatorname);
+#define SWATCH_TEST_REGISTER_OBJ( classname ) _SWATCH_ABSTRACT_REGISTER_CLASS( swatch::core::Object, classname )
+#define SWATCH_TEST_REGISTER_OBJCREATOR( creatorname ) _SWATCH_ABSTRACT_REGISTER_CREATOR( swatch::core::Object, creatorname )
 
 
 namespace swatch {
 namespace core {
 namespace test {
-
 
 // Dummy Creator interface
 class SimpleCreator : public ObjFactory::CreatorInterface {

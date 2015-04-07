@@ -5,8 +5,8 @@
  * @date    11/11/14
  */
 
-#ifndef SWATCH_SYSTEM_AMC13SERVICESTUB_HPP
-#define SWATCH_SYSTEM_AMC13SERVICESTUB_HPP
+#ifndef __SWATCH_SYSTEM_DAQTTCSTUB_HPP__
+#define __SWATCH_SYSTEM_DAQTTCSTUB_HPP__
 
 // C++ Headers
 #include <ostream>
@@ -23,12 +23,12 @@ namespace swatch {
 namespace system {
 
 /**
- * @class AMC13Stub
+ * @class DaqTTCStub
  * @brief Struct to hold the data to construct an AMC13
  */
-struct AMC13ServiceStub {
+struct DaqTTCStub {
 
-    void registerFields(xdata::Bag<AMC13ServiceStub> *bag) {
+    void registerFields(xdata::Bag<DaqTTCStub> *bag) {
         bag->addField("name", &name);
         bag->addField("creator", &creator);
         bag->addField("crate", &crate);
@@ -65,11 +65,11 @@ struct AMC13ServiceStub {
 
 };
 
-std::ostream& operator<<(std::ostream& os, const AMC13ServiceStub& sd );
+std::ostream& operator<<(std::ostream& os, const DaqTTCStub& sd );
 
-typedef xdata::Bag<AMC13ServiceStub> AMC13ServiceBag;
+typedef xdata::Bag<DaqTTCStub> AMC13ServiceBag;
 
 } // namespace system
 } // namespace swatch
 
-#endif /* SWATCH_SYSTEM_AMC13SERVICESTUB */
+#endif /* __SWATCH_SYSTEM_AMC13SERVICESTUB__ */

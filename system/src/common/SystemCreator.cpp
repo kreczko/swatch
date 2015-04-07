@@ -29,6 +29,7 @@ SystemCreator::operator()(const std::string& aId, const swatch::core::XParameter
 	System* sys = createSystem(aId, aPars);
 	addCrates(sys, aPars);
 	addProcessors(sys, aPars);
+	addDaqTTCs(sys, aPars);
 	addServices(sys, aPars);
 
 	return sys;
@@ -72,7 +73,11 @@ void SystemCreator::addProcessors(System* system, const swatch::core::XParameter
 
 
 //---
-void SystemCreator::addDaqTTC(System* system, const swatch::core::XParameterSet& aPars) {
+void SystemCreator::addDaqTTCs(System* system, const swatch::core::XParameterSet& aPars) {
+  
+  // Carry on only if there are daqttcs to build
+  if ( not aPars.has("daqttc") ) return;
+  
 	xdata::Vector<swco::XParameterSet> vPSets;
 	vPSets = aPars.get<xdata::Vector<swco::XParameterSet> >("daqttc");
 	BOOST_FOREACH(swco::XParameterSet& ps,vPSets) {
@@ -86,7 +91,11 @@ void SystemCreator::addDaqTTC(System* system, const swatch::core::XParameterSet&
 //---
 void SystemCreator::addServices(System* system, const swatch::core::XParameterSet& aPars) {
 	xdata::Vector<swco::XParameterSet> vPSets;
-	vPSets = aPars.get<xdata::Vector<swco::XParameterSet> >("services");
+  
+  // Carry on only if there are services to build
+  if ( not aPars.has("services") ) return;
+	
+  vPSets = aPars.get<xdata::Vector<swco::XParameterSet> >("services");
 	BOOST_FOREACH(swco::XParameterSet& ps,vPSets) {
 		Service* a = static_cast<Service*>(ServiceFactory::get()->make(
                 ps));

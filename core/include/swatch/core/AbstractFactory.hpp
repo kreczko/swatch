@@ -18,6 +18,16 @@
 #include <boost/unordered_map.hpp>
 #include <boost/shared_ptr.hpp>
 
+// Standard factory registration macros
+#define _SWATCH_ABSTRACT_REGISTER_CLASS( productname, classname ) \
+template<> bool swatch::core::ClassRegistrationHelper< productname, classname >::initialised_= \
+  swatch::core::ClassRegistrationHelper< productname, classname >::init(#classname);
+
+#define _SWATCH_ABSTRACT_REGISTER_CREATOR( productname, creatorname ) \
+template<> bool swatch::core::CreatorRegistrationHelper< productname, creatorname >::initialised_= \
+  swatch::core::CreatorRegistrationHelper< productname, creatorname >::init(#creatorname);
+
+
 namespace swatch {
 namespace core {
 
@@ -78,6 +88,7 @@ private:
  */
 template< typename A, typename D >
 struct ClassRegistrationHelper {
+    //! Dummy variable required as initialisation target
     static bool initialised_;
     
     static bool init(const std::string& aClassName) {
@@ -94,6 +105,7 @@ struct ClassRegistrationHelper {
  */
 template< typename A, typename K >
 struct CreatorRegistrationHelper {
+    //! Dummy variable required as initialisation target
     static bool initialised_;
     
     static bool init(const std::string& aCreatorName) {
@@ -106,6 +118,7 @@ struct CreatorRegistrationHelper {
 } // namespace core
 } // namespace swatch
 
+DEFINE_SWATCH_EXCEPTION(CreatorNotFound)
 #include "AbstractFactory.hxx"
 
 

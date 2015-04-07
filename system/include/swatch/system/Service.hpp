@@ -5,8 +5,8 @@
  * Created on July 21, 2014, 10:16 AM
  */
 
-#ifndef __swatch_system_service_hpp__
-#define	__swatch_system_service_hpp__
+#ifndef __SWATCH_SYSTEM_SERVICE_HPP__
+#define	__SWATCH_SYSTEM_SERVICE_HPP__
 
 #include "swatch/core/Object.hpp"
 
@@ -22,5 +22,5 @@ public:
 }
 }
 
-#endif	/* __swatch_system_service_hpp__ */
+#endif	/* __SWATCH_SYSTEM_SERVICE_HPP__ */
 

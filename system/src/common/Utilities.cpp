@@ -10,7 +10,7 @@
 
 // Swatch Headers
 #include "swatch/processor/Utilities.hpp"
-#include "swatch/system/AMC13ServiceStub.hpp"
+#include "swatch/system/DaqTTCStub.hpp"
 #include "swatch/system/CrateStub.hpp"
 
 // Boost Headers
@@ -19,6 +19,7 @@
 namespace swatch {
 namespace system {
 
+//---
 swatch::core::XParameterSet
 treeToCratePars(const boost::property_tree::ptree& t) {
 
@@ -36,10 +37,12 @@ treeToCratePars(const boost::property_tree::ptree& t) {
     return cratePars;
 }
   
+
+//---
 swatch::core::XParameterSet
-treeToAMC13Pars(const boost::property_tree::ptree& t) {
+treeToDaqTTCPars(const boost::property_tree::ptree& t) {
     swatch::core::XParameterSet amc13Set;
-    AMC13ServiceStub astub;
+    DaqTTCStub astub;
 
     astub.name           = t.get<std::string>("SERVICE NAME");
     astub.creator        = t.get<std::string>("SERVICE CREATOR");
@@ -59,6 +62,7 @@ treeToAMC13Pars(const boost::property_tree::ptree& t) {
     return amc13Set;
 }
 
+//---
 swatch::core::XParameterSet 
 treeToSystemPars( const boost::property_tree::ptree& t ) {
 
@@ -86,13 +90,12 @@ treeToSystemPars( const boost::property_tree::ptree& t ) {
     }
     sysPars.add("processors",processorSets);
 
-    xdata::Vector<XParameterSet> amc13Sets;
-    BOOST_FOREACH( const ptree::value_type &v, pt_system.get_child("SERVICES")) {
-        if ( v.second.get<std::string>("SERVICE TYPE","") != "AMC13" ) continue;
-        core::XParameterSet amc13Set = swatch::system::treeToAMC13Pars(v.second);
-        amc13Sets.push_back(amc13Set);
+    xdata::Vector<XParameterSet> daqTTCSets;
+    BOOST_FOREACH( const ptree::value_type &v, pt_system.get_child("DAQTTCS")) {
+        core::XParameterSet amc13Set = swatch::system::treeToDaqTTCPars(v.second);
+        daqTTCSets.push_back(amc13Set);
     }
-    sysPars.add("services",amc13Sets);
+    sysPars.add("daqttc",daqTTCSets);
 
     return sysPars;
 }

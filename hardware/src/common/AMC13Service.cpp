@@ -9,7 +9,7 @@
 
 // Swatch Headers
 #include "swatch/logger/Log.hpp"
-#include "swatch/system/AMC13ServiceStub.hpp"
+#include "swatch/system/DaqTTCStub.hpp"
 #include "swatch/system/DaqTTCFactory.hpp"
 #include "swatch/hardware/AMC13Commands.hpp"
 #include "swatch/hardware/AMC13Operations.hpp"
@@ -44,7 +44,7 @@ AMC13Service::AMC13Service(const std::string& aId, const core::XParameterSet& aP
     registerCommand<AMC13ResetCommand>("reset");
     registerOperation<AMC13Configure>("configure");
 
-    system::AMC13ServiceStub& desc = aPars.get<system::AMC13ServiceBag>("stub").bag;
+    system::DaqTTCStub& desc = aPars.get<system::AMC13ServiceBag>("stub").bag;
 
     crate_ = desc.crate;
     slot_  = desc.slot;

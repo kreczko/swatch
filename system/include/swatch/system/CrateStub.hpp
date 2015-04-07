@@ -5,8 +5,8 @@
  * @date    11/11/14
  */
 
-#ifndef SWATCH_SYSTEM_CRATESTUB
-#define SWATCH_SYSTEM_CRATESTUB
+#ifndef __SWATCH_SYSTEM_CRATESTUB_HPP__
+#define __SWATCH_SYSTEM_CRATESTUB_HPP__
 
 // C++ Headers
 #include <ostream>
@@ -50,4 +50,4 @@ std::ostream& operator<<(std::ostream& os, const CrateStub& sd );
 } // namespace system
 } // namespace swatch
 
-#endif /* SWATCH_SYSTEM_CRATESTUB */
+#endif /* __SWATCH_SYSTEM_CRATESTUB_HPP__ */

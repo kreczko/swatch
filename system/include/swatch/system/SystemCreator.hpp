@@ -11,8 +11,8 @@
  *
  */
 
-#ifndef SYSTEMCREATOR_HPP
-#define SYSTEMCREATOR_HPP
+#ifndef __SWATCH_SYSTEM_SYSTEMCREATOR_HPP__
+#define __SWATCH_SYSTEM_SYSTEMCREATOR_HPP__
 
 #include "swatch/system/SystemFactory.hpp"
 
@@ -26,7 +26,7 @@ public:
 protected:
     virtual swatch::system::System* createSystem(const std::string& aId, const swatch::core::XParameterSet& params);
     virtual void addProcessors(swatch::system::System* system, const swatch::core::XParameterSet& params);
-    virtual void addDaqTTC(swatch::system::System* system, const swatch::core::XParameterSet& params);
+    virtual void addDaqTTCs(swatch::system::System* system, const swatch::core::XParameterSet& params);
     virtual void addServices(swatch::system::System* system, const swatch::core::XParameterSet& params);
     virtual void addCrates(swatch::system::System* system, const swatch::core::XParameterSet& params);
     virtual void addCrate(swatch::system::System* system, const swatch::core::XParameterSet& params);
@@ -37,4 +37,4 @@ protected:
 } // namespace swatch
 
 
-#endif /* SYSTEMCREATOR_HPP_ */
+#endif /* __SWATCH_SYSTEM_SYSTEMCREATOR_HPP__ */

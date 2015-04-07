@@ -29,9 +29,10 @@
 #include "swatch/system/ServiceFactory.hpp"
 #include "swatch/system/Crate.hpp"
 #include "swatch/system/CrateStub.hpp"
-#include "swatch/system/AMC13ServiceStub.hpp"
+#include "swatch/system/DaqTTCStub.hpp"
 #include "swatch/processor/test/DummyProcessor.hpp"
 #include "swatch/system/test/DummyAMC13Service.hpp"
+#include "swatch/system/DaqTTCFactory.hpp"
 #include "swatch/logger/Log.hpp"
 
 // XDAQ Headers
@@ -62,6 +63,7 @@ struct Params {
       srv1(),
       srv2(),
       ps_processors(),
+      ps_daqttc(),
       ps_services() {
 
       
@@ -136,7 +138,7 @@ struct Params {
         swsys::AMC13ServiceBag amc13Bag, fakeMCHBag;
 
         amc13Bag.bag.name    = xdata::String("AMC13-1");
-        amc13Bag.bag.creator = xdata::String("DummyAMC13Service");
+        amc13Bag.bag.creator = xdata::String("swatch::system::test::DummyAMC13Service");
         amc13Bag.bag.uriT1   = xdata::String("ipbusudp-2.0://127.0.0.1:50014");
         amc13Bag.bag.addressTableT1 = xdata::String("/address/table/location");
         amc13Bag.bag.uriT2   = xdata::String("ipbusudp-2.0://127.0.0.1:50014");  
@@ -148,20 +150,22 @@ struct Params {
         srv1.add("name", amc13Bag.bag.name);
         srv1.add("class", amc13Bag.bag.creator);
         srv1.add("stub", amc13Bag);
-        
-        fakeMCHBag = amc13Bag;
-        fakeMCHBag.bag.name = xdata::String("MCH-1");
-        fakeMCHBag.bag.slot = xdata::UnsignedInteger(14);
-        
-        srv2.add("name", fakeMCHBag.bag.name);
-        srv2.add("class", fakeMCHBag.bag.creator);
-        srv2.add("stub", fakeMCHBag);
 
-        ps_services.push_back(srv1);
-        ps_services.push_back(srv2);
+        ps_daqttc.push_back(srv1);
+        
+        // fakeMCHBag = amc13Bag;
+        // fakeMCHBag.bag.name = xdata::String("MCH-1");
+        // fakeMCHBag.bag.slot = xdata::UnsignedInteger(14);
+        
+        // srv2.add("name", fakeMCHBag.bag.name);
+        // srv2.add("class", fakeMCHBag.bag.creator);
+        // srv2.add("stub", fakeMCHBag);
+
+        // ps_services.push_back(srv2);
 
         ps_system.insert("crates", ps_crates);
         ps_system.insert("processors", ps_processors);
+        ps_system.insert("daqttc", ps_daqttc);
         ps_system.insert("services", ps_services);
         
   
@@ -173,6 +177,7 @@ struct Params {
     swco::XParameterSet ps_system, p1, p2, p3, cA, cB, srv1, srv2;
     xdata::Vector<swco::XParameterSet> ps_crates;
     xdata::Vector<swco::XParameterSet> ps_processors;
+    xdata::Vector<swco::XParameterSet> ps_daqttc;
     xdata::Vector<swco::XParameterSet> ps_services;
 };
 
@@ -183,7 +188,7 @@ BOOST_FIXTURE_TEST_CASE(BuildSystemWithDefaultCreator, Params){
     swsys::System * system = swsys::SystemFactory::get()->make("swatch::system::SystemLoggingCreator", ps_system.get<xdata::String>("name"), ps_system);
     BOOST_CHECK_EQUAL(system->id(), "calol2");
     BOOST_CHECK_EQUAL(system->getProcessors().size(), size_t(3));
-    BOOST_CHECK_EQUAL(system->getDaqTTC().size(), size_t(2));
+    BOOST_CHECK_EQUAL(system->getDaqTTC().size(), size_t(1));
     // detailed tests for the content of processors and services
     // should be done in the respective Creator tests.
 }
@@ -269,8 +274,8 @@ BOOST_AUTO_TEST_CASE(HasCrate) {
 
 BOOST_FIXTURE_TEST_CASE(AddAMC13Service, Params) {
   LOG(kInfo) << "Running SystemTestSuite/AddAMC13Service";
-  swsys::Service * service = static_cast<swsys::Service*>(swsys::ServiceFactory::get()->make(
-        srv1));
+  swsys::DaqTTCService * service = swsys::DaqTTCFactory::get()->make(
+        srv1);
   std::string service_name = srv1.get("name").toString();
   swsys::System * system = new swsys::System("mySystem");
   // before we can add service we need to add crateA
@@ -279,10 +284,10 @@ BOOST_FIXTURE_TEST_CASE(AddAMC13Service, Params) {
   BOOST_CHECK_EQUAL(system->getServices().size(), size_t(0));
   BOOST_CHECK_EQUAL(system->getDaqTTC().size(), size_t(0));
   system->add(service);
-  BOOST_CHECK_EQUAL(system->getServices().size(), size_t(1));
+  BOOST_CHECK_EQUAL(system->getServices().size(), size_t(0));
   BOOST_CHECK_EQUAL(system->getDaqTTC().size(), size_t(1));
 
-  swsys::Service * stored_service = system->getObj<swsys::Service>(service_name);
+  swsys::DaqTTCService * stored_service = system->getObj<swsys::DaqTTCService>(service_name);
   BOOST_CHECK_EQUAL(service->id(), stored_service->id() );
 }
 

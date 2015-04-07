@@ -15,7 +15,7 @@
 namespace swatch {
 namespace system {
 
-swatch::core::XParameterSet treeToAMC13Pars( const boost::property_tree::ptree& t );
+swatch::core::XParameterSet treeToDaqTTCPars( const boost::property_tree::ptree& t );
 swatch::core::XParameterSet treeToSystemPars( const boost::property_tree::ptree& t );
 swatch::core::XParameterSet treeToCratePars( const boost::property_tree::ptree& t );
 

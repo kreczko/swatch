@@ -20,15 +20,8 @@ typedef swatch::core::AbstractFactory<swatch::system::System> SystemFactory;
 } // namespace system
 } // namespace swatch
 
-// Standard factory registration macros
-#define SWATCH_SYSTEM_REGISTER_CLASS( classname ) \
-template<> bool swatch::core::ClassRegistrationHelper<swatch::system::System, classname >::initialised_= \
-  swatch::core::ClassRegistrationHelper<swatch::system::System, classname >::init(#classname);
-
-#define SWATCH_SYSTEM_REGISTER_CREATOR( creatorname ) \
-template<> bool swatch::core::CreatorRegistrationHelper< swatch::system::System, creatorname >::initialised_= \
-  swatch::core::CreatorRegistrationHelper< swatch::system::System, creatorname >::init(#creatorname);
-
+#define SWATCH_SYSTEM_REGISTER_CLASS( classname ) _SWATCH_ABSTRACT_REGISTER_CLASS( swatch::system::System, classname)
+#define SWATCH_SYSTEM_REGISTER_CREATOR( creatorname ) _SWATCH_ABSTRACT_REGISTER_CREATOR( swatch::system::System, creatorname)
 
 #endif	/* __SWATCH_SYSTEM_SYSTEMFACTORY_HPP__ */
 

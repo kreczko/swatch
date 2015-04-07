@@ -13,7 +13,7 @@
 // Swatch Headers
 #include "swatch/logger/Log.hpp"
 #include "swatch/system/ServiceFactory.hpp"
-#include "swatch/system/AMC13ServiceStub.hpp"
+#include "swatch/system/DaqTTCStub.hpp"
 #include <swatch/core/xoperators.hpp>
 #include <xdata/Integer.h>
 

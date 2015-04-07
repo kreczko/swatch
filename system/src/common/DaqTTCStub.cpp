@@ -6,7 +6,7 @@
  */
 
 
-#include "swatch/system/AMC13ServiceStub.hpp"
+#include "swatch/system/DaqTTCStub.hpp"
 
 // Swatch Headers
 #include "swatch/core/xoperators.hpp"
@@ -14,9 +14,9 @@
 namespace swatch {
 namespace system {
 
-std::ostream& operator<<(std::ostream& os, const AMC13ServiceStub& sd ) {
+std::ostream& operator<<(std::ostream& os, const DaqTTCStub& sd ) {
     
-    os << "AMC13ServiceDescriptor[" << sd.name << "]:\n"
+    os << "DaqTTCStub[" << sd.name << "]:\n"
        << "   - Uses creator = " << sd.creator << "\n"
        << "   - Uri [T1] = " << sd.uriT1 << "\n"
        << "   - Address Table [T1] = " << sd.addressTableT1 << "\n"

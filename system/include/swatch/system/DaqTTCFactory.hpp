@@ -20,15 +20,8 @@ typedef swatch::core::AbstractFactory<swatch::system::DaqTTCService> DaqTTCFacto
 } // namespace system
 } // namespace swatch
 
-
 // Standard factory registration macros
-#define SWATCH_DAQTTC_REGISTER_CLASS( classname ) \
-template<> bool swatch::core::ClassRegistrationHelper<swatch::system::DaqTTCService, classname >::initialised_= \
-  swatch::core::ClassRegistrationHelper<swatch::system::DaqTTCService, classname >::init(#classname);
-
-#define SWATCH_DAQTTC_REGISTER_CREATOR( creatorname ) \
-template<> bool swatch::core::CreatorRegistrationHelper< swatch::system::DaqTTCService, creatorname >::initialised_= \
-  swatch::core::CreatorRegistrationHelper< swatch::system::DaqTTCService, creatorname >::init(#creatorname);
-
+#define SWATCH_DAQTTC_REGISTER_CLASS( classname ) _SWATCH_ABSTRACT_REGISTER_CLASS( swatch::system::DaqTTCService, classname )
+#define SWATCH_DAQTTC_REGISTER_CREATOR( creatorname ) _SWATCH_ABSTRACT_REGISTER_CREATOR( swatch::system::DaqTTCService, creatorname )
 
 #endif	/* __SWATCH_SYSTEM_DAQTTCFACTORY_HPP__ */

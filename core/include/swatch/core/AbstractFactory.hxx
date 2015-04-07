@@ -10,6 +10,8 @@
 #define	__SWATCH_CORE_ABSTRACTFACTORY_HXX__
 
 #include "xdata/String.h"
+#include "swatch/core/Utilities.hpp"
+
 namespace swatch {
 namespace core {
 
@@ -30,7 +32,7 @@ T* AbstractFactory<T>::make( const std::string& aCreatorId, const std::string& a
     typename boost::unordered_map< std::string , boost::shared_ptr<CreatorInterface> >::const_iterator lIt = creators_.find ( aCreatorId );
 
     if ( lIt == creators_.end() ) {
-        throw std::runtime_error("Class "+aCreatorId+" not found");
+        throw CreatorNotFound(demangleName(typeid(this).name())+": Creator '"+aCreatorId+"' not found");
     }
     
     return (*lIt->second)( aId, aPars );

@@ -14,7 +14,7 @@
 #include "swatch/system/System.hpp"
 #include "swatch/system/SystemFactory.hpp"
 #include "swatch/system/Crate.hpp"
-#include "swatch/system/AMC13ServiceStub.hpp"
+#include "swatch/system/DaqTTCStub.hpp"
 #include "swatch/processor/test/DummyProcessor.hpp"
 #include "swatch/system/test/DummyAMC13Service.hpp"
 #include "swatch/logger/Log.hpp"

@@ -5,8 +5,8 @@
  * Created on August 5, 2014, 2:08 PM
  */
 
-#ifndef __swatch_processor_servicefactory_hpp__
-#define	__swatch_processor_servicefactory_hpp__
+#ifndef __SWATCH_PROCESSOR_SERVICEFACTORY_HPP__
+#define	__SWATCH_PROCESSOR_SERVICEFACTORY_HPP__
 
 
 #include "swatch/core/AbstractFactory.hpp"
@@ -20,15 +20,12 @@ typedef swatch::core::AbstractFactory<swatch::processor::Processor> ProcessorFac
 } // namespace processor
 } // namespace swatch
 
-// Standard factory registration macros
-#define SWATCH_PROCESSOR_REGISTER_CLASS( classname ) \
-template<> bool swatch::core::ClassRegistrationHelper< swatch::processor::Processor, classname >::initialised_= \
-  swatch::core::ClassRegistrationHelper< swatch::processor::Processor, classname >::init(#classname);
+// Processor Class Registrator
+#define SWATCH_PROCESSOR_REGISTER_CLASS( classname ) _SWATCH_ABSTRACT_REGISTER_CLASS( swatch::processor::Processor, classname )
+// Processor Creator Registrator
+#define SWATCH_PROCESSOR_REGISTER_CREATOR( creatorname ) _SWATCH_ABSTRACT_REGISTER_CREATOR( swatch::processor::Processor, creatorname )
 
-#define SWATCH_PROCESSOR_REGISTER_CREATOR( creatorname ) \
-template<> bool swatch::core::CreatorRegistrationHelper< swatch::processor::Processor, creatorname >::initialised_= \
-  swatch::core::CreatorRegistrationHelper< swatch::processor::Processor, creatorname >::init(#creatorname);
 
-#endif	/* __swatch_processor_servicefactory_hpp__ */
+#endif	/* __SWATCH_PROCESSOR_SERVICEFACTORY_HPP__ */
 
 

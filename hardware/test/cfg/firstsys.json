@@ -29,7 +29,7 @@
                         ]
                       }
                     ],
-            "SERVICES":
+            "DAQTTCS":
                     [
                       {
                         "SERVICE NAME": "AMC13-1",
