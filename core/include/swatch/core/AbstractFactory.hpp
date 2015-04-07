@@ -29,8 +29,8 @@ private:
 public:
     template< typename A, typename D > friend struct ClassRegistrationHelper;
     template< typename A, typename K > friend struct CreatorRegistrationHelper;
-    template< typename A, typename D > friend struct ClassRegistrationHelper2g;
-    template< typename A, typename K > friend struct CreatorRegistrationHelper2g;
+    template< typename A, typename D > friend struct ClassRegistrationHelper;
+    template< typename A, typename K > friend struct CreatorRegistrationHelper;
     
     typedef T Product;
     
@@ -78,32 +78,6 @@ private:
  */
 template< typename A, typename D >
 struct ClassRegistrationHelper {
-    ClassRegistrationHelper(const std::string& aClassName) {
-        AbstractFactory<A>::get()->template add< typename AbstractFactory<A>::template BasicCreator<D> > (aClassName );
-    }
-};
-
-/**
- * Factory helper class
- * 
- * @tparam A Base product type
- * @tparam K Creator type
- */
-template< typename A, typename K >
-struct CreatorRegistrationHelper {
-    CreatorRegistrationHelper(const std::string& aCreatorName) {
-        AbstractFactory<A>::get()->template add< K >(aCreatorName);
-    }
-};
-
-/**
- * Factory helper class
- * 
- * @tparam A Base product type
- * @tparam D Derived product type
- */
-template< typename A, typename D >
-struct ClassRegistrationHelper2g {
     static bool initialised_;
     
     static bool init(const std::string& aClassName) {
@@ -119,7 +93,7 @@ struct ClassRegistrationHelper2g {
  * @tparam K Creator type
  */
 template< typename A, typename K >
-struct CreatorRegistrationHelper2g {
+struct CreatorRegistrationHelper {
     static bool initialised_;
     
     static bool init(const std::string& aCreatorName) {

@@ -20,12 +20,12 @@ typedef swatch::core::test::SimpleObject SimpleObject;
 
 // Standard factory registration macros
 #define SWATCH_TEST_REGISTER_OBJ( classname ) \
-template<> bool swatch::core::ClassRegistrationHelper2g<swatch::core::Object, classname >::initialised_= \
-  swatch::core::ClassRegistrationHelper2g<swatch::core::Object, classname >::init(#classname);
+template<> bool swatch::core::ClassRegistrationHelper<swatch::core::Object, classname >::initialised_= \
+  swatch::core::ClassRegistrationHelper<swatch::core::Object, classname >::init(#classname);
 
 #define SWATCH_TEST_REGISTER_OBJCREATOR( creatorname ) \
-template<> bool swatch::core::CreatorRegistrationHelper2g< swatch::core::Object, creatorname >::initialised_= \
-  swatch::core::CreatorRegistrationHelper2g< swatch::core::Object, creatorname >::init(#creatorname);
+template<> bool swatch::core::CreatorRegistrationHelper< swatch::core::Object, creatorname >::initialised_= \
+  swatch::core::CreatorRegistrationHelper< swatch::core::Object, creatorname >::init(#creatorname);
 
 
 namespace swatch {
