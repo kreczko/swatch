@@ -253,7 +253,7 @@ using namespace std;
     
     sysset.set("amc13s",vpset);
     
-    swatch::system::System* mysys = swatch::system::SystemFactory::get()->make("SystemCreator", sysset.get<std::string>("name"), sysset);
+    swatch::system::System* mysys = swatch::system::SystemFactory::get()->make("swatch::system::SystemCreator", sysset.get<std::string>("name"), sysset);
     cout << "Here's a brand new system: " << mysys << endl; 
     
     return 0;

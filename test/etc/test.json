@@ -5,17 +5,17 @@
     { 
       "name" : "p1",
       "uuid" : "0xc0de1",
-      "class" : "DummyProcessor"
+      "class" : "swatch::processor::test::DummyProcessor"
     },
     {
       "name" : "p2",
       "uuid" : "0xc0de2",
-      "class" : "DummyProcessor"
+      "class" : "swatch::processor::test::DummyProcessor"
     },
     {
       "name" : "p3",
       "uuid" : "0xc0de3",
-      "class" : "DummyProcessor"
+      "class" : "swatch::processor::test::DummyProcessor"
     }
   ]
   

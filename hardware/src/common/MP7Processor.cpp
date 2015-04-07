@@ -40,10 +40,12 @@ namespace swco = swatch::core;
 namespace swlog = swatch::logger;
 namespace swhw = swatch::hardware;
 
+SWATCH_PROCESSOR_REGISTER_CLASS(swatch::hardware::MP7Processor);
+
+
 namespace swatch {
 namespace hardware {
 
-SWATCH_PROCESSOR_REGISTER_CLASS(MP7Processor);
 
 MP7Processor::MP7Processor(const std::string& id, const swatch::core::XParameterSet& aPars) :
     Processor(id, aPars),

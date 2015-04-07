@@ -32,8 +32,6 @@ namespace swatch {
 namespace processor {
 namespace test {
 
-// SWATCH_PROCESSOR_REGISTER_CLASS(DummyProcessor);
-
 DummyProcessor::DummyProcessor(const std::string& id,
     const swatch::core::XParameterSet& params) :
         Processor(id, params),

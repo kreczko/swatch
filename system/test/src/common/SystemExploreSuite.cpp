@@ -51,7 +51,7 @@ struct SystemSetupA {
         XParameterSet a;
         a.insert("requires", xdata::String("ttc;daq"))
             ("provides", xdata::String("trigger"))
-            ("class",xdata::String("DummyProcessor"));
+            ("class",xdata::String("swatch::processor::test::DummyProcessor"));
         XParameterSet a1 = a, a2 = a, a3 = a;
 
         system = new System("calol2");
@@ -79,7 +79,7 @@ struct SystemSetupA {
         
         // a2.insert("crate", xdata::String("crateD"))
           // ("slot", xdata::Integer(2));
-        Processor* p2 = ProcessorFactory::get()->make("DummyProcessor","mp7-13", a2);
+        Processor* p2 = ProcessorFactory::get()->make("swatch::processor::test::DummyProcessor","mp7-13", a2);
         system->add(p2);
         
         // 3. Using ProcessorFactory, PSet based compact creator

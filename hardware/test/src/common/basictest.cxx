@@ -137,7 +137,7 @@ int main(int argc, char** argv) {
     XParameterSet sysset = swsys::treeToSystemPars(pt);
     
     LOG(swlo::kNotice) << "Building the new system";
-    swsys::System* mysys = swsys::SystemFactory::get()->make("SystemCreator", sysset.get<xdata::String>("name"), sysset);
+    swsys::System* mysys = swsys::SystemFactory::get()->make("swatch::system::SystemCreator", sysset.get<xdata::String>("name"), sysset);
     mysys->registerCommand<ResetClockCommand>("resetClocks");
     
     mysys->getCommand("resetClocks")->exec();

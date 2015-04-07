@@ -97,7 +97,7 @@ using namespace boost::assign;
 //    
 //    sysset.set("services",vpset);
     
-    swatch::system::System* mysys = swatch::system::SystemFactory::get()->make("SystemCreator", sysset.get<xdata::String>("name"), sysset);
+    swatch::system::System* mysys = swatch::system::SystemFactory::get()->make("swatch::system::SystemCreator", sysset.get<xdata::String>("name"), sysset);
     cout << "Here's a brand new system: " << mysys << endl; 
     
     return 0;

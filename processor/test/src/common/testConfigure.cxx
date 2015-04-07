@@ -250,7 +250,7 @@ int main(int argc, char const *argv[]) {
         
     swpro::ProcessorStub stubTemplate;
     stubTemplate.name = "";
-    stubTemplate.creator = "IPBusProcessor";
+    stubTemplate.creator = "swatch::processor::test::IPBusProcessor";
     stubTemplate.addressTable = addrtab;
     stubTemplate.uri = "";
     stubTemplate.crate = "s2g20-10";

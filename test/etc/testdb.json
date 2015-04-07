@@ -7,7 +7,7 @@
           {
             "PROCESSOR NAME": "MP-1",
             "PROCESSOR TYPE": "CALO2 PROCESSOR",
-            "PROCESSOR CREATOR": "DummyProcessor",
+            "PROCESSOR CREATOR": "swatch::project::test::DummyProcessor",
             "HARDWARE TYPE": "MP7",
             "URI": "chtcp-2.0://127.0.0.1:20304?target=192.168.2.95:50001",
             "ADDRESS TABLE": "file://${CACTUS_ROOT}/etc/mp7/addrtab/mp7fw_v1_4_0_xe/mp7xe_infra.xml",
@@ -26,7 +26,7 @@
           {
             "PROCESSOR NAME": "MP-2",
             "PROCESSOR TYPE": "CALO2 PROCESSOR",
-            "PROCESSOR CREATOR": "DummyProcessor",
+            "PROCESSOR CREATOR": "swatch::project::test::DummyProcessor",
             "HARDWARE TYPE": "MP7",
             "URI": "chtcp-2.0://127.0.0.1:20304?target=192.168.2.96:50001",
             "ADDRESS TABLE": "file://${CACTUS_ROOT}/etc/mp7/addrtab/mp7fw_v1_4_0_xe/mp7xe_infra.xml",
@@ -44,7 +44,7 @@
           {
             "PROCESSOR NAME": "MP-3",
             "PROCESSOR TYPE": "CALO2 PROCESSOR",
-            "PROCESSOR CREATOR": "DummyProcessor",
+            "PROCESSOR CREATOR": "swatch::project::test::DummyProcessor",
             "HARDWARE TYPE": "MP7",
             "URI": "chtcp-2.0://127.0.0.1:20304?target=192.168.2.97:50001",
             "ADDRESS TABLE": "file://${CACTUS_ROOT}/etc/mp7/addrtab/mp7fw_v1_4_0_xe/mp7xe_infra.xml",

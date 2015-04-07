@@ -26,11 +26,11 @@ using namespace std;
 namespace swlog = swatch::logger;
 namespace swsys = swatch::system;
 
+SWATCH_DAQTTC_REGISTER_CLASS(swatch::system::test::DummyAMC13Service);
+
 namespace swatch {
 namespace system {
 namespace test {
-
-SWATCH_DAQTTC_REGISTER_CLASS(DummyAMC13Service);
 
 DummyAMC13Service::DummyAMC13Service( const std::string& aId, const core::XParameterSet& aPars ) : system::DaqTTCService(aId,aPars) {
     LOG(swlog::kInfo) << "Building a DummyAMC13Service";

@@ -14,10 +14,10 @@ namespace swco = swatch::core;
 namespace swsys = swatch::system;
 namespace swpro = swatch::processor;
 
+SWATCH_SYSTEM_REGISTER_CREATOR(swatch::system::SystemLoggingCreator);
+
 namespace swatch {
 namespace system {
-
-SWATCH_SYSTEM_REGISTER_CREATOR(SystemLoggingCreator);
 
 swatch::system::System*
 SystemLoggingCreator::operator()(const std::string& aId, const swatch::core::XParameterSet& aPars) {

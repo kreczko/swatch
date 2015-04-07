@@ -90,11 +90,11 @@ struct Params {
         
         swpro::ProcessorStub proStubTmpl;
         
-        proStubTmpl.creator = xdata::String("DummyProcessor");
+        proStubTmpl.creator = xdata::String("swatch::processor::test::DummyProcessor");
         proStubTmpl.addressTable = xdata::String("/address/table/location");
         
         proStubTmpl.name = xdata::String("");
-        proStubTmpl.creator = xdata::String("DummyProcessor");
+        proStubTmpl.creator = xdata::String("swatch::processor::test::DummyProcessor");
         proStubTmpl.addressTable = xdata::String("/address/table/location");
         proStubTmpl.uri = xdata::String("");
         proStubTmpl.crate = xdata::String("crateA");
@@ -180,7 +180,7 @@ BOOST_AUTO_TEST_SUITE( SystemTestSuite )
 
 BOOST_FIXTURE_TEST_CASE(BuildSystemWithDefaultCreator, Params){
   LOG(kInfo) << "Running SystemTestSuite/BuildSystemWithDefaultCreator";
-    swsys::System * system = swsys::SystemFactory::get()->make("SystemLoggingCreator", ps_system.get<xdata::String>("name"), ps_system);
+    swsys::System * system = swsys::SystemFactory::get()->make("swatch::system::SystemLoggingCreator", ps_system.get<xdata::String>("name"), ps_system);
     BOOST_CHECK_EQUAL(system->id(), "calol2");
     BOOST_CHECK_EQUAL(system->getProcessors().size(), size_t(3));
     BOOST_CHECK_EQUAL(system->getDaqTTC().size(), size_t(2));

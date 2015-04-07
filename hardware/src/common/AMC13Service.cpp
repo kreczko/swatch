@@ -29,11 +29,12 @@ namespace swco = swatch::core;
 namespace swlo = swatch::logger;
 namespace swhw = swatch::hardware;
 
+
+SWATCH_DAQTTC_REGISTER_CLASS(swatch::hardware::AMC13Service)
+
 namespace swatch {
 namespace hardware {
-    
-SWATCH_DAQTTC_REGISTER_CLASS(AMC13Service)
-
+   
 
 //---
 AMC13Service::AMC13Service(const std::string& aId, const core::XParameterSet& aPars) :

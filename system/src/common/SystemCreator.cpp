@@ -16,11 +16,11 @@ namespace swco = swatch::core;
 //namespace swsys = swatch::system;
 namespace swpro = swatch::processor;
 
+SWATCH_SYSTEM_REGISTER_CREATOR(swatch::system::SystemCreator);
+
 
 namespace swatch {
 namespace system {
-
-SWATCH_SYSTEM_REGISTER_CREATOR(SystemCreator);
 
 
 swatch::system::System*
