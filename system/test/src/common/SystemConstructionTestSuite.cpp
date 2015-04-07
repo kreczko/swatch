@@ -9,10 +9,8 @@
 
 #include "swatch/processor/Processor.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
-#include "swatch/processor/ProcessorFactory.hpp"
 
 #include "swatch/system/System.hpp"
-#include "swatch/system/SystemFactory.hpp"
 #include "swatch/system/Crate.hpp"
 #include "swatch/system/DaqTTCStub.hpp"
 #include "swatch/processor/test/DummyProcessor.hpp"
@@ -131,7 +129,7 @@ BOOST_AUTO_TEST_CASE(BuildFullCrate) {
     // AMC13
     XParameterSet params13;
 
-    AMC13ServiceBag bag13;
+    DaqTTCBag bag13;
     bag13.bag.crate = xdata::String("s2x3g18");
     bag13.bag.slot = xdata::UnsignedInteger(13);
 

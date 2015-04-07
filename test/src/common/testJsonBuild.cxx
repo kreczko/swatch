@@ -15,11 +15,11 @@
 #include "swatch/core/Utilities.hpp"
 #include "swatch/core/Link.hpp"
 #include "swatch/core/Port.hpp"
+#include "swatch/core/Factory.hpp"
 #include "swatch/processor/Processor.hpp"
-#include "swatch/processor/ProcessorFactory.hpp"
 #include "swatch/system/System.hpp"
 #include "swatch/system/Crate.hpp"
-#include "swatch/system/SystemFactory.hpp"
+//#include "swatch/system/SystemFactory.hpp"
 #include "swatch/processor/test/DummyProcessor.hpp"
 #include "swatch/system/test/DummyAMC13Service.hpp"
 #include "swatch/system/Utilities.hpp"
@@ -97,7 +97,8 @@ using namespace boost::assign;
 //    
 //    sysset.set("services",vpset);
     
-    swatch::system::System* mysys = swatch::system::SystemFactory::get()->make("swatch::system::SystemCreator", sysset.get<xdata::String>("name"), sysset);
+//    swatch::system::System* mysys = swatch::system::SystemFactory::get()->make("swatch::system::SystemCreator", sysset.get<xdata::String>("name"), sysset);
+    swatch::system::System* mysys = swatch::core::Factory::get()->bake<swatch::system::System>("swatch::system::SystemCreator", sysset.get<xdata::String>("name"), sysset);
     cout << "Here's a brand new system: " << mysys << endl; 
     
     return 0;

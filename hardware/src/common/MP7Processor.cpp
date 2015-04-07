@@ -14,7 +14,7 @@
 
 // Swatch Headers
 #include "swatch/logger/Log.hpp"
-#include "swatch/processor/ProcessorFactory.hpp"
+#include "swatch/core/Factory.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
 
 // MP7 Headers
@@ -40,7 +40,7 @@ namespace swco = swatch::core;
 namespace swlog = swatch::logger;
 namespace swhw = swatch::hardware;
 
-SWATCH_PROCESSOR_REGISTER_CLASS(swatch::hardware::MP7Processor);
+SWATCH_REGISTER_CLASS(swatch::hardware::MP7Processor);
 
 
 namespace swatch {

@@ -39,8 +39,6 @@ private:
 public:
     template< typename A, typename D > friend struct ClassRegistrationHelper;
     template< typename A, typename K > friend struct CreatorRegistrationHelper;
-    template< typename A, typename D > friend struct ClassRegistrationHelper;
-    template< typename A, typename K > friend struct CreatorRegistrationHelper;
     
     typedef T Product;
     
@@ -52,6 +50,12 @@ public:
 
     T* make( const swatch::core::XParameterSet& params );
 
+    template<typename P>
+    P* bake( const std::string& aCreatorId, const std::string& aId, const swatch::core::XParameterSet& params );
+
+    template<typename P>
+    P* bake( const swatch::core::XParameterSet& params );
+    
     class CreatorInterface {
     public:
         virtual T* operator()( const std::string& aId, const swatch::core::XParameterSet& params ) = 0;
@@ -80,6 +84,7 @@ private:
 
 };
 
+
 /**
  * Factory helper class
  * 
@@ -96,6 +101,7 @@ struct ClassRegistrationHelper {
          return true;
     }
 };
+
 
 /**
  * Factory helper class
@@ -119,6 +125,8 @@ struct CreatorRegistrationHelper {
 } // namespace swatch
 
 DEFINE_SWATCH_EXCEPTION(CreatorNotFound)
+DEFINE_SWATCH_EXCEPTION(FailedFactoryCast)
+
 #include "AbstractFactory.hxx"
 
 

@@ -14,14 +14,19 @@
 #ifndef __SWATCH_SYSTEM_SYSTEMCREATOR_HPP__
 #define __SWATCH_SYSTEM_SYSTEMCREATOR_HPP__
 
-#include "swatch/system/SystemFactory.hpp"
+//#include "swatch/system/SystemFactory.hpp"
+#include "swatch/core/Factory.hpp"
 
 namespace swatch {
 namespace system {
 
-class SystemCreator : public swatch::system::SystemFactory::CreatorInterface {
+class System;
+
+//class SystemCreator : public swatch::system::SystemFactory::CreatorInterface {
+class SystemCreator : public swatch::core::Factory::CreatorInterface {
 public:
-    virtual swatch::system::System* operator()(const std::string& aId, const swatch::core::XParameterSet& params);
+//    virtual swatch::system::System* operator()(const std::string& aId, const swatch::core::XParameterSet& params);
+    virtual swatch::core::Object* operator()(const std::string& aId, const swatch::core::XParameterSet& params);
 
 protected:
     virtual swatch::system::System* createSystem(const std::string& aId, const swatch::core::XParameterSet& params);

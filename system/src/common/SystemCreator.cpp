@@ -3,27 +3,29 @@
 #include <xdata/Vector.h>
 
 // Swatch Headers
-#include "swatch/processor/ProcessorFactory.hpp"
+#include "swatch/core/Factory.hpp"
+#include "swatch/processor/Processor.hpp"
 #include "swatch/system/DaqTTCService.hpp"
+#include "swatch/system/Service.hpp"
+#include "swatch/system/System.hpp"
 #include "swatch/system/SystemCreator.hpp"
-#include "swatch/system/ServiceFactory.hpp"
 #include "swatch/system/Crate.hpp"
 
 #include "swatch/system/CrateStub.hpp"
-#include "swatch/system/DaqTTCFactory.hpp"
 
 namespace swco = swatch::core;
 //namespace swsys = swatch::system;
 namespace swpro = swatch::processor;
 
-SWATCH_SYSTEM_REGISTER_CREATOR(swatch::system::SystemCreator);
+SWATCH_REGISTER_CREATOR(swatch::system::SystemCreator);
 
 
 namespace swatch {
 namespace system {
 
-
-swatch::system::System*
+//---
+//swatch::system::System*
+swatch::core::Object*
 SystemCreator::operator()(const std::string& aId, const swatch::core::XParameterSet& aPars) {
 	// validity check should go here
 	System* sys = createSystem(aId, aPars);
@@ -35,11 +37,14 @@ SystemCreator::operator()(const std::string& aId, const swatch::core::XParameter
 	return sys;
 }
 
+
+//---
 swatch::system::System*
 SystemCreator::createSystem(const std::string& aId, const swatch::core::XParameterSet& aPars){
 	System* sys = new System(aId, aPars);
 	return sys;
 }
+
 
 //---
 void SystemCreator::addCrates(System* system, const swatch::core::XParameterSet& aPars) {
@@ -49,7 +54,6 @@ void SystemCreator::addCrates(System* system, const swatch::core::XParameterSet&
     BOOST_FOREACH(swco::XParameterSet& ps,vPSets) {
         addCrate(system, ps);
     }
-
 }
 
 
@@ -66,7 +70,8 @@ void SystemCreator::addProcessors(System* system, const swatch::core::XParameter
 	xdata::Vector<swco::XParameterSet> vPSets;
 	vPSets = aPars.get<xdata::Vector<swco::XParameterSet> >("processors");
 	BOOST_FOREACH(swco::XParameterSet& ps,vPSets) {
-		swpro::Processor* p = swpro::ProcessorFactory::get()->make(ps);
+//		swpro::Processor* p = swpro::ProcessorFactory::get()->make(ps);
+		swpro::Processor* p = swco::Factory::get()->bake<swpro::Processor>(ps);
 		system->add(p);
 	}
 }
@@ -81,8 +86,8 @@ void SystemCreator::addDaqTTCs(System* system, const swatch::core::XParameterSet
 	xdata::Vector<swco::XParameterSet> vPSets;
 	vPSets = aPars.get<xdata::Vector<swco::XParameterSet> >("daqttc");
 	BOOST_FOREACH(swco::XParameterSet& ps,vPSets) {
-		DaqTTCService* a = static_cast<DaqTTCService*>(DaqTTCFactory::get()->make(
-                ps));
+//		DaqTTCService* a = static_cast<DaqTTCService*>(DaqTTCFactory::get()->make(ps));
+		DaqTTCService* a = swco::Factory::get()->bake<DaqTTCService>(ps);
 
 		system->add(a);
 	}
@@ -97,8 +102,8 @@ void SystemCreator::addServices(System* system, const swatch::core::XParameterSe
 	
   vPSets = aPars.get<xdata::Vector<swco::XParameterSet> >("services");
 	BOOST_FOREACH(swco::XParameterSet& ps,vPSets) {
-		Service* a = static_cast<Service*>(ServiceFactory::get()->make(
-                ps));
+//		Service* a = static_cast<Service*>(ServiceFactory::get()->make(ps));
+		Service* a = swco::Factory::get()->bake<Service>(ps);
 
 		system->add(a);
 	}

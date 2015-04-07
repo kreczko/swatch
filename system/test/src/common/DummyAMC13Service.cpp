@@ -6,19 +6,19 @@
  */
 
 #include "swatch/system/test/DummyAMC13Service.hpp"
-#include "swatch/system/DaqTTCFactory.hpp"
+#include "swatch/core/Factory.hpp"
+
 // Boost Headers
 #include <boost/foreach.hpp>
 
 // Swatch Headers
 #include "swatch/logger/Log.hpp"
-#include "swatch/system/ServiceFactory.hpp"
+#include "swatch/core/xoperators.hpp"
 #include "swatch/system/DaqTTCStub.hpp"
-#include <swatch/core/xoperators.hpp>
-#include <xdata/Integer.h>
 
 // XDAQ Headers
 #include "xdata/Serializable.h"
+#include <xdata/Integer.h>
 
 // Namespace resolution
 using namespace std;
@@ -26,7 +26,7 @@ using namespace std;
 namespace swlog = swatch::logger;
 namespace swsys = swatch::system;
 
-SWATCH_DAQTTC_REGISTER_CLASS(swatch::system::test::DummyAMC13Service);
+SWATCH_REGISTER_CLASS(swatch::system::test::DummyAMC13Service);
 
 namespace swatch {
 namespace system {
@@ -43,7 +43,7 @@ DummyAMC13Service::DummyAMC13Service( const std::string& aId, const core::XParam
         LOG(swlog::kDebug) << "   " << k << " : " << aPars[k];
     }
 
-    swsys::AMC13ServiceBag& stub = aPars.get<swsys::AMC13ServiceBag>("stub");
+    swsys::DaqTTCBag& stub = aPars.get<swsys::DaqTTCBag>("stub");
 
     crate_ = stub.bag.crate;
     slot_ = stub.bag.slot;

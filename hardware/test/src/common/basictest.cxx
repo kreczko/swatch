@@ -12,8 +12,12 @@
 #include "swatch/core/XParameterSet.hpp"
 #include "swatch/core/xoperators.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
-#include "swatch/processor/ProcessorFactory.hpp"
+#include "swatch/core/Factory.hpp"
+#include "swatch/processor/Processor.hpp"
 #include "swatch/system/Crate.hpp"
+#include "swatch/system/DaqTTCService.hpp"
+#include "swatch/system/System.hpp"
+#include "swatch/system/Utilities.hpp"
 
 // Swatch Hardware Headers
 #include "swatch/hardware/MP7Processor.hpp"
@@ -22,9 +26,6 @@
 
 // uHAL Headers
 #include "uhal/log/log.hpp"
-#include "swatch/system/SystemFactory.hpp"
-#include "swatch/system/ServiceFactory.hpp"
-#include "swatch/system/Utilities.hpp"
 
 // XDAQ Headers
 #include "xdata/Vector.h"
@@ -137,7 +138,8 @@ int main(int argc, char** argv) {
     XParameterSet sysset = swsys::treeToSystemPars(pt);
     
     LOG(swlo::kNotice) << "Building the new system";
-    swsys::System* mysys = swsys::SystemFactory::get()->make("swatch::system::SystemCreator", sysset.get<xdata::String>("name"), sysset);
+//    swsys::System* mysys = swsys::SystemFactory::get()->make("swatch::system::SystemCreator", sysset.get<xdata::String>("name"), sysset);
+    swsys::System* mysys = swco::Factory::get()->bake<swsys::System>("swatch::system::SystemCreator", sysset.get<xdata::String>("name"), sysset);
     mysys->registerCommand<ResetClockCommand>("resetClocks");
     
     mysys->getCommand("resetClocks")->exec();

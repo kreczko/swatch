@@ -19,20 +19,17 @@
 #include "swatch/core/Utilities.hpp"
 #include "swatch/core/Link.hpp"
 #include "swatch/core/Port.hpp"
+#include "swatch/core/Factory.hpp"
 
 #include "swatch/processor/ProcessorStub.hpp"
 #include "swatch/processor/Processor.hpp"
-#include "swatch/processor/ProcessorFactory.hpp"
 
 #include "swatch/system/System.hpp"
-#include "swatch/system/SystemFactory.hpp"
-#include "swatch/system/ServiceFactory.hpp"
 #include "swatch/system/Crate.hpp"
 #include "swatch/system/CrateStub.hpp"
 #include "swatch/system/DaqTTCStub.hpp"
 #include "swatch/processor/test/DummyProcessor.hpp"
 #include "swatch/system/test/DummyAMC13Service.hpp"
-#include "swatch/system/DaqTTCFactory.hpp"
 #include "swatch/logger/Log.hpp"
 
 // XDAQ Headers
@@ -40,9 +37,6 @@
 #include "xdata/Integer.h"
 
 using namespace boost::assign;
-//using namespace swatch::core;
-//using namespace swatch::system;
-// using namespace swatch::processor;
 using namespace swatch::logger;
 using namespace swatch::system::test;
 
@@ -135,7 +129,7 @@ struct Params {
         
         ps_processors += p1,p2,p3;
 
-        swsys::AMC13ServiceBag amc13Bag, fakeMCHBag;
+        swsys::DaqTTCBag amc13Bag, fakeMCHBag;
 
         amc13Bag.bag.name    = xdata::String("AMC13-1");
         amc13Bag.bag.creator = xdata::String("swatch::system::test::DummyAMC13Service");
@@ -185,7 +179,8 @@ BOOST_AUTO_TEST_SUITE( SystemTestSuite )
 
 BOOST_FIXTURE_TEST_CASE(BuildSystemWithDefaultCreator, Params){
   LOG(kInfo) << "Running SystemTestSuite/BuildSystemWithDefaultCreator";
-    swsys::System * system = swsys::SystemFactory::get()->make("swatch::system::SystemLoggingCreator", ps_system.get<xdata::String>("name"), ps_system);
+//    swsys::System * system = swsys::SystemFactory::get()->make("swatch::system::SystemLoggingCreator", ps_system.get<xdata::String>("name"), ps_system);
+    swsys::System * system = swco::Factory::get()->bake<swsys::System>("swatch::system::SystemLoggingCreator", ps_system.get<xdata::String>("name"), ps_system);
     BOOST_CHECK_EQUAL(system->id(), "calol2");
     BOOST_CHECK_EQUAL(system->getProcessors().size(), size_t(3));
     BOOST_CHECK_EQUAL(system->getDaqTTC().size(), size_t(1));
@@ -274,8 +269,8 @@ BOOST_AUTO_TEST_CASE(HasCrate) {
 
 BOOST_FIXTURE_TEST_CASE(AddAMC13Service, Params) {
   LOG(kInfo) << "Running SystemTestSuite/AddAMC13Service";
-  swsys::DaqTTCService * service = swsys::DaqTTCFactory::get()->make(
-        srv1);
+//  swsys::DaqTTCService * service = swsys::DaqTTCFactory::get()->make(srv1);
+  swsys::DaqTTCService * service = swco::Factory::get()->bake<swsys::DaqTTCService>(srv1);
   std::string service_name = srv1.get("name").toString();
   swsys::System * system = new swsys::System("mySystem");
   // before we can add service we need to add crateA

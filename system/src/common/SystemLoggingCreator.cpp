@@ -4,22 +4,21 @@
 #include <boost/foreach.hpp>
 
 // Swatch Headers
+#include "swatch/system/System.hpp"
 #include "swatch/logger/Log.hpp"
-#include "swatch/processor/ProcessorFactory.hpp"
 #include "swatch/system/DaqTTCService.hpp"
-#include "swatch/system/ServiceFactory.hpp"
 
 namespace swlog = swatch::logger;
 namespace swco = swatch::core;
 namespace swsys = swatch::system;
 namespace swpro = swatch::processor;
 
-SWATCH_SYSTEM_REGISTER_CREATOR(swatch::system::SystemLoggingCreator);
+SWATCH_REGISTER_CREATOR(swatch::system::SystemLoggingCreator);
 
 namespace swatch {
 namespace system {
 
-swatch::system::System*
+swatch::core::Object*
 SystemLoggingCreator::operator()(const std::string& aId, const swatch::core::XParameterSet& aPars) {
     LOG(swlog::kNotice) << "SystemLoggingCreator: Building System " << aId;
     System* sys = createSystem(aId, aPars);

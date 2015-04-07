@@ -22,7 +22,8 @@ namespace system {
 
 class SystemLoggingCreator : public swatch::system::SystemCreator {
 public:
-    virtual swatch::system::System* operator()(const std::string& aId, const swatch::core::XParameterSet& params);
+//    virtual swatch::system::System* operator()(const std::string& aId, const swatch::core::XParameterSet& params);
+    virtual swatch::core::Object* operator()(const std::string& aId, const swatch::core::XParameterSet& params);
 };
 
 

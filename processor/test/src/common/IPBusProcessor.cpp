@@ -9,7 +9,7 @@
 
 // Swatch Headers
 #include "swatch/logger/Log.hpp"
-#include "swatch/processor/ProcessorFactory.hpp"
+#include "swatch/core/Factory.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
 #include "swatch/processor/test/IPBusProcessor.hpp"
 #include "swatch/processor/test/IPBusTTC.hpp"
@@ -38,7 +38,7 @@ using std::dec;
 namespace swlog = swatch::logger;
 namespace swpro = swatch::processor;
 
-SWATCH_PROCESSOR_REGISTER_CLASS(swatch::processor::test::IPBusProcessor);
+SWATCH_REGISTER_CLASS(swatch::processor::test::IPBusProcessor);
 
 
 namespace swatch {

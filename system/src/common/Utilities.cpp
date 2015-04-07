@@ -53,7 +53,7 @@ treeToDaqTTCPars(const boost::property_tree::ptree& t) {
     astub.crate          = t.get<std::string>("CRATE NAME");
     astub.slot           = t.get<uint32_t>("CRATE SLOT");
 
-    AMC13ServiceBag abag;
+    DaqTTCBag abag;
     abag.bag = astub;
 
     amc13Set.add("name", abag.bag.name);

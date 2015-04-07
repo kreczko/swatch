@@ -8,9 +8,9 @@
 #include "swatch/hardware/AMC13Service.hpp"
 
 // Swatch Headers
+#include "swatch/core/Factory.hpp"
 #include "swatch/logger/Log.hpp"
 #include "swatch/system/DaqTTCStub.hpp"
-#include "swatch/system/DaqTTCFactory.hpp"
 #include "swatch/hardware/AMC13Commands.hpp"
 #include "swatch/hardware/AMC13Operations.hpp"
 
@@ -30,7 +30,7 @@ namespace swlo = swatch::logger;
 namespace swhw = swatch::hardware;
 
 
-SWATCH_DAQTTC_REGISTER_CLASS(swatch::hardware::AMC13Service)
+SWATCH_REGISTER_CLASS(swatch::hardware::AMC13Service)
 
 namespace swatch {
 namespace hardware {
@@ -44,7 +44,7 @@ AMC13Service::AMC13Service(const std::string& aId, const core::XParameterSet& aP
     registerCommand<AMC13ResetCommand>("reset");
     registerOperation<AMC13Configure>("configure");
 
-    system::DaqTTCStub& desc = aPars.get<system::AMC13ServiceBag>("stub").bag;
+    system::DaqTTCStub& desc = aPars.get<system::DaqTTCBag>("stub").bag;
 
     crate_ = desc.crate;
     slot_  = desc.slot;

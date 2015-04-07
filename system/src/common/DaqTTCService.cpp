@@ -7,9 +7,6 @@
 
 #include "swatch/system/DaqTTCService.hpp"
 
-#include "swatch/system/ServiceFactory.hpp"
-
-
 // Boost Headers
 #include "boost/foreach.hpp"
 

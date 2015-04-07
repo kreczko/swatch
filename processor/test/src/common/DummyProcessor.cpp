@@ -9,7 +9,8 @@
 
 // Swatch Headers
 #include "swatch/logger/Log.hpp"
-#include "swatch/processor/ProcessorFactory.hpp"
+#include "swatch/core/Factory.hpp"
+//#include "swatch/processor/ProcessorFactory.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
 #include "swatch/processor/test/DummyProcessor.hpp"
 #include "swatch/processor/test/DummyRxPort.hpp"
@@ -25,7 +26,7 @@
 // C++ Headers
 #include <iomanip>
 
-SWATCH_PROCESSOR_REGISTER_CLASS(swatch::processor::test::DummyProcessor);
+SWATCH_REGISTER_CLASS(swatch::processor::test::DummyProcessor);
 
 
 namespace swatch {

@@ -10,10 +10,9 @@
 #include "swatch/core/Port.hpp"
 
 #include "swatch/processor/Processor.hpp"
-#include "swatch/processor/ProcessorFactory.hpp"
 
 #include "swatch/system/System.hpp"
-#include "swatch/system/SystemFactory.hpp"
+#include "swatch/core/Factory.hpp"
 #include "swatch/system/Crate.hpp"
 #include "swatch/processor/test/DummyProcessor.hpp"
 #include "swatch/system/test/DummyAMC13Service.hpp"
@@ -79,7 +78,8 @@ struct SystemSetupA {
         
         // a2.insert("crate", xdata::String("crateD"))
           // ("slot", xdata::Integer(2));
-        Processor* p2 = ProcessorFactory::get()->make("swatch::processor::test::DummyProcessor","mp7-13", a2);
+//        Processor* p2 = ProcessorFactory::get()->make("swatch::processor::test::DummyProcessor","mp7-13", a2);
+        Processor* p2 = Factory::get()->bake<Processor>("swatch::processor::test::DummyProcessor","mp7-13", a2);
         system->add(p2);
         
         // 3. Using ProcessorFactory, PSet based compact creator
@@ -89,7 +89,7 @@ struct SystemSetupA {
         b3.bag.slot = xdata::UnsignedInteger(3);
         a3.add("stub", b3);
         
-        Processor* p3 = ProcessorFactory::get()->make(a3);
+        Processor* p3 = Factory::get()->bake<Processor>(a3);
         system->add(p3);
         
         vector< pair<string, string> > links;
