@@ -19,7 +19,7 @@
 #include "swatch/processor/ProcessorStub.hpp"
 #include "swatch/system/Crate.hpp"
 #include "swatch/processor/test/DummyProcessor.hpp"
-#include "swatch/system/test/DummyAMC13Service.hpp"
+#include "swatch/system/test/DummyAMC13Manager.hpp"
 #include "swatch/logger/Log.hpp"
 
 // XDAQ Headers

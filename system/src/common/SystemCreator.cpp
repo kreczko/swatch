@@ -5,7 +5,7 @@
 // Swatch Headers
 #include "swatch/core/Factory.hpp"
 #include "swatch/processor/Processor.hpp"
-#include "swatch/system/DaqTTCService.hpp"
+#include "swatch/system/DaqTTCManager.hpp"
 #include "swatch/system/Service.hpp"
 #include "swatch/system/System.hpp"
 #include "swatch/system/SystemCreator.hpp"
@@ -87,7 +87,7 @@ void SystemCreator::addDaqTTCs(System* system, const swatch::core::XParameterSet
 	vPSets = aPars.get<xdata::Vector<swco::XParameterSet> >("daqttc");
 	BOOST_FOREACH(swco::XParameterSet& ps,vPSets) {
 //		DaqTTCService* a = static_cast<DaqTTCService*>(DaqTTCFactory::get()->make(ps));
-		DaqTTCService* a = swco::Factory::get()->bake<DaqTTCService>(ps);
+		DaqTTCManager* a = swco::Factory::get()->bake<DaqTTCManager>(ps);
 
 		system->add(a);
 	}

@@ -14,7 +14,7 @@
 #include "swatch/system/Crate.hpp"
 #include "swatch/system/DaqTTCStub.hpp"
 #include "swatch/processor/test/DummyProcessor.hpp"
-#include "swatch/system/test/DummyAMC13Service.hpp"
+#include "swatch/system/test/DummyAMC13Manager.hpp"
 #include "swatch/logger/Log.hpp"
 
 // XDAQ Headers
@@ -137,7 +137,7 @@ BOOST_AUTO_TEST_CASE(BuildFullCrate) {
         ("provides", xdata::String("ttc;daq"))
         ("stub", bag13);
 
-    DaqTTCService* amc13 = new DummyAMC13Service("amc13xg", params13);
+    DaqTTCManager* amc13 = new DummyAMC13Manager("amc13xg", params13);
     BOOST_TEST_MESSAGE("amc13 crate = "+amc13->getCrateId());
     BOOST_CHECK(amc13->getCrateId() == "s2x3g18" );
 

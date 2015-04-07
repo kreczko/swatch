@@ -19,7 +19,7 @@ class Processor;
 namespace system {
 
 class Service;
-class DaqTTCService;
+class DaqTTCManager;
 
 //! View class map swatch objects in crates. It doesn't own the objects it points to.
 class Crate : public core::ObjectView {
@@ -28,12 +28,12 @@ public:
     virtual ~Crate();
 
     
-    void add( system::DaqTTCService* aAMC13 );
+    void add( system::DaqTTCManager* aAMC13 );
     void add( processor::Processor* aProcessor );
     
     processor::Processor* amc( uint32_t slot );
     
-    system::DaqTTCService* amc13() { return amc13_; }
+    system::DaqTTCManager* amc13() { return amc13_; }
     
     std::vector<uint32_t> getPopulatedSlots() const;
     
@@ -42,7 +42,7 @@ public:
     
 private:
     Service* mch_;
-    DaqTTCService* amc13_;
+    DaqTTCManager* amc13_;
     std::vector<processor::Processor*> amcs_;
     
     uint32_t min_;

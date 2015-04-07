@@ -34,7 +34,7 @@ namespace system {
 
 class Crate;
 class Service;
-class DaqTTCService;
+class DaqTTCManager;
 
 //! Generic class to build a 
 class System : public core::Device, public core::ActionHandler {
@@ -46,14 +46,14 @@ public:
     virtual ~System();
     
     void add( processor::Processor* aProcessor );
-    void add( system::DaqTTCService* aAMC13 );
+    void add( system::DaqTTCManager* aAMC13 );
     void add( core::Link* aLink );
     void add( system::Service* aService );
     void add( system::Crate* crate );
     
     std::deque<processor::Processor*>& getProcessors() ;
     std::deque<Service*>& getServices();
-    std::deque<DaqTTCService*>& getDaqTTC();
+    std::deque<DaqTTCManager*>& getDaqTTC();
     std::deque<core::Link*>& getLinks();
     CratesMap& getCrates();
     
@@ -67,7 +67,7 @@ protected:
     std::deque<processor::Processor*> processors_;
     
     //! List of AMC13s
-    std::deque<DaqTTCService*> daqTtc_;
+    std::deque<DaqTTCManager*> daqTtc_;
     
     //! List of services
     std::deque<Service*> services_;

@@ -6,11 +6,11 @@
  */
 
 
-#ifndef SWATCH_HARDWARE_AMC13SERVICE_HPP
-#define SWATCH_HARDWARE_AMC13SERVICE_HPP
+#ifndef SWATCH_HARDWARE_AMC13MANAGER_HPP
+#define SWATCH_HARDWARE_AMC13MANAGER_HPP
 
 // Swatch Headers
-#include "swatch/system/DaqTTCService.hpp"
+#include "swatch/system/DaqTTCManager.hpp"
 
 // Forward declaration
 namespace amc13 {
@@ -20,10 +20,10 @@ class AMC13;
 namespace swatch {
 namespace hardware {
 
-class AMC13Service : public swatch::system::DaqTTCService {
+class AMC13Manager : public swatch::system::DaqTTCManager {
 public:
-    AMC13Service( const std::string& aId, const core::XParameterSet& params );
-    ~AMC13Service();
+    AMC13Manager( const std::string& aId, const core::XParameterSet& params );
+    ~AMC13Manager();
 
     virtual uint32_t getSlot() const;
 
@@ -49,4 +49,4 @@ private:
 } // namespace hardware
 } // namespace swatch
 
-#endif /* SWATCH_HARDWARE_AMC13SERVICE_HPP */
+#endif /* SWATCH_HARDWARE_AMC13MANAGER_HPP */

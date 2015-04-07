@@ -12,7 +12,7 @@
 #include "xdata/Integer.h"
 
 // Swatch Headers
-#include "swatch/hardware/AMC13Service.hpp"
+#include "swatch/hardware/AMC13Manager.hpp"
 #include "swatch/logger/Log.hpp"
 
 // AMC13 Headers

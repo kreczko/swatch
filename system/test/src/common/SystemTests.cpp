@@ -29,7 +29,7 @@
 #include "swatch/system/CrateStub.hpp"
 #include "swatch/system/DaqTTCStub.hpp"
 #include "swatch/processor/test/DummyProcessor.hpp"
-#include "swatch/system/test/DummyAMC13Service.hpp"
+#include "swatch/system/test/DummyAMC13Manager.hpp"
 #include "swatch/logger/Log.hpp"
 
 // XDAQ Headers
@@ -251,7 +251,7 @@ BOOST_AUTO_TEST_CASE(AddServiceNULLPointerShouldThrowException) {
 
 BOOST_AUTO_TEST_CASE(AddAMC13NULLPointerShouldThrowException) {
     swsys::System * system = new swsys::System("mySystem");
-    BOOST_CHECK_THROW(system->add((swsys::DaqTTCService*) NULL), std::invalid_argument);
+    BOOST_CHECK_THROW(system->add((swsys::DaqTTCManager*) NULL), std::invalid_argument);
 }
 
 BOOST_AUTO_TEST_CASE(AddLinkNULLPointerShouldThrowException) {
@@ -270,7 +270,7 @@ BOOST_AUTO_TEST_CASE(HasCrate) {
 BOOST_FIXTURE_TEST_CASE(AddAMC13Service, Params) {
   LOG(kInfo) << "Running SystemTestSuite/AddAMC13Service";
 //  swsys::DaqTTCService * service = swsys::DaqTTCFactory::get()->make(srv1);
-  swsys::DaqTTCService * service = swco::Factory::get()->bake<swsys::DaqTTCService>(srv1);
+  swsys::DaqTTCManager * service = swco::Factory::get()->bake<swsys::DaqTTCManager>(srv1);
   std::string service_name = srv1.get("name").toString();
   swsys::System * system = new swsys::System("mySystem");
   // before we can add service we need to add crateA
@@ -282,7 +282,7 @@ BOOST_FIXTURE_TEST_CASE(AddAMC13Service, Params) {
   BOOST_CHECK_EQUAL(system->getServices().size(), size_t(0));
   BOOST_CHECK_EQUAL(system->getDaqTTC().size(), size_t(1));
 
-  swsys::DaqTTCService * stored_service = system->getObj<swsys::DaqTTCService>(service_name);
+  swsys::DaqTTCManager * stored_service = system->getObj<swsys::DaqTTCManager>(service_name);
   BOOST_CHECK_EQUAL(service->id(), stored_service->id() );
 }
 

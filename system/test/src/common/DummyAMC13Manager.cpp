@@ -5,7 +5,7 @@
  * Created on August 3, 2014, 9:18 PM
  */
 
-#include "swatch/system/test/DummyAMC13Service.hpp"
+#include "swatch/system/test/DummyAMC13Manager.hpp"
 #include "swatch/core/Factory.hpp"
 
 // Boost Headers
@@ -26,13 +26,13 @@ using namespace std;
 namespace swlog = swatch::logger;
 namespace swsys = swatch::system;
 
-SWATCH_REGISTER_CLASS(swatch::system::test::DummyAMC13Service);
+SWATCH_REGISTER_CLASS(swatch::system::test::DummyAMC13Manager);
 
 namespace swatch {
 namespace system {
 namespace test {
 
-DummyAMC13Service::DummyAMC13Service( const std::string& aId, const core::XParameterSet& aPars ) : system::DaqTTCService(aId,aPars) {
+DummyAMC13Manager::DummyAMC13Manager( const std::string& aId, const core::XParameterSet& aPars ) : system::DaqTTCManager(aId,aPars) {
     LOG(swlog::kInfo) << "Building a DummyAMC13Service";
     
     LOG(swlog::kDebug) << "Id:" << this->id();;
@@ -49,29 +49,29 @@ DummyAMC13Service::DummyAMC13Service( const std::string& aId, const core::XParam
     slot_ = stub.bag.slot;
 }
 
-DummyAMC13Service::~DummyAMC13Service() {
+DummyAMC13Manager::~DummyAMC13Manager() {
 
   
 }
 
 uint32_t
-DummyAMC13Service::getSlot() const {
+DummyAMC13Manager::getSlot() const {
     return slot_;
 }
 
 const std::string&
-DummyAMC13Service::getCrateId() const {
+DummyAMC13Manager::getCrateId() const {
     return crate_;
 }
 
 
 void
-DummyAMC13Service::reset() {
+DummyAMC13Manager::reset() {
 }
 
 
 void
-DummyAMC13Service::enableTTC(const std::vector<uint32_t>& aSlots) {
+DummyAMC13Manager::enableTTC(const std::vector<uint32_t>& aSlots) {
     
     cout << "Enabling slots ";
     BOOST_FOREACH( uint32_t s, aSlots ) {
@@ -81,7 +81,7 @@ DummyAMC13Service::enableTTC(const std::vector<uint32_t>& aSlots) {
     
 }
 
-void DummyAMC13Service::configureClock(const std::string& mode) {
+void DummyAMC13Manager::configureClock(const std::string& mode) {
 
 }
 

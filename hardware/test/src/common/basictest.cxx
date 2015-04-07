@@ -15,14 +15,14 @@
 #include "swatch/core/Factory.hpp"
 #include "swatch/processor/Processor.hpp"
 #include "swatch/system/Crate.hpp"
-#include "swatch/system/DaqTTCService.hpp"
+#include "swatch/system/DaqTTCManager.hpp"
 #include "swatch/system/System.hpp"
 #include "swatch/system/Utilities.hpp"
 
 // Swatch Hardware Headers
 #include "swatch/hardware/MP7Processor.hpp"
 #include "swatch/hardware/MP7TTCInterface.hpp"
-#include "swatch/hardware/AMC13Service.hpp"
+#include "swatch/hardware/AMC13Manager.hpp"
 
 // uHAL Headers
 #include "uhal/log/log.hpp"
@@ -84,7 +84,7 @@ public:
 
         LOG(swlo::kInfo) << "Crate: "  << p.first << " - addr :" << crate;
 
-        swhw::AMC13Service* amc13 = dynamic_cast<swhw::AMC13Service*>(crate->amc13());
+        swhw::AMC13Manager* amc13 = dynamic_cast<swhw::AMC13Manager*>(crate->amc13());
         LOG(swlo::kInfo) << "populated slots: " << swlo::shortVecFmt(crate->getPopulatedSlots());
 
         // 

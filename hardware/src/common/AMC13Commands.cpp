@@ -13,7 +13,7 @@
 #include "xdata/Integer.h"
 
 // Swatch Headers
-#include "swatch/hardware/AMC13Service.hpp"
+#include "swatch/hardware/AMC13Manager.hpp"
 #include "swatch/logger/Log.hpp"
 
 // AMC13 Headers
@@ -44,7 +44,7 @@ AMC13ResetCommand::~AMC13ResetCommand() {
 void AMC13ResetCommand::code() {
   
 
-    AMC13Service* amc13 = getHandler<AMC13Service>();
+    AMC13Manager* amc13 = getHandler<AMC13Manager>();
     
   
     std::string mode = getParams().get<xdata::String>("mode");

@@ -10,7 +10,7 @@
 // Swatch Headers
 #include "swatch/processor/Processor.hpp"
 #include "swatch/system/Service.hpp"
-#include "swatch/system/DaqTTCService.hpp"
+#include "swatch/system/DaqTTCManager.hpp"
 
 // Boost Headers
 #include <boost/foreach.hpp>
@@ -33,7 +33,7 @@ Crate::~Crate() {
 }
 
 void
-Crate::add(system::DaqTTCService* aAMC13) {
+Crate::add(system::DaqTTCManager* aAMC13) {
     amc13_ = aAMC13;
     addObj( aAMC13, "amc13" );
 }

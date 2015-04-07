@@ -5,7 +5,7 @@
  * Created on July 28, 2014, 12:13 AM
  */
 
-#include "swatch/system/DaqTTCService.hpp"
+#include "swatch/system/DaqTTCManager.hpp"
 
 // Boost Headers
 #include "boost/foreach.hpp"
@@ -16,12 +16,12 @@ using namespace std;
 namespace swatch {
 namespace system {
 
-DaqTTCService::DaqTTCService(const std::string& aId, const core::XParameterSet& aPars) : swatch::core::Object(aId, aPars) {
+DaqTTCManager::DaqTTCManager(const std::string& aId, const core::XParameterSet& aPars) : swatch::core::Object(aId, aPars) {
 
 }
 
 
-DaqTTCService::~DaqTTCService() {
+DaqTTCManager::~DaqTTCManager() {
 }
 
 

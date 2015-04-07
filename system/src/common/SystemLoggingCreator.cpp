@@ -6,7 +6,7 @@
 // Swatch Headers
 #include "swatch/system/System.hpp"
 #include "swatch/logger/Log.hpp"
-#include "swatch/system/DaqTTCService.hpp"
+#include "swatch/system/DaqTTCManager.hpp"
 
 namespace swlog = swatch::logger;
 namespace swco = swatch::core;

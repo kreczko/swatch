@@ -15,7 +15,7 @@
 #include "swatch/core/Factory.hpp"
 #include "swatch/system/Crate.hpp"
 #include "swatch/processor/test/DummyProcessor.hpp"
-#include "swatch/system/test/DummyAMC13Service.hpp"
+#include "swatch/system/test/DummyAMC13Manager.hpp"
 
 // XDAQ Headers
 #include "xdata/UnsignedInteger.h"

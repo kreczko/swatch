@@ -5,7 +5,7 @@
  * @date    07/11/14
  */
 
-#include "swatch/hardware/AMC13Service.hpp"
+#include "swatch/hardware/AMC13Manager.hpp"
 
 // Swatch Headers
 #include "swatch/core/Factory.hpp"
@@ -30,15 +30,15 @@ namespace swlo = swatch::logger;
 namespace swhw = swatch::hardware;
 
 
-SWATCH_REGISTER_CLASS(swatch::hardware::AMC13Service)
+SWATCH_REGISTER_CLASS(swatch::hardware::AMC13Manager)
 
 namespace swatch {
 namespace hardware {
    
 
 //---
-AMC13Service::AMC13Service(const std::string& aId, const core::XParameterSet& aPars) :
-    swatch::system::DaqTTCService(aId, aPars),
+AMC13Manager::AMC13Manager(const std::string& aId, const core::XParameterSet& aPars) :
+    swatch::system::DaqTTCManager(aId, aPars),
     driver_(0x0) {
   
     registerCommand<AMC13ResetCommand>("reset");
@@ -62,28 +62,28 @@ AMC13Service::AMC13Service(const std::string& aId, const core::XParameterSet& aP
 
 
 //---
-AMC13Service::~AMC13Service() {
+AMC13Manager::~AMC13Manager() {
 
 }
 
 
 //---
 uint32_t
-AMC13Service::getSlot() const {
+AMC13Manager::getSlot() const {
     return slot_;
 }
 
 
 //---
 const std::string&
-AMC13Service::getCrateId() const {
+AMC13Manager::getCrateId() const {
     return crate_;
 }
 
 
 //---
 void
-AMC13Service::enableTTC(const std::vector<uint32_t>& slots) {
+AMC13Manager::enableTTC(const std::vector<uint32_t>& slots) {
     uint32_t mask(0x0);
     BOOST_FOREACH( uint32_t s, slots ) {
         mask |= 1 << (s-1);
@@ -95,7 +95,7 @@ AMC13Service::enableTTC(const std::vector<uint32_t>& slots) {
 }
 
 //---
-void AMC13Service::reset() {
+void AMC13Manager::reset() {
 
   // Stopping the run sounds like a good idea
   driver_->endRun();
@@ -143,7 +143,7 @@ void AMC13Service::reset() {
 
 
 void
-AMC13Service::configureClock(const std::string& mode) {
+AMC13Manager::configureClock(const std::string& mode) {
     
   LOG(swlo::kInfo) << "step 0: BCNT_ERROR = " << driver_->read(amc13::AMC13::T2,"STATUS.TTC.BCNT_ERROR"); ;
   if ( mode == "external" ) {
