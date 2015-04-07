@@ -25,11 +25,14 @@
 // C++ Headers
 #include <iomanip>
 
+SWATCH_PROCESSOR_REGISTER_CLASS(swatch::processor::test::DummyProcessor);
+
+
 namespace swatch {
 namespace processor {
 namespace test {
 
-SWATCH_PROCESSOR_REGISTER_CLASS(DummyProcessor);
+// SWATCH_PROCESSOR_REGISTER_CLASS(DummyProcessor);
 
 DummyProcessor::DummyProcessor(const std::string& id,
     const swatch::core::XParameterSet& params) :
@@ -69,7 +72,7 @@ swatch::core::XParameterSet DummyProcessor::generateParams() {
 
   swatch::processor::ProcessorStub stubTemplate;
   stubTemplate.name = "";
-  stubTemplate.creator = "DummyProcessor";
+  stubTemplate.creator = "swatch::processor::test::DummyProcessor";
   stubTemplate.addressTable = addrtab;
   stubTemplate.uri = "";
   stubTemplate.crate = "s2g20-10";

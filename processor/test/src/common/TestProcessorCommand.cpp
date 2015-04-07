@@ -17,9 +17,11 @@
 #include <xdata/String.h>
 
 using namespace swatch::logger;
+
 namespace swatch {
 namespace processor {
 namespace test {
+
 struct ProcessorCommandTestSetup {
   ProcessorCommandTestSetup():
   handler("BigDummy", DummyProcessor::generateParams()){

@@ -10,6 +10,7 @@
 #include "swatch/system/Crate.hpp"
 
 #include "swatch/system/CrateStub.hpp"
+#include "swatch/system/DaqTTCFactory.hpp"
 
 namespace swco = swatch::core;
 //namespace swsys = swatch::system;
@@ -69,6 +70,18 @@ void SystemCreator::addProcessors(System* system, const swatch::core::XParameter
 	}
 }
 
+
+//---
+void SystemCreator::addDaqTTC(System* system, const swatch::core::XParameterSet& aPars) {
+	xdata::Vector<swco::XParameterSet> vPSets;
+	vPSets = aPars.get<xdata::Vector<swco::XParameterSet> >("daqttc");
+	BOOST_FOREACH(swco::XParameterSet& ps,vPSets) {
+		DaqTTCService* a = static_cast<DaqTTCService*>(DaqTTCFactory::get()->make(
+                ps));
+
+		system->add(a);
+	}
+}
 
 //---
 void SystemCreator::addServices(System* system, const swatch::core::XParameterSet& aPars) {

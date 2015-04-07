@@ -82,7 +82,7 @@ System::add(system::DaqTTCService* aAMC13) {
     // but keep it aside
     daqTtc_.push_back(aAMC13);
     // Is this still a service?
-    services_.push_back(aAMC13);
+//    services_.push_back(aAMC13);
     
         // and give it a different view
     std::string crateId = aAMC13->getCrateId();
@@ -93,7 +93,7 @@ System::add(system::DaqTTCService* aAMC13) {
     	ss << "System '" << this->id() << "': Cannot find Crate " << crateId;
     	throw runtime_error(ss.str());
     } else
-    	cratesMap_[crateId]->add(aAMC13);
+    cratesMap_[crateId]->add(aAMC13);
     
 }
 
@@ -107,12 +107,12 @@ System::add(Service* aService) {
   //TODO: This is a bit disgusting, to be revised along with the ServiceFactory interface.  
   system::DaqTTCService* daqttc = 0x0;
   
-  if ( (daqttc = dynamic_cast<system::DaqTTCService*>(aService) ) != 0x0 ) {
-    this->add(daqttc);
-  } else {
+//  if ( (daqttc = dynamic_cast<system::DaqTTCService*>(aService) ) != 0x0 ) {
+//    this->add(daqttc);
+//  } else {
     this->addObj(aService);
     services_.push_back(aService);
-  }
+//  }
 }
 
 

@@ -7,9 +7,11 @@
 // Namespace resolution
 using std::cout;
 using std::endl;
+
 namespace swatch {
 namespace processor {
 namespace test {
+
 BOOST_AUTO_TEST_SUITE( ProcessorTestSuite )
 
 //____________________________________________________________________________//

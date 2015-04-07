@@ -30,6 +30,9 @@ SystemLoggingCreator::operator()(const std::string& aId, const swatch::core::XPa
     LOG(swlog::kNotice) << "SystemLoggingCreator: Building Processors";
     addProcessors(sys, aPars);
 
+    LOG(swlog::kNotice) << "SystemLoggingCreator: Building DaqTTC";
+    addDaqTTC(sys, aPars);
+    
     LOG(swlog::kNotice) << "SystemLoggingCreator: Building Services";
     addServices(sys, aPars);
 

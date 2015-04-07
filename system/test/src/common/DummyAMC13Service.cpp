@@ -6,7 +6,7 @@
  */
 
 #include "swatch/system/test/DummyAMC13Service.hpp"
-
+#include "swatch/system/DaqTTCFactory.hpp"
 // Boost Headers
 #include <boost/foreach.hpp>
 
@@ -30,7 +30,7 @@ namespace swatch {
 namespace system {
 namespace test {
 
-SWATCH_SERVICE_REGISTER_CLASS(DummyAMC13Service);
+SWATCH_DAQTTC_REGISTER_CLASS(DummyAMC13Service);
 
 DummyAMC13Service::DummyAMC13Service( const std::string& aId, const core::XParameterSet& aPars ) : system::DaqTTCService(aId,aPars) {
     LOG(swlog::kInfo) << "Building a DummyAMC13Service";

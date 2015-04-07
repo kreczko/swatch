@@ -26,6 +26,7 @@ public:
 protected:
     virtual swatch::system::System* createSystem(const std::string& aId, const swatch::core::XParameterSet& params);
     virtual void addProcessors(swatch::system::System* system, const swatch::core::XParameterSet& params);
+    virtual void addDaqTTC(swatch::system::System* system, const swatch::core::XParameterSet& params);
     virtual void addServices(swatch::system::System* system, const swatch::core::XParameterSet& params);
     virtual void addCrates(swatch::system::System* system, const swatch::core::XParameterSet& params);
     virtual void addCrate(swatch::system::System* system, const swatch::core::XParameterSet& params);

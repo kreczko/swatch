@@ -10,9 +10,11 @@
 // Swatch Headers
 #include "swatch/logger/Log.hpp"
 #include "swatch/system/AMC13ServiceStub.hpp"
-#include "swatch/system/ServiceFactory.hpp"
+#include "swatch/system/DaqTTCFactory.hpp"
 #include "swatch/hardware/AMC13Commands.hpp"
+#include "swatch/hardware/AMC13Operations.hpp"
 
+#include <boost/preprocessor/facilities.hpp>
 // XDAQ Headers
 #include "xdata/String.h"
 
@@ -30,7 +32,7 @@ namespace swhw = swatch::hardware;
 namespace swatch {
 namespace hardware {
     
-SWATCH_SERVICE_REGISTER_CLASS(AMC13Service)
+SWATCH_DAQTTC_REGISTER_CLASS(AMC13Service)
 
 
 //---
@@ -39,15 +41,12 @@ AMC13Service::AMC13Service(const std::string& aId, const core::XParameterSet& aP
     driver_(0x0) {
   
     registerCommand<AMC13ResetCommand>("reset");
-    
+    registerOperation<AMC13Configure>("configure");
+
     system::AMC13ServiceStub& desc = aPars.get<system::AMC13ServiceBag>("stub").bag;
 
     crate_ = desc.crate;
     slot_  = desc.slot;
-    
-    //TODO: Switch to HwInterface based constructor
-//    driver_ = new amc13::AMC13(desc.uriT1, static_cast<std::string>(desc.addressTableT1).substr(7),
-//                        desc.uriT2, static_cast<std::string>(desc.addressTableT2).substr(7) );
 
     uhal::HwInterface t1 = uhal::ConnectionManager::getDevice("T1", desc.uriT1, desc.addressTableT1);
     uhal::HwInterface t2 = uhal::ConnectionManager::getDevice("T2", desc.uriT2, desc.addressTableT2);

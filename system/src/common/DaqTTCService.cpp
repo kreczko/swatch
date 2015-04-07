@@ -19,7 +19,7 @@ using namespace std;
 namespace swatch {
 namespace system {
 
-DaqTTCService::DaqTTCService(const std::string& aId, const core::XParameterSet& aPars) : Service(aId, aPars) {
+DaqTTCService::DaqTTCService(const std::string& aId, const core::XParameterSet& aPars) : swatch::core::Object(aId, aPars) {
 
 }
 

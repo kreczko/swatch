@@ -13,7 +13,6 @@
 // Namespace resolution
 //using namespace swatch::core;
 
-BOOST_AUTO_TEST_SUITE( CoreTestSuite )
 
 // Type definition         
 typedef swatch::core::AbstractFactory<swatch::core::Object> ObjFactory;
@@ -21,10 +20,17 @@ typedef swatch::core::test::SimpleObject SimpleObject;
 
 // Standard factory registration macros
 #define SWATCH_TEST_REGISTER_OBJ( classname ) \
-swatch::core::ClassRegistrationHelper< swatch::core::Object, classname > classname##ObjClassRegistrationHelper( #classname );
+template<> bool swatch::core::ClassRegistrationHelper2g<swatch::core::Object, classname >::initialised_= \
+  swatch::core::ClassRegistrationHelper2g<swatch::core::Object, classname >::init(#classname);
 
 #define SWATCH_TEST_REGISTER_OBJCREATOR( creatorname ) \
-swatch::core::CreatorRegistrationHelper< swatch::core::Object, creatorname > creatorname##ObjCreatorRegistrationHelper( #creatorname );
+template<> bool swatch::core::CreatorRegistrationHelper2g< swatch::core::Object, creatorname >::initialised_= \
+  swatch::core::CreatorRegistrationHelper2g< swatch::core::Object, creatorname >::init(#creatorname);
+
+
+namespace swatch {
+namespace core {
+namespace test {
 
 
 // Dummy Creator interface
@@ -41,10 +47,16 @@ SimpleCreator::operator ()(const std::string& aId, const swatch::core::XParamete
     return so;
 }
 
+}
+}
+}
 
-SWATCH_TEST_REGISTER_OBJ(SimpleObject);
 
-SWATCH_TEST_REGISTER_OBJCREATOR(SimpleCreator)
+SWATCH_TEST_REGISTER_OBJ(swatch::core::test::SimpleObject);
+
+SWATCH_TEST_REGISTER_OBJCREATOR(swatch::core::test::SimpleCreator)
+
+BOOST_AUTO_TEST_SUITE( CoreTestSuite )
 
 BOOST_AUTO_TEST_CASE( FactoryTest ) {
     
@@ -52,7 +64,7 @@ BOOST_AUTO_TEST_CASE( FactoryTest ) {
         
     swatch::core::XParameterSet none;
     swatch::core::Object* obj;
-    obj = f->make("SimpleObject","d1", none);
+    obj = f->make("swatch::core::test::SimpleObject","d1", none);
     
     BOOST_CHECK( typeid(obj) == typeid(swatch::core::Object*) );
     
@@ -60,7 +72,7 @@ BOOST_AUTO_TEST_CASE( FactoryTest ) {
     
     delete obj;
     
-    obj = f->make("SimpleCreator","d1", none);
+    obj = f->make("swatch::core::test::SimpleCreator","d1", none);
     
     BOOST_CHECK( typeid(obj) == typeid(swatch::core::Object*) );
     

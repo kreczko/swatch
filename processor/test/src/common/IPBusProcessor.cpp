@@ -38,11 +38,13 @@ using std::dec;
 namespace swlog = swatch::logger;
 namespace swpro = swatch::processor;
 
+SWATCH_PROCESSOR_REGISTER_CLASS(swatch::processor::test::IPBusProcessor);
+
+
 namespace swatch {
 namespace processor {
 namespace test {
 
-SWATCH_PROCESSOR_REGISTER_CLASS(IPBusProcessor);
 
 IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::XParameterSet& params) :
     Processor(id, params) {

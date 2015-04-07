@@ -10,6 +10,7 @@
 // Hardware Headers
 #include "swatch/hardware/MP7TTCInterface.hpp"
 #include "swatch/hardware/MP7Commands.hpp"
+#include "swatch/hardware/MP7Operations.hpp"
 
 // Swatch Headers
 #include "swatch/logger/Log.hpp"
@@ -50,6 +51,8 @@ MP7Processor::MP7Processor(const std::string& id, const swatch::core::XParameter
   
     registerCommand<MP7ResetCommand>("reset");
     registerCommand<MP7ConfigureLoopback>("loopback");
+    
+    registerOperation<MP7Configure>("configure");
     
     processor::ProcessorBag& desc = aPars.get<processor::ProcessorBag>("descriptor");
     crate_ = desc.bag.crate;
