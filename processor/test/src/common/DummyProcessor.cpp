@@ -26,6 +26,7 @@
 // C++ Headers
 #include <iomanip>
 
+
 SWATCH_REGISTER_CLASS(swatch::processor::test::DummyProcessor);
 
 

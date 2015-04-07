@@ -13,7 +13,6 @@
 #include <typeinfo>
 
 // Boost Headers
-#include <boost/type_traits/is_base_of.hpp>
 #include <boost/unordered_map.hpp>
 
 #include <boost/mpl/assert.hpp>
@@ -34,9 +33,12 @@ public:
   XParameterSet(const XParameterSet& orig);
   virtual ~XParameterSet();
 
-  
+  /**
+   * Assignment operator
+   */
   XParameterSet& operator=( const XParameterSet& );
   
+  bool operator==( const XParameterSet& ) const;
   /**
    * Clear content
    */
@@ -106,8 +108,19 @@ public:
   template<typename T>
   T* pop( const std::string& name );  
   
+  /**
+   * Pops 'name' from the list of variable and 
+   * 
+   * @param name Variable to extract
+   * @return Pointer to the popped variable
+   */
   xdata::Serializable* pop( const std::string& name );
   
+  /**
+   * Erases 'name' from the list of variables.
+   * 
+   * @param name Variable to delete
+   */
   void erase( const std::string& name );
   
   xdata::Serializable& get( const std::string& name );
@@ -167,7 +180,8 @@ private:
     
     /**
      * Copy constructor
-     * The object pointer is not copied but a nuew istance is created instead.
+     * The object pointer is not copied but a new instance is created instead.
+     * 
      * @param orig Entry to copy from
      */
     XEntry( const XEntry& orig );
@@ -185,6 +199,7 @@ private:
   };
   
   typedef boost::unordered_map<std::string, XEntry> EntryMap;
+  
   EntryMap entries_;
 
 };

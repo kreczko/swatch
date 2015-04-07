@@ -94,11 +94,11 @@ template<typename P>
 P* AbstractFactory<T>::bake(const core::XParameterSet& aPars) {
    
     if ( !aPars.has("class") ) {
-        throw std::runtime_error("'class' parameter not found in parameter set");
+        throw XParameterNotFound("'class' parameter not found in parameter set");
     }
    
     if ( !aPars.has("name") ) {
-        throw std::runtime_error("'name' parameter not found in parameter set");
+        throw XParameterNotFound("'name' parameter not found in parameter set");
     }
    
     return this->bake<P>( aPars.get<xdata::String>("class"), aPars.get<xdata::String>("name"), aPars);

@@ -28,68 +28,6 @@ public:
 
 uint32_t Dummy::counts = 0;
 
-/*
-//____________________________________________________________________________//
-BOOST_AUTO_TEST_CASE(ParameterSetTest) {
-
-    // artificial scope to check destruction
-    {
-        using namespace boost::assign;
-        using namespace swatch::core;
-
-        ParameterSet pars;
-
-        pars.set("alpha", "beta");
-        BOOST_CHECK(pars.get<std::string>("alpha") == std::string("beta") );
-        
-//        BOOST_CHECK_MESSAGE(pars.get<std::string>("alpha") == std::string("beta1"), // #6 continues on error
-        
-        pars.insert("gamma", 5)("delta", "omega");
-        BOOST_CHECK(pars.get<int>("gamma") == 5 );
-        BOOST_CHECK(pars.get<std::string>("delta") == std::string("omega") );
-
-        BOOST_REQUIRE(pars.size() == 3);
-        
-        pars.insert("eta", 10.5)("phi", 0x0);
-        BOOST_CHECK(pars.get<double>("eta") == 10.5 );
-        BOOST_CHECK(pars.get<int>("phi") == 0x0 );
-
-        std::vector<int> intvector(3, 9);
-        pars.set("vec", intvector);
-        BOOST_CHECK(pars.get< std::vector<int> >("vec") == intvector );
-        
-        // Should fail here
-        //  pars.set("zada",new float[10]);
-
-        pars.set("dummyobj", Dummy("plain"));
-        BOOST_CHECK(pars.get< Dummy >("dummyobj") == Dummy("plain") );
-        // This will not compile
-        // pars.set("dummy*", new Dummy("pointer") );
-
-        ParameterSet subpars;
-
-        subpars.insert("a", 1)("b", 2)("c", 3);
-        pars.set("dummyset", subpars);
-        BOOST_CHECK( pars.get< ParameterSet >("dummyset").names() == subpars.names() );
-        BOOST_CHECK( pars.get< ParameterSet >("dummyset").get<int>("a") == subpars.get<int>("a") );
-
-        std::vector<ParameterSet> vpars;
-        vpars.push_back(subpars);
-        pars.set("vset", vpars);
-        BOOST_CHECK( pars.get< std::vector<ParameterSet> >("vset").size() == vpars.size() );
-
-        boost::shared_ptr<Dummy> shr_ptr(new Dummy("shared_dummy"));
-        pars.set("dummy_shr", shr_ptr);
-        BOOST_CHECK( pars.get< boost::shared_ptr<Dummy> >("dummy_shr") == shr_ptr );
-
-        BOOST_CHECK( pars.find("eta") != pars.end() );
-        
-        BOOST_CHECK( pars.get("doesntexist","abcd") == std::string("abcd") );
-        BOOST_CHECK( pars.find("doesntexist") == pars.end() );
-    }
-}
-
-*/
 BOOST_AUTO_TEST_CASE(ObjectTest) {
     using namespace boost::assign;
     using namespace swatch::core;

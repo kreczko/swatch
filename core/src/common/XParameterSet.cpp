@@ -44,6 +44,10 @@ XParameterSet& XParameterSet::operator=(const XParameterSet& other) {
   return (*this);
 }
 
+bool XParameterSet::operator==(const XParameterSet& o) const {
+  return entries_ == o.entries_;
+}
+
 
 //---
 void
@@ -92,8 +96,7 @@ XParameterSet::setValue(const xdata::Serializable& s) {
 
 //---
 int XParameterSet::equals(const xdata::Serializable& other) {
-  const XParameterSet& o = dynamic_cast<const XParameterSet&>(other);
-  return this->entries_ == o.entries_;
+  return (*this == dynamic_cast<const XParameterSet&>(other) );
 }
 
 
