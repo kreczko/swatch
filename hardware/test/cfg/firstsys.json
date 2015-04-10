@@ -34,7 +34,7 @@
                       {
                         "SERVICE NAME": "AMC13-1",
                         "SERVICE TYPE": "AMC13",
-                        "SERVICE CREATOR": "swatch::hardware::AMC13Service",
+                        "SERVICE CREATOR": "swatch::hardware::AMC13Manager",
                         "CRATE NAME": "B14 Crate",
                         "CRATE SLOT": 13,
                         "URI T1": "chtcp-2.0://127.0.0.1:20304?target=192.168.2.153:50001",

@@ -39,9 +39,9 @@ BOOST_AUTO_TEST_SUITE( ActionHandlerTestSuite)
 
 BOOST_FIXTURE_TEST_CASE(TestRegisterCommand,  ActionHandlerTestSetup) {
   LOG(kInfo) << "Running ActionHandlerTestSuite/TestRegisterCommand";
-  auto n_commands = handler.getCommands().size();
+  size_t n_commands = handler.getCommands().size();
   handler.registerCommand<DummyCommand>("dummy_5000");
-  auto n_commands_after = handler.getCommands().size();
+  size_t n_commands_after = handler.getCommands().size();
   BOOST_CHECK_EQUAL(n_commands_after, n_commands + 1);
 }
 
@@ -57,9 +57,9 @@ BOOST_FIXTURE_TEST_CASE(TestGetCommand,  ActionHandlerTestSetup) {
 
 BOOST_FIXTURE_TEST_CASE(TestRegisterOperation,  ActionHandlerTestSetup) {
   LOG(kInfo) << "Running ActionHandlerTestSuite/TestRegisterOperation";
-  auto n_ctrl = handler.getOperations().size();
+  size_t n_ctrl = handler.getOperations().size();
   handler.registerOperation<DummyOperation>("dummy_5000");
-  auto n_ctrl_after = handler.getOperations().size();
+  size_t n_ctrl_after = handler.getOperations().size();
   BOOST_CHECK_EQUAL(n_ctrl_after, n_ctrl + 1);
 }
 

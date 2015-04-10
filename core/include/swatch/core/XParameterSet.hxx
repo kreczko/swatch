@@ -12,7 +12,7 @@
 #include <boost/type_traits/is_base_of.hpp>
 
 // Swatch Headers
-#include "swatch/core/checkgccversion.hpp"
+//#include "swatch/core/checkgccversion.hpp"
 #include "swatch/core/XParameterSet.hpp"
 #include "swatch/core/Utilities.hpp"
 
@@ -25,13 +25,21 @@ namespace core {
 template<typename T>
 void XParameterSet::adopt( const std::string& name , T* data ) {
     BOOST_STATIC_ASSERT( (boost::is_base_of<xdata::Serializable,T>::value) ); 
-
+    /*
     if ( entries_.count(name) ) {
       throw XParameterExists(name + " is already defined");
     }
 
-    entries_.emplace( name, &typeid(T), static_cast<XCloner>(cloner_<T>), data );
-
+    // Uncomment emplace when XDAQ moves to C++0X
+    // entries_.emplace( name, &typeid(T), static_cast<XCloner>(cloner_<T>), data );
+    entries_[ name ] = XEntry(&typeid(T), static_cast<XCloner>(cloner_<T>), data) ;
+    */
+    
+    std::pair<EntryMap::iterator, bool> done = entries_.insert(std::make_pair(name, XEntry(&typeid(T), static_cast<XCloner>(cloner_<T>), data)) );
+    if ( not done.second ) {
+        throw XParameterExists(name + " is already defined");
+    }
+    
 }
 
 
@@ -40,14 +48,23 @@ template<typename T>
 void
 XParameterSet::add( const std::string& name , const T& data ) {
     BOOST_STATIC_ASSERT( (boost::is_base_of<xdata::Serializable,T>::value) ); 
-
+    
+    /*
     if ( entries_.count(name) ) {
       throw XParameterExists(name +" is already defined");
     }
 
     XCloner cloner = static_cast<XCloner>(cloner_<T>);
-    entries_.emplace( name, &typeid(T), cloner, static_cast<xdata::Serializable*>(cloner(&data)) );
-
+    // Uncomment emplace when XDAQ moves to C++0X
+    // entries_.emplace( name, &typeid(T), cloner, static_cast<xdata::Serializable*>(cloner(&data)) );
+    entries_[name] = XEntry(&typeid(T), cloner, static_cast<xdata::Serializable*>(cloner(&data)) );
+    */
+        
+    XCloner cloner = static_cast<XCloner>(cloner_<T>);
+    std::pair<EntryMap::iterator, bool> done = entries_.insert(std::make_pair(name, XEntry(&typeid(T), static_cast<XCloner>(cloner_<T>), cloner(&data))) );
+    if ( not done.second ) {
+        throw XParameterExists(name + " is already defined");
+    }
 }
 
 

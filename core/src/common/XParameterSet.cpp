@@ -7,6 +7,7 @@
 // Boost Headers
 #include <boost/foreach.hpp>
 #include <boost/bind.hpp>
+#include <boost/unordered/unordered_map.hpp>
 
 // XDAQ Headers
 #include "xdata/String.h"
@@ -38,7 +39,8 @@ XParameterSet::~XParameterSet() {
 XParameterSet& XParameterSet::operator=(const XParameterSet& other) {
   clear();
   BOOST_FOREACH( const EntryMap::value_type& it, other.entries_) {
-    entries_.emplace(it.first, it.second);
+//    entries_.emplace(it.first, it.second);
+    entries_.insert(it);
   }
   
   return (*this);

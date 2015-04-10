@@ -103,7 +103,7 @@ const std::map<std::string, std::string> FSM::getStateTransitions(
     throw exception("State " + s + " is undeclared");
   std::map<std::string, std::string> transitions;
   // check if any transition for from this state
-  auto transition_map_it = stateTransitionTable_.find(s);
+  TransitionTable::const_iterator transition_map_it = stateTransitionTable_.find(s);
   if (transition_map_it != stateTransitionTable_.end())
     transitions = transition_map_it->second;
 
@@ -141,7 +141,7 @@ void FSM::reset() {
 
 const std::string FSM::getState(const toolbox::fsm::State& s) const {
   std::string result = "\0";
-  for (auto it = state_map_.begin(); it != state_map_.end(); ++it) {
+  for (StateMap::const_iterator it = state_map_.begin(); it != state_map_.end(); ++it) {
     if (it->second == s) {
       result = it->first;
       break;

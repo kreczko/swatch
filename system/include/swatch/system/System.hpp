@@ -5,8 +5,8 @@
  * Created on July 13, 2014, 11:20 AM
  */
 
-#ifndef __SWATCH_TEST_SYSTEM_HPP__
-#define	__SWATCH_TEST_SYSTEM_HPP__
+#ifndef __SWATCH_SYSTEM_SYSTEM_HPP__
+#define	__SWATCH_SYSTEM_SYSTEM_HPP__
 
 
 // Swatch Headers
@@ -17,19 +17,14 @@
 // Forward declarations
 namespace swatch {
 
-namespace processor
-{
+namespace processor {
 	class Processor;
 }
 
-namespace core
-{
+namespace core {
 	class Link;
 }
 
-}
-
-namespace swatch {
 namespace system {
 
 class Crate;
@@ -88,5 +83,5 @@ protected:
 }
 }
 
-#endif	/* __SWATCH_TEST_SYSTEM_HPP__ */
+#endif	/* __SWATCH_SYSTEM_SYSTEM_HPP__ */
 

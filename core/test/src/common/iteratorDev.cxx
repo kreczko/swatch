@@ -77,8 +77,8 @@ private:
     mutable V proxy_;
 };
 
-typedef _iterator_base<MyMap::iterator, KeyValue<MyMap::iterator>> my_iterator;
-typedef _iterator_base<MyMap::const_iterator, const KeyValue<MyMap::const_iterator>> my_const_iterator;
+typedef _iterator_base<MyMap::iterator, KeyValue<MyMap::iterator> > my_iterator;
+typedef _iterator_base<MyMap::const_iterator, const KeyValue<MyMap::const_iterator> > my_const_iterator;
 int main(int argc, char const *argv[])
 {
 

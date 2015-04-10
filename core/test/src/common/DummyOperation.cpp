@@ -2,14 +2,20 @@
 #include "swatch/core/xoperators.hpp"
 #include "swatch/core/test/DummyHandler.hpp"
 
-#include <xdata/Integer.h>
-#include <xdata/String.h>
-#include <boost/foreach.hpp>
-#include "../../include/swatch/core/test/DummyOperation.hpp"
+#include "swatch/core/test/DummyOperation.hpp"
 #include "swatch/core/exception.hpp"
 #include "toolbox/fsm/exception/Exception.h"
 
+// C++ Headers
 #include <string>
+
+// Boosr Headers
+#include <boost/foreach.hpp>
+#include <boost/lexical_cast.hpp>
+
+// XDAQ Headers
+#include <xdata/Integer.h>
+#include <xdata/String.h>
 
 using namespace swatch;
 namespace swatch {
@@ -91,7 +97,7 @@ void DummyOperation::fail() {
 }
 
 void DummyOperation::failWithException() {
-  std::string line = std::to_string(static_cast<long long>(__LINE__));
+  std::string line = boost::lexical_cast<std::string>(static_cast<long long>(__LINE__));
   throw swatch::core::exception("as expected, I failed." + std::string(__FILE__) + line + std::string(__FUNCTION__) );
 }
 

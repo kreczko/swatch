@@ -95,11 +95,17 @@ private:
       void (OBJECT::*method_)();
     };
 
+    
+    typedef std::map<std::string, toolbox::fsm::State> StateMap;
+    typedef std::map<std::string, std::map<std::string, std::string> > TransitionTable;
+
   std::string initialState_;
   std::string currentState_;
   std::vector<std::string> states_;
-  std::map<std::string, toolbox::fsm::State> state_map_;
-  std::map<std::string, std::map<std::string, std::string> > stateTransitionTable_;
+//  std::map<std::string, toolbox::fsm::State> state_map_;
+//  std::map<std::string, std::map<std::string, std::string> > stateTransitionTable_;
+  StateMap state_map_;
+  TransitionTable stateTransitionTable_;
   toolbox::fsm::FiniteStateMachine fsm_;
   // xdaq FSM works with chars as States (don't ask why). We need something
   // to create them automatically for us
