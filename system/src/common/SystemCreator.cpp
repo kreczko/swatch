@@ -59,7 +59,7 @@ void SystemCreator::addCrates(System* system, const swatch::core::XParameterSet&
 
 //---
 void SystemCreator::addCrate(System* system, const swatch::core::XParameterSet& aPars) {
-  	CrateBag& stub = aPars.get<CrateBag>("stub");
+  CrateBag& stub = aPars.get<CrateBag>("stub");
 	Crate * crate = new Crate(stub.bag.name, aPars);
 	system->add(crate);
 }
@@ -70,26 +70,41 @@ void SystemCreator::addProcessors(System* system, const swatch::core::XParameter
 	xdata::Vector<swco::XParameterSet> vPSets;
 	vPSets = aPars.get<xdata::Vector<swco::XParameterSet> >("processors");
 	BOOST_FOREACH(swco::XParameterSet& ps,vPSets) {
-//		swpro::Processor* p = swpro::ProcessorFactory::get()->make(ps);
-		swpro::Processor* p = swco::Factory::get()->bake<swpro::Processor>(ps);
+    
+  swpro::Processor* p;
+  try {
+		p = swco::Factory::get()->bake<swpro::Processor>(ps);
+  } catch ( swatch::core::exception& xc ) {
+    std::stringstream xss;
+    xss << "Failed to create Processor:" << std::endl << xc.what();
+    throw SystemCreationFailed(xss.str());
+  }
 		system->add(p);
 	}
 }
 
 
 //---
-void SystemCreator::addDaqTTCs(System* system, const swatch::core::XParameterSet& aPars) {
-  
-  // Carry on only if there are daqttcs to build
-  if ( not aPars.has("daqttcs") ) return;
-  
-	xdata::Vector<swco::XParameterSet> vPSets;
-	vPSets = aPars.get<xdata::Vector<swco::XParameterSet> >("daqttcs");
-	BOOST_FOREACH(swco::XParameterSet& ps,vPSets) {
-		DaqTTCManager* a = swco::Factory::get()->bake<DaqTTCManager>(ps);
 
-		system->add(a);
-	}
+void SystemCreator::addDaqTTCs(System* system, const swatch::core::XParameterSet& aPars) {
+
+  // Carry on only if there are daqttcs to build
+  if (not aPars.has("daqttcs")) return;
+
+  xdata::Vector<swco::XParameterSet> vPSets;
+  vPSets = aPars.get<xdata::Vector<swco::XParameterSet> >("daqttcs");
+
+  BOOST_FOREACH(swco::XParameterSet& ps, vPSets) {
+    DaqTTCManager* daqttc;
+    try {
+      daqttc = swco::Factory::get()->bake<DaqTTCManager>(ps);
+    } catch (swatch::core::exception& xc) {
+      std::stringstream xss;
+      xss << "Failed to create DaqTTCManager: " << std::endl << xc.what();
+      throw SystemCreationFailed(xss.str());
+    }
+    system->add(daqttc);
+  }
 }
 
 //---

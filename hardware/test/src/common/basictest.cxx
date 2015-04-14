@@ -139,7 +139,8 @@ int main(int argc, char** argv) {
     
     LOG(swlo::kNotice) << "Building the new system";
 //    swsys::System* mysys = swsys::SystemFactory::get()->make("swatch::system::SystemCreator", sysset.get<xdata::String>("name"), sysset);
-    swsys::System* mysys = swco::Factory::get()->bake<swsys::System>("swatch::system::SystemCreator", sysset.get<xdata::String>("name"), sysset);
+//    swsys::System* mysys = swco::Factory::get()->bake<swsys::System>("swatch::system::SystemCreator", sysset.get<xdata::String>("name"), sysset);
+    swsys::System* mysys = swco::Factory::get()->bake<swsys::System>(sysset);
     mysys->registerCommand<ResetClockCommand>("resetClocks");
     
     mysys->getCommand("resetClocks")->exec();

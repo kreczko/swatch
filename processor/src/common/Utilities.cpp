@@ -35,7 +35,7 @@ treeToProcessorPars(const boost::property_tree::ptree& t) {
     // Store the bag in the set
     procSet.add("name", pbag.bag.name);
     procSet.add("class", pbag.bag.creator);
-    procSet.add("descriptor", pbag);
+    procSet.add("stub", pbag);
     return procSet;
 }
 

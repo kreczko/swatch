@@ -2,6 +2,7 @@
   "SYSTEM":
           {
             "NAME": "calol2",
+            "CREATOR": "swatch::system::SystemLoggingCreator",
             "CRATES": 
                 [
                   {

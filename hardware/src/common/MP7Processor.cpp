@@ -56,7 +56,7 @@ MP7Processor::MP7Processor(const std::string& id, const swatch::core::XParameter
     
     registerOperation<MP7Configure>("configure");
     
-    processor::ProcessorBag& desc = aPars.get<processor::ProcessorBag>("descriptor");
+    processor::ProcessorBag& desc = aPars.get<processor::ProcessorBag>("stub");
     crate_ = desc.bag.crate;
     slot_ = desc.bag.slot;
 
