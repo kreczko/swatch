@@ -95,8 +95,17 @@ treeToSystemPars( const boost::property_tree::ptree& t ) {
         core::XParameterSet amc13Set = swatch::system::treeToDaqTTCPars(v.second);
         daqTTCSets.push_back(amc13Set);
     }
-    sysPars.add("daqttc",daqTTCSets);
+    sysPars.add("daqttcs",daqTTCSets);
 
+    /* Enable if need services
+    xdata::Vector<XParameterSet> serviceSets;
+    BOOST_FOREACH( const ptree::value_type &v, pt_system.get_child("SERVICES")) {
+        core::XParameterSet serviceSet = swatch::system::treeToServicesPars(v.second);
+        serviceSets.push_back(serviceSet);
+    }
+    sysPars.add("services",serviceSets);
+    */
+   
     return sysPars;
 }
 

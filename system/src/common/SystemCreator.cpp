@@ -81,12 +81,11 @@ void SystemCreator::addProcessors(System* system, const swatch::core::XParameter
 void SystemCreator::addDaqTTCs(System* system, const swatch::core::XParameterSet& aPars) {
   
   // Carry on only if there are daqttcs to build
-  if ( not aPars.has("daqttc") ) return;
+  if ( not aPars.has("daqttcs") ) return;
   
 	xdata::Vector<swco::XParameterSet> vPSets;
-	vPSets = aPars.get<xdata::Vector<swco::XParameterSet> >("daqttc");
+	vPSets = aPars.get<xdata::Vector<swco::XParameterSet> >("daqttcs");
 	BOOST_FOREACH(swco::XParameterSet& ps,vPSets) {
-//		DaqTTCService* a = static_cast<DaqTTCService*>(DaqTTCFactory::get()->make(ps));
 		DaqTTCManager* a = swco::Factory::get()->bake<DaqTTCManager>(ps);
 
 		system->add(a);
@@ -101,12 +100,11 @@ void SystemCreator::addServices(System* system, const swatch::core::XParameterSe
   if ( not aPars.has("services") ) return;
 	
   vPSets = aPars.get<xdata::Vector<swco::XParameterSet> >("services");
-	BOOST_FOREACH(swco::XParameterSet& ps,vPSets) {
-//		Service* a = static_cast<Service*>(ServiceFactory::get()->make(ps));
-		Service* a = swco::Factory::get()->bake<Service>(ps);
-
-		system->add(a);
-	}
+  BOOST_FOREACH(swco::XParameterSet& ps,vPSets) {
+  	Service* a = swco::Factory::get()->bake<Service>(ps);
+  
+  	system->add(a);
+  }
 }
 
 } // namespace system
