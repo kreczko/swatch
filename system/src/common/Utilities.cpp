@@ -75,6 +75,7 @@ treeToSystemPars( const boost::property_tree::ptree& t ) {
 
     const ptree &pt_system = t.get_child("SYSTEM");
     sysPars.add("name", xdata::String(pt_system.get<std::string>("NAME")));
+    sysPars.add("class", xdata::String(pt_system.get<std::string>("CREATOR")));
 
     xdata::Vector<XParameterSet> crateSets;
     BOOST_FOREACH( const ptree::value_type &v, pt_system.get_child("CRATES")) {
