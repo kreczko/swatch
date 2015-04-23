@@ -14,7 +14,8 @@
 namespace  mp7 {
 class MP7Controller;
 class MGTRegionNode;
-class CtrlNode;
+//class CtrlNode;
+class DatapathNode;
 class AlignMonNode;
 }
 
@@ -39,7 +40,8 @@ private:
   uint32_t channelID_;
   MP7Processor& processor_;
   mp7::MP7Controller& driver_;
-  const mp7::CtrlNode& ctrl_;
+//  const mp7::CtrlNode& ctrl_;
+  const mp7::DatapathNode& datapath_;
   const mp7::MGTRegionNode& mgt_;
   const mp7::AlignMonNode& align_;
 
@@ -62,7 +64,8 @@ private:
     uint32_t channelID_;
     MP7Processor& processor_;
     mp7::MP7Controller& driver_;
-    const mp7::CtrlNode& ctrl_;
+//    const mp7::CtrlNode& ctrl_;
+    const mp7::DatapathNode& datapath_;
     const mp7::MGTRegionNode& mgt_;
 };
     

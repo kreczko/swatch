@@ -35,27 +35,27 @@ void MP7TTCInterface::clearErrors() {
 
 
 uint32_t MP7TTCInterface::getBunchCounter() const {
-    return driver_->getTTC().getBunchCounter();
+    return driver_->getTTC().readBunchCounter();
 }
 
 
 uint32_t MP7TTCInterface::getOrbitCounter() const {
-    return driver_->getTTC().getOrbitCounter();
+    return driver_->getTTC().readOrbitCounter();
 }
 
 
 uint32_t MP7TTCInterface::getEventCounter() const {
-    return driver_->getTTC().getEventCounter();
+    return driver_->getTTC().readEventCounter();
 }
 
 
 uint32_t MP7TTCInterface::getSingleBitErrors() const {
-    return driver_->getTTC().getSingleBitErrorCounter();
+    return driver_->getTTC().readSingleBitErrorCounter();
 }
 
 
 uint32_t MP7TTCInterface::getDoubleBitErrors() const {
-    return driver_->getTTC().getDoubleBitErrorCounter();
+    return driver_->getTTC().readDoubleBitErrorCounter();
 }
 
 
@@ -68,7 +68,7 @@ bool MP7TTCInterface::hasClock40Stopped() const {
 }
 
 bool MP7TTCInterface::isBC0Locked() const {
-    return driver_->getTTC().bc0Locked();
+    return driver_->getTTC().readBC0Locked();
 }
 
 } // namespace hardware

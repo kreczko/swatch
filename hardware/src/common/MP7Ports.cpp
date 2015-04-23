@@ -10,7 +10,7 @@
 
 // MP7 Headers
 #include "mp7/MP7Controller.hpp"
-#include "mp7/CtrlNode.hpp"
+#include "mp7/DatapathNode.hpp"
 #include "mp7/MGTRegionNode.hpp"
 #include "mp7/ChannelIDSet.hpp"
 #include "mp7/AlignMonNode.hpp"
@@ -25,9 +25,9 @@ MP7RxPort::MP7RxPort( const std::string& aId, uint32_t aChannelID, MP7Processor&
   channelID_(aChannelID),
   processor_(aProcessor),
   driver_(aProcessor.driver()),
-  ctrl_(aProcessor.driver().getCtrl()),
-  mgt_(driver_.hwInterface().getNode<mp7::MGTRegionNode>("datapath.region.mgt")),
-  align_(driver_.hwInterface().getNode<mp7::AlignMonNode>("datapath.region.align")) {
+  datapath_(aProcessor.driver().getDatapath()),
+  mgt_(datapath_.getNode<mp7::MGTRegionNode>("region.mgt")),
+  align_(datapath_.getNode<mp7::AlignMonNode>("region.align")) {
 }
 
 
@@ -50,7 +50,7 @@ MP7RxPort::isEnabled() const {
 //---
 bool
 MP7RxPort::isLocked() const {
-  ctrl_.selectLink(channelID_);
+  datapath_.selectLink(channelID_);
   
   // Calculate the channel local id
   uint32_t l = mp7::ChannelIDSet::channelToLocal(channelID_);
@@ -74,7 +74,7 @@ MP7RxPort::isLocked() const {
 
 //---
 bool MP7RxPort::isAligned() const {
-  ctrl_.selectLink(channelID_);
+  datapath_.selectLink(channelID_);
   return ( align_.errors() == 0  );
 }
 
@@ -82,8 +82,8 @@ bool MP7RxPort::isAligned() const {
 //---
 uint32_t
 MP7RxPort::getCRCErrors() const {
-  ctrl_.selectLink(channelID_);
-  return mgt_.crcErrors(mp7::ChannelIDSet::channelToLocal(channelID_));
+  datapath_.selectLink(channelID_);
+  return mgt_.readCrcErrors(mp7::ChannelIDSet::channelToLocal(channelID_));
 }
 
 
@@ -93,8 +93,8 @@ MP7TxPort::MP7TxPort(const std::string& aId, uint32_t aChannelID, MP7Processor& 
   channelID_(aChannelID),
   processor_(aProcessor),
   driver_(aProcessor.driver()),
-  ctrl_(aProcessor.driver().getCtrl()),
-  mgt_(driver_.hwInterface().getNode<mp7::MGTRegionNode>("datapath.region.mgt")) {
+  datapath_(aProcessor.driver().getDatapath()),
+  mgt_(datapath_.getNode<mp7::MGTRegionNode>("region.mgt")) {
 
 }
 
@@ -111,7 +111,7 @@ bool MP7TxPort::isEnabled() const {
 
 //---
 bool MP7TxPort::isOperating() const {
-  ctrl_.selectLink(channelID_);
+  datapath_.selectLink(channelID_);
   
   // Calculate the channel local id
   uint32_t l = mp7::ChannelIDSet::channelToLocal(channelID_);

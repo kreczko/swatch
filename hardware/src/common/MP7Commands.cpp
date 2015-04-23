@@ -72,7 +72,7 @@ void MP7ConfigureLoopback::code() {
   // Play patterns from zero
   mp7::orbit::Point zero;
   // Create a configurator to play patterns in loopback
-  mp7::PathConfigurator txPattern(mp7::PathConfigurator::kPattern, zero, p->driver().metric());
+  mp7::TestPathConfigurator txPattern(mp7::PathConfigurator::kPattern, zero, p->driver().getMetric());
 
   setProgress(0.1, "Configuring buffers");
   // Apply the configuration to TX buffers
@@ -83,8 +83,8 @@ void MP7ConfigureLoopback::code() {
   // Reset links (we're resetting both rx and tx. Should we be more selective in the future?)
   mgr.resetLinks();
   
-  // Configure RX links in loopback
-  mgr.configureLinks(true, false);
+  // Configure RX links in loopback, standard polarity
+  mgr.configureLinks(true, false, false);
   
   // All done, clear the counters
   mgr.clearLinkCounters();
