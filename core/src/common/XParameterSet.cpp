@@ -220,7 +220,7 @@ XParameterSet::XEntry::XEntry(const std::type_info* t, XCloner c, xdata::Seriali
 XParameterSet::XEntry::XEntry(const XEntry& orig) :
   typeinfo(orig.typeinfo),
   cloner( orig.cloner),
-  object( orig.cloner(orig.object)) {
+  object( orig.object ? orig.cloner(orig.object) : 0x0 ) {
 
 }
 

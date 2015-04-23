@@ -35,10 +35,14 @@ void XParameterSet::adopt( const std::string& name , T* data ) {
     entries_[ name ] = XEntry(&typeid(T), static_cast<XCloner>(cloner_<T>), data) ;
     */
     
-    std::pair<EntryMap::iterator, bool> done = entries_.insert(std::make_pair(name, XEntry(&typeid(T), static_cast<XCloner>(cloner_<T>), data)) );
+    // This is a dirty trick you should not look at. Needed because we cannot use emplace
+    std::pair<EntryMap::iterator, bool> done = entries_.insert(std::make_pair(name, XEntry(&typeid(T), static_cast<XCloner>(cloner_<T>), static_cast<T*>(0x0))) );
+
     if ( not done.second ) {
         throw XParameterExists(name + " is already defined");
     }
+    
+    entries_.find(name)->second.object = data;
     
 }
 

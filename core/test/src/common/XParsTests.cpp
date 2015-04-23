@@ -19,12 +19,14 @@
 #include <xdata/Vector.h>
 #include <xdata/Table.h>
 #include <xdata/Bag.h>
+#include <xdata/Boolean.h>
 
 // Boost Headers
 #include "boost/foreach.hpp"
 
 // C++ Header
-#include <iterator> //for std::ostream_iterator
+#include <iterator>
+#include <boost/test/test_tools.hpp> //for std::ostream_iterator
 
 struct MyBag {
     public:
@@ -32,7 +34,7 @@ struct MyBag {
 
       }
       MyBag( const MyBag& other ) : a_(-999), b_(-999) {
-        std::cout << "Copy!" << std::endl;
+        // std::cout << "Copy!" << std::endl;
         a_ = other.a_;
         b_ = other.b_;
       }
@@ -48,30 +50,43 @@ struct MyBag {
 
 BOOST_AUTO_TEST_SUITE( XParsTestSuite )
 
+BOOST_AUTO_TEST_CASE( XBoolean ) {
+  xdata::Boolean* b = new xdata::Boolean(true);
+  
+  bool c = *b;
+  BOOST_CHECK( c );
+  
+  b->setValue(xdata::Boolean(false));
+
+  c = *b;
+  BOOST_CHECK( not c );
+
+} 
+
+
 //---
 BOOST_AUTO_TEST_CASE(AddAdoptSetGetTest) {
   using namespace swatch::core;
   
   XParameterSet pars;
 
-  std::cout << "Count entries: " << pars.size() << std::endl;
-  std::cout << "Count 'aString': " << pars.has("aString") << std::endl;
+  // std::cout << "Count entries: " << pars.size() << std::endl;
+  // std::cout << "Count 'aString': " << pars.has("aString") << std::endl;
   
-  pars.add("aString", xdata::String("aString"));
+  pars.add("aString", xdata::String("something"));
   
   xdata::Bag<MyBag>* b = new xdata::Bag<MyBag>();
   pars.adopt("aBag", b);
 
-  std::cout << "Count entries after add/adopt: " << pars.size() << std::endl;
-  std::cout << "Count 'aString' again: " << pars.has("aString") << std::endl;
-
-  std::cout << "Get 'aString' from pars: " << pars.get<xdata::String>("aString").toString() << std::endl;
+  BOOST_CHECK_EQUAL(pars.size(), 2);
+  BOOST_CHECK_EQUAL(pars.has("aString"), true);
+  BOOST_CHECK_EQUAL(pars.get<xdata::String>("aString").toString(), "something");
 
   // Assign aString
   pars.get<xdata::String>("aString") = "dummy";
 
-  std::cout << "Check pars size " << pars.size() << std::endl;
-  
+  BOOST_CHECK_EQUAL(pars.size(), 2);
+
   BOOST_CHECK_EQUAL(pars.get<xdata::String>("aString").toString(), "dummy");
   BOOST_CHECK_EQUAL(pars.get("aString").toString(), "dummy");
   BOOST_CHECK_EQUAL(pars["aString"].toString(), "dummy");
@@ -79,32 +94,31 @@ BOOST_AUTO_TEST_CASE(AddAdoptSetGetTest) {
   pars["aString"].setValue(xdata::String("dummier"));
   BOOST_CHECK_EQUAL(pars.get<xdata::String>("aString").toString(), "dummier");
   
-  std::cout << "Get <templated>" << pars.get<xdata::String>("aString").toString() << std::endl;
-  std::cout << "Get " << pars.get("aString").toString() << std::endl;
-  std::cout << "Get (operator[])" << pars["aString"].toString() << std::endl;
-  
+
+  BOOST_CHECK_EQUAL(pars.get<xdata::String>("aString").toString(), "dummier");
+  BOOST_CHECK_EQUAL(pars.get("aString").toString(), "dummier");
+  BOOST_CHECK_EQUAL(pars["aString"].toString(), "dummier");
+
   BOOST_CHECK( pars.equals(pars) );
 
   XParameterSet pars2 = pars;
-  std::cout << "Check pars2 size " << pars2.size() << std::endl;
+  BOOST_CHECK_EQUAL(pars2.size(), 2);
+
+  // std::cout << "Check pars2 size " << pars2.size() << std::endl;
   BOOST_CHECK( pars2.equals(pars) );
   
 
   std::set<std::string> names = pars.keys();
-  std::copy(
-    names.begin(),
-    names.end(),
-    std::ostream_iterator<std::string>(std::cout, "\n")
-    );
-  
-  std::cout << std::endl;
-
-  std::cout << "Pop 'aString' from pars2: " << std::endl;
+  BOOST_CHECK_EQUAL(names.size(),2);
+  BOOST_CHECK(names.find("aString") != names.end() );
+  BOOST_CHECK(names.find("aBag") != names.end() );
 
   xdata::String* s = pars2.pop<xdata::String>("aString");
+  BOOST_CHECK_EQUAL(s->toString(), "dummier");
   
-  std::cout << " 'aString': " << s->toString() << std::endl;
-  std::cout << "Check pars2 size " << pars2.size() << std::endl;
+  // std::cout << " 'aString': " << s->toString() << std::endl;
+  // std::cout << "Check pars2 size " << pars2.size() << std::endl;
+  BOOST_CHECK_EQUAL(pars2.size(), 1);
   
 }
 
@@ -128,7 +142,7 @@ BOOST_AUTO_TEST_CASE(InsertTest) {
   
   XParameterSet pars;
   pars.insert("aString",  xdata::String("dummy"))("aFloat", xdata::Float(5.));
-  std::cout << "Count entries after add/insert: " << pars.size() << std::endl;
+  BOOST_CHECK_EQUAL(pars.size(), 2);
 
   BOOST_CHECK(pars.get<xdata::String>("aString") == "dummy");
   BOOST_CHECK(pars.get<xdata::Float>("aFloat") == 5.);
@@ -145,16 +159,17 @@ BOOST_AUTO_TEST_CASE(AddXPsetTest) {
   child->add("2nd", xdata::Integer(99));
   child->add("3rd", xdata::Vector<xdata::Integer>());
 
-  std::cout << "Child content: " << child->toString() << std::endl;
+  // std::cout << "Child content: " << child->toString() << std::endl;
 
   XParameterSet parent;
   parent.adopt("xps", child);
   BOOST_CHECK(&parent.get("xps") == child);
+  BOOST_CHECK(parent.get<XParameterSet>("xps") == *child);
 
 
   BOOST_CHECK(parent.get<XParameterSet>("xps").get<xdata::String>("1st") == "my first par");
 
-  std::cout << "Parent content: " << parent.toString() << std::endl;
+  // std::cout << "Parent content: " << parent.toString() << std::endl;
 
 
 }
@@ -269,8 +284,8 @@ BOOST_AUTO_TEST_CASE(CloneFloatTest) {
   
   xdata::Float* ofloat = static_cast<xdata::Float*>(cfloat(xfloat));
   
-  std::cout << "Float       : " << xfloat << " " << *xfloat << std::endl;
-  std::cout << "Other Float : " << ofloat << " " << *ofloat << std::endl;
+  // std::cout << "Float       : " << xfloat << " " << *xfloat << std::endl;
+  // std::cout << "Other Float : " << ofloat << " " << *ofloat << std::endl;
 
   BOOST_CHECK( ofloat->equals(*xfloat) );
 
@@ -290,8 +305,8 @@ BOOST_AUTO_TEST_CASE(CloneStringTest) {
   
   xdata::String* ostr = static_cast<xdata::String*>(cstr(xstr));
   
-  std::cout << "String       : " << xstr << " " << xstr->toString() << std::endl;
-  std::cout << "Other String : " << ostr << " " << ostr->toString() << std::endl;
+  // std::cout << "String       : " << xstr << " " << xstr->toString() << std::endl;
+  // std::cout << "Other String : " << ostr << " " << ostr->toString() << std::endl;
 
   BOOST_CHECK( *ostr == *xstr );
 
@@ -329,8 +344,8 @@ BOOST_AUTO_TEST_CASE(CloneTableTest) {
   xtable->setValueAt(1,"my float", tf);       
   xdata::Table* otable = static_cast<xdata::Table*>(ctable(xtable));
 
-  std::cout << "Table       : " << xtable << " " << xtable->toString() << std::endl;
-  std::cout << "Other Table : " << otable << " " << otable->toString() << std::endl;
+  // std::cout << "Table       : " << xtable << " " << xtable->toString() << std::endl;
+  // std::cout << "Other Table : " << otable << " " << otable->toString() << std::endl;
 
   delete xtable;
   delete otable;
@@ -350,8 +365,8 @@ BOOST_AUTO_TEST_CASE(CloneBagTest) {
 
   xdata::Bag<MyBag>* obag = static_cast<xdata::Bag<MyBag>*>( cbag(xbag) );
   
-  std::cout << "Bag       : " << xbag << " " << xbag->bag.a_.toString() << " " << xbag->bag.b_ << std::endl;
-  std::cout << "Other Bag : " << obag << " " << obag->bag.a_.toString() << " " << obag->bag.b_ << std::endl;
+  // std::cout << "Bag       : " << xbag << " " << xbag->bag.a_.toString() << " " << xbag->bag.b_ << std::endl;
+  // std::cout << "Other Bag : " << obag << " " << obag->bag.a_.toString() << " " << obag->bag.b_ << std::endl;
 
   BOOST_CHECK( obag->equals(*xbag) );
 
@@ -372,8 +387,8 @@ BOOST_AUTO_TEST_CASE(CloneXPsetTest) {
 
   XParameterSet* opars = static_cast<XParameterSet*>( cpars(xpars) );
   
-  std::cout << "XPset       : " << xpars << " " << xpars->get("a").toString() << " " << xpars->get("b").toString() << std::endl;
-  std::cout << "Other XPset : " << opars << " " << opars->get("a").toString() << " " << opars->get("b").toString() << std::endl;
+  // std::cout << "XPset       : " << xpars << " " << xpars->get("a").toString() << " " << xpars->get("b").toString() << std::endl;
+  // std::cout << "Other XPset : " << opars << " " << opars->get("a").toString() << " " << opars->get("b").toString() << std::endl;
 
   BOOST_CHECK( opars->equals(*xpars) );
 
