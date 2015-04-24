@@ -86,6 +86,28 @@ void DummyAMC13Manager::configureClock(const std::string& mode) {
 }
 
 
+double DummyAMC13Manager::ttcClockFreq() const {
+  return 4e7;
+}
+
+uint32_t DummyAMC13Manager::ttcBC0Counter() const {
+  return 42;
+}
+
+uint32_t DummyAMC13Manager::ttcBC0Errors() const {
+  return 0;
+}    
+
+uint32_t DummyAMC13Manager::ttcSingleBitErrors() const {
+  return 0;
+}    
+
+uint32_t DummyAMC13Manager::ttcDoubleBitErrors() const {
+  return 0;
+}
+
+
+
 } // namespace test
 } // namespace system
 } // namespace swatch

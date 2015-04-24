@@ -29,6 +29,21 @@ public:
     virtual void enableTTC( const std::vector<uint32_t> & aSlots );
     
     virtual void configureClock(const std::string& mode);
+    
+        /// Reads measured TTC clock frequency (in Hz) 
+    virtual double ttcClockFreq() const;
+    
+    /// Reads TTC BC0 counter
+    virtual uint32_t ttcBC0Counter() const;
+    
+    /// Reads TTC BC error counter
+    virtual uint32_t ttcBC0Errors() const;
+    
+    /// Reads TTC single-bit error counter
+    virtual uint32_t ttcSingleBitErrors() const;
+    
+    /// Reads TTC double-bit error counter
+    virtual uint32_t ttcDoubleBitErrors() const;
 
 
 private:

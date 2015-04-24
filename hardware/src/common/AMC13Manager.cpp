@@ -197,5 +197,26 @@ AMC13Manager::configureClock(const std::string& mode) {
 }
 
 
+double AMC13Manager::ttcClockFreq() const {
+  uint32_t regValue = driver_->read(amc13::AMC13::T2,"STATUS.TTC.CLK_FREQ");
+  return ((double)regValue*50);
+}
+
+uint32_t AMC13Manager::ttcBC0Counter() const {
+  return driver_->read(amc13::AMC13::T2,"STATUS.TTC.BC0_COUNTER");
+}
+    
+uint32_t AMC13Manager::ttcBC0Errors() const {
+  return driver_->read(amc13::AMC13::T2,"STATUS.TTC.BCNT_ERROR");
+}
+    
+uint32_t AMC13Manager::ttcSingleBitErrors() const {
+  return driver_->read(amc13::AMC13::T2,"STATUS.TTC.SBIT_ERROR");
+}
+    
+uint32_t AMC13Manager::ttcDoubleBitErrors() const {
+  return driver_->read(amc13::AMC13::T2,"STATUS.TTC.MBIT_ERROR");
+}
+
 } // namespace hardware
 } // namespace swatch
