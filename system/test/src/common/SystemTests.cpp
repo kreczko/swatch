@@ -132,7 +132,7 @@ struct Params {
         swsys::DaqTTCBag amc13Bag, fakeMCHBag;
 
         amc13Bag.bag.name    = xdata::String("AMC13-1");
-        amc13Bag.bag.creator = xdata::String("swatch::system::test::DummyAMC13Service");
+        amc13Bag.bag.creator = xdata::String("swatch::system::test::DummyAMC13Manager");
         amc13Bag.bag.uriT1   = xdata::String("ipbusudp-2.0://127.0.0.1:50014");
         amc13Bag.bag.addressTableT1 = xdata::String("/address/table/location");
         amc13Bag.bag.uriT2   = xdata::String("ipbusudp-2.0://127.0.0.1:50014");  

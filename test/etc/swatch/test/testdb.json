@@ -65,7 +65,7 @@
           {
             "SERVICE NAME": "AMC13-1",
             "SERVICE TYPE": "AMC13",
-            "SERVICE CREATOR": "swatch::system::test::DummyAMC13Service",
+            "SERVICE CREATOR": "swatch::system::test::DummyAMC13Manager",
             "CRATE NAME": "S2G17-01",
             "CRATE SLOT": 13,
             "CRATE LOCATION": "MyCrateLocation",

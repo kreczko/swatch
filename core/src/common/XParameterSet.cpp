@@ -40,7 +40,8 @@ XParameterSet& XParameterSet::operator=(const XParameterSet& other) {
   clear();
   BOOST_FOREACH( const EntryMap::value_type& it, other.entries_) {
 //    entries_.emplace(it.first, it.second);
-    entries_.insert(it);
+//    entries_.insert(it);//    
+    emplace(it.first, it.second);
   }
   
   return (*this);
@@ -50,6 +51,15 @@ bool XParameterSet::operator==(const XParameterSet& o) const {
   return entries_ == o.entries_;
 }
 
+std::pair<XParameterSet::EntryMap::iterator, bool>
+XParameterSet::emplace(const std::string& name, const std::type_info* t, XCloner c, xdata::Serializable* s) {
+  return entries_.emplace(name, t, c, s);
+}
+
+std::pair<XParameterSet::EntryMap::iterator, bool>
+XParameterSet::emplace(const std::string& name, const XEntry& entry ) {
+  return entries_.emplace(name, entry);
+}
 
 //---
 void

@@ -34,7 +34,16 @@ void XParameterSet::adopt( const std::string& name , T* data ) {
     // entries_.emplace( name, &typeid(T), static_cast<XCloner>(cloner_<T>), data );
     entries_[ name ] = XEntry(&typeid(T), static_cast<XCloner>(cloner_<T>), data) ;
     */
-    
+    std::pair<EntryMap::iterator, bool> it = emplace( name, &typeid(T), static_cast<XCloner>(cloner_<T>), data );
+    // Failed to emplace
+    if ( !it.second ) {
+      // Failed to insert. Delete data
+      delete data;
+      throw XParameterExists(name + " is already defined");
+    }
+   
+    //C+98 compliant
+    /*
     // This is a dirty trick you should not look at. Needed because we cannot use emplace
     std::pair<EntryMap::iterator, bool> done = entries_.insert(std::make_pair(name, XEntry(&typeid(T), static_cast<XCloner>(cloner_<T>), static_cast<T*>(0x0))) );
 
@@ -43,7 +52,7 @@ void XParameterSet::adopt( const std::string& name , T* data ) {
     }
     
     entries_.find(name)->second.object = data;
-    
+    */
 }
 
 
@@ -64,11 +73,15 @@ XParameterSet::add( const std::string& name , const T& data ) {
     entries_[name] = XEntry(&typeid(T), cloner, static_cast<xdata::Serializable*>(cloner(&data)) );
     */
         
+    // XCloner cloner = static_cast<XCloner>(cloner_<T>);
+    // std::pair<EntryMap::iterator, bool> done = entries_.insert(std::make_pair(name, XEntry(&typeid(T), static_cast<XCloner>(cloner_<T>), cloner(&data))) );
+    // if ( not done.second ) {
+    //     throw XParameterExists(name + " is already defined");
+    // }
     XCloner cloner = static_cast<XCloner>(cloner_<T>);
-    std::pair<EntryMap::iterator, bool> done = entries_.insert(std::make_pair(name, XEntry(&typeid(T), static_cast<XCloner>(cloner_<T>), cloner(&data))) );
-    if ( not done.second ) {
-        throw XParameterExists(name + " is already defined");
-    }
+    T* clone = static_cast<T*>(cloner(&data));
+
+    adopt(name, clone);
 }
 
 

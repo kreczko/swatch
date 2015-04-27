@@ -20,6 +20,8 @@ void ActionHandler::registerCommand(const std::string aName) {
   }
 
   commands_.emplace(aName, new C(this));
+
+
 }
 
 template<typename C>

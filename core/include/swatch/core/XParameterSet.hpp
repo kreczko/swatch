@@ -200,6 +200,10 @@ private:
   
   typedef boost::unordered_map<std::string, XEntry> EntryMap;
   
+  std::pair<EntryMap::iterator,bool> emplace( const std::string& name, const std::type_info* t, XCloner c, xdata::Serializable* s );
+  std::pair<EntryMap::iterator,bool> emplace( const std::string& name, const XEntry& );
+
+  //! Map storing the values
   EntryMap entries_;
 
 };

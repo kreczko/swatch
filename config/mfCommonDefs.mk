@@ -68,11 +68,11 @@ PYTHON_INCLUDE_PREFIX ?= $(shell python -c "import distutils.sysconfig;print dis
 
 ifndef DEBUG
 # Compiler flags
-CxxFlags = -g -Wall -O3 -MMD -MP -fPIC #-std=c++0x
+CxxFlags = -g -Wall -O3 -MMD -MP -fPIC -std=c++0x
 LinkFlags = -g -shared -fPIC -Wall -O3 
 ExecutableLinkFlags = -g -Wall -O3
 else
-CxxFlags = -g -ggdb -Wall -MMD -MP -fPIC #-std=c++0x
+CxxFlags = -g -ggdb -Wall -MMD -MP -fPIC -std=c++0x
 LinkFlags = -g -ggdb -shared -fPIC -Wall
 ExecutableLinkFlags = -g -ggdb -Wall
 endif
