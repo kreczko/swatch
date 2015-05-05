@@ -1,7 +1,6 @@
 /**
  * @file    exception.hpp
  * @author  Alessandro Thea
- * @brief   Implementation of the templated methods
  * @date    July 2014
  *
  */

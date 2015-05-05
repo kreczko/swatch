@@ -26,6 +26,8 @@
 namespace swatch {
 namespace core {
       
+
+//! Generic container for xdata::Serializable objects   
 class XParameterSet : public xdata::Serializable {
 public:
 
@@ -100,7 +102,7 @@ public:
   void set( const std::string& name , const xdata::Serializable& data );
 
   /**
-   * Pot an entry from the set
+   * Pop an entry from the set
    * 
    * @param name Parameter to pop.
    * @return Pointer to the entry removed.

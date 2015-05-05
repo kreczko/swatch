@@ -1,7 +1,7 @@
 /**
  * @file    XParameterSet.hxx
  * @author  Alessandro Thea
- * @brief   Generic contailer for xdata::Serializable objects
+ * @brief   Generic container for xdata::Serializable objects
  * @date    February 2015
  *
  */

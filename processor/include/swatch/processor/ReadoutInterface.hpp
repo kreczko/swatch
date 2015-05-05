@@ -17,7 +17,7 @@
 namespace swatch {
 namespace processor {
 
-//! A class derived from swatch::processor::Processor used as a base class for concrete type of uTCA processors
+//! @FIXME A class derived from swatch::processor::Processor used as a base class for concrete type of uTCA processors
 
 class ReadoutInterface {
 protected:

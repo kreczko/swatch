@@ -24,7 +24,7 @@ namespace system {
 
 /**
  * @class DaqTTCStub
- * @brief Struct to hold the data to construct an AMC13
+ * @brief Struct to hold the data to construct a DaqTTCManager object
  */
 struct DaqTTCStub {
 

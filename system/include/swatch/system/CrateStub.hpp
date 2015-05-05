@@ -20,7 +20,7 @@ namespace system {
 
 /**
  * @class CrateStub
- * @brief Struct to hold the data to construct an AMC13
+ * @brief Struct to hold the data that is required to construct a swatch::system::Crate object
  */
 class CrateStub {
 public:

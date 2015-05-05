@@ -19,6 +19,10 @@
 namespace swatch {
 namespace core {
 
+/*
+ * @brief A xdata::Serializable object with the ownership semantics of a boost::shared_ptr. 
+ * Can be used to add items to a XParameterSet without the XParameterSet actually owning the items. 
+ */
 template<typename T>
 class XPointer : public xdata::Serializable {
   BOOST_STATIC_ASSERT( (boost::is_base_of<xdata::Serializable,T>::value) ); 

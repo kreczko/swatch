@@ -5,9 +5,6 @@
  *      Author: kreczko
  *
  * The Operation (dev name) class is used as a mediator for classes that inherit from swatch::processor::Processor.
- * It provides a Finite State Machine (swatch::core::FSM) to cycle through pre-defined
- * (in an implementation of Operation) states and call Operation methods that are associated transitions.
- * The Operation methods then use the Handler resource to manipulate the hardware underneath.
  */
 
 #ifndef __SWATCH_CORE_OPERATION_HPP__
@@ -27,6 +24,13 @@ namespace core {
 class ActionHandler;
 
 typedef ActionHandler Resource;
+
+/*
+ * @brief Represents the multi-command operations (FSMs) of classes that inherit from swatch::core::ActionResource.
+ * It provides a Finite State Machine (swatch::core::FSM) to cycle through pre-defined
+ * (in an implementation of Operation) states and call Operation methods that are associated transitions.
+ * The Operation methods then use the Handler resource to manipulate the hardware underneath.
+ */
 
 class Operation {
 public:
