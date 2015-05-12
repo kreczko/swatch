@@ -22,6 +22,7 @@ treeToProcessorPars(const boost::property_tree::ptree& t) {
     // Fill the stub first (faster)
     ProcessorStub pstub;
     pstub.name         = t.get<std::string>("PROCESSOR NAME");
+    pstub.hwtype       = t.get<std::string>("HARDWARE TYPE");
     pstub.creator      = t.get<std::string>("PROCESSOR CREATOR");
     pstub.uri          = t.get<std::string>("URI");
     pstub.addressTable = t.get<std::string>("ADDRESS TABLE");

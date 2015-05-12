@@ -23,7 +23,7 @@ class Serializable;
 namespace swatch {
 namespace core {
 
-class ActionHandler;
+class ActionableObject;
 
 class Command {
 public:
@@ -63,7 +63,7 @@ public:
 protected:
 
     template<typename T>
-    Command( ActionHandler* aHandler, const T& aDefault );
+    Command( ActionableObject* aHandler, const T& aDefault );
     
     template<typename H> H* getHandler();
 
@@ -101,7 +101,7 @@ private:
 
     std::string statusMsg_;
 
-    ActionHandler* handler_;
+    ActionableObject* handler_;
 
 };
 

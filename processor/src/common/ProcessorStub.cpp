@@ -17,6 +17,7 @@ std::ostream& operator<<(std::ostream& os, const ProcessorStub& pd ) {
     
     os << "ProcessorDescriptor[" << pd.name << "]:\n"
        << "   - Uses creator = " << pd.creator << "\n"
+       << "   - HardwareType = " << pd.hwtype << "\n"
        << "   - Uri = " << pd.uri << "\n"
        << "   - Address Table = " << pd.addressTable << "\n"
        << "   - Crate ID = " << pd.crate << "\n"

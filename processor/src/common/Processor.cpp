@@ -7,6 +7,7 @@
 
 
 #include "swatch/processor/Processor.hpp"
+#include "swatch/processor/ProcessorStub.hpp"
 
 // Swatch Headers
 #include "swatch/core/Utilities.hpp"
@@ -29,12 +30,12 @@ const uint32_t Processor::NoSlot =  0x7fffffffL;
 
 ///---
 Processor::Processor( const std::string& aId, const core::XParameterSet& params ) :
-    Device(aId, params),
+    ActionableObject(aId, params),
     ttc_(0x0),
     readout_(0x0),
-    algo_(0x0) {
-    
-}
+    algo_(0x0),
+    device_(0x0)
+{}
 
 Processor::~Processor() {
 }
@@ -55,6 +56,11 @@ Processor::readout() {
 AlgoInterface*
 Processor::algo() {
     return algo_;
+}
+
+core::Device*
+Processor::device() {
+    return device_;
 }
 
 

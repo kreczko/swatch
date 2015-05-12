@@ -12,7 +12,7 @@
 //using namespace swatch::logger;
 namespace swatch {
 namespace core {
-Operation::Operation(ActionHandler* resource) :
+Operation::Operation(ActionableObject* resource) :
         parameters_(),
         fsm_(new FSM()),
         resource_(resource) {

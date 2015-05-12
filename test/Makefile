@@ -56,6 +56,7 @@ Libraries =	\
 		cactus_swatch_processor_test \
 		cactus_swatch_system \
 		cactus_swatch_system_test \
+		dl
 
 ExecutableLibraries = ${Libraries} ${Library}
 

@@ -11,7 +11,7 @@
 namespace swatch {
 namespace processor {
 namespace test {
-DummyProcessorCommand::DummyProcessorCommand(swatch::core::ActionHandler* handler) :
+DummyProcessorCommand::DummyProcessorCommand(swatch::core::ActionableObject* handler) :
         core::Command(handler, xdata::String("")) {
   getParams().adopt("aa", new xdata::Integer(15));
   getParams().adopt("todo", new xdata::String(""));

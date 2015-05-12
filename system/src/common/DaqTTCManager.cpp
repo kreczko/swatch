@@ -16,7 +16,7 @@ using namespace std;
 namespace swatch {
 namespace system {
 
-DaqTTCManager::DaqTTCManager(const std::string& aId, const core::XParameterSet& aPars) : swatch::core::Object(aId, aPars) {
+DaqTTCManager::DaqTTCManager(const std::string& aId, const core::XParameterSet& aPars) : swatch::core::ActionableObject(aId, aPars) {
 
 }
 

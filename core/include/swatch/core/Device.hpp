@@ -23,9 +23,9 @@ class OutputPort;
 /**
  *  Trigger network device
  */
-class Device : public Object {
+class Device {
 public:
-    Device( const std::string& aId, const XParameterSet& params  = XParameterSet() );
+    Device();
     virtual ~Device();
 
 
@@ -45,14 +45,16 @@ public:
 
     std::deque<OutputPort*>& getOutputs() { return outputs_; }
 
-protected:
+    typedef std::deque<InputPort*> tInputPortDeque;
+    typedef std::deque<OutputPort*> tOutputPortDeque;
+
+//protected:
 
     void addInput( InputPort* aInput );
     void addOutput( OutputPort*  aOutput );
 
-    std::deque<InputPort*> inputs_;
-    
-    std::deque<OutputPort*> outputs_;
+    tInputPortDeque inputs_;
+    tOutputPortDeque outputs_;
 
 };
 

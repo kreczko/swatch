@@ -1,7 +1,7 @@
 /**
  * @file    DummyHandler.cpp
  * @author  Alessandro Thea
- * @brief   ActionHandler class
+ * @brief   ActionableObject class
  * @date    February 2015
  *
  */
@@ -13,7 +13,7 @@ namespace swatch {
 namespace core {
 namespace test {
 DummyHandler::DummyHandler() :
-        ActionHandler(),
+        ActionableObject("Dummy"),
         something_("something"),
         number_(0){
 // Commands and Operations should be registered here

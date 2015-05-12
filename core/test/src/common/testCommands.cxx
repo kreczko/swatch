@@ -2,24 +2,21 @@
 #include <xdata/Integer.h>
 
 #include "swatch/core/Command.hpp"
-#include "swatch/core/ActionHandler.hpp"
+#include "swatch/core/ActionableObject.hpp"
 #include "swatch/logger/Log.hpp"
 #include "swatch/core/xoperators.hpp"
 
 namespace swlo = swatch::logger;
 namespace swco = swatch::core;
 
-class Other {
-
-};
 /**
  * @class DummyResource
  */
-class DummyHandler: public Other, public swco::ActionHandler {
+class DummyHandler: public swco::ActionableObject {
 public:
 
   DummyHandler() :
-    ActionHandler() {
+    ActionableObject( "Dummy" ) {
   }
   
   virtual ~DummyHandler() {
@@ -53,7 +50,7 @@ private:
 class DummyCommand : public swco::Command {
 public:
 
-  DummyCommand(swco::ActionHandler* mgr) : Command(mgr, xdata::Integer(-33)) {
+  DummyCommand(swco::ActionableObject* mgr) : Command(mgr, xdata::Integer(-33)) {
     getParams().adopt("aa", new xdata::Integer(15));
     getParams().adopt("todo", new xdata::String(""));
   }

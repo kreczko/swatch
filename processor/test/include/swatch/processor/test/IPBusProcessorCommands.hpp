@@ -12,7 +12,7 @@
 namespace swatch {
 
 namespace core {
-class ActionHandler;
+class ActionableObject;
 }
 
 namespace processor {
@@ -20,7 +20,7 @@ namespace test {
 
 class IPBusResetCommand : public swatch::core::Command {
 public:
-    IPBusResetCommand(core::ActionHandler* aHandler);
+    IPBusResetCommand(core::ActionableObject* aHandler);
 
   virtual ~IPBusResetCommand();
 
@@ -30,7 +30,7 @@ public:
 
 class IPBusConfigureCommand : public swatch::core::Command {
 public:
-    IPBusConfigureCommand(core::ActionHandler* aHandler);
+    IPBusConfigureCommand(core::ActionableObject* aHandler);
 
   virtual ~IPBusConfigureCommand();
 
@@ -41,7 +41,7 @@ public:
 
 class IPBusCapture : public swatch::core::Command {
 public:
-    IPBusCapture(core::ActionHandler* aHandler);
+    IPBusCapture(core::ActionableObject* aHandler);
 
   virtual ~IPBusCapture();
 

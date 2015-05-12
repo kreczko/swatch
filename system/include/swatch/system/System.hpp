@@ -8,10 +8,15 @@
 #ifndef __SWATCH_SYSTEM_SYSTEM_HPP__
 #define	__SWATCH_SYSTEM_SYSTEM_HPP__
 
+// C++ Headers
+#include <string>
+
+// boost headers
+#include <boost/unordered_map.hpp>
 
 // Swatch Headers
 #include "swatch/core/Device.hpp"
-#include "swatch/core/ActionHandler.hpp"
+#include "swatch/core/ActionableObject.hpp"
 
 
 // Forward declarations
@@ -32,10 +37,10 @@ class Service;
 class DaqTTCManager;
 
 //! Generic class to build a 
-class System : public core::Device, public core::ActionHandler {
+class System : public core::ActionableObject {
 public:
   
-  typedef boost::container::map<std::string, Crate*> CratesMap;
+  typedef boost::unordered_map<std::string, Crate*> CratesMap;
 
     System( const std::string& aId, const core::XParameterSet& params = core::XParameterSet() );
     virtual ~System();

@@ -1,7 +1,7 @@
 /**
  * @file    DummyOperation.hpp
  * @author  Alessandro Thea
- * @brief   ActionHandler class
+ * @brief   ActionableObject class
  * @date    February 2015
  *
  */
@@ -10,7 +10,7 @@
 #define SWATCH_CORE_TEST_DUMMYOPERATION_HPP
 
 #include "../../../../../include/swatch/core/Operation.hpp"
-#include "swatch/core/ActionHandler.hpp"
+#include "swatch/core/ActionableObject.hpp"
 //#include <xdata/Integer.h>
 //#include <xdata/String.h>
 
@@ -20,7 +20,7 @@ namespace test {
 class DummyOperation: public swatch::core::Operation {
 public:
 //  template<typename T>
-  DummyOperation(swatch::core::ActionHandler* handler);
+  DummyOperation(swatch::core::ActionableObject* handler);
   virtual ~DummyOperation();
 
   // current set of 'operations' we want the controller
@@ -38,7 +38,7 @@ public:
 };
 
 //template<typename T>
-//DummyOperation::DummyOperation(swatch::core::ActionHandler* handler,
+//DummyOperation::DummyOperation(swatch::core::ActionableObject* handler,
 //    const T& aDefault, FSM* fsm) :
 //        swatch::core::Operation(handler, aDefault, fsm) {
 //  parameters().adopt("aa", new xdata::Integer(15));

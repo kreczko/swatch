@@ -93,7 +93,7 @@ IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::XParam
         a.insert("path", xdata::String(path));
 
         IPBusRxChannel* rx = new IPBusRxChannel(strPrintf("rx%02d", k), hw(), a);
-        addInput(rx);
+        device()->addInput(rx);
 //        inputChannels_.push_back(new IPBusRxChannel(hw(), a));
 
         LOG(swlog::kDebug) << "rx ch[" << k << "]: size " << rx->getBufferSize();
@@ -108,7 +108,7 @@ IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::XParam
 
         
         IPBusTxChannel* tx = new IPBusTxChannel(strPrintf("tx%02d", k), hw(), a);
-        addOutput(tx);
+        device()->addOutput(tx);
 //        outputChannels_.push_back(new IPBusTxChannel(hw(), a));
 
         LOG(swlog::kDebug) << "tx ch[" << k << "]: size " << tx->getBufferSize();

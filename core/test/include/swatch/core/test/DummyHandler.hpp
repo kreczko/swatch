@@ -1,7 +1,7 @@
 /**
  * @file    DummyHandler.hpp
  * @author  Alessandro Thea
- * @brief   ActionHandler class
+ * @brief   ActionableObject class
  * @date    February 2015
  *
  */
@@ -9,17 +9,13 @@
 #ifndef SWATCH_CORE_TEST_DUMMYHANDLER_HPP
 #define SWATCH_CORE_TEST_DUMMYHANDLER_HPP
 
-#include "swatch/core/ActionHandler.hpp"
-
-class Other {
-
-};
+#include "swatch/core/ActionableObject.hpp"
 
 namespace swatch {
 namespace core {
 namespace test {
 
-class DummyHandler: public Other, public swatch::core::ActionHandler {
+class DummyHandler: public swatch::core::ActionableObject {
 public:
   DummyHandler();
 

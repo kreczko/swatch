@@ -18,7 +18,7 @@ T& Command::getResult() {
 }
 
 template<typename T>
-Command::Command(ActionHandler* aHandler, const T& aDefault) :
+Command::Command(ActionableObject* aHandler, const T& aDefault) :
         default_(new T(aDefault)),
         result_(new T()),
         handler_(aHandler) {

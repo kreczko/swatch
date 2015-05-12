@@ -22,7 +22,7 @@ namespace swatch {
 namespace core {
 namespace test {
 
-DummyOperation::DummyOperation(swatch::core::ActionHandler* handler) :
+DummyOperation::DummyOperation(swatch::core::ActionableObject* handler) :
     swatch::core::Operation(handler) {
   assert(handler != 0);
   getParams().adopt("todo", new xdata::String(""));

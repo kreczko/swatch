@@ -12,7 +12,7 @@ namespace swatch {
 namespace core {
 namespace test {
 
-DummyCommand::DummyCommand(core::ActionHandler* handler) :
+DummyCommand::DummyCommand(core::ActionableObject* handler) :
         core::Command(handler, xdata::Integer(-33)) {
   getParams().adopt("aa", new xdata::Integer(15));
   getParams().adopt("todo", new xdata::String(""));

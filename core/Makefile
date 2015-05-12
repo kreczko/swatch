@@ -33,7 +33,6 @@ Libraries =	\
 	log4cplus \
 	config \
 	asyncresolv \
-	tcpla \
 	xdaq \
 	xdata \
 	xerces-c \
@@ -45,6 +44,8 @@ Libraries =	\
 	logxmlappender \
 	logudpappender \
 	peer
+
+#	tcpla \
 	
 
 include ${SWATCH_ROOT}/config/mfRules.mk

@@ -9,8 +9,8 @@
 #define	__SWATCH_TEST_PROCESSOR_HPP__
 
 // Swatch Headers
+#include "swatch/core/ActionableObject.hpp"
 #include "swatch/core/Device.hpp"
-#include "swatch/core/ActionHandler.hpp"
 
 namespace swatch {
 
@@ -27,7 +27,7 @@ class AlgoInterface;
 /**
  *  @class Processor
  */
-class Processor : public core::Device, public core::ActionHandler {
+class Processor : public core::ActionableObject {
 protected:
   Processor(const std::string& aId, const core::XParameterSet& params = core::XParameterSet());
 public:
@@ -68,6 +68,8 @@ public:
     
     AlgoInterface* algo();
 
+    core::Device* device();
+
 protected:
 
     //! TTC control interface
@@ -78,6 +80,9 @@ protected:
     
     //!
     AlgoInterface* algo_;
+
+    core::Device* device_;
+
 
 };
 

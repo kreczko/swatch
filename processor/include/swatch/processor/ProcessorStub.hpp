@@ -52,6 +52,7 @@ struct ProcessorStub {
 
     void registerFields(xdata::Bag<ProcessorStub> *bag) {
         bag->addField("name", &name);
+        bag->addField("hwtype", &hwtype);
         bag->addField("creator", &creator);
         bag->addField("crate", &crate);
         bag->addField("slot", &slot);
@@ -63,6 +64,9 @@ struct ProcessorStub {
 
     //! Name of the Processor
     xdata::String name;
+
+    //! Type of the Processor
+    xdata::String hwtype;
 
     //! Class to create the Processor object
     xdata::String creator;

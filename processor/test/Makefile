@@ -43,7 +43,8 @@ Libraries =	\
 	cactus_uhal_tests \
 	cactus_swatch_logger \
 	cactus_swatch_core \
-	cactus_swatch_processor
+	cactus_swatch_processor \
+	dl
 
 
 ExecutableLibraries = ${Libraries} ${Library}

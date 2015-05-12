@@ -12,7 +12,7 @@
 namespace swatch {
 namespace processor {
 namespace test {
-DummyProcessorOperation::DummyProcessorOperation(swatch::core::ActionHandler* resource) :
+DummyProcessorOperation::DummyProcessorOperation(swatch::core::ActionableObject* resource) :
         core::Operation(resource) {
   getParams().adopt("aa", new xdata::Integer(15));
   getParams().adopt("todo", new xdata::String(""));

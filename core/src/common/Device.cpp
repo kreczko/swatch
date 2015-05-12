@@ -8,28 +8,36 @@
 #include "swatch/core/Device.hpp"
 #include "swatch/core/Port.hpp"
 
+#include <boost/foreach.hpp>
+
 using namespace std;
 
 namespace swatch {
 namespace core {
 
-Device::Device(const std::string& aId, const XParameterSet& params) :
-    Object(aId, params)
+Device::Device()
 {
 }
 
 Device::~Device() {
+  BOOST_FOREACH( tInputPortDeque::value_type p, inputs_) {
+    delete p;
+  }
+  inputs_.clear();
+
+  BOOST_FOREACH( tOutputPortDeque::value_type p, outputs_) {
+    delete p;
+  }
+  outputs_.clear();
 }
 
 void
 Device::addInput(InputPort* aInput) {
-    this->addObj(aInput);
     inputs_.push_back(aInput);
 }
 
 void
 Device::addOutput(OutputPort* aOutput) {
-    this->addObj(aOutput);
     outputs_.push_back(aOutput);
 }
 

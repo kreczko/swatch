@@ -10,14 +10,14 @@
 
 // Swatch Headers
 #include "swatch/core/Object.hpp"
-#include "swatch/core/ActionHandler.hpp"
+#include "swatch/core/ActionableObject.hpp"
 
 #include <string>
 
 namespace swatch {
 namespace system {
 
-class DaqTTCManager : public core::Object, public core::ActionHandler {
+class DaqTTCManager : public core::ActionableObject {
 protected:
     explicit DaqTTCManager( const std::string& aId, const core::XParameterSet& params );
 public:

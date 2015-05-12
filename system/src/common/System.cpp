@@ -28,7 +28,7 @@ namespace system {
 
 //---
 System::System(const std::string& aId, const core::XParameterSet& params)
-: Device(aId, params) {
+: ActionableObject(aId, params) {
 }
 
 

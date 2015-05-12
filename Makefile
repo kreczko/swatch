@@ -24,10 +24,10 @@ PACKAGES = \
 	core/test \
 	processor \
 	processor/test \
-	system \
-	system/test \
 	hardware \
 	hardware/test \
+	system \
+	system/test \
 	test
 endif
 

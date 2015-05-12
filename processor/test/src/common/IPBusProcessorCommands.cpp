@@ -9,6 +9,7 @@
 #include <xdata/Integer.h>
 
 // Swatch Headers
+#include "swatch/core/Device.hpp"
 #include "swatch/processor/test/IPBusProcessorCommands.hpp"
 #include "swatch/processor/test/IPBusProcessor.hpp"
 #include "swatch/processor/test/IPBusTTC.hpp"
@@ -32,7 +33,7 @@ namespace test {
 
 
 //---
-IPBusResetCommand::IPBusResetCommand(core::ActionHandler* aHandler) :
+IPBusResetCommand::IPBusResetCommand(core::ActionableObject* aHandler) :
   Command(aHandler, xdata::Integer()) {
   
   getParams().add("mode",xdata::String());
@@ -89,7 +90,7 @@ void IPBusResetCommand::code() {
 
 
 //---
-IPBusConfigureCommand::IPBusConfigureCommand(core::ActionHandler* aHandler) :
+IPBusConfigureCommand::IPBusConfigureCommand(core::ActionableObject* aHandler) :
   Command(aHandler, xdata::String()) {
   
   getParams().add("mode",xdata::String());
@@ -125,10 +126,10 @@ void IPBusConfigureCommand::code() {
    
     if ( config == "capture") {
       // And then buffers
-      BOOST_FOREACH(swco::InputPort* in, p->getInputs() ) {
+      BOOST_FOREACH(swco::InputPort* in, p->device()->getInputs() ) {
           dynamic_cast<IPBusRxChannel*>(in)->configureBuffer(BufferInterface::Capture);
       }
-      BOOST_FOREACH( swco::OutputPort* out, p->getOutputs() ) {
+      BOOST_FOREACH( swco::OutputPort* out, p->device()->getOutputs() ) {
           dynamic_cast<IPBusTxChannel*>(out)->configureBuffer(BufferInterface::Capture);
       }
     } else {
@@ -149,7 +150,7 @@ void IPBusConfigureCommand::code() {
     // Check links alignment (?)
 }
 
-IPBusCapture::IPBusCapture(core::ActionHandler* aHandler) :
+IPBusCapture::IPBusCapture(core::ActionableObject* aHandler) :
   Command(aHandler, xdata::String()) {
 }
 
@@ -167,8 +168,8 @@ void IPBusCapture::code() {
 //    sleep(1);
     
     std::vector< std::vector<uint64_t> > data;
-    data.reserve(p->getNumOutputs());
-    BOOST_FOREACH(swco::OutputPort* out, p->getOutputs() ) {
+    data.reserve(p->device()->getNumOutputs());
+    BOOST_FOREACH(swco::OutputPort* out, p->device()->getOutputs() ) {
       LOG(swlog::kDebug) << "Downloading " << out->id();
       IPBusTxChannel* tx = dynamic_cast<IPBusTxChannel*>(out);
       data.push_back(tx->download());

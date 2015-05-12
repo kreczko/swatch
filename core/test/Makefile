@@ -37,7 +37,9 @@ Libraries =	\
 	boost_unit_test_framework \
 	cactus_swatch_core \
 	cactus_swatch_logger \
-	toolbox
+	cactus_uhal_log \
+	toolbox \
+	dl
 
 ExecutableLibraries = ${Libraries} ${Library}
 

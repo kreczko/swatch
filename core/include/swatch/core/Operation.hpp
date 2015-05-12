@@ -21,9 +21,9 @@
 
 namespace swatch {
 namespace core {
-class ActionHandler;
+class ActionableObject;
 
-typedef ActionHandler Resource;
+typedef ActionableObject Resource;
 
 /*
  * @brief Represents the multi-command operations (FSMs) of classes that inherit from swatch::core::ActionResource.
@@ -68,7 +68,7 @@ public:
   std::string getStatus() const;
 
 protected:
-  Operation(ActionHandler* resource);
+  Operation(ActionableObject* resource);
 
   XParameterSet parameters_;
   FSM* fsm_;
@@ -76,7 +76,7 @@ protected:
 //  Operation( Resource* resource, const T& aDefault, FSM* fsm );
 
 private:
-  ActionHandler* resource_;
+  ActionableObject* resource_;
 
 //  StateTransition transition_;
 
