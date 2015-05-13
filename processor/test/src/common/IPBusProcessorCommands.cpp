@@ -33,8 +33,8 @@ namespace test {
 
 
 //---
-IPBusResetCommand::IPBusResetCommand(core::ActionableObject* aHandler) :
-  Command(aHandler, xdata::Integer()) {
+IPBusResetCommand::IPBusResetCommand(const std::string& aId) :
+  Command(aId, xdata::Integer()) {
   
   getParams().add("mode",xdata::String());
   
@@ -50,7 +50,7 @@ IPBusResetCommand::~IPBusResetCommand() {
 //---
 void IPBusResetCommand::code() {
 
-    IPBusProcessor* p = getHandler<IPBusProcessor>();
+    IPBusProcessor* p = getParent<IPBusProcessor>();
     
     if ( !getParams().has("mode") ) {
       setError("Configuration not found!");
@@ -90,8 +90,8 @@ void IPBusResetCommand::code() {
 
 
 //---
-IPBusConfigureCommand::IPBusConfigureCommand(core::ActionableObject* aHandler) :
-  Command(aHandler, xdata::String()) {
+IPBusConfigureCommand::IPBusConfigureCommand(const std::string& aId) :
+  Command(aId, xdata::String()) {
   
   getParams().add("mode",xdata::String());
 }
@@ -110,7 +110,7 @@ void IPBusConfigureCommand::code() {
     
     std::string config = getParams().get<xdata::String>("mode");
 
-    IPBusProcessor* p = getHandler<IPBusProcessor>();
+    IPBusProcessor* p = getParent<IPBusProcessor>();
 
     // // Check presence of TTC clock and signals
      if ( not p->ttc()->isClock40Locked() ) {
@@ -150,8 +150,8 @@ void IPBusConfigureCommand::code() {
     // Check links alignment (?)
 }
 
-IPBusCapture::IPBusCapture(core::ActionableObject* aHandler) :
-  Command(aHandler, xdata::String()) {
+IPBusCapture::IPBusCapture(const std::string& aId) :
+  Command(aId, xdata::String()) {
 }
 
 IPBusCapture::~IPBusCapture() {
@@ -159,7 +159,7 @@ IPBusCapture::~IPBusCapture() {
 
 void IPBusCapture::code() {
 
-    IPBusProcessor* p = getHandler<IPBusProcessor>();
+    IPBusProcessor* p = getParent<IPBusProcessor>();
 
 //    LOG(swlog::kNotice) << ">> Sending test BGo";
 //    p->ttc()->sendBGo(0xc);

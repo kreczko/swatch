@@ -19,9 +19,8 @@ namespace core {
 namespace test {
 class DummyCommand: public swatch::core::Command {
 public:
-  DummyCommand(swatch::core::ActionableObject* handler);
-  template<typename T>
-  DummyCommand(swatch::core::ActionableObject* handler, const T& aDefault);
+  DummyCommand( const std::string& aId );
+  template<typename T>  DummyCommand( const std::string& aId , const T& aDefault);
   virtual ~DummyCommand();
 
   virtual void code();
@@ -30,9 +29,8 @@ public:
 };
 
 template<typename T>
-DummyCommand::DummyCommand(swatch::core::ActionableObject* handler,
-    const T& aDefault) :
-        swatch::core::Command(handler, aDefault) {
+DummyCommand::DummyCommand( const std::string& aId , const T& aDefault) :
+       swatch::core::Command( aId , aDefault) {
   getParams().adopt("aa", new xdata::Integer(15));
   getParams().adopt("todo", new xdata::String(""));
 }

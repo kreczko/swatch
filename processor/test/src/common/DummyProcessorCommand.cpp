@@ -11,8 +11,8 @@
 namespace swatch {
 namespace processor {
 namespace test {
-DummyProcessorCommand::DummyProcessorCommand(swatch::core::ActionableObject* handler) :
-        core::Command(handler, xdata::String("")) {
+DummyProcessorCommand::DummyProcessorCommand(const std::string aId) :
+        core::Command(aId, xdata::String("")) {
   getParams().adopt("aa", new xdata::Integer(15));
   getParams().adopt("todo", new xdata::String(""));
 }
@@ -22,7 +22,7 @@ DummyProcessorCommand::~DummyProcessorCommand() {
 }
 
 void DummyProcessorCommand::code() {
-  DummyProcessor* res = getHandler<DummyProcessor>();
+  DummyProcessor* res = getParent<DummyProcessor>();
 
   std::string todo = parameters_.get<xdata::String>("todo");
   if (todo == "getCrateId") {

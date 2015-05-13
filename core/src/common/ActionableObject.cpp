@@ -23,22 +23,6 @@ ActionableObject::ActionableObject( const std::string& aId , const XParameterSet
 
 ActionableObject::~ActionableObject()
 {
-
-  BOOST_FOREACH( tConfigSequenceMap::value_type p, mConfigSequences) {
-    delete p.second;
-  }
-  mConfigSequences.clear();
-
-  BOOST_FOREACH( tCommandMap::value_type p, mCommands) {
-    delete p.second;
-  }
-  mCommands.clear();
-
-  BOOST_FOREACH( tOperationMap::value_type p, mOperations) {
-    delete p.second;
-  }
-  mOperations.clear();
-
 }
 
 //------------------------------------------------------------------------------------
@@ -103,6 +87,29 @@ std::set<std::string> ActionableObject::getOperations() const
 }
 
 //------------------------------------------------------------------------------------
+
+void ActionableObject::registerConfigSequence( const std::string& aId , ConfigSequence* aConfigSequence )
+{
+  if (mConfigSequences.count(aId)) throw ConfigSequenceAlreadyExistsInActionableObject(aId);
+  this->addObj(aConfigSequence);
+  mConfigSequences.insert( std::make_pair( aId , aConfigSequence ) );
+}
+
+void ActionableObject::registerCommand( const std::string& aId , Command* aCommand )
+{
+  if (mCommands.count(aId)) throw CommandAlreadyExistsInActionableObject(aId);
+  this->addObj(aCommand);
+  mCommands.insert( std::make_pair( aId , aCommand ) );
+}
+
+void ActionableObject::registerOperation( const std::string& aId , Operation* aOperation ) {
+  if (mOperations.count(aId)) throw OperationAlreadyExistsInActionableObject(aId);
+  this->addObj(aOperation);
+  mOperations.insert( std::make_pair( aId , aOperation ) );
+}
+
+//------------------------------------------------------------------------------------
+
 
 }
 }

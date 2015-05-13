@@ -1,4 +1,3 @@
-
 #include "swatch/core/ConfigSequence.hpp"
 //#include "toolbox/ConfigSequence/exception/Exception.h"
 
@@ -7,21 +6,10 @@
 namespace swatch {
 namespace core {
 
-ConfigSequence::ConfigSequence( Object& aSystem ) : 
-  mSystem( &aSystem ),
-  mProcessor( NULL ),
+ConfigSequence::ConfigSequence( const std::string& aId ) :
+  Functionoid( aId ),
   mHardwareType( NULL ),
-  mSystemId( NULL ),
-  mComponentId( NULL )
-{
-  
-}
-
-ConfigSequence::ConfigSequence( Object& aSystem , Object& aProcessor , const std::string& aHardwareType ) : 
-  mSystem( &aSystem ),
-  mProcessor( &aProcessor ),
-  mHardwareType( new std::string( aHardwareType ) ),
-  mSystemId( NULL ),
+  mParentId( NULL ),
   mComponentId( NULL )
 {
   
@@ -29,7 +17,7 @@ ConfigSequence::ConfigSequence( Object& aSystem , Object& aProcessor , const std
 
 ConfigSequence::~ConfigSequence() {
   if( mHardwareType ){ delete mHardwareType; }
-  if( mSystemId ){ delete mSystemId; }
+  if( mParentId ){ delete mParentId; }
   if( mComponentId ){ delete mComponentId; }
 }
 
@@ -72,21 +60,21 @@ const std::string* ConfigSequence::getHardwareType()
   return mHardwareType;
 }
 
-const std::string* ConfigSequence::getSystemId()
+const std::string* ConfigSequence::getParentId()
 {
-  if( !mSystemId )
-  {
-    mSystemId = new std::string( mSystem->path() );
-  }
-  return mSystemId;
+//   if( !mParentId )
+//   {
+//     mParentId = new std::string( mParent->path() );
+//   }
+  return mParentId;
 }
 
 const std::string* ConfigSequence::getComponentId()
 {
-  if( mProcessor and !mComponentId )
-  {
-    mComponentId = new std::string( mProcessor->path() );
-  }
+//   if( mProcessor and !mComponentId )
+//   {
+//     mComponentId = new std::string( mProcessor->path() );
+//   }
   return mComponentId;
 }
 

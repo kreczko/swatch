@@ -44,6 +44,8 @@ public:
   template < typename T >
   void registerMonitorable( const std::string& aId );
 
+  void registerMonitorable( const std::string& aId , Metric* aMetric);
+
   typedef boost::unordered_map< std::string , Metric* > tMonitorableMap;
      
 protected:

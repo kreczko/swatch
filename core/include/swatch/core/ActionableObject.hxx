@@ -5,26 +5,35 @@ namespace swatch {
 namespace core {
 
 template < typename T >
-void ActionableObject::registerConfigSequence( const std::string& aId )
+ConfigSequence* ActionableObject::registerConfigSequence( const std::string& aId )
 {
-//   BOOST_STATIC_ASSERT( (boost::is_base_of<ConfigSequence,T>::value) );
+  BOOST_STATIC_ASSERT( (boost::is_base_of<ConfigSequence,T>::value) );
   if (mConfigSequences.count(aId)) throw ConfigSequenceAlreadyExistsInActionableObject(aId);
-  mConfigSequences.emplace( aId , new T(this) );
+  ConfigSequence* lConfigSequence( new T( aId ) );
+  this->addObj(lConfigSequence);
+  mConfigSequences.insert( std::make_pair( aId , lConfigSequence ) );
+  return lConfigSequence;
 }
 
 template< typename T>
-void ActionableObject::registerCommand( const std::string& aId )
+Command* ActionableObject::registerCommand( const std::string& aId )
 {
-//   BOOST_STATIC_ASSERT( (boost::is_base_of<Command,T>::value) ); 
+  BOOST_STATIC_ASSERT( (boost::is_base_of<Command,T>::value) ); 
   if (mCommands.count(aId)) throw CommandAlreadyExistsInActionableObject(aId);
-  mCommands.emplace( aId , new T(this) );
+  Command* lCommand( new T( aId ) );
+  this->addObj(lCommand);
+  mCommands.insert( std::make_pair( aId , lCommand ) );
+  return lCommand;
 }
 
 template< typename T >
-void ActionableObject::registerOperation( const std::string& aId ) {
-//   BOOST_STATIC_ASSERT( (boost::is_base_of<Operation,T>::value) ); 
+Operation* ActionableObject::registerOperation( const std::string& aId ) {
+  BOOST_STATIC_ASSERT( (boost::is_base_of<Operation,T>::value) ); 
   if (mOperations.count(aId)) throw OperationAlreadyExistsInActionableObject(aId);
-  mOperations.emplace( aId , new T(this) );
+  Operation* lOperation( new T( aId ) );
+  this->addObj(lOperation);
+  mOperations.insert( std::make_pair( aId , lOperation ) );
+  return lOperation;
 }
 
 }

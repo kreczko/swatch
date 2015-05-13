@@ -16,6 +16,7 @@
 #include <boost/unordered_map.hpp>
 
 // Swatch Headers
+#include "swatch/core/Functionoid.hpp"
 #include "swatch/core/FSM.hpp"
 #include "swatch/core/XParameterSet.hpp"
 
@@ -32,15 +33,13 @@ typedef ActionableObject Resource;
  * The Operation methods then use the Handler resource to manipulate the hardware underneath.
  */
 
-class Operation {
+class Operation : public Functionoid {
 public:
 
   enum Status {
     kInitial, kRunning, kError, kWarning, kDone,
   };
   virtual ~Operation();
-
-  template<typename R> R* getResource();
 
   // OLD
   /*
@@ -55,8 +54,6 @@ public:
   void executeTransition(const std::string);
   std::string getCurrentState() const;
 
-  XParameterSet & getParams();
-
   const std::vector<std::string>& getStates() const;
   
   const std::map<std::string, std::string> getStateTransitions(const std::string& s) const;
@@ -68,15 +65,13 @@ public:
   std::string getStatus() const;
 
 protected:
-  Operation(ActionableObject* resource);
+  Operation( const std::string& aId );
 
-  XParameterSet parameters_;
   FSM* fsm_;
 //  template<typename T>
 //  Operation( Resource* resource, const T& aDefault, FSM* fsm );
 
 private:
-  ActionableObject* resource_;
 
 //  StateTransition transition_;
 
@@ -84,7 +79,5 @@ private:
 typedef boost::unordered_map<std::string, Operation*> OperationMap;
 } /* namespace core */
 } /* namespace swatch */
-
-#include "Operation.hxx"
 
 #endif /* __SWATCH_CORE_OPERATION_HPP__ */

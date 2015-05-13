@@ -85,6 +85,8 @@ protected:
     //! Map of children and their child nodes
     boost::unordered_map< std::string, Object* > objectsChart_;
 
+    Object* getParent();
+
 private:
     
     void getCharts( std::string path, boost::unordered_map<std::string, Object*>& ) const;

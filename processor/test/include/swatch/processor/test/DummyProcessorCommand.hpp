@@ -18,9 +18,9 @@ namespace processor {
 namespace test {
 class DummyProcessorCommand: public swatch::core::Command {
 public:
-  DummyProcessorCommand(swatch::core::ActionableObject* handler);
+  DummyProcessorCommand(const std::string aId);
   template<typename T>
-  DummyProcessorCommand(swatch::core::ActionableObject* handler, const T& aDefault);
+  DummyProcessorCommand(const std::string aId, const T& aDefault);
   virtual ~DummyProcessorCommand();
 
   virtual void code();
@@ -29,9 +29,9 @@ public:
 };
 
 template<typename T>
-DummyProcessorCommand::DummyProcessorCommand(swatch::core::ActionableObject* handler,
+DummyProcessorCommand::DummyProcessorCommand(const std::string aId,
     const T& aDefault) :
-        swatch::core::Command(handler, aDefault) {
+        swatch::core::Command(aId, aDefault) {
   getParams().adopt("aa", new xdata::Integer(15));
   getParams().adopt("todo", new xdata::String(""));
 }

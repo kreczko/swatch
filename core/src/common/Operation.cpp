@@ -12,19 +12,13 @@
 //using namespace swatch::logger;
 namespace swatch {
 namespace core {
-Operation::Operation(ActionableObject* resource) :
-        parameters_(),
-        fsm_(new FSM()),
-        resource_(resource) {
+Operation::Operation( const std::string& aId ) :
+        Functionoid( aId ),
+        fsm_(new FSM()) {
 }
 
 Operation::~Operation() {
   // TODO Auto-generated destructor stub
-}
-
-XParameterSet&
-Operation::getParams() {
-  return parameters_;
 }
 
 bool Operation::preCondition() const {

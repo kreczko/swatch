@@ -30,12 +30,6 @@ Command::exec() {
 }
 
 //---
-XParameterSet&
-Command::getParams() {
-  return parameters_;
-}
-
-//---
 void Command::reset() {
     setStatus(kInitial),
     setResult(defaultResult());

@@ -53,7 +53,8 @@ BOOST_AUTO_TEST_SUITE( CommandTestSuite)
 // we want to make sure that the factory can use this
 BOOST_AUTO_TEST_CASE(TestConstructor) {
   DummyHandler handler = DummyHandler();
-  swatch::core::Command* test = new DummyCommand(&handler);
+  swatch::core::Command* test = handler.registerCommand<DummyCommand>("Test");
+  
   BOOST_CHECK(test->getParams().get<xdata::Integer>("aa").equals(xdata::Integer(15)));
 }
 

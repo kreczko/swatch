@@ -45,5 +45,11 @@ std::set<std::string> MonitorableObject::getMonitorables() const
   return lNames;
 }
 
+void MonitorableObject::registerMonitorable( const std::string& aId , Metric* aMetric )
+{
+  if (mMonitorables.count(aId)) throw MonitorableAlreadyExistsInMonitorableObject(aId);
+  mMonitorables.insert( std::make_pair( aId , aMetric ) );
+}
+
 }
 }

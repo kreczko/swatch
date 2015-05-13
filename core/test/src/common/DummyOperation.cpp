@@ -22,9 +22,9 @@ namespace swatch {
 namespace core {
 namespace test {
 
-DummyOperation::DummyOperation(swatch::core::ActionableObject* handler) :
-    swatch::core::Operation(handler) {
-  assert(handler != 0);
+DummyOperation::DummyOperation(  const std::string& aId ) :
+    swatch::core::Operation( aId ) {
+//   assert(handler != 0);
   getParams().adopt("todo", new xdata::String(""));
 
   std::string halted("HALTED");
@@ -66,33 +66,33 @@ DummyOperation::~DummyOperation() {
 }
 
 void DummyOperation::configure() {
-  DummyHandler* res = getResource<DummyHandler>();
+  DummyHandler* res = getParent<DummyHandler>();
   res->setNumber(42);
   res->setSomething("I have been configured");
 }
 
 void DummyOperation::coldReset() {
-  DummyHandler* res = getResource<DummyHandler>();
+  DummyHandler* res = getParent<DummyHandler>();
   res->setSomething("I am cold...");
 }
 
 void DummyOperation::enable() {
-  DummyHandler* res = getResource<DummyHandler>();
+  DummyHandler* res = getParent<DummyHandler>();
   res->setSomething("I am enabled...");
 }
 
 void DummyOperation::stop() {
-  DummyHandler* res = getResource<DummyHandler>();
+  DummyHandler* res = getParent<DummyHandler>();
   res->setSomething("somebody stop me...");
 }
 
 void DummyOperation::suspend() {
-  DummyHandler* res = getResource<DummyHandler>();
+  DummyHandler* res = getParent<DummyHandler>();
   res->setSomething("I have been suspended!");
 }
 
 void DummyOperation::fail() {
-  DummyHandler* res = getResource<DummyHandler>();
+  DummyHandler* res = getParent<DummyHandler>();
   res->fail();
 }
 

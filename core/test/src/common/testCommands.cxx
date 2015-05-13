@@ -50,7 +50,7 @@ private:
 class DummyCommand : public swco::Command {
 public:
 
-  DummyCommand(swco::ActionableObject* mgr) : Command(mgr, xdata::Integer(-33)) {
+  DummyCommand( const std::string& aId ) : Command( aId, xdata::Integer(-33)) {
     getParams().adopt("aa", new xdata::Integer(15));
     getParams().adopt("todo", new xdata::String(""));
   }
@@ -61,7 +61,7 @@ public:
 
   virtual void code() {
 
-    DummyHandler* res = getHandler<DummyHandler>();
+    DummyHandler* res = getParent<DummyHandler>();
 
     BOOST_FOREACH(const std::string& n, parameters_.keys()) {
       LOG(swlo::kInfo) << n << " : " << parameters_[n];

@@ -59,6 +59,11 @@ Object::addObj( Object* aChild ) {
 
 }
 
+Object* Object::getParent()
+{
+  return parent_;
+}
+
 const std::string& 
 Object::id() const {
     return id_;

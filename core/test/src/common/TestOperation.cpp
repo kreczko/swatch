@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_SUITE( OperationTestSuite )
 BOOST_AUTO_TEST_CASE(TestConstructor) {
   LOG(kInfo) << "Running OperationTestSuite/TestConstructor";
   DummyHandler handler = DummyHandler();
-  swatch::core::Operation* common = new DummyOperation(&handler);
+  swatch::core::Operation* common = handler.registerOperation<DummyOperation>("Common");
   BOOST_CHECK_EQUAL(common->getCurrentState(), "HALTED");
 }
 

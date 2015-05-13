@@ -14,7 +14,7 @@ namespace processor {
 namespace test {
 class DummyProcessorOperation: public swatch::core::Operation {
 public:
-  DummyProcessorOperation(swatch::core::ActionableObject* resource);
+  DummyProcessorOperation(const std::string& aId);
   virtual ~DummyProcessorOperation();
 
   // current set of 'operations' we want the operation to execute

@@ -12,8 +12,8 @@
 namespace swatch {
 namespace processor {
 namespace test {
-DummyProcessorOperation::DummyProcessorOperation(swatch::core::ActionableObject* resource) :
-        core::Operation(resource) {
+DummyProcessorOperation::DummyProcessorOperation(const std::string& aId) :
+        core::Operation(aId) {
   getParams().adopt("aa", new xdata::Integer(15));
   getParams().adopt("todo", new xdata::String(""));
   std::string halted("HALTED");
@@ -32,7 +32,7 @@ DummyProcessorOperation::~DummyProcessorOperation() {
 }
 
 void DummyProcessorOperation::test(toolbox::Event::Reference event) {
-  DummyProcessor* res = getResource<DummyProcessor>();
+  DummyProcessor* res = getParent<DummyProcessor>();
   res->test1();
   res->test2();
 }

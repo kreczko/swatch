@@ -44,7 +44,7 @@ AMC13ResetCommand::~AMC13ResetCommand() {
 void AMC13ResetCommand::code() {
   
 
-    AMC13Manager* amc13 = getHandler<AMC13Manager>();
+    AMC13Manager* amc13 = getParent<AMC13Manager>();
     
   
     std::string mode = getParams().get<xdata::String>("mode");

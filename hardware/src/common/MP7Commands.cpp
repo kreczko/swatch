@@ -39,7 +39,7 @@ MP7ResetCommand::~MP7ResetCommand() {
 //---
 void MP7ResetCommand::code() {
 
-  MP7Processor* p = getHandler<MP7Processor>();
+  MP7Processor* p = getParent<MP7Processor>();
 
   // TODO: acquire lock
   std::string mode = "external";
@@ -64,7 +64,7 @@ MP7ConfigureLoopback::~MP7ConfigureLoopback() {
 
 //---
 void MP7ConfigureLoopback::code() {
-  MP7Processor* p = getHandler<MP7Processor>();
+  MP7Processor* p = getParent<MP7Processor>();
   mp7::ChannelsManager mgr = p->driver().channelMgr();
   
   

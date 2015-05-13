@@ -54,7 +54,7 @@ MP7Configure::pass(){
 //---
 void
 MP7Configure::coldReset() {
-  MP7Processor* res = getResource<MP7Processor>();
+  MP7Processor* res = getParent<MP7Processor>();
 
   swatch::core::Command* reset = res->getCommand("reset");
   reset->exec();
@@ -63,25 +63,25 @@ MP7Configure::coldReset() {
 //---
 void
 MP7Configure::configure() {
-  MP7Processor* res = getResource<MP7Processor>();
+  MP7Processor* res = getParent<MP7Processor>();
 }
 
 //---
 void
 MP7Configure::enable() {
-  MP7Processor* res = getResource<MP7Processor>();
+  MP7Processor* res = getParent<MP7Processor>();
 }
 
 //---
 void
 MP7Configure::suspend() {
-  MP7Processor* res = getResource<MP7Processor>();
+  MP7Processor* res = getParent<MP7Processor>();
 }
 
 //---
 void
 MP7Configure::stop() {
-  MP7Processor* res = getResource<MP7Processor>();
+  MP7Processor* res = getParent<MP7Processor>();
 }
 
 } /* namespace hardware */

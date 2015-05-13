@@ -18,20 +18,15 @@ T& Command::getResult() {
 }
 
 template<typename T>
-Command::Command(ActionableObject* aHandler, const T& aDefault) :
+Command::Command( const std::string& aId , const T& aDefault ) :
+        Functionoid( aId ),
         default_(new T(aDefault)),
-        result_(new T()),
-        handler_(aHandler) {
+        result_(new T()) {
   // T must be derived from xdata::Serializable
   BOOST_STATIC_ASSERT((boost::is_base_of<xdata::Serializable, T>::value));
-
   reset();
 }
 
-template<typename H>
-H* Command::getHandler() {
-  return dynamic_cast<H*>(handler_);
-}
 } // namespace core
 } // namespace swatch
 

@@ -12,8 +12,8 @@ namespace swatch {
 namespace core {
 namespace test {
 
-DummyCommand::DummyCommand(core::ActionableObject* handler) :
-        core::Command(handler, xdata::Integer(-33)) {
+DummyCommand::DummyCommand(  const std::string& aId ) :
+        core::Command( aId , xdata::Integer(-33)) {
   getParams().adopt("aa", new xdata::Integer(15));
   getParams().adopt("todo", new xdata::String(""));
 }
@@ -23,7 +23,7 @@ DummyCommand::~DummyCommand() {
 }
 
 void DummyCommand::code() {
-  DummyHandler* res = getHandler<DummyHandler>();
+  DummyHandler* res = getParent<DummyHandler>();
 
   BOOST_FOREACH(const std::string& n, parameters_.keys()) {
     LOG(logger::kInfo) << n << " : " << parameters_[n];

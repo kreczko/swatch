@@ -20,7 +20,7 @@ namespace test {
 class DummyOperation: public swatch::core::Operation {
 public:
 //  template<typename T>
-  DummyOperation(swatch::core::ActionableObject* handler);
+  DummyOperation(  const std::string& aId );
   virtual ~DummyOperation();
 
   // current set of 'operations' we want the controller
@@ -38,7 +38,7 @@ public:
 };
 
 //template<typename T>
-//DummyOperation::DummyOperation(swatch::core::ActionableObject* handler,
+//DummyOperation::DummyOperation(const std::string aId,
 //    const T& aDefault, FSM* fsm) :
 //        swatch::core::Operation(handler, aDefault, fsm) {
 //  parameters().adopt("aa", new xdata::Integer(15));

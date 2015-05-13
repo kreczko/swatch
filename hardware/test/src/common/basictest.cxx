@@ -59,7 +59,7 @@ public:
 
   virtual void code() {
     
-    swsys::System* sys = getHandler<swsys::System>();
+    swsys::System* sys = getParent<swsys::System>();
     
     LOG(swlo::kNotice) << "Resetting AMC13s";
 

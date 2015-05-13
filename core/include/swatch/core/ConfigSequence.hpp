@@ -29,11 +29,10 @@ namespace swatch {
 namespace swatch {
 namespace core {
 
-  class ConfigSequence {
+  class ConfigSequence : public Functionoid {
   public:
     /// Constructor
-    ConfigSequence( Object& aSystem );
-    ConfigSequence( Object& aSystem , Object& aProcessor , const std::string& aHardwareType );
+    ConfigSequence( const std::string& aId );
 
     /// Destructor
     virtual ~ConfigSequence();
@@ -52,7 +51,7 @@ namespace core {
     std::set<std::string> getParams();
 
     const std::string* getHardwareType();
-    const std::string* getSystemId();
+    const std::string* getParentId();
     const std::string* getComponentId();
 
 
@@ -64,13 +63,10 @@ namespace core {
     void run( Command* aCommand );
 
   private:
-    Object* mProcessor;
-    Object* mSystem;
-
     std::deque< Command* > mCommands;
 
     std::string* mHardwareType;
-    std::string* mSystemId;
+    std::string* mParentId;
     std::string* mComponentId;
   };
 

@@ -20,7 +20,7 @@ namespace test {
 
 class IPBusResetCommand : public swatch::core::Command {
 public:
-    IPBusResetCommand(core::ActionableObject* aHandler);
+    IPBusResetCommand(const std::string& aId);
 
   virtual ~IPBusResetCommand();
 
@@ -30,7 +30,7 @@ public:
 
 class IPBusConfigureCommand : public swatch::core::Command {
 public:
-    IPBusConfigureCommand(core::ActionableObject* aHandler);
+    IPBusConfigureCommand(const std::string& aId);
 
   virtual ~IPBusConfigureCommand();
 
@@ -41,7 +41,7 @@ public:
 
 class IPBusCapture : public swatch::core::Command {
 public:
-    IPBusCapture(core::ActionableObject* aHandler);
+    IPBusCapture(const std::string& aId);
 
   virtual ~IPBusCapture();
 

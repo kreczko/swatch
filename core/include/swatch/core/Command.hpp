@@ -13,6 +13,7 @@
 #include <string>
 
 // Swatch Headers
+#include "swatch/core/Functionoid.hpp"
 #include "swatch/core/XParameterSet.hpp"
 
 // Forward declarations
@@ -25,7 +26,7 @@ namespace core {
 
 class ActionableObject;
 
-class Command {
+class Command : public Functionoid {
 public:
 
     enum Status {
@@ -46,8 +47,6 @@ protected:
 public:
     virtual void reset();
 
-    XParameterSet & getParams();
-
     Status getStatus() const;
 
     float getProgress() const;
@@ -63,9 +62,7 @@ public:
 protected:
 
     template<typename T>
-    Command( ActionableObject* aHandler, const T& aDefault );
-    
-    template<typename H> H* getHandler();
+    Command( const std::string& aId , const T& aDefault );
 
     xdata::Serializable& defaultResult();
 
@@ -100,8 +97,6 @@ private:
     std::string progressMsg_;
 
     std::string statusMsg_;
-
-    ActionableObject* handler_;
 
 };
 
