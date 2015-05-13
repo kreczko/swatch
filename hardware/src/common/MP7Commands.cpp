@@ -24,7 +24,7 @@ namespace hardware {
 
 
 //---
-MP7ResetCommand::MP7ResetCommand(core::ActionHandler* aHandler) : 
+MP7ResetCommand::MP7ResetCommand(core::ActionableObject* aHandler) : 
     Command(aHandler, xdata::Integer() ) {
 
     // Integer result?
@@ -50,7 +50,7 @@ void MP7ResetCommand::code() {
 
 
 //---
-MP7ConfigureLoopback::MP7ConfigureLoopback(core::ActionHandler* aHandler) :
+MP7ConfigureLoopback::MP7ConfigureLoopback(core::ActionableObject* aHandler) :
   Command(aHandler, xdata::Integer() ){
 
 }

@@ -26,7 +26,7 @@ namespace swatch {
 namespace hardware {
 
 //---
-AMC13ResetCommand::AMC13ResetCommand(core::ActionHandler* aHandler) :
+AMC13ResetCommand::AMC13ResetCommand(core::ActionableObject* aHandler) :
   Command(aHandler, xdata::Integer()) {
   
   getParams().add("mode", xdata::String());

@@ -48,7 +48,7 @@ namespace swpro = swatch::processor;
 
 class ResetClockCommand : public swco::Command {
 public:
-  ResetClockCommand(swco::ActionHandler* aHandler) :
+  ResetClockCommand(swco::ActionableObject* aHandler) :
     Command(aHandler, xdata::Integer()) {
   }
   
@@ -154,7 +154,7 @@ int main(int argc, char** argv) {
                        << setw(9) << "operating" << " | "
                        << setw(7) << "aligned" << " | "
                        << setw(6) << "crcs" ;
-      BOOST_FOREACH( swco::InputPort* ip, p->getInputs() ){
+      BOOST_FOREACH( swco::InputPort* ip, p->device()->getInputs() ){
         LOG(swlo::kInfo) << left 
             << setw(15) << ip->path() << " | "
             << setw(7) << ip->isEnabled() << " | "

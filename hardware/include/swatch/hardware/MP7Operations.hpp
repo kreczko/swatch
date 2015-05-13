@@ -10,18 +10,13 @@
 
 #include "swatch/core/Operation.hpp"
 
-namespace swatch {
-namespace core {
-class ActionHandler;
-}
-}
 
 namespace swatch {
 namespace hardware {
  
 class MP7Configure : public swatch::core::Operation {
    public:
-       MP7Configure( swatch::core::ActionHandler* resource );
+       MP7Configure( swatch::core::ActionableObject* resource );
        virtual ~MP7Configure();
 
        bool pass();
