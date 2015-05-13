@@ -10,7 +10,7 @@
 #define	__SWATCH_CORE_LINK_HPP__
 
 
-#include "swatch/processor/Device.hpp"
+#include "swatch/processor/LinkInterface.hpp"
 
 namespace swatch {
 namespace processor {

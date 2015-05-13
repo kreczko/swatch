@@ -11,7 +11,7 @@
 #include "swatch/logger/Log.hpp"
 #include "swatch/core/Factory.hpp"
 //#include "swatch/processor/ProcessorFactory.hpp"
-#include "swatch/processor/Device.hpp"
+#include "swatch/processor/LinkInterface.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
 #include "swatch/processor/test/DummyProcessor.hpp"
 #include "swatch/processor/test/DummyRxPort.hpp"
@@ -43,13 +43,13 @@ DummyProcessor::DummyProcessor(const std::string& id,
   for (int chan(0); chan < 4; ++chan) {
     ss.str(std::string());
     ss << "rx" << std::setw(2) << std::setfill('0') << chan;
-    this->device()->addInput(new DummyRxPort(ss.str()));
+    this->linkInterface()->addInput(new DummyRxPort(ss.str()));
   }
 
   for (int chan(0); chan < 2; ++chan) {
     ss.str(std::string());
     ss << "tx" << std::setw(2) << std::setfill('0') << chan;
-    this->device()->addOutput(new DummyTxPort(ss.str()));
+    this->linkInterface()->addOutput(new DummyTxPort(ss.str()));
   }
 
   swatch::processor::ProcessorBag& stub = params.get<swatch::processor::ProcessorBag>("stub");

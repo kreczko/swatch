@@ -5,7 +5,7 @@
  * Created on July 11, 2014, 12:51 PM
  */
 
-#include "swatch/processor/Device.hpp"
+#include "swatch/processor/LinkInterface.hpp"
 #include "swatch/processor/Port.hpp"
 
 #include <boost/foreach.hpp>
@@ -15,11 +15,11 @@ using namespace std;
 namespace swatch {
 namespace processor {
 
-Device::Device()
+LinkInterface::LinkInterface()
 {
 }
 
-Device::~Device() {
+LinkInterface::~LinkInterface() {
   BOOST_FOREACH( tInputPortDeque::value_type p, inputs_) {
     delete p;
   }
@@ -32,12 +32,12 @@ Device::~Device() {
 }
 
 void
-Device::addInput(InputPort* aInput) {
+LinkInterface::addInput(InputPort* aInput) {
     inputs_.push_back(aInput);
 }
 
 void
-Device::addOutput(OutputPort* aOutput) {
+LinkInterface::addOutput(OutputPort* aOutput) {
     outputs_.push_back(aOutput);
 }
 

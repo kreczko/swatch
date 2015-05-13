@@ -71,14 +71,14 @@ MP7Processor::MP7Processor(const std::string& id, const swatch::core::XParameter
     for( uint32_t k(0); k<nRx; ++k) {
       std::ostringstream oss;
       oss << "rx" << std::setw(2) << std::setfill('0') << k;
-      device()->addInput( new MP7RxPort(oss.str(), k, *this) );
+      linkInterface()->addInput( new MP7RxPort(oss.str(), k, *this) );
     }
     
     // Instantiate Tx ports
     for( uint32_t k(0); k<nTx; ++k) {
       std::ostringstream oss;
       oss << "tx" << std::setw(2) << std::setfill('0') << k;
-      device()->addOutput( new MP7TxPort(oss.str(), k, *this) );  
+      linkInterface()->addOutput( new MP7TxPort(oss.str(), k, *this) );  
     }
     
     LOG(swlog::kNotice) << "MP7 Processor '" << this->id() << "' built: firmware 0x" << std::hex << firmwareVersion() << std::endl;

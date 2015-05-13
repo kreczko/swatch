@@ -19,7 +19,7 @@ test configuration
 #include "swatch/processor/test/BufferInterface.hpp"
 
 // Swatch Headers
-#include "swatch/processor/Device.hpp"
+#include "swatch/processor/LinkInterface.hpp"
 #include "swatch/core/xoperators.hpp"
 #include "swatch/logger/Log.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
@@ -188,8 +188,8 @@ void printStatus( swpro::Processor* p ) {
     LOG(swlog::kInfo) << "Processor " << p->id();
     LOG(swlog::kInfo) << ">> Info";
     LOG(swlog::kInfo) << "Firmware version : 0x"  << std::hex << p->firmwareVersion() << std::dec;
-    LOG(swlog::kInfo) << "Inputs  : " << p->device()->getNumInputs();
-    LOG(swlog::kInfo) << "Outputs : " << p->device()->getNumOutputs();
+    LOG(swlog::kInfo) << "Inputs  : " << p->linkInterface()->getNumInputs();
+    LOG(swlog::kInfo) << "Outputs : " << p->linkInterface()->getNumOutputs();
     LOG(swlog::kInfo) << ">> TTC";
     printStatus( p->ttc() );
 }
@@ -289,7 +289,7 @@ int main(int argc, char const *argv[]) {
 
     LOG(swlog::kDebug) << "Input channels scan";
     // Test rx upload and download
-    BOOST_FOREACH( swpro::InputPort* in, p0->device()->getInputs() ) {        
+    BOOST_FOREACH( swpro::InputPort* in, p0->linkInterface()->getInputs() ) {        
         swpro::test::IPBusRxChannel* rx = dynamic_cast<swpro::test::IPBusRxChannel*>(in);
         std::vector<uint64_t> v(rx->getBufferSize(),0x5555);
         // cout << "v.size() = " << v.size() << endl;
@@ -303,7 +303,7 @@ int main(int argc, char const *argv[]) {
 
     LOG(swlog::kDebug) << "Output channels scan";
     // Test tx channels injection and 
-    BOOST_FOREACH( swpro::OutputPort* out, p0->device()->getOutputs() ) {        
+    BOOST_FOREACH( swpro::OutputPort* out, p0->linkInterface()->getOutputs() ) {        
         swpro::test::IPBusTxChannel* tx = dynamic_cast<swpro::test::IPBusTxChannel*>(out);
 
         std::vector<uint64_t> v(tx->getBufferSize(),0x5555);

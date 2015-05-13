@@ -1,5 +1,5 @@
 /**
- * @file    Device.hpp
+ * @file    LinkInterface.hpp
  * @author  Alessandro Thea
  * @brief   Device, class representing the trigger network node.
  * @date    20.08.2014
@@ -23,10 +23,10 @@ class OutputPort;
 /**
  *  Trigger network device
  */
-class Device {
+class LinkInterface {
 public:
-    Device();
-    virtual ~Device();
+    LinkInterface();
+    virtual ~LinkInterface();
 
 
     /**

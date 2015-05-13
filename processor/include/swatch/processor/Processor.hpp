@@ -22,7 +22,7 @@ namespace processor {
 class TTCInterface;
 class ReadoutInterface;
 class AlgoInterface;
-class Device;
+class LinkInterface;
 
 /**
  *  @class Processor
@@ -68,7 +68,7 @@ public:
     
     AlgoInterface* algo();
 
-    Device* device();
+    LinkInterface* linkInterface();
 
 protected:
 
@@ -81,7 +81,7 @@ protected:
     //!
     AlgoInterface* algo_;
 
-    Device* device_;
+    LinkInterface* device_;
 
 
 };

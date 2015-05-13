@@ -13,7 +13,7 @@
 // 
 // // Swatch Headers
 // #include "swatch/core/XParameterSet.hpp"
-// #include "swatch/processor/Device.hpp"
+// #include "swatch/processor/LinkInterface.hpp"
 // #include "swatch/core/xoperators.hpp"
 // 
 // using namespace std;
@@ -26,7 +26,7 @@
 // 	XParameterSet params  = XParameterSet();
 // 	params.insert("name", xdata::String("dev1"));
 // 	params.insert("type", xdata::String("test-dev"));
-// 	Device * dev = new Device();
+// 	Device * dev = new LinkInterface();
 // 	const XParameterSet& pset = dev->pset();
 // 	BOOST_CHECK_EQUAL(pset.has("name"), true);
 // 	BOOST_CHECK_EQUAL(pset.has("type"), true);

@@ -20,7 +20,7 @@
 #include "swatch/processor/TTCInterface.hpp"
 #include "swatch/processor/ReadoutInterface.hpp"
 #include "swatch/processor/AlgoInterface.hpp"
-#include "swatch/processor/Device.hpp"
+#include "swatch/processor/LinkInterface.hpp"
 
 
 using namespace std;
@@ -60,8 +60,8 @@ Processor::algo() {
     return algo_;
 }
 
-Device*
-Processor::device() {
+LinkInterface*
+Processor::linkInterface() {
     return device_;
 }
 
