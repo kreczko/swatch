@@ -16,7 +16,7 @@
 // Swatch Headers
 #include "swatch/logger/Log.hpp"
 #include "swatch/core/Factory.hpp"
-#include "swatch/processor/Device.hpp"
+#include "swatch/processor/LinkInterface.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
 
 // MP7 Headers
