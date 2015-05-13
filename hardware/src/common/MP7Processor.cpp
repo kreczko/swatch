@@ -7,34 +7,31 @@
 
 #include "swatch/hardware/MP7Processor.hpp"
 
-// Hardware Headers
+// Swatch hardware Headers
 #include "swatch/hardware/MP7TTCInterface.hpp"
 #include "swatch/hardware/MP7Commands.hpp"
 #include "swatch/hardware/MP7Operations.hpp"
+#include "swatch/hardware/MP7Ports.hpp"
 
 // Swatch Headers
 #include "swatch/logger/Log.hpp"
 #include "swatch/core/Factory.hpp"
+#include "swatch/processor/Device.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
 
 // MP7 Headers
 #include "mp7/MP7Controller.hpp"
 
-// Temporary
-#include "mp7/ClockingNode.hpp"
-#include "mp7/ClockingXENode.hpp"
-
 // uHAL Headers
 #include "uhal/HwInterface.hpp"
 #include "uhal/ConnectionManager.hpp"
-#include "swatch/hardware/MP7Ports.hpp"
-
-#include <iomanip>
 
 // Boost Headers
 #include <boost/assign.hpp>
 
 // C++ Headers
+#include <iomanip>
+
 
 namespace swco = swatch::core;
 namespace swlog = swatch::logger;

@@ -13,6 +13,7 @@
 #include "swatch/core/xoperators.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
 #include "swatch/core/Factory.hpp"
+#include "swatch/processor/Device.hpp"
 #include "swatch/processor/Processor.hpp"
 #include "swatch/system/Crate.hpp"
 #include "swatch/system/DaqTTCManager.hpp"
