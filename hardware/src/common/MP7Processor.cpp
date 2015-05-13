@@ -36,6 +36,7 @@
 namespace swco = swatch::core;
 namespace swlog = swatch::logger;
 namespace swhw = swatch::hardware;
+namespace swpro = swatch::processor;
 
 SWATCH_REGISTER_CLASS(swatch::hardware::MP7Processor);
 
@@ -63,6 +64,7 @@ MP7Processor::MP7Processor(const std::string& id, const swatch::core::XParameter
     
     // Build subcomponents
     ttc_  = new MP7TTCInterface( driver_ ); 
+    device_ = new swpro::LinkInterface();
     
     uint32_t nRx = driver_->getChannelIDs(mp7::kLinkIDs).channels().size();
     uint32_t nTx = driver_->getChannelIDs(mp7::kLinkIDs).channels().size();
