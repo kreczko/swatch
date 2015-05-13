@@ -10,7 +10,7 @@
 #include "swatch/system/Service.hpp"
 #include "swatch/system/DaqTTCManager.hpp"
 
-#include "swatch/core/Link.hpp"
+#include "swatch/processor/Link.hpp"
 #include "swatch/processor/Processor.hpp"
 
 
@@ -111,7 +111,7 @@ System::add(Service* aService) {
 
 //---
 void
-System::add(core::Link* aLink) {
+System::add(processor::Link* aLink) {
     if (aLink == NULL)
         throw std::invalid_argument("Link pointer is NULL!");
     this->addObj(aLink);
@@ -147,7 +147,7 @@ System::getServices() {
 
 
 //---
-std::deque<core::Link*>&
+std::deque<processor::Link*>&
 System::getLinks() {
     return links_;
 }

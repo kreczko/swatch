@@ -10,17 +10,17 @@
 #define	__SWATCH_CORE_LINK_HPP__
 
 
-#include "swatch/core/Device.hpp"
+#include "swatch/processor/Device.hpp"
 
 namespace swatch {
-namespace core {
+namespace processor {
 
 class InputPort;
 class OutputPort;
 
-class Link : public ObjectView {
+class Link : public core::ObjectView {
 public:
-    explicit Link( const std::string& aId, OutputPort* aSrc, InputPort* aDst, const XParameterSet& params  = XParameterSet() );
+    explicit Link( const std::string& aId, OutputPort* aSrc, InputPort* aDst, const core::XParameterSet& params  = core::XParameterSet() );
     ~Link();
     
     OutputPort* getSrc() { return src_; }

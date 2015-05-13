@@ -15,7 +15,7 @@
 
 
 namespace swatch {
-namespace core {
+namespace processor {
 
 class InputPort;
 class OutputPort;

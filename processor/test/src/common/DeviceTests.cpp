@@ -13,7 +13,7 @@
 // 
 // // Swatch Headers
 // #include "swatch/core/XParameterSet.hpp"
-// #include "swatch/core/Device.hpp"
+// #include "swatch/processor/Device.hpp"
 // #include "swatch/core/xoperators.hpp"
 // 
 // using namespace std;

@@ -5,14 +5,14 @@
  * Created on July 27, 2014, 10:59 PM
  */
 
-#include "swatch/core/Link.hpp" 
+#include "swatch/processor/Link.hpp" 
 
-#include "swatch/core/Port.hpp"
+#include "swatch/processor/Port.hpp"
 
 namespace swatch {
-namespace core {
+namespace processor {
 
-Link::Link(const std::string& aId, OutputPort* aSrc, InputPort* aDst, const XParameterSet& params) :
+Link::Link(const std::string& aId, OutputPort* aSrc, InputPort* aDst, const core::XParameterSet& params) :
     ObjectView( aId ), src_(aSrc), dst_(aDst) {
     this->addObj(src_, "src");
     this->addObj(dst_, "dst");

@@ -5,15 +5,15 @@
  * Created on July 11, 2014, 12:51 PM
  */
 
-#include "swatch/core/Device.hpp"
-#include "swatch/core/Port.hpp"
+#include "swatch/processor/Device.hpp"
+#include "swatch/processor/Port.hpp"
 
 #include <boost/foreach.hpp>
 
 using namespace std;
 
 namespace swatch {
-namespace core {
+namespace processor {
 
 Device::Device()
 {

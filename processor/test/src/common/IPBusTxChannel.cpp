@@ -21,7 +21,7 @@ namespace processor {
 namespace test {
 
 IPBusTxChannel::IPBusTxChannel(std::string aId, uhal::HwInterface& hwif, const swatch::core::XParameterSet& params) :
-    core::OutputPort(aId),
+    OutputPort(aId),
     IPBusComponent(hwif) {
   
     std::string path = params.get<xdata::String>("path");

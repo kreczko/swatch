@@ -19,6 +19,8 @@
 
 #include "swatch/processor/TTCInterface.hpp"
 #include "swatch/processor/ReadoutInterface.hpp"
+#include "swatch/processor/AlgoInterface.hpp"
+#include "swatch/processor/Device.hpp"
 
 
 using namespace std;
@@ -58,7 +60,7 @@ Processor::algo() {
     return algo_;
 }
 
-core::Device*
+Device*
 Processor::device() {
     return device_;
 }

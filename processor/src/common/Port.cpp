@@ -5,11 +5,11 @@
  * Created on July 21, 2014, 9:57 AM
  */
 
-#include "swatch/core/Port.hpp"
+#include "swatch/processor/Port.hpp"
 
 
 namespace swatch {
-namespace core {
+namespace processor {
 
 // Port::Port(const std::string& aId, const XParameterSet& params) : Object(aId) {
 // }

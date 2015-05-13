@@ -17,8 +17,8 @@
 #include "swatch/core/XParameterSet.hpp"
 #include "swatch/core/Object.hpp"
 #include "swatch/core/Utilities.hpp"
-#include "swatch/core/Link.hpp"
-#include "swatch/core/Port.hpp"
+#include "swatch/processor/Link.hpp"
+#include "swatch/processor/Port.hpp"
 #include "swatch/core/Factory.hpp"
 
 #include "swatch/processor/ProcessorStub.hpp"
@@ -256,7 +256,7 @@ BOOST_AUTO_TEST_CASE(AddAMC13NULLPointerShouldThrowException) {
 
 BOOST_AUTO_TEST_CASE(AddLinkNULLPointerShouldThrowException) {
     swsys::System * system = new swsys::System("mySystem");
-    BOOST_CHECK_THROW(system->add((swco::Link*) NULL), std::invalid_argument);
+    BOOST_CHECK_THROW(system->add((swpro::Link*) NULL), std::invalid_argument);
 }
 
 BOOST_AUTO_TEST_CASE(HasCrate) {

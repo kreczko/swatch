@@ -10,7 +10,6 @@
 
 // Swatch Headers
 #include "swatch/core/ActionableObject.hpp"
-#include "swatch/core/Device.hpp"
 
 namespace swatch {
 
@@ -23,6 +22,7 @@ namespace processor {
 class TTCInterface;
 class ReadoutInterface;
 class AlgoInterface;
+class Device;
 
 /**
  *  @class Processor
@@ -68,7 +68,7 @@ public:
     
     AlgoInterface* algo();
 
-    core::Device* device();
+    Device* device();
 
 protected:
 
@@ -81,7 +81,7 @@ protected:
     //!
     AlgoInterface* algo_;
 
-    core::Device* device_;
+    Device* device_;
 
 
 };

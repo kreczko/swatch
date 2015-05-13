@@ -9,6 +9,7 @@
 #define	__SWATCH_PROCESSOR_TEST_IPBUSPROCESSOR_HPP__
 
 // Swatch Headers
+#include "swatch/processor/Device.hpp"
 #include "swatch/processor/Processor.hpp"
 #include "swatch/core/XParameterSet.hpp"
 

@@ -7,7 +7,7 @@
 #include "swatch/database/DBEntry.hpp"
 #include "swatch/database/UUID.hpp"
 
-#include "swatch/core/Port.hpp"
+#include "swatch/processor/Port.hpp"
 #include "swatch/core/ParameterSet.hpp"
 #include "swatch/database/DBSnapshot.hpp"
 #include "swatch/database/DBLoader.hpp"

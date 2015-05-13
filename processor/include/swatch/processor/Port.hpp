@@ -11,12 +11,12 @@
 #include "swatch/core/Object.hpp"
 
 namespace swatch {
-namespace core {
+namespace processor {
 
-class InputPort : public Object {
+class InputPort : public core::Object {
 protected:
     explicit InputPort( const std::string& aId) : Object(aId) {}
-    explicit InputPort( const std::string& aId, const XParameterSet& params ) : Object(aId, params) {}
+    explicit InputPort( const std::string& aId, const core::XParameterSet& params ) : Object(aId, params) {}
 public:
     virtual ~InputPort() {}
 
@@ -27,10 +27,10 @@ public:
 
 };
 
-class OutputPort : public Object {
+class OutputPort : public core::Object {
 public:
     explicit OutputPort( const std::string& aId ) : Object(aId ) {}
-    explicit OutputPort( const std::string& aId, const XParameterSet& params ) : Object(aId, params) {}
+    explicit OutputPort( const std::string& aId, const core::XParameterSet& params ) : Object(aId, params) {}
     virtual ~OutputPort() {}
 
     virtual bool isEnabled() const = 0;

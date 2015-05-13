@@ -4,7 +4,7 @@
 
 #ifndef SWATCH_PROCESSOR_TEST_DUMMYRXPORT_HPP
 #define SWATCH_PROCESSOR_TEST_DUMMYRXPORT_HPP
-#include "swatch/core/Port.hpp"
+#include "swatch/processor/Port.hpp"
 #include <string>
 
 namespace swatch {
@@ -14,7 +14,7 @@ namespace test {
  * @class DummyRxPort
  * @brief Dummy input port implementation
  */
-class DummyRxPort : public core::InputPort {
+class DummyRxPort : public InputPort {
 public:
   DummyRxPort(const std::string& aId);
 

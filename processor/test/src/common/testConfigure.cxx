@@ -19,7 +19,7 @@ test configuration
 #include "swatch/processor/test/BufferInterface.hpp"
 
 // Swatch Headers
-#include "swatch/core/Device.hpp"
+#include "swatch/processor/Device.hpp"
 #include "swatch/core/xoperators.hpp"
 #include "swatch/logger/Log.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
@@ -289,7 +289,7 @@ int main(int argc, char const *argv[]) {
 
     LOG(swlog::kDebug) << "Input channels scan";
     // Test rx upload and download
-    BOOST_FOREACH( swco::InputPort* in, p0->device()->getInputs() ) {        
+    BOOST_FOREACH( swpro::InputPort* in, p0->device()->getInputs() ) {        
         swpro::test::IPBusRxChannel* rx = dynamic_cast<swpro::test::IPBusRxChannel*>(in);
         std::vector<uint64_t> v(rx->getBufferSize(),0x5555);
         // cout << "v.size() = " << v.size() << endl;
@@ -303,7 +303,7 @@ int main(int argc, char const *argv[]) {
 
     LOG(swlog::kDebug) << "Output channels scan";
     // Test tx channels injection and 
-    BOOST_FOREACH( swco::OutputPort* out, p0->device()->getOutputs() ) {        
+    BOOST_FOREACH( swpro::OutputPort* out, p0->device()->getOutputs() ) {        
         swpro::test::IPBusTxChannel* tx = dynamic_cast<swpro::test::IPBusTxChannel*>(out);
 
         std::vector<uint64_t> v(tx->getBufferSize(),0x5555);

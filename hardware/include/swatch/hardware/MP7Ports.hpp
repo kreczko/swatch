@@ -8,7 +8,7 @@
 #ifndef __SWATCH_HARDWARE_MP7PORTS_HPP__
 #define __SWATCH_HARDWARE_MP7PORTS_HPP__
 
-#include "swatch/core/Port.hpp"
+#include "swatch/processor/Port.hpp"
 #include "MP7Processor.hpp"
 
 namespace  mp7 {
@@ -24,7 +24,7 @@ namespace hardware {
 
 class MP7Processor;
 
-class MP7RxPort : public core::InputPort {
+class MP7RxPort : public processor::InputPort {
 public:
 
   MP7RxPort( const std::string& aId, uint32_t aChannelID, MP7Processor& aProcessor );
@@ -48,7 +48,7 @@ private:
 };
 
 
-class MP7TxPort : public core::OutputPort {
+class MP7TxPort : public processor::OutputPort {
 public: 
   
     MP7TxPort( const std::string& aId, uint32_t aChannelID, MP7Processor& aProcessor );

@@ -6,8 +6,8 @@
 #include "swatch/core/XParameterSet.hpp"
 #include "swatch/core/Object.hpp"
 #include "swatch/core/Utilities.hpp"
-#include "swatch/core/Link.hpp"
-#include "swatch/core/Port.hpp"
+#include "swatch/processor/Link.hpp"
+#include "swatch/processor/Port.hpp"
 
 #include "swatch/processor/Processor.hpp"
 

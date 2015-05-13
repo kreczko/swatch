@@ -11,6 +11,7 @@
 #include "swatch/logger/Log.hpp"
 #include "swatch/core/Factory.hpp"
 //#include "swatch/processor/ProcessorFactory.hpp"
+#include "swatch/processor/Device.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
 #include "swatch/processor/test/DummyProcessor.hpp"
 #include "swatch/processor/test/DummyRxPort.hpp"

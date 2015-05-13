@@ -15,7 +15,6 @@
 #include <boost/unordered_map.hpp>
 
 // Swatch Headers
-#include "swatch/core/Device.hpp"
 #include "swatch/core/ActionableObject.hpp"
 
 
@@ -24,10 +23,7 @@ namespace swatch {
 
 namespace processor {
 	class Processor;
-}
-
-namespace core {
-	class Link;
+  class Link;
 }
 
 namespace system {
@@ -47,14 +43,14 @@ public:
     
     void add( processor::Processor* aProcessor );
     void add( system::DaqTTCManager* aAMC13 );
-    void add( core::Link* aLink );
+    void add( processor::Link* aLink );
     void add( system::Service* aService );
     void add( system::Crate* crate );
     
     std::deque<processor::Processor*>& getProcessors() ;
     std::deque<Service*>& getServices();
     std::deque<DaqTTCManager*>& getDaqTTC();
-    std::deque<core::Link*>& getLinks();
+    std::deque<processor::Link*>& getLinks();
     CratesMap& getCrates();
     
     bool hasCrate(const std::string& crate_id) const;
@@ -73,7 +69,7 @@ protected:
     std::deque<Service*> services_;
     
     //! List of internal links
-    std::deque<core::Link*> links_; 
+    std::deque<processor::Link*> links_; 
     
     //! List of external ports
     // std::deque<SysPorts*> mPorts;

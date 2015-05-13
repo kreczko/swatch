@@ -8,7 +8,7 @@
 #ifndef SWATCH_PROCESSOR_TEST_IPBUXRXCHANNEL_HPP
 #define SWATCH_PROCESSOR_TEST_IPBUXRXCHANNEL_HPP
 
-#include "swatch/core/Port.hpp"
+#include "swatch/processor/Port.hpp"
 #include "swatch/processor/test/BufferInterface.hpp"
 #include "swatch/processor/test/IPBusComponent.hpp"
 
@@ -19,7 +19,7 @@ namespace swatch {
 namespace processor {
 namespace test {
 
-class IPBusRxChannel : public core::InputPort, public BufferInterface, public IPBusComponent {
+class IPBusRxChannel : public InputPort, public BufferInterface, public IPBusComponent {
 public:
     IPBusRxChannel(std::string aId, uhal::HwInterface& hw, const swatch::core::XParameterSet& params);
     virtual ~IPBusRxChannel();
