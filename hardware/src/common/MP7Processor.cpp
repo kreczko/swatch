@@ -49,10 +49,10 @@ MP7Processor::MP7Processor(const std::string& id, const swatch::core::XParameter
     Processor(id, aPars),
     driver_(0x0) {
   
-    registerCommand<MP7ResetCommand>("reset");
-    registerCommand<MP7ConfigureLoopback>("loopback");
+    Register<MP7ResetCommand>("reset");
+    Register<MP7ConfigureLoopback>("loopback");
     
-    registerOperation<MP7Configure>("configure");
+    Register<MP7Configure>("configure");
     
     processor::ProcessorBag& desc = aPars.get<processor::ProcessorBag>("stub");
     crate_ = desc.bag.crate;

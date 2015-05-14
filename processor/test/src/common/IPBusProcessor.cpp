@@ -51,9 +51,9 @@ IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::XParam
     using namespace swatch::core;
     using namespace boost::assign;
     
-    registerCommand<IPBusResetCommand>("reset");
-    registerCommand<IPBusConfigureCommand>("configure");
-    registerCommand<IPBusCapture>("capture");
+    Register<IPBusResetCommand>("reset");
+    Register<IPBusConfigureCommand>("configure");
+    Register<IPBusCapture>("capture");
     
     swpro::ProcessorBag& stub = params.get<swpro::ProcessorBag>("stub");
 

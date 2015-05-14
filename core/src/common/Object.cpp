@@ -25,12 +25,12 @@ Object::~Object() {
 }
 
 const std::type_info&
-Object::type() {
+Object::type() const{
     return typeid(*this);
 }
 
 std::string
-Object::typeName() {
+Object::typeName() const{
     return demangleName(this->type().name());
 }
 
@@ -59,9 +59,12 @@ Object::addObj( Object* aChild ) {
 
 }
 
-Object* Object::getParent()
+Object* Object::getAncestor( const uint32_t& aDepth )
 {
-  return parent_;
+  if( !aDepth ) return this;
+  if( !parent_ ) return NULL;
+  return parent_-> getAncestor( aDepth-1 );
+  
 }
 
 const std::string& 
@@ -101,7 +104,7 @@ Object::getAncestors(std::deque<const Object*>& aGenealogy) const {
 
 void Object::print( std::ostream& aStr , const uint32_t& aIndent ) const
 {
-  aStr << std::string( aIndent , ' ' ) << "- " << id_ << '\n';
+  aStr << '\n' << std::string( aIndent , ' ' ) << "- [" << typeName() << "] " << id_;
   for ( std::deque<Object*>::const_iterator lIt = children_.begin(); lIt != children_.end(); ++lIt ) {
     (**lIt).print( aStr, aIndent+1 );
   }
@@ -164,6 +167,11 @@ Object::getObj(const std::string& aId) const {
 //    return it->second->findObject(child);
     return it->second->getObj(child);
 }
+
+
+const XParameterSet& Object::pset() const
+{ return pSet_; }
+
 
 // TODO: include self
 std::vector<std::string>

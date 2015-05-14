@@ -23,7 +23,7 @@ namespace test {
 struct ProcessorOperationTestSetup {
   ProcessorOperationTestSetup():
   handler("BigDummy", DummyProcessor::generateParams()){
-    handler.registerOperation<DummyProcessorOperation>("testing");
+    handler.Register<DummyProcessorOperation>("testing");
 
     testing = handler.getOperation("testing");
 

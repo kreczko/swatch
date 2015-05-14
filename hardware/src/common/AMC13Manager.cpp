@@ -41,8 +41,8 @@ AMC13Manager::AMC13Manager(const std::string& aId, const core::XParameterSet& aP
     swatch::system::DaqTTCManager(aId, aPars),
     driver_(0x0) {
   
-    registerCommand<AMC13ResetCommand>("reset");
-    registerOperation<AMC13Configure>("configure");
+    Register<AMC13ResetCommand>("reset");
+    Register<AMC13Configure>("configure");
 
     system::DaqTTCStub& desc = aPars.get<system::DaqTTCBag>("stub").bag;
 

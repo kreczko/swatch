@@ -20,6 +20,7 @@ Includes = 	\
 		include \
 		${SWATCH_ROOT}/logger/include \
 		${SWATCH_ROOT}/core/include \
+		${SWATCH_ROOT}/core/test/include \
 		${SWATCH_ROOT}/processor/include \
 		${SWATCH_ROOT}/processor/test/include \
 		${SWATCH_ROOT}/system/include \
@@ -31,6 +32,7 @@ LibraryPaths =	\
 		lib \
 		${SWATCH_ROOT}/logger/lib \
 		${SWATCH_ROOT}/core/lib \
+		${SWATCH_ROOT}/core/test/lib \
 		${SWATCH_ROOT}/processor/lib \
 		${SWATCH_ROOT}/processor/test/lib \
 		${SWATCH_ROOT}/system/lib \
@@ -43,6 +45,7 @@ Libraries =	\
 		boost_unit_test_framework \
 		cactus_swatch_logger \
 		cactus_swatch_core \
+		cactus_swatch_core_test \
 		cactus_swatch_processor \
 		cactus_swatch_processor_test \
 		cactus_swatch_system \

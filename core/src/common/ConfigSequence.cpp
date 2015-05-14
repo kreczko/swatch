@@ -1,4 +1,5 @@
 #include "swatch/core/ConfigSequence.hpp"
+#include "swatch/core/ActionableObject.hpp"
 //#include "toolbox/ConfigSequence/exception/Exception.h"
 
 #include <xdata/String.h>
@@ -8,17 +9,13 @@ namespace core {
 
 ConfigSequence::ConfigSequence( const std::string& aId ) :
   Functionoid( aId ),
-  mHardwareType( NULL ),
-  mParentId( NULL ),
-  mComponentId( NULL )
+  mTables( NULL )
 {
   
 }
 
 ConfigSequence::~ConfigSequence() {
-  if( mHardwareType ){ delete mHardwareType; }
-  if( mParentId ){ delete mParentId; }
-  if( mComponentId ){ delete mComponentId; }
+  if( mTables ) delete mTables;
 }
 
 void ConfigSequence::exec()
@@ -48,35 +45,47 @@ std::set< std::string > ConfigSequence::getParams()
   return lAllKeys;
 }
 
+const std::deque<std::string>& ConfigSequence::getTables()
+{
+  if( !mTables ) setTables();
+  return *mTables;
+}
 
-void ConfigSequence::run( Command* aCommand )
+ConfigSequence& ConfigSequence::run( Command* aCommand )
 {
   mCommands.push_back( aCommand );
+  return *this;
 }
 
-
-const std::string* ConfigSequence::getHardwareType()
+ConfigSequence& ConfigSequence::then ( Command* aCommand )
 {
-  return mHardwareType;
+  return run( aCommand );
 }
 
-const std::string* ConfigSequence::getParentId()
+ConfigSequence& ConfigSequence::operator() ( Command* aCommand )
 {
-//   if( !mParentId )
-//   {
-//     mParentId = new std::string( mParent->path() );
-//   }
-  return mParentId;
+  return run( aCommand );
 }
 
-const std::string* ConfigSequence::getComponentId()
+
+ConfigSequence& ConfigSequence::run( const std::string& aCommand )
 {
-//   if( mProcessor and !mComponentId )
-//   {
-//     mComponentId = new std::string( mProcessor->path() );
-//   }
-  return mComponentId;
+  ActionableObject* lParent( getParent<ActionableObject>()  );
+  mCommands.push_back( lParent->getCommand( aCommand ) );
+  return *this;
 }
+
+ConfigSequence& ConfigSequence::then ( const std::string& aCommand )
+{
+  return run( aCommand );
+}
+
+ConfigSequence& ConfigSequence::operator() ( const std::string& aCommand )
+{
+  return run( aCommand );
+}
+
+
 
 } /* namespace core */
 } /* namespace swatch */

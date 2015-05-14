@@ -58,15 +58,11 @@ public:
   Operation* getOperation( const std::string& aId );
 
   template< typename T>
-  ConfigSequence* registerConfigSequence( const std::string& aId );
-  template< typename T>
-  Command* registerCommand(const std::string& aId );
-  template< typename T>
-  Operation* registerOperation(const std::string& aId );
+  T* Register( const std::string& aId );
 
-  void registerConfigSequence( const std::string& aId , ConfigSequence* aConfigSequence );
-  void registerCommand(const std::string& aId , Command* aCommand );
-  void registerOperation(const std::string& aId , Operation* aOperation );
+  void Register( const std::string& aId , ConfigSequence* aConfigSequence );
+  void Register(const std::string& aId , Command* aCommand );
+  void Register(const std::string& aId , Operation* aOperation );
 
 
   typedef boost::unordered_map< std::string , ConfigSequence* > tConfigSequenceMap;

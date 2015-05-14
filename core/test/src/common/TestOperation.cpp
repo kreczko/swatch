@@ -22,9 +22,9 @@ namespace test {
 struct OperationTestSetup {
   OperationTestSetup():
   handler(){
-    handler.registerOperation<DummyOperation>("common");
-    handler.registerOperation<DummyOperation>("custom");
-    handler.registerOperation<DummyOperation>("test");
+    handler.Register<DummyOperation>("common");
+    handler.Register<DummyOperation>("custom");
+    handler.Register<DummyOperation>("test");
 
     common = handler.getOperation("common");
     custom = handler.getOperation("custom");
@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_SUITE( OperationTestSuite )
 BOOST_AUTO_TEST_CASE(TestConstructor) {
   LOG(kInfo) << "Running OperationTestSuite/TestConstructor";
   DummyHandler handler = DummyHandler();
-  swatch::core::Operation* common = handler.registerOperation<DummyOperation>("Common");
+  swatch::core::Operation* common = handler.Register<DummyOperation>("Common");
   BOOST_CHECK_EQUAL(common->getCurrentState(), "HALTED");
 }
 

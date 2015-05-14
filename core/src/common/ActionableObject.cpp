@@ -88,21 +88,21 @@ std::set<std::string> ActionableObject::getOperations() const
 
 //------------------------------------------------------------------------------------
 
-void ActionableObject::registerConfigSequence( const std::string& aId , ConfigSequence* aConfigSequence )
+void ActionableObject::Register( const std::string& aId , ConfigSequence* aConfigSequence )
 {
   if (mConfigSequences.count(aId)) throw ConfigSequenceAlreadyExistsInActionableObject(aId);
   this->addObj(aConfigSequence);
   mConfigSequences.insert( std::make_pair( aId , aConfigSequence ) );
 }
 
-void ActionableObject::registerCommand( const std::string& aId , Command* aCommand )
+void ActionableObject::Register( const std::string& aId , Command* aCommand )
 {
   if (mCommands.count(aId)) throw CommandAlreadyExistsInActionableObject(aId);
   this->addObj(aCommand);
   mCommands.insert( std::make_pair( aId , aCommand ) );
 }
 
-void ActionableObject::registerOperation( const std::string& aId , Operation* aOperation ) {
+void ActionableObject::Register( const std::string& aId , Operation* aOperation ) {
   if (mOperations.count(aId)) throw OperationAlreadyExistsInActionableObject(aId);
   this->addObj(aOperation);
   mOperations.insert( std::make_pair( aId , aOperation ) );

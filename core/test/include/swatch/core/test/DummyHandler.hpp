@@ -21,7 +21,7 @@ public:
 
   virtual ~DummyHandler();
 
-//  void registerCommand(std::string aName, Command* aCmd);
+//  void Register(std::string aName, Command* aCmd);
 //  void registerController(std::string name, Controller* ctrl);
 
   uint32_t number() const;

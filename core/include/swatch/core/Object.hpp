@@ -69,8 +69,8 @@ public:
     iterator begin();
     iterator end();
     
-    const std::type_info& type();
-    std::string typeName();
+    const std::type_info& type() const;
+    std::string typeName() const;
     
     const std::string& id() const; 
     const std::string path() const;
@@ -83,8 +83,11 @@ public:
     
     template<typename T>
     T* getObj(const std::string& aId);
+
+    template<typename T>
+    std::deque<T*> getChildrenOfType();
     
-    const XParameterSet& pset() { return pSet_; }
+    const XParameterSet& pset() const;
     
 protected:
 
@@ -96,7 +99,7 @@ protected:
     //! Map of children and their child nodes
     boost::unordered_map< std::string, Object* > objectsChart_;
 
-    Object* getParent();
+    Object* getAncestor( const uint32_t& aDepth = 1 );
 
 private:
     void print( std::ostream& aStr , const uint32_t& aIndent = 0 ) const;
@@ -158,6 +161,16 @@ T* Object::getObj(const std::string& aId) {
     return dynamic_cast<T*>( this->getObj(aId) );
 }
 
+
+template<typename T>
+std::deque<T*> Object::getChildrenOfType() {
+  std::deque<T*> lRet;
+  for ( std::deque<Object*>::const_iterator lIt = children_.begin(); lIt != children_.end(); ++lIt ) {
+    T* lChild( dynamic_cast<T*>( *lIt ) );
+    if( lChild ) lRet.push_back( lChild );
+  }
+  return lRet;
+}
 
 } // namespace core
 } // namespace swatch

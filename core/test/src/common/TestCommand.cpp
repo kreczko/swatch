@@ -25,10 +25,10 @@ namespace test {
 struct CommandTestSetup {
   CommandTestSetup():
   handler(){
-    handler.registerCommand<DummyCommand>("dummy_print");//, new DummyCommand(&handler, xdata::Integer(-33)));
-    handler.registerCommand<DummyCommand>("dummy_error");//, new DummyCommand(&handler, xdata::Integer(-33)));
-    handler.registerCommand<DummyCommand>("dummy_nada");//, new DummyCommand(&handler, xdata::Integer(-33)));
-//    handler.registerCommand<DummyCommand>("dummy_getcrate");//, new DummyCommand(&handler, xdata::String("dfd")));
+    handler.Register<DummyCommand>("dummy_print");//, new DummyCommand(&handler, xdata::Integer(-33)));
+    handler.Register<DummyCommand>("dummy_error");//, new DummyCommand(&handler, xdata::Integer(-33)));
+    handler.Register<DummyCommand>("dummy_nada");//, new DummyCommand(&handler, xdata::Integer(-33)));
+//    handler.Register<DummyCommand>("dummy_getcrate");//, new DummyCommand(&handler, xdata::String("dfd")));
 
     print = handler.getCommand("dummy_print");
     error = handler.getCommand("dummy_error");
@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_SUITE( CommandTestSuite)
 // we want to make sure that the factory can use this
 BOOST_AUTO_TEST_CASE(TestConstructor) {
   DummyHandler handler = DummyHandler();
-  swatch::core::Command* test = handler.registerCommand<DummyCommand>("Test");
+  swatch::core::Command* test = handler.Register<DummyCommand>("Test");
   
   BOOST_CHECK(test->getParams().get<xdata::Integer>("aa").equals(xdata::Integer(15)));
 }

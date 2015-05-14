@@ -22,11 +22,11 @@ namespace test {
 struct ActionableObjectTestSetup {
   ActionableObjectTestSetup():
   handler(){
-    handler.registerCommand<DummyCommand>("dummy_1");//, new DummyCommand(&handler));
-    handler.registerCommand<DummyCommand>("dummy_2");//, new DummyCommand(&handler));
-    handler.registerCommand<DummyCommand>("dummy_3");//, new DummyCommand(&handler));
-    handler.registerOperation<DummyOperation>("test_1");
-    handler.registerOperation<DummyOperation>("test_2");
+    handler.Register<DummyCommand>("dummy_1");//, new DummyCommand(&handler));
+    handler.Register<DummyCommand>("dummy_2");//, new DummyCommand(&handler));
+    handler.Register<DummyCommand>("dummy_3");//, new DummyCommand(&handler));
+    handler.Register<DummyOperation>("test_1");
+    handler.Register<DummyOperation>("test_2");
   }
   ~ActionableObjectTestSetup(){
   }
@@ -40,7 +40,7 @@ BOOST_AUTO_TEST_SUITE( ActionableObjectTestSuite)
 BOOST_FIXTURE_TEST_CASE(TestRegisterCommand,  ActionableObjectTestSetup) {
   LOG(kInfo) << "Running ActionableObjectTestSuite/TestRegisterCommand";
   size_t n_commands = handler.getCommands().size();
-  handler.registerCommand<DummyCommand>("dummy_5000");
+  handler.Register<DummyCommand>("dummy_5000");
   size_t n_commands_after = handler.getCommands().size();
   BOOST_CHECK_EQUAL(n_commands_after, n_commands + 1);
 }
@@ -58,7 +58,7 @@ BOOST_FIXTURE_TEST_CASE(TestGetCommand,  ActionableObjectTestSetup) {
 BOOST_FIXTURE_TEST_CASE(TestRegisterOperation,  ActionableObjectTestSetup) {
   LOG(kInfo) << "Running ActionableObjectTestSuite/TestRegisterOperation";
   size_t n_ctrl = handler.getOperations().size();
-  handler.registerOperation<DummyOperation>("dummy_5000");
+  handler.Register<DummyOperation>("dummy_5000");
   size_t n_ctrl_after = handler.getOperations().size();
   BOOST_CHECK_EQUAL(n_ctrl_after, n_ctrl + 1);
 }

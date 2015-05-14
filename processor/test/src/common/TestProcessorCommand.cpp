@@ -25,7 +25,7 @@ namespace test {
 struct ProcessorCommandTestSetup {
   ProcessorCommandTestSetup():
   handler("BigDummy", DummyProcessor::generateParams()){
-    handler.registerCommand<DummyProcessorCommand>("dummy_getcrate");
+    handler.Register<DummyProcessorCommand>("dummy_getcrate");
 
     get_crate = handler.getCommand("dummy_getcrate");
 

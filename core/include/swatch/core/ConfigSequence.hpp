@@ -11,25 +11,20 @@
 
 #include "swatch/core/Object.hpp"
 #include "swatch/core/Command.hpp"
+#include "swatch/core/exception.hpp"
 
 #include <deque>
 #include <set>
 
 
-//Forward declarations
-namespace swatch {
-  namespace processor {
-    class Processor;
-  }
-  namespace system {
-    class System;
-  }
-}
-
 namespace swatch {
 namespace core {
+  class GateKeeper;
+
 
   class ConfigSequence : public Functionoid {
+  friend class GateKeeper;  
+
   public:
     /// Constructor
     ConfigSequence( const std::string& aId );
@@ -37,6 +32,26 @@ namespace core {
     /// Destructor
     virtual ~ConfigSequence();
   
+    /**
+      Utility function to add a command to the command sequence
+      @param aCommand a command to add to the command sequence
+    */
+    ConfigSequence& run( Command* aCommand );
+    ConfigSequence& then( Command* aCommand );
+    ConfigSequence& operator() ( Command* aCommand );
+
+    ConfigSequence& run( const std::string& aCommand );
+    ConfigSequence& then( const std::string& aCommand );
+    ConfigSequence& operator() ( const std::string& aCommand );
+
+    std::set<std::string> getParams();
+    const std::deque<std::string>& getTables();
+
+  protected:
+    virtual void setTables() = 0;
+    std::deque<std::string>* mTables;
+
+  private:
     /**
       Run the configuration sequence
     */
@@ -47,28 +62,11 @@ namespace core {
     */
     virtual void reset();
 
-
-    std::set<std::string> getParams();
-
-    const std::string* getHardwareType();
-    const std::string* getParentId();
-    const std::string* getComponentId();
-
-
-  protected:
-    /**
-      Utility function to add a command to the command sequence
-      @param aCommand a command to add to the command sequence
-    */
-    void run( Command* aCommand );
-
   private:
     std::deque< Command* > mCommands;
-
-    std::string* mHardwareType;
-    std::string* mParentId;
-    std::string* mComponentId;
   };
+
+DEFINE_SWATCH_EXCEPTION( UnknownParentType );  
 
 } /* namespace core */
 } /* namespace swatch */

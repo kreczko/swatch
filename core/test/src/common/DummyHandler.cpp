@@ -46,7 +46,7 @@ void DummyHandler::fail() {
 
 //---
 //void
-//DummyHandler::registerCommand(std::string aName, Command* aCmd) {
+//DummyHandler::Register(std::string aName, Command* aCmd) {
 //
 //  // Check if aCmd has already been registered
 //  if ( commands_.count(aName) ) {

@@ -6,6 +6,7 @@
  */
 
 #include <cstdlib>
+#include <iostream>
 
 // Swatch Headers
 #include "swatch/logger/Log.hpp"
@@ -42,28 +43,33 @@ int main(int argc, char** argv) {
     XParameterSet sysset = swatch::system::treeToSystemPars(pt);  
     swatch::system::System* lSystem = swatch::core::Factory::get()->bake<swatch::system::System>(sysset);
 
+    std::cout << *lSystem << std::endl;
+
 
     std::deque<swatch::processor::Processor*>& lProcessors( lSystem->getProcessors() );
 
     for( std::deque<swatch::processor::Processor*>::iterator lIt( lProcessors.begin()) ; lIt!=lProcessors.end() ; ++lIt )
     {
-      const swatch::processor::ProcessorStub& stub = (**lIt).pset().get<swatch::processor::ProcessorBag>("stub").bag;
+      std::set<std::string> lConfigSequences( (**lIt).getConfigSequences() );
 
-      std::cout << (**lIt).path() << std::endl;
-      std::cout << stub << std::endl;
+      for( std::set<std::string>::iterator lIt2( lConfigSequences.begin()) ; lIt2!=lConfigSequences.end() ; ++lIt2 )
+      {
+        std::cout << *lIt2 << std::endl;
+        swatch::core::ConfigSequence* lConfigSequence( (**lIt).getConfigSequence( *lIt2 ) );
+      
+        std::set<std::string> lParams = lConfigSequence->getParams();
 
-//       const std::string* lStr( NULL );
-//       lStr = ( **lIt ).mConfigSequence.getHardwareType();
-//       if( lStr ) std::cout << "HW : " << *lStr << std::endl;
-//       else std::cout << "HW : NULL" << std::endl;
-// 
-//       lStr = ( **lIt ).mConfigSequence.getSystemId();
-//       if( lStr ) std::cout << "System : " << *lStr << std::endl;
-//       else std::cout << "System : NULL" << std::endl;
-// 
-//       lStr = ( **lIt ).mConfigSequence.getComponentId();
-//       if( lStr ) std::cout << "Component : " << *lStr << std::endl;
-//       else std::cout << "Component : NULL" << std::endl;
+        for( std::set<std::string>::iterator lIt3( lParams.begin()) ; lIt3!=lParams.end() ; ++lIt3 )
+        {
+          std::cout << "[Param] " << *lIt3 << std::endl;
+        }
+
+        std::deque<std::string> lTables = lConfigSequence->getTables();
+        for( std::deque<std::string>::iterator lIt3( lTables.begin()) ; lIt3!=lTables.end() ; ++lIt3 )
+        {
+          std::cout << "[Table] " << *lIt3 << std::endl;
+        }
+      }
 
     }
 
