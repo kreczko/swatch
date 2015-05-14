@@ -77,9 +77,9 @@ public:
 
     std::vector<std::string> getPaths() const;
 
-    std::vector<std::string> getChildren();
+    std::vector<std::string> getChildren() const;
 
-    Object* getObj(const std::string& aId);
+    Object* getObj(const std::string& aId) const;
     
     template<typename T>
     T* getObj(const std::string& aId);

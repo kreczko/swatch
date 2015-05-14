@@ -123,7 +123,7 @@ Object::getCharts(std::string path, boost::unordered_map<std::string,Object*>& c
 }
 
 std::vector<std::string>
-Object::getChildren() {
+Object::getChildren() const {
     std::vector<std::string> names;
     boost::unordered_map<std::string, Object*> chart;
     this->getCharts(id_,chart);
@@ -137,7 +137,7 @@ Object::getChildren() {
 
 
 Object*
-Object::getObj(const std::string& aId) {
+Object::getObj(const std::string& aId) const {
 
     std::size_t pos;
     string father, child;
@@ -150,7 +150,7 @@ Object::getObj(const std::string& aId) {
     
 //    cout << "father = '" << father << "'   child = '" << child << "'" << endl;
     
-    boost::unordered_map<std::string, Object*>::iterator it;
+    boost::unordered_map<std::string, Object*>::const_iterator it;
     
     if ( (it = objectsChart_.find(father) ) == objectsChart_.end() ) {
         stringstream ss;
