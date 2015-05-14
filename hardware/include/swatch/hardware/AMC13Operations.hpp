@@ -16,7 +16,7 @@ namespace hardware {
 
 class AMC13Configure : public swatch::core::Operation {
 public:
-    AMC13Configure(core::ActionableObject* aHandler);
+    AMC13Configure(const std::string& aId);
     virtual ~AMC13Configure();
     
 };

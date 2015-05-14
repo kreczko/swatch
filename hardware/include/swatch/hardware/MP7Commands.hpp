@@ -15,7 +15,7 @@ namespace hardware {
 
 class MP7ResetCommand : public core::Command {
 public:
-  MP7ResetCommand( core::ActionableObject* aHandler );
+  MP7ResetCommand(const std::string& aId);
   virtual ~MP7ResetCommand();
 
   virtual void code();
@@ -25,7 +25,7 @@ public:
 
 class MP7ConfigureLoopback : public core::Command{
 public:
-  MP7ConfigureLoopback( core::ActionableObject* aHandler );
+  MP7ConfigureLoopback(const std::string& aId);
 
   virtual ~MP7ConfigureLoopback();
 

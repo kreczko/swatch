@@ -14,7 +14,8 @@
 namespace swatch {
 namespace hardware {
 
-MP7Configure::MP7Configure(swatch::core::ActionableObject* resource) : swatch::core::Operation(resource) {
+MP7Configure::MP7Configure(const std::string& aId) : 
+  swatch::core::Operation(aId) {
 
   std::string halted("Halted");
   std::string configured("Configured");

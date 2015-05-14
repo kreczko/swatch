@@ -24,8 +24,8 @@ namespace hardware {
 
 
 //---
-MP7ResetCommand::MP7ResetCommand(core::ActionableObject* aHandler) : 
-    Command(aHandler, xdata::Integer() ) {
+MP7ResetCommand::MP7ResetCommand(const std::string& aId) : 
+    Command(aId, xdata::Integer() ) {
 
     // Integer result?
 
@@ -50,8 +50,8 @@ void MP7ResetCommand::code() {
 
 
 //---
-MP7ConfigureLoopback::MP7ConfigureLoopback(core::ActionableObject* aHandler) :
-  Command(aHandler, xdata::Integer() ){
+MP7ConfigureLoopback::MP7ConfigureLoopback(const std::string& aId) :
+  Command(aId, xdata::Integer() ){
 
 }
 

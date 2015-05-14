@@ -16,7 +16,7 @@ namespace hardware {
  
 class MP7Configure : public swatch::core::Operation {
    public:
-       MP7Configure( swatch::core::ActionableObject* resource );
+       MP7Configure(const std::string& aId);
        virtual ~MP7Configure();
 
        bool pass();

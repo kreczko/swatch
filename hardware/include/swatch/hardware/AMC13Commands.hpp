@@ -16,7 +16,7 @@ namespace hardware {
 
 class AMC13ResetCommand : public swatch::core::Command {
 public:
-    AMC13ResetCommand(core::ActionableObject* aHandler);
+    AMC13ResetCommand(const std::string& aId);
     virtual ~AMC13ResetCommand();
     
 

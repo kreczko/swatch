@@ -49,8 +49,8 @@ namespace swpro = swatch::processor;
 
 class ResetClockCommand : public swco::Command {
 public:
-  ResetClockCommand(swco::ActionableObject* aHandler) :
-    Command(aHandler, xdata::Integer()) {
+  ResetClockCommand(const std::string& aId) :
+    Command(aId, xdata::Integer()) {
   }
   
   virtual ~ResetClockCommand() {

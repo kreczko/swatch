@@ -25,8 +25,8 @@ namespace swatch {
 namespace hardware {
 
 //---
-AMC13Configure::AMC13Configure(core::ActionableObject* aHandler) :
-  swatch::core::Operation(aHandler) {
+AMC13Configure::AMC13Configure(const std::string& aId) :
+  swatch::core::Operation(aId) {
   
 }
 
