@@ -82,8 +82,6 @@ protected:
 
     void setStatusMsg( const std::string& aMsg );
 
-    XParameterSet parameters_;
-
 private:
 
     Status status_;

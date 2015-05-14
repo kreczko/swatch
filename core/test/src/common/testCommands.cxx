@@ -63,11 +63,11 @@ public:
 
     DummyHandler* res = getParent<DummyHandler>();
 
-    BOOST_FOREACH(const std::string& n, parameters_.keys()) {
-      LOG(swlo::kInfo) << n << " : " << parameters_[n];
+    BOOST_FOREACH(const std::string& n, getParams().keys()) {
+      LOG(swlo::kInfo) << n << " : " << getParams()[n];
     }
 
-    std::string todo = parameters_.get<xdata::String>("todo");
+    std::string todo = getParams().get<xdata::String>("todo");
     if (todo == "print") {
 
       res->setSomething("|12345|");

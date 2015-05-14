@@ -8,6 +8,8 @@
 #ifndef SWATCH_PROCESSOR_ALGOINTERFACE_HPP
 #define SWATCH_PROCESSOR_ALGOINTERFACE_HPP
 
+#include "swatch/core/Object.hpp"
+
 // SWATCH Headers
 
 namespace swatch {
@@ -19,9 +21,10 @@ namespace processor {
  * @brief  Abstract class defining the algorithm component interface
  * @date   09/09/2014
  */
-class AlgoInterface {
+class AlgoInterface: public core::Object {
 public:
-    
+
+    AlgoInterface() : core::Object( "algo" ) {}    
     /**
      * Destructor
      */

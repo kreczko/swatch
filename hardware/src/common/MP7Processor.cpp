@@ -63,8 +63,8 @@ MP7Processor::MP7Processor(const std::string& id, const swatch::core::XParameter
     driver_ = new mp7::MP7Controller(board);
     
     // Build subcomponents
-    ttc_  = new MP7TTCInterface( driver_ ); 
-    links_ = new swpro::LinkInterface();
+    Add( new MP7TTCInterface( driver_ ) ); 
+    Add( new swpro::LinkInterface() );
     
     uint32_t nRx = driver_->getChannelIDs(mp7::kLinkIDs).channels().size();
     uint32_t nTx = driver_->getChannelIDs(mp7::kLinkIDs).channels().size();

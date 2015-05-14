@@ -24,7 +24,7 @@ DummyProcessorCommand::~DummyProcessorCommand() {
 void DummyProcessorCommand::code() {
   DummyProcessor* res = getParent<DummyProcessor>();
 
-  std::string todo = parameters_.get<xdata::String>("todo");
+  std::string todo = getParams().get<xdata::String>("todo");
   if (todo == "getCrateId") {
     setProgress(90.49, "Dummy command did something");
     setResult(xdata::String(res->getCrateId()));

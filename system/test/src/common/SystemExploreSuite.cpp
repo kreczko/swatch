@@ -94,8 +94,8 @@ struct SystemSetupA {
         
         vector< pair<string, string> > links;
         push_back(links)
-                ("mp7-10.tx00", "mp7-13.rx01")
-                ("mp7-10.tx01", "mp7-13.rx00");
+                ("mp7-10.links.tx00", "mp7-13.links.rx01")
+                ("mp7-10.links.tx01", "mp7-13.links.rx00");
         unsigned int lid;
 
         vector< pair<string, string> >::iterator lIt;
@@ -108,6 +108,30 @@ struct SystemSetupA {
             Link* lLink = new Link(lname.str(), src, dst);
             system->add(lLink);
         }
+
+
+//         vector< pair<string, string> > lSource , lDestinations;
+//         push_back(lSource)
+//                 ("mp7-10","tx00")
+//                 ("mp7-10","tx01");
+//         push_back(lDestinations)
+//                 ("mp7-13","rx01")
+//                 ("mp7-13","rx00");
+//         unsigned int lid;
+// 
+//         vector< pair<string, string> >::iterator lIt1( lSource.begin() ) , lIt2( lDestinations.begin() );
+// 
+//         for ( lid = 0; lIt1 != lSource.end(); ++lIt1, ++lIt2, ++lid) {
+//             OutputPort* src = system->getObj<Processor>(lIt1->first)->linkInterface()->getOutput(lIt1->second);
+//             InputPort* dst = system->getObj<Processor>(lIt2->first)->linkInterface()->getInput(lIt2->second);
+// 
+//             stringstream lname;
+//             lname << "link" << std::setw(3) << std::setfill('0') << lid;
+//             Link* lLink = new Link(lname.str(), src, dst);
+//             system->add(lLink);
+//         }
+
+
     }
 
     ~SystemSetupA() {
@@ -152,7 +176,7 @@ BOOST_AUTO_TEST_CASE(ExploreSystem) {
     LOG(kDebug) << "Testing getters and aliases";
     LOG(kDebug) << "===========================";
     vector<string> names;
-    names += "mp7-10.tx00", "link000.src", "crateC.amc01.tx00";
+    names += "mp7-10.links.tx00", "link000.src", "crateC.amc01.links.tx00";
     vector< string >::const_iterator itN;
     BOOST_FOREACH( string name, names ) {
         Object* o = system->getObj(name);
@@ -160,9 +184,9 @@ BOOST_AUTO_TEST_CASE(ExploreSystem) {
     }
     LOG(kDebug) << "Multi-hop getter";
     LOG(kDebug) << "================";
-    Object* o = system->getObj("crateC")->getObj("amc01")->getObj("tx00");
+    Object* o = system->getObj("crateC")->getObj("amc01")->getObj("links")->getObj("tx00");
     LOG(kDebug) << "Testing  crate1 + mp7-13 + tx00: " << o->path() << " of type " << o->typeName();
-    BOOST_CHECK_EQUAL(o->path(),"calol2.mp7-10.tx00");
+    BOOST_CHECK_EQUAL(o->path(),"calol2.mp7-10.links.tx00");
     BOOST_CHECK_EQUAL(o->typeName(),"swatch::processor::test::DummyTxPort");
 
 

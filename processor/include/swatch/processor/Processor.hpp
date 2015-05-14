@@ -10,6 +10,7 @@
 
 // Swatch Headers
 #include "swatch/core/ActionableObject.hpp"
+#include "swatch/core/exception.hpp"
 
 namespace swatch {
 
@@ -63,14 +64,18 @@ public:
     virtual std::string firmwareInfo() const = 0; 
 
     TTCInterface* ttc();
-    
     ReadoutInterface* readout();
-    
     AlgoInterface* algo();
-
     LinkInterface* linkInterface();
 
 protected:
+
+    void Add( TTCInterface* aTTCInterface );
+    void Add( ReadoutInterface* aReadoutInterface );
+    void Add( AlgoInterface* aAlgoInterface );
+    void Add( LinkInterface* aLinkInterface );
+
+private:
 
     //! TTC control interface
     TTCInterface* ttc_;
@@ -85,6 +90,12 @@ protected:
 
 
 };
+
+
+DEFINE_SWATCH_EXCEPTION(TTCInterfaceAlreadyDefined);
+DEFINE_SWATCH_EXCEPTION(ReadoutInterfaceAlreadyDefined);
+DEFINE_SWATCH_EXCEPTION(AlgoInterfaceAlreadyDefined);
+DEFINE_SWATCH_EXCEPTION(LinkInterfaceAlreadyDefined);
 
 }
 }

@@ -40,7 +40,7 @@ DummyProcessor::DummyProcessor(const std::string& id,
         Processor(id, params),
         ranTests_() {
 
-  links_ = new processor::LinkInterface();
+  Add( new processor::LinkInterface() );
 
   std::stringstream ss;
   for (int chan(0); chan < 4; ++chan) {

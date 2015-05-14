@@ -99,6 +99,14 @@ Object::getAncestors(std::deque<const Object*>& aGenealogy) const {
 }
 
 
+void Object::print( std::ostream& aStr , const uint32_t& aIndent ) const
+{
+  aStr << std::string( aIndent , ' ' ) << "- " << id_ << '\n';
+  for ( std::deque<Object*>::const_iterator lIt = children_.begin(); lIt != children_.end(); ++lIt ) {
+    (**lIt).print( aStr, aIndent+1 );
+  }
+}
+
 void
 Object::getCharts(std::string path, boost::unordered_map<std::string,Object*>& chart ) const {
 
@@ -312,4 +320,10 @@ bool Object::iterator::next()
 }
 
 }
+}
+
+std::ostream& operator<< ( std::ostream& aStr , const swatch::core::Object& aObject )
+{
+  aObject.print( aStr );
+  return aStr;
 }

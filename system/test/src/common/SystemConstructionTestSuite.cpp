@@ -82,8 +82,8 @@ BOOST_AUTO_TEST_CASE(BuildMiniSystem) {// this is not a test
 
     std::vector< std::pair<std::string, std::string> > links;
     push_back(links)
-            ("calol2-10.tx00", "demux.rx01")
-            ("calol2-13.tx01", "demux.rx00");
+            ("calol2-10.links.tx00", "demux.links.rx01")
+            ("calol2-13.links.tx01", "demux.links.rx00");
     
     unsigned int lid;
     std::vector< std::pair<std::string, std::string> >::iterator it;

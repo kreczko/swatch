@@ -13,7 +13,6 @@
 
 #include "swatch/core/Object.hpp"
 
-
 namespace swatch {
 namespace processor {
 
@@ -23,7 +22,7 @@ class OutputPort;
 /**
  *  Trigger network device
  */
-class LinkInterface {
+class LinkInterface: public core::Object {
 public:
     LinkInterface();
     virtual ~LinkInterface();
@@ -33,17 +32,20 @@ public:
      * Number of input channels
      * @return Number of input channels
      */
-    uint32_t getNumInputs() const { return inputs_.size(); }
+    uint32_t getNumInputs() const;
 
     /**
      * Number of output channels
      * @return Number of output channels
      */
-    uint32_t getNumOutputs() const { return outputs_.size(); }
+    uint32_t getNumOutputs() const;
 
-    std::deque<InputPort*>& getInputs() { return inputs_; }
+    std::deque<InputPort*>& getInputs();
 
-    std::deque<OutputPort*>& getOutputs() { return outputs_; }
+    std::deque<OutputPort*>& getOutputs();
+
+    InputPort* getInput( const std::string& aId );
+    OutputPort* getOutput( const std::string& aId );
 
     typedef std::deque<InputPort*> tInputPortDeque;
     typedef std::deque<OutputPort*> tOutputPortDeque;
@@ -53,9 +55,9 @@ public:
     void addInput( InputPort* aInput );
     void addOutput( OutputPort*  aOutput );
 
+private:
     tInputPortDeque inputs_;
     tOutputPortDeque outputs_;
-
 };
 
 }

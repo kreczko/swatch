@@ -66,6 +66,36 @@ Processor::linkInterface() {
 }
 
 
+void Processor::Add( TTCInterface* aTTCInterface )
+{
+  if( ttc_ ) throw TTCInterfaceAlreadyDefined( "TTCInterface already defined" );
+  this->addObj(aTTCInterface);
+  ttc_ = aTTCInterface;
+}
+
+void Processor::Add( ReadoutInterface* aReadoutInterface )
+{
+  if( readout_ ) throw ReadoutInterfaceAlreadyDefined( "ReadoutInterface already defined" );
+  this->addObj(aReadoutInterface);
+  readout_ = aReadoutInterface;
+}
+
+void Processor::Add( AlgoInterface* aAlgoInterface )
+{
+  if( algo_ ) throw AlgoInterfaceAlreadyDefined( "AlgoInterface already defined" );
+  this->addObj(aAlgoInterface);
+  algo_ = aAlgoInterface;
+}
+
+void Processor::Add( LinkInterface* aLinkInterface )
+{
+  if( links_ ) throw LinkInterfaceAlreadyDefined( "LinkInterface already defined" );
+  this->addObj(aLinkInterface);
+  links_ = aLinkInterface;
+}
+
+
+
 } // namespace processor
 } // namespace swatch
 

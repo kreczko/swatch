@@ -11,12 +11,21 @@
 
 // Standard Headers
 #include <typeinfo>
+#include <ostream>
 
 // Boost Headers
 #include "boost/unordered_map.hpp"
 #include "boost/lexical_cast.hpp"
 
 #include "swatch/core/XParameterSet.hpp"
+
+namespace swatch {
+namespace core {
+class Object;
+}
+}
+
+std::ostream& operator<< ( std::ostream& aStr , const swatch::core::Object& aObject );
 
 namespace swatch {
 namespace core {
@@ -49,6 +58,8 @@ public:
             Stack itStack_;
     };
     
+    friend std::ostream& (::operator<<) ( std::ostream& aStr , const swatch::core::Object& aObject );
+
     explicit Object( const std::string& aId );
 
     Object( const std::string& aId, const XParameterSet& params );
@@ -88,6 +99,7 @@ protected:
     Object* getParent();
 
 private:
+    void print( std::ostream& aStr , const uint32_t& aIndent = 0 ) const;
     
     void getCharts( std::string path, boost::unordered_map<std::string, Object*>& ) const;
     
@@ -149,6 +161,8 @@ T* Object::getObj(const std::string& aId) {
 
 } // namespace core
 } // namespace swatch
+
+
 
 #endif	/* __SWATCH_TEST_OBJECT_HPP__ */
 
