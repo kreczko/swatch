@@ -8,10 +8,13 @@
  *
  */
 
-#ifndef __SWATCH_CORE_DEVICE_HPP__
-#define	__SWATCH_CORE_DEVICE_HPP__
+#ifndef __SWATCH_PROCESSOR_LINKINTERFACE_HPP__
+#define __SWATCH_PROCESSOR_LINKINTERFACE_HPP__
 
-#include "swatch/core/Object.hpp"
+
+// SWATCH headers
+#include "swatch/core/MonitorableObject.hpp"
+
 
 namespace swatch {
 namespace processor {
@@ -22,7 +25,7 @@ class OutputPort;
 /**
  *  Trigger network device
  */
-class LinkInterface: public core::Object {
+class LinkInterface: public core::MonitorableObject {
 public:
     LinkInterface();
     virtual ~LinkInterface();

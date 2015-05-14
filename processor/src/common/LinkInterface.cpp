@@ -16,7 +16,7 @@ namespace swatch {
 namespace processor {
 
 LinkInterface::LinkInterface():
-core::Object( "links" )
+core::MonitorableObject( "links" )
 {
 }
 

@@ -8,9 +8,9 @@
 #ifndef SWATCH_PROCESSOR_READOUTINTERFACE_HPP
 #define SWATCH_PROCESSOR_READOUTINTERFACE_HPP
 
-#include "swatch/core/Object.hpp"
 
 // Swatch Headers
+#include "swatch/core/MonitorableObject.hpp"
 
 // C++ Headers
 
@@ -20,13 +20,13 @@ namespace processor {
 
 //! @FIXME A class derived from swatch::processor::Processor used as a base class for concrete type of uTCA processors
 
-class ReadoutInterface: public core::Object {
+class ReadoutInterface: public core::MonitorableObject {
 protected:
 
     /**
      * Constructor
      */
-    ReadoutInterface() : core::Object( "readout" ) {}
+    ReadoutInterface() : core::MonitorableObject( "readout" ) {}
 
 public:
 

@@ -8,9 +8,8 @@
 #ifndef SWATCH_PROCESSOR_TTCINTERFACE_HPP
 #define SWATCH_PROCESSOR_TTCINTERFACE_HPP
 
-#include "swatch/core/Object.hpp"
-
 // SWATCH HEADERS
+#include "swatch/core/MonitorableObject.hpp"
 
 // OTHER HEADERS
 
@@ -22,14 +21,14 @@ namespace processor {
 
 //! @FIXME A class derived from swatch::processor::Processor used as a base class for concrete type of uTCA processors
 
-class TTCInterface: public core::Object {
+class TTCInterface: public core::MonitorableObject {
 protected:
 
     /**
      * Constructor
      * @param id The name of the processor
      */
-    TTCInterface() : core::Object( "ttc" ) {}
+    TTCInterface() : core::MonitorableObject( "ttc" ) {}
 public:
     /**
      * Destructor Made virtual to delegate this task to this class's children and avoid potential run time errors
