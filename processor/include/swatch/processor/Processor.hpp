@@ -81,7 +81,7 @@ protected:
     //!
     AlgoInterface* algo_;
 
-    LinkInterface* device_;
+    LinkInterface* links_;
 
 
 };

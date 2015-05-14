@@ -39,6 +39,9 @@ DummyProcessor::DummyProcessor(const std::string& id,
     const swatch::core::XParameterSet& params) :
         Processor(id, params),
         ranTests_() {
+
+  links_ = new processor::LinkInterface();
+
   std::stringstream ss;
   for (int chan(0); chan < 4; ++chan) {
     ss.str(std::string());
@@ -69,7 +72,7 @@ uint32_t DummyProcessor::getSlot() const {
 }
 
 swatch::core::XParameterSet DummyProcessor::generateParams() {
-  const std::string addrtab = "file://processor/test/etc/dummy.xml";
+  const std::string addrtab = "file://processor/test/etc/swatch/processor/test/dummy.xml";
 
   swatch::processor::ProcessorStub stubTemplate;
   stubTemplate.name = "";

@@ -36,7 +36,7 @@ Processor::Processor( const std::string& aId, const core::XParameterSet& params 
     ttc_(0x0),
     readout_(0x0),
     algo_(0x0),
-    device_(0x0)
+    links_(0x0)
 {}
 
 Processor::~Processor() {
@@ -62,7 +62,7 @@ Processor::algo() {
 
 LinkInterface*
 Processor::linkInterface() {
-    return device_;
+    return links_;
 }
 
 

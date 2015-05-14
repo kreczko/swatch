@@ -201,7 +201,7 @@ int main(int argc, char const *argv[]) {
   
     swlog::Log::setLogThreshold(swlog::kDebug);
     
-    const std::string addrtab = "file://${SWATCH_ROOT}/processor/test/etc/dummy.xml";
+    const std::string addrtab = "file://${SWATCH_ROOT}/processor/test/etc/swatch/processor/test/dummy.xml";
     /* code */
     swpro::test::IPBusDummyHardware x("board-0", 50010, addrtab);
     x.start();

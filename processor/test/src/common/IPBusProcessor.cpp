@@ -73,6 +73,7 @@ IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::XParam
     //    connection_ = swatch::processor::Connection::make(interface);
     ttc_  = new IPBusTTC(hw());
     algo_ = new IPBusFakeAlgos(hw());
+    links_ = new processor::LinkInterface();
 
 
     uhal::ValWord<uint32_t> n_rx = hw().getNode("ctrl.infos.nRx").read();
