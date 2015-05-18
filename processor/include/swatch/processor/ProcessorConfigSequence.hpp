@@ -25,7 +25,7 @@ namespace processor {
     virtual ~ProcessorConfigSequence();
   
   private:
-    void setTables();
+    std::vector< std::string >* setTables();
 
   };
 

@@ -236,7 +236,7 @@ Object::iterator::iterator() : begin_() {
 Object::iterator::iterator ( Object* aBegin ) : begin_ ( aBegin ) {
 }
 
-Object::iterator::iterator ( iterator& aOrig ) : begin_ ( aOrig.begin_ ) , itStack_ ( aOrig.itStack_ ) {
+Object::iterator::iterator ( const iterator& aOrig ) : begin_ ( aOrig.begin_ ) , itStack_ ( aOrig.itStack_ ) {
 }
 
 Object::iterator::~iterator() {

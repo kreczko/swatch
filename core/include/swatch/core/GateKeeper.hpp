@@ -13,7 +13,16 @@
 #include <string>
 
 // Swatch Headers
-#include "swatch/core/XParameterSet.hpp"
+#include "swatch/core/Object.hpp"
+#include "swatch/core/exception.hpp"
+
+// XDAQ Headers
+#include <xdata/Table.h>
+#include <xdata/Serializable.h>
+
+//BOOST Headers
+#include "boost/unordered_map.hpp"
+
 
 namespace swatch {
 namespace core {
@@ -22,7 +31,7 @@ class GateKeeper {
   public:
 
     /// Constructor
-    GateKeeper();
+    GateKeeper( Object* aToplevel , const uint32_t& aKey );
 
     /// Destructor
     virtual ~GateKeeper();
@@ -31,8 +40,10 @@ class GateKeeper {
     /**
       Method to retreive the list of data which are going to be required and preload it to check that everything is there 
     */
-    bool preloadAndCheck();
+    bool preload();
 
+
+    virtual xdata::Table* getTable( const std::string& aId ) = 0;
 
     /**
       Method to retreive configuration data from a specified path
@@ -42,11 +53,16 @@ class GateKeeper {
       @param aHardwareID An ID specifying a table for a particular hardwaretype
       @return the requested data
     */
-    xdata::Serializable& get( const std::string& aPath , const std::string* aComponentID = NULL , const std::string* aSystemID = NULL , const std::string* aHardwareID = NULL );
+     xdata::Serializable* get( const std::string& aParam , const std::vector<std::string>& aTables );
 
   private:
-
+      Object* mToplevel;
+      uint32_t mKey;
+      typedef boost::unordered_map< std::string, xdata::Table* > tTableCache;
+      tTableCache mCache;
 };
+ 
+DEFINE_SWATCH_EXCEPTION( UnknownParameter );  
 
 } /* namespace core */
 } /* namespace swatch */

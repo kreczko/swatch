@@ -1,3 +1,4 @@
+#include "swatch/core/GateKeeper.hpp"
 #include "swatch/core/ConfigSequence.hpp"
 #include "swatch/core/ActionableObject.hpp"
 //#include "toolbox/ConfigSequence/exception/Exception.h"
@@ -9,7 +10,10 @@ namespace core {
 
 ConfigSequence::ConfigSequence( const std::string& aId ) :
   Functionoid( aId ),
-  mTables( NULL )
+  mTables( NULL ),
+  mCommands(),
+  mIt( mCommands.end() ),
+  mGateKeeper( NULL )
 {
   
 }
@@ -18,36 +22,59 @@ ConfigSequence::~ConfigSequence() {
   if( mTables ) delete mTables;
 }
 
+void ConfigSequence::configure()
+{
+  if( !mGateKeeper ) throw NoGateKeeperDefined( "No GateKeeper Defined" );
+
+  for( std::vector< Command* >::iterator lIt( mCommands.begin()) ; lIt != mCommands.end() ; ++lIt )
+  {
+    XParameterSet& lParams( (**lIt).getParams() );
+
+    std::set< std::string > lKeys( lParams.keys() );
+    for( std::set< std::string >::iterator lIt2( lKeys.begin() ); lIt2!=lKeys.end(); ++lIt2 )
+    {
+      std::string lPath( id() + "." + (**lIt).id() + "." + *lIt2 );
+      xdata::Serializable* lData( mGateKeeper->get( lPath , getTables() ) );
+      lParams.update( *lIt2 , *lData ); ///TODO : Who has ownership of the xdata::Serializable* ????!
+    }
+
+  }
+}
+
 void ConfigSequence::exec()
 {
-  for( std::deque< Command* >::iterator lIt = mCommands.begin() ; lIt != mCommands.end() ; ++lIt )
+  for( mIt = mCommands.begin() ; mIt != mCommands.end() ; ++mIt )
   {
-    (**lIt).exec();
+    (**mIt).exec();
+    if( (**mIt).getStatus() != Command::kDone ) return;
   }
 }
 
 void ConfigSequence::reset()
 {
-  for( std::deque< Command* >::iterator lIt = mCommands.begin() ; lIt != mCommands.end() ; ++lIt )
+  for( mIt = mCommands.begin() ; mIt != mCommands.end() ; ++mIt )
   {
-    (**lIt).reset();
+    (**mIt).reset();
   }
 }
 
 std::set< std::string > ConfigSequence::getParams()
 {
   std::set< std::string > lKeys, lAllKeys;
-  for( std::deque< Command* >::iterator lIt( mCommands.begin()) ; lIt != mCommands.end() ; ++lIt )
+  for( std::vector< Command* >::iterator lIt( mCommands.begin()) ; lIt != mCommands.end() ; ++lIt )
   {
     lKeys = (**lIt).getParams().keys();
-    lAllKeys.insert( lKeys.begin() , lKeys.end() );
+    for( std::set< std::string >::iterator lIt2( lKeys.begin() ); lIt2!=lKeys.end(); ++lIt2 )
+    {
+      lAllKeys.insert( id() + "." + (**lIt).id() + "." + *lIt2 );
+    }
   }
   return lAllKeys;
 }
 
-const std::deque<std::string>& ConfigSequence::getTables()
+const std::vector<std::string>& ConfigSequence::getTables()
 {
-  if( !mTables ) setTables();
+  if( !mTables ) mTables = setTables();
   return *mTables;
 }
 
@@ -71,8 +98,7 @@ ConfigSequence& ConfigSequence::operator() ( Command* aCommand )
 ConfigSequence& ConfigSequence::run( const std::string& aCommand )
 {
   ActionableObject* lParent( getParent<ActionableObject>()  );
-  mCommands.push_back( lParent->getCommand( aCommand ) );
-  return *this;
+  return run( lParent->getCommand( aCommand ) );
 }
 
 ConfigSequence& ConfigSequence::then ( const std::string& aCommand )
@@ -86,6 +112,44 @@ ConfigSequence& ConfigSequence::operator() ( const std::string& aCommand )
 }
 
 
+Command::Status ConfigSequence::getStatus() const
+{
+  if (mIt == mCommands.end() ) return Command::kDone;
+  return (**mIt).getStatus();
+}
+
+float ConfigSequence::getProgress() const
+{
+  if (mIt ==mCommands.end() ) return 100.;
+  return (**mIt).getProgress();
+}
+
+float ConfigSequence::getOverallProgress() const
+{
+  uint32_t lStep = mIt - mCommands.begin();
+  float lProgress = (100. * lStep) + getProgress();
+  return lProgress / mCommands.size();
+}
+
+const std::string& ConfigSequence::getProgressMsg() const
+{
+  if (mIt == mCommands.end() ) return mConfigSequenceComplete;
+  return (**mIt).getProgressMsg();
+}
+
+const std::string& ConfigSequence::getStatusMsg() const
+{
+  if (mIt == mCommands.end() ) return mConfigSequenceComplete;
+  return (**mIt).getStatusMsg();
+}
+
+
+void ConfigSequence::setGateKeeper( GateKeeper* aGateKeeper )
+{
+  mGateKeeper = aGateKeeper;
+}
+
+std::string ConfigSequence::mConfigSequenceComplete = std::string( "ConfigSequence complete" );
 
 } /* namespace core */
 } /* namespace swatch */

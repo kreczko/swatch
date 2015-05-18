@@ -11,9 +11,8 @@
 
 #include "swatch/core/Object.hpp"
 #include "swatch/core/Command.hpp"
-#include "swatch/core/exception.hpp"
 
-#include <deque>
+#include <vector>
 #include <set>
 
 
@@ -22,8 +21,9 @@ namespace core {
   class GateKeeper;
 
 
+///TODO : In the configure method, who has ownership of the xdata::Serializable* - the source table or the destination parameter set????!
   class ConfigSequence : public Functionoid {
-  friend class GateKeeper;  
+    friend class GateKeeper;
 
   public:
     /// Constructor
@@ -45,28 +45,56 @@ namespace core {
     ConfigSequence& operator() ( const std::string& aCommand );
 
     std::set<std::string> getParams();
-    const std::deque<std::string>& getTables();
+    const std::vector<std::string>& getTables();
 
-  protected:
-    virtual void setTables() = 0;
-    std::deque<std::string>* mTables;
 
-  private:
+    Command::Status getStatus() const;
+
+    float getProgress() const;
+    float getOverallProgress() const;
+
+    const std::string& getProgressMsg() const;
+
+    const std::string& getStatusMsg() const;
+
+    /**
+      Configure the configuration sequence
+    */
+    virtual void configure();
+
     /**
       Run the configuration sequence
     */
     virtual void exec();
 
     /**
-      Run the configuration commands
+      Reset the configuration commands
     */
     virtual void reset();
 
+  protected:
+    virtual std::vector<std::string>* setTables() = 0;
+
+
   private:
-    std::deque< Command* > mCommands;
+    void setGateKeeper( GateKeeper* aGateKeeper );
+
+    template< typename T>
+    T* cloneSerializable( T* aObj )
+    {
+      return new T( *aObj );
+    } 
+
+
+    std::vector<std::string>* mTables;
+    std::vector< Command* > mCommands;
+    std::vector< Command* >::iterator mIt;
+    GateKeeper* mGateKeeper;
+
+    static std::string mConfigSequenceComplete;
   };
 
-DEFINE_SWATCH_EXCEPTION( UnknownParentType );  
+DEFINE_SWATCH_EXCEPTION( NoGateKeeperDefined );  
 
 } /* namespace core */
 } /* namespace swatch */

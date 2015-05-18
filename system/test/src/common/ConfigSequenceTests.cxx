@@ -13,6 +13,9 @@
 #include "swatch/core/XParameterSet.hpp"
 #include "swatch/core/xoperators.hpp"
 #include "swatch/core/Factory.hpp"
+#include "swatch/core/GateKeeper.hpp"
+
+#include "swatch/core/test/DummyGateKeeper.hpp"
 
 #include "swatch/system/Utilities.hpp"
 #include "swatch/system/System.hpp"
@@ -45,6 +48,9 @@ int main(int argc, char** argv) {
 
     std::cout << *lSystem << std::endl;
 
+    swatch::core::test::DummyGateKeeper lGateKeeper( lSystem );
+    lGateKeeper.preload();
+
 
     std::deque<swatch::processor::Processor*>& lProcessors( lSystem->getProcessors() );
 
@@ -54,6 +60,7 @@ int main(int argc, char** argv) {
 
       for( std::set<std::string>::iterator lIt2( lConfigSequences.begin()) ; lIt2!=lConfigSequences.end() ; ++lIt2 )
       {
+        std::cout << std::string( 100 , '-' ) << std::endl;
         std::cout << *lIt2 << std::endl;
         swatch::core::ConfigSequence* lConfigSequence( (**lIt).getConfigSequence( *lIt2 ) );
       
@@ -64,11 +71,20 @@ int main(int argc, char** argv) {
           std::cout << "[Param] " << *lIt3 << std::endl;
         }
 
-        std::deque<std::string> lTables = lConfigSequence->getTables();
-        for( std::deque<std::string>::iterator lIt3( lTables.begin()) ; lIt3!=lTables.end() ; ++lIt3 )
+        std::vector<std::string> lTables = lConfigSequence->getTables();
+        for( std::vector<std::string>::iterator lIt3( lTables.begin()) ; lIt3!=lTables.end() ; ++lIt3 )
         {
           std::cout << "[Table] " << *lIt3 << std::endl;
         }
+
+        lConfigSequence->configure();
+    
+        lConfigSequence->exec();
+//         std::cout << lConfigSequence->getProgress() << std::endl;
+//         std::cout << lConfigSequence->getOverallProgress() << std::endl;
+//         std::cout << lConfigSequence->getProgressMsg() << std::endl;
+//         std::cout << lConfigSequence->getStatusMsg() << std::endl;
+
       }
 
     }

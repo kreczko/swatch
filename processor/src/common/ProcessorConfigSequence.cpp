@@ -14,20 +14,22 @@ ProcessorConfigSequence::ProcessorConfigSequence( const std::string& aId ) :
 ProcessorConfigSequence::~ProcessorConfigSequence() {
 }
 
-void ProcessorConfigSequence::setTables()
+std::vector< std::string >* ProcessorConfigSequence::setTables()
 {
-  mTables = new std::deque< std::string >();
+  std::vector< std::string >* lTables = new std::vector< std::string >();
 
   core::Object* lParent = core::Object::getAncestor(1);
   if ( lParent )
   {
-    mTables->push_back( lParent->path() ); //Config based on component ID has highest priority
+    lTables->push_back( lParent->path() ); //Config based on component ID has highest priority
     
     core::Object* lGrandparent = core::Object::getAncestor(2);
-    if ( lGrandparent ) mTables->push_back( lGrandparent->path() + ".processors" ); //Then config based on system ID
+    if ( lGrandparent ) lTables->push_back( lGrandparent->path() + ".processors" ); //Then config based on system ID
 
-    mTables->push_back( lParent->pset().get<ProcessorBag>("stub").bag.hwtype ); //Config based on hardware type has lowest priority
+    lTables->push_back( lParent->pset().get<ProcessorBag>("stub").bag.hwtype ); //Config based on hardware type has lowest priority
   }
+
+  return lTables;
 }
 
 } /* namespace core */

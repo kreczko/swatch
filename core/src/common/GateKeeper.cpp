@@ -1,18 +1,75 @@
 
 #include "swatch/core/GateKeeper.hpp"
+#include "swatch/core/ConfigSequence.hpp"
+
 
 namespace swatch {
 namespace core {
 
-  GateKeeper::GateKeeper()
+  GateKeeper::GateKeeper( Object* aToplevel , const uint32_t& aKey ):
+    mToplevel( aToplevel ),
+    mKey ( aKey ),
+    mCache()
   {}
 
   GateKeeper::~GateKeeper()
-  {}
+  {
+    for( boost::unordered_map< std::string, xdata::Table* >::iterator lIt( mCache.begin() ); lIt!=mCache.end(); ++lIt )
+    {
+      delete lIt->second;
+      lIt->second = NULL;
+    }
+    mCache.clear();
+  }
 
+  bool GateKeeper::preload()
+  {
+    // Iterate over all objects under the top level: if they are ConfigSequences, claim them and cache the resources they will use
+    for( Object::iterator lIt( mToplevel->begin() ); lIt != mToplevel->end(); ++ lIt )
+    {
+      ConfigSequence* lConfigSequence( dynamic_cast< ConfigSequence* >( &(*lIt ) ) );
+      if ( lConfigSequence )
+      {
+        lConfigSequence->setGateKeeper( this );
+
+        const std::vector<std::string>& lTables = lConfigSequence->getTables();
+
+        for( std::vector<std::string>::const_iterator lIt2( lTables.begin()) ; lIt2!=lTables.end() ; ++lIt2 )
+        {
+          xdata::Table* lTable( getTable( *lIt2 ) ); //perfectly acceptable to return NULL - no such table exists
+          if( lTable ) mCache.insert( std::make_pair( *lIt2 , lTable ) );
+        }
+
+        std::set<std::string> lParams = lConfigSequence->getParams();
+        for( std::set<std::string>::const_iterator lIt2( lParams.begin()) ; lIt2!=lParams.end() ; ++lIt2 )
+        {
+          get( *lIt2 , lTables );         
+        }
+
+      } 
+    }
+    return true;
+  }
 
   
+  xdata::Serializable* GateKeeper::get( const std::string& aParam , const std::vector<std::string>& aTables )
+  {
+    //We could add runtime overriding of values to the GateKeeper and check them first...
 
+    for( std::vector<std::string>::const_iterator lIt( aTables.begin()) ; lIt!=aTables.end() ; ++lIt )
+    {
+      tTableCache::iterator lTable( mCache.find( *lIt ) );
+      if( lTable == mCache.end() ) continue; //perfectly acceptable for table name to not exist, just try the table with the next highest priority
+
+      try{
+        xdata::Serializable* lData( lTable->second->getValueAt( mKey , aParam )); 
+        if( lData ) return lData; //perfectly acceptable for specific table not hold the requested data, just try the table with the next highest priority
+      }catch( const xdata::exception::Exception& ){}
+    } 
+
+    throw UnknownParameter( aParam ); //no table contains the requested parameter - problem!
+    return NULL; //to stop the compiler complaining...
+  }
   
 
 } /* namespace core */

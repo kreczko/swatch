@@ -41,7 +41,7 @@ public:
             iterator();
             virtual ~iterator();
             iterator ( Object* aBegin );
-            iterator ( iterator& aOrig );
+            iterator ( const iterator& aOrig );
   
             Object& value() const;
             Object& operator*() const;

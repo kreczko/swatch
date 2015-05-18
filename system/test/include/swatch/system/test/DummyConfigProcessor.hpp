@@ -31,7 +31,20 @@ public:
     virtual uint64_t firmwareVersion() const;
     virtual std::string firmwareInfo() const;
 
-private:
+    uint32_t number() const;
+  
+    void setNumber(uint32_t number);
+  
+    std::string something() const;
+  
+    void setSomething(std::string something);
+  
+    void fail();
+  
+  private:
+    std::string something_;
+    uint32_t number_;
+
 
     std::string mCrate;
 
