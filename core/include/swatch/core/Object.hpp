@@ -22,6 +22,7 @@
 namespace swatch {
 namespace core {
 class Object;
+class Functionoid;
 }
 }
 
@@ -59,6 +60,7 @@ public:
     };
     
     friend std::ostream& (::operator<<) ( std::ostream& aStr , const swatch::core::Object& aObject );
+    friend class Functionoid;
 
     explicit Object( const std::string& aId );
 
@@ -99,9 +101,9 @@ protected:
     //! Map of children and their child nodes
     boost::unordered_map< std::string, Object* > objectsChart_;
 
+private:
     Object* getAncestor( const uint32_t& aDepth = 1 );
 
-private:
     void print( std::ostream& aStr , const uint32_t& aIndent = 0 ) const;
     
     void getCharts( std::string path, boost::unordered_map<std::string, Object*>& ) const;

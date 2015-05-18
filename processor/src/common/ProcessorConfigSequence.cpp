@@ -18,12 +18,12 @@ std::vector< std::string >* ProcessorConfigSequence::setTables()
 {
   std::vector< std::string >* lTables = new std::vector< std::string >();
 
-  core::Object* lParent = core::Object::getAncestor(1);
+  core::Object* lParent = getParent();
   if ( lParent )
   {
     lTables->push_back( lParent->path() ); //Config based on component ID has highest priority
     
-    core::Object* lGrandparent = core::Object::getAncestor(2);
+    core::Object* lGrandparent = getParent(2);
     if ( lGrandparent ) lTables->push_back( lGrandparent->path() + ".processors" ); //Then config based on system ID
 
     lTables->push_back( lParent->pset().get<ProcessorBag>("stub").bag.hwtype ); //Config based on hardware type has lowest priority

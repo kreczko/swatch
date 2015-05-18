@@ -38,7 +38,9 @@ namespace core {
 
     XParameterSet& getParams();
 
-    template<typename T> T* getParent();
+  protected:
+    Object* getParent( const uint32_t& aDepth=1 );
+    template<typename T> T* getParent( const uint32_t& aDepth=1 );
   
   private:
 		XParameterSet mParams;

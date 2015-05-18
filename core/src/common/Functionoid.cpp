@@ -24,5 +24,9 @@ Functionoid::getParams() {
   return mParams;
 }
 
+Object* Functionoid::getParent( const uint32_t& aDepth ) {
+  return getAncestor(aDepth);
+}
+
 } /* namespace core */
 } /* namespace swatch */
