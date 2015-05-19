@@ -13,9 +13,9 @@
 #include "swatch/core/XParameterSet.hpp"
 #include "swatch/core/xoperators.hpp"
 #include "swatch/core/Factory.hpp"
-#include "swatch/core/GateKeeper.hpp"
 
-#include "swatch/core/test/DummyGateKeeper.hpp"
+#include "swatch/core/XmlGateKeeper.hpp"
+//#include "swatch/core/test/DummyGateKeeper.hpp"
 
 #include "swatch/system/Utilities.hpp"
 #include "swatch/system/System.hpp"
@@ -29,6 +29,13 @@
 // Boost Headers
 #include <boost/foreach.hpp>
 #include <boost/property_tree/json_parser.hpp>
+
+
+#include <xdata/Integer.h>
+#include <xdata/String.h>
+#include <xdata/Boolean.h>
+#include <xdata/Float.h>
+
 
 using namespace std;
 using boost::property_tree::ptree;
@@ -48,7 +55,8 @@ int main(int argc, char** argv) {
 
     std::cout << *lSystem << std::endl;
 
-    swatch::core::test::DummyGateKeeper lGateKeeper( lSystem );
+//    swatch::core::test::DummyGateKeeper lGateKeeper( lSystem );
+    swatch::core::XmlGateKeeper lGateKeeper( lSystem , "${SWATCH_ROOT}/system/test/cfg/db.xml" , 0 );
     lGateKeeper.preload();
 
 
@@ -77,10 +85,13 @@ int main(int argc, char** argv) {
           std::cout << "[Table] " << *lIt3 << std::endl;
         }
 
-        lConfigSequence->configure();
-    
+
+   
         // for now just empty params
         XParameterSet params;
+        params.add( "sequence_1.dummy_1.aa" , xdata::Integer(123) );
+        params.add( "sequence_1.dummy_2.aa" , xdata::Integer(321) );
+
         lConfigSequence->exec(params);
 //         std::cout << lConfigSequence->getProgress() << std::endl;
 //         std::cout << lConfigSequence->getOverallProgress() << std::endl;

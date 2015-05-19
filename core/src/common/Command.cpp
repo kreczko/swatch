@@ -15,7 +15,8 @@ Command::~Command() {
 
 //---
 void 
-Command::exec(const XParameterSet& params) {
+Command::exec( XParameterSet& params) ///Should take const reference but xdata::serializable is const-correctness broken
+{ 
   // Reset the status before doing anything
   reset();
 

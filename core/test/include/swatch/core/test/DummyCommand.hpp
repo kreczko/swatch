@@ -23,10 +23,10 @@ public:
   template<typename T>  DummyCommand( const std::string& aId , const T& aDefault);
   virtual ~DummyCommand();
 
-  virtual void code(const XParameterSet& params);
+  virtual void code( XParameterSet& params); ///Should take const reference but xdata::serializable is const-correctness broken
 
   template<typename T>
-  void registerParam(const std::string name, const T& defaultValue) {
+  void registerParam(const std::string& name, const T& defaultValue) {
     core::Functionoid::registerParameter(name, defaultValue);
   }
 };

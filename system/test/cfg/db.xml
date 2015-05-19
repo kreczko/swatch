@@ -1,0 +1,76 @@
+<db>
+  <table id="calol2.processors" >
+    <row id="0">
+      <entry id="sequence_1.dummy_1.todo" type="string">print</entry>
+      <entry id="sequence_1.dummy_2.todo" type="string">print</entry>
+      <entry id="sequence_1.dummy_3.todo" type="string">print</entry>
+      <entry id="sequence_1.dummy_4.todo" type="string">print</entry>
+      <entry id="sequence_1.dummy_5.todo" type="string">print</entry>
+      <entry id="sequence_1.dummy_6.todo" type="string">print</entry>
+      <entry id="sequence_2.dummy_1.todo" type="string">print</entry>
+      <entry id="sequence_2.dummy_2.todo" type="string">print</entry>
+      <entry id="sequence_2.dummy_3.todo" type="string">print</entry>
+      <entry id="sequence_2.dummy_4.todo" type="string">print</entry>
+      <entry id="sequence_2.dummy_5.todo" type="string">print</entry>
+      <entry id="sequence_2.dummy_6.todo" type="string">print</entry>
+      <entry id="sequence_1.dummy_1.aa"   type="int">1</entry>
+      <entry id="sequence_1.dummy_2.aa"   type="int">2</entry>
+      <entry id="sequence_1.dummy_3.aa"   type="int">3</entry>
+      <entry id="sequence_1.dummy_4.aa"   type="int">4</entry>
+      <entry id="sequence_1.dummy_5.aa"   type="int">5</entry>
+      <entry id="sequence_1.dummy_6.aa"   type="int">6</entry>
+      <entry id="sequence_2.dummy_1.aa"   type="int">7</entry>
+      <entry id="sequence_2.dummy_2.aa"   type="int">8</entry>
+      <entry id="sequence_2.dummy_3.aa"   type="int">9</entry>
+      <entry id="sequence_2.dummy_4.aa"   type="int">10</entry>
+      <entry id="sequence_2.dummy_5.aa"   type="int">11</entry>
+      <entry id="sequence_2.dummy_6.aa"   type="int">12</entry>      
+    </row>
+  </table>
+  <table id="calol2.mp01" >
+    <row id="0">    
+      <entry id="sequence_1.dummy_1.aa" type="int">10</entry>
+      <entry id="sequence_1.dummy_2.aa" type="int">20</entry>
+      <entry id="sequence_1.dummy_3.aa" type="int">30</entry>
+      <entry id="sequence_1.dummy_4.aa" type="int">40</entry>
+      <entry id="sequence_1.dummy_5.aa" type="int">50</entry>
+      <entry id="sequence_1.dummy_6.aa" type="int">60</entry>
+      <entry id="sequence_2.dummy_1.aa" type="int">70</entry>
+      <entry id="sequence_2.dummy_2.aa" type="int">80</entry>
+      <entry id="sequence_2.dummy_3.aa" type="int">90</entry>
+      <entry id="sequence_2.dummy_4.aa" type="int">100</entry>
+      <entry id="sequence_2.dummy_5.aa" type="int">110</entry>
+      <entry id="sequence_2.dummy_6.aa" type="int">120</entry>
+    </row>
+    <row id="1">    
+      <entry id="sequence_1.dummy_1.aa" type="int">101</entry>
+      <entry id="sequence_1.dummy_2.aa" type="int">201</entry>
+      <entry id="sequence_1.dummy_3.aa" type="int">301</entry>
+      <entry id="sequence_1.dummy_4.aa" type="int">401</entry>
+      <entry id="sequence_1.dummy_5.aa" type="int">501</entry>
+      <entry id="sequence_1.dummy_6.aa" type="int">601</entry>
+      <entry id="sequence_2.dummy_1.aa" type="int">701</entry>
+      <entry id="sequence_2.dummy_2.aa" type="int">801</entry>
+      <entry id="sequence_2.dummy_3.aa" type="int">901</entry>
+      <entry id="sequence_2.dummy_4.aa" type="int">1001</entry>
+      <entry id="sequence_2.dummy_5.aa" type="int">1101</entry>
+      <entry id="sequence_2.dummy_6.aa" type="int">1201</entry>
+    </row>    
+  </table>
+  <table id="calol2.mp02" >
+    <row id="0">      
+      <entry id="sequence_1.dummy_1.aa" type="int">100</entry>
+      <entry id="sequence_1.dummy_2.aa" type="int">200</entry>
+      <entry id="sequence_1.dummy_3.aa" type="int">300</entry>
+      <entry id="sequence_1.dummy_4.aa" type="int">400</entry>
+      <entry id="sequence_1.dummy_5.aa" type="int">500</entry>
+      <entry id="sequence_1.dummy_6.aa" type="int">600</entry>
+      <entry id="sequence_2.dummy_1.aa" type="int">700</entry>
+      <entry id="sequence_2.dummy_2.aa" type="int">800</entry>
+      <entry id="sequence_2.dummy_3.aa" type="int">900</entry>
+      <entry id="sequence_2.dummy_4.aa" type="int">1000</entry>
+      <entry id="sequence_2.dummy_5.aa" type="int">1100</entry>
+      <entry id="sequence_2.dummy_6.aa" type="int">1200</entry>
+    </row>
+  </table>         
+</db>         

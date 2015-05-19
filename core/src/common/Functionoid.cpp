@@ -30,8 +30,7 @@ Object* Functionoid::getParent( const uint32_t& aDepth ) {
   return getAncestor(aDepth);
 }
 
-const XParameterSet Functionoid::mergeParametersWithDefaults(
-    const XParameterSet& params) const {
+XParameterSet Functionoid::mergeParametersWithDefaults( XParameterSet& params) const {
   XParameterSet merged = XParameterSet(params);
   merged.update(parameters_);
   return merged;

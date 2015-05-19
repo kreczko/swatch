@@ -23,6 +23,15 @@
 // Swatch Headers
 #include "swatch/core/exception.hpp"
 
+
+namespace swatch {
+namespace core {
+class XParameterSet;
+}
+}
+
+std::ostream& operator<< ( std::ostream& aStr , swatch::core::XParameterSet& aXParameterSet );
+
 namespace swatch {
 namespace core {
       
@@ -30,6 +39,8 @@ namespace core {
 //! Generic container for xdata::Serializable objects   
 class XParameterSet : public xdata::Serializable {
 public:
+
+  friend std::ostream& (::operator<<) ( std::ostream& aStr , swatch::core::XParameterSet& aXParameterSet );
 
   XParameterSet();
   XParameterSet(const XParameterSet& orig);

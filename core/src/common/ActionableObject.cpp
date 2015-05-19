@@ -32,7 +32,7 @@ ConfigSequence* ActionableObject::getConfigSequence( const std::string& aId )
   try {
     return mConfigSequences.at( aId );
   } catch ( const std::out_of_range& e ) {
-    throw ConfigSequenceNotFoundInActionableObject(aId);
+    throw ConfigSequenceNotFoundInActionableObject( "Unable to find ConfigSequence with Id '"+aId+"'" );
   }
   return NULL;
 }
@@ -42,7 +42,7 @@ Command* ActionableObject::getCommand( const std::string& aId )
   try {
     return mCommands.at( aId );
   } catch ( const std::out_of_range& e ) {
-    throw CommandNotFoundInActionableObject(aId);
+    throw CommandNotFoundInActionableObject( "Unable to find Command with Id '"+aId+"'" );
   }
   return NULL;
 }
@@ -52,7 +52,7 @@ Operation* ActionableObject::getOperation( const std::string& aId )
   try {
     return mOperations.at( aId );
   } catch ( const std::out_of_range& e ) {
-    throw OperationNotFoundInActionableObject(aId);
+    throw OperationNotFoundInActionableObject( "Unable to find Operation with Id '"+aId+"'" );
   }
   return NULL;
 }
@@ -90,20 +90,20 @@ std::set<std::string> ActionableObject::getOperations() const
 
 void ActionableObject::Register( const std::string& aId , ConfigSequence* aConfigSequence )
 {
-  if (mConfigSequences.count(aId)) throw ConfigSequenceAlreadyExistsInActionableObject(aId);
+  if (mConfigSequences.count(aId)) throw ConfigSequenceAlreadyExistsInActionableObject( "ConfigSequence With Id '"+aId+"' Already Exists" );
   this->addObj(aConfigSequence);
   mConfigSequences.insert( std::make_pair( aId , aConfigSequence ) );
 }
 
 void ActionableObject::Register( const std::string& aId , Command* aCommand )
 {
-  if (mCommands.count(aId)) throw CommandAlreadyExistsInActionableObject(aId);
+  if (mCommands.count(aId)) throw CommandAlreadyExistsInActionableObject( "Command With Id '"+aId+"' Already Exists" );
   this->addObj(aCommand);
   mCommands.insert( std::make_pair( aId , aCommand ) );
 }
 
 void ActionableObject::Register( const std::string& aId , Operation* aOperation ) {
-  if (mOperations.count(aId)) throw OperationAlreadyExistsInActionableObject(aId);
+  if (mOperations.count(aId)) throw OperationAlreadyExistsInActionableObject( "Operation With Id '"+aId+"' Already Exists" );
   this->addObj(aOperation);
   mOperations.insert( std::make_pair( aId , aOperation ) );
 }

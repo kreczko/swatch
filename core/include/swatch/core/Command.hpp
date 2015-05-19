@@ -39,10 +39,10 @@ public:
 
     virtual ~Command();
 
-    void exec(const XParameterSet& params);
+    void exec( XParameterSet& params); ///Should take const reference but xdata::serializable is const-correctness broken
    
 protected:
-    virtual void code(const XParameterSet& params) = 0;
+    virtual void code( XParameterSet& params ) = 0; ///Should take const reference but xdata::serializable is const-correctness broken
 
 public:
     virtual void reset();

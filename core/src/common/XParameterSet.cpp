@@ -115,7 +115,9 @@ int XParameterSet::equals(const xdata::Serializable& other) {
 //---
 std::string XParameterSet::toString() throw (xdata::exception::Exception) {
   std::ostringstream oss;
-  BOOST_FOREACH( const std::string& name, keys() ) {
+  std::set<std::string> lKeys( keys() );
+
+  BOOST_FOREACH( const std::string& name, lKeys ) {
     const XEntry& e = entries_.at(name);
     oss << ( oss.tellp() == 0 ? '{' : ',' );
 
@@ -130,7 +132,9 @@ std::string XParameterSet::toString() throw (xdata::exception::Exception) {
     }
     oss << ")";
   }
-  oss << '}';
+
+  if( lKeys.size() ) oss << '}';
+  else               oss << "{}";
 
   return oss.str();
 }
@@ -265,3 +269,10 @@ void XParameterSet::update(const XParameterSet& other) {
 
 } // core
 } // swatch
+
+
+std::ostream& operator<< ( std::ostream& aStr , swatch::core::XParameterSet& aXParameterSet )
+{
+  aStr << aXParameterSet.toString();
+  return aStr;
+}

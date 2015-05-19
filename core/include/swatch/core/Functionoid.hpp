@@ -45,7 +45,7 @@ namespace core {
      * Merges a parameter set with the default parameter set.
      * Default values are only used if not present in params.
      */
-    const XParameterSet mergeParametersWithDefaults(const XParameterSet& params) const;
+    XParameterSet mergeParametersWithDefaults( XParameterSet& params) const;
 
   protected:
     Object* getParent( const uint32_t& aDepth=1 );
@@ -57,8 +57,7 @@ namespace core {
 
 protected:
   template<typename T>
-  void registerParameter(const std::string name,
-      const T& defaultValue);
+  void registerParameter(const std::string name, const T& defaultValue);
   };
 
 } /* namespace core */

@@ -1,6 +1,10 @@
 #include "swatch/core/GateKeeper.hpp"
 #include "swatch/core/ConfigSequence.hpp"
 #include "swatch/core/ActionableObject.hpp"
+
+//#include "swatch/logger/Log.hpp"
+
+#include <boost/foreach.hpp>
 //#include "toolbox/ConfigSequence/exception/Exception.h"
 
 #include <xdata/String.h>
@@ -13,18 +17,23 @@ ConfigSequence::ConfigSequence( const std::string& aId ) :
   mTables( NULL ),
   mCommands(),
   mIt( mCommands.end() ),
-  mGateKeeper( NULL )
+  mGateKeeper( NULL ),
+  mCachedParameters( NULL )
 {
   
 }
 
 ConfigSequence::~ConfigSequence() {
   if( mTables ) delete mTables;
+  if( mCachedParameters ) delete mCachedParameters;
 }
 
-void ConfigSequence::configure()
+void ConfigSequence::cacheParameters()
 {
   if( !mGateKeeper ) throw NoGateKeeperDefined( "No GateKeeper Defined" );
+
+  mCachedParameters = new tParameterSets();
+  mCachedParameters->reserve( mCommands.size() );
 
   for( std::vector< Command* >::iterator lIt( mCommands.begin()) ; lIt != mCommands.end() ; ++lIt )
   {
@@ -37,19 +46,58 @@ void ConfigSequence::configure()
       xdata::Serializable* lData( mGateKeeper->get( lPath , getTables() ) );
       lParams.update( *lIt2 , *lData ); ///TODO : Who has ownership of the xdata::Serializable* ????!
     }
-
+    mCachedParameters->push_back( lParams );
   }
 }
 
-void ConfigSequence::exec(const XParameterSet& params)
+
+XParameterSet ConfigSequence::mergeUserParametersWithCachedParams( XParameterSet& aUserParams , XParameterSet& aCached , const std::string& aCommandId ) const
 {
-  const XParameterSet merged_params = mergeParametersWithDefaults(params);
-  for( mIt = mCommands.begin() ; mIt != mCommands.end() ; ++mIt )
+  XParameterSet lMergedParams( aCached );
+
+  // We need to split the string to find out which command the user param is meant for
+  std::set<std::string> lKeys( aUserParams.keys() );
+  BOOST_FOREACH( const std::string& lParamName, lKeys )
   {
-    (**mIt).exec(merged_params);
+
+    if( lParamName.compare( 0 , id().size() , id() ) != 0 )
+    {
+      std::cout << "User parameters '" << lParamName << "' not intended for members of config-sequence '" << id() << "'. Skipping." << std::endl;
+      continue;
+    }
+    
+    if( lParamName.compare( id().size()+1 , aCommandId.size() , aCommandId ) == 0 )
+    {
+      std::string lMergedKey( lParamName.substr( id().size()+aCommandId.size()+2 ) );
+      lMergedParams.set( lMergedKey , aUserParams[ lParamName ] );
+    }
+  }
+
+  return lMergedParams;
+}
+
+
+
+void ConfigSequence::exec( XParameterSet& aParams ) ///Should take const reference but xdata::serializable is const-correctness broken
+{
+  if( !mCachedParameters ) cacheParameters();
+
+  mIt = mCommands.begin();
+  tParameterSets::iterator lIt( mCachedParameters->begin() );
+
+  for(  ; mIt != mCommands.end() ; ++mIt, ++lIt )
+  {
+    XParameterSet lMergedParams( mergeUserParametersWithCachedParams(aParams , *lIt , (**mIt).id() ) );
+
+//     std::cout << "Passed: " << aParams << std::endl;
+//     std::cout << "Cached: " << ( *lIt ) << std::endl;
+//     std::cout << "Merged: " << lMergedParams << std::endl;
+
+    (**mIt).exec( lMergedParams );
     if( (**mIt).getStatus() != Command::kDone ) return;
   }
 }
+
 
 void ConfigSequence::reset()
 {

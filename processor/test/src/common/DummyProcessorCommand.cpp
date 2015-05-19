@@ -13,7 +13,7 @@ namespace swco = swatch::core;
 namespace swatch {
 namespace processor {
 namespace test {
-DummyProcessorCommand::DummyProcessorCommand(const std::string aId) :
+DummyProcessorCommand::DummyProcessorCommand(const std::string& aId) :
         DummyCommand(aId, xdata::String("")) {
   registerParameter("aa", xdata::Integer(15));
   registerParameter("todo", xdata::String(""));
@@ -23,7 +23,8 @@ DummyProcessorCommand::~DummyProcessorCommand() {
 //  delete dummy_proc_;
 }
 
-void DummyProcessorCommand::code(const swco::XParameterSet& params) {
+void DummyProcessorCommand::code(swco::XParameterSet& params) ///Should take const reference but xdata::serializable is const-correctness broken
+{
   DummyProcessor* res = getParent<DummyProcessor>();
 
   std::string todo = params.get<xdata::String>("todo");

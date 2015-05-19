@@ -23,7 +23,8 @@ DummyCommand::~DummyCommand() {
 //  delete dummy_proc_;
 }
 
-void DummyCommand::code(const XParameterSet& params) {
+void DummyCommand::code(XParameterSet& params) ///Should take const reference but xdata::serializable is const-correctness broken
+{
   DummyHandler* res = getParent<DummyHandler>();
 
   BOOST_FOREACH(const std::string& n, params.keys()) {

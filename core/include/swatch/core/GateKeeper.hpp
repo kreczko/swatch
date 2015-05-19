@@ -53,7 +53,10 @@ class GateKeeper {
       @param aHardwareID An ID specifying a table for a particular hardwaretype
       @return the requested data
     */
-     xdata::Serializable* get( const std::string& aParam , const std::vector<std::string>& aTables );
+    xdata::Serializable* get( const std::string& aParam , const std::vector<std::string>& aTables );
+
+  protected:
+    void add( const std::string& aId , xdata::Table* aTable );  
 
   private:
       Object* mToplevel;
@@ -62,6 +65,7 @@ class GateKeeper {
       tTableCache mCache;
 };
  
+DEFINE_SWATCH_EXCEPTION( TableWithIdAlreadyExists );  
 DEFINE_SWATCH_EXCEPTION( UnknownParameter );  
 
 } /* namespace core */

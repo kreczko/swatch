@@ -51,12 +51,13 @@ public:
 
   virtual ~DummyConfigCommand(){}
 
-  virtual void code(const swatch::core::XParameterSet& params){
+  virtual void code(swatch::core::XParameterSet& params )///Should take const reference but xdata::serializable is const-correctness broken
+  {
     DummyConfigProcessor* res = getParent<DummyConfigProcessor>();
   
-//     BOOST_FOREACH(const std::string& n, getParams().keys()) {
-//       LOG(logger::kInfo) << n << " : " << getParams()[n];
-//     }
+    BOOST_FOREACH(const std::string& n, params.keys()) {
+      LOG(logger::kInfo) << n << " : " << params.get(n).toString();
+    }
   
     std::string todo = params.get<xdata::String>("todo");
     if (todo == "print") {

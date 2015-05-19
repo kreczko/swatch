@@ -58,14 +58,9 @@ namespace core {
     const std::string& getStatusMsg() const;
 
     /**
-      Configure the configuration sequence
-    */
-    virtual void configure();
-
-    /**
       Run the configuration sequence
     */
-    virtual void exec(const XParameterSet& params);
+    virtual void exec( XParameterSet& params); ///Should take const reference but xdata::serializable is const-correctness broken
 
     /**
       Reset the configuration commands
@@ -77,19 +72,22 @@ namespace core {
 
 
   private:
+    /**
+      Configure the configuration sequence
+    */
+    void cacheParameters();
+
+    XParameterSet mergeUserParametersWithCachedParams( XParameterSet& aUserParams , XParameterSet& aCached , const std::string& aCommandId ) const;
+
     void setGateKeeper( GateKeeper* aGateKeeper );
-
-    template< typename T>
-    T* cloneSerializable( T* aObj )
-    {
-      return new T( *aObj );
-    } 
-
 
     std::vector<std::string>* mTables;
     std::vector< Command* > mCommands;
     std::vector< Command* >::iterator mIt;
     GateKeeper* mGateKeeper;
+
+    typedef std::vector< XParameterSet > tParameterSets;
+    tParameterSets* mCachedParameters;
 
     static std::string mConfigSequenceComplete;
   };

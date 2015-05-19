@@ -31,7 +31,7 @@ Metric* MonitorableObject::getMonitorable( const std::string& aId )
   try {
     return mMonitorables.at( aId );
   } catch ( const std::out_of_range& e ) {
-    throw MonitorableNotFoundInMonitorableObject(aId);
+    throw MonitorableNotFoundInMonitorableObject( "Unable to find metric with Id '"+aId+"'" );
   }
   return NULL;
 }

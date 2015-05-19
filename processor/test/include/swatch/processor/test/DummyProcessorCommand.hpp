@@ -18,16 +18,16 @@ namespace processor {
 namespace test {
 class DummyProcessorCommand: public swatch::core::test::DummyCommand {
 public:
-  DummyProcessorCommand(const std::string aId);
+  DummyProcessorCommand(const std::string& aId);
   template<typename T>
-  DummyProcessorCommand(const std::string aId, const T& aDefault);
+  DummyProcessorCommand(const std::string& aId, const T& aDefault);
   virtual ~DummyProcessorCommand();
 
-  virtual void code(const swatch::core::XParameterSet& params);
+  virtual void code(swatch::core::XParameterSet& params); ///Should take const reference but xdata::serializable is const-correctness broken
 };
 
 template<typename T>
-DummyProcessorCommand::DummyProcessorCommand(const std::string aId,
+DummyProcessorCommand::DummyProcessorCommand(const std::string& aId,
     const T& aDefault) :
         swatch::core::Command(aId, aDefault) {
   registerParameter("aa", xdata::Integer(15));

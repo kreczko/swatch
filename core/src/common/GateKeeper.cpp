@@ -36,8 +36,11 @@ namespace core {
 
         for( std::vector<std::string>::const_iterator lIt2( lTables.begin()) ; lIt2!=lTables.end() ; ++lIt2 )
         {
+          tTableCache::iterator lTableIt( mCache.find( *lIt2 ) );
+          if( lTableIt != mCache.end() ) continue;
+
           xdata::Table* lTable( getTable( *lIt2 ) ); //perfectly acceptable to return NULL - no such table exists
-          if( lTable ) mCache.insert( std::make_pair( *lIt2 , lTable ) );
+          if( lTable ) mCache.insert( std::make_pair( *lIt2 , lTable ) ); //Could use add method here, but there is no point rechecking the existence of the Id in the cache
         }
 
         std::set<std::string> lParams = lConfigSequence->getParams();
@@ -67,10 +70,18 @@ namespace core {
       }catch( const xdata::exception::Exception& ){}
     } 
 
-    throw UnknownParameter( aParam ); //no table contains the requested parameter - problem!
+    throw UnknownParameter( "Unable to find parameter '"+aParam+"' in any listed table" ); //no table contains the requested parameter - problem!
     return NULL; //to stop the compiler complaining...
   }
   
+
+  void GateKeeper::add( const std::string& aId , xdata::Table* aTable )
+  {
+    tTableCache::iterator lTableIt( mCache.find( aId ) );
+    if( lTableIt != mCache.end() ) throw TableWithIdAlreadyExists( "Table With Id '"+aId+"' Already Exists" );
+    mCache.insert( std::make_pair( aId , aTable ) );
+  }
+
 
 } /* namespace core */
 } /* namespace swatch */
