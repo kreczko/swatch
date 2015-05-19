@@ -11,6 +11,7 @@
 #include "swatch/logger/Log.hpp"
 #include "swatch/core/Command.hpp"
 #include "swatch/core/Factory.hpp"
+#include "swatch/core/Placeholder.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
 #include "swatch/system/test/DummyConfigProcessor.hpp"
 #include "swatch/processor/ProcessorConfigSequence.hpp"
@@ -39,13 +40,13 @@ class DummyConfigCommand: public swatch::core::Command {
 public:
   DummyConfigCommand( const std::string& aId ) :
     core::Command( aId , xdata::Integer(-33)) {
-    registerParameter("aa", xdata::Integer(15));
+    registerParameter("aa", swatch::core::Placeholder< xdata::Integer >() );
     registerParameter("todo", xdata::String(""));
   }
 
   template<typename T>  DummyConfigCommand( const std::string& aId , const T& aDefault) :
     swatch::core::Command( aId , aDefault) {
-    registerParameter("aa", xdata::Integer(15));
+    registerParameter("aa", swatch::core::Placeholder< xdata::Integer >() );
     registerParameter("todo", xdata::String(""));
   }
 
