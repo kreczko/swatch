@@ -24,6 +24,7 @@ test configuration
 #include "swatch/logger/Log.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
 #include "swatch/processor/TTCInterface.hpp"
+#include "swatch/core/test/DummyCommand.hpp"
 
 // Boost Headers
 #include <boost/random/mersenne_twister.hpp>
@@ -44,6 +45,7 @@ using std::endl;
 namespace swlog = swatch::logger;
 namespace swpro = swatch::processor;
 namespace swco = swatch::core;
+namespace swct = swatch::core::test;
 
 //---
 struct TTCCountersIncrementer : public swpro::test::IPBusWorkLoop {
@@ -267,6 +269,7 @@ int main(int argc, char const *argv[]) {
     p0bag.bag.uri = ssURI.str();
 
     swatch::core::XParameterSet params;
+    swatch::core::XParameterSet empty_params;
     params.add("name", xdata::String("Processor 0"));
     params.add("class", p0bag.bag.creator);
     params.add("stub",p0bag);
@@ -321,14 +324,14 @@ int main(int argc, char const *argv[]) {
     
     LOG(swlog::kNotice) << ">> Resetting on internal clock";
     
-    swco::Command* reset = p0->getCommand("reset");
-    reset->getParams().set( "mode", xdata::String("internal") );
+    swct::DummyCommand* reset = (swct::DummyCommand*) p0->getCommand("reset");
+    reset->registerParam("mode", xdata::String("internal"));
 
-    BOOST_FOREACH( const std::string& s, reset->getParams().keys() ) {
-      LOG(swlog::kInfo) << " - " << s << ": " << reset->getParams()[s];
+    BOOST_FOREACH( const std::string& s, reset->getDefaultParams().keys() ) {
+      LOG(swlog::kInfo) << " - " << s << ": " << reset->getDefaultParams()[s];
     }
 
-    reset->exec();
+    reset->exec(empty_params);
     if ( reset->getStatus() == swco::Command::kError ) {  
       LOG(swlog::kError) << reset->getStatusMsg();
       return -1;
@@ -342,18 +345,18 @@ int main(int argc, char const *argv[]) {
     LOG(swlog::kNotice) << "//_ Step 2 ___ Testing config __________________________________";
 
     
-    swco::Command* cfgCmd = p0->getCommand("configure");
-    cfgCmd->getParams().set("mode", xdata::String("capture") );
-    BOOST_FOREACH( const std::string& s, cfgCmd->getParams().keys() ) {
-      LOG(swlog::kInfo) << " - " << s << ": " << cfgCmd->getParams()[s];
+    swct::DummyCommand* cfgCmd = (swct::DummyCommand*) p0->getCommand("configure");
+    cfgCmd->registerParam("mode", xdata::String("capture"));
+    BOOST_FOREACH( const std::string& s, cfgCmd->getDefaultParams().keys() ) {
+      LOG(swlog::kInfo) << " - " << s << ": " << cfgCmd->getDefaultParams()[s];
     }
-    cfgCmd->exec();
+    cfgCmd->exec(empty_params);
     if ( cfgCmd->getStatus() == swco::Command::kError ) {  
       LOG(swlog::kError) << cfgCmd->getStatusMsg();
       return -1;
     }
     
-    p0->getCommand("capture")->exec();
+    p0->getCommand("capture")->exec(empty_params);
 
     LOG(swlog::kNotice) << "//_ Destruction ________________________________________________";
     

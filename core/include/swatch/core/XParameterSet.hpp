@@ -141,6 +141,11 @@ public:
 
   void update( const std::string& name, const xdata::Serializable& data );
   
+  /**
+   * Updates this parameter set with another one.
+   * Existing values are not overwritten!
+   */
+  void update( const XParameterSet& other );
 
   class Inserter {
   public:

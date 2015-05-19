@@ -39,10 +39,10 @@ public:
 
     virtual ~Command();
 
-    void exec();
+    void exec(const XParameterSet& params);
    
 protected:
-    virtual void code() = 0;
+    virtual void code(const XParameterSet& params) = 0;
 
 public:
     virtual void reset();

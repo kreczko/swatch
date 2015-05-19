@@ -24,28 +24,29 @@ namespace test {
 
 struct CommandTestSetup {
   CommandTestSetup():
-  handler(){
+  handler(),
+  print(),
+  error(),
+  nothing(),
+  params(){
     handler.Register<DummyCommand>("dummy_print");//, new DummyCommand(&handler, xdata::Integer(-33)));
     handler.Register<DummyCommand>("dummy_error");//, new DummyCommand(&handler, xdata::Integer(-33)));
     handler.Register<DummyCommand>("dummy_nada");//, new DummyCommand(&handler, xdata::Integer(-33)));
-//    handler.Register<DummyCommand>("dummy_getcrate");//, new DummyCommand(&handler, xdata::String("dfd")));
 
     print = handler.getCommand("dummy_print");
     error = handler.getCommand("dummy_error");
     nothing = handler.getCommand("dummy_nada");
-//    get_crate = handler.getCommand("dummy_getcrate");
 
-    print->getParams().get<xdata::String>("todo") = "print";
-    error->getParams().get<xdata::String>("todo") = "error";
-    nothing->getParams().get<xdata::String>("todo") = "nothing";
-//    get_crate->parameters().get<xdata::String>("todo") = "getCrateId";
+    ((DummyCommand*) print)->registerParam("todo", xdata::String("print"));
+    ((DummyCommand*) error)->registerParam("todo", xdata::String("error"));
+    ((DummyCommand*) nothing)->registerParam("todo", xdata::String("nothing"));
   }
   ~CommandTestSetup(){
   }
 
   DummyHandler handler;
-  Command* print, *error, *nothing, *get_crate;
-
+  Command* print, *error, *nothing;
+  XParameterSet params;
 };
 
 BOOST_AUTO_TEST_SUITE( CommandTestSuite)
@@ -55,20 +56,19 @@ BOOST_AUTO_TEST_CASE(TestConstructor) {
   DummyHandler handler = DummyHandler();
   swatch::core::Command* test = handler.Register<DummyCommand>("Test");
   
-  BOOST_CHECK(test->getParams().get<xdata::Integer>("aa").equals(xdata::Integer(15)));
+  BOOST_CHECK(test->getDefaultParams().get<xdata::Integer>("aa").equals(xdata::Integer(15)));
 }
 
 BOOST_FIXTURE_TEST_CASE(TestTodo,  CommandTestSetup) {
   LOG(kInfo) << "Running CommandTestSuite/TestTodo";
-  BOOST_CHECK(print->getParams().get<xdata::String>("todo") == "print");
-  BOOST_CHECK(error->getParams().get<xdata::String>("todo") == "error");
-  BOOST_CHECK(nothing->getParams().get<xdata::String>("todo") == "nothing");
-//  BOOST_CHECK(get_crate->parameters().get<xdata::String>("todo") == "getCrateId");
+  BOOST_CHECK(print->getDefaultParams().get<xdata::String>("todo") == "print");
+  BOOST_CHECK(error->getDefaultParams().get<xdata::String>("todo") == "error");
+  BOOST_CHECK(nothing->getDefaultParams().get<xdata::String>("todo") == "nothing");
 }
 
 BOOST_FIXTURE_TEST_CASE(TestRunPrint,  CommandTestSetup) {
   LOG(kInfo) << "Running CommandTestSuite/TestRunPrint";
-  print->exec();
+  print->exec(params);
 
   BOOST_CHECK_EQUAL(print->getProgress(), 100.0);
   BOOST_CHECK_EQUAL(print->getStatus(), Command::kDone);
@@ -76,22 +76,9 @@ BOOST_FIXTURE_TEST_CASE(TestRunPrint,  CommandTestSetup) {
   BOOST_CHECK(print->getResult<xdata::Integer>().equals(xdata::Integer(99)));
 }
 
-// TODO: move this to Processor
-//BOOST_FIXTURE_TEST_CASE(TestRunGetCrate,  CommandTestSetup) {
-//  LOG(kInfo) << "Running CommandTestSuite/TestRunGetCrate";
-//  get_crate->exec();
-//
-//  BOOST_CHECK_EQUAL(get_crate->progress(), 100.0);
-//  BOOST_CHECK_EQUAL(get_crate->status(), Command::kDone);
-//  BOOST_CHECK_EQUAL(get_crate->result().type(), "string");
-//  BOOST_CHECK_EQUAL(get_crate->statusMsg(), "Dummy command successfully completed");
-//  BOOST_CHECK(get_crate->result<xdata::String>().equals(xdata::String("s2g20-10")));
-//  BOOST_CHECK_EQUAL(get_crate->result<xdata::String>().toString(), "s2g20-10");
-//}
-
 BOOST_FIXTURE_TEST_CASE(TestRunNothing,  CommandTestSetup) {
   LOG(kInfo) << "Running CommandTestSuite/TestRunNothing";
-  nothing->exec();
+  nothing->exec(params);
 
   BOOST_CHECK_EQUAL(nothing->getProgress(), 0);
   BOOST_CHECK_EQUAL(nothing->getStatus(), Command::kWarning);
@@ -100,7 +87,7 @@ BOOST_FIXTURE_TEST_CASE(TestRunNothing,  CommandTestSetup) {
 
 BOOST_FIXTURE_TEST_CASE(TestRunError,  CommandTestSetup) {
   LOG(kInfo) << "Running CommandTestSuite/TestRunError";
-  error->exec();
+  error->exec(params);
 
   BOOST_CHECK_CLOSE(error->getProgress(), 50.49, 0.1);
   BOOST_CHECK_EQUAL(error->getStatus(), Command::kError);

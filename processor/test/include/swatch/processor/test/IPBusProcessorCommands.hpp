@@ -8,7 +8,7 @@
 #ifndef __SWATCH_CORE_TEST_IPBUSPROCESSORCOMMAND__
 #define __SWATCH_CORE_TEST_IPBUSPROCESSORCOMMAND__
 
-#include "swatch/core/Command.hpp"
+#include "swatch/core/test/DummyCommand.hpp"
 namespace swatch {
 
 namespace core {
@@ -18,7 +18,7 @@ class ActionableObject;
 namespace processor {
 namespace test {
 
-class IPBusResetCommand : public swatch::core::Command {
+class IPBusResetCommand : public swatch::core::test::DummyCommand {
 public:
     IPBusResetCommand(const std::string& aId);
 
@@ -28,7 +28,7 @@ public:
 
 };
 
-class IPBusConfigureCommand : public swatch::core::Command {
+class IPBusConfigureCommand : public swatch::core::test::DummyCommand {
 public:
     IPBusConfigureCommand(const std::string& aId);
 
@@ -39,7 +39,7 @@ public:
 };
 
 
-class IPBusCapture : public swatch::core::Command {
+class IPBusCapture : public swatch::core::test::DummyCommand {
 public:
     IPBusCapture(const std::string& aId);
 

@@ -79,7 +79,9 @@ int main(int argc, char** argv) {
 
         lConfigSequence->configure();
     
-        lConfigSequence->exec();
+        // for now just empty params
+        XParameterSet params;
+        lConfigSequence->exec(params);
 //         std::cout << lConfigSequence->getProgress() << std::endl;
 //         std::cout << lConfigSequence->getOverallProgress() << std::endl;
 //         std::cout << lConfigSequence->getProgressMsg() << std::endl;

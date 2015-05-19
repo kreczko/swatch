@@ -7,6 +7,8 @@
 #include <iostream>
 #include "swatch/core/Functionoid.hpp"
 
+#include <boost/foreach.hpp>
+
 
 //using namespace swatch::logger;
 namespace swatch {
@@ -19,13 +21,20 @@ Functionoid::~Functionoid() {
   // TODO Auto-generated destructor stub
 }
 
-XParameterSet&
-Functionoid::getParams() {
-  return mParams;
+const XParameterSet&
+Functionoid::getDefaultParams() const {
+  return parameters_;
 }
 
 Object* Functionoid::getParent( const uint32_t& aDepth ) {
   return getAncestor(aDepth);
+}
+
+const XParameterSet Functionoid::mergeParametersWithDefaults(
+    const XParameterSet& params) const {
+  XParameterSet merged = XParameterSet(params);
+  merged.update(parameters_);
+  return merged;
 }
 
 } /* namespace core */

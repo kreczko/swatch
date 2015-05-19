@@ -25,7 +25,7 @@ namespace test {
 DummyOperation::DummyOperation(  const std::string& aId ) :
     swatch::core::Operation( aId ) {
 //   assert(handler != 0);
-  getParams().adopt("todo", new xdata::String(""));
+  registerParameter("todo", xdata::String(""));
 
   std::string halted("HALTED");
   std::string configured("CONFIGURED");

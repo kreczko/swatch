@@ -15,13 +15,16 @@ Command::~Command() {
 
 //---
 void 
-Command::exec() {
+Command::exec(const XParameterSet& params) {
   // Reset the status before doing anything
   reset();
 
+  // merge with default settings
+  XParameterSet p = mergeParametersWithDefaults(params);
+
   // Execute the command protected by a very generic try/catch
   try {
-    this->code();
+    this->code(p);
   } catch ( const std::exception& e ) {
     // TODO: log the error to error msg (or not?)
     // Then rethrow the exception on to the higher layers of code.

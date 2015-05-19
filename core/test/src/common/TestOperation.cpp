@@ -30,9 +30,9 @@ struct OperationTestSetup {
     custom = handler.getOperation("custom");
     test = handler.getOperation("test");
 
-    common->getParams().get<xdata::String>("todo") = "common";
-    custom->getParams().get<xdata::String>("todo") = "custom";
-    test->getParams().get<xdata::String>("todo") = "test";
+    ((DummyOperation*) common)->registerParam("todo", xdata::String("common"));
+    ((DummyOperation*) custom)->registerParam("todo", xdata::String("custom"));
+    ((DummyOperation*) test)->registerParam("todo", xdata::String("test"));
   }
   ~OperationTestSetup(){
   }
@@ -54,9 +54,9 @@ BOOST_AUTO_TEST_CASE(TestConstructor) {
 
 BOOST_FIXTURE_TEST_CASE(TestTodo,  OperationTestSetup) {
   LOG(kInfo) << "Running OperationTestSuite/TestTodo";
-  BOOST_CHECK(common->getParams().get<xdata::String>("todo") == "common");
-  BOOST_CHECK(custom->getParams().get<xdata::String>("todo") == "custom");
-  BOOST_CHECK(test->getParams().get<xdata::String>("todo") == "test");
+  BOOST_CHECK(common->getDefaultParams().get<xdata::String>("todo") == "common");
+  BOOST_CHECK(custom->getDefaultParams().get<xdata::String>("todo") == "custom");
+  BOOST_CHECK(test->getDefaultParams().get<xdata::String>("todo") == "test");
 }
 
 
@@ -73,7 +73,7 @@ BOOST_FIXTURE_TEST_CASE(TestConfigure,  OperationTestSetup) {
   BOOST_CHECK_EQUAL(common->getCurrentState(), "HALTED");
   common->executeTransition("configure");
   BOOST_CHECK_EQUAL(common->getCurrentState(), "CONFIGURED");
-  BOOST_CHECK_EQUAL(handler.number(), int(42));
+  BOOST_CHECK_EQUAL(handler.number(), uint32_t(42));
   BOOST_CHECK_EQUAL(handler.something(), "I have been configured");
 }
 

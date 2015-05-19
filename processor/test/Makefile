@@ -32,6 +32,7 @@ LibraryPaths =	\
 	lib \
 	${SWATCH_ROOT}/logger/lib \
 	${SWATCH_ROOT}/core/lib \
+	${SWATCH_ROOT}/core/test/lib \
 	${SWATCH_ROOT}/processor/lib \
 	${CACTUS_ROOT}/lib \
 	${XDAQ_ROOT}/lib
@@ -43,6 +44,7 @@ Libraries =	\
 	cactus_uhal_tests \
 	cactus_swatch_logger \
 	cactus_swatch_core \
+	cactus_swatch_core_test \
 	cactus_swatch_processor \
 	dl
 

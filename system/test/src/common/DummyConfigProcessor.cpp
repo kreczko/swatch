@@ -39,28 +39,28 @@ class DummyConfigCommand: public swatch::core::Command {
 public:
   DummyConfigCommand( const std::string& aId ) :
     core::Command( aId , xdata::Integer(-33)) {
-    getParams().adopt("aa", new xdata::Integer(15));
-    getParams().adopt("todo", new xdata::String(""));
+    registerParameter("aa", xdata::Integer(15));
+    registerParameter("todo", xdata::String(""));
   }
 
   template<typename T>  DummyConfigCommand( const std::string& aId , const T& aDefault) :
     swatch::core::Command( aId , aDefault) {
-    getParams().adopt("aa", new xdata::Integer(15));
-    getParams().adopt("todo", new xdata::String(""));
+    registerParameter("aa", xdata::Integer(15));
+    registerParameter("todo", xdata::String(""));
   }
 
   virtual ~DummyConfigCommand(){}
 
-  virtual void code(){
+  virtual void code(const swatch::core::XParameterSet& params){
     DummyConfigProcessor* res = getParent<DummyConfigProcessor>();
   
 //     BOOST_FOREACH(const std::string& n, getParams().keys()) {
 //       LOG(logger::kInfo) << n << " : " << getParams()[n];
 //     }
   
-    std::string todo = getParams().get<xdata::String>("todo");
+    std::string todo = params.get<xdata::String>("todo");
     if (todo == "print") {
-      LOG(logger::kInfo) << id() << ".exec() running case 'print' with 'aa'=" << getParams().get<xdata::Integer>("aa");
+      LOG(logger::kInfo) << id() << ".exec() running case 'print' with 'aa'=" << params.get<xdata::Integer>("aa");
       res->setSomething("|12345|");
       res->setNumber(54);
       setProgress(100.0);

@@ -13,9 +13,11 @@ namespace swatch {
 namespace processor {
 namespace test {
 DummyProcessorOperation::DummyProcessorOperation(const std::string& aId) :
-        core::Operation(aId) {
-  getParams().adopt("aa", new xdata::Integer(15));
-  getParams().adopt("todo", new xdata::String(""));
+        DummyOperation(aId) {
+  // since DummyOperation sets states, lets clear it all up
+  fsm_->clear();
+  registerParameter("aa", xdata::Integer(15));
+  registerParameter("todo", xdata::String(""));
   std::string halted("HALTED");
   std::string tested("TESTED");
 

@@ -65,7 +65,7 @@ namespace core {
     /**
       Run the configuration sequence
     */
-    virtual void exec();
+    virtual void exec(const XParameterSet& params);
 
     /**
       Reset the configuration commands

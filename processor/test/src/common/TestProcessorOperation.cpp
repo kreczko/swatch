@@ -17,6 +17,8 @@
 #include <xdata/String.h>
 
 using namespace swatch::logger;
+namespace swct = swatch::core::test;
+
 namespace swatch {
 namespace processor {
 namespace test {
@@ -25,15 +27,14 @@ struct ProcessorOperationTestSetup {
   handler("BigDummy", DummyProcessor::generateParams()){
     handler.Register<DummyProcessorOperation>("testing");
 
-    testing = handler.getOperation("testing");
-
-    testing->getParams().get<xdata::String>("todo") = "test";
+    testing = (swct::DummyOperation*) handler.getOperation("testing");
+    testing->registerParam("todo", xdata::String("test"));
   }
   ~ProcessorOperationTestSetup(){
   }
 
   DummyProcessor handler;
-  swatch::core::Operation* testing;
+  swct::DummyOperation* testing;
 
 };
 
@@ -42,7 +43,7 @@ BOOST_AUTO_TEST_SUITE( ProcessorOperationTestSuite)
 // we want to make sure that the factory can use this
 BOOST_FIXTURE_TEST_CASE(TestTodo,  ProcessorOperationTestSetup) {
   LOG(kInfo) << "Running ProcessorOperationTestSuite/TestTodo";
-  BOOST_CHECK(testing->getParams().get<xdata::String>("todo") == "test");
+  BOOST_CHECK(testing->getDefaultParams().get<xdata::String>("todo") == "test");
 }
 
 BOOST_FIXTURE_TEST_CASE(TestOperation,  ProcessorOperationTestSetup) {

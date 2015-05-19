@@ -14,6 +14,9 @@
 #include <deque>
 #include <set>
 
+// XDAQ Headers
+#include <xdata/Serializable.h>
+
 
 //Forward declarations
 namespace swatch {
@@ -36,14 +39,26 @@ namespace core {
     /// Destructor
     virtual ~Functionoid();
 
-    XParameterSet& getParams();
+    const XParameterSet& getDefaultParams() const;
+
+    /**
+     * Merges a parameter set with the default parameter set.
+     * Default values are only used if not present in params.
+     */
+    const XParameterSet mergeParametersWithDefaults(const XParameterSet& params) const;
 
   protected:
     Object* getParent( const uint32_t& aDepth=1 );
     template<typename T> T* getParent( const uint32_t& aDepth=1 );
+
   
   private:
-		XParameterSet mParams;
+		XParameterSet parameters_;
+
+protected:
+  template<typename T>
+  void registerParameter(const std::string name,
+      const T& defaultValue);
   };
 
 } /* namespace core */

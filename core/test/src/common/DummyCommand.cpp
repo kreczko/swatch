@@ -12,24 +12,25 @@ namespace swatch {
 namespace core {
 namespace test {
 
-DummyCommand::DummyCommand(  const std::string& aId ) :
-        core::Command( aId , xdata::Integer(-33)) {
-  getParams().adopt("aa", new xdata::Integer(15));
-  getParams().adopt("todo", new xdata::String(""));
+DummyCommand::DummyCommand(const std::string& aId) :
+        core::Command(aId, xdata::Integer(-33)) {
+
+  registerParameter("aa", xdata::Integer(15));
+  registerParameter("todo", xdata::String(""));
 }
 
 DummyCommand::~DummyCommand() {
 //  delete dummy_proc_;
 }
 
-void DummyCommand::code() {
+void DummyCommand::code(const XParameterSet& params) {
   DummyHandler* res = getParent<DummyHandler>();
 
-  BOOST_FOREACH(const std::string& n, getParams().keys()) {
-    LOG(logger::kInfo) << n << " : " << getParams()[n];
+  BOOST_FOREACH(const std::string& n, params.keys()) {
+    LOG(logger::kInfo) << n << " : " << getDefaultParams()[n];
   }
 
-  std::string todo = getParams().get<xdata::String>("todo");
+  std::string todo = params.get<xdata::String>("todo");
   if (todo == "print") {
 
     res->setSomething("|12345|");

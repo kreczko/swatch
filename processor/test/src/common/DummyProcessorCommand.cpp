@@ -8,23 +8,25 @@
 #include <xdata/String.h>
 #include <boost/foreach.hpp>
 
+namespace swco = swatch::core;
+
 namespace swatch {
 namespace processor {
 namespace test {
 DummyProcessorCommand::DummyProcessorCommand(const std::string aId) :
-        core::Command(aId, xdata::String("")) {
-  getParams().adopt("aa", new xdata::Integer(15));
-  getParams().adopt("todo", new xdata::String(""));
+        DummyCommand(aId, xdata::String("")) {
+  registerParameter("aa", xdata::Integer(15));
+  registerParameter("todo", xdata::String(""));
 }
 
 DummyProcessorCommand::~DummyProcessorCommand() {
 //  delete dummy_proc_;
 }
 
-void DummyProcessorCommand::code() {
+void DummyProcessorCommand::code(const swco::XParameterSet& params) {
   DummyProcessor* res = getParent<DummyProcessor>();
 
-  std::string todo = getParams().get<xdata::String>("todo");
+  std::string todo = params.get<xdata::String>("todo");
   if (todo == "getCrateId") {
     setProgress(90.49, "Dummy command did something");
     setResult(xdata::String(res->getCrateId()));

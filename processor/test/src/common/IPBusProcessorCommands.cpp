@@ -34,9 +34,9 @@ namespace test {
 
 //---
 IPBusResetCommand::IPBusResetCommand(const std::string& aId) :
-  Command(aId, xdata::Integer()) {
+  DummyCommand(aId, xdata::Integer()) {
   
-  getParams().add("mode",xdata::String());
+  registerParameter("mode",xdata::String());
   
 
 }
@@ -52,12 +52,12 @@ void IPBusResetCommand::code() {
 
     IPBusProcessor* p = getParent<IPBusProcessor>();
     
-    if ( !getParams().has("mode") ) {
+    if ( !getDefaultParams().has("mode") ) {
       setError("Configuration not found!");
       return;
     }
     
-    std::string config = getParams().get<xdata::String>("mode");
+    std::string config = getDefaultParams().get<xdata::String>("mode");
 
     // p->ctrl()->configureClock(clock); 
     p->hw().getNode("ttc.stat.clk40Locked").write(true);
@@ -91,9 +91,9 @@ void IPBusResetCommand::code() {
 
 //---
 IPBusConfigureCommand::IPBusConfigureCommand(const std::string& aId) :
-  Command(aId, xdata::String()) {
+  DummyCommand(aId, xdata::String()) {
   
-  getParams().add("mode",xdata::String());
+  registerParameter("mode",xdata::String());
 }
 
 IPBusConfigureCommand::~IPBusConfigureCommand() {
@@ -103,12 +103,12 @@ IPBusConfigureCommand::~IPBusConfigureCommand() {
 void IPBusConfigureCommand::code() {
   
     using namespace swatch::core;
-    if ( !getParams().has("mode") ) {
+    if ( !getDefaultParams().has("mode") ) {
       setError("Configuration not found!");
       return;
     }
     
-    std::string config = getParams().get<xdata::String>("mode");
+    std::string config = getDefaultParams().get<xdata::String>("mode");
 
     IPBusProcessor* p = getParent<IPBusProcessor>();
 
@@ -151,7 +151,7 @@ void IPBusConfigureCommand::code() {
 }
 
 IPBusCapture::IPBusCapture(const std::string& aId) :
-  Command(aId, xdata::String()) {
+  DummyCommand(aId, xdata::String()) {
 }
 
 IPBusCapture::~IPBusCapture() {

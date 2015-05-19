@@ -78,14 +78,14 @@ BOOST_AUTO_TEST_CASE(AddAdoptSetGetTest) {
   xdata::Bag<MyBag>* b = new xdata::Bag<MyBag>();
   pars.adopt("aBag", b);
 
-  BOOST_CHECK_EQUAL(pars.size(), 2);
+  BOOST_CHECK_EQUAL(pars.size(), size_t(2));
   BOOST_CHECK_EQUAL(pars.has("aString"), true);
   BOOST_CHECK_EQUAL(pars.get<xdata::String>("aString").toString(), "something");
 
   // Assign aString
   pars.get<xdata::String>("aString") = "dummy";
 
-  BOOST_CHECK_EQUAL(pars.size(), 2);
+  BOOST_CHECK_EQUAL(pars.size(), size_t(2));
 
   BOOST_CHECK_EQUAL(pars.get<xdata::String>("aString").toString(), "dummy");
   BOOST_CHECK_EQUAL(pars.get("aString").toString(), "dummy");
@@ -102,14 +102,14 @@ BOOST_AUTO_TEST_CASE(AddAdoptSetGetTest) {
   BOOST_CHECK( pars.equals(pars) );
 
   XParameterSet pars2 = pars;
-  BOOST_CHECK_EQUAL(pars2.size(), 2);
+  BOOST_CHECK_EQUAL(pars2.size(), size_t(2));
 
   // std::cout << "Check pars2 size " << pars2.size() << std::endl;
   BOOST_CHECK( pars2.equals(pars) );
   
 
   std::set<std::string> names = pars.keys();
-  BOOST_CHECK_EQUAL(names.size(),2);
+  BOOST_CHECK_EQUAL(names.size(), size_t(2));
   BOOST_CHECK(names.find("aString") != names.end() );
   BOOST_CHECK(names.find("aBag") != names.end() );
 
@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_CASE(AddAdoptSetGetTest) {
   
   // std::cout << " 'aString': " << s->toString() << std::endl;
   // std::cout << "Check pars2 size " << pars2.size() << std::endl;
-  BOOST_CHECK_EQUAL(pars2.size(), 1);
+  BOOST_CHECK_EQUAL(pars2.size(), size_t(1));
   
 }
 
@@ -142,10 +142,10 @@ BOOST_AUTO_TEST_CASE(InsertTest) {
   
   XParameterSet pars;
   pars.insert("aString",  xdata::String("dummy"))("aFloat", xdata::Float(5.));
-  BOOST_CHECK_EQUAL(pars.size(), 2);
+  BOOST_CHECK_EQUAL(pars.size(), size_t(2));
 
   BOOST_CHECK(pars.get<xdata::String>("aString") == "dummy");
-  BOOST_CHECK(pars.get<xdata::Float>("aFloat") == 5.);
+  BOOST_CHECK(pars.get<xdata::Float>("aFloat") == float(5.));
 
 }
 
@@ -394,6 +394,22 @@ BOOST_AUTO_TEST_CASE(CloneXPsetTest) {
 
   delete opars;
   delete xpars;
+}
+
+BOOST_AUTO_TEST_CASE(ParameterUpdate) {
+  using namespace swatch::core;
+  XParameterSet x1 = XParameterSet();
+  XParameterSet x2 = XParameterSet();
+  x1.add("x", xdata::Integer(1));
+  x2.add("x", xdata::Integer(3));
+  x2.add("y", xdata::Integer(42));
+  x1.update(x2);
+
+  // original value
+  BOOST_CHECK_EQUAL(x1.get<xdata::Integer>("x"), 1);
+  // new parameter
+  BOOST_CHECK(x1.has("y"));
+  BOOST_CHECK_EQUAL(x1.get<xdata::Integer>("y"), 42);
 }
 
 

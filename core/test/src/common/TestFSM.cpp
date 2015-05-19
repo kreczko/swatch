@@ -232,7 +232,17 @@ BOOST_FIXTURE_TEST_CASE(SimpleStateMachineWithObject, FSMs) {
   BOOST_CHECK_EQUAL(default_fsm_with_functions.getCurrentState(), configured);
 }
 
-BOOST_AUTO_TEST_SUITE_END() // ProcessorTestSuite
+BOOST_FIXTURE_TEST_CASE(Clear, FSMs) {
+  BOOST_CHECK(default_fsm_with_functions.getCurrentState() != "\0");
+  BOOST_CHECK(default_fsm_with_functions.getInitialState() != "\0");
+  BOOST_CHECK(default_fsm_with_functions.getStates().size() != size_t(0));
+  default_fsm_with_functions.clear();
+  BOOST_CHECK_EQUAL(default_fsm_with_functions.getCurrentState(), "\0");
+  BOOST_CHECK_EQUAL(default_fsm_with_functions.getInitialState(), "\0");
+  BOOST_CHECK_EQUAL(default_fsm_with_functions.getStates().size(), size_t(0));
+}
+
+BOOST_AUTO_TEST_SUITE_END() // FSMTestSuite
 
 } /* namespace core */
 } /* namespace swatch */

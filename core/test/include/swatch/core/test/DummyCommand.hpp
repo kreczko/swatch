@@ -23,16 +23,19 @@ public:
   template<typename T>  DummyCommand( const std::string& aId , const T& aDefault);
   virtual ~DummyCommand();
 
-  virtual void code();
+  virtual void code(const XParameterSet& params);
 
-
+  template<typename T>
+  void registerParam(const std::string name, const T& defaultValue) {
+    core::Functionoid::registerParameter(name, defaultValue);
+  }
 };
 
 template<typename T>
 DummyCommand::DummyCommand( const std::string& aId , const T& aDefault) :
        swatch::core::Command( aId , aDefault) {
-  getParams().adopt("aa", new xdata::Integer(15));
-  getParams().adopt("todo", new xdata::String(""));
+  registerParameter("aa", xdata::Integer(15));
+  registerParameter("todo", xdata::String(""));
 }
 
 } /* namespace test */

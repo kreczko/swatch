@@ -7,7 +7,7 @@
 #include <boost/test/unit_test.hpp>
 #include <boost/foreach.hpp>
 // swatch headers
-#include "swatch/core/Command.hpp"
+#include "swatch/core/test/DummyCommand.hpp"
 #include "swatch/logger/Log.hpp"
 #include "swatch/processor/test/DummyProcessor.hpp"
 #include "swatch/processor/test/DummyProcessorCommand.hpp"
@@ -17,6 +17,7 @@
 #include <xdata/String.h>
 
 using namespace swatch::logger;
+namespace swct = swatch::core::test;
 
 namespace swatch {
 namespace processor {
@@ -24,18 +25,21 @@ namespace test {
 
 struct ProcessorCommandTestSetup {
   ProcessorCommandTestSetup():
-  handler("BigDummy", DummyProcessor::generateParams()){
+  handler("BigDummy", DummyProcessor::generateParams()),
+  get_crate(),
+  params() {
     handler.Register<DummyProcessorCommand>("dummy_getcrate");
 
-    get_crate = handler.getCommand("dummy_getcrate");
+    get_crate = (swct::DummyCommand*) handler.getCommand("dummy_getcrate");
 
-    get_crate->getParams().get<xdata::String>("todo") = "getCrateId";
+    get_crate->registerParam("todo", xdata::String("getCrateId"));
   }
   ~ProcessorCommandTestSetup(){
   }
 
   DummyProcessor handler;
-  swatch::core::Command* get_crate;
+  swct::DummyCommand* get_crate;
+  swatch::core::XParameterSet params;
 
 };
 
@@ -44,12 +48,12 @@ BOOST_AUTO_TEST_SUITE( ProcessorCommandTestSuite)
 // we want to make sure that the factory can use this
 BOOST_FIXTURE_TEST_CASE(TestTodo,  ProcessorCommandTestSetup) {
   LOG(kInfo) << "Running ProcessorCommandTestSuite/TestTodo";
-  BOOST_CHECK_EQUAL(get_crate->getParams().get<xdata::String>("todo").toString(), "getCrateId");
+  BOOST_CHECK_EQUAL(get_crate->getDefaultParams().get<xdata::String>("todo").toString(), "getCrateId");
 }
 
 BOOST_FIXTURE_TEST_CASE(TestRunGetCrate,  ProcessorCommandTestSetup) {
   LOG(kInfo) << "Running ProcessorCommandTestSuite/TestRunGetCrate";
-  get_crate->exec();
+  get_crate->exec(params);
 
   BOOST_CHECK_EQUAL(get_crate->getProgress(), 100.0);
   BOOST_CHECK_EQUAL(get_crate->getStatus(), swatch::core::Command::kDone);

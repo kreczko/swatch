@@ -257,6 +257,11 @@ XParameterSet::Inserter::Inserter(XParameterSet* ps) {
     xps_ = ps;
 }
 
+void XParameterSet::update(const XParameterSet& other) {
+  BOOST_FOREACH( const EntryMap::value_type& it, other.entries_) {
+      emplace(it.first, it.second);
+  }
+}
 
 } // core
 } // swatch

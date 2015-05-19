@@ -88,10 +88,12 @@ const char* logColors[] = {
     ansi::kCyan
     };
 
-Log::Log() {
+Log::Log() :
+	messageLevel_(LogLevel::kError) {
 }
 
-Log::Log(const Log&) {
+Log::Log(const Log&) :
+				messageLevel_(LogLevel::kError) {
 }
 
 Log::~Log() {

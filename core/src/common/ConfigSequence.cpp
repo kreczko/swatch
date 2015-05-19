@@ -28,7 +28,7 @@ void ConfigSequence::configure()
 
   for( std::vector< Command* >::iterator lIt( mCommands.begin()) ; lIt != mCommands.end() ; ++lIt )
   {
-    XParameterSet& lParams( (**lIt).getParams() );
+    XParameterSet lParams( (**lIt).getDefaultParams() );
 
     std::set< std::string > lKeys( lParams.keys() );
     for( std::set< std::string >::iterator lIt2( lKeys.begin() ); lIt2!=lKeys.end(); ++lIt2 )
@@ -41,11 +41,12 @@ void ConfigSequence::configure()
   }
 }
 
-void ConfigSequence::exec()
+void ConfigSequence::exec(const XParameterSet& params)
 {
+  const XParameterSet merged_params = mergeParametersWithDefaults(params);
   for( mIt = mCommands.begin() ; mIt != mCommands.end() ; ++mIt )
   {
-    (**mIt).exec();
+    (**mIt).exec(merged_params);
     if( (**mIt).getStatus() != Command::kDone ) return;
   }
 }
@@ -63,7 +64,7 @@ std::set< std::string > ConfigSequence::getParams()
   std::set< std::string > lKeys, lAllKeys;
   for( std::vector< Command* >::iterator lIt( mCommands.begin()) ; lIt != mCommands.end() ; ++lIt )
   {
-    lKeys = (**lIt).getParams().keys();
+    lKeys = (**lIt).getDefaultParams().keys();
     for( std::set< std::string >::iterator lIt2( lKeys.begin() ); lIt2!=lKeys.end(); ++lIt2 )
     {
       lAllKeys.insert( id() + "." + (**lIt).id() + "." + *lIt2 );

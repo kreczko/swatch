@@ -7,19 +7,18 @@
 
 #ifndef SWATCH_PROCESSOR_TEST_DUMMYPROCESSOROPERATION_HPP
 #define SWATCH_PROCESSOR_TEST_DUMMYPROCESSOROPERATION_HPP
-#include "swatch/core/Operation.hpp"
+#include "swatch/core/test/DummyOperation.hpp"
 
 namespace swatch {
 namespace processor {
 namespace test {
-class DummyProcessorOperation: public swatch::core::Operation {
+class DummyProcessorOperation: public swatch::core::test::DummyOperation {
 public:
   DummyProcessorOperation(const std::string& aId);
   virtual ~DummyProcessorOperation();
 
   // current set of 'operations' we want the operation to execute
   virtual void test(toolbox::Event::Reference event);
-
 };
 }
 }

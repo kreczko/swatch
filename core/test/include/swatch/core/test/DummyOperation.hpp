@@ -35,6 +35,11 @@ public:
   virtual bool check_true_example();
   virtual bool check_false_example();
 
+  template<typename T>
+  void registerParam(const std::string name, const T& defaultValue) {
+    core::Functionoid::registerParameter(name, defaultValue);
+  }
+
 };
 
 //template<typename T>

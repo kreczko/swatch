@@ -252,5 +252,18 @@ void FSM::addTransition(const std::string& from, const std::string& to,
   fsm_.addStateTransition(toState, fromState, rollback, this, &FSM::doNothing);
 }
 
+void FSM::clear() {
+  reset();
+  currentState_ = "\0";
+  initialState_ = "\0";
+  states_.clear();
+  state_map_.clear();
+  stateTransitionTable_.clear();
+  xdaq_state_index_ = 0;
+  highestState_ = 0;
+  stateMethods_.clear();
+  fsm_ = toolbox::fsm::FiniteStateMachine();
+}
+
 } /* namespace core */
 } /* namespace swatch */
