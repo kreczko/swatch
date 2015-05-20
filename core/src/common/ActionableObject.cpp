@@ -27,12 +27,12 @@ ActionableObject::~ActionableObject()
 
 //------------------------------------------------------------------------------------
 
-ConfigSequence* ActionableObject::getConfigSequence( const std::string& aId )
+CommandSequence* ActionableObject::getCommandSequence( const std::string& aId )
 {
   try {
-    return mConfigSequences.at( aId );
+    return mCommandSequences.at( aId );
   } catch ( const std::out_of_range& e ) {
-    throw ConfigSequenceNotFoundInActionableObject( "Unable to find ConfigSequence with Id '"+aId+"'" );
+    throw CommandSequenceNotFoundInActionableObject( "Unable to find CommandSequence with Id '"+aId+"'" );
   }
   return NULL;
 }
@@ -59,10 +59,10 @@ Operation* ActionableObject::getOperation( const std::string& aId )
 
 //------------------------------------------------------------------------------------
 
-std::set<std::string> ActionableObject::getConfigSequences() const
+std::set<std::string> ActionableObject::getCommandSequences() const
 {
   std::set<std::string> lNames;
-  BOOST_FOREACH( tConfigSequenceMap::value_type p, mConfigSequences) {
+  BOOST_FOREACH( tCommandSequenceMap::value_type p, mCommandSequences) {
     lNames.insert( p.first );
   }
   return lNames;
@@ -88,11 +88,11 @@ std::set<std::string> ActionableObject::getOperations() const
 
 //------------------------------------------------------------------------------------
 
-void ActionableObject::Register( const std::string& aId , ConfigSequence* aConfigSequence )
+void ActionableObject::Register( const std::string& aId , CommandSequence* aCommandSequence )
 {
-  if (mConfigSequences.count(aId)) throw ConfigSequenceAlreadyExistsInActionableObject( "ConfigSequence With Id '"+aId+"' Already Exists" );
-  this->addObj(aConfigSequence);
-  mConfigSequences.insert( std::make_pair( aId , aConfigSequence ) );
+  if (mCommandSequences.count(aId)) throw CommandSequenceAlreadyExistsInActionableObject( "CommandSequence With Id '"+aId+"' Already Exists" );
+  this->addObj(aCommandSequence);
+  mCommandSequences.insert( std::make_pair( aId , aCommandSequence ) );
 }
 
 void ActionableObject::Register( const std::string& aId , Command* aCommand )

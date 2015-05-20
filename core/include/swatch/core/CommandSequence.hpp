@@ -1,13 +1,13 @@
 /**
- * @file    ConfigSequence.hpp
+ * @file    CommandSequence.hpp
  * @author  arose
  * @brief   
  * @date    May 2015
  *
  */
 
-#ifndef __SWATCH_CORE_ConfigSequence_HPP__
-#define __SWATCH_CORE_ConfigSequence_HPP__
+#ifndef __SWATCH_CORE_CommandSequence_HPP__
+#define __SWATCH_CORE_CommandSequence_HPP__
 
 #include "swatch/core/Object.hpp"
 #include "swatch/core/Command.hpp"
@@ -22,27 +22,27 @@ namespace core {
 
 
 ///TODO : In the configure method, who has ownership of the xdata::Serializable* - the source table or the destination parameter set????!
-  class ConfigSequence : public Functionoid {
+  class CommandSequence : public Functionoid {
     friend class GateKeeper;
 
   public:
     /// Constructor
-    ConfigSequence( const std::string& aId );
+    CommandSequence( const std::string& aId );
 
     /// Destructor
-    virtual ~ConfigSequence();
+    virtual ~CommandSequence();
   
     /**
       Utility function to add a command to the command sequence
       @param aCommand a command to add to the command sequence
     */
-    ConfigSequence& run( Command* aCommand );
-    ConfigSequence& then( Command* aCommand );
-    ConfigSequence& operator() ( Command* aCommand );
+    CommandSequence& run( Command* aCommand );
+    CommandSequence& then( Command* aCommand );
+    CommandSequence& operator() ( Command* aCommand );
 
-    ConfigSequence& run( const std::string& aCommand );
-    ConfigSequence& then( const std::string& aCommand );
-    ConfigSequence& operator() ( const std::string& aCommand );
+    CommandSequence& run( const std::string& aCommand );
+    CommandSequence& then( const std::string& aCommand );
+    CommandSequence& operator() ( const std::string& aCommand );
 
     std::set<std::string> getParams();
     const std::vector<std::string>& getTables();
@@ -89,7 +89,7 @@ namespace core {
     typedef std::vector< XParameterSet > tParameterSets;
     tParameterSets* mCachedParameters;
 
-    static std::string mConfigSequenceComplete;
+    static std::string mCommandSequenceComplete;
   };
 
 DEFINE_SWATCH_EXCEPTION( NoGateKeeperDefined );  
@@ -97,4 +97,4 @@ DEFINE_SWATCH_EXCEPTION( NoGateKeeperDefined );
 } /* namespace core */
 } /* namespace swatch */
 
-#endif /* __SWATCH_CORE_ConfigSequence_HPP__ */
+#endif /* __SWATCH_CORE_CommandSequence_HPP__ */

@@ -1,20 +1,20 @@
-#include "swatch/processor/ProcessorConfigSequence.hpp"
+#include "swatch/processor/ProcessorCommandSequence.hpp"
 #include "swatch/processor/Processor.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
 
 namespace swatch {
 namespace processor {
 
-ProcessorConfigSequence::ProcessorConfigSequence( const std::string& aId ) :
-  ConfigSequence( aId )
+ProcessorCommandSequence::ProcessorCommandSequence( const std::string& aId ) :
+  CommandSequence( aId )
 {
   
 }
 
-ProcessorConfigSequence::~ProcessorConfigSequence() {
+ProcessorCommandSequence::~ProcessorCommandSequence() {
 }
 
-std::vector< std::string >* ProcessorConfigSequence::setTables()
+std::vector< std::string >* ProcessorCommandSequence::setTables()
 {
   std::vector< std::string >* lTables = new std::vector< std::string >();
 

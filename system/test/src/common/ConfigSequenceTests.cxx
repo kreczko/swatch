@@ -64,22 +64,22 @@ int main(int argc, char** argv) {
 
     for( std::deque<swatch::processor::Processor*>::iterator lIt( lProcessors.begin()) ; lIt!=lProcessors.end() ; ++lIt )
     {
-      std::set<std::string> lConfigSequences( (**lIt).getConfigSequences() );
+      std::set<std::string> lCommandSequences( (**lIt).getCommandSequences() );
 
-      for( std::set<std::string>::iterator lIt2( lConfigSequences.begin()) ; lIt2!=lConfigSequences.end() ; ++lIt2 )
+      for( std::set<std::string>::iterator lIt2( lCommandSequences.begin()) ; lIt2!=lCommandSequences.end() ; ++lIt2 )
       {
         std::cout << std::string( 100 , '-' ) << std::endl;
         std::cout << *lIt2 << std::endl;
-        swatch::core::ConfigSequence* lConfigSequence( (**lIt).getConfigSequence( *lIt2 ) );
+        swatch::core::CommandSequence* lCommandSequence( (**lIt).getCommandSequence( *lIt2 ) );
       
-        std::set<std::string> lParams = lConfigSequence->getParams();
+        std::set<std::string> lParams = lCommandSequence->getParams();
 
         for( std::set<std::string>::iterator lIt3( lParams.begin()) ; lIt3!=lParams.end() ; ++lIt3 )
         {
           std::cout << "[Param] " << *lIt3 << std::endl;
         }
 
-        std::vector<std::string> lTables = lConfigSequence->getTables();
+        std::vector<std::string> lTables = lCommandSequence->getTables();
         for( std::vector<std::string>::iterator lIt3( lTables.begin()) ; lIt3!=lTables.end() ; ++lIt3 )
         {
           std::cout << "[Table] " << *lIt3 << std::endl;
@@ -92,11 +92,11 @@ int main(int argc, char** argv) {
         params.add( "sequence_1.dummy_1.aa" , xdata::Integer(123) );
         params.add( "sequence_1.dummy_2.aa" , xdata::Integer(321) );
 
-        lConfigSequence->exec(params);
-//         std::cout << lConfigSequence->getProgress() << std::endl;
-//         std::cout << lConfigSequence->getOverallProgress() << std::endl;
-//         std::cout << lConfigSequence->getProgressMsg() << std::endl;
-//         std::cout << lConfigSequence->getStatusMsg() << std::endl;
+        lCommandSequence->exec(params);
+//         std::cout << lCommandSequence->getProgress() << std::endl;
+//         std::cout << lCommandSequence->getOverallProgress() << std::endl;
+//         std::cout << lCommandSequence->getProgressMsg() << std::endl;
+//         std::cout << lCommandSequence->getStatusMsg() << std::endl;
 
       }
 

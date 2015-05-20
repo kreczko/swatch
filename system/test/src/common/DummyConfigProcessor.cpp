@@ -14,7 +14,7 @@
 #include "swatch/core/Placeholder.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
 #include "swatch/system/test/DummyConfigProcessor.hpp"
-#include "swatch/processor/ProcessorConfigSequence.hpp"
+#include "swatch/processor/ProcessorCommandSequence.hpp"
 
 // XDAQ Headers
 #include "xdata/String.h"
@@ -109,11 +109,11 @@ Processor(id, params)
   Register<DummyConfigCommand>("dummy_6");
 
   //Define the sequence through pointers to commands - run, then and operator() are all aliases
-  core::ConfigSequence* lSequence1 = Register<processor::ProcessorConfigSequence>( "sequence_1" );
+  core::CommandSequence* lSequence1 = Register<processor::ProcessorCommandSequence>( "sequence_1" );
   lSequence1->run( lDummy1 ).then( lDummy2 )( lDummy3 );
 
   //Define the sequence through command ids - run, then and operator() are all aliases
-  core::ConfigSequence* lSequence2 = Register<processor::ProcessorConfigSequence>( "sequence_2" );
+  core::CommandSequence* lSequence2 = Register<processor::ProcessorCommandSequence>( "sequence_2" );
   lSequence2->run( "dummy_4" ).then( "dummy_5" )( "dummy_6" );
 
 

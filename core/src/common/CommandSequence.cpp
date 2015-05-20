@@ -1,18 +1,18 @@
 #include "swatch/core/GateKeeper.hpp"
-#include "swatch/core/ConfigSequence.hpp"
+#include "swatch/core/CommandSequence.hpp"
 #include "swatch/core/ActionableObject.hpp"
 
 //#include "swatch/logger/Log.hpp"
 
 #include <boost/foreach.hpp>
-//#include "toolbox/ConfigSequence/exception/Exception.h"
+//#include "toolbox/CommandSequence/exception/Exception.h"
 
 #include <xdata/String.h>
 
 namespace swatch {
 namespace core {
 
-ConfigSequence::ConfigSequence( const std::string& aId ) :
+CommandSequence::CommandSequence( const std::string& aId ) :
   Functionoid( aId ),
   mTables( NULL ),
   mCommands(),
@@ -23,12 +23,12 @@ ConfigSequence::ConfigSequence( const std::string& aId ) :
   
 }
 
-ConfigSequence::~ConfigSequence() {
+CommandSequence::~CommandSequence() {
   if( mTables ) delete mTables;
   if( mCachedParameters ) delete mCachedParameters;
 }
 
-void ConfigSequence::cacheParameters()
+void CommandSequence::cacheParameters()
 {
   if( !mGateKeeper ) throw NoGateKeeperDefined( "No GateKeeper Defined" );
 
@@ -51,7 +51,7 @@ void ConfigSequence::cacheParameters()
 }
 
 
-XParameterSet ConfigSequence::mergeUserParametersWithCachedParams( XParameterSet& aUserParams , XParameterSet& aCached , const std::string& aCommandId ) const
+XParameterSet CommandSequence::mergeUserParametersWithCachedParams( XParameterSet& aUserParams , XParameterSet& aCached , const std::string& aCommandId ) const
 {
   XParameterSet lMergedParams( aCached );
 
@@ -78,7 +78,7 @@ XParameterSet ConfigSequence::mergeUserParametersWithCachedParams( XParameterSet
 
 
 
-void ConfigSequence::exec( XParameterSet& aParams ) ///Should take const reference but xdata::serializable is const-correctness broken
+void CommandSequence::exec( XParameterSet& aParams ) ///Should take const reference but xdata::serializable is const-correctness broken
 {
   if( !mCachedParameters ) cacheParameters();
 
@@ -99,7 +99,7 @@ void ConfigSequence::exec( XParameterSet& aParams ) ///Should take const referen
 }
 
 
-void ConfigSequence::reset()
+void CommandSequence::reset()
 {
   for( mIt = mCommands.begin() ; mIt != mCommands.end() ; ++mIt )
   {
@@ -107,7 +107,7 @@ void ConfigSequence::reset()
   }
 }
 
-std::set< std::string > ConfigSequence::getParams()
+std::set< std::string > CommandSequence::getParams()
 {
   std::set< std::string > lKeys, lAllKeys;
   for( std::vector< Command* >::iterator lIt( mCommands.begin()) ; lIt != mCommands.end() ; ++lIt )
@@ -121,84 +121,84 @@ std::set< std::string > ConfigSequence::getParams()
   return lAllKeys;
 }
 
-const std::vector<std::string>& ConfigSequence::getTables()
+const std::vector<std::string>& CommandSequence::getTables()
 {
   if( !mTables ) mTables = setTables();
   return *mTables;
 }
 
-ConfigSequence& ConfigSequence::run( Command* aCommand )
+CommandSequence& CommandSequence::run( Command* aCommand )
 {
   mCommands.push_back( aCommand );
   return *this;
 }
 
-ConfigSequence& ConfigSequence::then ( Command* aCommand )
+CommandSequence& CommandSequence::then ( Command* aCommand )
 {
   return run( aCommand );
 }
 
-ConfigSequence& ConfigSequence::operator() ( Command* aCommand )
+CommandSequence& CommandSequence::operator() ( Command* aCommand )
 {
   return run( aCommand );
 }
 
 
-ConfigSequence& ConfigSequence::run( const std::string& aCommand )
+CommandSequence& CommandSequence::run( const std::string& aCommand )
 {
   ActionableObject* lParent( getParent<ActionableObject>()  );
   return run( lParent->getCommand( aCommand ) );
 }
 
-ConfigSequence& ConfigSequence::then ( const std::string& aCommand )
+CommandSequence& CommandSequence::then ( const std::string& aCommand )
 {
   return run( aCommand );
 }
 
-ConfigSequence& ConfigSequence::operator() ( const std::string& aCommand )
+CommandSequence& CommandSequence::operator() ( const std::string& aCommand )
 {
   return run( aCommand );
 }
 
 
-Command::Status ConfigSequence::getStatus() const
+Command::Status CommandSequence::getStatus() const
 {
   if (mIt == mCommands.end() ) return Command::kDone;
   return (**mIt).getStatus();
 }
 
-float ConfigSequence::getProgress() const
+float CommandSequence::getProgress() const
 {
   if (mIt ==mCommands.end() ) return 100.;
   return (**mIt).getProgress();
 }
 
-float ConfigSequence::getOverallProgress() const
+float CommandSequence::getOverallProgress() const
 {
   uint32_t lStep = mIt - mCommands.begin();
   float lProgress = (100. * lStep) + getProgress();
   return lProgress / mCommands.size();
 }
 
-const std::string& ConfigSequence::getProgressMsg() const
+const std::string& CommandSequence::getProgressMsg() const
 {
-  if (mIt == mCommands.end() ) return mConfigSequenceComplete;
+  if (mIt == mCommands.end() ) return mCommandSequenceComplete;
   return (**mIt).getProgressMsg();
 }
 
-const std::string& ConfigSequence::getStatusMsg() const
+const std::string& CommandSequence::getStatusMsg() const
 {
-  if (mIt == mCommands.end() ) return mConfigSequenceComplete;
+  if (mIt == mCommands.end() ) return mCommandSequenceComplete;
   return (**mIt).getStatusMsg();
 }
 
 
-void ConfigSequence::setGateKeeper( GateKeeper* aGateKeeper )
+void CommandSequence::setGateKeeper( GateKeeper* aGateKeeper )
 {
   mGateKeeper = aGateKeeper;
 }
 
-std::string ConfigSequence::mConfigSequenceComplete = std::string( "ConfigSequence complete" );
+std::string CommandSequence::mCommandSequenceComplete = std::string( "CommandSequence complete" );
 
 } /* namespace core */
 } /* namespace swatch */

@@ -1,6 +1,6 @@
 
 #include "swatch/core/GateKeeper.hpp"
-#include "swatch/core/ConfigSequence.hpp"
+#include "swatch/core/CommandSequence.hpp"
 
 
 namespace swatch {
@@ -24,15 +24,15 @@ namespace core {
 
   bool GateKeeper::preload()
   {
-    // Iterate over all objects under the top level: if they are ConfigSequences, claim them and cache the resources they will use
+    // Iterate over all objects under the top level: if they are CommandSequences, claim them and cache the resources they will use
     for( Object::iterator lIt( mToplevel->begin() ); lIt != mToplevel->end(); ++ lIt )
     {
-      ConfigSequence* lConfigSequence( dynamic_cast< ConfigSequence* >( &(*lIt ) ) );
-      if ( lConfigSequence )
+      CommandSequence* lCommandSequence( dynamic_cast< CommandSequence* >( &(*lIt ) ) );
+      if ( lCommandSequence )
       {
-        lConfigSequence->setGateKeeper( this );
+        lCommandSequence->setGateKeeper( this );
 
-        const std::vector<std::string>& lTables = lConfigSequence->getTables();
+        const std::vector<std::string>& lTables = lCommandSequence->getTables();
 
         for( std::vector<std::string>::const_iterator lIt2( lTables.begin()) ; lIt2!=lTables.end() ; ++lIt2 )
         {
@@ -43,7 +43,7 @@ namespace core {
           if( lTable ) mCache.insert( std::make_pair( *lIt2 , lTable ) ); //Could use add method here, but there is no point rechecking the existence of the Id in the cache
         }
 
-        std::set<std::string> lParams = lConfigSequence->getParams();
+        std::set<std::string> lParams = lCommandSequence->getParams();
         for( std::set<std::string>::const_iterator lIt2( lParams.begin()) ; lIt2!=lParams.end() ; ++lIt2 )
         {
           get( *lIt2 , lTables );         

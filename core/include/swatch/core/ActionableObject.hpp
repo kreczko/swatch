@@ -12,7 +12,7 @@
 // SWATCH Headers
 #include "swatch/core/exception.hpp"
 #include "swatch/core/MonitorableObject.hpp"
-#include "swatch/core/ConfigSequence.hpp"
+#include "swatch/core/CommandSequence.hpp"
 #include "swatch/core/Command.hpp"
 #include "swatch/core/Operation.hpp"
 
@@ -38,7 +38,7 @@ public:
     * List of Configuration Sequence names stored.
     * @return set of command names
     */    
-  std::set< std::string > getConfigSequences() const;
+  std::set< std::string > getCommandSequences() const;
 
   /**
     * List of command names stored.
@@ -53,35 +53,35 @@ public:
   std::set<std::string> getOperations() const;
 
 
-  ConfigSequence* getConfigSequence( const std::string& aId );
+  CommandSequence* getCommandSequence( const std::string& aId );
   Command* getCommand( const std::string& aId );
   Operation* getOperation( const std::string& aId );
 
   template< typename T>
   T* Register( const std::string& aId );
 
-  void Register( const std::string& aId , ConfigSequence* aConfigSequence );
+  void Register( const std::string& aId , CommandSequence* aCommandSequence );
   void Register(const std::string& aId , Command* aCommand );
   void Register(const std::string& aId , Operation* aOperation );
 
 
-  typedef boost::unordered_map< std::string , ConfigSequence* > tConfigSequenceMap;
+  typedef boost::unordered_map< std::string , CommandSequence* > tCommandSequenceMap;
   typedef boost::unordered_map< std::string , Command* > tCommandMap;
   typedef boost::unordered_map< std::string , Operation* > tOperationMap;
      
 protected:
 
 private:
-  tConfigSequenceMap mConfigSequences;
+  tCommandSequenceMap mCommandSequences;
   tCommandMap mCommands;
   tOperationMap mOperations;
 };
 
-DEFINE_SWATCH_EXCEPTION(ConfigSequenceAlreadyExistsInActionableObject);
+DEFINE_SWATCH_EXCEPTION(CommandSequenceAlreadyExistsInActionableObject);
 DEFINE_SWATCH_EXCEPTION(CommandAlreadyExistsInActionableObject);
 DEFINE_SWATCH_EXCEPTION(OperationAlreadyExistsInActionableObject);
 
-DEFINE_SWATCH_EXCEPTION(ConfigSequenceNotFoundInActionableObject);
+DEFINE_SWATCH_EXCEPTION(CommandSequenceNotFoundInActionableObject);
 DEFINE_SWATCH_EXCEPTION(CommandNotFoundInActionableObject);
 DEFINE_SWATCH_EXCEPTION(OperationNotFoundInActionableObject);
 

@@ -1,6 +1,6 @@
 
 #include "swatch/core/test/DummyGateKeeper.hpp"
-#include "swatch/core/ConfigSequence.hpp"
+#include "swatch/core/CommandSequence.hpp"
 
 #include <sstream>
 
