@@ -17,10 +17,10 @@ namespace hardware {
 class AMC13ResetCommand : public swatch::core::Command {
 public:
     AMC13ResetCommand(const std::string& aId);
-    virtual ~AMC13ResetCommand();
-    
 
-    virtual void code();
+    virtual ~AMC13ResetCommand();
+
+    virtual void code(core::XParameterSet& params);
 
     
 };

@@ -18,7 +18,7 @@ public:
   MP7ResetCommand(const std::string& aId);
   virtual ~MP7ResetCommand();
 
-  virtual void code();
+  virtual void code(core::XParameterSet& params);
 
 };
 
@@ -29,7 +29,7 @@ public:
 
   virtual ~MP7ConfigureLoopback();
 
-  virtual void code();
+  virtual void code(core::XParameterSet& params);
 
 };
 

@@ -58,7 +58,8 @@ MP7Configure::coldReset() {
   MP7Processor* res = getParent<MP7Processor>();
 
   swatch::core::Command* reset = res->getCommand("reset");
-  reset->exec();
+  core::XParameterSet emptyParamSet; //TODO: Remove this line once Command::exec method takes a const reference
+  reset->exec( emptyParamSet );
 }
 
 //---

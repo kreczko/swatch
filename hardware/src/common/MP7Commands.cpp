@@ -5,14 +5,12 @@
  *
  */
 
-
-
 #include "swatch/hardware/MP7Commands.hpp"
 
 // XDAQ Headers
 #include "xdata/Integer.h"
 
-// Swatch Hardware Headers
+// Swatch headers
 #include "swatch/hardware/MP7Processor.hpp"
 
 // MP7 Core Headers
@@ -37,7 +35,7 @@ MP7ResetCommand::~MP7ResetCommand() {
 }
 
 //---
-void MP7ResetCommand::code() {
+void MP7ResetCommand::code(core::XParameterSet& params) {
 
   MP7Processor* p = getParent<MP7Processor>();
 
@@ -63,7 +61,7 @@ MP7ConfigureLoopback::~MP7ConfigureLoopback() {
 
 
 //---
-void MP7ConfigureLoopback::code() {
+void MP7ConfigureLoopback::code(core::XParameterSet& params) {
   MP7Processor* p = getParent<MP7Processor>();
   mp7::ChannelsManager mgr = p->driver().channelMgr();
   

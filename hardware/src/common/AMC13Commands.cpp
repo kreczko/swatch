@@ -28,9 +28,8 @@ namespace hardware {
 //---
 AMC13ResetCommand::AMC13ResetCommand(const std::string& aId) :
   Command(aId, xdata::Integer()) {
-  
-  getParams().add("mode", xdata::String());
-
+ 
+  registerParameter("mode", xdata::String());
 }
 
 
@@ -41,13 +40,13 @@ AMC13ResetCommand::~AMC13ResetCommand() {
 
 
 //---
-void AMC13ResetCommand::code() {
+void AMC13ResetCommand::code(core::XParameterSet& params) {
   
 
     AMC13Manager* amc13 = getParent<AMC13Manager>();
     
   
-    std::string mode = getParams().get<xdata::String>("mode");
+    std::string mode = params.get<xdata::String>("mode");
   
     if ( mode == "ttsloopback" ) {
         amc13->driver()->reset(amc13::AMC13Simple::T1);

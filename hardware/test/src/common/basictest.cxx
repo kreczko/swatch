@@ -57,7 +57,7 @@ public:
   }
 
 
-  virtual void code() {
+  virtual void code(swco::XParameterSet& params) {
     
     swsys::System* sys = getParent<swsys::System>();
     
@@ -108,8 +108,9 @@ public:
 
         BOOST_FOREACH( uint32_t s, crate->getAMCSlots()) {
           swpro::Processor* p = crate->amc(s);
-          
-          p->getCommand("reset")->exec();
+         
+          swatch::core::XParameterSet emptyParamSet; //TODO: Remove this line once exec method takes const refererence 
+          p->getCommand("reset")->exec(emptyParamSet);
           
           LOG(swlo::kInfo) << "BC0 Locked" << p->ttc()->isBC0Locked();
         }
@@ -144,10 +145,11 @@ int main(int argc, char** argv) {
     swsys::System* mysys = swco::Factory::get()->bake<swsys::System>(sysset);
     mysys->Register<ResetClockCommand>("resetClocks");
     
-    mysys->getCommand("resetClocks")->exec();
+    swco::XParameterSet emptyParamSet;
+    mysys->getCommand("resetClocks")->exec(emptyParamSet);
     
     BOOST_FOREACH( swpro::Processor* p, mysys->getProcessors() ) {
-      p->getCommand("loopback")->exec();
+      p->getCommand("loopback")->exec(emptyParamSet);
       
       LOG(swlo::kInfo) << left 
                        << setw(15) << "id" << " | "
