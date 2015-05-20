@@ -1,18 +1,32 @@
+/* 
+ * File:   Metric.cpp
+ * Author: Tom Williams
+ * Date: May 2015
+ */
 
 #include "swatch/core/Metric.hpp"
 
-using namespace std;
 
 namespace swatch {
 namespace core {
 
 
-Metric::Metric(const std::string& aId ) : mId( aId )
-{
+AbstractMetric::AbstractMetric() {
 }
 
-Metric::~Metric() {
+
+AbstractMetric::~AbstractMetric() {
 }
+
+
+template<>
+std::string convertMetricDataToString<bool>(bool data)
+{
+    std::ostringstream oss;
+    oss << std::boolalpha << data;
+    return oss.str();
+}
+
 
 }
 }

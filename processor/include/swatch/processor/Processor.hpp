@@ -15,6 +15,7 @@
 namespace swatch {
 
 namespace core {
+class AbstractMetric;
 class XParameterSet;
 }
 
@@ -67,7 +68,11 @@ public:
     ReadoutInterface* readout();
     AlgoInterface* algo();
     LinkInterface* linkInterface();
+    
+    static std::vector<std::string> getDefaultMetrics();
 
+    static std::vector<std::string> getDefaultMonitorableObjects();
+    
 protected:
 
     void Add( TTCInterface* aTTCInterface );
@@ -82,7 +87,7 @@ private:
 
     //! Readout control interface
     ReadoutInterface* readout_;
-    
+
     //!
     AlgoInterface* algo_;
 

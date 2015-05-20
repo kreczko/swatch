@@ -24,11 +24,8 @@ namespace processor {
 class TTCInterface: public core::MonitorableObject {
 protected:
 
-    /**
-     * Constructor
-     * @param id The name of the processor
-     */
-    TTCInterface() : core::MonitorableObject( "ttc" ) {}
+    TTCInterface();
+
 public:
     /**
      * Destructor Made virtual to delegate this task to this class's children and avoid potential run time errors
@@ -75,6 +72,8 @@ public:
     virtual bool hasClock40Stopped() const = 0;
     virtual bool isBC0Locked() const = 0;
 
+    static std::vector<std::string> getDefaultMetrics();
+    
 };
 
 } // namespace processor

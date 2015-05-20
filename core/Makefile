@@ -19,12 +19,14 @@ Library = cactus_swatch_core
 
 Includes = \
 	include \
+	${SWATCH_ROOT}/logger/include \
 	${CACTUS_ROOT}/include \
 	$(XDAQ_ROOT)/include \
 	$(XDAQ_ROOT)/include/linux
 
 LibraryPaths = lib \
 	$(XDAQ_ROOT)/lib \
+	$(CACTUS_ROOT)/lib \
 	/lib64
 
 Libraries =	\
@@ -43,8 +45,8 @@ Libraries =	\
 	uuid \
 	logxmlappender \
 	logudpappender \
-	peer
-
+	peer \
+	boost_regex
 #	tcpla \
 	
 

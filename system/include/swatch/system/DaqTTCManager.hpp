@@ -48,6 +48,8 @@ public:
     
     /// Reads TTC double-bit error counter
     virtual uint32_t ttcDoubleBitErrors() const = 0;
+    
+    static std::vector<std::string> getDefaultMetrics();
 };
 
 } // namespace system

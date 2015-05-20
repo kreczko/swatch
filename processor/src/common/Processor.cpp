@@ -37,7 +37,9 @@ Processor::Processor( const std::string& aId, const core::XParameterSet& params 
     readout_(0x0),
     algo_(0x0),
     links_(0x0)
-{}
+{
+  registerMetric<uint64_t,Processor>("firmwareVersion", *this, &Processor::firmwareVersion, 0, 0);
+}
 
 Processor::~Processor() {
 }
@@ -66,12 +68,31 @@ Processor::linkInterface() {
 }
 
 
+std::vector<std::string> Processor::getDefaultMetrics() {
+  std::vector<std::string> metrics;
+  metrics.push_back("firmwareVersion");
+  
+  return metrics;
+}
+
+
+std::vector<std::string> Processor::getDefaultMonitorableObjects() {
+  std::vector<std::string> objs;
+  objs.push_back("ttc");
+  objs.push_back("links");
+  
+  return objs;
+}
+
+
+
 void Processor::Add( TTCInterface* aTTCInterface )
 {
   if( ttc_ ) throw TTCInterfaceAlreadyDefined( "TTCInterface already defined" );
   this->addObj(aTTCInterface);
   ttc_ = aTTCInterface;
 }
+
 
 void Processor::Add( ReadoutInterface* aReadoutInterface )
 {
@@ -93,7 +114,6 @@ void Processor::Add( LinkInterface* aLinkInterface )
   this->addObj(aLinkInterface);
   links_ = aLinkInterface;
 }
-
 
 
 } // namespace processor

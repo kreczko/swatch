@@ -1,21 +1,27 @@
 
 #include "swatch/core/MonitorableObject.hpp"
+
+
 #include <boost/foreach.hpp>
+
 
 using namespace std;
 
 namespace swatch {
 namespace core {
 
+  
 MonitorableObject::MonitorableObject( const std::string& aId ) :
     Object( aId )
 {
 }
 
+
 MonitorableObject::MonitorableObject( const std::string& aId , const XParameterSet& aParams ) :
     Object( aId , aParams )
 {
 }
+
 
 MonitorableObject::~MonitorableObject()
 {
@@ -23,33 +29,53 @@ MonitorableObject::~MonitorableObject()
     delete p.second;
   }
   mMonitorables.clear();
-  
 }
 
-Metric* MonitorableObject::getMonitorable( const std::string& aId )
-{
-  try {
-    return mMonitorables.at( aId );
-  } catch ( const std::out_of_range& e ) {
-    throw MonitorableNotFoundInMonitorableObject( "Unable to find metric with Id '"+aId+"'" );
-  }
-  return NULL;
-}
 
-std::set<std::string> MonitorableObject::getMonitorables() const
+std::vector<std::string> MonitorableObject::getMetrics() const
 {
-  std::set<std::string> lNames;
+  std::vector<std::string> lNames;
   BOOST_FOREACH( tMonitorableMap::value_type p, mMonitorables) {
-    lNames.insert( p.first );
+    lNames.push_back( p.first );
   }
   return lNames;
 }
 
-void MonitorableObject::registerMonitorable( const std::string& aId , Metric* aMetric )
+
+AbstractMetric& MonitorableObject::getMetric( const std::string& aId )
 {
-  if (mMonitorables.count(aId)) throw MonitorableAlreadyExistsInMonitorableObject(aId);
-  mMonitorables.insert( std::make_pair( aId , aMetric ) );
+  try {
+    return *mMonitorables.at( aId );
+  } catch ( const std::out_of_range& e ) {
+    throw MonitorableNotFoundInMonitorableObject("MonitorableObject \"" + this->path() + "\" does not contain metric of ID \"" + aId + "\"");
+  }
 }
+
+
+StatusFlag MonitorableObject::getStatus() const
+{
+  StatusFlag result = kGood;
+  
+  std::vector<std::string> childIds = getChildren();
+
+  for(std::vector<std::string>::const_iterator it=childIds.begin(); it != childIds.end(); it++)
+  {
+    // Temporary workaround for bug in Object::getChildren : Manually remove the parent ID from the returned child IDs
+    // TODO: Remove this substr-based workaround once Object::getChildren bug has been fixed
+    std::string childId = it->substr(this->id().size()+1);
+    if(swatch::core::MonitorableObject* monObj = dynamic_cast<swatch::core::MonitorableObject*>(this->getObj(childId)))
+    {
+      result = result & monObj->getStatus();
+    }
+  }
+  
+  BOOST_FOREACH( tMonitorableMap::value_type p, mMonitorables) {
+    result = result & p.second->getValue().first;
+  }
+  
+  return result;
+}
+
 
 }
 }
