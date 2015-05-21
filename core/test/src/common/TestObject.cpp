@@ -58,8 +58,6 @@ BOOST_AUTO_TEST_SUITE( ObjectTestSuite )
 
 
 BOOST_AUTO_TEST_CASE(ObjectGetTests) {
-    std::cout << "Running ObjectGetTests" << std::endl;
-   
     using namespace swatch::core;
     using namespace swatch::core::test;
     
@@ -89,8 +87,6 @@ BOOST_AUTO_TEST_CASE(ObjectGetTests) {
 
 
 BOOST_AUTO_TEST_CASE(ObjectAddTests) {
-  std::cout << "Running ObjectAddTests" << std::endl;
-
   SimpleObject anObject("parent");
   
   // Setup: Add a dummy child
@@ -106,8 +102,6 @@ BOOST_AUTO_TEST_CASE(ObjectAddTests) {
 
 
 BOOST_AUTO_TEST_CASE(ObjectIdPathTests) {
-  std::cout << "Running ObjectIdPathTests" << std::endl;
-
   using namespace swatch::core;
   using namespace swatch::core::test;
   
