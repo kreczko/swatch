@@ -31,8 +31,6 @@ public:
   DummyProcessor(const std::string& id, const swatch::core::XParameterSet& params);
     virtual ~DummyProcessor();
 
-    virtual uint32_t getSlot() const;
-    virtual const std::string& getCrateId() const;
     virtual uint64_t firmwareVersion() const;
     virtual std::string firmwareInfo() const;
 
@@ -41,10 +39,8 @@ public:
     const std::vector<std::string> ranTests() const;
     void test1();
     void test2();
-private:
 
-    uint32_t slot_;
-    std::string crate_;
+private:
 
     std::vector<std::string> ranTests_;
 };

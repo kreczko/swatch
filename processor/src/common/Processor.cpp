@@ -33,15 +33,34 @@ const uint32_t Processor::NoSlot =  0x7fffffffL;
 ///---
 Processor::Processor( const std::string& aId, const core::XParameterSet& params ) :
     ActionableObject(aId, params),
+    slot_(NoSlot),
     ttc_(0x0),
     readout_(0x0),
     algo_(0x0),
     links_(0x0)
 {
+  // Register common processor metrics
   registerMetric<uint64_t,Processor>("firmwareVersion", *this, &Processor::firmwareVersion, 0, 0);
+
+  // Set crate and slot number from processor stub  
+  processor::ProcessorBag& desc = params.get<processor::ProcessorBag>("stub");
+  crateId_ = desc.bag.crate;
+  slot_ = desc.bag.slot;
 }
 
 Processor::~Processor() {
+}
+
+
+uint32_t
+Processor::getSlot() const {
+  return slot_;
+}
+
+
+const std::string&
+Processor::getCrateId() const {
+  return crateId_;
 }
 
 

@@ -27,20 +27,12 @@ public:
     MP7Processor(const std::string& id, const swatch::core::XParameterSet& aPars);
     ~MP7Processor();
     
-    virtual uint32_t getSlot() const;
-
-    virtual const std::string& getCrateId() const;
-
     virtual uint64_t firmwareVersion() const;
     
     virtual std::string firmwareInfo() const;
 
     mp7::MP7Controller& driver() { return *driver_; } 
 private:
-    
-    uint32_t slot_;
-    
-    std::string crate_;
     
     mp7::MP7Controller* driver_;
 

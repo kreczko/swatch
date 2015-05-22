@@ -57,9 +57,6 @@ IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::XParam
     
     swpro::ProcessorBag& stub = params.get<swpro::ProcessorBag>("stub");
 
-    crate_ = stub.bag.crate;
-    slot_ = stub.bag.slot;
-
     // Build the objects
     hw_ = new uhal::HwInterface(
             uhal::ConnectionManager::getDevice(
@@ -122,15 +119,6 @@ IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::XParam
 IPBusProcessor::~IPBusProcessor() {
 }
 
-
-const std::string& IPBusProcessor::getCrateId() const {
-    return crate_;
-}
-
-
-uint32_t IPBusProcessor::getSlot() const {
-    return slot_;
-}
 
 uint64_t
 IPBusProcessor::firmwareVersion() const {

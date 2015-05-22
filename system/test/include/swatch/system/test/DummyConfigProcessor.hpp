@@ -26,8 +26,6 @@ public:
   DummyConfigProcessor(const std::string& id, const swatch::core::XParameterSet& params);
     virtual ~DummyConfigProcessor();
 
-    virtual uint32_t getSlot() const;
-    virtual const std::string& getCrateId() const;
     virtual uint64_t firmwareVersion() const;
     virtual std::string firmwareInfo() const;
 
@@ -44,12 +42,6 @@ public:
   private:
     std::string something_;
     uint32_t number_;
-
-
-    std::string mCrate;
-
-    uint32_t slot_;
-    std::string crate_;
 };
 
         

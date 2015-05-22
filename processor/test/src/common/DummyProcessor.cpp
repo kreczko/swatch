@@ -55,21 +55,11 @@ DummyProcessor::DummyProcessor(const std::string& id,
     this->linkInterface()->addOutput(new DummyTxPort(ss.str()));
   }
 
-  swatch::processor::ProcessorBag& stub = params.get<swatch::processor::ProcessorBag>("stub");
-  crate_ = stub.bag.crate;
-  slot_ = stub.bag.slot;
 }
 
 DummyProcessor::~DummyProcessor() {
 }
 
-const std::string& DummyProcessor::getCrateId() const {
-  return crate_;
-}
-
-uint32_t DummyProcessor::getSlot() const {
-  return slot_;
-}
 
 swatch::core::XParameterSet DummyProcessor::generateParams() {
   const std::string addrtab = "file://processor/test/etc/swatch/processor/test/dummy.xml";

@@ -12,7 +12,6 @@
 #include "swatch/core/Command.hpp"
 #include "swatch/core/Factory.hpp"
 #include "swatch/core/Placeholder.hpp"
-#include "swatch/processor/ProcessorStub.hpp"
 #include "swatch/system/test/DummyConfigProcessor.hpp"
 #include "swatch/processor/ProcessorCommandSequence.hpp"
 
@@ -97,9 +96,6 @@ public:
 DummyConfigProcessor::DummyConfigProcessor(const std::string& id, const swatch::core::XParameterSet& params) :
 Processor(id, params)
 {
-  swatch::processor::ProcessorStub& stub = params.get<swatch::processor::ProcessorBag>("stub").bag;
-  crate_ = stub.crate;
-  slot_ = stub.slot;
 
   core::Command* lDummy1 = Register<DummyConfigCommand>("dummy_1");
   core::Command* lDummy2 = Register<DummyConfigCommand>("dummy_2");
@@ -122,13 +118,6 @@ Processor(id, params)
 DummyConfigProcessor::~DummyConfigProcessor() {
 }
 
-const std::string& DummyConfigProcessor::getCrateId() const {
-  return crate_;
-}
-
-uint32_t DummyConfigProcessor::getSlot() const {
-  return slot_;
-}
 
 uint64_t DummyConfigProcessor::firmwareVersion() const {
   return 0;

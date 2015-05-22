@@ -32,24 +32,14 @@ public:
     IPBusProcessor(const std::string& id, const swatch::core::XParameterSet& params);
     virtual ~IPBusProcessor();
 
-    virtual uint32_t getSlot() const;
-    
-    virtual const std::string& getCrateId() const;
-    
     virtual uint64_t firmwareVersion() const;
 
     virtual std::string firmwareInfo() const;
 
-    
-    
     uhal::HwInterface& hw() const;
 
 private:
 
-    uint32_t slot_;
-    std::string crate_;
-
-    //! 
     uhal::HwInterface* hw_;
 };
 

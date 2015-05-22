@@ -39,13 +39,13 @@ public:
      * Return the board slot number
      * @return 
      */
-    virtual uint32_t getSlot() const = 0;
+    uint32_t getSlot() const;
     
     /**
      * Processor crate id getter
      * @return String with the name of the crate
      */
-    virtual const std::string& getCrateId() const = 0;
+    const std::string& getCrateId() const;
 
     //! Constant corresponing to no slot being assigned
     static const uint32_t NoSlot;
@@ -82,6 +82,10 @@ protected:
 
 private:
 
+    uint32_t slot_;
+    
+    std::string crateId_;
+    
     //! TTC control interface
     TTCInterface* ttc_;
 

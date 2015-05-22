@@ -55,8 +55,6 @@ MP7Processor::MP7Processor(const std::string& id, const swatch::core::XParameter
     Register<MP7Configure>("configure");
     
     processor::ProcessorBag& desc = aPars.get<processor::ProcessorBag>("stub");
-    crate_ = desc.bag.crate;
-    slot_ = desc.bag.slot;
 
     uhal::HwInterface board = uhal::ConnectionManager::getDevice(id, desc.bag.uri, desc.bag.addressTable) ;
     
@@ -91,17 +89,6 @@ MP7Processor::~MP7Processor() {
     delete driver_;
 }
 
-
-const std::string&
-MP7Processor::getCrateId() const {
-    return crate_;
-}
-
-
-uint32_t
-MP7Processor::getSlot() const {
-    return slot_;
-}
 
 uint64_t
 MP7Processor::firmwareVersion() const {
