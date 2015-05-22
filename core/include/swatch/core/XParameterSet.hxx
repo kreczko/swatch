@@ -89,16 +89,28 @@ XParameterSet::add( const std::string& name , const T& data ) {
 template<typename T>
 T&
 XParameterSet::get( const std::string& name ) {
-     BOOST_STATIC_ASSERT( (boost::is_base_of<xdata::Serializable,T>::value) );
-    return dynamic_cast<T&>( get(name) );
+    BOOST_STATIC_ASSERT( (boost::is_base_of<xdata::Serializable,T>::value) );
+    try{
+      return dynamic_cast<T&>( get(name) );
+    }catch( const std::bad_cast& ){
+      const std::type_info* lFrom( entries_.find(name)->second.typeinfo );
+      const std::type_info* lTo( &typeid(T) );
+      throw XParameterFailedCast("Unable to cast '"+name+"' from '"+demangleName( lFrom->name() )+"' to '"+ demangleName( lTo->name() ) + "'" );
+    }
 }
 
 //---
 template<typename T>
 T&
 XParameterSet::get( const std::string& name ) const {
-     BOOST_STATIC_ASSERT( (boost::is_base_of<xdata::Serializable,T>::value) ); 
-    return dynamic_cast<T&>( const_cast<xdata::Serializable&>(get(name)) );
+    BOOST_STATIC_ASSERT( (boost::is_base_of<xdata::Serializable,T>::value) ); 
+    try{
+      return dynamic_cast<T&>( const_cast<xdata::Serializable&>(get(name)) );
+    }catch( const std::bad_cast& ){
+      const std::type_info* lFrom( entries_.find(name)->second.typeinfo );
+      const std::type_info* lTo( &typeid(T) );
+      throw XParameterFailedCast("Unable to cast '"+name+"' from '"+demangleName( lFrom->name() )+"' to '"+ demangleName( lTo->name() ) + "'" );
+    }
 }
 
 //---
@@ -117,7 +129,9 @@ T* XParameterSet::pop( const std::string& name ) {
 
   // If cast fails, throw
   if ( s != 0x0 and t == 0x0 ) {
-    throw XParameterFailedCast("Failed to cast "+name+" to "+demangleName(entryIt->second.typeinfo->name() ) );
+    const std::type_info* lFrom( entryIt->second.typeinfo );
+    const std::type_info* lTo( &typeid(T) );
+    throw XParameterFailedCast("Unable to cast '"+name+"' from '"+ demangleName( lFrom->name() ) +"' to '"+demangleName( lTo->name() )+"'" );
   }
 
   entries_.erase(entryIt);
