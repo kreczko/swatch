@@ -111,16 +111,19 @@ void Object::print( std::ostream& aStr , const uint32_t& aIndent ) const
 }
 
 void
-Object::getCharts(std::string path, boost::unordered_map<std::string,Object*>& chart ) const {
+Object::getCharts(const std::string& basePath, boost::unordered_map<std::string,Object*>& chart ) const {
 
-    // Add known objects prefixing  
+    std::string prefix(basePath.empty() ? "" : basePath+'.');
+    
+    // 1) Add children
     boost::unordered_map<std::string, Object*>::const_iterator itMap;
     for ( itMap = objectsChart_.begin(); itMap != objectsChart_.end(); ++itMap ) {
-        chart.insert( std::make_pair(path+"."+itMap->first, itMap->second) );
+        chart.insert( std::make_pair(prefix+itMap->first, itMap->second) );
     }
+    // 2) Add children's children (ad infinitum) by recursive calls
     std::deque<Object*>::const_iterator it;
     for ( it = children_.begin(); it != children_.end(); ++it ) {
-        (*it)->getCharts( path+'.'+(*it)->id_, chart );
+        (*it)->getCharts( prefix+(*it)->id_, chart );
     }    
     
 }
@@ -128,8 +131,19 @@ Object::getCharts(std::string path, boost::unordered_map<std::string,Object*>& c
 std::vector<std::string>
 Object::getChildren() const {
     std::vector<std::string> names;
+    names.reserve(objectsChart_.size());
+    for(boost::unordered_map<std::string, Object*>::const_iterator it=objectsChart_.begin(); it != objectsChart_.end(); it++)
+        names.push_back(it->first);
+    return names;
+}
+
+
+std::vector<std::string>
+Object::getDescendants() const {
     boost::unordered_map<std::string, Object*> chart;
-    this->getCharts(id_,chart);
+    this->getCharts("",chart);
+
+    std::vector<std::string> names;
     names.reserve(chart.size());
     boost::unordered_map<std::string, Object*>::const_iterator it;
     for( it = chart.begin() ; it!=chart.end(); ++it ) {

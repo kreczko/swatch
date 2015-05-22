@@ -167,7 +167,7 @@ BOOST_AUTO_TEST_CASE(ExploreSystem) {
     LOG(kDebug) << "These are subsystem children";
     LOG(kDebug) << "============================";
     
-    BOOST_FOREACH( const std::string& name, system->getChildren()) {
+    BOOST_FOREACH( const std::string& name, system->getDescendants()) {
         LOG(kDebug) << name; 
     }
     LOG(kDebug) << "";

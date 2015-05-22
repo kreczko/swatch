@@ -79,8 +79,12 @@ public:
 
     std::vector<std::string> getPaths() const;
 
+    //! Returns ID string of all children of this object
     std::vector<std::string> getChildren() const;
 
+    //! Returns relative ID path of all this descendents (children, grandchildren, etc) of this object
+    std::vector<std::string> getDescendants() const;
+    
     Object* getObj(const std::string& aId) const;
     
     template<typename T>
@@ -106,7 +110,11 @@ private:
 
     void print( std::ostream& aStr , const uint32_t& aIndent = 0 ) const;
     
-    void getCharts( std::string path, boost::unordered_map<std::string, Object*>& ) const;
+    /*! Fills up a map with all descendants of this object; the path of each object in the map is prepended by the string specified by the caller
+     * @param basePath String that is prepended to object paths
+     * @param chart Map that will be filled with all descendants
+     */
+    void getCharts(const std::string& basePath, boost::unordered_map<std::string, Object*>& chart) const;
     
     void getAncestors ( std::deque< const Object* >& aGenealogy ) const;
 

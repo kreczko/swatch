@@ -60,10 +60,7 @@ StatusFlag MonitorableObject::getStatus() const
 
   for(std::vector<std::string>::const_iterator it=childIds.begin(); it != childIds.end(); it++)
   {
-    // Temporary workaround for bug in Object::getChildren : Manually remove the parent ID from the returned child IDs
-    // TODO: Remove this substr-based workaround once Object::getChildren bug has been fixed
-    std::string childId = it->substr(this->id().size()+1);
-    if(swatch::core::MonitorableObject* monObj = dynamic_cast<swatch::core::MonitorableObject*>(this->getObj(childId)))
+    if(swatch::core::MonitorableObject* monObj = dynamic_cast<swatch::core::MonitorableObject*>(this->getObj(*it)))
     {
       result = result & monObj->getStatus();
     }

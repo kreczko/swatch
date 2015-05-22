@@ -126,7 +126,7 @@ BOOST_AUTO_TEST_CASE(ObjectIdPathTests) {
 }
 
 
-/*
+
 BOOST_AUTO_TEST_CASE(ObjectChildrenTests) {
      using namespace swatch::core;
      using namespace swatch::core::test;
@@ -134,19 +134,15 @@ BOOST_AUTO_TEST_CASE(ObjectChildrenTests) {
      TestFamily family;
      
      // 1) Check children returned from granpa are correct
-     std::vector<std::string> expectedIds, returnedIds;
-     expectedIds.push_back("parentA");
-     expectedIds.push_back("parentB");
-     returnedIds = family.granpa->getChildren();
+     std::vector<std::string> expectedIds = {"parentA", "parentB"};
+     std::vector<std::string> returnedIds = family.granpa->getChildren();
      
      std::sort(expectedIds.begin(), expectedIds.end());
      std::sort(returnedIds.begin(), returnedIds.end());
      BOOST_CHECK_EQUAL_COLLECTIONS( returnedIds.begin(), returnedIds.end(), expectedIds.begin(), expectedIds.end() );
      
      // 2) Check children returned from parentA are correct
-     expectedIds.clear();
-     expectedIds.push_back("kidA1");
-     expectedIds.push_back("kidA2");
+     expectedIds = {"kidA1", "kidA2"};
      returnedIds = family.parentA->getChildren();
      
      std::sort(expectedIds.begin(), expectedIds.end());
@@ -154,9 +150,7 @@ BOOST_AUTO_TEST_CASE(ObjectChildrenTests) {
      BOOST_CHECK_EQUAL_COLLECTIONS( returnedIds.begin(), returnedIds.end(), expectedIds.begin(), expectedIds.end() );
      
      // 3) Check children returned from parentB are correct
-     expectedIds.clear();
-     expectedIds.push_back("kidB1");
-     expectedIds.push_back("kidB2");
+     expectedIds = {"kidB1", "kidB2"};
      returnedIds = family.parentB->getChildren();
      
      std::sort(expectedIds.begin(), expectedIds.end());
@@ -170,7 +164,46 @@ BOOST_AUTO_TEST_CASE(ObjectChildrenTests) {
      BOOST_CHECK( family.kidB2->getChildren().empty() );
      
 }
-*/
+
+BOOST_AUTO_TEST_CASE(ObjectDescendantsTests) {
+     using namespace swatch::core;
+     using namespace swatch::core::test;
+     
+     TestFamily family;
+     
+     // 1) Check descendants returned from granpa are correct
+     std::vector<std::string> expectedIds = {"parentA", "parentA.kidA1", "parentA.kidA2", "parentB", "parentB.kidB1", "parentB.kidB2"};
+     std::vector<std::string> returnedIds = family.granpa->getDescendants();
+     
+     std::sort(expectedIds.begin(), expectedIds.end());
+     std::sort(returnedIds.begin(), returnedIds.end());
+     BOOST_CHECK_EQUAL_COLLECTIONS( returnedIds.begin(), returnedIds.end(), expectedIds.begin(), expectedIds.end() );
+     
+     // 2) Check descendants returned from parentA are correct
+     expectedIds = {"kidA1", "kidA2"};
+     returnedIds = family.parentA->getDescendants();
+     
+     std::sort(expectedIds.begin(), expectedIds.end());
+     std::sort(returnedIds.begin(), returnedIds.end());
+     BOOST_CHECK_EQUAL_COLLECTIONS( returnedIds.begin(), returnedIds.end(), expectedIds.begin(), expectedIds.end() );
+     
+     // 3) Check children returned from parentB are correct
+     expectedIds = {"kidB1", "kidB2"};
+     returnedIds = family.parentB->getDescendants();
+     
+     std::sort(expectedIds.begin(), expectedIds.end());
+     std::sort(returnedIds.begin(), returnedIds.end());
+     BOOST_CHECK_EQUAL_COLLECTIONS( returnedIds.begin(), returnedIds.end(), expectedIds.begin(), expectedIds.end() );
+     
+     // 4) Check children returned from kids are correct
+     BOOST_CHECK( family.kidA1->getDescendants().empty() );
+     BOOST_CHECK( family.kidA2->getDescendants().empty() );
+     BOOST_CHECK( family.kidB1->getDescendants().empty() );
+     BOOST_CHECK( family.kidB2->getDescendants().empty() );
+     
+}
+
+
 
 //TODO
 /*
