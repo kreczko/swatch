@@ -10,10 +10,9 @@
 // XDAQ Headers
 #include "swatch/core/xoperators.hpp"
 
-namespace swatch {
-namespace processor {
 
-std::ostream& operator<<(std::ostream& os, const ProcessorStub& pd ) {
+
+std::ostream& operator<<(std::ostream& os, const swatch::processor::ProcessorStub& pd ) {
     
     os << "ProcessorDescriptor[" << pd.name << "]:\n"
        << "   - Uses creator = " << pd.creator << "\n"
@@ -26,6 +25,9 @@ std::ostream& operator<<(std::ostream& os, const ProcessorStub& pd ) {
 
     return os;
 }
+
+namespace swatch {
+namespace processor {
 
 } // namespace processor
 } // namespace swatch

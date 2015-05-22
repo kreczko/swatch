@@ -65,11 +65,12 @@ struct DaqTTCStub {
 
 };
 
-std::ostream& operator<<(std::ostream& os, const DaqTTCStub& sd );
-
 typedef xdata::Bag<DaqTTCStub> DaqTTCBag;
 
 } // namespace system
 } // namespace swatch
+
+std::ostream& operator<<(std::ostream& os, const swatch::system::DaqTTCStub& sd );
+
 
 #endif /* __SWATCH_SYSTEM_AMC13SERVICESTUB__ */

@@ -45,9 +45,10 @@ public:
 
 typedef xdata::Bag<CrateStub> CrateBag;
 
-std::ostream& operator<<(std::ostream& os, const CrateStub& sd );
-
 } // namespace system
 } // namespace swatch
+
+std::ostream& operator<<(std::ostream& os, const swatch::system::CrateStub& sd );
+
 
 #endif /* __SWATCH_SYSTEM_CRATESTUB_HPP__ */

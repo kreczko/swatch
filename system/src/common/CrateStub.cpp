@@ -13,8 +13,10 @@
 
 namespace swatch {
 namespace system {
+} // namespace system
+} // namespace swatch
 
-std::ostream& operator<<(std::ostream& os, const CrateStub& sd ) {
+std::ostream& operator<<(std::ostream& os, const swatch::system::CrateStub& sd ) {
     
     os << "CrateStub[" << sd.name << "]:\n"
        << "   - Location = " << sd.location << "\n"
@@ -24,5 +26,4 @@ std::ostream& operator<<(std::ostream& os, const CrateStub& sd ) {
     return os;
 }
 
-} // namespace system
-} // namespace swatch
+

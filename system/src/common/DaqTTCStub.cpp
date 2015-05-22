@@ -14,7 +14,11 @@
 namespace swatch {
 namespace system {
 
-std::ostream& operator<<(std::ostream& os, const DaqTTCStub& sd ) {
+} // namespace system
+} // namespace swatch
+
+
+std::ostream& operator<<(std::ostream& os, const swatch::system::DaqTTCStub& sd ) {
     
     os << "DaqTTCStub[" << sd.name << "]:\n"
        << "   - Uses creator = " << sd.creator << "\n"
@@ -28,6 +32,3 @@ std::ostream& operator<<(std::ostream& os, const DaqTTCStub& sd ) {
 
     return os;
 }
-
-} // namespace system
-} // namespace swatch

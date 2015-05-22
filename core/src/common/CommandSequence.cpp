@@ -1,6 +1,9 @@
 #include "swatch/core/GateKeeper.hpp"
 #include "swatch/core/CommandSequence.hpp"
 #include "swatch/core/ActionableObject.hpp"
+#include "swatch/core/XParameterSet.hpp"
+
+#include <iostream>
 
 //#include "swatch/logger/Log.hpp"
 
@@ -89,9 +92,9 @@ void CommandSequence::exec( XParameterSet& aParams ) ///Should take const refere
   {
     XParameterSet lMergedParams( mergeUserParametersWithCachedParams(aParams , *lIt , (**mIt).id() ) );
 
-//     std::cout << "Passed: " << aParams << std::endl;
-//     std::cout << "Cached: " << ( *lIt ) << std::endl;
-//     std::cout << "Merged: " << lMergedParams << std::endl;
+    std::cout << "Passed: " << aParams << std::endl;
+    std::cout << "Cached: " << ( *lIt ) << std::endl;
+    std::cout << "Merged: " << lMergedParams << std::endl;
 
     (**mIt).exec( lMergedParams );
     if( (**mIt).getStatus() != Command::kDone ) return;

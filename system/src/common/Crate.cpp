@@ -92,19 +92,20 @@ Crate::getAMCSlots() const {
     return slots;
 }
 
-std::ostream&
-operator<<(std::ostream& os, const Crate& cv) {
-    os << "mch(" << cv.mch_ << ") amc13(" << cv.amc13_ << ")";
-    for ( uint8_t i = cv.min_; i < cv.max_; ++i ) {
-        os << " amc[" << (int)i << "](" << cv.amcs_[i] << ")"; 
-    }
-    return os;
-}
-
 bool Crate::isSlotTaken( uint32_t slot ) const {
 	return amcs_[slot - min_] != NULL;
 }
 
 
 }
+}
+
+
+std::ostream&
+operator<<(std::ostream& os, const swatch::system::Crate& cv) {
+    os << "mch(" << cv.mch_ << ") amc13(" << cv.amc13_ << ")";
+    for ( uint8_t i = cv.min_; i < cv.max_; ++i ) {
+        os << " amc[" << (int)i << "](" << cv.amcs_[i] << ")"; 
+    }
+    return os;
 }

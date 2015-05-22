@@ -11,11 +11,17 @@
 #include "swatch/core/Object.hpp"
 
 namespace swatch {
-
 namespace processor {
 class Processor;
 }
+namespace system {
+class Crate;
+}
+}
 
+std::ostream& operator<<(std::ostream& os, const swatch::system::Crate& cv);
+
+namespace swatch {
 namespace system {
 
 class Service;
@@ -49,7 +55,7 @@ private:
     uint32_t max_;
     
     friend class System;    
-    friend std::ostream& operator<<(std::ostream& os, const Crate& cv);
+    friend std::ostream& (::operator<<) (std::ostream& os, const swatch::system::Crate& cv);
     
 };
 

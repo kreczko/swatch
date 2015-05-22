@@ -13,7 +13,9 @@
 #include "xdata/String.h"
 #include "Utilities.hpp"
 
+
 namespace xdata {
+
 std::ostream& operator<< (std::ostream& stream, const xdata::Serializable& ser);
 
 /*

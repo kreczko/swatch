@@ -92,9 +92,10 @@ struct ProcessorStub {
 
 typedef xdata::Bag<ProcessorStub> ProcessorBag;
 
-std::ostream& operator<<(std::ostream& os, const ProcessorStub& pd );
-
 } // namespace processor
 } // namespace swatch
+
+std::ostream& operator<<(std::ostream& os, const swatch::processor::ProcessorStub& pd );
+
 
 #endif /* __SWATCH_PROCESSOR_PROCESSORSTUB_HPP__ */
