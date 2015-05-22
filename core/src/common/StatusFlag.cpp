@@ -13,6 +13,10 @@
 namespace swatch{
 namespace core{
 
+} //ns core
+} //ns swatch
+
+
 std::ostream& operator<<(std::ostream& aOut, swatch::core::StatusFlag aValue) {
     if (aValue == swatch::core::kUnknown)
         return (aOut << "UNKNOWN");
@@ -22,10 +26,6 @@ std::ostream& operator<<(std::ostream& aOut, swatch::core::StatusFlag aValue) {
         return (aOut << "ERROR");
     throw std::runtime_error("Invalid StatusFlag enum value in ostream operator<<");
 }
-
-} //ns core
-} //ns swatch
-
 
 swatch::core::StatusFlag operator& (const swatch::core::StatusFlag& flag1, const swatch::core::StatusFlag& flag2)
 {
