@@ -51,39 +51,30 @@ IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::XParam
     using namespace swatch::core;
     using namespace boost::assign;
     
+    // Add commands
     Register<IPBusResetCommand>("reset");
     Register<IPBusConfigureCommand>("configure");
     Register<IPBusCapture>("capture");
     
-    swpro::ProcessorBag& stub = params.get<swpro::ProcessorBag>("stub");
+    // Extract stub
+    swpro::ProcessorStub& stub = params.get<swpro::ProcessorBag>("stub").bag;
 
-    // Build the objects
-    hw_ = new uhal::HwInterface(
-            uhal::ConnectionManager::getDevice(
-                id,
-                stub.bag.uri,
-                stub.bag.addressTable)
-            );
-
-
-
-    //    connection_ = swatch::processor::Connection::make(interface);
+    // Build the driver and interfaces
+    hw_ = new uhal::HwInterface( uhal::ConnectionManager::getDevice(id, stub.uri, stub.addressTable) );
     Add( new IPBusTTC(hw()) );
     Add( new IPBusFakeAlgos(hw()) );
     Add( new processor::LinkInterface() );
 
-
+    // build the list of links based on the firmware informations
     uhal::ValWord<uint32_t> n_rx = hw().getNode("ctrl.infos.nRx").read();
     uhal::ValWord<uint32_t> n_tx = hw().getNode("ctrl.infos.nTx").read();
     hw().dispatch();
-    
-    // build the list of links based on the firmware informations
+
     uint32_t nInputs = n_rx;
     uint32_t nOutputs = n_tx;
 
     LOG(swlog::kDebug) << "Detected " << nInputs << " rx and " << nOutputs << " tx channels.";
 
-//    inputChannels_.reserve(nInputs);
     for (size_t k(0); k < nInputs; ++k) {
         XParameterSet a;
         std::string path = "channels.rx" + boost::lexical_cast<std::string>(k);
@@ -97,7 +88,6 @@ IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::XParam
         LOG(swlog::kDebug) << "rx ch[" << k << "]: size " << rx->getBufferSize();
     }
 
-//    outputChannels_.reserve(nOutputs);
     for (size_t k(0); k < nOutputs; ++k) {
         XParameterSet a, ctrl, buf;
         std::string path = "channels.tx" + boost::lexical_cast<std::string>(k);

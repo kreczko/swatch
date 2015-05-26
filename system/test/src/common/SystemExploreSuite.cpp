@@ -16,6 +16,7 @@
 #include "swatch/system/Crate.hpp"
 #include "swatch/processor/test/DummyProcessor.hpp"
 #include "swatch/system/test/DummyAMC13Manager.hpp"
+#include "swatch/system/test/utilities.hpp"
 
 // XDAQ Headers
 #include "xdata/UnsignedInteger.h"
@@ -65,6 +66,7 @@ struct SystemSetupA {
         ProcessorBag b1;
         b1.bag.crate = xdata::String("crateC");
         b1.bag.slot = xdata::UnsignedInteger(1);
+        addRxTxPortStubs(b1.bag);
         a1.add("stub", b1);
 
         Processor* p1 = new DummyProcessor("mp7-10", a1);
@@ -74,6 +76,7 @@ struct SystemSetupA {
         ProcessorBag b2;
         b2.bag.crate = xdata::String("crateD");
         b2.bag.slot = xdata::UnsignedInteger(2);
+        addRxTxPortStubs(b2.bag);
         a2.add("stub", b2);
         
         // a2.insert("crate", xdata::String("crateD"))
@@ -87,6 +90,7 @@ struct SystemSetupA {
         ProcessorBag b3;
         b3.bag.crate = xdata::String("crateD");
         b3.bag.slot = xdata::UnsignedInteger(3);
+        addRxTxPortStubs(b3.bag);
         a3.add("stub", b3);
         
         Processor* p3 = Factory::get()->bake<Processor>(a3);
@@ -146,6 +150,8 @@ struct SystemSetupA {
     swatch::processor::Processor* p3;
 
 };
+
+
 
 BOOST_FIXTURE_TEST_SUITE(SystemExploreTestSuite, SystemSetupA)
 

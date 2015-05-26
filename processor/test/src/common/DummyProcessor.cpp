@@ -19,6 +19,7 @@
 
 // XDAQ Headers
 #include "xdata/String.h"
+#include "xdata/Vector.h"
 
 // Boost Headers
 #include <boost/assign.hpp>
@@ -42,22 +43,42 @@ DummyProcessor::DummyProcessor(const std::string& id,
 
   Add( new processor::LinkInterface() );
 
-  std::stringstream ss;
-  for (int chan(0); chan < 4; ++chan) {
-    ss.str(std::string());
-    ss << "rx" << std::setw(2) << std::setfill('0') << chan;
-    this->linkInterface()->addInput(new DummyRxPort(ss.str()));
-  }
-
-  for (int chan(0); chan < 2; ++chan) {
-    ss.str(std::string());
-    ss << "tx" << std::setw(2) << std::setfill('0') << chan;
-    this->linkInterface()->addOutput(new DummyTxPort(ss.str()));
-  }
-
+  ProcessorStub& stub = params.get<ProcessorBag>("stub").bag;
+  
+  std::vector<ProcessorPortBag>::iterator it;
+  for(it = stub.rxPorts.begin(); it != stub.rxPorts.end(); it++)
+    linkInterface()->addInput(new DummyRxPort(it->bag.name));
+  for(it = stub.txPorts.begin(); it != stub.txPorts.end(); it++)
+    linkInterface()->addOutput(new DummyTxPort(it->bag.name));
 }
 
 DummyProcessor::~DummyProcessor() {
+}
+
+
+const std::vector<std::string> DummyProcessor::ranTests() const {
+  return ranTests_;
+}
+
+
+void DummyProcessor::test1() {
+  // some code to test the device
+  ranTests_.push_back("test1");
+}
+
+
+void DummyProcessor::test2() {
+  // some code to test the device
+  ranTests_.push_back("test2");
+}
+
+
+uint64_t DummyProcessor::firmwareVersion() const {
+  return 0;
+}
+
+std::string DummyProcessor::firmwareInfo() const {
+  return "none";
 }
 
 
@@ -72,10 +93,20 @@ swatch::core::XParameterSet DummyProcessor::generateParams() {
   stubTemplate.crate = "s2g20-10";
   stubTemplate.slot = 0;
 
+  stubTemplate.rxPorts.push_back( getPortBag("rxA", 0) );
+  stubTemplate.rxPorts.push_back( getPortBag("rxB", 1) );
+  stubTemplate.rxPorts.push_back( getPortBag("rxC", 2) );
+  stubTemplate.rxPorts.push_back( getPortBag("rxD", 3) );
+  stubTemplate.rxPorts.push_back( getPortBag("rxE", 4) );
+
+  stubTemplate.txPorts.push_back( getPortBag("txA", 0) );
+  stubTemplate.txPorts.push_back( getPortBag("txB", 5) );
+  stubTemplate.txPorts.push_back( getPortBag("txC", 10) );
+  
   // x is ready for testing
   swatch::processor::ProcessorBag p0bag;
   p0bag.bag = stubTemplate;
-
+  
   swatch::core::XParameterSet params;
   params.add("name", xdata::String("Processor 0"));
   params.add("class", p0bag.bag.creator);
@@ -83,26 +114,13 @@ swatch::core::XParameterSet DummyProcessor::generateParams() {
   return params;
 }
 
-void DummyProcessor::test1() {
-  // some code to test the device
-  ranTests_.push_back("test1");
-}
 
-void DummyProcessor::test2() {
-  // some code to test the device
-  ranTests_.push_back("test2");
-}
-
-const std::vector<std::string> DummyProcessor::ranTests() const {
-  return ranTests_;
-}
-
-uint64_t DummyProcessor::firmwareVersion() const {
-  return 0;
-}
-
-std::string DummyProcessor::firmwareInfo() const {
-  return "none";
+xdata::Bag<ProcessorPortStub> DummyProcessor::getPortBag(const std::string& name, size_t number)
+{
+  xdata::Bag<ProcessorPortStub> b;
+  b.bag.name = name;
+  b.bag.number = number;
+  return b;
 }
 
 }

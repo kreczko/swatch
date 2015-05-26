@@ -10,12 +10,15 @@
 
 // Swatch Headers
 #include "swatch/processor/Processor.hpp"
+#include "swatch/processor/ProcessorStub.hpp"
 #include "swatch/core/XParameterSet.hpp"
-
 #include "swatch/processor/AlgoInterface.hpp"
 
 // uHAL Headers
 #include "uhal/HwInterface.hpp"
+
+// XDAQ headers
+#include "xdata/Bag.h"
 
 // C++ Headers
 #include <vector>
@@ -34,15 +37,17 @@ public:
     virtual uint64_t firmwareVersion() const;
     virtual std::string firmwareInfo() const;
 
-    static swatch::core::XParameterSet generateParams();
-
     const std::vector<std::string> ranTests() const;
     void test1();
     void test2();
 
+    static swatch::core::XParameterSet generateParams();
+
 private:
 
     std::vector<std::string> ranTests_;
+    
+    static xdata::Bag<ProcessorPortStub> getPortBag(const std::string& name, size_t number);
 };
 
         

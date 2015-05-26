@@ -15,6 +15,7 @@
 #include "swatch/system/DaqTTCStub.hpp"
 #include "swatch/processor/test/DummyProcessor.hpp"
 #include "swatch/system/test/DummyAMC13Manager.hpp"
+#include "swatch/system/test/utilities.hpp"
 #include "swatch/logger/Log.hpp"
 
 // XDAQ Headers
@@ -50,17 +51,18 @@ BOOST_AUTO_TEST_CASE(BuildMiniSystem) {// this is not a test
     ProcessorBag b1, b2, b3;
     b1.bag.crate = xdata::String("crateA");
     b1.bag.slot = xdata::UnsignedInteger(1);
+    addRxTxPortStubs(b1.bag);
     a1.add("stub", b1);
 
     b2.bag.crate = xdata::String("crateA");
     b2.bag.slot = xdata::UnsignedInteger(2);
+    addRxTxPortStubs(b2.bag);
     a2.add("stub", b2);
 
     b3.bag.crate = xdata::String("crateB");
     b3.bag.slot = xdata::UnsignedInteger(1);
+    addRxTxPortStubs(b3.bag);
     a3.add("stub", b3);
-
-
 
 
     BOOST_TEST_MESSAGE("Constructor");

@@ -7,7 +7,10 @@
 
 #include "swatch/processor/Utilities.hpp"
 
-// Swatch Headers
+// boost headers
+#include "boost/foreach.hpp"
+
+// SWATCH headers
 #include "swatch/processor/ProcessorStub.hpp"
 
 
@@ -18,8 +21,7 @@ namespace processor {
 swatch::core::XParameterSet
 treeToProcessorPars(const boost::property_tree::ptree& t) {
 
-    swatch::core::XParameterSet procSet;
-    // Fill the stub first (faster)
+    // Fill the stub with basic info
     ProcessorStub pstub;
     pstub.name         = t.get<std::string>("PROCESSOR NAME");
     pstub.hwtype       = t.get<std::string>("HARDWARE TYPE");
@@ -29,14 +31,35 @@ treeToProcessorPars(const boost::property_tree::ptree& t) {
     pstub.crate        = t.get<std::string>("CRATE NAME");
     pstub.slot         = t.get<uint32_t>("CRATE SLOT");
 
-    // Then make a bag
+    // Iterate over rx ports list
+    BOOST_FOREACH(const boost::property_tree::ptree::value_type& rxPortInfo, t.get_child("RX PORTS"))
+    {
+      xdata::Bag<ProcessorPortStub> b;
+      b.bag.name = rxPortInfo.second.get<std::string>("NAME");
+      b.bag.number = rxPortInfo.second.get<std::string>("PID");
+      pstub.rxPorts.push_back(b);
+    }
+    
+    // Iterate over tx ports list
+    BOOST_FOREACH(const boost::property_tree::ptree::value_type& txPortInfo, t.get_child("TX PORTS"))
+    {
+      xdata::Bag<ProcessorPortStub> b;
+      b.bag.name = txPortInfo.second.get<std::string>("NAME");
+      b.bag.number = txPortInfo.second.get<std::string>("PID");
+      pstub.txPorts.push_back(b);
+    }
+
+    
+    // Finally, make the processor bag
     ProcessorBag pbag;
     pbag.bag = pstub;
 
-    // Store the bag in the set
+    // Store the bag in the XParameterSet
+    swatch::core::XParameterSet procSet;
     procSet.add("name", pbag.bag.name);
     procSet.add("class", pbag.bag.creator);
     procSet.add("stub", pbag);
+    
     return procSet;
 }
 

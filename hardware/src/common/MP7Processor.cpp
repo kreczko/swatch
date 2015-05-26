@@ -49,40 +49,30 @@ MP7Processor::MP7Processor(const std::string& id, const swatch::core::XParameter
     Processor(id, aPars),
     driver_(0x0) {
   
+    // Add commands
     Register<MP7ResetCommand>("reset");
     Register<MP7ConfigureLoopback>("loopback");
-    
+    // Add operations
     Register<MP7Configure>("configure");
     
-    processor::ProcessorBag& desc = aPars.get<processor::ProcessorBag>("stub");
+    // Extract stub, and create driver
+    processor::ProcessorStub& stub = aPars.get<processor::ProcessorBag>("stub").bag;
 
-    uhal::HwInterface board = uhal::ConnectionManager::getDevice(id, desc.bag.uri, desc.bag.addressTable) ;
-    
+    uhal::HwInterface board = uhal::ConnectionManager::getDevice(id, stub.uri, stub.addressTable) ;
     driver_ = new mp7::MP7Controller(board);
     
     // Build subcomponents
     Add( new MP7TTCInterface( driver_ ) ); 
     Add( new swpro::LinkInterface() );
     
-    uint32_t nRx = driver_->getChannelIDs(mp7::kLinkIDs).channels().size();
-    uint32_t nTx = driver_->getChannelIDs(mp7::kLinkIDs).channels().size();
-    
-    // Instantiate Rx ports
-    for( uint32_t k(0); k<nRx; ++k) {
-      std::ostringstream oss;
-      oss << "rx" << std::setw(2) << std::setfill('0') << k;
-      linkInterface()->addInput( new MP7RxPort(oss.str(), k, *this) );
-    }
-    
-    // Instantiate Tx ports
-    for( uint32_t k(0); k<nTx; ++k) {
-      std::ostringstream oss;
-      oss << "tx" << std::setw(2) << std::setfill('0') << k;
-      linkInterface()->addOutput( new MP7TxPort(oss.str(), k, *this) );  
-    }
-    
+    // Add input and output ports
+    std::vector<processor::ProcessorPortBag>::iterator it;
+    for(it = stub.rxPorts.begin(); it != stub.rxPorts.end(); it++)
+      linkInterface()->addInput(new MP7RxPort(it->bag.name, it->bag.number, *this));
+    for(it = stub.txPorts.begin(); it != stub.txPorts.end(); it++)
+      linkInterface()->addOutput(new MP7TxPort(it->bag.name, it->bag.number, *this));
+
     LOG(swlog::kNotice) << "MP7 Processor '" << this->id() << "' built: firmware 0x" << std::hex << firmwareVersion() << std::endl;
-    
 }
 
 MP7Processor::~MP7Processor() {

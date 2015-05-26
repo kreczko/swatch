@@ -1,0 +1,55 @@
+{
+  "SYSTEM":
+          {
+            "NAME": "calol2",
+            "CREATOR": "swatch::system::SystemLoggingCreator",
+            "CRATES": 
+                [
+                  {
+                    "CRATE NAME": "B14 Crate",
+                    "CRATE LOCATION": "Electronics lab @ B14",
+                    "CRATE DESCRIPTION": "MyCrateDescription"
+                  }
+                ],
+            "PROCESSORS":
+                    [
+                      {
+                        "PROCESSOR NAME": "mp01",
+                        "PROCESSOR TYPE": "CALO2 PROCESSOR",
+                        "PROCESSOR CREATOR": "swatch::processor::test::DummyProcessor",
+                        "HARDWARE TYPE": "MP7",
+                        "URI": "chtcp-2.0://127.0.0.1:20304?target=192.168.2.118:50001",
+                        "ADDRESS TABLE": "file://${CACTUS_ROOT}/etc/mp7/addrtab/xe_v1_6_0/mp7xe_infra.xml",
+                        "CRATE NAME": "B14 Crate",
+                        "CRATE SLOT": 3,
+                        "RX PORTS": [
+                            { "NAME" : "Rx1", "PID": 0 },
+                            { "NAME" : "Rx2", "PID": 1 },
+                            { "NAME" : "Rx3", "PID": 2 },
+                            { "NAME" : "Rx4", "PID": 3 },
+                            { "NAME" : "Rx5", "PID": 4 }
+                        ],
+                        "TX PORTS": [
+                            { "NAME" : "TxA", "PID": 0 },
+                            { "NAME" : "TxB", "PID": 5 },
+                            { "NAME" : "TxC", "PID": 10 }
+                        ]
+                      }
+                    ],
+            "DAQTTCS":
+                    [
+                      {
+                        "SERVICE NAME": "AMC13-1",
+                        "SERVICE TYPE": "AMC13",
+                        "SERVICE CREATOR": "swatch::system::test::DummyAMC13Manager",
+                        "CRATE NAME": "B14 Crate",
+                        "CRATE SLOT": 13,
+                        "URI T1": "chtcp-2.0://127.0.0.1:20304?target=192.168.2.153:50001",
+                        "ADDRESS TABLE T1": "file://${CACTUS_ROOT}/etc/amc13/AMC13XG_T1.xml",
+                        "URI T2": "chtcp-2.0://127.0.0.1:20304?target=192.168.2.152:50001",
+                        "ADDRESS TABLE T2": "file://${CACTUS_ROOT}/etc/amc13/AMC13XG_T2.xml",
+                        "FED ID": 1234
+                      }
+                    ]
+          }
+}
