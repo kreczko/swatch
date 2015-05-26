@@ -1,5 +1,5 @@
 /**
- * @file    XRef.hxx
+ * @file    XPointer.hpp
  * @author  Alessandro Thea
  * @brief   Implementation of the templated methods
  * @date    April 2015

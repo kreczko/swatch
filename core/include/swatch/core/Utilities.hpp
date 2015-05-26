@@ -1,8 +1,8 @@
 /**
- * @file    Utilities.hpp
- * @author  Alessandro Thea
- * @brief   Brief description
- * @date    22/07/14
+   @file    Utilities.hpp
+   @author  Alessandro Thea
+   @brief   Brief description
+   @date    22/07/14
  */
 
 
@@ -16,56 +16,54 @@
 // Boost Headers
 #include <boost/any.hpp>
 
-namespace swatch {
-namespace core {
-/**
- * 
- * @param iMangledName
- * @return 
- */
-std::string demangleName( const char* iMangledName);
+namespace swatch
+{
+  namespace core
+  {
+    /**
+      Back-convert GCC-mangled names to class names
+      @param aMangledName a GCC-mangled name
+      @return the original class names
+     */
+    std::string demangleName ( const char* aMangledName );
 
-/**
- * 
- * @param 
- * @return 
- */
-std::string anyToString( const boost::any& );
+    /**
+      Convert a boost::any to a string representation
+      @param aAny a boost::any to convert to a string
+      @return a string representation of the boost::any
+     */
+    std::string anyToString ( const boost::any& aAny );
 
-/**
- * Formats a std::string in printf fashion
- * @param fmt Format string
- * @param ... List of arguments
- * @return A formatted string
- */
-std::string strPrintf(const char* aFmt, ...);
+    /**
+      Formats a std::string in printf fashion
+      @param aFmt Format string
+      @param ... List of arguments
+      @return A formatted string
+    */
+    std::string strPrintf ( const char* aFmt, ... );
 
-/**
- * Sleeps for time in millisecs
- * @param millisec
- */
-void millisleep( const double& millisec );
+    /**
+      Sleeps for time in millisecs
+      @param aMillisec a time in millisecs for which to sleep
+    */
+    void millisleep ( const double& aMillisec );
 
-/**
- * @brief [brief description]
- * @details [long description]
- * 
- * @param aPath [description]
- * @return [description]
- */
-std::vector<std::string> shellExpandPaths ( const std::string& aPath );
+    /**
+      Expand a shell expression (stars, environment variables, etc) to a list of file paths
+      @param aPath a shell expression to expand
+      @return a list of all matching file paths, throw if no results found
+    */
+    std::vector<std::string> shellExpandPaths ( const std::string& aPath );
 
 
-/**
- * @brief [brief description]
- * @details [long description]
- * 
- * @param aPath [description]
- * @return [description]
- */
-std::string shellExpandPath(const std::string& aPath);
+    /**
+      Expand a shell expression (stars, environment variables, etc) to a file path
+      @param aPath a shell expression to expand
+      @return a file path, throw if no results or more than one result found
+    */
+    std::string shellExpandPath ( const std::string& aPath );
 
-} // namespace core
+  } // namespace core
 } // namespace swatch
 
 
