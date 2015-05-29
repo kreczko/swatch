@@ -23,16 +23,11 @@
                         "CRATE NAME": "B14 Crate",
                         "CRATE SLOT": 3,
                         "RX PORTS": [
-                            { "NAME" : "Rx1", "PID": 0 },
-                            { "NAME" : "Rx2", "PID": 1 },
-                            { "NAME" : "Rx3", "PID": 2 },
-                            { "NAME" : "Rx4", "PID": 3 },
-                            { "NAME" : "Rx5", "PID": 4 }
+                            { "NAME" : "Rx[0:10]", "PID" : "[0:10]"},
+                            { "NAME" : "Rx[10:20:5]", "PID" : "[10:20:5]"}
                         ],
                         "TX PORTS": [
-                            { "NAME" : "TxA", "PID": 0 },
-                            { "NAME" : "TxB", "PID": 5 },
-                            { "NAME" : "TxC", "PID": 10 }
+                            { "NAME" : "Tx[00:72]", "PID": "[0:72]" }
                         ]
                       }
                     ],
