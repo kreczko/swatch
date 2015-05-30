@@ -30,17 +30,17 @@ class XParameterSet;
 }
 }
 
-std::ostream& operator<< ( std::ostream& aStr , swatch::core::XParameterSet& aXParameterSet );
 
 namespace swatch {
 namespace core {
-      
+
+std::ostream& operator<< ( std::ostream& aStr , swatch::core::XParameterSet& aXParameterSet );
 
 //! Generic container for xdata::Serializable objects   
 class XParameterSet : public xdata::Serializable {
 public:
 
-  friend std::ostream& (::operator<<) ( std::ostream& aStr , swatch::core::XParameterSet& aXParameterSet );
+  friend std::ostream& (operator<<) ( std::ostream& aStr , swatch::core::XParameterSet& aXParameterSet );
 
   XParameterSet();
   XParameterSet(const XParameterSet& orig);

@@ -30,13 +30,14 @@ namespace swatch
   }
 }
 
-// Forward declaration of the object-streaming operator
-std::ostream& operator<< ( std::ostream& aStr , const swatch::core::Object& aObject );
 
 namespace swatch
 {
   namespace core
   {
+
+    // Forward declaration of the object-streaming operator
+    std::ostream& operator<< ( std::ostream& aStr , const swatch::core::Object& aObject );
 
     /**
       Hierarchical base class for swatch classes. Inspired by uhal::Node
@@ -132,7 +133,7 @@ namespace swatch
             Stack itStack_;
         };
 
-        friend std::ostream& ( ::operator<< ) ( std::ostream& aStr , const swatch::core::Object& aObject );
+        friend std::ostream& ( operator<< ) ( std::ostream& aStr , const swatch::core::Object& aObject );
         friend class Functionoid;
 
         /**

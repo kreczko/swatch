@@ -10,7 +10,8 @@
 // XDAQ Headers
 #include "swatch/core/xoperators.hpp"
 
-
+namespace swatch {
+namespace processor {
 
 std::ostream& operator<<(std::ostream& os, const swatch::processor::ProcessorStub& pd ) {
     
@@ -25,9 +26,6 @@ std::ostream& operator<<(std::ostream& os, const swatch::processor::ProcessorStu
 
     return os;
 }
-
-namespace swatch {
-namespace processor {
 
 } // namespace processor
 } // namespace swatch

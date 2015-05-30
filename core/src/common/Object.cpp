@@ -397,11 +397,13 @@ namespace swatch
       return false;
     }
 
+
+    std::ostream& operator<< ( std::ostream& aStr , const swatch::core::Object& aObject )
+    {
+      aObject.print ( aStr );
+      return aStr;
+    }
+
   }
 }
 
-std::ostream& operator<< ( std::ostream& aStr , const swatch::core::Object& aObject )
-{
-  aObject.print ( aStr );
-  return aStr;
-}

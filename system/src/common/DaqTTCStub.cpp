@@ -14,9 +14,6 @@
 namespace swatch {
 namespace system {
 
-} // namespace system
-} // namespace swatch
-
 
 std::ostream& operator<<(std::ostream& os, const swatch::system::DaqTTCStub& sd ) {
     
@@ -32,3 +29,7 @@ std::ostream& operator<<(std::ostream& os, const swatch::system::DaqTTCStub& sd 
 
     return os;
 }
+
+
+} // namespace system
+} // namespace swatch

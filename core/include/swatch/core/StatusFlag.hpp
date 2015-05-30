@@ -21,13 +21,15 @@ enum StatusFlag{
     kUnknown
 };
 
-} // namespace core
-} // namespace swatch
 
 std::ostream& operator<<(std::ostream& out, swatch::core::StatusFlag value);
 
 
 swatch::core::StatusFlag operator& (const swatch::core::StatusFlag& flag1, const swatch::core::StatusFlag& flag2);
+
+
+} // namespace core
+} // namespace swatch
 
 
 #endif	/* __SWATCH_CORE_STATUSFLAG_HPP__ */

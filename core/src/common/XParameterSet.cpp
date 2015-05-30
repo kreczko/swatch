@@ -267,12 +267,13 @@ void XParameterSet::update(const XParameterSet& other) {
   }
 }
 
-} // core
-} // swatch
-
 
 std::ostream& operator<< ( std::ostream& aStr , swatch::core::XParameterSet& aXParameterSet )
 {
   aStr << aXParameterSet.toString();
   return aStr;
 }
+
+} // core
+} // swatch
+
