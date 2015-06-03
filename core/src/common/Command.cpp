@@ -1,4 +1,6 @@
 #include "swatch/core/Command.hpp"
+#include "swatch/core/ThreadPool.hpp"
+
 
 // XDAQ Headers
 #include "xdata/Serializable.h"
@@ -25,11 +27,28 @@ Command::exec( XParameterSet& params) ///Should take const reference but xdata::
 
   // Execute the command protected by a very generic try/catch
   try {
-    this->code(p);
+    // if threadpool is to be used
+    if (use_thread_pool_){
+      ThreadPool& pool = ThreadPool::getInstance();
+      pool.addTask<Command>(this, &Command::runCode, p);
+    }
+    else{
+      // otherwise execute in same thread
+      this->runCode(p);
+    }
   } catch ( const std::exception& e ) {
     // TODO: log the error to error msg (or not?)
     // Then rethrow the exception on to the higher layers of code.
     throw;
+  }
+}
+
+void Command::runCode(XParameterSet& params) {
+  try {
+    this->code(params);
+  } catch (const std::exception& e) {
+    this->setError(
+        "An exception occured in Command::code(): " + std::string(e.what()));
   }
 }
 
@@ -63,29 +82,39 @@ xdata::Serializable& Command::getResult() {
 void
 Command::setDone(const std::string& aMsg) {
   setProgress(100.);
-  status_ = kDone;
-  statusMsg_ = aMsg;
+  {
+    boost::unique_lock<boost::mutex> lock(status_mutex_);
+    status_ = kDone;
+    statusMsg_ = aMsg;
+  }
 }
 
 
 //---
 void
 Command::setWarning(const std::string& aMsg) {
-  status_ = kWarning;
-  statusMsg_ = aMsg;
+  {
+    boost::unique_lock<boost::mutex> lock(status_mutex_);
+    status_ = kWarning;
+    statusMsg_ = aMsg;
+  }
 }
 
 
 //---
 void
 Command::setError(const std::string& aMsg) {
-  status_ = kError;
-  statusMsg_ = aMsg;
+  {
+    boost::unique_lock<boost::mutex> lock(status_mutex_);
+    status_ = kError;
+    statusMsg_ = aMsg;
+  }
 }
 
 
 //---
-const std::string& Command::getProgressMsg() const {
+std::string Command::getProgressMsg() {
+  boost::unique_lock<boost::mutex> lock(progress_mutex_);
   return progressMsg_;
 }
 
@@ -93,7 +122,10 @@ const std::string& Command::getProgressMsg() const {
 //---
 void
 Command::setProgress(float aProgress) {
-  progress_ = aProgress;
+  {
+    boost::unique_lock<boost::mutex> lock(progress_mutex_);
+    progress_ = aProgress;
+  }
 }
 
 //---
@@ -102,32 +134,49 @@ Command::setProgress(float aProgress, const std::string& aMsg ) {
   if ( aProgress < 0. or aProgress > 100.) {
     std::ostringstream err;
     err << "Progress must be in the [0.,100.] range. " << aProgress;
+    // TODO: should this not throw a SWATCH exception?
     throw std::out_of_range(err.str());
   }
-  
-  progress_ = aProgress;
-  progressMsg_ = aMsg;
+  {
+    boost::unique_lock<boost::mutex> lock(progress_mutex_);
+    progress_ = aProgress;
+    progressMsg_ = aMsg;
+  }
 }
 
 //---
 void Command::setStatusMsg(const std::string& aMsg) {
-  statusMsg_ = aMsg;
+  {
+    boost::unique_lock<boost::mutex> lock(status_mutex_);
+    statusMsg_ = aMsg;
+  }
 }
 
 void Command::setResult( const xdata::Serializable& aResult ){
-  result_->setValue(aResult);
+  {
+    boost::unique_lock<boost::mutex> lock(result_mutex_);
+    result_->setValue(aResult);
+  }
 }
 
 xdata::Serializable& Command::defaultResult(){
   return *default_;
 }
 
-const std::string& Command::getStatusMsg() const {
+std::string Command::getStatusMsg() {
+  boost::unique_lock<boost::mutex> lock(status_mutex_);
   return statusMsg_;
 }
 
 void Command::setStatus( Status aStatus ) {
-  status_ = aStatus;
+  {
+    boost::unique_lock<boost::mutex> lock(status_mutex_);
+    status_ = aStatus;
+  }
+}
+
+void Command::setUseThreadPool(bool use_thread_pool) {
+  use_thread_pool_ = use_thread_pool;
 }
 
 } // namespace core

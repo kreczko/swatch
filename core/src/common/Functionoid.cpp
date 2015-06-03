@@ -14,7 +14,8 @@
 namespace swatch {
 namespace core {
 Functionoid::Functionoid( const std::string& aId ) :
-        Object( aId ) {
+        Object( aId ),
+        parameters_() {
 }
 
 Functionoid::~Functionoid() {

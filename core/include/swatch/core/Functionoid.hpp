@@ -9,13 +9,15 @@
 #ifndef __SWATCH_CORE_Functionoid_HPP__
 #define __SWATCH_CORE_Functionoid_HPP__
 
-#include "swatch/core/Object.hpp"
-
+// C++ Headers
 #include <deque>
 #include <set>
 
 // XDAQ Headers
 #include <xdata/Serializable.h>
+
+// Swatch Headers
+#include "swatch/core/Object.hpp"
 
 
 //Forward declarations

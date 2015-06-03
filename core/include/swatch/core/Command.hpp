@@ -12,6 +12,9 @@
 // C++ Headers
 #include <string>
 
+// BOOST Headers
+#include <boost/thread/mutex.hpp>
+
 // Swatch Headers
 #include "swatch/core/Functionoid.hpp"
 #include "swatch/core/XParameterSet.hpp"
@@ -42,6 +45,9 @@ public:
     void exec( XParameterSet& params); ///Should take const reference but xdata::serializable is const-correctness broken
    
 protected:
+    // thread safe exception catching wrapper for code()
+    void runCode( XParameterSet& params );
+    // user defined code for execution
     virtual void code( XParameterSet& params ) = 0; ///Should take const reference but xdata::serializable is const-correctness broken
 
 public:
@@ -55,9 +61,11 @@ public:
 
     template<typename T> T& getResult();
 
-    const std::string& getProgressMsg() const;
+    std::string getProgressMsg();
 
-    const std::string& getStatusMsg() const;
+    std::string getStatusMsg();
+
+    void setUseThreadPool(bool use_thread_pool);
 
 protected:
 
@@ -95,6 +103,13 @@ private:
     std::string progressMsg_;
 
     std::string statusMsg_;
+
+    // should the thread pool for the execution of the command be used?
+    // defaults to false (preserving previous behaviour)
+    bool use_thread_pool_;
+
+    // synchronisation
+    boost::mutex status_mutex_, progress_mutex_, result_mutex_;
 
 };
 

@@ -6,6 +6,8 @@
 #include <xdata/Integer.h>
 #include <xdata/String.h>
 #include <boost/foreach.hpp>
+#include <boost/chrono.hpp>
+#include <unistd.h>
 
 using namespace swatch;
 namespace swatch {
@@ -46,6 +48,16 @@ void DummyCommand::code(XParameterSet& params) ///Should take const reference bu
     setProgress(50.49, "Dummy command did something");
     setError("But ended up in error");
 
+  } else if (todo == "thread") {
+    setStatus(kRunning);
+    setProgress(1, "Dummy command just started");
+    unsigned int milliseconds(params.get<xdata::Integer>("milliseconds"));
+    for (unsigned int i = 0; i < milliseconds; ++i) {
+      boost::this_thread::sleep_for(boost::chrono::milliseconds(1));
+//      usleep(1); // takes microseconds
+      setProgress(1. + i/1000, "Dummy command progressed");
+    }
+    setDone("Thread command " + id() + " completed");
   } else {
     //      setProgress(0.0);
     setProgress(0.0, "Not even started");
