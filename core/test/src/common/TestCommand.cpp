@@ -68,7 +68,11 @@ BOOST_FIXTURE_TEST_CASE(TestTodo,  CommandTestSetup) {
 
 BOOST_FIXTURE_TEST_CASE(TestRunPrint,  CommandTestSetup) {
   LOG(kInfo) << "Running CommandTestSuite/TestRunPrint";
-  print->exec( params , false );
+  print->exec( params );
+
+  do {
+  } while ( (print->getStatus() == swatch::core::Command::kInitial) || (print->getStatus() == swatch::core::Command::kRunning) );
+
 
   BOOST_CHECK_EQUAL(print->getProgress(), 100.0);
   BOOST_CHECK_EQUAL(print->getStatus(), Command::kDone);
@@ -78,7 +82,10 @@ BOOST_FIXTURE_TEST_CASE(TestRunPrint,  CommandTestSetup) {
 
 BOOST_FIXTURE_TEST_CASE(TestRunNothing,  CommandTestSetup) {
   LOG(kInfo) << "Running CommandTestSuite/TestRunNothing";
-  nothing->exec( params , false );
+  nothing->exec( params );
+
+  do {
+  } while ( (nothing->getStatus() == swatch::core::Command::kInitial) || (nothing->getStatus() == swatch::core::Command::kRunning) );
 
   BOOST_CHECK_EQUAL(nothing->getProgress(), 0);
   BOOST_CHECK_EQUAL(nothing->getStatus(), Command::kWarning);
@@ -87,7 +94,10 @@ BOOST_FIXTURE_TEST_CASE(TestRunNothing,  CommandTestSetup) {
 
 BOOST_FIXTURE_TEST_CASE(TestRunError,  CommandTestSetup) {
   LOG(kInfo) << "Running CommandTestSuite/TestRunError";
-  error->exec( params , false );
+  error->exec( params );
+
+  do {
+  } while ( (error->getStatus() == swatch::core::Command::kInitial) || (error->getStatus() == swatch::core::Command::kRunning) );
 
   BOOST_CHECK_CLOSE(error->getProgress(), 50.49, 0.1);
   BOOST_CHECK_EQUAL(error->getStatus(), Command::kError);

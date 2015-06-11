@@ -53,7 +53,10 @@ BOOST_FIXTURE_TEST_CASE(TestTodo,  ProcessorCommandTestSetup) {
 
 BOOST_FIXTURE_TEST_CASE(TestRunGetCrate,  ProcessorCommandTestSetup) {
   LOG(kInfo) << "Running ProcessorCommandTestSuite/TestRunGetCrate";
-  get_crate->exec( params , false );
+  get_crate->exec( params );
+
+  do {
+  } while ( (get_crate->getStatus() == swatch::core::Command::kInitial) || (get_crate->getStatus() == swatch::core::Command::kRunning) );
 
   BOOST_CHECK_EQUAL(get_crate->getProgress(), 100.0);
   BOOST_CHECK_EQUAL(get_crate->getStatus(), swatch::core::Command::kDone);
