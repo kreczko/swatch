@@ -38,6 +38,7 @@ Libraries =	\
 	cactus_swatch_core \
 	cactus_swatch_logger \
 	cactus_uhal_log \
+	cactus_extern_pugixml \
 	toolbox \
 	dl
 

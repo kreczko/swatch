@@ -28,16 +28,13 @@ public:
   void addState(const std::string s);
 //  void addInput(const std::string i);
 
-  void addStateTransition(const std::string& from, const std::string& to,
-      const std::string& input);
-  template<class OBJECT> void addStateTransition(const std::string& from,
-      const std::string& to, const std::string& input, OBJECT * obj,
-      void (OBJECT::*func)(toolbox::Event::Reference));
+  void addStateTransition(const std::string& from, const std::string& to,  const std::string& input);
+
+  template<class OBJECT>
+  void addStateTransition(const std::string& from,  const std::string& to, const std::string& input, OBJECT * obj, void (OBJECT::*func)(toolbox::Event::Reference));
 
   template <class OBJECT>
-  void addTransition(const std::string& from, const std::string& to,
-      const std::string& event, OBJECT* object, bool (OBJECT::*condition)(),
-      void (OBJECT::*function)());
+  void addTransition(const std::string& from, const std::string& to, const std::string& event, OBJECT* object, bool (OBJECT::*condition)(), void (OBJECT::*function)());
 
   // for a simple FSM without function calls
   void addTransition ( const std::string& from, const std::string& to, const std::string& event);
@@ -47,17 +44,18 @@ public:
    * added via addState()) otherwise an exception is thrown;
    */
   void setInitialState(const std::string s);
+
   const std::string& getInitialState() const;
 
 // useful function mostly used internally
   bool hasState(const std::string& s) const;
 
   const std::vector<std::string>& getStates() const;
-  const std::map<std::string, std::string> getStateTransitions(
-      const std::string& s) const;
+
+  const std::map<std::string, std::string> getStateTransitions( const std::string& s ) const;
 
   const toolbox::fsm::State getNextXDAQState();
-  const toolbox::fsm::State getXDAQState(const std::string& s) const;
+  const toolbox::fsm::State getXDAQState( const std::string& s ) const;
 
   // Resets the FSM (sets state == initial state)
   void reset();

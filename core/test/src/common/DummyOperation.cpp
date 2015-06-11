@@ -25,7 +25,6 @@ namespace test {
 DummyOperation::DummyOperation(  const std::string& aId ) :
     swatch::core::Operation( aId ) {
 //   assert(handler != 0);
-  registerParameter("todo", xdata::String(""));
 
   std::string halted("HALTED");
   std::string configured("CONFIGURED");
@@ -41,20 +40,13 @@ DummyOperation::DummyOperation(  const std::string& aId ) :
   fsm_->setInitialState(halted);
   fsm_->reset();
 
-  fsm_->addTransition<DummyOperation>(halted, halted, "coldReset", this, &DummyOperation::check_true_example,
-      &DummyOperation::coldReset);
-  fsm_->addTransition<DummyOperation>(halted, configured, "configure", this,
-      &DummyOperation::check_true_example, &DummyOperation::configure);
-  fsm_->addTransition<DummyOperation>(configured, enabled, "enable", this, &DummyOperation::check_true_example,
-      &DummyOperation::enable);
-  fsm_->addTransition<DummyOperation>(enabled, suspended, "suspend", this, &DummyOperation::check_true_example,
-      &DummyOperation::suspend);
-  fsm_->addTransition<DummyOperation>(enabled, configured, "stop", this, &DummyOperation::check_true_example,
-      &DummyOperation::stop);
-  fsm_->addTransition<DummyOperation>(suspended, enabled, "enable", this, &DummyOperation::check_true_example,
-      &DummyOperation::enable);
-  fsm_->addTransition<DummyOperation>(suspended, configured, "stop", this, &DummyOperation::check_true_example,
-      &DummyOperation::stop);
+  fsm_->addTransition<DummyOperation>(halted, halted, "coldReset", this, &DummyOperation::check_true_example, &DummyOperation::coldReset);
+  fsm_->addTransition<DummyOperation>(halted, configured, "configure", this,      &DummyOperation::check_true_example, &DummyOperation::configure);
+  fsm_->addTransition<DummyOperation>(configured, enabled, "enable", this, &DummyOperation::check_true_example, &DummyOperation::enable);
+  fsm_->addTransition<DummyOperation>(enabled, suspended, "suspend", this, &DummyOperation::check_true_example, &DummyOperation::suspend);
+  fsm_->addTransition<DummyOperation>(enabled, configured, "stop", this, &DummyOperation::check_true_example, &DummyOperation::stop);
+  fsm_->addTransition<DummyOperation>(suspended, enabled, "enable", this, &DummyOperation::check_true_example, &DummyOperation::enable);
+  fsm_->addTransition<DummyOperation>(suspended, configured, "stop", this, &DummyOperation::check_true_example, &DummyOperation::stop);
   // special ones
 //  fsm_->addTransition<DummyOperation>(halted, failed, "fail", this, &DummyOperation::fail);
   fsm_->addTransition<DummyOperation>(halted, failed, "failWithException", this,

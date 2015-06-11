@@ -58,8 +58,7 @@ public:
    * Returns an instance of a ThreadPool. Only one instance is allowed per program (SingleTon).
    * For information about the parameters, please see constructor documentation.
    */
-  static ThreadPool& getInstance(size_t n_threads = 1, bool run_until_queue_empty = false,
-      bool force_thread_cancellation = false);
+  static ThreadPool& getInstance(size_t n_threads = 1, bool run_until_queue_empty = false, bool force_thread_cancellation = false);
 
   /**
    * Terminates the current instance of the ThreadPool thus allowing
@@ -76,9 +75,17 @@ public:
    * @param param: parameter set to be passed to the object function
    */
   template<class OBJECT>
-  void addTask(OBJECT* cmd,
-      boost::function<void(OBJECT*, XParameterSet&)> function,
-      XParameterSet& param);
+  void addTask( OBJECT* cmd , boost::function<void(OBJECT*, XParameterSet&)> function , XParameterSet& param );
+
+
+  /**
+   * Function to add a task to the queue.
+   * @param cmd: pointer to the object
+   * @param function: reference to the object function
+   */
+  template<class OBJECT>
+  void addTask( OBJECT* cmd , boost::function<void(OBJECT*)> function );
+
 
 private:
   /**
@@ -87,8 +94,7 @@ private:
    * @param run_until_queue_empty if true the pool will wait until the task queue is empty. Default is false
    * @param force_thread_cancellation if true the pool will cancel all running threads when stopped. Default is false
    */
-  ThreadPool(size_t n_threads = 1, bool run_until_queue_empty = false,
-        bool force_thread_cancellation = false);
+  ThreadPool(size_t n_threads = 1, bool run_until_queue_empty = false, bool force_thread_cancellation = false);
 
   ThreadPool(ThreadPool const&); // not implemented
   ThreadPool& operator=(ThreadPool const&); // not implemented

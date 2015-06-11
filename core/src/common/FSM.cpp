@@ -97,8 +97,7 @@ void FSM::addStateTransition(const std::string& from, const std::string& to,
   stateTransitionTable_[from][input] = to;
 }
 
-const std::map<std::string, std::string> FSM::getStateTransitions(
-    const std::string& s) const {
+const std::map<std::string, std::string> FSM::getStateTransitions( const std::string& s) const {
   if (!hasState(s))
     throw exception("State " + s + " is undeclared");
   std::map<std::string, std::string> transitions;
@@ -119,8 +118,7 @@ void FSM::fireEvent(toolbox::Event::Reference event) {
     else
       currentState_ = getState(xdaq_new);
   } catch (toolbox::fsm::exception::Exception& e) {
-    throw exception(
-        "An error occured during an event:" + std::string(e.what()));
+    throw exception( "An error occured during an event:" + std::string(e.what()));
   } catch (...) {
     throw exception("An unknown error occured during an event");
   }
@@ -174,29 +172,23 @@ void FSM::moveForward(toolbox::fsm::FiniteStateMachine& fsm) {
   } catch (toolbox::fsm::exception::Exception& except) {
     toolbox::Event::Reference e(new toolbox::Event("move_back", NULL));
     fsm.fireEvent(e);
-    throw toolbox::fsm::exception::Exception("FSM::moveForward", except.what(),
-    __FILE__, __LINE__, __FUNCTION__);
+    throw toolbox::fsm::exception::Exception("FSM::moveForward", except.what(), __FILE__, __LINE__, __FUNCTION__);
   } catch (xcept::Exception& except) {
     toolbox::Event::Reference e(new toolbox::Event("move_back", NULL));
     fsm.fireEvent(e);
-    throw toolbox::fsm::exception::Exception("FSM::moveForward", except.what(),
-    __FILE__, __LINE__, __FUNCTION__);
+    throw toolbox::fsm::exception::Exception("FSM::moveForward", except.what(), __FILE__, __LINE__, __FUNCTION__);
   } catch (exception& except) {
     toolbox::Event::Reference e(new toolbox::Event("move_back", NULL));
     fsm.fireEvent(e);
-    throw toolbox::fsm::exception::Exception("FSM::moveForward", except.what(),
-    __FILE__, __LINE__, __FUNCTION__);
+    throw toolbox::fsm::exception::Exception("FSM::moveForward", except.what(), __FILE__, __LINE__, __FUNCTION__);
   } catch (...) {
     toolbox::Event::Reference e ( new toolbox::Event ( "move_back", NULL ) );
     fsm.fireEvent ( e );
-    throw toolbox::fsm::exception::Exception("FSM::moveForward",
-        "Unkown exception",
-        __FILE__, __LINE__, __FUNCTION__);
+    throw toolbox::fsm::exception::Exception("FSM::moveForward", "Unkown exception", __FILE__, __LINE__, __FUNCTION__);
   }
 }
 
-std::string FSM::getRollbackTransition(const std::string& from,
-    const std::string& transition) {
+std::string FSM::getRollbackTransition(const std::string& from, const std::string& transition) {
   std::string rollback;
   rollback = "move_back_";
   rollback += from + "_";
@@ -209,16 +201,13 @@ void FSM::executeTransition(const std::string& transition) {
   fireEvent(e);
 }
 
-void FSM::addTransition(const std::string& from, const std::string& to,
-    const std::string& event) {
+void FSM::addTransition(const std::string& from, const std::string& to, const std::string& event) {
 
   if (!hasState(from)) {
-    throw exception(
-        "FSM::addTransition: State name: " + from + " does not exist");
+    throw exception("FSM::addTransition: State name: " + from + " does not exist");
   }
   if (!hasState(to)) {
-    throw exception(
-        "FSM::addTransition: State name: " + to + " does not exist");
+    throw exception("FSM::addTransition: State name: " + to + " does not exist");
   }
 
   toolbox::fsm::State fromState = state_map_[from];
@@ -227,25 +216,20 @@ void FSM::addTransition(const std::string& from, const std::string& to,
   // add intermediate state
   toolbox::fsm::State intermediateState = getNextXDAQState();
   std::string intermediateStateName = from + "_" + event + "_" + to;
-  fsm_.addState(intermediateState, intermediateStateName, this,
-      &FSM::moveForward);
-  StateMethodSignature* stateMethod = new StateMethod<FSM>(this, NULL,
-  NULL);
+  fsm_.addState(intermediateState, intermediateStateName, this, &FSM::moveForward);
+  StateMethodSignature* stateMethod = new StateMethod<FSM>(this, NULL,NULL);
 
   stateMethods_[intermediateStateName] = stateMethod;
   stateTransitionTable_[from][event] = intermediateStateName;
 
   //add event transition
-  fsm_.addStateTransition(fromState, intermediateState, event, this,
-      &FSM::doNothing);
+  fsm_.addStateTransition(fromState, intermediateState, event, this, &FSM::doNothing);
 
   //add move_forward transition
-  fsm_.addStateTransition(intermediateState, toState, "move_forward", this,
-      &FSM::doNothing);
+  fsm_.addStateTransition(intermediateState, toState, "move_forward", this, &FSM::doNothing);
 
   //add move_back transition
-  fsm_.addStateTransition(intermediateState, fromState, "move_back", this,
-      &FSM::doNothing);
+  fsm_.addStateTransition(intermediateState, fromState, "move_back", this,  &FSM::doNothing);
 
   //add rollback transition
   std::string rollback = getRollbackTransition(from, event);

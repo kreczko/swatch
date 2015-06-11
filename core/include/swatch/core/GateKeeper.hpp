@@ -11,6 +11,7 @@
 
 // C++ Headers
 #include <string>
+#include <iostream>
 
 // Swatch Headers
 #include "swatch/core/Object.hpp"
@@ -22,23 +23,34 @@
 
 //BOOST Headers
 #include "boost/unordered_map.hpp"
-
+#include "boost/shared_ptr.hpp"
+#include "boost/date_time/posix_time/posix_time_types.hpp"
 
 namespace swatch
 {
   namespace core
   {
 
+    class GateKeeper;
+    std::ostream& operator<< ( std::ostream& aStr , const swatch::core::GateKeeper& aGateKeeper );
+
+
     class GateKeeper
     {
+      friend std::ostream& operator<< ( std::ostream& aStr , const swatch::core::GateKeeper& aGateKeeper );
+
       public:
+        typedef boost::shared_ptr<xdata::Serializable> tParameter;
+        typedef boost::unordered_map< std::string, tParameter > tParameters;
+        typedef boost::shared_ptr<tParameters> tTable;
+        typedef boost::unordered_map< std::string, tTable > tTableCache;
 
         /**
           Constructor
           @param aToplevel The system for which we are acting as gatekeeper
           @param aKey A global run-identifier
         */
-        GateKeeper ( Object* aToplevel , const uint32_t& aKey );
+        GateKeeper ( Object* aToplevel , const std::string& aKey );
 
         /// Destructor
         virtual ~GateKeeper();
@@ -55,7 +67,7 @@ namespace swatch
           @param aId the ID of the table to create
           @return the new xdata table
         */
-        virtual xdata::Table* getTable ( const std::string& aId ) = 0;
+        virtual tTable getTable ( const std::string& aKey , const std::string& aId ) = 0;
 
         /**
           Method to retreive configuration data from a specified path
@@ -63,7 +75,13 @@ namespace swatch
           @param aTables A list of table identifiers (which may or may not exist) to look in for the requested parameters
           @return the requested data, or throw if the key is not found in any table
         */
-        xdata::Serializable* get ( const std::string& aParam , const std::vector<std::string>& aTables );
+//         tParameter get ( const std::string& aParam , const std::vector<std::string>& aTables );
+        tParameter get ( const std::string& aSequenceId , const std::string& aCommandId , const std::string& aParameterId , const std::vector<std::string>& aTables );
+
+
+        const boost::posix_time::ptime& lastUpdated();
+
+        void SetRuntimeParameter( const std::string& aParam , tParameter aData );
 
       protected:
         /**
@@ -71,22 +89,39 @@ namespace swatch
           @param aId the name of the table
           @param aTable a new xdata table, of which the Gatekeeper will take ownership
         */
-        void add ( const std::string& aId , xdata::Table* aTable );
+        void add ( const std::string& aId , tTable aTable );
 
       private:
+
+        /**
+          Method to retreive configuration data from a specified path
+          @param aParam A key used to identify the configuration data being requested of the gatekeeper
+          @param aTable A table identifier (which may or may not exist) to look in for the requested parameters
+          @return the requested data, or throw if the key is not found in any table
+        */
+        tParameter get ( const std::string& aParam , const std::string& aTable );
+
+        tParameter get ( const std::string& aSequencePath , const std::string& aCommandPath , const std::string& aTable );
+
+
         /// The system for which we are acting as gatekeeper
         Object* mToplevel;
 
         /// The global run-identifier
-        uint32_t mKey;
+        std::string mKey;
 
-        typedef boost::unordered_map< std::string, xdata::Table* > tTableCache;
         /// The cache of tables
         tTableCache mCache;
+
+        /// The last time a table was modified
+        boost::posix_time::ptime mUpdateTime;
+
+        static const std::string mRuntimeTableLabel;
+
     };
 
     DEFINE_SWATCH_EXCEPTION ( TableWithIdAlreadyExists );
-    DEFINE_SWATCH_EXCEPTION ( UnknownParameter );
+    DEFINE_SWATCH_EXCEPTION ( ParameterWithGivenIdAlreadyExistsInTable );
 
   } /* namespace core */
 } /* namespace swatch */

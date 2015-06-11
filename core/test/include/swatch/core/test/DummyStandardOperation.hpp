@@ -9,7 +9,7 @@
 #ifndef SWATCH_CORE_TEST_DUMMYOPERATION_HPP
 #define SWATCH_CORE_TEST_DUMMYOPERATION_HPP
 
-#include "../../../../../include/swatch/core/Operation.hpp"
+#include "swatch/core/StandardOperation.hpp"
 #include "swatch/core/ActionableObject.hpp"
 //#include <xdata/Integer.h>
 //#include <xdata/String.h>
@@ -17,11 +17,11 @@
 namespace swatch {
 namespace core {
 namespace test {
-class DummyOperation: public swatch::core::Operation {
+class DummyStandardOperation: public swatch::core::StandardOperation {
 public:
 //  template<typename T>
-  DummyOperation(  const std::string& aId );
-  virtual ~DummyOperation();
+  DummyStandardOperation(  const std::string& aId );
+  virtual ~DummyStandardOperation();
 
   // current set of 'operations' we want the controller
   virtual void configure();

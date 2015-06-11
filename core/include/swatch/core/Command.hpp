@@ -42,11 +42,13 @@ public:
 
     virtual ~Command();
 
-    void exec( XParameterSet& params); ///Should take const reference but xdata::serializable is const-correctness broken
+    void exec( XParameterSet& params , const bool& aUseThreadPool = true ); ///Should take const reference but xdata::serializable is const-correctness broken
    
-protected:
+private:
     // thread safe exception catching wrapper for code()
     void runCode( XParameterSet& params );
+
+protected:
     // user defined code for execution
     virtual void code( XParameterSet& params ) = 0; ///Should take const reference but xdata::serializable is const-correctness broken
 
@@ -65,9 +67,18 @@ public:
 
     std::string getStatusMsg();
 
-    void setUseThreadPool(bool use_thread_pool);
+    const XParameterSet& getDefaultParams() const;
+
+    template<typename T>
+    void registerParameter(const std::string name, const T& defaultValue);
 
 protected:
+
+    /**
+     * Merges a parameter set with the default parameter set.
+     * Default values are only used if not present in params.
+     */
+    XParameterSet mergeParametersWithDefaults( XParameterSet& params) const;
 
     template<typename T>
     Command( const std::string& aId , const T& aDefault );
@@ -91,6 +102,7 @@ protected:
     void setStatusMsg( const std::string& aMsg );
 
 private:
+    XParameterSet parameters_;
 
     Status status_;
 
@@ -103,10 +115,6 @@ private:
     std::string progressMsg_;
 
     std::string statusMsg_;
-
-    // should the thread pool for the execution of the command be used?
-    // defaults to false (preserving previous behaviour)
-    bool use_thread_pool_;
 
     // synchronisation
     boost::mutex status_mutex_, progress_mutex_, result_mutex_;

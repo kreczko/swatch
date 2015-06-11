@@ -22,12 +22,6 @@ public:
   DummyFunctionoid( const std::string& aId );
   virtual ~DummyFunctionoid();
 
-  template<typename T>
-  void registerParam(const std::string name, const T& defaultValue) {
-    core::Functionoid::registerParameter(name, defaultValue);
-  }
-
-
 };
 
 } /* namespace test */

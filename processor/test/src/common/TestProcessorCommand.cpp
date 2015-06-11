@@ -32,7 +32,7 @@ struct ProcessorCommandTestSetup {
 
     get_crate = (swct::DummyCommand*) handler.getCommand("dummy_getcrate");
 
-    get_crate->registerParam("todo", xdata::String("getCrateId"));
+    get_crate->registerParameter("todo", xdata::String("getCrateId"));
   }
   ~ProcessorCommandTestSetup(){
   }
@@ -53,7 +53,7 @@ BOOST_FIXTURE_TEST_CASE(TestTodo,  ProcessorCommandTestSetup) {
 
 BOOST_FIXTURE_TEST_CASE(TestRunGetCrate,  ProcessorCommandTestSetup) {
   LOG(kInfo) << "Running ProcessorCommandTestSuite/TestRunGetCrate";
-  get_crate->exec(params);
+  get_crate->exec( params , false );
 
   BOOST_CHECK_EQUAL(get_crate->getProgress(), 100.0);
   BOOST_CHECK_EQUAL(get_crate->getStatus(), swatch::core::Command::kDone);

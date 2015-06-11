@@ -16,8 +16,8 @@ DummyProcessorOperation::DummyProcessorOperation(const std::string& aId) :
         DummyOperation(aId) {
   // since DummyOperation sets states, lets clear it all up
   fsm_->clear();
-  registerParameter("aa", xdata::Integer(15));
-  registerParameter("todo", xdata::String(""));
+//   registerParameter("aa", xdata::Integer(15));
+//   registerParameter("todo", xdata::String(""));
   std::string halted("HALTED");
   std::string tested("TESTED");
 

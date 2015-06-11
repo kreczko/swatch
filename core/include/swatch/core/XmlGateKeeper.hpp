@@ -15,6 +15,9 @@
 // Swatch Headers
 #include "swatch/core/GateKeeper.hpp"
 
+namespace pugi {
+  class xml_node;
+}
 
 namespace swatch {
 namespace core {
@@ -23,15 +26,24 @@ class XmlGateKeeper : public GateKeeper {
   public:
 
     /// Constructor
-    XmlGateKeeper( Object* aToplevel , const std::string& aFileName , const uint32_t& aKey );
+    XmlGateKeeper( Object* aToplevel , const std::string& aFileName , const std::string& aKey );
 
     /// Destructor
     virtual ~XmlGateKeeper();
 
-    xdata::Table* getTable( const std::string& aId );
+    GateKeeper::tTable getTable( const std::string& aKey , const std::string& aId );
 
   private:
+
+    std::pair< std::string , GateKeeper::tParameter > CreateParameter( pugi::xml_node& aEntry );
+    std::pair< std::string , GateKeeper::tTable > CreateTable( pugi::xml_node& aTable );
+
+
+    std::string mFileName;
 };
+
+DEFINE_SWATCH_EXCEPTION ( UnknownDataType );
+
 
 } /* namespace core */
 } /* namespace swatch */

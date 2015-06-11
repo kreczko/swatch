@@ -56,9 +56,10 @@ int main(int argc, char** argv) {
     std::cout << *lSystem << std::endl;
 
 //    swatch::core::test::DummyGateKeeper lGateKeeper( lSystem );
-    swatch::core::XmlGateKeeper lGateKeeper( lSystem , "${SWATCH_ROOT}/system/test/cfg/db.xml" , 0 );
+    swatch::core::XmlGateKeeper lGateKeeper( lSystem , "${SWATCH_ROOT}/system/test/cfg/db.xml" , "RunKey1" );
     lGateKeeper.preload();
 
+    std::cout << lGateKeeper << std::endl;
 
     std::deque<swatch::processor::Processor*>& lProcessors( lSystem->getProcessors() );
 
@@ -72,27 +73,27 @@ int main(int argc, char** argv) {
         std::cout << *lIt2 << std::endl;
         swatch::core::CommandSequence* lCommandSequence( (**lIt).getCommandSequence( *lIt2 ) );
       
-        std::set<std::string> lParams = lCommandSequence->getParams();
-
-        for( std::set<std::string>::iterator lIt3( lParams.begin()) ; lIt3!=lParams.end() ; ++lIt3 )
-        {
-          std::cout << "[Param] " << *lIt3 << std::endl;
-        }
-
-        std::vector<std::string> lTables = lCommandSequence->getTables();
-        for( std::vector<std::string>::iterator lIt3( lTables.begin()) ; lIt3!=lTables.end() ; ++lIt3 )
-        {
-          std::cout << "[Table] " << *lIt3 << std::endl;
-        }
+//         std::set<std::string> lParams = lCommandSequence->getParams();
+// 
+//         for( std::set<std::string>::iterator lIt3( lParams.begin()) ; lIt3!=lParams.end() ; ++lIt3 )
+//         {
+//           std::cout << "[Param] " << *lIt3 << std::endl;
+//         }
+// 
+//         std::vector<std::string> lTables = lCommandSequence->getTables();
+//         for( std::vector<std::string>::iterator lIt3( lTables.begin()) ; lIt3!=lTables.end() ; ++lIt3 )
+//         {
+//           std::cout << "[Table] " << *lIt3 << std::endl;
+//         }
 
 
    
         // for now just empty params
-        XParameterSet params;
-        params.add( "sequence_1.dummy_1.aa" , xdata::Integer(123) );
-        params.add( "sequence_1.dummy_2.aa" , xdata::Integer(321) );
+//         XParameterSet params;
+//         params.add( "sequence_1.dummy_1.aa" , xdata::Integer(123) );
+//         params.add( "sequence_1.dummy_2.aa" , xdata::Integer(321) );
 
-        lCommandSequence->exec(params);
+        lCommandSequence->exec();
 //         std::cout << lCommandSequence->getProgress() << std::endl;
 //         std::cout << lCommandSequence->getOverallProgress() << std::endl;
 //         std::cout << lCommandSequence->getProgressMsg() << std::endl;

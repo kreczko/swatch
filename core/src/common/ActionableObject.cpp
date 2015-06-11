@@ -34,7 +34,7 @@ CommandSequence* ActionableObject::getCommandSequence( const std::string& aId )
   } catch ( const std::out_of_range& e ) {
     throw CommandSequenceNotFoundInActionableObject( "Unable to find CommandSequence with Id '"+aId+"'" );
   }
-  return NULL;
+  return NULL; //Stop the compiler complaining
 }
 
 Command* ActionableObject::getCommand( const std::string& aId )
@@ -44,7 +44,7 @@ Command* ActionableObject::getCommand( const std::string& aId )
   } catch ( const std::out_of_range& e ) {
     throw CommandNotFoundInActionableObject( "Unable to find Command with Id '"+aId+"'" );
   }
-  return NULL;
+  return NULL; //Stop the compiler complaining
 }
 
 Operation* ActionableObject::getOperation( const std::string& aId )
@@ -54,7 +54,7 @@ Operation* ActionableObject::getOperation( const std::string& aId )
   } catch ( const std::out_of_range& e ) {
     throw OperationNotFoundInActionableObject( "Unable to find Operation with Id '"+aId+"'" );
   }
-  return NULL;
+  return NULL; //Stop the compiler complaining
 }
 
 //------------------------------------------------------------------------------------

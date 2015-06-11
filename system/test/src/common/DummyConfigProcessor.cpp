@@ -39,49 +39,18 @@ class DummyConfigCommand: public swatch::core::Command {
 public:
   DummyConfigCommand( const std::string& aId ) :
     core::Command( aId , xdata::Integer(-33)) {
-    registerParameter("aa", swatch::core::Placeholder< xdata::Integer >() );
-    registerParameter("todo", xdata::String(""));
-  }
-
-  template<typename T>  DummyConfigCommand( const std::string& aId , const T& aDefault) :
-    swatch::core::Command( aId , aDefault) {
-    registerParameter("aa", swatch::core::Placeholder< xdata::Integer >() );
-    registerParameter("todo", xdata::String(""));
+    registerParameter("parameter", xdata::String("Default Value"));
   }
 
   virtual ~DummyConfigCommand(){}
 
   virtual void code(swatch::core::XParameterSet& params )///Should take const reference but xdata::serializable is const-correctness broken
   {
-    DummyConfigProcessor* res = getParent<DummyConfigProcessor>();
-  
-    BOOST_FOREACH(const std::string& n, params.keys()) {
-      LOG(logger::kInfo) << n << " : " << params.get(n).toString();
-    }
-  
-    std::string todo = params.get<xdata::String>("todo");
-    if (todo == "print") {
-      LOG(logger::kInfo) << id() << ".exec() running case 'print' with 'aa'=" << params.get<xdata::Integer>("aa");
-      res->setSomething("|12345|");
-      res->setNumber(54);
-      setProgress(100.0);
-      setResult(xdata::Integer(99));
-      setProgress(99., "doing stuff");
-      setDone("Dummy command successfully completed");
-  
-    } else if (todo == "error") {
-      LOG(logger::kInfo) << id() << ".exec() running case 'error'";
-      //      setProgress(50.49);
-      setProgress(50.49, "Dummy command did something");
-      setError("But ended up in error");
-  
-    } else {
-      LOG(logger::kInfo) << id() << ".exec() running case OTHER";
-      //      setProgress(0.0);
-      setProgress(0.0, "Not even started");
-      setWarning("Nothing was done");
-  
-    }
+
+    std::string lParameter = params.get<xdata::String>("parameter");
+    LOG(logger::kInfo) << id() << ".exec() running case with 'parameter'='" << lParameter<<"'";
+    setDone("Dummy command successfully completed");
+
   }
 
 

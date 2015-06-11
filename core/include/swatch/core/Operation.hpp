@@ -22,9 +22,8 @@
 
 namespace swatch {
 namespace core {
-class ActionableObject;
-
-typedef ActionableObject Resource;
+  class ActionableObject;
+  class CommandSequence;  
 
 /*
  * @brief Represents the multi-command operations (FSMs) of classes that inherit from swatch::core::ActionResource.
@@ -36,22 +35,10 @@ typedef ActionableObject Resource;
 class Operation : public Functionoid {
 public:
 
-  enum Status {
-    kInitial, kRunning, kError, kWarning, kDone,
-  };
   virtual ~Operation();
 
-  // OLD
-  /*
-   * Returns if preconditions of the operation are met.
-   * Currently this only involves a check if the FSM
-   * can make the state transition
-   */
-  virtual bool preCondition() const;
-
-//  void setStateTransition(StateTransition t);
-
   void executeTransition(const std::string);
+
   std::string getCurrentState() const;
 
   const std::vector<std::string>& getStates() const;
@@ -64,16 +51,17 @@ public:
 
   std::string getStatus() const;
 
+
+  void addTransition(const std::string& from, const std::string& to, const std::string& event, CommandSequence& aCommandSequence );
+
+  void addTransition(const std::string& from, const std::string& to, const std::string& event, const std::string& aCommandSequenceId );
+
 protected:
   Operation( const std::string& aId );
 
   FSM* fsm_;
-//  template<typename T>
-//  Operation( Resource* resource, const T& aDefault, FSM* fsm );
 
 private:
-
-//  StateTransition transition_;
 
 };
 typedef boost::unordered_map<std::string, Operation*> OperationMap;

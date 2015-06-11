@@ -325,7 +325,7 @@ int main(int argc, char const *argv[]) {
     LOG(swlog::kNotice) << ">> Resetting on internal clock";
     
     swct::DummyCommand* reset = (swct::DummyCommand*) p0->getCommand("reset");
-    reset->registerParam("mode", xdata::String("internal"));
+    reset->registerParameter("mode", xdata::String("internal"));
 
     BOOST_FOREACH( const std::string& s, reset->getDefaultParams().keys() ) {
       LOG(swlog::kInfo) << " - " << s << ": " << reset->getDefaultParams()[s];
@@ -346,7 +346,7 @@ int main(int argc, char const *argv[]) {
 
     
     swct::DummyCommand* cfgCmd = (swct::DummyCommand*) p0->getCommand("configure");
-    cfgCmd->registerParam("mode", xdata::String("capture"));
+    cfgCmd->registerParameter("mode", xdata::String("capture"));
     BOOST_FOREACH( const std::string& s, cfgCmd->getDefaultParams().keys() ) {
       LOG(swlog::kInfo) << " - " << s << ": " << cfgCmd->getDefaultParams()[s];
     }

@@ -13,8 +13,7 @@
 namespace swatch {
 namespace core {
 
-template<class OBJECT> void FSM::addStateTransition(const std::string& from, const std::string& to, const std::string& input, OBJECT * obj,
-            void (OBJECT::*func)(toolbox::Event::Reference)) {
+template<class OBJECT> void FSM::addStateTransition(const std::string& from, const std::string& to, const std::string& input, OBJECT * obj, void (OBJECT::*func)(toolbox::Event::Reference)) {
       if (!hasState(from))
             throw exception("'from' State " + from + " is undeclared");
         if (!hasState(to))
@@ -30,8 +29,7 @@ template<class OBJECT> void FSM::addStateTransition(const std::string& from, con
 //  fsm_.setFailedStateTransitionAction(obj, func);
 //}
 
-template<class OBJECT> FSM::StateMethod<OBJECT>::StateMethod(OBJECT* object,
-    bool (OBJECT::*condition)(), void (OBJECT::*method)()) :
+template<class OBJECT> FSM::StateMethod<OBJECT>::StateMethod(OBJECT* object, bool (OBJECT::*condition)(), void (OBJECT::*method)()) :
         obj_(object),
         condition_(condition),
         method_(method) {
@@ -53,9 +51,7 @@ template <class OBJECT> bool FSM::StateMethod<OBJECT>::condition() {
 }
 
 template <class OBJECT>
-  void FSM::addTransition(const std::string& from, const std::string& to,
-      const std::string& event, OBJECT* object, bool (OBJECT::*condition)(),
-      void (OBJECT::*function)()){
+  void FSM::addTransition(const std::string& from, const std::string& to, const std::string& event, OBJECT* object, bool (OBJECT::*condition)(), void (OBJECT::*function)()){
   if( ! hasState(from)){
     throw exception("FSM::addTransition: State name: " + from + " does not exist");
   }
@@ -76,16 +72,13 @@ template <class OBJECT>
   stateTransitionTable_[from][event] = intermediateStateName;
 
   //add event transition
-  fsm_.addStateTransition(fromState, intermediateState, event, this,
-      &FSM::doNothing);
+  fsm_.addStateTransition(fromState, intermediateState, event, this, &FSM::doNothing);
 
   //add move_forward transition
-  fsm_.addStateTransition(intermediateState, toState, "move_forward", this,
-      &FSM::doNothing);
+  fsm_.addStateTransition(intermediateState, toState, "move_forward", this, &FSM::doNothing);
 
   //add move_back transition
-  fsm_.addStateTransition(intermediateState, fromState, "move_back", this,
-      &FSM::doNothing);
+  fsm_.addStateTransition(intermediateState, fromState, "move_back", this,  &FSM::doNothing);
 
   //add rollback transition
   std::string rollback = getRollbackTransition(from, event);

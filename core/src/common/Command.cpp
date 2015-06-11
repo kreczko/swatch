@@ -17,7 +17,7 @@ Command::~Command() {
 
 //---
 void 
-Command::exec( XParameterSet& params) ///Should take const reference but xdata::serializable is const-correctness broken
+Command::exec( XParameterSet& params  , const bool& aUseThreadPool ) ///Should take const reference but xdata::serializable is const-correctness broken
 { 
   // Reset the status before doing anything
   reset();
@@ -28,7 +28,7 @@ Command::exec( XParameterSet& params) ///Should take const reference but xdata::
   // Execute the command protected by a very generic try/catch
   try {
     // if threadpool is to be used
-    if (use_thread_pool_){
+    if ( aUseThreadPool ){
       ThreadPool& pool = ThreadPool::getInstance();
       pool.addTask<Command>(this, &Command::runCode, p);
     }
@@ -47,8 +47,7 @@ void Command::runCode(XParameterSet& params) {
   try {
     this->code(params);
   } catch (const std::exception& e) {
-    this->setError(
-        "An exception occured in Command::code(): " + std::string(e.what()));
+    this->setError( "An exception occured in Command::code(): " + std::string(e.what()));
   }
 }
 
@@ -175,8 +174,14 @@ void Command::setStatus( Status aStatus ) {
   }
 }
 
-void Command::setUseThreadPool(bool use_thread_pool) {
-  use_thread_pool_ = use_thread_pool;
+const XParameterSet& Command::getDefaultParams() const {
+  return parameters_;
+}
+
+XParameterSet Command::mergeParametersWithDefaults( XParameterSet& params ) const {
+  XParameterSet merged = XParameterSet(params);
+  merged.update(parameters_);
+  return merged;
 }
 
 } // namespace core

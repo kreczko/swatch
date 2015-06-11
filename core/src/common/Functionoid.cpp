@@ -14,28 +14,20 @@
 namespace swatch {
 namespace core {
 Functionoid::Functionoid( const std::string& aId ) :
-        Object( aId ),
-        parameters_() {
+        Object( aId )
+{
 }
 
 Functionoid::~Functionoid() {
   // TODO Auto-generated destructor stub
 }
 
-const XParameterSet&
-Functionoid::getDefaultParams() const {
-  return parameters_;
-}
 
 Object* Functionoid::getParent( const uint32_t& aDepth ) {
   return getAncestor(aDepth);
 }
 
-XParameterSet Functionoid::mergeParametersWithDefaults( XParameterSet& params) const {
-  XParameterSet merged = XParameterSet(params);
-  merged.update(parameters_);
-  return merged;
-}
+
 
 } /* namespace core */
 } /* namespace swatch */

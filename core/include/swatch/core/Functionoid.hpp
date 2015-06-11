@@ -41,26 +41,11 @@ namespace core {
     /// Destructor
     virtual ~Functionoid();
 
-    const XParameterSet& getDefaultParams() const;
-
-    /**
-     * Merges a parameter set with the default parameter set.
-     * Default values are only used if not present in params.
-     */
-    XParameterSet mergeParametersWithDefaults( XParameterSet& params) const;
-
   protected:
     Object* getParent( const uint32_t& aDepth=1 );
-    template<typename T> T* getParent( const uint32_t& aDepth=1 );
+    template<typename T> T* getParent( const uint32_t& aDepth=1 );		
 
-  
-  private:
-		XParameterSet parameters_;
-
-protected:
-  template<typename T>
-  void registerParameter(const std::string name, const T& defaultValue);
-  };
+};
 
 } /* namespace core */
 } /* namespace swatch */

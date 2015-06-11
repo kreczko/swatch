@@ -28,7 +28,7 @@ struct ProcessorOperationTestSetup {
     handler.Register<DummyProcessorOperation>("testing");
 
     testing = (swct::DummyOperation*) handler.getOperation("testing");
-    testing->registerParam("todo", xdata::String("test"));
+//     testing->registerParam("todo", xdata::String("test"));
   }
   ~ProcessorOperationTestSetup(){
   }
@@ -39,12 +39,13 @@ struct ProcessorOperationTestSetup {
 };
 
 BOOST_AUTO_TEST_SUITE( ProcessorOperationTestSuite)
+
 // although commands will be created via a factory in the end,
 // we want to make sure that the factory can use this
-BOOST_FIXTURE_TEST_CASE(TestTodo,  ProcessorOperationTestSetup) {
-  LOG(kInfo) << "Running ProcessorOperationTestSuite/TestTodo";
-  BOOST_CHECK(testing->getDefaultParams().get<xdata::String>("todo") == "test");
-}
+// BOOST_FIXTURE_TEST_CASE(TestTodo,  ProcessorOperationTestSetup) {
+//   LOG(kInfo) << "Running ProcessorOperationTestSuite/TestTodo";
+//   BOOST_CHECK(testing->getDefaultParams().get<xdata::String>("todo") == "test");
+// }
 
 BOOST_FIXTURE_TEST_CASE(TestOperation,  ProcessorOperationTestSetup) {
   LOG(kInfo) << "Running ProcessorOperationTestSuite/TestOperation";

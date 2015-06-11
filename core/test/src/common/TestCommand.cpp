@@ -37,9 +37,9 @@ struct CommandTestSetup {
     error = handler.getCommand("dummy_error");
     nothing = handler.getCommand("dummy_nada");
 
-    ((DummyCommand*) print)->registerParam("todo", xdata::String("print"));
-    ((DummyCommand*) error)->registerParam("todo", xdata::String("error"));
-    ((DummyCommand*) nothing)->registerParam("todo", xdata::String("nothing"));
+    ((DummyCommand*) print)->registerParameter("todo", xdata::String("print"));
+    ((DummyCommand*) error)->registerParameter("todo", xdata::String("error"));
+    ((DummyCommand*) nothing)->registerParameter("todo", xdata::String("nothing"));
   }
   ~CommandTestSetup(){
   }
@@ -68,7 +68,7 @@ BOOST_FIXTURE_TEST_CASE(TestTodo,  CommandTestSetup) {
 
 BOOST_FIXTURE_TEST_CASE(TestRunPrint,  CommandTestSetup) {
   LOG(kInfo) << "Running CommandTestSuite/TestRunPrint";
-  print->exec(params);
+  print->exec( params , false );
 
   BOOST_CHECK_EQUAL(print->getProgress(), 100.0);
   BOOST_CHECK_EQUAL(print->getStatus(), Command::kDone);
@@ -78,7 +78,7 @@ BOOST_FIXTURE_TEST_CASE(TestRunPrint,  CommandTestSetup) {
 
 BOOST_FIXTURE_TEST_CASE(TestRunNothing,  CommandTestSetup) {
   LOG(kInfo) << "Running CommandTestSuite/TestRunNothing";
-  nothing->exec(params);
+  nothing->exec( params , false );
 
   BOOST_CHECK_EQUAL(nothing->getProgress(), 0);
   BOOST_CHECK_EQUAL(nothing->getStatus(), Command::kWarning);
@@ -87,7 +87,7 @@ BOOST_FIXTURE_TEST_CASE(TestRunNothing,  CommandTestSetup) {
 
 BOOST_FIXTURE_TEST_CASE(TestRunError,  CommandTestSetup) {
   LOG(kInfo) << "Running CommandTestSuite/TestRunError";
-  error->exec(params);
+  error->exec( params , false );
 
   BOOST_CHECK_CLOSE(error->getProgress(), 50.49, 0.1);
   BOOST_CHECK_EQUAL(error->getStatus(), Command::kError);

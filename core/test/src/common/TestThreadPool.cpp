@@ -36,20 +36,20 @@ public:
     cmd2 = handler.getCommand("cmd2");
     cmd3 = handler.getCommand("cmd3");
 
-    ((DummyCommand*) cmd1)->registerParam("todo", xdata::String("thread"));
-    ((DummyCommand*) cmd2)->registerParam("todo", xdata::String("thread"));
-    ((DummyCommand*) cmd3)->registerParam("todo", xdata::String("thread"));
+    ((DummyCommand*) cmd1)->registerParameter("todo", xdata::String("thread"));
+    ((DummyCommand*) cmd2)->registerParameter("todo", xdata::String("thread"));
+    ((DummyCommand*) cmd3)->registerParameter("todo", xdata::String("thread"));
 
-    ((DummyCommand*) cmd1)->registerParam("milliseconds",
+    ((DummyCommand*) cmd1)->registerParameter("milliseconds",
         xdata::Integer(wait_time_in_ms));
-    ((DummyCommand*) cmd2)->registerParam("milliseconds",
+    ((DummyCommand*) cmd2)->registerParameter("milliseconds",
         xdata::Integer(wait_time_in_ms));
-    ((DummyCommand*) cmd3)->registerParam("milliseconds",
+    ((DummyCommand*) cmd3)->registerParameter("milliseconds",
         xdata::Integer(wait_time_in_ms));
 
-    cmd1->setUseThreadPool(true);
-    cmd2->setUseThreadPool(true);
-    cmd3->setUseThreadPool(true);
+//     cmd1->setUseThreadPool(true);
+//     cmd2->setUseThreadPool(true);
+//     cmd3->setUseThreadPool(true);
 
   }
   ~ThreadPoolSetup() {

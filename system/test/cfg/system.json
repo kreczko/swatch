@@ -23,10 +23,11 @@
                         "CRATE NAME": "B14 Crate",
                         "CRATE SLOT": 3,
                         "RX PORTS": [
-                            {
-                              "NAME" : "Rx1",
-                              "PID": 0 
-                            }
+                            { "NAME" : "Rx[0:10]", "PID" : "[0:10]"},
+                            { "NAME" : "Rx[10:20:5]", "PID" : "[10:20:5]"}
+                        ],
+                        "TX PORTS": [
+                            { "NAME" : "Tx[00:72]", "PID": "[0:72]" }
                         ]
                       }
                     ],

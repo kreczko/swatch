@@ -25,10 +25,6 @@ public:
 
   virtual void code( XParameterSet& params); ///Should take const reference but xdata::serializable is const-correctness broken
 
-  template<typename T>
-  void registerParam(const std::string& name, const T& defaultValue) {
-    core::Functionoid::registerParameter(name, defaultValue);
-  }
 };
 
 template<typename T>

@@ -12,6 +12,11 @@
 #include "swatch/core/Object.hpp"
 #include "swatch/core/Command.hpp"
 
+#include "boost/date_time/posix_time/posix_time_types.hpp"
+#include <boost/thread/mutex.hpp>
+// #include "boost/any.hpp"
+
+
 #include <vector>
 #include <set>
 
@@ -19,13 +24,22 @@
 namespace swatch {
 namespace core {
   class GateKeeper;
+  class Operation;
 
 
 ///TODO : In the configure method, who has ownership of the xdata::Serializable* - the source table or the destination parameter set????!
   class CommandSequence : public Functionoid {
     friend class GateKeeper;
+    friend class Operation;
 
   public:
+
+    enum Status {
+        kDone,
+        kRunning,
+        kFailed
+    }; 
+
     /// Constructor
     CommandSequence( const std::string& aId );
 
@@ -44,23 +58,21 @@ namespace core {
     CommandSequence& then( const std::string& aCommand );
     CommandSequence& operator() ( const std::string& aCommand );
 
-    std::set<std::string> getParams();
+//     std::set<std::string> getParams();
     const std::vector<std::string>& getTables();
 
 
-    Command::Status getStatus() const;
+    const Command* getCurrentCommand();
 
-    float getProgress() const;
-    float getOverallProgress() const;
+    Status getStatus() const;
 
-    const std::string& getProgressMsg() const;
-
-    const std::string& getStatusMsg() const;
+    float getProgress();
+    std::vector< xdata::Serializable* > getResults();
 
     /**
       Run the configuration sequence
     */
-    virtual void exec( XParameterSet& params); ///Should take const reference but xdata::serializable is const-correctness broken
+    virtual void exec( const bool& aUseThreadPool = true ); 
 
     /**
       Reset the configuration commands
@@ -72,27 +84,46 @@ namespace core {
 
 
   private:
-    /**
-      Configure the configuration sequence
-    */
-    void cacheParameters();
+    virtual bool precondition();
+    virtual void threadless_exec(); 
 
-    XParameterSet mergeUserParametersWithCachedParams( XParameterSet& aUserParams , XParameterSet& aCached , const std::string& aCommandId ) const;
+    // thread safe exception catching wrapper for code()
+    void runCode();
 
     void setGateKeeper( GateKeeper* aGateKeeper );
 
+    void UpdateParameterCache();
+
+
+//     Command& getCommand( boost::any& aCommand ) const;
+    Command& getCommand( Command* aCommand ) const;
+
+
     std::vector<std::string>* mTables;
-    std::vector< Command* > mCommands;
-    std::vector< Command* >::iterator mIt;
+
+    typedef std::vector< Command* > tCommandVector;
+//     typedef std::vector< boost::any > tCommandVector;
+
+    tCommandVector mCommands;
+    tCommandVector::iterator mIt;
+
     GateKeeper* mGateKeeper;
 
     typedef std::vector< XParameterSet > tParameterSets;
-    tParameterSets* mCachedParameters;
+    tParameterSets mCachedParameters;
 
-    static std::string mCommandSequenceComplete;
+//     static std::string mCommandSequenceComplete;
+
+    /// The last time a table was updated from the Gatekeeper
+    boost::posix_time::ptime mUpdateTime;
+
+    boost::mutex mIteratorMutex ; //mObjectMutex
+
+    Status mStatus;
   };
 
 DEFINE_SWATCH_EXCEPTION( NoGateKeeperDefined );  
+DEFINE_SWATCH_EXCEPTION( NoParentDefined );  
 
 } /* namespace core */
 } /* namespace swatch */
