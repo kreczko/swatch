@@ -37,6 +37,7 @@ public:
 
     amc13::AMC13* driver() { return driver_; }
 
+    /*
     virtual double ttcClockFreq() const;
     
     virtual uint32_t ttcBC0Counter() const;
@@ -46,7 +47,11 @@ public:
     virtual uint32_t ttcSingleBitErrors() const;
     
     virtual uint32_t ttcDoubleBitErrors() const;
+    */
 
+protected:
+    virtual void implementUpdateMetrics();
+    
 private:
 
     uint32_t slot_;

@@ -56,22 +56,19 @@ public:
      */
     virtual uint32_t getOrbitCounter() const = 0;
 
-    /**
-     * @brief Single bit error counter getter.
-     * @return Current value of the single bit error counter.
-     */
-    virtual uint32_t getSingleBitErrors() const = 0;
-
-    /**
-     * @brief Double bit error counter getter.
-     * @return Current value of the double bit error counter.
-     */
-    virtual uint32_t getDoubleBitErrors() const = 0;
+protected:
+    //! Metric indicating if clk40 is locked
+    core::Metric<bool>& metricIsClock40Locked_;
+    //! Metric indicating if clk40 has stopped
+    core::Metric<bool>& metricHasClock40Stopped_;
+    //! Metric indicating if BC0 is locked
+    core::Metric<bool>& metricIsBC0Locked_;
+    //! Metric representing single-bit error counter
+    core::Metric<uint32_t>& metricSingleBitErrors_;
+    //! Metric representing double-bit error counter
+    core::Metric<uint32_t>& metricDoubleBitErrors_;
     
-    virtual bool isClock40Locked() const = 0;
-    virtual bool hasClock40Stopped() const = 0;
-    virtual bool isBC0Locked() const = 0;
-
+public:
     static std::vector<std::string> getDefaultMetrics();
     
 };

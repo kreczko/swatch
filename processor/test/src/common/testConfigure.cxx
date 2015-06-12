@@ -177,19 +177,19 @@ private:
 
 
 void printStatus( swpro::TTCInterface* ttc ) {
-    LOG(swlog::kInfo) << "Clock40 Locked: " << (ttc->isClock40Locked() ? "True" : "False");
+/*    LOG(swlog::kInfo) << "Clock40 Locked: " << (ttc->isClock40Locked() ? "True" : "False");
     LOG(swlog::kInfo) << "Orbit Locked:   " << (ttc->isBC0Locked() ? "True" : "False" );
     LOG(swlog::kInfo) << "Event counter:  " << ttc->getEventCounter();
     LOG(swlog::kInfo) << "Bunch counter:  " << ttc->getBunchCounter();
     LOG(swlog::kInfo) << "Orbit counter:  " << ttc->getOrbitCounter();
     LOG(swlog::kInfo) << "SBEC  counter:  " << ttc->getSingleBitErrors();
     LOG(swlog::kInfo) << "DBEC  counter:  " << ttc->getDoubleBitErrors();
-} 
+*/} 
 
 void printStatus( swpro::Processor* p ) {
     LOG(swlog::kInfo) << "Processor " << p->id();
     LOG(swlog::kInfo) << ">> Info";
-    LOG(swlog::kInfo) << "Firmware version : 0x"  << std::hex << p->firmwareVersion() << std::dec;
+//    LOG(swlog::kInfo) << "Firmware version : 0x"  << std::hex << p->firmwareVersion() << std::dec;
     LOG(swlog::kInfo) << "Inputs  : " << p->linkInterface()->getNumInputs();
     LOG(swlog::kInfo) << "Outputs : " << p->linkInterface()->getNumOutputs();
     LOG(swlog::kInfo) << ">> TTC";

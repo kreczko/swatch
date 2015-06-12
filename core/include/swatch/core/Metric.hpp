@@ -9,6 +9,7 @@
 
 
 #include <string>
+#include <sys/time.h>
 
 #include "boost/thread/mutex.hpp"
 #include "boost/scoped_ptr.hpp"
@@ -39,8 +40,16 @@ public:
     //! Returns status flag deduced from comparing the stored value with limits, as well as string representation of the metric's value. (THREAD SAFE)
     virtual std::pair<swatch::core::StatusFlag, std::string> getValue() = 0;
     
-    //! Retrieve the value of the metric from the hardware, and update the stored value. (THREAD SAFE)
-    virtual void update() = 0;
+    //! Returns time at which metric's value was last updated
+    virtual timeval getUpdateTimestamp() = 0;
+
+    
+protected:
+    
+    //! Set the value of the metric to being unknown
+    virtual void setValueUnknown() = 0;
+
+    friend class MonitorableObject;
     
     /* Possibilities for the future: Masking, and updating limits at runtime
     bool isMasked() const;
@@ -51,52 +60,47 @@ public:
     */
 };
 
-template<typename DataType, class ParentObjectType>
+template<typename DataType>
 class Metric : public AbstractMetric {
-
-// TODO: ?? Assert that ParentObjectType is derived from swatch::core::MonitorableObject ??
     
 public:
-    //! C++ type of member function used to retrieve the metric value from hardware
-    typedef DataType (ParentObjectType::*ParentMemberFunctionPtr)() const; 
-    
+
     /*!
-     * Construct a Metric that retrieves the data via a member function pointer
-     * @param parent object instance used to retrieve new data values
-     * @param fRetrieveValue method used to retrieve new data values
+     * Construct the Metric 
      * @param minGoodValue Minimum value resulting in "GOOD" value of status flag (i.e. lower data values result in "ERROR" status flag)
      * @param maxGoodValue Maximum value resulting in "GOOD" value of status flag (i.e. higher data values result in "ERROR" status flag)
      */
-    Metric(ParentObjectType& parent, ParentMemberFunctionPtr fRetrieveValue, DataType minGoodValue, DataType maxGoodValue);
+    Metric(DataType minGoodValue, DataType maxGoodValue);
 
     ~Metric();
     
     std::pair<swatch::core::StatusFlag, std::string> getValue();
     
-    virtual void update();
+    timeval getUpdateTimestamp();
     
 private:
+
+    //! Set the value of the metric
+    void setValue(const DataType& value);
     
-    //! Reference to the object instance that owns this metric; used when retrieving the metric value from the hardware.
-    ParentObjectType& obj_;
-    
-    //! Member function used to retrieve the metric value from hardware.
-    const ParentMemberFunctionPtr fRetrieveValue_;
+    //! Set the value of the metric to being unknown
+    void setValueUnknown();
     
     //! Latest retrieved value of metric; set to NULL if metric value is unknown.
     boost::scoped_ptr<DataType> value_;   
 
+    timeval updateTimestamp_;
+    
     // TODO: Maybe eventually update to read-write mutex if needed ???
     //! Mutex used to stop corruption of data_ and updateErrorMsg_
     boost::mutex mutex_;
-    
-    //! Stores details in case error occurs when updating the metric value
-    std::string updateErrorMsg_;
-    
+
     // TODO: Update limits to being more flexible, and settable from base class
     
     DataType minGoodValue_;
     DataType maxGoodValue_;
+    
+    friend class MonitorableObject;
  };
 
 //! Function template for representing metric data as string 

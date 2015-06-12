@@ -34,7 +34,6 @@ public:
   DummyProcessor(const std::string& id, const swatch::core::XParameterSet& params);
     virtual ~DummyProcessor();
 
-    virtual uint64_t firmwareVersion() const;
     virtual std::string firmwareInfo() const;
 
     const std::vector<std::string> ranTests() const;
@@ -42,6 +41,9 @@ public:
     void test2();
 
     static swatch::core::XParameterSet generateParams();
+
+protected:
+    virtual void implementUpdateMetrics();
 
 private:
 

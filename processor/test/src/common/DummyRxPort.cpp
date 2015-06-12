@@ -16,7 +16,7 @@ DummyRxPort::DummyRxPort(const std::string& aId) :
 DummyRxPort::~DummyRxPort() {
 }
 
-
+/*
 bool DummyRxPort::isEnabled() const {
   return true;
 }
@@ -35,6 +35,15 @@ bool DummyRxPort::isAligned() const {
 uint32_t DummyRxPort::getCRCErrors() const {
   return 0;
 }
+ */
+
+void DummyRxPort::implementUpdateMetrics() {
+  setMetricValue<>(metricIsEnabled_, true);
+  setMetricValue<>(metricIsLocked_, true);
+  setMetricValue<>(metricIsAligned_, true);
+  setMetricValue<>(metricCRCErrors_, uint32_t(0));
+}
+
 } // namespace test
 } // namespace processor
 } // namespace swatch

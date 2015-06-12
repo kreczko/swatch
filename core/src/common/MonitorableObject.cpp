@@ -2,7 +2,7 @@
 #include "swatch/core/MonitorableObject.hpp"
 
 
-#include <boost/foreach.hpp>
+#include "boost/foreach.hpp"
 
 
 using namespace std;
@@ -25,17 +25,17 @@ MonitorableObject::MonitorableObject( const std::string& aId , const XParameterS
 
 MonitorableObject::~MonitorableObject()
 {
-  BOOST_FOREACH( tMonitorableMap::value_type p, mMonitorables) {
+  BOOST_FOREACH( tMetricMap::value_type p, metrics_) {
     delete p.second;
   }
-  mMonitorables.clear();
+  metrics_.clear();
 }
 
 
 std::vector<std::string> MonitorableObject::getMetrics() const
 {
   std::vector<std::string> lNames;
-  BOOST_FOREACH( tMonitorableMap::value_type p, mMonitorables) {
+  BOOST_FOREACH( tMetricMap::value_type p, metrics_) {
     lNames.push_back( p.first );
   }
   return lNames;
@@ -45,9 +45,9 @@ std::vector<std::string> MonitorableObject::getMetrics() const
 AbstractMetric& MonitorableObject::getMetric( const std::string& aId )
 {
   try {
-    return *mMonitorables.at( aId );
+    return *metrics_.at( aId );
   } catch ( const std::out_of_range& e ) {
-    throw MonitorableNotFoundInMonitorableObject("MonitorableObject \"" + this->path() + "\" does not contain metric of ID \"" + aId + "\"");
+    throw MetricNotFoundInMonitorableObject("MonitorableObject \"" + this->path() + "\" does not contain metric of ID \"" + aId + "\"");
   }
 }
 
@@ -66,11 +66,39 @@ StatusFlag MonitorableObject::getStatus() const
     }
   }
   
-  BOOST_FOREACH( tMonitorableMap::value_type p, mMonitorables) {
+  BOOST_FOREACH( tMetricMap::value_type p, metrics_) {
     result = result & p.second->getValue().first;
   }
   
   return result;
+}
+
+
+void MonitorableObject::updateMetrics() 
+{
+  timeval startTime;
+  gettimeofday(&startTime, NULL);
+
+  try{
+    this->implementUpdateMetrics();
+    
+    // TODO: should lock a mutex ??
+    updateErrorMsg_.clear();
+  }
+  catch(const std::exception& e)
+  {
+    // TODO: should lock a mutex ??
+    updateErrorMsg_ = e.what();
+  }
+
+  BOOST_FOREACH(tMetricMap::value_type p, metrics_) {
+    timeval lastUpdateTime = p.second->getUpdateTimestamp(); 
+    if((lastUpdateTime.tv_sec == startTime.tv_sec) && (lastUpdateTime.tv_usec < startTime.tv_usec))
+      p.second->setValueUnknown();
+    else if(lastUpdateTime.tv_sec < startTime.tv_sec)
+      p.second->setValueUnknown();
+  }
+  
 }
 
 

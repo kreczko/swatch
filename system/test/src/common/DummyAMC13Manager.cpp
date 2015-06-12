@@ -85,7 +85,7 @@ void DummyAMC13Manager::configureClock(const std::string& mode) {
 
 }
 
-
+/*
 double DummyAMC13Manager::ttcClockFreq() const {
   return 4e7;
 }
@@ -105,7 +105,16 @@ uint32_t DummyAMC13Manager::ttcSingleBitErrors() const {
 uint32_t DummyAMC13Manager::ttcDoubleBitErrors() const {
   return 0;
 }
+*/
 
+
+void DummyAMC13Manager::implementUpdateMetrics() {
+  setMetricValue<double>(ttcMetricClockFreq_, 4e7);
+  setMetricValue<uint32_t>(ttcMetricBC0Counter_, 42);
+  setMetricValue<uint32_t>(ttcMetricBC0Errors_, 0);
+  setMetricValue<uint32_t>(ttcMetricSingleBitErrors_, 0);
+  setMetricValue<uint32_t>(ttcMetricDoubleBitErrors_, 0);
+}
 
 
 } // namespace test

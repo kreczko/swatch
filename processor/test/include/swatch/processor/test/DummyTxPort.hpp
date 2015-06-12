@@ -18,10 +18,13 @@ public:
   DummyTxPort ( const std::string& aId);
   virtual ~DummyTxPort ();
 
+  /*
   virtual bool isEnabled() const;
 
   virtual bool isOperating() const;
-
+   */
+  
+  virtual void implementUpdateMetrics();
 };
 } // namespace test
 } // namespace processor

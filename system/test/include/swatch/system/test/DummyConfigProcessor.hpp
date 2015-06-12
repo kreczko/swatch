@@ -40,6 +40,9 @@ public:
     void fail();
   
   private:
+      
+    void implementUpdateMetrics() {}
+    
     std::string something_;
     uint32_t number_;
 };

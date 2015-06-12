@@ -15,13 +15,15 @@ namespace swatch {
 namespace hardware {
 
 MP7TTCInterface::MP7TTCInterface( mp7::MP7Controller* controller ) :
-driver_(controller) {
-
+  driver_(controller)
+{
 }
+
 
 MP7TTCInterface::~MP7TTCInterface() {
 
 }
+
 
 void 
 MP7TTCInterface::clearCounters() {
@@ -49,26 +51,14 @@ uint32_t MP7TTCInterface::getEventCounter() const {
 }
 
 
-uint32_t MP7TTCInterface::getSingleBitErrors() const {
-    return driver_->getTTC().readSingleBitErrorCounter();
-}
+void MP7TTCInterface::implementUpdateMetrics()
+{
+  setMetricValue<>(metricSingleBitErrors_, driver_->getTTC().readSingleBitErrorCounter());
+  setMetricValue<>(metricDoubleBitErrors_, driver_->getTTC().readDoubleBitErrorCounter());
+  setMetricValue<>(metricIsClock40Locked_, driver_->getCtrl().clock40Locked());
+  setMetricValue<>(metricHasClock40Stopped_, driver_->getCtrl().clock40Stopped());
+  setMetricValue<>(metricIsBC0Locked_, driver_->getTTC().readBC0Locked());
 
-
-uint32_t MP7TTCInterface::getDoubleBitErrors() const {
-    return driver_->getTTC().readDoubleBitErrorCounter();
-}
-
-
-bool MP7TTCInterface::isClock40Locked() const {
-    return driver_->getCtrl().clock40Locked();
-}
-
-bool MP7TTCInterface::hasClock40Stopped() const {
-    return driver_->getCtrl().clock40Stopped();
-}
-
-bool MP7TTCInterface::isBC0Locked() const {
-    return driver_->getTTC().readBC0Locked();
 }
 
 } // namespace hardware

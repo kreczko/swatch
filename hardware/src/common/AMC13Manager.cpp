@@ -196,7 +196,7 @@ AMC13Manager::configureClock(const std::string& mode) {
   
 }
 
-
+/*
 double AMC13Manager::ttcClockFreq() const {
   uint32_t regValue = driver_->read(amc13::AMC13::T2,"STATUS.TTC.CLK_FREQ");
   return ((double)regValue*50);
@@ -216,6 +216,16 @@ uint32_t AMC13Manager::ttcSingleBitErrors() const {
     
 uint32_t AMC13Manager::ttcDoubleBitErrors() const {
   return driver_->read(amc13::AMC13::T2,"STATUS.TTC.MBIT_ERROR");
+}
+*/
+
+void AMC13Manager::implementUpdateMetrics()
+{
+  setMetricValue<>(ttcMetricClockFreq_, (double) driver_->read(amc13::AMC13::T2,"STATUS.TTC.CLK_FREQ")*50 ); 
+  setMetricValue<>(ttcMetricBC0Counter_, driver_->read(amc13::AMC13::T2,"STATUS.TTC.BC0_COUNTER"));
+  setMetricValue<>(ttcMetricBC0Errors_, driver_->read(amc13::AMC13::T2,"STATUS.TTC.BCNT_ERROR"));
+  setMetricValue<>(ttcMetricSingleBitErrors_, driver_->read(amc13::AMC13::T2,"STATUS.TTC.SBIT_ERROR"));
+  setMetricValue<>(ttcMetricDoubleBitErrors_, driver_->read(amc13::AMC13::T2,"STATUS.TTC.MBIT_ERROR"));
 }
 
 } // namespace hardware

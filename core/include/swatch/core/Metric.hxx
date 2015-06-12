@@ -12,6 +12,7 @@
 
 #include "boost/lexical_cast.hpp"
 #include "boost/thread/lock_guard.hpp"
+#include "Metric.hpp"
 
 
 
@@ -19,10 +20,8 @@ namespace swatch {
 namespace core {
 
 
-template<typename DataType, class ParentObjectType>
-Metric<DataType, ParentObjectType>::Metric(ParentObjectType& parent, ParentMemberFunctionPtr fRetrieveValue, DataType minGoodValue, DataType maxGoodValue) : 
-  obj_(parent),
-  fRetrieveValue_(fRetrieveValue),
+template<typename DataType>
+Metric<DataType>::Metric(DataType minGoodValue, DataType maxGoodValue) : 
   value_(NULL),
   minGoodValue_(minGoodValue),
   maxGoodValue_(maxGoodValue)
@@ -31,18 +30,18 @@ Metric<DataType, ParentObjectType>::Metric(ParentObjectType& parent, ParentMembe
 }
 
 
-template<typename DataType, class ParentObjectType>
-Metric<DataType, ParentObjectType>::~Metric(){
+template<typename DataType>
+Metric<DataType>::~Metric(){
 }
 
 
-template<typename DataType, class ParentObjectType>
-std::pair<swatch::core::StatusFlag, std::string> Metric<DataType, ParentObjectType>::getValue() {
+template<typename DataType>
+std::pair<swatch::core::StatusFlag, std::string> Metric<DataType>::getValue() {
     boost::lock_guard<boost::mutex> lock(mutex_);
 
     if(this->value_ == NULL)
     {
-        return std::pair<swatch::core::StatusFlag, std::string>(kUnknown, updateErrorMsg_);
+        return std::pair<swatch::core::StatusFlag, std::string>(kUnknown, boost::lexical_cast<std::string>(swatch::core::kUnknown));
     }
     
     std::pair<swatch::core::StatusFlag, std::string> result;
@@ -56,7 +55,14 @@ std::pair<swatch::core::StatusFlag, std::string> Metric<DataType, ParentObjectTy
     return result;
 }
 
+template<typename DataType>
+timeval Metric<DataType>::getUpdateTimestamp()
+{
+    boost::lock_guard<boost::mutex> lock(mutex_);
+    return updateTimestamp_;
+}
 
+/*
 template<typename DataType, class ParentObjectType>
 void Metric<DataType, ParentObjectType>::update() {
 
@@ -74,6 +80,22 @@ void Metric<DataType, ParentObjectType>::update() {
         value_.reset(NULL);
         updateErrorMsg_ = e.what();
     }
+}
+*/
+
+template<typename DataType>
+void Metric<DataType>::setValue(const DataType& value) {
+    boost::lock_guard<boost::mutex> lock(mutex_);
+    gettimeofday(&updateTimestamp_, NULL);
+    value_.reset(new DataType(value));
+}
+
+
+template<typename DataType>
+void Metric<DataType>::setValueUnknown() {
+    boost::lock_guard<boost::mutex> lock(mutex_);
+    gettimeofday(&updateTimestamp_, NULL);
+    value_.reset(NULL);
 }
 
 

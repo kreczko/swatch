@@ -61,8 +61,8 @@ IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::XParam
 
     // Build the driver and interfaces
     hw_ = new uhal::HwInterface( uhal::ConnectionManager::getDevice(id, stub.uri, stub.addressTable) );
-    Add( new IPBusTTC(hw()) );
-    Add( new IPBusFakeAlgos(hw()) );
+//    Add( new IPBusTTC(hw()) );
+//    Add( new IPBusFakeAlgos(hw()) );
     Add( new processor::LinkInterface() );
 
     // build the list of links based on the firmware informations
@@ -81,12 +81,12 @@ IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::XParam
 
         a.insert("path", xdata::String(path));
 
-        IPBusRxChannel* rx = new IPBusRxChannel(strPrintf("rx%02d", k), hw(), a);
+/*        IPBusRxChannel* rx = new IPBusRxChannel(strPrintf("rx%02d", k), hw(), a);
         linkInterface()->addInput(rx);
 //        inputChannels_.push_back(new IPBusRxChannel(hw(), a));
 
         LOG(swlog::kDebug) << "rx ch[" << k << "]: size " << rx->getBufferSize();
-    }
+*/    }
 
     for (size_t k(0); k < nOutputs; ++k) {
         XParameterSet a, ctrl, buf;
@@ -95,12 +95,12 @@ IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::XParam
         a.insert("path", xdata::String(path));
 
         
-        IPBusTxChannel* tx = new IPBusTxChannel(strPrintf("tx%02d", k), hw(), a);
+/*        IPBusTxChannel* tx = new IPBusTxChannel(strPrintf("tx%02d", k), hw(), a);
         linkInterface()->addOutput(tx);
 //        outputChannels_.push_back(new IPBusTxChannel(hw(), a));
 
         LOG(swlog::kDebug) << "tx ch[" << k << "]: size " << tx->getBufferSize();
-    }
+*/    }
     
     
 }

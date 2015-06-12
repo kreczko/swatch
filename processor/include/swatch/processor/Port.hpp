@@ -17,15 +17,18 @@ class InputPort : public core::MonitorableObject {
 protected:
     explicit InputPort( const std::string& aId);
     explicit InputPort( const std::string& aId, const core::XParameterSet& params );
+
 public:
     virtual ~InputPort() {}
 
-    virtual bool isEnabled() const = 0;
-    virtual bool isLocked() const = 0;
-    virtual bool isAligned() const = 0;
-    virtual uint32_t getCRCErrors() const = 0;
-    
     static std::vector<std::string> getDefaultMetrics();
+
+protected:
+    
+    core::Metric<bool>& metricIsEnabled_;
+    core::Metric<bool>& metricIsLocked_;
+    core::Metric<bool>& metricIsAligned_;
+    core::Metric<uint32_t>& metricCRCErrors_;    
 };
 
 class OutputPort : public core::MonitorableObject {
@@ -34,10 +37,11 @@ public:
     explicit OutputPort( const std::string& aId, const core::XParameterSet& params );
     virtual ~OutputPort() {}
 
-    virtual bool isEnabled() const = 0;
-    virtual bool isOperating() const = 0;
-    
     static std::vector<std::string> getDefaultMetrics();
+
+protected:
+    core::Metric<bool>& metricIsEnabled_;
+    core::Metric<bool>& metricIsOperating_;
 };
 
 }

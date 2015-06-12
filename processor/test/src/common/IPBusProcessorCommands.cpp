@@ -113,13 +113,13 @@ void IPBusConfigureCommand::code() {
     IPBusProcessor* p = getParent<IPBusProcessor>();
 
     // // Check presence of TTC clock and signals
-     if ( not p->ttc()->isClock40Locked() ) {
+/*     if ( not p->ttc()->isClock40Locked() ) {
          LOG(swlog::kError) << "Clock 40 NOT locked!";
      }
      if ( not p->ttc()->isBC0Locked() ) {
          LOG(swlog::kError) << "Orbit (BC0) NOT locked!";
      }
-
+*/
     // // And clear all counters
     // p->ttc()->clearCounters();
     

@@ -1,8 +1,8 @@
 /**
  * @file    MonitorableObject.hpp
  * @author  Andy Rose
- * @brief   An object which exposes its Monitorables
- * @date    August 2014
+ * @brief   An object representing hardware that whose status can be monitored by reading various quantities (Metrics)
+ * @date    May 2015
  *
  */
 
@@ -20,6 +20,7 @@
 
 // BOOST Headers
 #include "boost/unordered_map.hpp"
+
 
 namespace swatch {
 namespace core {
@@ -44,29 +45,41 @@ public:
 
   //! Get overall object status based on status flags of child Metrics and child MonitorableObjects; returns kGood in case there are no metrics.
   StatusFlag getStatus() const;
+  
+  //! Update values of this object's metrics
+  void updateMetrics();
 
 protected:
 
   /*!
-   * register a metric of type swatch::core::Metric
+   * register a metric of type swatch::core::Metric<DataType>
    * @param aId ID string of the metric
-   * @param aObj object instance used to retrieve new data values
-   * @param aRetrieveValueFunc method used to retrieve new data values
    * @param aMinGoodValue Minimum value resulting in "GOOD" value of status flag (i.e. lower data values result in "ERROR" status flag)
    * @param aMaxGoodValue Maximum value resulting in "GOOD" value of status flag (i.e. higher data values result in "ERROR" status flag)
+   * @returns A reference to the registered metric
    */
-  template <typename DataType, typename ObjectType> 
-  void registerMetric( const std::string& aId, ObjectType& aObj, typename Metric<DataType, ObjectType>::ParentMemberFunctionPtr aRetrieveValueFunc, DataType aMinGoodValue, DataType aMaxGoodValue);
+  template <typename DataType> 
+  Metric<DataType>& registerMetric( const std::string& aId, DataType aMinGoodValue, DataType aMaxGoodValue);
     
+  //! Set value of metric
+  template <typename DataType>
+  void setMetricValue(Metric<DataType>& metric, const DataType& value);
+  
+  //! User-defined function that retrieves values of all the object's metrics from the hardware
+  virtual void implementUpdateMetrics() = 0;
+  
 private:
-  typedef boost::unordered_map< std::string , AbstractMetric* > tMonitorableMap;
+  typedef boost::unordered_map< std::string , AbstractMetric* > tMetricMap;
 
-  tMonitorableMap mMonitorables;
+  tMetricMap metrics_;
+
+  //! Stores details in case error occurs when updating the metric values
+  std::string updateErrorMsg_;
 };
 
-DEFINE_SWATCH_EXCEPTION(MonitorableAlreadyExistsInMonitorableObject);
+DEFINE_SWATCH_EXCEPTION(MetricAlreadyExistsInMonitorableObject);
 
-DEFINE_SWATCH_EXCEPTION(MonitorableNotFoundInMonitorableObject);
+DEFINE_SWATCH_EXCEPTION(MetricNotFoundInMonitorableObject);
 
 } // namespace core
 } // namespace swatch

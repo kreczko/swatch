@@ -30,6 +30,7 @@ public:
     
     virtual void configureClock(const std::string& mode);
     
+    /*
         /// Reads measured TTC clock frequency (in Hz) 
     virtual double ttcClockFreq() const;
     
@@ -44,10 +45,12 @@ public:
     
     /// Reads TTC double-bit error counter
     virtual uint32_t ttcDoubleBitErrors() const;
-
-
+    */
+    
 private:
 
+    virtual void implementUpdateMetrics();
+    
     uint32_t slot_;
     
     std::string crate_;

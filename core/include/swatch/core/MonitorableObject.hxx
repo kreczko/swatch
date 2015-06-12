@@ -1,20 +1,28 @@
-#include <boost/type_traits/is_base_of.hpp>
-#include <boost/static_assert.hpp>
 
 #include "Metric.hpp"
+
 
 namespace swatch {
 namespace core {
 
-template <typename DataType, typename ObjectType> 
-void MonitorableObject::registerMetric( const std::string& aId, ObjectType& aObj, typename Metric<DataType, ObjectType>::ParentMemberFunctionPtr aRetrieveValueFunc, DataType aMinGoodValue, DataType aMaxGoodValue)
+template <typename DataType> 
+Metric<DataType>& MonitorableObject::registerMetric( const std::string& aId, DataType aMinGoodValue, DataType aMaxGoodValue)
 {
-  // BOOST_STATIC_ASSERT( (boost::is_base_of<Metric,T>::value) );
-  assert(static_cast<void*>(&aObj) == static_cast<void*>(this) );
-  
-  if (mMonitorables.count(aId)) throw MonitorableAlreadyExistsInMonitorableObject(aId);
-  mMonitorables.emplace( aId , new Metric<DataType, ObjectType>(aObj, aRetrieveValueFunc, aMinGoodValue, aMaxGoodValue));
+  if (metrics_.count(aId))
+    throw MetricAlreadyExistsInMonitorableObject("Metric of ID \""+aId+"\" already exists in object of path \""+path()+"\"");
+
+  Metric<DataType>* m = new Metric<DataType>(aMinGoodValue, aMaxGoodValue);
+  metrics_.insert( tMetricMap::value_type(aId , m) );
+  return *m;
 }
+
+template <typename DataType>
+void MonitorableObject::setMetricValue(Metric<DataType>& metric, const DataType& value)
+{
+  metric.setValue(value);
+}
+
+
 
 
 }

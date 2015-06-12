@@ -34,6 +34,7 @@ public:
 
     virtual void configureClock(const std::string& mode) = 0;
 
+    /*
     /// Reads measured TTC clock frequency (in Hz) 
     virtual double ttcClockFreq() const = 0;
     
@@ -48,8 +49,16 @@ public:
     
     /// Reads TTC double-bit error counter
     virtual uint32_t ttcDoubleBitErrors() const = 0;
+    */
     
     static std::vector<std::string> getDefaultMetrics();
+
+protected:
+    core::Metric<double>& ttcMetricClockFreq_;
+    core::Metric<uint32_t>& ttcMetricBC0Counter_;
+    core::Metric<uint32_t>& ttcMetricBC0Errors_;
+    core::Metric<uint32_t>& ttcMetricSingleBitErrors_;
+    core::Metric<uint32_t>& ttcMetricDoubleBitErrors_;
 };
 
 } // namespace system

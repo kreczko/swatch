@@ -9,6 +9,7 @@
 
 
 #include <map>
+#include <set>
 #include <string>
 
 
@@ -26,7 +27,7 @@ public:
     
     ~MetricView();
     
-    //! Call update method of all metrics in this view
+    //! Update values of all metrics in this view
     void update();
     
     //! Number of metrics in the view
@@ -50,6 +51,8 @@ private:
     typedef std::map<std::string, swatch::core::AbstractMetric*> MetricMap;
     
     std::map<std::string, swatch::core::AbstractMetric*> metricsMap_;
+    
+    std::set<swatch::core::MonitorableObject*> monitorableObjects_;
 };
 
 } // namespace core

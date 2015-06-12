@@ -33,15 +33,13 @@ const uint32_t Processor::NoSlot =  0x7fffffffL;
 ///---
 Processor::Processor( const std::string& aId, const core::XParameterSet& params ) :
     ActionableObject(aId, params),
+    metricFirmwareVersion_( registerMetric<uint64_t>("firmwareVersion", 0, 0) ),
     slot_(NoSlot),
     ttc_(0x0),
     readout_(0x0),
     algo_(0x0),
     links_(0x0)
 {
-  // Register common processor metrics
-  registerMetric<uint64_t,Processor>("firmwareVersion", *this, &Processor::firmwareVersion, 0, 0);
-
   // Set crate and slot number from processor stub  
   processor::ProcessorBag& desc = params.get<processor::ProcessorBag>("stub");
   crateId_ = desc.bag.crate;
@@ -62,7 +60,6 @@ const std::string&
 Processor::getCrateId() const {
   return crateId_;
 }
-
 
 TTCInterface*
 Processor::ttc() {

@@ -57,6 +57,10 @@ public:
 
     void addInput( InputPort* aInput );
     void addOutput( OutputPort*  aOutput );
+    
+    
+protected:
+    void implementUpdateMetrics() {}
 
 private:
     tInputPortDeque inputs_;

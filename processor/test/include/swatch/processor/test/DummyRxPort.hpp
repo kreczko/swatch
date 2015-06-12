@@ -20,15 +20,18 @@ public:
 
   virtual ~DummyRxPort();
 
+  /*
   virtual bool isEnabled() const;
 
   virtual bool isLocked() const;
 
   virtual bool isAligned() const;
 
-
   virtual uint32_t getCRCErrors() const;
+  */
 
+  virtual void implementUpdateMetrics();
+  
 };
 
 } // namespace test

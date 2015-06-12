@@ -73,10 +73,6 @@ void DummyProcessor::test2() {
 }
 
 
-uint64_t DummyProcessor::firmwareVersion() const {
-  return 0;
-}
-
 std::string DummyProcessor::firmwareInfo() const {
   return "none";
 }
@@ -112,6 +108,12 @@ swatch::core::XParameterSet DummyProcessor::generateParams() {
   params.add("class", p0bag.bag.creator);
   params.add("stub", p0bag);
   return params;
+}
+
+
+void DummyProcessor::implementUpdateMetrics()
+{
+  setMetricValue<uint64_t>(metricFirmwareVersion_, 0);
 }
 
 

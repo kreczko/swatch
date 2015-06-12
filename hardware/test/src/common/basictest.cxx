@@ -112,7 +112,7 @@ public:
           swatch::core::XParameterSet emptyParamSet; //TODO: Remove this line once exec method takes const refererence 
           p->getCommand("reset")->exec(emptyParamSet);
           
-          LOG(swlo::kInfo) << "BC0 Locked" << p->ttc()->isBC0Locked();
+//          LOG(swlo::kInfo) << "BC0 Locked" << p->ttc()->isBC0Locked();
         }
 
     }
@@ -158,13 +158,13 @@ int main(int argc, char** argv) {
                        << setw(7) << "aligned" << " | "
                        << setw(6) << "crcs" ;
       BOOST_FOREACH( swpro::InputPort* ip, p->linkInterface()->getInputs() ){
-        LOG(swlo::kInfo) << left 
+/*        LOG(swlo::kInfo) << left 
             << setw(15) << ip->path() << " | "
             << setw(7) << ip->isEnabled() << " | "
             << setw(9) << ip->isLocked() << " | "
             << setw(7) << ip->isAligned() << " | "
             << setw(6) << ip->getCRCErrors() ;
-      } 
+  */    } 
     }
 
     return 0;

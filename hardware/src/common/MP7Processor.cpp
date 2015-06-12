@@ -47,8 +47,8 @@ namespace hardware {
 
 MP7Processor::MP7Processor(const std::string& id, const swatch::core::XParameterSet& aPars) :
     Processor(id, aPars),
-    driver_(0x0) {
-  
+    driver_(0x0)
+{
     // Add commands
     Register<MP7ResetCommand>("reset");
     Register<MP7ConfigureLoopback>("loopback");
@@ -72,7 +72,7 @@ MP7Processor::MP7Processor(const std::string& id, const swatch::core::XParameter
     for(it = stub.txPorts.begin(); it != stub.txPorts.end(); it++)
       linkInterface()->addOutput(new MP7TxPort(it->bag.name, it->bag.number, *this));
 
-    LOG(swlog::kNotice) << "MP7 Processor '" << this->id() << "' built: firmware 0x" << std::hex << firmwareVersion() << std::endl;
+    LOG(swlog::kNotice) << "MP7 Processor '" << this->id() << "' built: firmware 0x" << std::hex << retrieveFirmwareVersion() << std::endl;
 }
 
 MP7Processor::~MP7Processor() {
@@ -81,7 +81,7 @@ MP7Processor::~MP7Processor() {
 
 
 uint64_t
-MP7Processor::firmwareVersion() const {
+MP7Processor::retrieveFirmwareVersion() const {
     uhal::ValWord<uint32_t> v = driver_->getCtrl().getNode("id.fwrev").read();
     driver_->hwInterface().dispatch();
     
@@ -93,6 +93,11 @@ MP7Processor::firmwareInfo() const {
   return "";
 }
 
+void MP7Processor::implementUpdateMetrics() {
+  
+  setMetricValue<>(metricFirmwareVersion_, retrieveFirmwareVersion());
+
+}
 
 } // namespace hardware
 } // namespace swatch

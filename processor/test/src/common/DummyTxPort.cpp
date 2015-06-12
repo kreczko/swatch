@@ -15,12 +15,19 @@ OutputPort(aId){
 DummyTxPort::~DummyTxPort() {
 }
 
+/*
 bool DummyTxPort::isEnabled() const {
   return true;
 }
 
 bool DummyTxPort::isOperating() const {
   return true;
+}
+ */
+
+void DummyTxPort::implementUpdateMetrics() {
+  setMetricValue<>(metricIsEnabled_, true);
+  setMetricValue<>(metricIsOperating_, true);
 }
 } // namespace test
 } // namespace processor

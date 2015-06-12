@@ -38,6 +38,9 @@ public:
 
     uhal::HwInterface& hw() const;
 
+protected:
+    virtual void implementUpdateMetrics() {}
+    
 private:
 
     uhal::HwInterface* hw_;

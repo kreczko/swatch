@@ -12,14 +12,13 @@ namespace swatch {
 namespace processor {
 
 TTCInterface::TTCInterface():
-core::MonitorableObject( "ttc" )
+core::MonitorableObject( "ttc" ),
+metricIsClock40Locked_( registerMetric<bool>("isClock40Locked", true, true) ),
+metricHasClock40Stopped_( registerMetric<bool>("hasClock40Stopped", false, false) ),
+metricIsBC0Locked_( registerMetric<bool>("isBC0Locked", true, true) ),
+metricSingleBitErrors_( registerMetric<uint32_t>("singleBitErrors", 0, 0) ),
+metricDoubleBitErrors_( registerMetric<uint32_t>("doubleBitErrors", 0, 0) )
 {
-  this->registerMetric<bool,TTCInterface>("isClock40Locked", *this, &TTCInterface::isClock40Locked, true, true);
-  this->registerMetric<bool,TTCInterface>("hasClock40Stopped", *this, &TTCInterface::hasClock40Stopped, false, false);
-  this->registerMetric<bool,TTCInterface>("isBC0Locked", *this, &TTCInterface::isBC0Locked, true, true);
-  this->registerMetric<uint32_t,TTCInterface>("singleBitErrors", *this, &TTCInterface::getSingleBitErrors, 0, 0);
-  this->registerMetric<uint32_t,TTCInterface>("doubleBitErrors", *this, &TTCInterface::getDoubleBitErrors, 0, 0);
-  
 }
 
 

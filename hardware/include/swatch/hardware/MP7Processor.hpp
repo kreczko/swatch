@@ -27,15 +27,18 @@ public:
     MP7Processor(const std::string& id, const swatch::core::XParameterSet& aPars);
     ~MP7Processor();
     
-    virtual uint64_t firmwareVersion() const;
+    virtual uint64_t retrieveFirmwareVersion() const;
     
     virtual std::string firmwareInfo() const;
 
     mp7::MP7Controller& driver() { return *driver_; } 
+    
+protected:
+    virtual void implementUpdateMetrics();
+    
 private:
     
     mp7::MP7Controller* driver_;
-
 };
 
 } // namespace hardware

@@ -51,12 +51,6 @@ public:
     static const uint32_t NoSlot;
 
     /**
-     * Firmware version getter
-     * @return 64 bit word
-     */
-    virtual uint64_t firmwareVersion() const = 0;
-
-    /**
      * Additional firmware information.
      * The string is meant to be informative for the user
      * @details [long description]
@@ -80,6 +74,9 @@ protected:
     void Add( AlgoInterface* aAlgoInterface );
     void Add( LinkInterface* aLinkInterface );
 
+    //! Firmware version metric
+    core::Metric<uint64_t>& metricFirmwareVersion_;
+    
 private:
 
     uint32_t slot_;

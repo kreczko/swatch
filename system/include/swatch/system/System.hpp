@@ -56,8 +56,9 @@ public:
     bool hasCrate(const std::string& crate_id) const;
 
 
-    
 protected:
+    
+    virtual void implementUpdateMetrics() {}
 
     //! List of processors
     std::deque<processor::Processor*> processors_;

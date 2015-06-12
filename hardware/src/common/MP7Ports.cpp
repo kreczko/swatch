@@ -5,16 +5,20 @@
  * @date    February 2015
  */
 
-
 #include "swatch/hardware/MP7Ports.hpp"
 
-// MP7 Headers
+
+// SWATCH headers
+#include "swatch/hardware/MP7Processor.hpp"
+
+// MP7 headers
 #include "mp7/MP7Controller.hpp"
 #include "mp7/DatapathNode.hpp"
 #include "mp7/MGTRegionNode.hpp"
 #include "mp7/ChannelIDSet.hpp"
 #include "mp7/AlignMonNode.hpp"
 #include "mp7/Utilities.hpp"
+
 
 namespace swatch {
 namespace hardware {
@@ -27,7 +31,8 @@ MP7RxPort::MP7RxPort( const std::string& aId, uint32_t aChannelID, MP7Processor&
   driver_(aProcessor.driver()),
   datapath_(aProcessor.driver().getDatapath()),
   mgt_(datapath_.getNode<mp7::MGTRegionNode>("region.mgt")),
-  align_(datapath_.getNode<mp7::AlignMonNode>("region.align")) {
+  align_(datapath_.getNode<mp7::AlignMonNode>("region.align"))
+{
 }
 
 
@@ -37,54 +42,51 @@ MP7RxPort::~MP7RxPort() {
 
 
 //---
-bool
-MP7RxPort::isEnabled() const {
+void MP7RxPort::implementUpdateMetrics()
+{
   // Where to store the information if the port is enabled or not?
   // In the MP7 case is slightly complicated. The Masks will be known to the processor, but not to the driver.
   // Interesting problem
-  return true;
+  setMetricValue<>(metricIsEnabled_, true);
   
-}
-
-
-//---
-bool
-MP7RxPort::isLocked() const {
-  datapath_.selectLink(channelID_);
+  // Select the link, and calculate channel's local ID (within quad) ...
+  datapath_.selectLink(this->channelID_);
+  uint32_t localId = mp7::ChannelIDSet::channelToLocal(channelID_);
   
-  // Calculate the channel local id
-  uint32_t l = mp7::ChannelIDSet::channelToLocal(channelID_);
 
+  /* IS LOCKED */
   // Point to the right node
-  std::string path = mp7::strprintf("ro_regs.ch%d.status", l);
+  std::string mgtStatusNodePath = "ro_regs.ch" + boost::lexical_cast<std::string>(localId) + ".status";
+  uhal::ValWord<uint32_t> mgtInReset = mgt_.getNode(mgtStatusNodePath+".rxusrrst").read();
+  uhal::ValWord<uint32_t> mgtResetDone = mgt_.getNode(mgtStatusNodePath+".rx_fsm_reset_done").read();
+  uhal::ValWord<uint32_t> mgtNoCRCs = mgt_.getNode(mgtStatusNodePath+".crc_checked").read();
 
-  // Get all subregisters
-  mp7::Snapshot s =  mp7::snapshot(mgt_.getNode(path));
+  /* IS ALIGNED */
+  uhal::ValWord<uint32_t> alignErrors = align_.getNode("stat.err_cnt").read();
+  
+  
+  /* CRC ERRORS */
+  //if (aChannel > 3)
+  //  throw mp7:MGTChannelIdOutOfBounds("Invalid channel number requested");
+  uhal::ValWord<uint32_t> crcErrors = mgt_.getNode(mgtStatusNodePath+".crc_error").read();
+  driver_.hwInterface().dispatch();
 
-  return (
+  bool isLocked (
     // Not in reset
-    !s["rxusrrst"] and
+    !mgtInReset.value() and
     // Reset completed
-    s["rx_fsm_reset_done"] and
+    mgtResetDone.value() and
     // And no crcs
-    s["crc_checked"] != 0x0
+    mgtNoCRCs.value() != 0x0
   );
+
+  setMetricValue<>(metricIsLocked_, isLocked);
+  
+  setMetricValue<>(metricIsAligned_, alignErrors.value() == 0);
+  
+  setMetricValue<>(metricCRCErrors_, crcErrors.value());
 }
 
-
-//---
-bool MP7RxPort::isAligned() const {
-  datapath_.selectLink(channelID_);
-  return ( align_.errors() == 0  );
-}
-
-
-//---
-uint32_t
-MP7RxPort::getCRCErrors() const {
-  datapath_.selectLink(channelID_);
-  return mgt_.readCrcErrors(mp7::ChannelIDSet::channelToLocal(channelID_));
-}
 
 
 //---
@@ -94,9 +96,10 @@ MP7TxPort::MP7TxPort(const std::string& aId, uint32_t aChannelID, MP7Processor& 
   processor_(aProcessor),
   driver_(aProcessor.driver()),
   datapath_(aProcessor.driver().getDatapath()),
-  mgt_(datapath_.getNode<mp7::MGTRegionNode>("region.mgt")) {
-
+  mgt_(datapath_.getNode<mp7::MGTRegionNode>("region.mgt"))
+{
 }
+
 
 //---
 MP7TxPort::~MP7TxPort() {
@@ -104,13 +107,11 @@ MP7TxPort::~MP7TxPort() {
 
 
 //---
-bool MP7TxPort::isEnabled() const {
-  return true;
-}
-
-
-//---
-bool MP7TxPort::isOperating() const {
+void MP7TxPort::implementUpdateMetrics()
+{  
+  setMetricValue<>(metricIsEnabled_, true);
+  
+  /* IS OPERATING */
   datapath_.selectLink(channelID_);
   
   // Calculate the channel local id
@@ -122,14 +123,15 @@ bool MP7TxPort::isOperating() const {
   // Get all subregisters
   mp7::Snapshot s =  mp7::snapshot(mgt_.getNode(path));
 
-  return (
+  bool isOperating (
     // Not in reset
     !s["txusrrst"] and
     // Reset completed
     s["tx_fsm_reset_done"]
   );
-}
 
+  setMetricValue<>(metricIsOperating_, isOperating);
+}
 
 }
 }

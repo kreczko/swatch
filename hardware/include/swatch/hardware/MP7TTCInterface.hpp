@@ -35,6 +35,7 @@ public:
 
     virtual uint32_t getEventCounter() const;
 
+    /* 
     virtual uint32_t getSingleBitErrors() const;
 
     virtual uint32_t getDoubleBitErrors() const;
@@ -44,12 +45,17 @@ public:
     virtual bool isClock40Locked() const;
 
     virtual bool isBC0Locked() const;
-
-    private:
+    */
+    
+protected:
+    virtual void implementUpdateMetrics();
+    
+private:
     
     mp7::MP7Controller* driver_;
 
 };
+ 
 } // namespace hardware
 } // namespace swatch 
 
