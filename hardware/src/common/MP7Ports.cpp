@@ -69,7 +69,7 @@ void MP7RxPort::implementUpdateMetrics()
   //if (aChannel > 3)
   //  throw mp7:MGTChannelIdOutOfBounds("Invalid channel number requested");
   uhal::ValWord<uint32_t> crcErrors = mgt_.getNode(mgtStatusNodePath+".crc_error").read();
-  driver_.hwInterface().dispatch();
+  driver_.hw().dispatch();
 
   bool isLocked (
     // Not in reset

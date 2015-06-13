@@ -83,7 +83,7 @@ MP7Processor::~MP7Processor() {
 uint64_t
 MP7Processor::retrieveFirmwareVersion() const {
     uhal::ValWord<uint32_t> v = driver_->getCtrl().getNode("id.fwrev").read();
-    driver_->hwInterface().dispatch();
+    driver_->hw().dispatch();
     
     return v.value();
 }
