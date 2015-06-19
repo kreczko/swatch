@@ -6,11 +6,11 @@
  *
  */
 
-#ifndef __SWATCH_CORE_LINK_HPP__
-#define	__SWATCH_CORE_LINK_HPP__
+#ifndef __SWATCH_PROCESSOR_LINK_HPP__
+#define	__SWATCH_PROCESSOR_LINK_HPP__
 
 
-#include "swatch/processor/LinkInterface.hpp"
+#include "swatch/core/Object.hpp"
 
 namespace swatch {
 namespace processor {
@@ -35,5 +35,5 @@ protected:
 } // namespace core
 } // namespace swatch
 
-#endif	/* __SWATCH_CORE_LINK_HPP__ */
+#endif	/* __SWATCH_PROCESSOR_LINK_HPP__ */
 

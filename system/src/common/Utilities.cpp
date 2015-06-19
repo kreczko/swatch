@@ -98,6 +98,13 @@ treeToSystemPars( const boost::property_tree::ptree& t ) {
     }
     sysPars.add("daqttcs",daqTTCSets);
 
+    
+    xdata::Vector<processor::LinkBag> linkBags;
+    BOOST_FOREACH( const ptree::value_type& v, pt_system.get_child("LINKS")) {
+        swatch::processor::treeToLinkPars(v.second, linkBags);
+    }
+    sysPars.add("links", linkBags);
+    
     /* Enable if need services
     xdata::Vector<XParameterSet> serviceSets;
     BOOST_FOREACH( const ptree::value_type &v, pt_system.get_child("SERVICES")) {

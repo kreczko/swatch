@@ -29,14 +29,26 @@ BOOST_AUTO_TEST_CASE(SliceSyntaxParsingTests) {
   BOOST_CHECK_EQUAL_COLLECTIONS(returned.begin(), returned.end(), expected.begin(), expected.end());
   returned = expandPortSliceSyntax("[0:9:3]");
   BOOST_CHECK_EQUAL_COLLECTIONS(returned.begin(), returned.end(), expected.begin(), expected.end());
-  
+
   expected = {"12", "24", "36"};
   returned = expandPortSliceSyntax("[12:37:12]");
   BOOST_CHECK_EQUAL_COLLECTIONS(returned.begin(), returned.end(), expected.begin(), expected.end());
   returned = expandPortSliceSyntax("[12:48:12]");
   BOOST_CHECK_EQUAL_COLLECTIONS(returned.begin(), returned.end(), expected.begin(), expected.end());
 
+
+  // Very basic strings, decreasing numbers
+  expected = {"12", "11", "10"};
+  returned = expandPortSliceSyntax("[12:9:-1]");
+  BOOST_CHECK_EQUAL_COLLECTIONS(returned.begin(), returned.end(), expected.begin(), expected.end());
   
+  expected = {"12", "09", "06"};
+  returned = expandPortSliceSyntax("[12:3:-3]");
+  BOOST_CHECK_EQUAL_COLLECTIONS(returned.begin(), returned.end(), expected.begin(), expected.end());
+  returned = expandPortSliceSyntax("[12:5:-3]");
+  BOOST_CHECK_EQUAL_COLLECTIONS(returned.begin(), returned.end(), expected.begin(), expected.end());
+
+
   // Very basic strings (no prefix / suffix), fixed width
   expected = {"00", "01"};
   returned = expandPortSliceSyntax("[00:2]");
@@ -96,6 +108,7 @@ BOOST_AUTO_TEST_CASE(SliceSyntaxPortStubTests){
 
   
   result.clear();
+  
   // Check for throwing when lengths of name and index sequence aren't equal
   BOOST_CHECK_THROW(expandPortSliceSyntax("myPort_rx[0:3]", "[0:2]", result), std::runtime_error);
   BOOST_CHECK( result.empty() );
@@ -104,6 +117,61 @@ BOOST_AUTO_TEST_CASE(SliceSyntaxPortStubTests){
   BOOST_CHECK_THROW(expandPortSliceSyntax("myPort_rx[0:3]", "a[0:2]", result), std::runtime_error);
   BOOST_CHECK( result.empty() );
   
+}
+
+
+BOOST_AUTO_TEST_CASE(SliceSyntaxLinkStubTests) {
+  std::cout << "ProcessorTestSuite.SliceSyntaxLinkStubTests" << std::endl;
+  
+  xdata::Vector<swatch::processor::LinkBag> result;
+  std::vector<swatch::processor::LinkBag> expected;
+  
+  expandLinkSliceSyntax("myLink_[0:10]", "mySrcPort_[0:20:2]", "myDstPort_[200:0:-20]", result);
+  // Generate expected vector
+  size_t j = 0;   // j : src port
+  size_t k = 200; // k : dst port
+  for(size_t i=0; i<10; i++, j+=2, k-=20)
+  {
+    std::ostringstream oss;
+    oss << "myLink_" << std::setw(2) << std::setfill('0') << i;
+    
+    LinkBag b;
+    b.bag.name = oss.str();
+
+    oss.str("");
+    oss << "mySrcPort_" << std::setw(2) << std::setfill('0') << j;
+    b.bag.src = oss.str();
+    
+    oss.str("");
+    oss << "myDstPort_" << std::setw(3) << std::setfill('0') << k;
+    b.bag.dst = oss.str();
+    
+    expected.push_back(b);
+  }
+  
+  BOOST_CHECK_EQUAL(result.size(), expected.size());
+  for( size_t i = 0; i < std::min(result.size(), expected.size()); i++ )
+  {
+    BOOST_CHECK_EQUAL(std::string(result[i].bag.name), std::string(expected[i].bag.name));
+    BOOST_CHECK_EQUAL(std::string(result[i].bag.src), std::string(expected[i].bag.src));
+    BOOST_CHECK_EQUAL(std::string(result[i].bag.dst), std::string(expected[i].bag.dst));
+  }
+
+
+
+  result.clear();
+
+  // Check for throwing when lengths of link name, source port and/or dest port sequences aren't equal
+
+  BOOST_CHECK_THROW(expandLinkSliceSyntax("myLink_[0:2]", "a_src_port[0:3]", "a_dst_port[0:3]", result), std::runtime_error);
+  BOOST_CHECK( result.empty() );
+  
+  BOOST_CHECK_THROW(expandLinkSliceSyntax("myLink_[0:3]", "a_src_port[0:2]", "a_dist_port[0:3]", result), std::runtime_error);
+  BOOST_CHECK( result.empty() );
+
+  BOOST_CHECK_THROW(expandLinkSliceSyntax("myLink_[0:3]", "a_src_port[0:3]", "a_dist_port[0:2]", result), std::runtime_error);
+  BOOST_CHECK( result.empty() );
+
 }
     
         

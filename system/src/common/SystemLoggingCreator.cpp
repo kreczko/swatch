@@ -35,6 +35,9 @@ SystemLoggingCreator::operator()(const std::string& aId, const swatch::core::XPa
     LOG(swlog::kNotice) << "SystemLoggingCreator: Building Services";
     addServices(sys, aPars);
 
+    LOG(swlog::kNotice) << "SystemLoggingCreator: Building Links";
+    addLinks(sys, aPars);
+    
     return sys;
 }
 } // namespace system

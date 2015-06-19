@@ -14,8 +14,10 @@
 #ifndef __SWATCH_SYSTEM_SYSTEMCREATOR_HPP__
 #define __SWATCH_SYSTEM_SYSTEMCREATOR_HPP__
 
+
 #include "swatch/core/Factory.hpp"
 #include "swatch/core/exception.hpp"
+
 
 namespace swatch {
 namespace system {
@@ -35,6 +37,7 @@ protected:
     virtual void addServices(swatch::system::System* system, const swatch::core::XParameterSet& params);
     virtual void addCrates(swatch::system::System* system, const swatch::core::XParameterSet& params);
     virtual void addCrate(swatch::system::System* system, const swatch::core::XParameterSet& params);
+    virtual void addLinks(swatch::system::System* system, const swatch::core::XParameterSet& params);    
 };
 
 DEFINE_SWATCH_EXCEPTION(SystemCreationFailed);

@@ -7,13 +7,16 @@
 
 #include "swatch/processor/Utilities.hpp"
 
+
 // boost headers
 #include "boost/foreach.hpp"
 #include "boost/lexical_cast.hpp"
+#include "boost/property_tree/ptree.hpp"
 #include "boost/regex.hpp"
 
 // SWATCH headers
 #include "swatch/processor/ProcessorStub.hpp"
+#include "swatch/processor/LinkStub.hpp"
 
 
 namespace swatch {
@@ -58,6 +61,38 @@ treeToProcessorPars(const boost::property_tree::ptree& t) {
 }
 
 
+void treeToLinkPars(const boost::property_tree::ptree& t, std::vector<LinkBag>& linkBags) 
+{
+    const std::string name = t.get<std::string>("NAME");
+    const std::string src = t.get<std::string>("FROM");
+    const std::string dst = t.get<std::string>("TO");
+  
+    expandLinkSliceSyntax(name, src, dst, linkBags);
+}
+
+
+void expandLinkSliceSyntax(const std::string& aName, const std::string& aSrc, const std::string& aDst, std::vector<swatch::processor::LinkBag>& aLinkStubVector)
+{
+    std::vector<std::string> names = expandPortSliceSyntax(aName);
+    std::vector<std::string> src = expandPortSliceSyntax(aSrc);
+    std::vector<std::string> dst = expandPortSliceSyntax(aDst);
+  
+    if (names.size() != src.size() )
+        throw std::runtime_error(boost::lexical_cast<std::string>(names.size())+" link names created from name \""+aName+"\" using slice syntax, but " +boost::lexical_cast<std::string>(src.size())+ " source IDs created from \""+aSrc+"\"");
+    else if (names.size() != dst.size() )
+        throw std::runtime_error(boost::lexical_cast<std::string>(names.size())+" link names created from name \""+aName+"\" using slice syntax, but " +boost::lexical_cast<std::string>(dst.size())+ " destination IDs created from \""+aDst+"\"");
+
+    for(size_t i=0; i<names.size(); i++)
+    {
+        LinkBag b;
+        b.bag.name = names.at(i);
+        b.bag.src = src.at(i);
+        b.bag.dst = dst.at(i);
+        aLinkStubVector.push_back(b);
+    }
+}
+
+
 void expandPortSliceSyntax(const std::string& aName, const std::string& aIndex, std::vector<swatch::processor::ProcessorPortBag>& aPortStubVector)
 {
     std::vector<std::string> names = expandPortSliceSyntax(aName);
@@ -78,7 +113,7 @@ void expandPortSliceSyntax(const std::string& aName, const std::string& aIndex, 
 
 std::vector<std::string> expandPortSliceSyntax(const std::string& aString)
 {
-    const boost::regex sliceRegex("(.*)\\[(\\d+):(\\d+)(:(\\d+))?\\](.*)");
+    const boost::regex sliceRegex("(.*)\\[(\\d+):(\\d+)(:(-?\\d+))?\\](.*)");
     
     // Perform the regex search; if regex doesn't match the argument, then it doesn't contain slice syntax, so return early
     boost::cmatch matchResults;
@@ -91,14 +126,14 @@ std::vector<std::string> expandPortSliceSyntax(const std::string& aString)
     const std::string prefix(matchResults[1]);
     const size_t startIdx = boost::lexical_cast<size_t>(matchResults[2]);
     const size_t stopIdx = boost::lexical_cast<size_t>(matchResults[3]);
-    const size_t step = matchResults[5].matched ? boost::lexical_cast<size_t>(matchResults[5]) : 1;
+    const int step = matchResults[5].matched ? boost::lexical_cast<int>(matchResults[5]) : 1;
     const std::string suffix(matchResults[6]);
 
     const size_t idxWidth = std::max(matchResults[2].second - matchResults[2].first, matchResults[3].second - matchResults[3].first);
     
     // Generate the result
     std::vector<std::string> results;
-    for(size_t idx=startIdx; idx<stopIdx; idx += step)
+    for(size_t idx=startIdx; (step>0) ? (idx<stopIdx) : (idx>stopIdx); idx += step)
     {
         std::ostringstream oss;
         oss << prefix;
