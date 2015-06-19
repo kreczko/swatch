@@ -17,7 +17,9 @@ namespace core {
 
 enum StatusFlag{
     kGood,
+    kWarning,
     kError,
+    kNoLimit,
     kUnknown
 };
 

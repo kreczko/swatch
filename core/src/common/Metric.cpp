@@ -11,14 +11,6 @@ namespace swatch {
 namespace core {
 
 
-AbstractMetric::AbstractMetric() {
-}
-
-
-AbstractMetric::~AbstractMetric() {
-}
-
-
 template<>
 std::string convertMetricDataToString<bool>(bool data)
 {

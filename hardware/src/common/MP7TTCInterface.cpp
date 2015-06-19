@@ -36,23 +36,12 @@ void MP7TTCInterface::clearErrors() {
 }
 
 
-uint32_t MP7TTCInterface::getBunchCounter() const {
-    return driver_->getTTC().readBunchCounter();
-}
-
-
-uint32_t MP7TTCInterface::getOrbitCounter() const {
-    return driver_->getTTC().readOrbitCounter();
-}
-
-
-uint32_t MP7TTCInterface::getEventCounter() const {
-    return driver_->getTTC().readEventCounter();
-}
-
-
 void MP7TTCInterface::implementUpdateMetrics()
 {
+  setMetricValue<>(metricBunchCounter_, driver_->getTTC().readBunchCounter());
+  setMetricValue<>(metricOrbitCounter_, driver_->getTTC().readOrbitCounter());
+  setMetricValue<>(metricEventCounter_, driver_->getTTC().readEventCounter());
+  
   setMetricValue<>(metricSingleBitErrors_, driver_->getTTC().readSingleBitErrorCounter());
   setMetricValue<>(metricDoubleBitErrors_, driver_->getTTC().readDoubleBitErrorCounter());
   setMetricValue<>(metricIsClock40Locked_, driver_->getCtrl().clock40Locked());

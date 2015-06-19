@@ -21,12 +21,18 @@ namespace core {
 
 
 template<typename DataType>
-Metric<DataType>::Metric(DataType minGoodValue, DataType maxGoodValue) : 
-  value_(NULL),
-  minGoodValue_(minGoodValue),
-  maxGoodValue_(maxGoodValue)
+Metric<DataType>::Metric() :
+  value_(NULL)
 {
-    
+}
+
+
+template<typename DataType>
+Metric<DataType>::Metric(MetricCondition<DataType>* aErrorCondition, MetricCondition<DataType>* aWarnCondition) : 
+  value_(NULL),
+  errorCondition_(aErrorCondition),
+  warnCondition_(aWarnCondition)
+{
 }
 
 
@@ -36,31 +42,37 @@ Metric<DataType>::~Metric(){
 
 
 template<typename DataType>
-std::pair<swatch::core::StatusFlag, std::string> Metric<DataType>::getValue() {
+MetricSnapshot Metric<DataType>::getValue() const {
     boost::lock_guard<boost::mutex> lock(mutex_);
 
-    if(this->value_ == NULL)
+    swatch::core::StatusFlag flag = kUnknown;
+    std::string value = boost::lexical_cast<std::string>(swatch::core::kUnknown);
+    
+    if (this->value_ != NULL)
     {
-        return std::pair<swatch::core::StatusFlag, std::string>(kUnknown, boost::lexical_cast<std::string>(swatch::core::kUnknown));
+        if ( (errorCondition_ == NULL) && (warnCondition_ == NULL) )
+            flag = kNoLimit;
+        else if ( errorCondition_ && (*errorCondition_)(*value_))
+            flag = kError;
+        else if ( warnCondition_ && (*warnCondition_)(*value_))
+            flag = kWarning;
+        else
+            flag = kGood;
+
+        value = convertMetricDataToString(*value_);
     }
     
-    std::pair<swatch::core::StatusFlag, std::string> result;
-    if ( ( *(this->value_) <= this->maxGoodValue_ ) && ( *(this->value_) >= this->minGoodValue_ ))
-        result.first = kGood;
-    else
-        result.first = kError;
-    
-    result.second = convertMetricDataToString(*this->value_);
-    
-    return result;
+    return MetricSnapshot(flag, value, updateTimestamp_, errorCondition_, warnCondition_);
 }
 
+
 template<typename DataType>
-timeval Metric<DataType>::getUpdateTimestamp()
+timeval Metric<DataType>::getUpdateTimestamp() const
 {
     boost::lock_guard<boost::mutex> lock(mutex_);
     return updateTimestamp_;
 }
+
 
 /*
 template<typename DataType, class ParentObjectType>
@@ -104,6 +116,17 @@ std::string convertMetricDataToString(DataType data)
 {
     return boost::lexical_cast<std::string>(data);
 }
+
+
+template<typename DataType>
+MetricCondition<DataType>::MetricCondition() {
+}
+
+
+template<typename DataType>
+MetricCondition<DataType>::~MetricCondition() {
+}
+
 
 } // namespace core
 } // namespace swatch

@@ -38,25 +38,15 @@ public:
     // Clear error counters
     virtual void clearErrors() = 0;
 
-    /**
-     * @brief Bunch counter getter.
-     * @return Current value of the bunch counter.
-     */
-    virtual uint32_t getBunchCounter() const = 0;
-
-    /**
-     * @brief Event counter getter.
-     * @return Current value of the event counter.
-     */
-    virtual uint32_t getEventCounter() const = 0;
-
-    /**
-     * @brief Orbit counter getter.
-     * @return Current value of the orbit counter.
-     */
-    virtual uint32_t getOrbitCounter() const = 0;
 
 protected:
+    //! Metric containing bunch counter value
+    core::Metric<uint32_t>& metricBunchCounter_;
+    //! Metric containing event counter value
+    core::Metric<uint32_t>& metricEventCounter_;
+    //! Metric containing orbit counter value
+    core::Metric<uint32_t>& metricOrbitCounter_;
+    
     //! Metric indicating if clk40 is locked
     core::Metric<bool>& metricIsClock40Locked_;
     //! Metric indicating if clk40 has stopped

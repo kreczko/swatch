@@ -5,22 +5,21 @@
  * Created on July 11, 2014, 10:55 AM
  */
 
-
 #include "swatch/processor/Processor.hpp"
-#include "swatch/processor/ProcessorStub.hpp"
 
-// Swatch Headers
-#include "swatch/core/Utilities.hpp"
 
 // Boost Headers
 #include <boost/detail/container_fwd.hpp>
 #include <boost/unordered/unordered_map.hpp>
 #include <boost/foreach.hpp>
 
-#include "swatch/processor/TTCInterface.hpp"
-#include "swatch/processor/ReadoutInterface.hpp"
+// Swatch Headers
+#include "swatch/core/Utilities.hpp"
 #include "swatch/processor/AlgoInterface.hpp"
 #include "swatch/processor/LinkInterface.hpp"
+#include "swatch/processor/ProcessorStub.hpp"
+#include "swatch/processor/ReadoutInterface.hpp"
+#include "swatch/processor/TTCInterface.hpp"
 
 
 using namespace std;
@@ -33,7 +32,7 @@ const uint32_t Processor::NoSlot =  0x7fffffffL;
 ///---
 Processor::Processor( const std::string& aId, const core::XParameterSet& params ) :
     ActionableObject(aId, params),
-    metricFirmwareVersion_( registerMetric<uint64_t>("firmwareVersion", 0, 0) ),
+    metricFirmwareVersion_( registerMetric<uint64_t>("firmwareVersion") ),
     slot_(NoSlot),
     ttc_(0x0),
     readout_(0x0),

@@ -52,15 +52,32 @@ public:
 protected:
 
   /*!
-   * register a metric of type swatch::core::Metric<DataType>
+   * register a metric of type swatch::core::Metric<DataType> , without any error or warning limits 
    * @param aId ID string of the metric
-   * @param aMinGoodValue Minimum value resulting in "GOOD" value of status flag (i.e. lower data values result in "ERROR" status flag)
-   * @param aMaxGoodValue Maximum value resulting in "GOOD" value of status flag (i.e. higher data values result in "ERROR" status flag)
    * @returns A reference to the registered metric
    */
-  template <typename DataType> 
-  Metric<DataType>& registerMetric( const std::string& aId, DataType aMinGoodValue, DataType aMaxGoodValue);
-    
+  template <typename DataType>
+  Metric<DataType>& registerMetric(const std::string& aId);  
+
+  /*!
+   * register a metric of type swatch::core::Metric<DataType>
+   * @param aId ID string of the metric
+   * @param aErrorCondition Functor that is used to determine whether metric's value indicates an error; must inherit from swatch::core::MetricCondition<DataType>
+   * @returns A reference to the registered metric
+   */
+  template <typename DataType, class ErrorCondition>
+  Metric<DataType>& registerMetric(const std::string& aId, const ErrorCondition& aErrorCondition);
+
+  /*!
+   * register a metric of type swatch::core::Metric<DataType>
+   * @param aId ID string of the metric
+   * @param aErrorCondition Functor that is used to determine whether metric's value indicates an error; must inherit from swatch::core::MetricCondition<DataType>
+   * @param aWarnCondition Functor that is used to determine whether metric's value constitutes a warning; must inherit from swatch::core::MetricCondition<DataType>
+   * @returns A reference to the registered metric
+   */
+  template <typename DataType, class ErrorCondition, class WarnCondition> 
+  Metric<DataType>& registerMetric(const std::string& aId, const ErrorCondition& aErrorCondition, const WarnCondition& aWarnCondition);
+  
   //! Set value of metric
   template <typename DataType>
   void setMetricValue(Metric<DataType>& metric, const DataType& value);

@@ -28,14 +28,13 @@ public:
     
     virtual void clearErrors();
     
-
+    /*
     virtual uint32_t getBunchCounter() const;
 
     virtual uint32_t getOrbitCounter() const;
 
     virtual uint32_t getEventCounter() const;
 
-    /* 
     virtual uint32_t getSingleBitErrors() const;
 
     virtual uint32_t getDoubleBitErrors() const;

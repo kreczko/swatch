@@ -67,7 +67,7 @@ StatusFlag MonitorableObject::getStatus() const
   }
   
   BOOST_FOREACH( tMetricMap::value_type p, metrics_) {
-    result = result & p.second->getValue().first;
+    result = result & p.second->getValue().getStatus();
   }
   
   return result;

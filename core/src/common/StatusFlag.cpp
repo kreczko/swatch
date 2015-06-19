@@ -10,29 +10,41 @@
 #include <iostream>
 #include <stdexcept>
 
+
 namespace swatch{
 namespace core{
 
 
-  std::ostream& operator<<(std::ostream& aOut, swatch::core::StatusFlag aValue) {
-    if (aValue == swatch::core::kUnknown)
-        return (aOut << "UNKNOWN");
-    else if (aValue == swatch::core::kGood)
-        return (aOut << "GOOD");
-    else if (aValue == swatch::core::kError)
-        return (aOut << "ERROR");
-    throw std::runtime_error("Invalid StatusFlag enum value in ostream operator<<");
+std::ostream& operator<<(std::ostream& aOut, swatch::core::StatusFlag aValue) {
+  switch (aValue) {
+    case kGood :
+      return (aOut << "Good");
+    case kWarning :  
+      return (aOut << "Warning");
+    case kError : 
+      return (aOut << "Error");
+    case kNoLimit : 
+      return (aOut << "NoLimit");
+    case kUnknown : 
+      return (aOut << "Unknown");
+    default : 
+      throw std::runtime_error("Invalid StatusFlag enum value in ostream operator<<");
+  }
 }
 
 
 swatch::core::StatusFlag operator& (const swatch::core::StatusFlag& flag1, const swatch::core::StatusFlag& flag2)
 {
-    if(flag1 == swatch::core::kUnknown || flag2 == swatch::core::kUnknown)
-        return swatch::core::kUnknown;
-    else if (flag1 == swatch::core::kError || flag2 == swatch::core::kError)
-        return swatch::core::kError;
-    else
-        return swatch::core::kGood;
+  if (flag1 == kNoLimit && flag2 == kNoLimit)
+    return kNoLimit;
+  else if (flag1 == kError || flag2 == kError)
+    return kError;
+  else if(flag1 == kUnknown || flag2 == kUnknown)
+    return kUnknown;
+  else if (flag1 == kWarning || flag2 == kWarning)
+    return kWarning;
+  else
+    return kGood;
 }
 
 

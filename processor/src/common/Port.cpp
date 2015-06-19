@@ -6,27 +6,29 @@
  */
 
 #include "swatch/processor/Port.hpp"
-#include "swatch/core/Metric.hpp"
-#include "swatch/core/MonitorableObject.hpp"
+
+
+#include "swatch/core/MetricConditions.hpp"
+
 
 namespace swatch {
 namespace processor {
 
 InputPort::InputPort( const std::string& aId) : 
     MonitorableObject(aId),
-    metricIsEnabled_( registerMetric<bool>("isEnabled", true, true) ),
-    metricIsLocked_( registerMetric<bool>("isLocked", true, true) ),
-    metricIsAligned_( registerMetric<bool>("isAligned", true, true) ),
-    metricCRCErrors_( registerMetric<uint32_t>("crcErrors", 0, 0) )        
+    metricIsEnabled_( registerMetric<bool>("isEnabled", core::EqualCondition<bool>(false)) ),
+    metricIsLocked_( registerMetric<bool>("isLocked", core::EqualCondition<bool>(false)) ),
+    metricIsAligned_( registerMetric<bool>("isAligned", core::EqualCondition<bool>(false)) ),
+    metricCRCErrors_( registerMetric<uint32_t>("crcErrors", core::GreaterThanCondition<uint32_t>(0)) )        
 {
 }
 
 InputPort::InputPort( const std::string& aId, const core::XParameterSet& params ) : 
     MonitorableObject(aId, params),
-    metricIsEnabled_( registerMetric<bool>("isEnabled", true, true) ),
-    metricIsLocked_( registerMetric<bool>("isLocked", true, true) ),
-    metricIsAligned_( registerMetric<bool>("isAligned", true, true) ),
-    metricCRCErrors_( registerMetric<uint32_t>("crcErrors", 0, 0) )        
+    metricIsEnabled_( registerMetric<bool>("isEnabled", core::EqualCondition<bool>(false)) ),
+    metricIsLocked_( registerMetric<bool>("isLocked", core::EqualCondition<bool>(false)) ),
+    metricIsAligned_( registerMetric<bool>("isAligned", core::EqualCondition<bool>(false)) ),
+    metricCRCErrors_( registerMetric<uint32_t>("crcErrors", core::GreaterThanCondition<uint32_t>(0)) )        
 {
 }
 
@@ -44,15 +46,15 @@ std::vector<std::string> InputPort::getDefaultMetrics() {
 
 OutputPort::OutputPort( const std::string& aId ) :
     MonitorableObject(aId ),
-    metricIsEnabled_( registerMetric<bool>("isEnabled", true, true) ),
-    metricIsOperating_( registerMetric<bool>("isOperating", true, true) )
+    metricIsEnabled_( registerMetric<bool>("isEnabled", core::EqualCondition<bool>(false)) ),
+    metricIsOperating_( registerMetric<bool>("isOperating", core::EqualCondition<bool>(false)) )
 {
 }
     
 OutputPort::OutputPort( const std::string& aId, const core::XParameterSet& params ) :
     MonitorableObject(aId, params),
-    metricIsEnabled_( registerMetric<bool>("isEnabled", true, true) ),
-    metricIsOperating_( registerMetric<bool>("isOperating", true, true) )
+    metricIsEnabled_( registerMetric<bool>("isEnabled", core::EqualCondition<bool>(false)) ),
+    metricIsOperating_( registerMetric<bool>("isOperating", core::EqualCondition<bool>(false)) )
 {
 }
 
