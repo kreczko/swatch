@@ -45,6 +45,7 @@
                         "ADDRESS TABLE T2": "file://${CACTUS_ROOT}/etc/amc13/AMC13XG_T2.xml",
                         "FED ID": 1234
                       }
-                    ]
+                    ],
+             "LINKS" : []
           }
 }
