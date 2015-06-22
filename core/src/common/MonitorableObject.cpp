@@ -60,7 +60,7 @@ StatusFlag MonitorableObject::getStatus() const
 
   for(std::vector<std::string>::const_iterator it=childIds.begin(); it != childIds.end(); it++)
   {
-    if(swatch::core::MonitorableObject* monObj = dynamic_cast<swatch::core::MonitorableObject*>(this->getObj(*it)))
+    if(swatch::core::MonitorableObject* monObj = dynamic_cast<swatch::core::MonitorableObject*>(& this->getObj(*it)))
     {
       result = result & monObj->getStatus();
     }

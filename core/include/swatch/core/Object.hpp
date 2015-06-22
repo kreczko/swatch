@@ -211,7 +211,7 @@ namespace swatch
           @param aId a dot-delimeted path from the current object to the target
           @return the object indicated by the dot-delimeted path or throw if the target doesn't exist
         */
-        Object* getObj ( const std::string& aId ) const;
+        Object& getObj ( const std::string& aId ) const;
 
         /**
           Navigate down the dot-delimeted path from the current object and return the target, dynamic cast to type T
@@ -324,7 +324,7 @@ namespace swatch
     template<typename T>
     T* Object::getObj ( const std::string& aId )
     {
-      return dynamic_cast<T*> ( this->getObj ( aId ) );
+      return dynamic_cast<T*> ( & this->getObj ( aId ) );
     }
 
 

@@ -58,10 +58,10 @@ public:
      */
     virtual std::string firmwareInfo() const = 0; 
 
-    TTCInterface* ttc();
-    ReadoutInterface* readout();
-    AlgoInterface* algo();
-    LinkInterface* linkInterface();
+    TTCInterface& ttc();
+    ReadoutInterface& readout();
+    AlgoInterface& algo();
+    LinkInterface& linkInterface();
     
     static std::vector<std::string> getDefaultMetrics();
 

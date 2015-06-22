@@ -26,17 +26,17 @@ BOOST_AUTO_TEST_CASE(CreationTest) {
   BOOST_CHECK_EQUAL(p.getCrateId(), "s2g20-10");
 
   // Input and output ports
-  BOOST_CHECK_EQUAL(p.linkInterface()->getNumInputs(), 5);
-  BOOST_CHECK_NO_THROW(p.linkInterface()->getInput("rxA"));
-  BOOST_CHECK_NO_THROW(p.linkInterface()->getInput("rxB"));
-  BOOST_CHECK_NO_THROW(p.linkInterface()->getInput("rxC"));
-  BOOST_CHECK_NO_THROW(p.linkInterface()->getInput("rxD"));
-  BOOST_CHECK_NO_THROW(p.linkInterface()->getInput("rxE"));
+  BOOST_CHECK_EQUAL(p.linkInterface().getNumInputs(), 5);
+  BOOST_CHECK_NO_THROW(p.linkInterface().getInput("rxA"));
+  BOOST_CHECK_NO_THROW(p.linkInterface().getInput("rxB"));
+  BOOST_CHECK_NO_THROW(p.linkInterface().getInput("rxC"));
+  BOOST_CHECK_NO_THROW(p.linkInterface().getInput("rxD"));
+  BOOST_CHECK_NO_THROW(p.linkInterface().getInput("rxE"));
 
-  BOOST_CHECK_EQUAL(p.linkInterface()->getNumOutputs(), 3);
-  BOOST_CHECK_NO_THROW(p.linkInterface()->getOutput("txA"));
-  BOOST_CHECK_NO_THROW(p.linkInterface()->getInput("txB"));
-  BOOST_CHECK_NO_THROW(p.linkInterface()->getInput("txC"));
+  BOOST_CHECK_EQUAL(p.linkInterface().getNumOutputs(), 3);
+  BOOST_CHECK_NO_THROW(p.linkInterface().getOutput("txA"));
+  BOOST_CHECK_NO_THROW(p.linkInterface().getInput("txB"));
+  BOOST_CHECK_NO_THROW(p.linkInterface().getInput("txC"));
 }
         
 BOOST_AUTO_TEST_SUITE_END() // ProcessorTestSuite

@@ -45,14 +45,22 @@ std::deque<InputPort*>& LinkInterface::getInputs() { return inputs_; }
 
 std::deque<OutputPort*>& LinkInterface::getOutputs() { return outputs_; }
 
-InputPort* LinkInterface::getInput( const std::string& aId )
+
+InputPort& LinkInterface::getInput( const std::string& aId )
 {
-  return getObj<InputPort>( aId );
+  if (InputPort* in = getObj<InputPort>( aId ))
+    return *in;
+  else
+    throw std::runtime_error("LinkInterface \""+this->path()+"\" does not contain any input port of ID \"" + aId + "\"");
 }
 
-OutputPort* LinkInterface::getOutput( const std::string& aId )
+
+OutputPort& LinkInterface::getOutput( const std::string& aId )
 {
-  return getObj<OutputPort>( aId );
+  if (OutputPort* out = getObj<OutputPort>( aId ))
+    return *out;
+  else
+    throw std::runtime_error("LinkInterface \""+this->path()+"\" does not contain any output port of ID \"" + aId + "\"");
 }
 
 

@@ -190,9 +190,9 @@ BOOST_AUTO_TEST_CASE(BuildFullCrate) {
     BOOST_CHECK(crate->amc13() == amc13);
     
     // Are the objs accessible with the crate aliases?
-    BOOST_CHECK(crate->getObj("amc01") == dummies[0]);
-    BOOST_CHECK(crate->getObj("amc07") == dummies[6]);
-    BOOST_CHECK(crate->getObj("amc13") == amc13);
+    BOOST_CHECK( (& crate->getObj("amc01")) == dummies[0]);
+    BOOST_CHECK( (& crate->getObj("amc07")) == dummies[6]);
+    BOOST_CHECK( (& crate->getObj("amc13")) == amc13);
     
     
     BOOST_TEST_MESSAGE("Destructor");

@@ -64,17 +64,17 @@ BOOST_AUTO_TEST_CASE(ObjectGetTests) {
     TestFamily family;
     
     // 1) Check access to immediate children (via pointer comparison)
-    BOOST_CHECK_EQUAL( family.granpa->getObj("parentA"), family.parentA );
-    BOOST_CHECK_EQUAL( family.parentA->getObj("kidA1"), family.kidA1 );
-    BOOST_CHECK_EQUAL( family.parentA->getObj("kidA2"), family.kidA2 );
-    BOOST_CHECK_EQUAL( family.parentB->getObj("kidB1"), family.kidB1 );
-    BOOST_CHECK_EQUAL( family.parentB->getObj("kidB2"), family.kidB2 );
+    BOOST_CHECK_EQUAL( & family.granpa->getObj("parentA"), family.parentA );
+    BOOST_CHECK_EQUAL( & family.parentA->getObj("kidA1"), family.kidA1 );
+    BOOST_CHECK_EQUAL( & family.parentA->getObj("kidA2"), family.kidA2 );
+    BOOST_CHECK_EQUAL( & family.parentB->getObj("kidB1"), family.kidB1 );
+    BOOST_CHECK_EQUAL( & family.parentB->getObj("kidB2"), family.kidB2 );
     
     // 2) Check access to children of children (via pointer comparison)
-    BOOST_CHECK_EQUAL( family.granpa->getObj("parentA.kidA1"), family.kidA1 );
-    BOOST_CHECK_EQUAL( family.granpa->getObj("parentA.kidA2"), family.kidA2 );
-    BOOST_CHECK_EQUAL( family.granpa->getObj("parentB.kidB1"), family.kidB1 );
-    BOOST_CHECK_EQUAL( family.granpa->getObj("parentB.kidB2"), family.kidB2 );
+    BOOST_CHECK_EQUAL( & family.granpa->getObj("parentA.kidA1"), family.kidA1 );
+    BOOST_CHECK_EQUAL( & family.granpa->getObj("parentA.kidA2"), family.kidA2 );
+    BOOST_CHECK_EQUAL( & family.granpa->getObj("parentB.kidB1"), family.kidB1 );
+    BOOST_CHECK_EQUAL( & family.granpa->getObj("parentB.kidB2"), family.kidB2 );
     
     // 3) Check that throws correctly when invalid ID given
     BOOST_CHECK_THROW( family.granpa->getObj("invalid_object_id"), std::runtime_error);
@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_CASE(ObjectAddTests) {
   SimpleObject* child = new SimpleObject("child");
   BOOST_CHECK_THROW( anObject.getObj("child"), std::runtime_error);
   anObject.add(child);
-  BOOST_CHECK_EQUAL( anObject.getObj("child"), child);
+  BOOST_CHECK_EQUAL( & anObject.getObj("child"), child);
   
   // Check that Object::add throws when try to add another child with same ID
   SimpleObject child2("child");

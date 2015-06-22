@@ -185,15 +185,15 @@ BOOST_AUTO_TEST_CASE(ExploreSystem) {
     names += "mp7-10.links.tx00", "link000.src", "crateC.amc01.links.tx00";
     vector< string >::const_iterator itN;
     BOOST_FOREACH( string name, names ) {
-        Object* o = system->getObj(name);
-        LOG(kDebug) << "Found " << name << " : " << o->path() << " of type " << o->typeName();
+        Object& o = system->getObj(name);
+        LOG(kDebug) << "Found " << name << " : " << o.path() << " of type " << o.typeName();
     }
     LOG(kDebug) << "Multi-hop getter";
     LOG(kDebug) << "================";
-    Object* o = system->getObj("crateC")->getObj("amc01")->getObj("links")->getObj("tx00");
-    LOG(kDebug) << "Testing  crate1 + mp7-13 + tx00: " << o->path() << " of type " << o->typeName();
-    BOOST_CHECK_EQUAL(o->path(),"calol2.mp7-10.links.tx00");
-    BOOST_CHECK_EQUAL(o->typeName(),"swatch::processor::test::DummyTxPort");
+    Object& o = system->getObj("crateC").getObj("amc01").getObj("links").getObj("tx00");
+    LOG(kDebug) << "Testing  crate1 + mp7-13 + tx00: " << o.path() << " of type " << o.typeName();
+    BOOST_CHECK_EQUAL(o.path(),"calol2.mp7-10.links.tx00");
+    BOOST_CHECK_EQUAL(o.typeName(),"swatch::processor::test::DummyTxPort");
 
 
     LOG(kDebug) << "";

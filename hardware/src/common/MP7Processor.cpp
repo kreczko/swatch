@@ -68,9 +68,9 @@ MP7Processor::MP7Processor(const std::string& id, const swatch::core::XParameter
     // Add input and output ports
     std::vector<processor::ProcessorPortBag>::iterator it;
     for(it = stub.rxPorts.begin(); it != stub.rxPorts.end(); it++)
-      linkInterface()->addInput(new MP7RxPort(it->bag.name, it->bag.number, *this));
+      linkInterface().addInput(new MP7RxPort(it->bag.name, it->bag.number, *this));
     for(it = stub.txPorts.begin(); it != stub.txPorts.end(); it++)
-      linkInterface()->addOutput(new MP7TxPort(it->bag.name, it->bag.number, *this));
+      linkInterface().addOutput(new MP7TxPort(it->bag.name, it->bag.number, *this));
 
     LOG(swlog::kNotice) << "MP7 Processor '" << this->id() << "' built: firmware 0x" << std::hex << retrieveFirmwareVersion() << std::endl;
 }

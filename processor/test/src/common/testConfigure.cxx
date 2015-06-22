@@ -190,10 +190,10 @@ void printStatus( swpro::Processor* p ) {
     LOG(swlog::kInfo) << "Processor " << p->id();
     LOG(swlog::kInfo) << ">> Info";
 //    LOG(swlog::kInfo) << "Firmware version : 0x"  << std::hex << p->firmwareVersion() << std::dec;
-    LOG(swlog::kInfo) << "Inputs  : " << p->linkInterface()->getNumInputs();
-    LOG(swlog::kInfo) << "Outputs : " << p->linkInterface()->getNumOutputs();
+    LOG(swlog::kInfo) << "Inputs  : " << p->linkInterface().getNumInputs();
+    LOG(swlog::kInfo) << "Outputs : " << p->linkInterface().getNumOutputs();
     LOG(swlog::kInfo) << ">> TTC";
-    printStatus( p->ttc() );
+    printStatus( & p->ttc() );
 }
 
 
@@ -292,7 +292,7 @@ int main(int argc, char const *argv[]) {
 
     LOG(swlog::kDebug) << "Input channels scan";
     // Test rx upload and download
-    BOOST_FOREACH( swpro::InputPort* in, p0->linkInterface()->getInputs() ) {        
+    BOOST_FOREACH( swpro::InputPort* in, p0->linkInterface().getInputs() ) {        
         swpro::test::IPBusRxChannel* rx = dynamic_cast<swpro::test::IPBusRxChannel*>(in);
         std::vector<uint64_t> v(rx->getBufferSize(),0x5555);
         // cout << "v.size() = " << v.size() << endl;
@@ -306,7 +306,7 @@ int main(int argc, char const *argv[]) {
 
     LOG(swlog::kDebug) << "Output channels scan";
     // Test tx channels injection and 
-    BOOST_FOREACH( swpro::OutputPort* out, p0->linkInterface()->getOutputs() ) {        
+    BOOST_FOREACH( swpro::OutputPort* out, p0->linkInterface().getOutputs() ) {        
         swpro::test::IPBusTxChannel* tx = dynamic_cast<swpro::test::IPBusTxChannel*>(out);
 
         std::vector<uint64_t> v(tx->getBufferSize(),0x5555);
@@ -339,7 +339,7 @@ int main(int argc, char const *argv[]) {
     
     LOG(swlog::kNotice) << ">> Take a nap (1 sec)";
     sleep(1);
-    printStatus( p0->ttc() );
+    printStatus( & p0->ttc() );
 
     
     LOG(swlog::kNotice) << "//_ Step 2 ___ Testing config __________________________________";

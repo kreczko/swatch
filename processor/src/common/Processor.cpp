@@ -34,10 +34,10 @@ Processor::Processor( const std::string& aId, const core::XParameterSet& params 
     ActionableObject(aId, params),
     metricFirmwareVersion_( registerMetric<uint64_t>("firmwareVersion") ),
     slot_(NoSlot),
-    ttc_(0x0),
-    readout_(0x0),
-    algo_(0x0),
-    links_(0x0)
+    ttc_(NULL),
+    readout_(NULL),
+    algo_(NULL),
+    links_(NULL)
 {
   // Set crate and slot number from processor stub  
   processor::ProcessorBag& desc = params.get<processor::ProcessorBag>("stub");
@@ -60,26 +60,40 @@ Processor::getCrateId() const {
   return crateId_;
 }
 
-TTCInterface*
+
+TTCInterface&
 Processor::ttc() {
-    return ttc_;
+  if (ttc_ == NULL)
+    throw std::runtime_error("Processor \""+this->path()+"\" has not registered any TTC interface object");
+  else
+    return *ttc_;
 }
 
 
-ReadoutInterface*
+ReadoutInterface&
 Processor::readout() {
-    return readout_;
+  if (readout_ == NULL)
+    throw std::runtime_error("Processor \""+this->path()+"\" has not registered any readout interface object");
+  else
+    return *readout_;
 }
 
 
-AlgoInterface*
+AlgoInterface&
 Processor::algo() {
-    return algo_;
+  if (algo_ == NULL)
+    throw std::runtime_error("Processor \""+this->path()+"\" has not registered any algo interface object");
+  else
+    return *algo_;
 }
 
-LinkInterface*
+
+LinkInterface&
 Processor::linkInterface() {
-    return links_;
+  if (links_ == NULL)
+    throw std::runtime_error("Processor \""+this->path()+"\" has not registered any link interface object");
+  else
+    return *links_;
 }
 
 

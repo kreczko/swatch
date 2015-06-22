@@ -47,9 +47,9 @@ DummyProcessor::DummyProcessor(const std::string& id,
   
   std::vector<ProcessorPortBag>::iterator it;
   for(it = stub.rxPorts.begin(); it != stub.rxPorts.end(); it++)
-    linkInterface()->addInput(new DummyRxPort(it->bag.name));
+    linkInterface().addInput(new DummyRxPort(it->bag.name));
   for(it = stub.txPorts.begin(); it != stub.txPorts.end(); it++)
-    linkInterface()->addOutput(new DummyTxPort(it->bag.name));
+    linkInterface().addOutput(new DummyTxPort(it->bag.name));
 }
 
 DummyProcessor::~DummyProcessor() {

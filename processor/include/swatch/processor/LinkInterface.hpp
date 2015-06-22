@@ -47,8 +47,8 @@ public:
 
     std::deque<OutputPort*>& getOutputs();
 
-    InputPort* getInput( const std::string& aId );
-    OutputPort* getOutput( const std::string& aId );
+    InputPort& getInput( const std::string& aId );
+    OutputPort& getOutput( const std::string& aId );
 
     typedef std::deque<InputPort*> tInputPortDeque;
     typedef std::deque<OutputPort*> tOutputPortDeque;

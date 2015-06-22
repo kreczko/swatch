@@ -183,7 +183,7 @@ namespace swatch
     }
 
 
-    Object* Object::getObj ( const std::string& aId ) const
+    Object& Object::getObj ( const std::string& aId ) const
     {
       std::size_t pos;
       string father, child;
@@ -210,11 +210,10 @@ namespace swatch
 
       if ( child.empty() )
       {
-        return it->second;
+        return *(it->second);
       }
 
-      //    return it->second->findObject(child);
-      return it->second->getObj ( child );
+      return it->second->getObj(child);
     }
 
 

@@ -157,7 +157,7 @@ int main(int argc, char** argv) {
                        << setw(9) << "operating" << " | "
                        << setw(7) << "aligned" << " | "
                        << setw(6) << "crcs" ;
-      BOOST_FOREACH( swpro::InputPort* ip, p->linkInterface()->getInputs() ){
+      BOOST_FOREACH( swpro::InputPort* ip, p->linkInterface().getInputs() ){
 /*        LOG(swlo::kInfo) << left 
             << setw(15) << ip->path() << " | "
             << setw(7) << ip->isEnabled() << " | "
