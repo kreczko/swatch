@@ -11,6 +11,7 @@
 
 // C++ Headers
 #include <string>
+#include <iosfwd>
 
 // BOOST Headers
 #include <boost/thread/mutex.hpp>
@@ -120,6 +121,8 @@ private:
     boost::mutex status_mutex_, progress_mutex_, result_mutex_;
 
 };
+
+std::ostream& operator<<(std::ostream& out, swatch::core::Command::Status s);
 
 typedef boost::unordered_map<std::string, Command*> CommandMap;
 

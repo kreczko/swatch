@@ -8,6 +8,18 @@
 namespace swatch {
 namespace core {
 
+std::ostream& operator<<(std::ostream& out, swatch::core::Command::Status s) {
+  switch (s) {
+    case swatch::core::Command::kInitial : out << "Initial"; break;
+    case swatch::core::Command::kRunning : out << "Running"; break;
+    case swatch::core::Command::kWarning : out << "Warning"; break;
+    case swatch::core::Command::kError   : out << "Error"; break;
+    case swatch::core::Command::kDone    : out << "Done"; break;
+    default : out << "Unknown value of swatch::core::Command::Status enum"; 
+  }
+  return out;
+}
+
 //---
 Command::~Command() {
   if ( result_ ) delete result_;
