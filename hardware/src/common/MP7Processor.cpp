@@ -51,9 +51,13 @@ MP7Processor::MP7Processor(const std::string& id, const swatch::core::XParameter
 {
     // Add commands
     Register<MP7ResetCommand>("reset");
+    Register<MP7SetupLinks>("mgts");
+    Register<MP7AlignLinks>("align");
+
+    
     Register<MP7ConfigureLoopback>("loopback");
+
     // Add operations
-    Register<MP7Configure>("configure");
     
     // Extract stub, and create driver
     processor::ProcessorStub& stub = aPars.get<processor::ProcessorBag>("stub").bag;

@@ -22,7 +22,32 @@ public:
 
 };
 
+//---
+class MP7SetupLinks : public core::Command {
+public:
+  MP7SetupLinks(const std::string& aId);
+    
+  virtual ~MP7SetupLinks();
 
+  virtual void code(core::XParameterSet& params);
+
+};
+
+
+//---
+class MP7AlignLinks : public core::Command {
+public:
+  MP7AlignLinks(const std::string& aId);
+
+  virtual ~MP7AlignLinks();
+
+
+  virtual void code( core::XParameterSet& params);
+
+};
+
+
+//---
 class MP7ConfigureLoopback : public core::Command{
 public:
   MP7ConfigureLoopback(const std::string& aId);
