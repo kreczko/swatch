@@ -38,7 +38,6 @@ uint32_t DummyRxPort::getCRCErrors() const {
  */
 
 void DummyRxPort::implementUpdateMetrics() {
-  setMetricValue<>(metricIsEnabled_, true);
   setMetricValue<>(metricIsLocked_, true);
   setMetricValue<>(metricIsAligned_, true);
   setMetricValue<>(metricCRCErrors_, uint32_t(0));

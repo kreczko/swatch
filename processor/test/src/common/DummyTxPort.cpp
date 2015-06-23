@@ -26,7 +26,6 @@ bool DummyTxPort::isOperating() const {
  */
 
 void DummyTxPort::implementUpdateMetrics() {
-  setMetricValue<>(metricIsEnabled_, true);
   setMetricValue<>(metricIsOperating_, true);
 }
 } // namespace test

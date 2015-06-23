@@ -24,8 +24,6 @@ public:
     static const std::vector<std::string> defaultMetrics;
 
 protected:
-    
-    core::Metric<bool>& metricIsEnabled_;
     core::Metric<bool>& metricIsLocked_;
     core::Metric<bool>& metricIsAligned_;
     core::Metric<uint32_t>& metricCRCErrors_;    
@@ -40,7 +38,6 @@ public:
     static const std::vector<std::string> defaultMetrics;
 
 protected:
-    core::Metric<bool>& metricIsEnabled_;
     core::Metric<bool>& metricIsOperating_;
 };
 

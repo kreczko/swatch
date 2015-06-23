@@ -16,7 +16,6 @@ namespace processor {
 
 InputPort::InputPort( const std::string& aId) : 
     MonitorableObject(aId),
-    metricIsEnabled_( registerMetric<bool>("isEnabled", core::EqualCondition<bool>(false)) ),
     metricIsLocked_( registerMetric<bool>("isLocked", core::EqualCondition<bool>(false)) ),
     metricIsAligned_( registerMetric<bool>("isAligned", core::EqualCondition<bool>(false)) ),
     metricCRCErrors_( registerMetric<uint32_t>("crcErrors", core::GreaterThanCondition<uint32_t>(0)) )        
@@ -25,7 +24,6 @@ InputPort::InputPort( const std::string& aId) :
 
 InputPort::InputPort( const std::string& aId, const core::XParameterSet& params ) : 
     MonitorableObject(aId, params),
-    metricIsEnabled_( registerMetric<bool>("isEnabled", core::EqualCondition<bool>(false)) ),
     metricIsLocked_( registerMetric<bool>("isLocked", core::EqualCondition<bool>(false)) ),
     metricIsAligned_( registerMetric<bool>("isAligned", core::EqualCondition<bool>(false)) ),
     metricCRCErrors_( registerMetric<uint32_t>("crcErrors", core::GreaterThanCondition<uint32_t>(0)) )        
@@ -34,25 +32,23 @@ InputPort::InputPort( const std::string& aId, const core::XParameterSet& params 
 
 
 
-const std::vector<std::string> InputPort::defaultMetrics = { "isEnabled", "isLocked", "isAligned", "crcErrors" };
+const std::vector<std::string> InputPort::defaultMetrics = { "isLocked", "isAligned", "crcErrors" };
   
 
 OutputPort::OutputPort( const std::string& aId ) :
     MonitorableObject(aId ),
-    metricIsEnabled_( registerMetric<bool>("isEnabled", core::EqualCondition<bool>(false)) ),
     metricIsOperating_( registerMetric<bool>("isOperating", core::EqualCondition<bool>(false)) )
 {
 }
     
 OutputPort::OutputPort( const std::string& aId, const core::XParameterSet& params ) :
     MonitorableObject(aId, params),
-    metricIsEnabled_( registerMetric<bool>("isEnabled", core::EqualCondition<bool>(false)) ),
     metricIsOperating_( registerMetric<bool>("isOperating", core::EqualCondition<bool>(false)) )
 {
 }
 
 
-const std::vector<std::string> OutputPort::defaultMetrics = { "isEnabled", "isOperating" };
+const std::vector<std::string> OutputPort::defaultMetrics = { "isOperating" };
 
 }
 }

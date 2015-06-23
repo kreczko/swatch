@@ -44,11 +44,6 @@ MP7RxPort::~MP7RxPort() {
 //---
 void MP7RxPort::implementUpdateMetrics()
 {
-  // Where to store the information if the port is enabled or not?
-  // In the MP7 case is slightly complicated. The Masks will be known to the processor, but not to the driver.
-  // Interesting problem
-  setMetricValue<>(metricIsEnabled_, true);
-  
   // Select the link, and calculate channel's local ID (within quad) ...
   datapath_.selectLink(this->channelID_);
   uint32_t localId = mp7::ChannelIDSet::channelToLocal(channelID_);
@@ -109,8 +104,6 @@ MP7TxPort::~MP7TxPort() {
 //---
 void MP7TxPort::implementUpdateMetrics()
 {  
-  setMetricValue<>(metricIsEnabled_, true);
-  
   /* IS OPERATING */
   datapath_.selectLink(channelID_);
   
