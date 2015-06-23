@@ -21,7 +21,7 @@ protected:
 public:
     virtual ~InputPort() {}
 
-    static std::vector<std::string> getDefaultMetrics();
+    static const std::vector<std::string> defaultMetrics;
 
 protected:
     
@@ -37,7 +37,7 @@ public:
     explicit OutputPort( const std::string& aId, const core::XParameterSet& params );
     virtual ~OutputPort() {}
 
-    static std::vector<std::string> getDefaultMetrics();
+    static const std::vector<std::string> defaultMetrics;
 
 protected:
     core::Metric<bool>& metricIsEnabled_;

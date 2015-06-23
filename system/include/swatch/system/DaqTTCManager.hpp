@@ -51,7 +51,7 @@ public:
     virtual uint32_t ttcDoubleBitErrors() const = 0;
     */
     
-    static std::vector<std::string> getDefaultMetrics();
+    static const std::vector<std::string> defaultMetrics;
 
 protected:
     core::Metric<double>& ttcMetricClockFreq_;

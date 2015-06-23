@@ -97,21 +97,10 @@ Processor::linkInterface() {
 }
 
 
-std::vector<std::string> Processor::getDefaultMetrics() {
-  std::vector<std::string> metrics;
-  metrics.push_back("firmwareVersion");
-  
-  return metrics;
-}
+const std::vector<std::string> Processor::defaultMetrics = { "firmwareVersion" };
 
 
-std::vector<std::string> Processor::getDefaultMonitorableObjects() {
-  std::vector<std::string> objs;
-  objs.push_back("ttc");
-  objs.push_back("links");
-  
-  return objs;
-}
+const std::vector<std::string> Processor::defaultMonitorableObjects = { "ttc", "links" };
 
 
 

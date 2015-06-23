@@ -63,9 +63,9 @@ public:
     AlgoInterface& algo();
     LinkInterface& linkInterface();
     
-    static std::vector<std::string> getDefaultMetrics();
+    static const std::vector<std::string> defaultMetrics;
 
-    static std::vector<std::string> getDefaultMonitorableObjects();
+    static const std::vector<std::string> defaultMonitorableObjects;
     
 protected:
 

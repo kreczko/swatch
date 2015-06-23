@@ -36,15 +36,7 @@ DaqTTCManager::~DaqTTCManager() {
 }
 
 
-std::vector<std::string> DaqTTCManager::getDefaultMetrics() {
-  std::vector<std::string> metrics;
-  metrics.push_back("clkFreq");
-  metrics.push_back("bc0Counter");
-  metrics.push_back("bc0Errors");
-  metrics.push_back("ttcSingleBitErrors");
-  metrics.push_back("ttcDoubleBitErrors");
-  return metrics;
-}
+const std::vector<std::string> DaqTTCManager::defaultMetrics = { "clkFreq", "bc0Counter", "bc0Errors", "ttcSingleBitErrors", "ttcDoubleBitErrors"};
 
 
 } // namespace system

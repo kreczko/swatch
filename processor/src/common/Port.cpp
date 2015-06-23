@@ -34,14 +34,7 @@ InputPort::InputPort( const std::string& aId, const core::XParameterSet& params 
 
 
 
-std::vector<std::string> InputPort::getDefaultMetrics() {
-    std::vector<std::string> result;
-    result.push_back("isEnabled");
-    result.push_back("isLocked");
-    result.push_back("isAligned");
-    result.push_back("crcErrors");
-    return result;
-}
+const std::vector<std::string> InputPort::defaultMetrics = { "isEnabled", "isLocked", "isAligned", "crcErrors" };
   
 
 OutputPort::OutputPort( const std::string& aId ) :
@@ -59,12 +52,7 @@ OutputPort::OutputPort( const std::string& aId, const core::XParameterSet& param
 }
 
 
-std::vector<std::string> OutputPort::getDefaultMetrics(){
-  std::vector<std::string> result;
-  result.push_back("isEnabled");
-  result.push_back("isOperating");
-  return result;
-}
+const std::vector<std::string> OutputPort::defaultMetrics = { "isEnabled", "isOperating" };
 
 }
 }
