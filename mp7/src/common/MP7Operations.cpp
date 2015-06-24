@@ -5,14 +5,16 @@
  * 
  */
 
-#include "swatch/hardware/MP7Operations.hpp"
+#include "swatch/mp7/MP7Operations.hpp"
+
 
 // Swatch headers
-#include "swatch/hardware/MP7Processor.hpp"
-#include "swatch/hardware/MP7Commands.hpp"
+#include "swatch/mp7/MP7Processor.hpp"
+#include "swatch/mp7/MP7Commands.hpp"
+
 
 namespace swatch {
-namespace hardware {
+namespace mp7 {
 
 MP7Configure::MP7Configure(const std::string& aId) : 
   swatch::core::Operation(aId) {
@@ -86,5 +88,5 @@ MP7Configure::stop() {
   MP7Processor* res = getParent<MP7Processor>();
 }
 
-} /* namespace hardware */
+} /* namespace mp7 */
 } /* namespace swatch */ 

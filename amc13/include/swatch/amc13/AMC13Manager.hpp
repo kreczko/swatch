@@ -1,16 +1,17 @@
 /**
- * @file    AMC13Service.hpp
+ * @file    AMC13Manager.hpp
  * @author  Alessandro Thea
  * @brief   Brief description
  * @date    07/11/14
  */
 
+#ifndef SWATCH_AMC13_AMC13MANAGER_HPP
+#define SWATCH_AMC13_AMC13MANAGER_HPP
 
-#ifndef SWATCH_HARDWARE_AMC13MANAGER_HPP
-#define SWATCH_HARDWARE_AMC13MANAGER_HPP
 
 // Swatch Headers
 #include "swatch/system/DaqTTCManager.hpp"
+
 
 // Forward declaration
 namespace amc13 {
@@ -18,7 +19,7 @@ class AMC13;
 }
 
 namespace swatch {
-namespace hardware {
+namespace amc13 {
 
 class AMC13Manager : public swatch::system::DaqTTCManager {
 public:
@@ -35,7 +36,7 @@ public:
 
     virtual void enableTTC(const std::vector<uint32_t>& aSlots);
 
-    amc13::AMC13* driver() { return driver_; }
+    ::amc13::AMC13& driver() { return *driver_; }
 
     /*
     virtual double ttcClockFreq() const;
@@ -58,10 +59,10 @@ private:
     
     std::string crate_;
     
-    amc13::AMC13* driver_;
+    ::amc13::AMC13* driver_;
 };
 
-} // namespace hardware
+} // namespace amc13
 } // namespace swatch
 
-#endif /* SWATCH_HARDWARE_AMC13MANAGER_HPP */
+#endif /* SWATCH_AMC13_AMC13MANAGER_HPP */

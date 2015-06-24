@@ -6,13 +6,15 @@
  * 
  */
 
-#ifndef __SWATCH_HARDWARE_AMC13COMMANDS_HPP__
-#define __SWATCH_HARDWARE_AMC13COMMANDS_HPP__
+#ifndef __SWATCH_AMC13_AMC13COMMANDS_HPP__
+#define __SWATCH_AMC13_AMC13COMMANDS_HPP__
+
 
 #include "swatch/core/Command.hpp"
 
+
 namespace swatch {
-namespace hardware {
+namespace amc13 {
 
 class AMC13ResetCommand : public swatch::core::Command {
 public:
@@ -25,7 +27,7 @@ public:
     
 };
 
-} // namespace hardware
+} // namespace amc13
 } // namespace swatch
 
 #endif

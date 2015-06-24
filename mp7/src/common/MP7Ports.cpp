@@ -5,11 +5,11 @@
  * @date    February 2015
  */
 
-#include "swatch/hardware/MP7Ports.hpp"
+#include "swatch/mp7/MP7Ports.hpp"
 
 
 // SWATCH headers
-#include "swatch/hardware/MP7Processor.hpp"
+#include "swatch/mp7/MP7Processor.hpp"
 
 // MP7 headers
 #include "mp7/MP7Controller.hpp"
@@ -21,7 +21,7 @@
 
 
 namespace swatch {
-namespace hardware {
+namespace mp7 {
 
 //---
 MP7RxPort::MP7RxPort( const std::string& aId, uint32_t aChannelID, MP7Processor& aProcessor ) :
@@ -30,8 +30,8 @@ MP7RxPort::MP7RxPort( const std::string& aId, uint32_t aChannelID, MP7Processor&
   processor_(aProcessor),
   driver_(aProcessor.driver()),
   datapath_(aProcessor.driver().getDatapath()),
-  mgt_(datapath_.getNode<mp7::MGTRegionNode>("region.mgt")),
-  align_(datapath_.getNode<mp7::AlignMonNode>("region.align"))
+  mgt_(datapath_.getNode< ::mp7::MGTRegionNode>("region.mgt")),
+  align_(datapath_.getNode< ::mp7::AlignMonNode>("region.align"))
 {
 }
 
@@ -46,7 +46,7 @@ void MP7RxPort::implementUpdateMetrics()
 {
   // Select the link, and calculate channel's local ID (within quad) ...
   datapath_.selectLink(this->channelID_);
-  uint32_t localId = mp7::ChannelIDSet::channelToLocal(channelID_);
+  uint32_t localId = ::mp7::ChannelIDSet::channelToLocal(channelID_);
   
 
   /* IS LOCKED */
@@ -91,7 +91,7 @@ MP7TxPort::MP7TxPort(const std::string& aId, uint32_t aChannelID, MP7Processor& 
   processor_(aProcessor),
   driver_(aProcessor.driver()),
   datapath_(aProcessor.driver().getDatapath()),
-  mgt_(datapath_.getNode<mp7::MGTRegionNode>("region.mgt"))
+  mgt_(datapath_.getNode< ::mp7::MGTRegionNode>("region.mgt"))
 {
 }
 
@@ -108,13 +108,13 @@ void MP7TxPort::implementUpdateMetrics()
   datapath_.selectLink(channelID_);
   
   // Calculate the channel local id
-  uint32_t l = mp7::ChannelIDSet::channelToLocal(channelID_);
+  uint32_t l = ::mp7::ChannelIDSet::channelToLocal(channelID_);
 
   // Point to the right node
-  std::string path = mp7::strprintf("ro_regs.ch%d.status", l);
+  std::string path = ::mp7::strprintf("ro_regs.ch%d.status", l);
 
   // Get all subregisters
-  mp7::Snapshot s =  mp7::snapshot(mgt_.getNode(path));
+  ::mp7::Snapshot s =  ::mp7::snapshot(mgt_.getNode(path));
 
   bool isOperating (
     // Not in reset

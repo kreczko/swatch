@@ -6,13 +6,15 @@
  * 
  */
 
-#ifndef __SWATCH_HARDWARE_AMC13OPERATIONS_HPP__
-#define __SWATCH_HARDWARE_AMC13OPERATIONS_HPP__
+#ifndef __SWATCH_AMC13_AMC13OPERATIONS_HPP__
+#define __SWATCH_AMC13_AMC13OPERATIONS_HPP__
+
 
 #include "swatch/core/Operation.hpp"
 
+
 namespace swatch {
-namespace hardware {
+namespace amc13 {
 
 class AMC13Configure : public swatch::core::Operation {
 public:
@@ -21,7 +23,7 @@ public:
     
 };
 
-} // namespace hardware
+} // namespace amc13
 } // namespace swatch
 
-#endif /* __SWATCH_HARDWARE_AMC13OPERATIONS_HPP__ */
+#endif /* __SWATCH_AMC13_AMC13OPERATIONS_HPP__ */

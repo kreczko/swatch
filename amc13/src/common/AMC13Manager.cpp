@@ -5,17 +5,17 @@
  * @date    07/11/14
  */
 
-#include "swatch/hardware/AMC13Manager.hpp"
+#include "swatch/amc13/AMC13Manager.hpp"
+
 
 // Swatch Headers
 #include "swatch/core/Factory.hpp"
 #include "swatch/logger/Log.hpp"
 #include "swatch/system/DaqTTCStub.hpp"
-#include "swatch/hardware/AMC13Commands.hpp"
-#include "swatch/hardware/AMC13Operations.hpp"
+#include "swatch/amc13/AMC13Commands.hpp"
+#include "swatch/amc13/AMC13Operations.hpp"
 
-#include <boost/preprocessor/facilities.hpp>
-// XDAQ Headers
+// XDAQ headers
 #include "xdata/String.h"
 
 // AMC13 Headers
@@ -24,17 +24,21 @@
 // Boost Headers
 #include <boost/assign.hpp>
 #include <boost/foreach.hpp>
+#include <boost/preprocessor/facilities.hpp>
 
-namespace swco = swatch::core;
+
 namespace swlo = swatch::logger;
-namespace swhw = swatch::hardware;
 
 
-SWATCH_REGISTER_CLASS(swatch::hardware::AMC13Manager)
+SWATCH_REGISTER_CLASS(swatch::amc13::AMC13Manager)
 
 namespace swatch {
-namespace hardware {
-   
+namespace amc13 {
+
+using ::amc13::AMC13;
+
+using ::amc13::AMC13Simple;
+
 
 //---
 AMC13Manager::AMC13Manager(const std::string& aId, const core::XParameterSet& aPars) :
@@ -52,10 +56,10 @@ AMC13Manager::AMC13Manager(const std::string& aId, const core::XParameterSet& aP
     uhal::HwInterface t1 = uhal::ConnectionManager::getDevice("T1", desc.uriT1, desc.addressTableT1);
     uhal::HwInterface t2 = uhal::ConnectionManager::getDevice("T2", desc.uriT2, desc.addressTableT2);
 
-    driver_ = new amc13::AMC13(t1, t2);
+    driver_ = new AMC13(t1, t2);
 
-    uint32_t vT1 = driver_->read(amc13::AMC13::T1, "STATUS.FIRMWARE_VERS");
-    uint32_t vT2 = driver_->read(amc13::AMC13::T2, "STATUS.FIRMWARE_VERS");
+    uint32_t vT1 = driver_->read(AMC13::T1, "STATUS.FIRMWARE_VERS");
+    uint32_t vT2 = driver_->read(AMC13::T2, "STATUS.FIRMWARE_VERS");
     LOG(swlo::kNotice) << "AMC13 Service '" << id() << "' built. T1 ver: 0x" << std::hex << vT1 << " T2 ver: 0x" << std::hex << vT2;
 
 }
@@ -63,7 +67,7 @@ AMC13Manager::AMC13Manager(const std::string& aId, const core::XParameterSet& aP
 
 //---
 AMC13Manager::~AMC13Manager() {
-
+  delete driver_;
 }
 
 
@@ -101,13 +105,13 @@ void AMC13Manager::reset() {
   driver_->endRun();
   
   // Reset T2 first
-  driver_->reset(amc13::AMC13::T2);
+  driver_->reset(AMC13::T2);
   
   // Disable all AMC13 links
   driver_->AMCInputEnable(0x0);
 
   // Clear the TTS inputs mask
-  driver_->write(amc13::AMC13Simple::T1, "CONF.AMC.TTS_DISABLE_MASK", 0x0);
+  driver_->write(AMC13Simple::T1, "CONF.AMC.TTS_DISABLE_MASK", 0x0);
 
   // Disable fake data generator
   driver_->fakeDataEnable(false);
@@ -128,7 +132,7 @@ void AMC13Manager::reset() {
   driver_->setFEDid(0);
   
   // Then move onto T1
-  driver_->reset(amc13::AMC13::T1);
+  driver_->reset(AMC13::T1);
 
   // Just in case  
   driver_->resetDAQ();
@@ -145,16 +149,16 @@ void AMC13Manager::reset() {
 void
 AMC13Manager::configureClock(const std::string& mode) {
     
-  LOG(swlo::kInfo) << "step 0: BCNT_ERROR = " << driver_->read(amc13::AMC13::T2,"STATUS.TTC.BCNT_ERROR"); ;
+  LOG(swlo::kInfo) << "step 0: BCNT_ERROR = " << driver_->read(AMC13::T2,"STATUS.TTC.BCNT_ERROR"); ;
   if ( mode == "external" ) {
-    driver_->reset(amc13::AMC13Simple::T1);
-    driver_->reset(amc13::AMC13Simple::T2);
+    driver_->reset(AMC13Simple::T1);
+    driver_->reset(AMC13Simple::T2);
     LOG(swlo::kDebug) << "Enabling external TTC/BC0 inputs";
     driver_->localTtcSignalEnable(false);
     
   } else if ( mode == "ttsloopback" ) {
-    driver_->reset(amc13::AMC13Simple::T1);
-    driver_->reset(amc13::AMC13Simple::T2);
+    driver_->reset(AMC13Simple::T1);
+    driver_->reset(AMC13Simple::T2);
     LOG(swlo::kDebug) << "Enabling local TTC";
     driver_->localTtcSignalEnable(true);
         
@@ -169,14 +173,14 @@ AMC13Manager::configureClock(const std::string& mode) {
   sleep(1);  
 
   // Then reset T2 again
-  driver_->reset(amc13::AMC13::T2);
+  driver_->reset(AMC13::T2);
 
   
-  uint32_t clkfreq  = driver_->read(amc13::AMC13::T2,"STATUS.TTC.CLK_FREQ");
-  uint32_t bc0count = driver_->read(amc13::AMC13::T2,"STATUS.TTC.BC0_COUNTER");
-  uint32_t bcnt_err = driver_->read(amc13::AMC13::T2,"STATUS.TTC.BCNT_ERROR");
-  uint32_t sbit_err = driver_->read(amc13::AMC13::T2,"STATUS.TTC.SBIT_ERROR");
-  uint32_t mbit_err = driver_->read(amc13::AMC13::T2,"STATUS.TTC.MBIT_ERROR");
+  uint32_t clkfreq  = driver_->read(AMC13::T2,"STATUS.TTC.CLK_FREQ");
+  uint32_t bc0count = driver_->read(AMC13::T2,"STATUS.TTC.BC0_COUNTER");
+  uint32_t bcnt_err = driver_->read(AMC13::T2,"STATUS.TTC.BCNT_ERROR");
+  uint32_t sbit_err = driver_->read(AMC13::T2,"STATUS.TTC.SBIT_ERROR");
+  uint32_t mbit_err = driver_->read(AMC13::T2,"STATUS.TTC.MBIT_ERROR");
   
 
   LOG(swlo::kInfo) << "AMC13 TTC Status";
@@ -221,12 +225,13 @@ uint32_t AMC13Manager::ttcDoubleBitErrors() const {
 
 void AMC13Manager::implementUpdateMetrics()
 {
-  setMetricValue<>(ttcMetricClockFreq_, (double) driver_->read(amc13::AMC13::T2,"STATUS.TTC.CLK_FREQ")*50 ); 
-  setMetricValue<>(ttcMetricBC0Counter_, driver_->read(amc13::AMC13::T2,"STATUS.TTC.BC0_COUNTER"));
-  setMetricValue<>(ttcMetricBC0Errors_, driver_->read(amc13::AMC13::T2,"STATUS.TTC.BCNT_ERROR"));
-  setMetricValue<>(ttcMetricSingleBitErrors_, driver_->read(amc13::AMC13::T2,"STATUS.TTC.SBIT_ERROR"));
-  setMetricValue<>(ttcMetricDoubleBitErrors_, driver_->read(amc13::AMC13::T2,"STATUS.TTC.MBIT_ERROR"));
+  setMetricValue<>(ttcMetricClockFreq_, (double) driver_->read(AMC13::T2,"STATUS.TTC.CLK_FREQ")*50 ); 
+  setMetricValue<>(ttcMetricBC0Counter_, driver_->read(AMC13::T2,"STATUS.TTC.BC0_COUNTER"));
+  setMetricValue<>(ttcMetricBC0Errors_, driver_->read(AMC13::T2,"STATUS.TTC.BCNT_ERROR"));
+  setMetricValue<>(ttcMetricSingleBitErrors_, driver_->read(AMC13::T2,"STATUS.TTC.SBIT_ERROR"));
+  setMetricValue<>(ttcMetricDoubleBitErrors_, driver_->read(AMC13::T2,"STATUS.TTC.MBIT_ERROR"));
 }
 
-} // namespace hardware
+
+} // namespace amc13
 } // namespace swatch

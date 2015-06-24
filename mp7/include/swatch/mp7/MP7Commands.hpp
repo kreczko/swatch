@@ -5,13 +5,15 @@
  *
  */
 
-#ifndef __SWATCH_HARDWARE_MP7COMMANDS_HPP__
-#define __SWATCH_HARDWARE_MP7COMMANDS_HPP__
+#ifndef __SWATCH_MP7_MP7COMMANDS_HPP__
+#define __SWATCH_MP7_MP7COMMANDS_HPP__
+
 
 #include "swatch/core/Command.hpp"
 
+
 namespace swatch {
-namespace hardware {
+namespace mp7 {
 
 class MP7ResetCommand : public core::Command {
 public:
@@ -59,7 +61,7 @@ public:
 };
 
 
-} /* namespace hardware */
+} /* namespace mp7 */
 } /* namespace swatch */
 
-#endif /* __SWATCH_HARDWARE_MP7COMMANDS_HPP__ */
+#endif /* __SWATCH_MP7_MP7COMMANDS_HPP__ */

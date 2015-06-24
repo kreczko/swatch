@@ -5,23 +5,24 @@
  *
  */
 
-#include <xdata/Boolean.h>
-#include <xdata/UnsignedInteger.h>
+#include "swatch/mp7/MP7Commands.hpp"
 
-#include "swatch/hardware/MP7Commands.hpp"
 
 // XDAQ Headers
+#include "xdata/Boolean.h"
 #include "xdata/Integer.h"
+#include "xdata/UnsignedInteger.h"
 
 // Swatch headers
-#include "swatch/hardware/MP7Processor.hpp"
+#include "swatch/mp7/MP7Processor.hpp"
 
 // MP7 Core Headers
 #include "mp7/MP7Controller.hpp"
 #include "mp7/PathConfigurator.hpp"
 
+
 namespace swatch {
-namespace hardware {
+namespace mp7 {
 
 
 //---
@@ -71,7 +72,7 @@ MP7SetupLinks::~MP7SetupLinks() {
 void MP7SetupLinks::code(core::XParameterSet& params) {
   
   MP7Processor* p = getParent<MP7Processor>();
-  mp7::ChannelsManager mgr = p->driver().channelMgr();
+  ::mp7::ChannelsManager mgr = p->driver().channelMgr();
 
   setProgress(0.,"Configuring links");
 
@@ -81,12 +82,12 @@ void MP7SetupLinks::code(core::XParameterSet& params) {
   bool invPol = params.get<xdata::Boolean>("invertPolarity");
 
   if ( loopback ) {
-    mp7::orbit::Point zero;
+    ::mp7::orbit::Point zero;
     // Create a configurator to play patterns in loopback
-    mp7::TestPathConfigurator txPattern(mp7::PathConfigurator::kPattern, zero, p->driver().getMetric());
+    ::mp7::TestPathConfigurator txPattern(::mp7::PathConfigurator::kPattern, zero, p->driver().getMetric());
 
     // Apply the configuration to TX buffers
-    mgr.configureBuffers(mp7::kTxBuffer, txPattern);
+    mgr.configureBuffers(::mp7::kTxBuffer, txPattern);
   
     setProgress(0.5, "Buffers configured");
   }
@@ -118,7 +119,7 @@ MP7AlignLinks::~MP7AlignLinks() {
 void MP7AlignLinks::code(core::XParameterSet& params) {
 
   MP7Processor* p = getParent<MP7Processor>();
-  mp7::ChannelsManager mgr = p->driver().channelMgr();
+  ::mp7::ChannelsManager mgr = p->driver().channelMgr();
 
   
   xdata::Boolean& autoAlign = params.get<xdata::Boolean>("autoAlign");
@@ -142,7 +143,7 @@ void MP7AlignLinks::code(core::XParameterSet& params) {
   } else {
     setProgress(0.2, "Aligning links to " + alignBx.toString());
 
-    mp7::orbit::Point p( alignBx );
+    ::mp7::orbit::Point p( alignBx );
     mgr.alignLinks(p);
     
     setDone("Links aligned to " + alignBx.toString() );
@@ -170,18 +171,18 @@ MP7ConfigureLoopback::~MP7ConfigureLoopback() {
 //---
 void MP7ConfigureLoopback::code(core::XParameterSet& params) {
   MP7Processor* p = getParent<MP7Processor>();
-  mp7::ChannelsManager mgr = p->driver().channelMgr();
+  ::mp7::ChannelsManager mgr = p->driver().channelMgr();
   
   
   // TODO: acquire lock
   // Play patterns from zero
-  mp7::orbit::Point zero;
+  ::mp7::orbit::Point zero;
   // Create a configurator to play patterns in loopback
-  mp7::TestPathConfigurator txPattern(mp7::PathConfigurator::kPattern, zero, p->driver().getMetric());
+  ::mp7::TestPathConfigurator txPattern(::mp7::PathConfigurator::kPattern, zero, p->driver().getMetric());
 
   setProgress(0.1, "Configuring buffers");
   // Apply the configuration to TX buffers
-  mgr.configureBuffers(mp7::kTxBuffer, txPattern);
+  mgr.configureBuffers(::mp7::kTxBuffer, txPattern);
 
   setProgress(0.2, "Configuring links");
 
@@ -204,5 +205,5 @@ void MP7ConfigureLoopback::code(core::XParameterSet& params) {
 }
 
 
-} /* namespace hardware */
+} /* namespace mp7 */
 } /* namespace swatch */

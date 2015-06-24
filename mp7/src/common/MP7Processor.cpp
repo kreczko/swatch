@@ -5,13 +5,14 @@
  * @date    06/11/14
  */
 
-#include "swatch/hardware/MP7Processor.hpp"
+#include "swatch/mp7/MP7Processor.hpp"
+
 
 // Swatch hardware Headers
-#include "swatch/hardware/MP7TTCInterface.hpp"
-#include "swatch/hardware/MP7Commands.hpp"
-#include "swatch/hardware/MP7Operations.hpp"
-#include "swatch/hardware/MP7Ports.hpp"
+#include "swatch/mp7/MP7TTCInterface.hpp"
+#include "swatch/mp7/MP7Commands.hpp"
+#include "swatch/mp7/MP7Operations.hpp"
+#include "swatch/mp7/MP7Ports.hpp"
 
 // Swatch Headers
 #include "swatch/logger/Log.hpp"
@@ -33,16 +34,14 @@
 #include <iomanip>
 
 
-namespace swco = swatch::core;
 namespace swlog = swatch::logger;
-namespace swhw = swatch::hardware;
 namespace swpro = swatch::processor;
 
-SWATCH_REGISTER_CLASS(swatch::hardware::MP7Processor);
+SWATCH_REGISTER_CLASS(swatch::mp7::MP7Processor);
 
 
 namespace swatch {
-namespace hardware {
+namespace mp7 {
 
 
 MP7Processor::MP7Processor(const std::string& id, const swatch::core::XParameterSet& aPars) :
@@ -63,10 +62,10 @@ MP7Processor::MP7Processor(const std::string& id, const swatch::core::XParameter
     processor::ProcessorStub& stub = aPars.get<processor::ProcessorBag>("stub").bag;
 
     uhal::HwInterface board = uhal::ConnectionManager::getDevice(id, stub.uri, stub.addressTable) ;
-    driver_ = new mp7::MP7Controller(board);
+    driver_ = new ::mp7::MP7Controller(board);
     
     // Build subcomponents
-    Add( new MP7TTCInterface( driver_ ) ); 
+    Add( new MP7TTCInterface( *driver_ ) ); 
     Add( new swpro::LinkInterface() );
     
     // Add input and output ports
@@ -103,5 +102,5 @@ void MP7Processor::implementUpdateMetrics() {
 
 }
 
-} // namespace hardware
+} // namespace mp7
 } // namespace swatch

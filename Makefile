@@ -17,6 +17,17 @@ PACKAGES = \
 	system \
 	test \
 	pyswatch
+else ifeq ($(Set), amc13)
+PACKAGES = \
+        logger\
+        core \
+        core/test \
+        processor \
+        processor/test \
+        system \
+        system/test \
+        test \
+	amc13
 else ifeq ($(Set), hwdevel)
 PACKAGES = \
 	logger\
@@ -26,9 +37,9 @@ PACKAGES = \
 	processor/test \
 	system \
 	system/test \
-	hardware \
-	hardware/test \
-	test
+	test \
+	amc13 \
+	mp7
 endif
 
 VIRTUAL_PACKAGES = $(addsuffix /.virtual.Makefile,${PACKAGES})

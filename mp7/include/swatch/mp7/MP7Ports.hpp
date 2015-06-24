@@ -5,8 +5,8 @@
  * @date    February 2015
  */
 
-#ifndef __SWATCH_HARDWARE_MP7PORTS_HPP__
-#define __SWATCH_HARDWARE_MP7PORTS_HPP__
+#ifndef __SWATCH_MP7_MP7PORTS_HPP__
+#define __SWATCH_MP7_MP7PORTS_HPP__
 
 #include "swatch/processor/Port.hpp"
 
@@ -19,7 +19,7 @@ class AlignMonNode;
 }
 
 namespace swatch {
-namespace hardware {
+namespace mp7 {
 
 class MP7Processor;
 
@@ -36,11 +36,10 @@ private:
   //! Pointer to the main resource
   uint32_t channelID_;
   MP7Processor& processor_;
-  mp7::MP7Controller& driver_;
-//  const mp7::CtrlNode& ctrl_;
-  const mp7::DatapathNode& datapath_;
-  const mp7::MGTRegionNode& mgt_;
-  const mp7::AlignMonNode& align_;
+  ::mp7::MP7Controller& driver_;
+  const ::mp7::DatapathNode& datapath_;
+  const ::mp7::MGTRegionNode& mgt_;
+  const ::mp7::AlignMonNode& align_;
 };
 
 
@@ -57,10 +56,9 @@ private:
     //! Pointer to the main resource
     uint32_t channelID_;
     MP7Processor& processor_;
-    mp7::MP7Controller& driver_;
-//    const mp7::CtrlNode& ctrl_;
-    const mp7::DatapathNode& datapath_;
-    const mp7::MGTRegionNode& mgt_;
+    ::mp7::MP7Controller& driver_;
+    const ::mp7::DatapathNode& datapath_;
+    const ::mp7::MGTRegionNode& mgt_;
 
  };
     
@@ -68,4 +66,4 @@ private:
 }
 
 
-#endif /* __SWATCH_HARDWARE_MP7PORTS_HPP__ */
+#endif /* __SWATCH_MP7_MP7PORTS_HPP__ */

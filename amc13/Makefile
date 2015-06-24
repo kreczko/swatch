@@ -3,10 +3,10 @@ SWATCH_BACK_TO_ROOT= $(shell pwd)/..
 include ${SWATCH_BACK_TO_ROOT}/config/mfCommonDefs.mk
 
 Project = cactuscore
-Package = swatch/hardware
+Package = swatch/amc13
 
-PackagePath = $(SWATCH_ROOT)/hardware
-PackageName = cactuscore-swatch-hardware
+PackagePath = $(SWATCH_ROOT)/amc13
+PackageName = cactuscore-swatch-amc13
 
 Packager = Alessandro Thea
 
@@ -15,7 +15,7 @@ PACKAGE_VER_MINOR = 1
 PACKAGE_VER_PATCH = 0
 PACKAGE_RELEASE = 0
 
-Library = cactus_swatch_hardware
+Library = cactus_swatch_amc13
 
 Includes = \
 	include \
@@ -38,7 +38,6 @@ LibraryPaths = \
 
 Libraries = \
 	cactus_uhal_uhal \
-	cactus_mp7_mp7 \
 	cactus_amc13_amc13 \
 	cactus_swatch_logger \
 	cactus_swatch_core \

@@ -5,14 +5,14 @@
  * 
  */
 
-#ifndef __SWATCH_HARDWARE_MP7OPERATIONS_HPP__
-#define __SWATCH_HARDWARE_MP7OPERATIONS_HPP__
+#ifndef __SWATCH_MP7_MP7OPERATIONS_HPP__
+#define __SWATCH_MP7_MP7OPERATIONS_HPP__
 
 #include "swatch/core/Operation.hpp"
 
 
 namespace swatch {
-namespace hardware {
+namespace mp7 {
  
 class MP7Configure : public swatch::core::Operation {
    public:
@@ -31,4 +31,4 @@ class MP7Configure : public swatch::core::Operation {
 }
 } // namespace swatch
 
-#endif /* __SWATCH_HARDWARE_MP7OPERATIONS_HPP__ */
+#endif /* __SWATCH_MP7_MP7OPERATIONS_HPP__ */

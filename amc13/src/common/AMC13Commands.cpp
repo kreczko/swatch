@@ -5,15 +5,15 @@
  *
  */
 
-#include <xdata/String.h>
+#include "swatch/amc13/AMC13Commands.hpp"
 
-#include "swatch/hardware/AMC13Commands.hpp"
 
 // XDAQ Headers
 #include "xdata/Integer.h"
+#include "xdata/String.h"
 
 // Swatch Headers
-#include "swatch/hardware/AMC13Manager.hpp"
+#include "swatch/amc13/AMC13Manager.hpp"
 #include "swatch/logger/Log.hpp"
 
 // AMC13 Headers
@@ -23,7 +23,7 @@
 namespace swlo = swatch::logger;
 
 namespace swatch {
-namespace hardware {
+namespace amc13 {
 
 //---
 AMC13ResetCommand::AMC13ResetCommand(const std::string& aId) :
@@ -41,24 +41,24 @@ AMC13ResetCommand::~AMC13ResetCommand() {
 
 //---
 void AMC13ResetCommand::code(core::XParameterSet& params) {
-  
 
     AMC13Manager* amc13 = getParent<AMC13Manager>();
-    
-  
+   
     std::string mode = params.get<xdata::String>("mode");
+
+    using ::amc13::AMC13Simple;
   
     if ( mode == "ttsloopback" ) {
-        amc13->driver()->reset(amc13::AMC13Simple::T1);
-        amc13->driver()->reset(amc13::AMC13Simple::T2);
+        amc13->driver().reset(AMC13Simple::T1);
+        amc13->driver().reset(AMC13Simple::T2);
         LOG(swlo::kInfo) << "Enabling local TTC";
-        amc13->driver()->localTtcSignalEnable(true);
+        amc13->driver().localTtcSignalEnable(true);
         
     } else if ( mode == "external" ) {
-        amc13->driver()->reset(amc13::AMC13Simple::T1);
-        amc13->driver()->reset(amc13::AMC13Simple::T2);
+        amc13->driver().reset(AMC13Simple::T1);
+        amc13->driver().reset(AMC13Simple::T2);
         LOG(swlo::kInfo) << "Enabling external TTC input" << std::endl;
-        amc13->driver()->localTtcSignalEnable(false);
+        amc13->driver().localTtcSignalEnable(false);
     } else {
       std::ostringstream oss;
         oss << "Unknown option " << mode;
@@ -72,5 +72,5 @@ void AMC13ResetCommand::code(core::XParameterSet& params) {
 }
 
 
-} // namespace hardware
+} // namespace amc13
 } // namespace swatch

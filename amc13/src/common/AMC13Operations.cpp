@@ -5,14 +5,14 @@
  *
  */
 
+#include "swatch/amc13/AMC13Operations.hpp"
 
-#include "swatch/hardware/AMC13Operations.hpp"
 
 // XDAQ Headers
 #include "xdata/Integer.h"
 
 // Swatch Headers
-#include "swatch/hardware/AMC13Manager.hpp"
+#include "swatch/amc13/AMC13Manager.hpp"
 #include "swatch/logger/Log.hpp"
 
 // AMC13 Headers
@@ -22,7 +22,7 @@
 namespace swlo = swatch::logger;
 
 namespace swatch {
-namespace hardware {
+namespace amc13 {
 
 //---
 AMC13Configure::AMC13Configure(const std::string& aId) :
@@ -37,5 +37,5 @@ AMC13Configure::~AMC13Configure() {
 }
 
 
-} // namespace hardware
+} // namespace amc13
 } // namespace swatch

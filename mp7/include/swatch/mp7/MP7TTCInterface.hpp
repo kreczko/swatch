@@ -5,22 +5,25 @@
  * Created on November 6, 2014, 4:50 PM
  */
 
-#ifndef SWATCH_HARDWARE_MP7TCC
-#define SWATCH_HARDWARE_MP7TCC
+#ifndef SWATCH_MP7_MP7TCCINTERFACE_HPP
+#define SWATCH_MP7_MP7TCCINTERFACE_HPP
+
 
 // Swatch Headers
 #include "swatch/processor/TTCInterface.hpp"
+
 
 namespace mp7 {
 class MP7Controller;
 }
 
+
 namespace swatch {
-namespace hardware {
+namespace mp7 {
 
 class MP7TTCInterface : public swatch::processor::TTCInterface {
 public:
-    MP7TTCInterface( mp7::MP7Controller* );
+    MP7TTCInterface( ::mp7::MP7Controller& );
     ~MP7TTCInterface();
     
 
@@ -51,11 +54,11 @@ protected:
     
 private:
     
-    mp7::MP7Controller* driver_;
+    ::mp7::MP7Controller& driver_;
 
 };
  
-} // namespace hardware
+} // namespace mp7
 } // namespace swatch 
 
 #endif
