@@ -94,7 +94,9 @@ private:
 
     LinkInterface* links_;
 
-
+private:
+    Processor( const Processor& other ); // non copyable
+    Processor& operator=( const Processor& ); // non copyable
 };
 
 

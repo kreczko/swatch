@@ -59,6 +59,10 @@ protected:
     core::Metric<uint32_t>& ttcMetricBC0Errors_;
     core::Metric<uint32_t>& ttcMetricSingleBitErrors_;
     core::Metric<uint32_t>& ttcMetricDoubleBitErrors_;
+    
+private:
+    DaqTTCManager( const DaqTTCManager& other ); // non copyable
+    DaqTTCManager& operator=( const DaqTTCManager& ); // non copyable
 };
 
 } // namespace system
