@@ -8,13 +8,14 @@
 namespace swatch {
 namespace core {
 
-std::ostream& operator<<(std::ostream& out, swatch::core::Command::Status s) {
+std::ostream& operator<<(std::ostream& out, swatch::core::Command::State s) {
   switch (s) {
-    case swatch::core::Command::kInitial : out << "Initial"; break;
-    case swatch::core::Command::kRunning : out << "Running"; break;
-    case swatch::core::Command::kWarning : out << "Warning"; break;
-    case swatch::core::Command::kError   : out << "Error"; break;
-    case swatch::core::Command::kDone    : out << "Done"; break;
+    case swatch::core::Command::kInitial   : out << "Initial"; break;
+    case swatch::core::Command::kScheduled : out << "Scheduled"; break;
+    case swatch::core::Command::kRunning   : out << "Running"; break;
+    case swatch::core::Command::kWarning   : out << "Warning"; break;
+    case swatch::core::Command::kError     : out << "Error"; break;
+    case swatch::core::Command::kDone      : out << "Done"; break;
     default : out << "Unknown value of swatch::core::Command::Status enum"; 
   }
   return out;
@@ -22,8 +23,7 @@ std::ostream& operator<<(std::ostream& out, swatch::core::Command::Status s) {
 
 //---
 Command::~Command() {
-  if ( result_ ) delete result_;
-  if ( default_ ) delete default_;
+  if ( defaultResult_ ) delete defaultResult_;
 }
 
 
@@ -41,6 +41,9 @@ Command::exec( XParameterSet& params  , const bool& aUseThreadPool ) ///Should t
   try {
     // if threadpool is to be used
     if ( aUseThreadPool ){
+      boost::unique_lock<boost::mutex> lock(mutex_);
+      state_ = kScheduled;
+      
       ThreadPool& pool = ThreadPool::getInstance();
       pool.addTask<Command>(this, &Command::runCode, p);
     }
@@ -56,145 +59,195 @@ Command::exec( XParameterSet& params  , const bool& aUseThreadPool ) ///Should t
 }
 
 void Command::runCode(XParameterSet& params) {
+  // 1) Declare that I'm running
+  {
+    boost::unique_lock<boost::mutex> lock(mutex_);
+    state_ = kRunning;
+    gettimeofday(&execStartTime_, NULL);
+  }
+  
+  // 2) Run the code, handling any exceptions
   try {
-    this->code(params);
-  } catch (const std::exception& e) {
-    this->setError( "An exception occured in Command::code(): " + std::string(e.what()));
+    State s = this->code(params);
+    
+    boost::unique_lock<boost::mutex> lock(mutex_);
+    gettimeofday(&execEndTime_, NULL);
+    switch (s) { 
+      case kDone :
+      case kWarning :
+        progress_ = 1.0;
+      case kError : 
+        state_ = s;
+        break;
+      default : 
+        state_ = kError;
+        statusMsg_ = "ERROR - Command::code() method returned invalid Status enum value '" + boost::lexical_cast<std::string>(s) + "'   \n Original status message was: " + statusMsg_;
+    }
+  }
+  catch (const std::exception& e) {
+    boost::unique_lock<boost::mutex> lock(mutex_);
+    gettimeofday(&execEndTime_, NULL);
+    state_ = kError;
+    statusMsg_ = std::string("ERROR - An exception occurred in Command::code(): ") + e.what();
   }
 }
 
 //---
 void Command::reset() {
-    setStatus(kInitial),
-    setResult(defaultResult());
-    setProgress(0);
-    setStatusMsg("");
-}
-
-//---
-Command::Status
-Command::getStatus() const {
-  return status_;
-}
-
-//---
-float Command::getProgress() const {
-  return progress_;
+  boost::unique_lock<boost::mutex> lock(mutex_);
+  state_ = kInitial;
+  progress_ = 0.0;
+  statusMsg_ = "";
+  
+  result_.reset(resultCloner_(defaultResult_));
 }
 
 
 //---
-xdata::Serializable& Command::getResult() {
-  return *result_;
+Command::State
+Command::getState() const {
+  boost::unique_lock<boost::mutex> lock(mutex_);
+  return state_;
 }
 
 
 //---
-void
-Command::setDone(const std::string& aMsg) {
-  setProgress(100.);
-  {
-    boost::unique_lock<boost::mutex> lock(status_mutex_);
-    status_ = kDone;
-    statusMsg_ = aMsg;
+CommandStatus Command::getStatus() const {
+  boost::unique_lock<boost::mutex> lock(mutex_);
+  
+  // Only let user see the result once the command has completed (since its contents can change before then) ...
+  boost::shared_ptr<xdata::Serializable> result((xdata::Serializable*) NULL);
+  if ( (state_ == kDone) || (state_ == kWarning) || (state_ == kError))
+    result = result_;
+  
+  float runningTime = 0.0;
+  timeval endTime;
+  switch (state_) {
+    case kInitial :
+    case kScheduled : 
+      break;
+    default:
+      if (state_ == kRunning)
+        gettimeofday(&endTime, NULL);
+      else
+        endTime = execEndTime_;
+
+      runningTime = double(endTime.tv_sec - execStartTime_.tv_sec);
+      runningTime += float(double(endTime.tv_usec) - double(execStartTime_.tv_usec))/1e6;
+      break;
   }
-}
-
-
-//---
-void
-Command::setWarning(const std::string& aMsg) {
-  {
-    boost::unique_lock<boost::mutex> lock(status_mutex_);
-    status_ = kWarning;
-    statusMsg_ = aMsg;
-  }
-}
-
-
-//---
-void
-Command::setError(const std::string& aMsg) {
-  {
-    boost::unique_lock<boost::mutex> lock(status_mutex_);
-    status_ = kError;
-    statusMsg_ = aMsg;
-  }
-}
-
-
-//---
-std::string Command::getProgressMsg() {
-  boost::unique_lock<boost::mutex> lock(progress_mutex_);
-  return progressMsg_;
+    
+  return CommandStatus(state_, runningTime, progress_, statusMsg_, result);
 }
 
 
 //---
 void
 Command::setProgress(float aProgress) {
-  {
-    boost::unique_lock<boost::mutex> lock(progress_mutex_);
-    progress_ = aProgress;
+  if ( aProgress < 0. or aProgress > 1.) {
+    std::ostringstream err;
+    err << "Progress must be in the [0.,1.] range. " << aProgress;
+    // TODO: should this not throw a SWATCH exception?
+    throw std::out_of_range(err.str());
   }
+
+  boost::unique_lock<boost::mutex> lock(mutex_);
+  progress_ = aProgress;
 }
+
 
 //---
 void
 Command::setProgress(float aProgress, const std::string& aMsg ) {
-  if ( aProgress < 0. or aProgress > 100.) {
+  if ( aProgress < 0. or aProgress > 1.) {
     std::ostringstream err;
-    err << "Progress must be in the [0.,100.] range. " << aProgress;
+    err << "Progress must be in the [0.,1.] range. " << aProgress;
     // TODO: should this not throw a SWATCH exception?
     throw std::out_of_range(err.str());
   }
-  {
-    boost::unique_lock<boost::mutex> lock(progress_mutex_);
-    progress_ = aProgress;
-    progressMsg_ = aMsg;
-  }
+
+  boost::unique_lock<boost::mutex> lock(mutex_);
+  progress_ = aProgress;
+  statusMsg_ = aMsg;
 }
+
+
+void Command::setResult( const xdata::Serializable& aResult ){
+  boost::unique_lock<boost::mutex> lock(mutex_);
+  result_->setValue(aResult);
+}
+
 
 //---
 void Command::setStatusMsg(const std::string& aMsg) {
-  {
-    boost::unique_lock<boost::mutex> lock(status_mutex_);
-    statusMsg_ = aMsg;
-  }
+  boost::unique_lock<boost::mutex> lock(mutex_);
+  statusMsg_ = aMsg;
 }
 
-void Command::setResult( const xdata::Serializable& aResult ){
-  {
-    boost::unique_lock<boost::mutex> lock(result_mutex_);
-    result_->setValue(aResult);
-  }
-}
 
 xdata::Serializable& Command::defaultResult(){
-  return *default_;
+  return *defaultResult_;
 }
 
-std::string Command::getStatusMsg() {
-  boost::unique_lock<boost::mutex> lock(status_mutex_);
-  return statusMsg_;
-}
-
-void Command::setStatus( Status aStatus ) {
-  {
-    boost::unique_lock<boost::mutex> lock(status_mutex_);
-    status_ = aStatus;
-  }
-}
 
 const XParameterSet& Command::getDefaultParams() const {
   return parameters_;
 }
+
+
+const xdata::Serializable& Command::getDefaultResult() const {
+  return *defaultResult_;
+}
+
 
 XParameterSet Command::mergeParametersWithDefaults( XParameterSet& params ) const {
   XParameterSet merged = XParameterSet(params);
   merged.update(parameters_);
   return merged;
 }
+
+
+
+
+Command::State CommandStatus::getState() const {
+  return state_;
+}
+    
+
+float CommandStatus::getRunningTime() const {
+  return runningTime_;
+}
+
+
+float CommandStatus::getProgress() const {
+  return progress_;
+}
+
+
+const std::string& CommandStatus::getStatusMsg() const {
+  return statusMsg_;
+}
+
+
+const xdata::Serializable* const CommandStatus::getResult() const {
+  return result_.get();
+}
+
+
+std::string CommandStatus::getResultAsString() const {
+  return result_->toString();
+}
+    
+
+CommandStatus::CommandStatus(Command::State aState, float aRunningTime, float aProgress, const std::string& aStatusMsg, const boost::shared_ptr<xdata::Serializable>& aResult) :
+  state_(aState),
+  runningTime_(aRunningTime),
+  progress_(aProgress),
+  statusMsg_(aStatusMsg),
+  result_(aResult)
+{
+}
+
 
 } // namespace core
 } // namespace swatch

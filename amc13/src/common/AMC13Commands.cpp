@@ -40,7 +40,7 @@ AMC13ResetCommand::~AMC13ResetCommand() {
 
 
 //---
-void AMC13ResetCommand::code(core::XParameterSet& params) {
+core::Command::State AMC13ResetCommand::code(core::XParameterSet& params) {
 
     AMC13Manager* amc13 = getParent<AMC13Manager>();
    
@@ -63,12 +63,14 @@ void AMC13ResetCommand::code(core::XParameterSet& params) {
       std::ostringstream oss;
         oss << "Unknown option " << mode;
         LOG(swlo::kError) << oss.str();
-        setError(oss.str());
-        return;
+        setStatusMsg(oss.str());
+        return kError;
     }
     
     // and check the status
     // amc13->driver()->getStatus()->Report(1);
+    
+    return kDone;
 }
 
 

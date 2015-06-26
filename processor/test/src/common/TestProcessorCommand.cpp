@@ -56,14 +56,16 @@ BOOST_FIXTURE_TEST_CASE(TestRunGetCrate,  ProcessorCommandTestSetup) {
   get_crate->exec( params );
 
   do {
-  } while ( (get_crate->getStatus() == swatch::core::Command::kInitial) || (get_crate->getStatus() == swatch::core::Command::kRunning) );
+  } while ( (get_crate->getState() == swatch::core::Command::kScheduled) || (get_crate->getState() == swatch::core::Command::kRunning) );
 
-  BOOST_CHECK_EQUAL(get_crate->getProgress(), 100.0);
-  BOOST_CHECK_EQUAL(get_crate->getStatus(), swatch::core::Command::kDone);
-  BOOST_CHECK_EQUAL(get_crate->getResult().type(), "string");
-  BOOST_CHECK_EQUAL(get_crate->getStatusMsg(), "Dummy command successfully completed");
-  BOOST_CHECK(get_crate->getResult<xdata::String>().equals(xdata::String("s2g20-10")));
-  BOOST_CHECK_EQUAL(get_crate->getResult<xdata::String>().toString(), "s2g20-10");
+  core::CommandStatus status = get_crate->getStatus();
+  BOOST_CHECK_EQUAL(status.getProgress(), 1.0);
+  BOOST_CHECK_EQUAL(status.getStatusMsg(), "Dummy command successfully completed");
+  BOOST_CHECK_EQUAL(status.getState(), swatch::core::Command::kDone);
+  BOOST_REQUIRE(status.getResult() != NULL);
+  BOOST_CHECK_EQUAL(status.getResult()->type(), "string");
+  BOOST_CHECK(xdata::String(*dynamic_cast<const xdata::String*>(status.getResult())).equals(xdata::String("s2g20-10")));
+  BOOST_CHECK_EQUAL(status.getResultAsString(), "s2g20-10");
 }
 
 

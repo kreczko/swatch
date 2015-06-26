@@ -73,7 +73,7 @@ BOOST_FIXTURE_TEST_CASE(TolerantPool1, ThreadPoolSetup) {
   cmd1->exec(params);
   cmd2->exec(params);
   cmd3->exec(params);
-  LOG(kInfo) << "cmd1 " << cmd1->getProgress();
+  LOG(kInfo) << "cmd1 " << cmd1->getStatus().getProgress();
   // now wait for a bit
   // in 5ms cmd1 and cmd2 should start and due to nature of the pool finish
   // but cmd3 should not even start
@@ -81,11 +81,11 @@ BOOST_FIXTURE_TEST_CASE(TolerantPool1, ThreadPoolSetup) {
   // delete pool, forces all running commands to finish
   ThreadPool::reset();
 
-  BOOST_CHECK_EQUAL(cmd1->getStatus(), Command::kDone);
-  BOOST_CHECK_EQUAL(cmd2->getStatus(), Command::kDone);
-  // cmd3 should be in running state
-  BOOST_CHECK_EQUAL(cmd3->getStatus(), Command::kInitial);
-  BOOST_CHECK_EQUAL(cmd3->getProgress(), 0);
+  BOOST_CHECK_EQUAL(cmd1->getState(), Command::kDone);
+  BOOST_CHECK_EQUAL(cmd2->getState(), Command::kDone);
+  // cmd3 should be in scheduled state
+  BOOST_CHECK_EQUAL(cmd3->getState(), Command::kScheduled);
+  BOOST_CHECK_EQUAL(cmd3->getStatus().getProgress(), 0);
 }
 
 BOOST_FIXTURE_TEST_CASE(TolerantPool2, ThreadPoolSetup) {
@@ -98,7 +98,7 @@ BOOST_FIXTURE_TEST_CASE(TolerantPool2, ThreadPoolSetup) {
   cmd1->exec(params);
   cmd2->exec(params);
   cmd3->exec(params);
-  LOG(kInfo) << "cmd1 " << cmd1->getProgress();
+  LOG(kInfo) << "cmd1 " << cmd1->getStatus().getProgress();
   // now wait for a bit
   // in 18ms cmd1 and cmd2 should finish
   // and cmd3 start
@@ -107,10 +107,10 @@ BOOST_FIXTURE_TEST_CASE(TolerantPool2, ThreadPoolSetup) {
   // delete pool, forces all running commands to finish
   ThreadPool::reset();
 
-  BOOST_CHECK_EQUAL(cmd1->getStatus(), Command::kDone);
-  BOOST_CHECK_EQUAL(cmd2->getStatus(), Command::kDone);
+  BOOST_CHECK_EQUAL(cmd1->getState(), Command::kDone);
+  BOOST_CHECK_EQUAL(cmd2->getState(), Command::kDone);
   // cmd3 should be done as well (since it started)
-  BOOST_CHECK_EQUAL(cmd3->getStatus(), Command::kDone);
+  BOOST_CHECK_EQUAL(cmd3->getState(), Command::kDone);
 }
 
 BOOST_FIXTURE_TEST_CASE(GoodGuyPool, ThreadPoolSetup) {
@@ -130,12 +130,12 @@ BOOST_FIXTURE_TEST_CASE(GoodGuyPool, ThreadPoolSetup) {
   // delete pool, forces all running commands to finish
   ThreadPool::reset();
 
-  BOOST_CHECK_EQUAL(cmd1->getStatus(), Command::kDone);
-  BOOST_CHECK_EQUAL(cmd2->getStatus(), Command::kDone);
+  BOOST_CHECK_EQUAL(cmd1->getState(), Command::kDone);
+  BOOST_CHECK_EQUAL(cmd2->getState(), Command::kDone);
   // cmd3 should be done as well for this nice pool
-  BOOST_CHECK_EQUAL(cmd3->getStatus(), Command::kDone);
+  BOOST_CHECK_EQUAL(cmd3->getState(), Command::kDone);
   // with more than 1% progress
-  BOOST_CHECK_GT(cmd3->getProgress(), 99);
+  BOOST_CHECK_GT(cmd3->getStatus().getProgress(), 0.99);
 }
 
 /*

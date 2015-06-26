@@ -18,9 +18,10 @@ namespace mp7 {
 class MP7ResetCommand : public core::Command {
 public:
   MP7ResetCommand(const std::string& aId);
+
   virtual ~MP7ResetCommand();
 
-  virtual void code(core::XParameterSet& params);
+  virtual State code(core::XParameterSet& params);
 
 };
 
@@ -31,7 +32,7 @@ public:
     
   virtual ~MP7SetupLinks();
 
-  virtual void code(core::XParameterSet& params);
+  virtual State code(core::XParameterSet& params);
 
 };
 
@@ -43,9 +44,7 @@ public:
 
   virtual ~MP7AlignLinks();
 
-
-  virtual void code( core::XParameterSet& params);
-
+  virtual State code( core::XParameterSet& params);
 };
 
 
@@ -56,7 +55,7 @@ public:
 
   virtual ~MP7ConfigureLoopback();
 
-  virtual void code(core::XParameterSet& params);
+  virtual State code(core::XParameterSet& params);
 
 };
 

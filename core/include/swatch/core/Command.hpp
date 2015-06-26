@@ -28,13 +28,17 @@ class Serializable;
 namespace swatch {
 namespace core {
 
+
 class ActionableObject;
+class CommandStatus;
+
 
 class Command : public Functionoid {
 public:
 
-    enum Status {
+    enum State {
         kInitial,
+        kScheduled,
         kRunning,
         kError,
         kWarning,
@@ -45,55 +49,28 @@ public:
 
     void exec( XParameterSet& params , const bool& aUseThreadPool = true ); ///Should take const reference but xdata::serializable is const-correctness broken
    
-private:
-    // thread safe exception catching wrapper for code()
-    void runCode( XParameterSet& params );
-
-protected:
-    // user defined code for execution
-    virtual void code( XParameterSet& params ) = 0; ///Should take const reference but xdata::serializable is const-correctness broken
-
-public:
     virtual void reset();
 
-    Status getStatus() const;
+    State getState() const;
 
-    float getProgress() const;
-
-    xdata::Serializable& getResult();
-
-    template<typename T> T& getResult();
-
-    std::string getProgressMsg();
-
-    std::string getStatusMsg();
-
-    const XParameterSet& getDefaultParams() const;
-
+    CommandStatus getStatus() const;
+    
     template<typename T>
     void registerParameter(const std::string name, const T& defaultValue);
 
-protected:
+    const XParameterSet& getDefaultParams() const;
+    
+    const xdata::Serializable& getDefaultResult() const;
 
-    /**
-     * Merges a parameter set with the default parameter set.
-     * Default values are only used if not present in params.
-     */
-    XParameterSet mergeParametersWithDefaults( XParameterSet& params) const;
+protected:
+    // user defined code for execution
+    virtual State code( XParameterSet& params ) = 0; ///Should take const reference but xdata::serializable is const-correctness broken
 
     template<typename T>
     Command( const std::string& aId , const T& aDefault );
 
     xdata::Serializable& defaultResult();
 
-    void setDone( const std::string& aMsg );
-
-    void setWarning( const std::string& aMsg );
-
-    void setError( const std::string& aMsg );
-
-    void setStatus( Status aStatus );
-    
     void setProgress( float aProgress );
     
     void setProgress( float aProgress, const std::string& aMsg );
@@ -103,31 +80,86 @@ protected:
     void setStatusMsg( const std::string& aMsg );
 
 private:
+    /**
+     * Merges a parameter set with the default parameter set.
+     * Default values are only used if not present in params.
+     */
+    XParameterSet mergeParametersWithDefaults( XParameterSet& params) const;
+
+    // thread safe exception catching wrapper for code()
+    void runCode( XParameterSet& params );
+
     XParameterSet parameters_;
 
-    Status status_;
+    xdata::Serializable* const defaultResult_;
+
+    State state_;
+
+    timeval execStartTime_;
+    timeval execEndTime_;
 
     float progress_;
 
-    xdata::Serializable* default_;
-
-    xdata::Serializable* result_;
-
-    std::string progressMsg_;
-
     std::string statusMsg_;
 
-    // synchronisation
-    boost::mutex status_mutex_, progress_mutex_, result_mutex_;
+    boost::shared_ptr<xdata::Serializable> result_;
 
+    // Mutex for thread safety of read-/write-access of member data read-/write-access
+    mutable boost::mutex mutex_;
+    
+    //! Creates copy of xdata::Serializable object of type T on heap
+    template<typename T>
+    static xdata::Serializable* cloneSerializable_( const xdata::Serializable* other );
+
+    typedef xdata::Serializable* (*ResultXCloner)( const xdata::Serializable* );
+
+    //! Used to clone default result into result_ at start of execution, just before the code method is called
+    ResultXCloner resultCloner_;
 };
 
-std::ostream& operator<<(std::ostream& out, swatch::core::Command::Status s);
+std::ostream& operator<<(std::ostream& out, swatch::core::Command::State s);
 
 typedef boost::unordered_map<std::string, Command*> CommandMap;
 
+
+//! Provides a snapshot of the progress/status of a swatch::core::Command
+class CommandStatus {
+    
+public:
+    //! Returns status of command execution
+    Command::State getState() const;
+    
+    //! Returns command's running time in seconds
+    float getRunningTime() const;
+
+    //! Returns fractional progress of command; range [0,1]
+    float getProgress() const;
+    
+    //! Returns command's status message
+    const std::string& getStatusMsg() const;
+    
+    //! Returns command's result; equal to NULL if command has not already completed execution
+    const xdata::Serializable* const getResult() const;
+    
+    std::string getResultAsString() const;
+    
+private:
+    CommandStatus(Command::State aState, float aRunningTime, float aProgress, const std::string& aStatusMsg, const boost::shared_ptr<xdata::Serializable>& aResult);
+
+    const Command::State state_;
+    const float runningTime_;
+    const float progress_;
+    const std::string statusMsg_;
+    boost::shared_ptr<xdata::Serializable> result_;
+
+    friend class Command;
+};
+
 } // namespace core
 } // namespace swatch
+
+
 #include "swatch/core/Command.hxx"
+
 
 #endif /* __SWATCH_CORE_COMMAND_HPP__ */

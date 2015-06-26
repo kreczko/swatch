@@ -23,21 +23,23 @@ DummyProcessorCommand::~DummyProcessorCommand() {
 //  delete dummy_proc_;
 }
 
-void DummyProcessorCommand::code(swco::XParameterSet& params) ///Should take const reference but xdata::serializable is const-correctness broken
+core::Command::State DummyProcessorCommand::code(swco::XParameterSet& params) ///Should take const reference but xdata::serializable is const-correctness broken
 {
   DummyProcessor* res = getParent<DummyProcessor>();
 
   std::string todo = params.get<xdata::String>("todo");
   if (todo == "getCrateId") {
-    setProgress(90.49, "Dummy command did something");
+    setProgress(0.9049, "Dummy command did something");
     setResult(xdata::String(res->getCrateId()));
-    setDone("Dummy command successfully completed");
-
+    
+    setStatusMsg("Dummy command successfully completed");
+    return kDone;
   } else {
     //      setProgress(0.0);
     setProgress(0.0, "Not even started");
-    setWarning("Nothing was done");
-
+    
+    setStatusMsg("Nothing was done");
+    return kWarning;
   }
 }
 } // namespace test

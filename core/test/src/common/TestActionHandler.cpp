@@ -48,7 +48,7 @@ BOOST_FIXTURE_TEST_CASE(TestRegisterCommand,  ActionableObjectTestSetup) {
 BOOST_FIXTURE_TEST_CASE(TestGetCommand,  ActionableObjectTestSetup) {
   LOG(kInfo) << "Running ActionableObjectTestSuite/TestGetCommand";
   Command* dummy_1 = handler.getCommand("dummy_1");
-  BOOST_CHECK_EQUAL(dummy_1->getStatus(), 0);
+  BOOST_CHECK_EQUAL(dummy_1->getState(), 0);
   // do not delete commands, they are owned by ActionableObject
   // memory access violation at address: 0x00000081: no mapping at fault address
   // maybe we should return smart pointers (boost::shared_ptr)?

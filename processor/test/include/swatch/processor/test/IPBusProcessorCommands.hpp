@@ -24,7 +24,7 @@ public:
 
   virtual ~IPBusResetCommand();
 
-  virtual void code();
+  virtual State code();
 
 };
 
@@ -34,7 +34,7 @@ public:
 
   virtual ~IPBusConfigureCommand();
 
-  virtual void code();
+  virtual State code();
 
 };
 
@@ -45,7 +45,7 @@ public:
 
   virtual ~IPBusCapture();
 
-  virtual void code();
+  virtual State code();
 
 };
 

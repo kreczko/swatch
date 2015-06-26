@@ -23,7 +23,7 @@ public:
   template<typename T>  DummyCommand( const std::string& aId , const T& aDefault);
   virtual ~DummyCommand();
 
-  virtual void code( XParameterSet& params); ///Should take const reference but xdata::serializable is const-correctness broken
+  virtual Command::State code( XParameterSet& params); ///Should take const reference but xdata::serializable is const-correctness broken
 
 };
 

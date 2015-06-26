@@ -15,8 +15,10 @@
 #include <xdata/Integer.h>
 #include <xdata/String.h>
 
+
 using namespace swatch::logger;
 using namespace swatch::core;
+
 
 namespace swatch {
 namespace core {
@@ -71,13 +73,15 @@ BOOST_FIXTURE_TEST_CASE(TestRunPrint,  CommandTestSetup) {
   print->exec( params );
 
   do {
-  } while ( (print->getStatus() == swatch::core::Command::kInitial) || (print->getStatus() == swatch::core::Command::kRunning) );
+  } while ( (print->getState() == swatch::core::Command::kScheduled) || (print->getState() == swatch::core::Command::kRunning) );
 
 
-  BOOST_CHECK_EQUAL(print->getProgress(), 100.0);
-  BOOST_CHECK_EQUAL(print->getStatus(), Command::kDone);
-  BOOST_CHECK_EQUAL(print->getResult().type(), "int");
-  BOOST_CHECK(print->getResult<xdata::Integer>().equals(xdata::Integer(99)));
+  CommandStatus status = print->getStatus();
+  BOOST_CHECK_EQUAL(status.getProgress(), 1.0);
+  BOOST_REQUIRE_EQUAL(status.getState(), Command::kDone);
+  BOOST_CHECK_EQUAL(status.getResult()->type(), "int");
+  xdata::Integer result(*dynamic_cast<const xdata::Integer*>(status.getResult()));
+  BOOST_CHECK(result.equals(xdata::Integer(99)));
 }
 
 BOOST_FIXTURE_TEST_CASE(TestRunNothing,  CommandTestSetup) {
@@ -85,11 +89,12 @@ BOOST_FIXTURE_TEST_CASE(TestRunNothing,  CommandTestSetup) {
   nothing->exec( params );
 
   do {
-  } while ( (nothing->getStatus() == swatch::core::Command::kInitial) || (nothing->getStatus() == swatch::core::Command::kRunning) );
+  } while ( (nothing->getState() == swatch::core::Command::kScheduled) || (nothing->getState() == swatch::core::Command::kRunning) );
 
-  BOOST_CHECK_EQUAL(nothing->getProgress(), 0);
-  BOOST_CHECK_EQUAL(nothing->getStatus(), Command::kWarning);
-  BOOST_CHECK_EQUAL(nothing->getStatusMsg(), "Nothing was done");
+  CommandStatus status = nothing->getStatus();
+  BOOST_CHECK_EQUAL(status.getProgress(), 1.0);
+  BOOST_CHECK_EQUAL(status.getState(), Command::kWarning);
+  BOOST_CHECK_EQUAL(status.getStatusMsg(), "Nothing was done");
 }
 
 BOOST_FIXTURE_TEST_CASE(TestRunError,  CommandTestSetup) {
@@ -97,11 +102,12 @@ BOOST_FIXTURE_TEST_CASE(TestRunError,  CommandTestSetup) {
   error->exec( params );
 
   do {
-  } while ( (error->getStatus() == swatch::core::Command::kInitial) || (error->getStatus() == swatch::core::Command::kRunning) );
+  } while ( (error->getState() == swatch::core::Command::kScheduled) || (error->getState() == swatch::core::Command::kRunning) );
 
-  BOOST_CHECK_CLOSE(error->getProgress(), 50.49, 0.1);
-  BOOST_CHECK_EQUAL(error->getStatus(), Command::kError);
-  BOOST_CHECK_EQUAL(error->getStatusMsg(), "But ended up in error");
+  CommandStatus status = error->getStatus();
+  BOOST_CHECK_CLOSE(status.getProgress(), 0.5049, 0.0001);
+  BOOST_CHECK_EQUAL(status.getState(), Command::kError);
+  BOOST_CHECK_EQUAL(status.getStatusMsg(), "But ended up in error");
 }
 
 BOOST_AUTO_TEST_SUITE_END() // CommandTestSuite

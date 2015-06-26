@@ -48,13 +48,13 @@ IPBusResetCommand::~IPBusResetCommand() {
 
 
 //---
-void IPBusResetCommand::code() {
+core::Command::State IPBusResetCommand::code() {
 
     IPBusProcessor* p = getParent<IPBusProcessor>();
     
     if ( !getDefaultParams().has("mode") ) {
-      setError("Configuration not found!");
-      return;
+      setStatusMsg("Configuration not found!");
+      return kError;
     }
     
     std::string config = getDefaultParams().get<xdata::String>("mode");
@@ -72,9 +72,8 @@ void IPBusResetCommand::code() {
         p->hw().getNode("ttc.ctrl.enable").write(0x0);
         p->hw().getNode("ttc.ctrl.genBC0").write(0x1); 
     } else {
-      setError("Unknown configuration mode '"+config+"'");
-
-      return;
+      setStatusMsg("Unknown configuration mode '"+config+"'");
+      return kError;
     }
 
     p->hw().getNode("ttc.stat.bc0Locked").write(true);
@@ -84,7 +83,8 @@ void IPBusResetCommand::code() {
     p->ttc().clearErrors();
     p->ttc().clearCounters();
     
-    setDone("Done!");
+    setStatusMsg("Done!");
+    return kDone;
 }
 
 
@@ -100,12 +100,12 @@ IPBusConfigureCommand::~IPBusConfigureCommand() {
   
 }
 
-void IPBusConfigureCommand::code() {
+core::Command::State IPBusConfigureCommand::code() {
   
     using namespace swatch::core;
     if ( !getDefaultParams().has("mode") ) {
-      setError("Configuration not found!");
-      return;
+      setStatusMsg("Configuration not found!");
+      return kError;
     }
     
     std::string config = getDefaultParams().get<xdata::String>("mode");
@@ -133,8 +133,8 @@ void IPBusConfigureCommand::code() {
           dynamic_cast<IPBusTxChannel*>(out)->configureBuffer(BufferInterface::Capture);
       }
     } else {
-      setError("Unknown configuration mode '"+config+"'");
-      return;
+      setStatusMsg("Unknown configuration mode '"+config+"'");
+      return kError;
     }
 
 
@@ -148,6 +148,8 @@ void IPBusConfigureCommand::code() {
     
 
     // Check links alignment (?)
+
+    return kDone;
 }
 
 IPBusCapture::IPBusCapture(const std::string& aId) :
@@ -157,7 +159,7 @@ IPBusCapture::IPBusCapture(const std::string& aId) :
 IPBusCapture::~IPBusCapture() {
 }
 
-void IPBusCapture::code() {
+core::Command::State IPBusCapture::code() {
 
     IPBusProcessor* p = getParent<IPBusProcessor>();
 
@@ -185,6 +187,8 @@ void IPBusCapture::code() {
             msg << "0x" << std::hex << std::setfill('0') << std::setw(8) << data[k][j] << "   ";
         LOG(swlog::kInfo) << msg.str();
     }
+    
+    return kDone;
 }
 
 

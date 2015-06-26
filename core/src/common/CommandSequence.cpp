@@ -134,7 +134,7 @@ void CommandSequence::runCode( ) {
       Command& lCommand( getCommand( *mIt ) );
       lCommand.exec( *lIt , false ); // False = run the commands in this thread!
 
-      if( lCommand.getStatus() != Command::kDone )
+      if( lCommand.getState() != Command::kDone )
       {
         mStatus = kFailed;
         return;
@@ -245,9 +245,9 @@ float CommandSequence::getProgress()
 }
 
 
-std::vector< xdata::Serializable* > CommandSequence::getResults()
+std::vector< const xdata::Serializable* > CommandSequence::getResults()
 {
-  std::vector< xdata::Serializable* > lRet;
+  std::vector< const xdata::Serializable* > lRet;
   lRet.reserve( mCommands.size() );
 
     
@@ -255,7 +255,7 @@ std::vector< xdata::Serializable* > CommandSequence::getResults()
   for( tCommandVector::iterator lIt( mCommands.begin()) ; lIt != mIt ; ++lIt )
   {
     Command& lCommand( getCommand( *lIt ) );
-    lRet.push_back( & lCommand.getResult() );
+    lRet.push_back( lCommand.getStatus().getResult() );
   }
   return lRet;
 }

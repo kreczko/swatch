@@ -25,7 +25,7 @@ DummyCommand::~DummyCommand() {
 //  delete dummy_proc_;
 }
 
-void DummyCommand::code(XParameterSet& params) ///Should take const reference but xdata::serializable is const-correctness broken
+Command::State DummyCommand::code(XParameterSet& params) ///Should take const reference but xdata::serializable is const-correctness broken
 {
   DummyHandler* res = getParent<DummyHandler>();
 
@@ -38,31 +38,40 @@ void DummyCommand::code(XParameterSet& params) ///Should take const reference bu
 
     res->setSomething("|12345|");
     res->setNumber(54);
-    setProgress(100.0);
+    setProgress(0.1);
+    
     setResult(xdata::Integer(99));
-    setProgress(99., "doing stuff");
-    setDone("Dummy command successfully completed");
+    setProgress(0.99, "doing stuff");
+    
+    setStatusMsg("Dummy command successfully completed");
+    return kDone;
 
-  } else if (todo == "error") {
-    //      setProgress(50.49);
-    setProgress(50.49, "Dummy command did something");
-    setError("But ended up in error");
+  } 
+  else if (todo == "error") 
+  {
+    setProgress(0.5049, "Dummy command did something");
 
-  } else if (todo == "thread") {
-    setStatus(kRunning);
-    setProgress(1, "Dummy command just started");
+    setStatusMsg("But ended up in error");
+    return kError;
+  }
+  else if (todo == "thread")
+  {
+    setProgress(0.01, "Dummy command just started");
     unsigned int milliseconds(params.get<xdata::Integer>("milliseconds"));
     for (unsigned int i = 0; i < milliseconds; ++i) {
       boost::this_thread::sleep_for(boost::chrono::milliseconds(1));
 //      usleep(1); // takes microseconds
-      setProgress(1. + i/1000, "Dummy command progressed");
+      setProgress(0.01 + 0.99 * float(i) / milliseconds, "Dummy command progressed");
     }
-    setDone("Thread command " + id() + " completed");
-  } else {
-    //      setProgress(0.0);
+    setStatusMsg("Thread command " + id() + " completed");
+    return kDone;
+  }
+  else
+  {
     setProgress(0.0, "Not even started");
-    setWarning("Nothing was done");
 
+    setStatusMsg("Nothing was done");
+    return kWarning;
   }
 }
 

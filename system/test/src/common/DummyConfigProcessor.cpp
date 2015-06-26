@@ -44,13 +44,13 @@ public:
 
   virtual ~DummyConfigCommand(){}
 
-  virtual void code(swatch::core::XParameterSet& params )///Should take const reference but xdata::serializable is const-correctness broken
+  virtual State code(swatch::core::XParameterSet& params )///Should take const reference but xdata::serializable is const-correctness broken
   {
 
     std::string lParameter = params.get<xdata::String>("parameter");
     LOG(logger::kInfo) << id() << ".exec() running case with 'parameter'='" << lParameter<<"'";
-    setDone("Dummy command successfully completed");
-
+    setStatusMsg("Dummy command successfully completed");
+    return kDone;
   }
 
 

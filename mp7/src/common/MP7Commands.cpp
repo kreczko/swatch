@@ -39,7 +39,7 @@ MP7ResetCommand::~MP7ResetCommand() {
 }
 
 //---
-void MP7ResetCommand::code(core::XParameterSet& params) {
+core::Command::State MP7ResetCommand::code(core::XParameterSet& params) {
 
   MP7Processor* p = getParent<MP7Processor>();
   setProgress(0.,"Resetting");
@@ -48,7 +48,8 @@ void MP7ResetCommand::code(core::XParameterSet& params) {
   std::string mode = "external";
   p->driver().reset(mode, mode, mode);
 
-  setDone("Reset completed");
+  setStatusMsg("Reset completed");
+  return kDone;
 }
 
 
@@ -59,7 +60,6 @@ MP7SetupLinks::MP7SetupLinks(const std::string& aId) :
   registerParameter("loopback",xdata::Boolean(false));
   registerParameter("orbitTag",xdata::Boolean(false));
   registerParameter("invertPolarity",xdata::Boolean(false));
-
 }
 
 
@@ -69,7 +69,7 @@ MP7SetupLinks::~MP7SetupLinks() {
 
 
 //---
-void MP7SetupLinks::code(core::XParameterSet& params) {
+core::Command::State MP7SetupLinks::code(core::XParameterSet& params) {
   
   MP7Processor* p = getParent<MP7Processor>();
   ::mp7::ChannelsManager mgr = p->driver().channelMgr();
@@ -98,7 +98,8 @@ void MP7SetupLinks::code(core::XParameterSet& params) {
   
   // All done, clear the counters
   mgr.clearLinkCounters();
-  setDone("Links configured");
+  setStatusMsg("Links configured");
+  return kDone;
 }
 
 
@@ -116,7 +117,7 @@ MP7AlignLinks::~MP7AlignLinks() {
 }
 
 //---
-void MP7AlignLinks::code(core::XParameterSet& params) {
+core::Command::State MP7AlignLinks::code(core::XParameterSet& params) {
 
   MP7Processor* p = getParent<MP7Processor>();
   ::mp7::ChannelsManager mgr = p->driver().channelMgr();
@@ -127,7 +128,8 @@ void MP7AlignLinks::code(core::XParameterSet& params) {
   
   if ( !autoAlign ) {
     if ( alignBx.isNaN() or not alignBx.isFinite()) {
-      setError("Aaargh!");
+      setStatusMsg("Aaargh!");
+      return kError;
     }
   }
   
@@ -138,16 +140,16 @@ void MP7AlignLinks::code(core::XParameterSet& params) {
 
     mgr.minimizeAndAlignLinks(3);
     auto ap = mgr.getAlignmentPositions();
-    setDone("Links aligned somewhere" );
-
+    setStatusMsg("Links aligned somewhere" );
+    return kDone;
   } else {
     setProgress(0.2, "Aligning links to " + alignBx.toString());
 
     ::mp7::orbit::Point p( alignBx );
     mgr.alignLinks(p);
     
-    setDone("Links aligned to " + alignBx.toString() );
-
+    setStatusMsg("Links aligned to " + alignBx.toString() );
+    return kDone;
   }
   
   
@@ -169,7 +171,7 @@ MP7ConfigureLoopback::~MP7ConfigureLoopback() {
 
 
 //---
-void MP7ConfigureLoopback::code(core::XParameterSet& params) {
+core::Command::State MP7ConfigureLoopback::code(core::XParameterSet& params) {
   MP7Processor* p = getParent<MP7Processor>();
   ::mp7::ChannelsManager mgr = p->driver().channelMgr();
   
@@ -200,8 +202,8 @@ void MP7ConfigureLoopback::code(core::XParameterSet& params) {
   // And then align them
   mgr.minimizeAndAlignLinks();
   
-  setDone("All links aligned");
-  
+  setStatusMsg("All links aligned");
+  return kDone;
 }
 
 

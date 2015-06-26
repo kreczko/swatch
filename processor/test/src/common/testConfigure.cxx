@@ -332,8 +332,11 @@ int main(int argc, char const *argv[]) {
     }
 
     reset->exec(empty_params);
-    if ( reset->getStatus() == swco::Command::kError ) {  
-      LOG(swlog::kError) << reset->getStatusMsg();
+    do {
+    } while ( (reset->getState() == swatch::core::Command::kScheduled) || (reset->getState() == swatch::core::Command::kRunning) );
+
+    if ( reset->getState() == swco::Command::kError ) {  
+      LOG(swlog::kError) << reset->getStatus().getStatusMsg();
       return -1;
     }
     
@@ -351,8 +354,11 @@ int main(int argc, char const *argv[]) {
       LOG(swlog::kInfo) << " - " << s << ": " << cfgCmd->getDefaultParams()[s];
     }
     cfgCmd->exec(empty_params);
-    if ( cfgCmd->getStatus() == swco::Command::kError ) {  
-      LOG(swlog::kError) << cfgCmd->getStatusMsg();
+    do {
+    } while ( (reset->getState() == swatch::core::Command::kScheduled) || (reset->getState() == swatch::core::Command::kRunning) );
+
+    if ( cfgCmd->getState() == swco::Command::kError ) {  
+      LOG(swlog::kError) << cfgCmd->getStatus().getStatusMsg();
       return -1;
     }
     

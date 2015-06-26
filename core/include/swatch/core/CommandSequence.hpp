@@ -67,7 +67,7 @@ namespace core {
     Status getStatus() const;
 
     float getProgress();
-    std::vector< xdata::Serializable* > getResults();
+    std::vector< const xdata::Serializable* > getResults();
 
     /**
       Run the configuration sequence
