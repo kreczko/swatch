@@ -1,0 +1,26 @@
+
+#include "swatch/mp7/MP7NullAlgo.hpp"
+
+
+namespace swatch {
+namespace mp7 {
+
+
+MP7NullAlgo::MP7NullAlgo( ::mp7::MP7Controller& controller) {
+}
+
+
+MP7NullAlgo::~MP7NullAlgo() {
+}
+
+
+void MP7NullAlgo::reset(){
+}
+
+
+void MP7NullAlgo::implementUpdateMetrics() {
+}
+
+
+} // namespace mp7
+} // namespace swatch

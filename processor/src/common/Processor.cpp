@@ -100,7 +100,7 @@ Processor::linkInterface() {
 const std::vector<std::string> Processor::defaultMetrics = { "firmwareVersion" };
 
 
-const std::vector<std::string> Processor::defaultMonitorableObjects = { "ttc", "links" };
+const std::vector<std::string> Processor::defaultMonitorableObjects = { "ttc", "links", "readout", "algo" };
 
 
 

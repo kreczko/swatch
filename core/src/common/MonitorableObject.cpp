@@ -54,7 +54,7 @@ AbstractMetric& MonitorableObject::getMetric( const std::string& aId )
 
 StatusFlag MonitorableObject::getStatus() const
 {
-  StatusFlag result = kGood;
+  StatusFlag result = kNoLimit;
   
   std::vector<std::string> childIds = getChildren();
 

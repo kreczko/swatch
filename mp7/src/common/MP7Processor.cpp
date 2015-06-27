@@ -8,17 +8,18 @@
 #include "swatch/mp7/MP7Processor.hpp"
 
 
-// Swatch hardware Headers
-#include "swatch/mp7/MP7TTCInterface.hpp"
-#include "swatch/mp7/MP7Commands.hpp"
-#include "swatch/mp7/MP7Operations.hpp"
-#include "swatch/mp7/MP7Ports.hpp"
-
-// Swatch Headers
+// SWATCH headers
 #include "swatch/logger/Log.hpp"
 #include "swatch/core/Factory.hpp"
 #include "swatch/processor/LinkInterface.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
+
+// SWATCH MP7 headers
+#include "swatch/mp7/MP7Commands.hpp"
+#include "swatch/mp7/MP7Operations.hpp"
+#include "swatch/mp7/MP7Ports.hpp"
+#include "swatch/mp7/MP7ReadoutInterface.hpp"
+#include "swatch/mp7/MP7TTCInterface.hpp"
 
 // MP7 Headers
 #include "mp7/MP7Controller.hpp"
@@ -26,9 +27,6 @@
 // uHAL Headers
 #include "uhal/HwInterface.hpp"
 #include "uhal/ConnectionManager.hpp"
-
-// Boost Headers
-#include <boost/assign.hpp>
 
 // C++ Headers
 #include <iomanip>
@@ -66,6 +64,7 @@ MP7Processor::MP7Processor(const std::string& id, const swatch::core::XParameter
     
     // Build subcomponents
     Add( new MP7TTCInterface( *driver_ ) ); 
+    Add( new MP7ReadoutInterface(*driver_) );
     Add( new swpro::LinkInterface() );
     
     // Add input and output ports

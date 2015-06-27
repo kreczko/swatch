@@ -4,12 +4,8 @@
 
 #include "swatch/processor/Processor.hpp"
 
-// Boost Headers
-#include <boost/unordered_map.hpp>
-
 
 // Forward declarations
-
 namespace mp7 {
 class MP7Controller;
 }
@@ -28,7 +24,7 @@ struct MP7ClockMode {
 class MP7Processor: public processor::Processor {
 public:
     MP7Processor(const std::string& id, const swatch::core::XParameterSet& aPars);
-    ~MP7Processor();
+    virtual ~MP7Processor();
     
     virtual uint64_t retrieveFirmwareVersion() const;
     
