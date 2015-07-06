@@ -23,7 +23,7 @@ struct MP7ClockMode {
 
 class MP7Processor: public processor::Processor {
 public:
-    MP7Processor(const std::string& id, const swatch::core::XParameterSet& aPars);
+    MP7Processor(const swatch::core::AbstractStub& aStub);
     virtual ~MP7Processor();
     
     virtual uint64_t retrieveFirmwareVersion() const;

@@ -16,7 +16,7 @@ namespace processor {
 class InputPort : public core::MonitorableObject {
 protected:
     explicit InputPort( const std::string& aId);
-    explicit InputPort( const std::string& aId, const core::XParameterSet& params );
+//    explicit InputPort( const std::string& aId, const core::XParameterSet& params );
 
 public:
     virtual ~InputPort() {}
@@ -32,7 +32,7 @@ protected:
 class OutputPort : public core::MonitorableObject {
 public:
     explicit OutputPort( const std::string& aId );
-    explicit OutputPort( const std::string& aId, const core::XParameterSet& params );
+//    explicit OutputPort( const std::string& aId, const core::XParameterSet& params );
     virtual ~OutputPort() {}
 
     static const std::vector<std::string> defaultMetrics;

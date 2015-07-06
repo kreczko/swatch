@@ -48,58 +48,33 @@ struct SystemSetupA {
         using namespace boost::assign;
         using namespace std;
 
-        XParameterSet a;
-        a.insert("requires", xdata::String("ttc;daq"))
-            ("provides", xdata::String("trigger"))
-            ("class",xdata::String("swatch::processor::test::DummyProcessor"));
-        XParameterSet a1 = a, a2 = a, a3 = a;
-
-        system = new System("calol2");
-        crateC = new Crate("crateC");
-        crateD = new Crate("crateD");
+        system = new System(SystemStub("mysys"));
+        crateC = new Crate(CrateStub("crateC"));
+        crateD = new Crate(CrateStub("crateD"));
         system->add(crateC);
         system->add(crateD);
         
         
-        // Use 3 different methods to build the dummy processors
+        // Use 2 different methods to build the dummy processors
         // 1. explicit  constructor call
-        ProcessorBag b1;
-        b1.bag.crate = xdata::String("crateC");
-        b1.bag.slot = xdata::UnsignedInteger(1);
-        addRxTxPortStubs(b1.bag);
-        a1.add("stub", b1);
-
-        Processor* p1 = new DummyProcessor("mp7-10", a1);
+        ProcessorStub s1("dummy-10");
+        s1.crate = "crateC";
+        s1.slot = 1;
+        addRxTxPortStubs(s1); 
+        Processor* p1 = new DummyProcessor(s1);
         system->add(p1);
-        
-        // 2. Using ProcessorFactory, low level creator
-        ProcessorBag b2;
-        b2.bag.crate = xdata::String("crateD");
-        b2.bag.slot = xdata::UnsignedInteger(2);
-        addRxTxPortStubs(b2.bag);
-        a2.add("stub", b2);
-        
-        // a2.insert("crate", xdata::String("crateD"))
-          // ("slot", xdata::Integer(2));
-//        Processor* p2 = ProcessorFactory::get()->make("swatch::processor::test::DummyProcessor","mp7-13", a2);
-        Processor* p2 = Factory::get()->bake<Processor>("swatch::processor::test::DummyProcessor","mp7-13", a2);
+
+        ProcessorStub s2("dummy-13");
+        s2.crate = "crateD";
+        s2.slot = 2;
+        addRxTxPortStubs(s2); 
+        Processor* p2 = Factory::get()->make<Processor>("swatch::processor::test::DummyProcessor",s2);
         system->add(p2);
-        
-        // 3. Using ProcessorFactory, PSet based compact creator
-        a3.insert("name",xdata::String("mp_4"));
-        ProcessorBag b3;
-        b3.bag.crate = xdata::String("crateD");
-        b3.bag.slot = xdata::UnsignedInteger(3);
-        addRxTxPortStubs(b3.bag);
-        a3.add("stub", b3);
-        
-        Processor* p3 = Factory::get()->bake<Processor>(a3);
-        system->add(p3);
         
         vector< pair<string, string> > links;
         push_back(links)
-                ("mp7-10.links.tx00", "mp7-13.links.rx01")
-                ("mp7-10.links.tx01", "mp7-13.links.rx00");
+                ("dummy-10.links.tx00", "dummy-13.links.rx01")
+                ("dummy-10.links.tx01", "dummy-13.links.rx00");
         unsigned int lid;
 
         vector< pair<string, string> >::iterator lIt;
@@ -112,29 +87,6 @@ struct SystemSetupA {
             Link* lLink = new Link(lname.str(), src, dst);
             system->add(lLink);
         }
-
-
-//         vector< pair<string, string> > lSource , lDestinations;
-//         push_back(lSource)
-//                 ("mp7-10","tx00")
-//                 ("mp7-10","tx01");
-//         push_back(lDestinations)
-//                 ("mp7-13","rx01")
-//                 ("mp7-13","rx00");
-//         unsigned int lid;
-// 
-//         vector< pair<string, string> >::iterator lIt1( lSource.begin() ) , lIt2( lDestinations.begin() );
-// 
-//         for ( lid = 0; lIt1 != lSource.end(); ++lIt1, ++lIt2, ++lid) {
-//             OutputPort* src = system->getObj<Processor>(lIt1->first)->linkInterface()->getOutput(lIt1->second);
-//             InputPort* dst = system->getObj<Processor>(lIt2->first)->linkInterface()->getInput(lIt2->second);
-// 
-//             stringstream lname;
-//             lname << "link" << std::setw(3) << std::setfill('0') << lid;
-//             Link* lLink = new Link(lname.str(), src, dst);
-//             system->add(lLink);
-//         }
-
 
     }
 
@@ -182,7 +134,7 @@ BOOST_AUTO_TEST_CASE(ExploreSystem) {
     LOG(kDebug) << "Testing getters and aliases";
     LOG(kDebug) << "===========================";
     vector<string> names;
-    names += "mp7-10.links.tx00", "link000.src", "crateC.amc01.links.tx00";
+    names += "dummy-10.links.tx00", "link000.src", "crateC.amc01.links.tx00";
     vector< string >::const_iterator itN;
     BOOST_FOREACH( string name, names ) {
         Object& o = system->getObj(name);
@@ -191,8 +143,8 @@ BOOST_AUTO_TEST_CASE(ExploreSystem) {
     LOG(kDebug) << "Multi-hop getter";
     LOG(kDebug) << "================";
     Object& o = system->getObj("crateC").getObj("amc01").getObj("links").getObj("tx00");
-    LOG(kDebug) << "Testing  crate1 + mp7-13 + tx00: " << o.path() << " of type " << o.typeName();
-    BOOST_CHECK_EQUAL(o.path(),"calol2.mp7-10.links.tx00");
+    LOG(kDebug) << "Testing  crate1 + dummy-13 + tx00: " << o.path() << " of type " << o.typeName();
+    BOOST_CHECK_EQUAL(o.path(),"mysys.dummy-10.links.tx00");
     BOOST_CHECK_EQUAL(o.typeName(),"swatch::processor::test::DummyTxPort");
 
 

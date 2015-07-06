@@ -142,12 +142,12 @@ namespace swatch
         */
         explicit Object ( const std::string& aId );
 
-        /**
-          Constructor with parameter set
-          @param aId The ID string of the object
-          @param params A parameter set associated with the objects
-        */
-        Object ( const std::string& aId, const XParameterSet& params );
+//        /**
+//          Constructor with parameter set
+//          @param aId The ID string of the object
+//          @param params A parameter set associated with the objects
+//        */
+//        Object ( const std::string& aId, const XParameterSet& params );
 
         /**
           Destructor
@@ -224,11 +224,6 @@ namespace swatch
 //         template<typename T>
 //         std::deque<T*> getChildrenOfType();
 
-        /**
-          Return the parameter-set of the object
-          @return the parameter-set of the object       
-        */
-        const XParameterSet& pset() const;
 
       protected:
 
@@ -293,11 +288,6 @@ namespace swatch
         */
         Object* parent_;
 
-        /**
-          The parameter-set of the current Object
-        */
-        const XParameterSet pSet_;
-
         friend class iterator;
         friend class ObjectView;
     };
@@ -308,7 +298,7 @@ namespace swatch
 
         ObjectView ( const std::string& aId );
 
-        ObjectView ( const std::string& aId, const XParameterSet& aSet );
+//        ObjectView ( const std::string& aId, const XParameterSet& aSet );
 
         virtual ~ObjectView();
 

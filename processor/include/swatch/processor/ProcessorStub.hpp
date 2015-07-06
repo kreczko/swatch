@@ -11,12 +11,9 @@
 
 // C++ Headers
 #include <ostream>
- 
-// XDAQ Headers
-#include "xdata/String.h"
-#include "xdata/Vector.h"
-#include "xdata/UnsignedInteger.h"
-#include "xdata/Bag.h"
+#include <vector>
+// Swatch Headers
+#include "swatch/core/AbstractStub.hpp"
 
 namespace swatch {
 namespace processor {
@@ -26,73 +23,60 @@ namespace processor {
  * @brief Structure to hold data to build a Processor port.
  * 
  */
-struct ProcessorPortStub {
+class ProcessorPortStub : public swatch::core::AbstractStub {
+public:
 
-    void registerFields(xdata::Bag<ProcessorPortStub> *bag) {
-        bag->addField("name", &name);
-        bag->addField("number", &number);
-    }
+  ProcessorPortStub(const std::string& aId) : swatch::core::AbstractStub(aId) { }
 
-    //! Name of the port
-    xdata::String  name;
+  virtual ~ProcessorPortStub() { }
 
-    //! Port number
-    xdata::UnsignedInteger number;
+  //! Port number
+  uint32_t number;
 };
 
 
-typedef xdata::Bag<ProcessorPortStub> ProcessorPortBag;
+//typedef xdata::Bag<ProcessorPortStub> ProcessorPortBag;
 
 /**
  * @class ProcessorStub
  * @brief Struct to hold the data to construct a processor
  */
 
-struct ProcessorStub {
+class ProcessorStub : public swatch::core::AbstractStub {
+public:
 
-    void registerFields(xdata::Bag<ProcessorStub> *bag) {
-        bag->addField("name", &name);
-        bag->addField("hwtype", &hwtype);
-        bag->addField("creator", &creator);
-        bag->addField("crate", &crate);
-        bag->addField("slot", &slot);
-        bag->addField("uri", &uri);
-        bag->addField("addressTable", &addressTable);
-        bag->addField("rxPorts", &rxPorts);
-        bag->addField("txPorts", &txPorts);
-    }
+  ProcessorStub(const std::string& aId) :
+    AbstractStub(aId) { }
 
-    //! Name of the Processor
-    xdata::String name;
+  virtual ~ProcessorStub() { }
 
-    //! Type of the Processor
-    xdata::String hwtype;
+  //! Type of the Processor
+  std::string hwtype;
 
-    //! Class to create the Processor object
-    xdata::String creator;
+  //! Class to create the Processor object
+  std::string creator;
 
-    //! Id of the uTCA crate where the Processor is installed 
-    xdata::String crate;
+  //! Id of the uTCA crate where the Processor is installed 
+  std::string crate;
 
-    //! Slot where the board is installed 
-    xdata::UnsignedInteger slot;
+  //! Slot where the board is installed 
+  uint32_t slot;
 
-    //! Uri to access the hardware resource
-    xdata::String uri;
+  //! Uri to access the hardware resource
+  std::string uri;
 
-    //! Address table
-    xdata::String addressTable;
+  //! Address table
+  std::string addressTable;
 
-    //! List of receiver port bags
-    xdata::Vector<xdata::Bag<ProcessorPortStub> > rxPorts;
+  //! List of receiver port bags
+  std::vector<ProcessorPortStub> rxPorts;
 
-    //! List of transmitter port bags
-    xdata::Vector<xdata::Bag<ProcessorPortStub> > txPorts;
+  //! List of transmitter port bags
+  std::vector<ProcessorPortStub> txPorts;
+
 };
 
-typedef xdata::Bag<ProcessorStub> ProcessorBag;
-
-std::ostream& operator<<(std::ostream& os, const swatch::processor::ProcessorStub& pd );
+std::ostream& operator<<(std::ostream& os, const swatch::processor::ProcessorStub& pd);
 
 
 } // namespace processor

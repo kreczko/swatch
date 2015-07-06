@@ -27,14 +27,19 @@ namespace system {
 
 
 //---
-System::System(const std::string& aId, const core::XParameterSet& params)
-: ActionableObject(aId, params) {
+System::System( const swatch::core::AbstractStub& aStub )
+: ActionableObject(aStub.id), stub_(dynamic_cast<const swatch::system::SystemStub&>(aStub)) {
 }
 
 
 //---
 System::~System() {
 }
+
+const SystemStub& System::getStub() const {
+  return stub_;
+}
+
 
 //---
 System::CratesMap&
@@ -127,12 +132,15 @@ System::add( Crate* crate ){
 	cratesMap_[crate->id()] = crate;
 }
 
+
 //---
 std::deque<processor::Processor*>&
 System::getProcessors() {
     return processors_;
 }
 
+
+//---
 std::deque<DaqTTCManager*>&
 System::getDaqTTC() {
     return daqTtc_;

@@ -11,7 +11,8 @@
 // Swatch Headers
 #include "swatch/core/Object.hpp"
 #include "swatch/core/ActionableObject.hpp"
-
+#include "swatch/system/DaqTTCManager.hpp"
+#include "DaqTTCStub.hpp"
 #include <string>
 
 namespace swatch {
@@ -19,9 +20,11 @@ namespace system {
 
 class DaqTTCManager : public core::ActionableObject {
 protected:
-    explicit DaqTTCManager( const std::string& aId, const core::XParameterSet& params );
+    explicit DaqTTCManager( const swatch::core::AbstractStub& aStub );
 public:
     virtual ~DaqTTCManager();
+    
+    const DaqTTCStub& getStub() const;
     
     virtual uint32_t getSlot() const = 0;
 
@@ -53,6 +56,9 @@ public:
     
     static const std::vector<std::string> defaultMetrics;
 
+private:
+    DaqTTCStub stub_;
+
 protected:
     core::Metric<double>& ttcMetricClockFreq_;
     core::Metric<uint32_t>& ttcMetricBC0Counter_;
@@ -63,6 +69,7 @@ protected:
 private:
     DaqTTCManager( const DaqTTCManager& other ); // non copyable
     DaqTTCManager& operator=( const DaqTTCManager& ); // non copyable
+
 };
 
 } // namespace system

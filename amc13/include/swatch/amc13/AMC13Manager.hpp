@@ -23,7 +23,7 @@ namespace amc13 {
 
 class AMC13Manager : public swatch::system::DaqTTCManager {
 public:
-    AMC13Manager( const std::string& aId, const core::XParameterSet& params );
+    AMC13Manager( const swatch::core::AbstractStub& aStub );
     ~AMC13Manager();
 
     virtual uint32_t getSlot() const;

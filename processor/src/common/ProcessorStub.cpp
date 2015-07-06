@@ -15,11 +15,11 @@ namespace processor {
 
 std::ostream& operator<<(std::ostream& os, const swatch::processor::ProcessorStub& pd ) {
     
-    os << "ProcessorDescriptor[" << pd.name << "]:\n"
-       << "   - Uses creator = " << pd.creator << "\n"
-       << "   - HardwareType = " << pd.hwtype << "\n"
+    os << "ProcessorDescriptor[" << pd.id << "]:\n"
+       << "   - User creator = " << pd.creator << "\n"
+       << "   - Hardware type = " << pd.hwtype << "\n"
        << "   - Uri = " << pd.uri << "\n"
-       << "   - Address Table = " << pd.addressTable << "\n"
+       << "   - Address table = " << pd.addressTable << "\n"
        << "   - Crate ID = " << pd.crate << "\n"
        << "   - Crate Slot = " << pd.slot 
        << std::flush;

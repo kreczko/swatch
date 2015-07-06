@@ -50,8 +50,8 @@ int main(int argc, char** argv) {
     // Build the property tree
     ptree pt;
     read_json(shellExpandPath("${SWATCH_ROOT}/system/test/cfg/system.json"), pt);
-    XParameterSet sysset = swatch::system::treeToSystemPars(pt);  
-    swatch::system::System* lSystem = swatch::core::Factory::get()->bake<swatch::system::System>(sysset);
+    swatch::system::SystemStub sysstub = swatch::system::treeToSystemPars(pt);  
+    swatch::system::System* lSystem = swatch::core::Factory::get()->make<swatch::system::System>(sysstub.creator, sysstub);
 
     std::cout << *lSystem << std::endl;
 

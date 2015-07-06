@@ -14,6 +14,7 @@
 #include <boost/foreach.hpp>
 
 // Swatch Headers
+#include "swatch/core/AbstractStub.hpp"
 #include "swatch/core/Utilities.hpp"
 #include "swatch/processor/AlgoInterface.hpp"
 #include "swatch/processor/LinkInterface.hpp"
@@ -30,9 +31,10 @@ namespace processor {
 const uint32_t Processor::NoSlot =  0x7fffffffL;
 
 ///---
-Processor::Processor( const std::string& aId, const core::XParameterSet& params ) :
-    ActionableObject(aId, params),
+Processor::Processor( const swatch::core::AbstractStub& aStub) :
+    ActionableObject(aStub.id),
     metricFirmwareVersion_( registerMetric<uint64_t>("firmwareVersion") ),
+    stub_(dynamic_cast<const processor::ProcessorStub&>(aStub)),
     slot_(NoSlot),
     ttc_(NULL),
     readout_(NULL),
@@ -40,27 +42,35 @@ Processor::Processor( const std::string& aId, const core::XParameterSet& params 
     links_(NULL)
 {
   // Set crate and slot number from processor stub  
-  processor::ProcessorBag& desc = params.get<processor::ProcessorBag>("stub");
-  crateId_ = desc.bag.crate;
-  slot_ = desc.bag.slot;
+  crateId_ = stub_.crate;
+  slot_ = stub_.slot;
 }
 
 Processor::~Processor() {
 }
 
 
+//---
+const ProcessorStub& Processor::getStub() const {
+  return stub_;
+}
+
+
+//---
 uint32_t
 Processor::getSlot() const {
   return slot_;
 }
 
 
+//---
 const std::string&
 Processor::getCrateId() const {
   return crateId_;
 }
 
 
+//---
 TTCInterface&
 Processor::ttc() {
   if (ttc_ == NULL)
@@ -70,6 +80,7 @@ Processor::ttc() {
 }
 
 
+//---
 ReadoutInterface&
 Processor::readout() {
   if (readout_ == NULL)
@@ -79,6 +90,7 @@ Processor::readout() {
 }
 
 
+//---
 AlgoInterface&
 Processor::algo() {
   if (algo_ == NULL)
@@ -88,6 +100,7 @@ Processor::algo() {
 }
 
 
+//---
 LinkInterface&
 Processor::linkInterface() {
   if (links_ == NULL)
@@ -96,14 +109,14 @@ Processor::linkInterface() {
     return *links_;
 }
 
-
+//---
 const std::vector<std::string> Processor::defaultMetrics = { "firmwareVersion" };
 
-
+//---
 const std::vector<std::string> Processor::defaultMonitorableObjects = { "ttc", "links", "readout", "algo" };
 
 
-
+//---
 void Processor::Add( TTCInterface* aTTCInterface )
 {
   if( ttc_ ) throw TTCInterfaceAlreadyDefined( "TTCInterface already defined" );

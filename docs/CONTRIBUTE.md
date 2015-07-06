@@ -134,7 +134,9 @@ Once everything is done and the tests are all passing create the SVN branch:
 ```
 svn mkdir ^/branches/$branchname -m "Creating branch for ticket Refs #$ticketnumber"
 svn cp -m "Creating branch for ticket Refs #$ticketnumber" ^/trunk/cactuscore/swatch ^/branches/$branchname
+
 git config --add svn-remote.svn-${branchname}.url svn+ssh://$cern_username@svn.cern.ch/reps/cactus/branches/$branchname/swatch
+
 git config --add svn-remote.svn-${branchname}.fetch :refs/remotes/svn-${branchname}
 git svn fetch svn-${branchname} # it is faster if you add '-r <revision>' where revision == from branch creation
 # git branch -a should now show your new git-svn branch

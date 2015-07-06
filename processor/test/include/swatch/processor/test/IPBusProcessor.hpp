@@ -29,7 +29,9 @@ namespace test {
 //----------------------------------------------------------------------------//
 class IPBusProcessor : public swatch::processor::Processor {
 public:
-    IPBusProcessor(const std::string& id, const swatch::core::XParameterSet& params);
+  // TO DELETE
+//    IPBusProcessor(const std::string& id, const swatch::core::XParameterSet& params);
+    IPBusProcessor( const swatch::core::AbstractStub& aStub );
     virtual ~IPBusProcessor();
 
     virtual uint64_t firmwareVersion() const;

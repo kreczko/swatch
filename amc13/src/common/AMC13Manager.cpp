@@ -41,14 +41,14 @@ using ::amc13::AMC13Simple;
 
 
 //---
-AMC13Manager::AMC13Manager(const std::string& aId, const core::XParameterSet& aPars) :
-    swatch::system::DaqTTCManager(aId, aPars),
+AMC13Manager::AMC13Manager(const swatch::core::AbstractStub& aStub) :
+    swatch::system::DaqTTCManager(aStub),
     driver_(0x0) {
   
     Register<AMC13ResetCommand>("reset");
     Register<AMC13Configure>("configure");
 
-    system::DaqTTCStub& desc = aPars.get<system::DaqTTCBag>("stub").bag;
+    const system::DaqTTCStub& desc = getStub();
 
     crate_ = desc.crate;
     slot_  = desc.slot;

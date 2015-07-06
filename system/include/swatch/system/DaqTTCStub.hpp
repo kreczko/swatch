@@ -1,5 +1,5 @@
 /**
- * @file    AMC13ServiceStub.hpp
+ * @file    DAQTTCStub.hpp
  * @author  Alessandro Thea
  * @brief   Brief description
  * @date    11/11/14
@@ -13,11 +13,8 @@
 #include <stdint.h>
 #include <vector>
 
-// XDAQ Headers
-#include "xdata/String.h"
-#include "xdata/Vector.h"
-#include "xdata/UnsignedInteger.h"
-#include "xdata/Bag.h"
+// Swatch Headers
+#include "swatch/core/AbstractStub.hpp"
 
 namespace swatch {
 namespace system {
@@ -26,49 +23,41 @@ namespace system {
  * @class DaqTTCStub
  * @brief Struct to hold the data to construct a DaqTTCManager object
  */
-struct DaqTTCStub {
+class DaqTTCStub : public swatch::core::AbstractStub {
+public:
 
-    void registerFields(xdata::Bag<DaqTTCStub> *bag) {
-        bag->addField("name", &name);
-        bag->addField("creator", &creator);
-        bag->addField("crate", &crate);
-        bag->addField("slot", &slot);
-        bag->addField("uriT1", &uriT1);
-        bag->addField("addressTableT1", &addressTableT1);
-        bag->addField("uriT2", &uriT2);
-        bag->addField("addressTableT2", &addressTableT2);
-    }
+  DaqTTCStub(const std::string& aId) :
+    AbstractStub(aId) { }
 
-    //! Name of the Processor
-    xdata::String name;
+  virtual ~DaqTTCStub() { }
 
-    //! Class to create the Processor object
-    xdata::String creator;
+  //! Class to create the DaqTTC object
+  std::string creator;
 
-    //! Id of the uTCA crate where the Processor is installed 
-    xdata::String crate;
+  //! Id of the uTCA crate where the DaqTTC is installed 
+  std::string crate;
 
-    //! Slot where the board is installed 
-    xdata::UnsignedInteger slot;
+  //! Slot where the board is installed 
+  uint32_t slot;
 
-    //! Uri to access the hardware resource
-    xdata::String uriT1;
+  //! Uri to access the hardware resource
+  std::string uriT1;
 
-    //! Address table
-    xdata::String addressTableT1;
+  //! Address table
+  std::string addressTableT1;
 
-    //! Uri to access the hardware resource
-    xdata::String uriT2;
+  //! Uri to access the hardware resource
+  std::string uriT2;
 
-    //! Address table
-    xdata::String addressTableT2;
+  //! Address table
+  std::string addressTableT2;
 
 };
 
-typedef xdata::Bag<DaqTTCStub> DaqTTCBag;
+//typedef xdata::Bag<DaqTTCStub> DaqTTCBag;
 
 
-std::ostream& operator<<(std::ostream& os, const swatch::system::DaqTTCStub& sd );
+std::ostream& operator<<(std::ostream& os, const swatch::system::DaqTTCStub& sd);
 
 
 } // namespace system

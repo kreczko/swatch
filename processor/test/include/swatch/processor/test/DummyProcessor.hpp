@@ -31,7 +31,8 @@ namespace test {
 
 class DummyProcessor : public swatch::processor::Processor {
 public:
-  DummyProcessor(const std::string& id, const swatch::core::XParameterSet& params);
+//  DummyProcessor(const std::string& id, const swatch::core::XParameterSet& params);
+    DummyProcessor( const swatch::core::AbstractStub& aStub );
     virtual ~DummyProcessor();
 
     virtual std::string firmwareInfo() const;
@@ -40,7 +41,8 @@ public:
     void test1();
     void test2();
 
-    static swatch::core::XParameterSet generateParams();
+//    static swatch::core::XParameterSet generateParams();
+    static ProcessorStub generateParams( const std::string& aId );
 
 protected:
     virtual void implementUpdateMetrics();
@@ -49,7 +51,7 @@ private:
 
     std::vector<std::string> ranTests_;
     
-    static xdata::Bag<ProcessorPortStub> getPortBag(const std::string& name, size_t number);
+    static ProcessorPortStub getPortBag(const std::string& name, size_t number);
 };
 
         

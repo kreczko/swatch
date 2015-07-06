@@ -8,16 +8,13 @@
 
 #include "swatch/system/CrateStub.hpp"
 
-// XDAQ Headers
-#include "swatch/core/xoperators.hpp"
-
 namespace swatch {
 namespace system {
 
   
 std::ostream& operator<<(std::ostream& os, const swatch::system::CrateStub& sd ) {
     
-    os << "CrateStub[" << sd.name << "]:\n"
+    os << "CrateStub[" << sd.id << "]:\n"
        << "   - Location = " << sd.location << "\n"
        << "   - Description = " << sd.description << "\n"
        << std::flush;

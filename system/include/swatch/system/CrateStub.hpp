@@ -11,9 +11,8 @@
 // C++ Headers
 #include <ostream>
 
-// XDAQ Headers
-#include "xdata/String.h"
-#include "xdata/Bag.h"
+// Swatch Headers
+#include "swatch/core/AbstractStub.hpp"
 
 namespace swatch {
 namespace system {
@@ -22,31 +21,24 @@ namespace system {
  * @class CrateStub
  * @brief Struct to hold the data that is required to construct a swatch::system::Crate object
  */
-class CrateStub {
+class CrateStub : public swatch::core::AbstractStub {
 public:
 
-    void registerFields(xdata::Bag<CrateStub> *bag) {
-        bag->addField("name", &name);
-        bag->addField("description", &description);
-        bag->addField("location", &location);
-    }
+  CrateStub(const std::string& aId) :
+    AbstractStub(aId) { }
 
-    //! Name of the Crate
-    xdata::String name;
+  virtual ~CrateStub() { }
 
-    //! Description of the crate
-    xdata::String description;
+  //! Description of the crate
+  std::string description;
 
-    //! Geo location of the crate
-    xdata::String location;
+  //! Geo location of the crate
+  std::string location;
 
 };
 
 
-typedef xdata::Bag<CrateStub> CrateBag;
-
-
-std::ostream& operator<<(std::ostream& os, const swatch::system::CrateStub& sd );
+std::ostream& operator<<(std::ostream& os, const swatch::system::CrateStub& sd);
 
 } // namespace system
 } // namespace swatch

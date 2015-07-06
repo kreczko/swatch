@@ -20,7 +20,7 @@ class OutputPort;
 
 class Link : public core::ObjectView {
 public:
-    explicit Link( const std::string& aId, OutputPort* aSrc, InputPort* aDst, const core::XParameterSet& params  = core::XParameterSet() );
+    explicit Link( const std::string& aId, OutputPort* aSrc, InputPort* aDst );
     ~Link();
     
     OutputPort* getSrc() { return src_; }

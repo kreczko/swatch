@@ -20,7 +20,7 @@ BOOST_AUTO_TEST_SUITE( ProcessorTestSuite )
 BOOST_AUTO_TEST_CASE(CreationTest) {
   std::cout << "ProcessorTestSuite.CreationTest" << std::endl;
   
-  DummyProcessor p("dummy", DummyProcessor::generateParams());
+  DummyProcessor p(DummyProcessor::generateParams("dummy"));
 
   BOOST_CHECK_EQUAL(p.getSlot(), 0);
   BOOST_CHECK_EQUAL(p.getCrateId(), "s2g20-10");

@@ -16,8 +16,8 @@ namespace swatch {
 namespace mp7 {
 
 
-MP7NullAlgoProcessor::MP7NullAlgoProcessor(const std::string& id, const swatch::core::XParameterSet& aPars) :
-    MP7Processor(id, aPars)
+MP7NullAlgoProcessor::MP7NullAlgoProcessor(const swatch::core::AbstractStub& aStub) :
+    MP7Processor(aStub)
 {
   //! Add algo interface
   Add( new MP7NullAlgo(this->driver()) );

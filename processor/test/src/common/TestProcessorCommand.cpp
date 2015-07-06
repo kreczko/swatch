@@ -25,19 +25,20 @@ namespace test {
 
 struct ProcessorCommandTestSetup {
   ProcessorCommandTestSetup():
-  handler("BigDummy", DummyProcessor::generateParams()),
+  resource(DummyProcessor::generateParams("dummy")),
   get_crate(),
   params() {
-    handler.Register<DummyProcessorCommand>("dummy_getcrate");
+    resource.Register<DummyProcessorCommand>("dummy_getcrate");
 
-    get_crate = (swct::DummyCommand*) handler.getCommand("dummy_getcrate");
+    get_crate = (swct::DummyCommand*) resource.getCommand("dummy_getcrate");
 
     get_crate->registerParameter("todo", xdata::String("getCrateId"));
   }
+  
   ~ProcessorCommandTestSetup(){
   }
 
-  DummyProcessor handler;
+  DummyProcessor resource;
   swct::DummyCommand* get_crate;
   swatch::core::XParameterSet params;
 

@@ -37,58 +37,54 @@ namespace system {
 //---
 //swatch::system::System*
 swatch::core::Object*
-SystemCreator::operator()(const std::string& aId, const swatch::core::XParameterSet& aPars) {
+SystemCreator::operator()(const swatch::core::AbstractStub& aStub) {
     // validity check should go here
-    System* sys = createSystem(aId, aPars);
-    addCrates(sys, aPars);
-    addProcessors(sys, aPars);
-    addDaqTTCs(sys, aPars);
-    addServices(sys, aPars);
-    addLinks(sys, aPars);
-        
+    System* sys = createSystem(aStub);
+    addCrates(sys);
+    addProcessors(sys);
+    addDaqTTCs(sys);
+//    addServices(sys);
+    addLinks(sys);      
     return sys;
 }
 
 
 //---
 swatch::system::System*
-SystemCreator::createSystem(const std::string& aId, const swatch::core::XParameterSet& aPars){
-    System* sys = new System(aId, aPars);
+SystemCreator::createSystem(const swatch::core::AbstractStub& aStub){
+    System* sys = new System(aStub);
     return sys;
 }
 
 
 //---
-void SystemCreator::addCrates(System* system, const swatch::core::XParameterSet& aPars) {
-    xdata::Vector<swco::XParameterSet> vPSets;
+void SystemCreator::addCrates(System* system) {
     
-    vPSets = aPars.get<xdata::Vector<swco::XParameterSet> >("crates");
-    BOOST_FOREACH(swco::XParameterSet& ps,vPSets) {
-        addCrate(system, ps);
+    BOOST_FOREACH(auto& cStub,system->getStub().crates) {
+        addCrate(system, cStub);
     }
 }
 
 
 //---
-void SystemCreator::addCrate(System* system, const swatch::core::XParameterSet& aPars) {
-  CrateBag& stub = aPars.get<CrateBag>("stub");
-  Crate * crate = new Crate(stub.bag.name, aPars);
+void SystemCreator::addCrate(System* system, const CrateStub& aStub) {
+  
+  Crate * crate = new Crate(aStub);
   system->add(crate);
+
 }
 
 
 //---
-void SystemCreator::addProcessors(System* system, const swatch::core::XParameterSet& aPars) {
-  xdata::Vector<swco::XParameterSet> vPSets;
-  vPSets = aPars.get<xdata::Vector<swco::XParameterSet> >("processors");
+void SystemCreator::addProcessors(System* system) {
 
-  BOOST_FOREACH(swco::XParameterSet& ps,vPSets) {
+  BOOST_FOREACH(auto& pStub,system->getStub().processors) {
     swpro::Processor* p;
     try {
-      p = swco::Factory::get()->bake<swpro::Processor>(ps);
+      p = swco::Factory::get()->make<swpro::Processor>(pStub.creator, pStub);
     } catch ( swatch::core::exception& xc ) {
-      std::stringstream xss;
-      xss << "Failed to create Processor:" << std::endl << xc.what();
+      std::ostringstream xss;
+      xss << "Failed to create Processor (id: '" << pStub.id << "'):" << std::endl << xc.what();
       throw SystemCreationFailed(xss.str());
     }
     system->add(p);
@@ -97,57 +93,50 @@ void SystemCreator::addProcessors(System* system, const swatch::core::XParameter
 
 
 //---
-void SystemCreator::addDaqTTCs(System* system, const swatch::core::XParameterSet& aPars) {
+void SystemCreator::addDaqTTCs(System* system) {
 
-  // Carry on only if there are daqttcs to build
-  if (not aPars.has("daqttcs")) return;
-
-  xdata::Vector<swco::XParameterSet> vPSets;
-  vPSets = aPars.get<xdata::Vector<swco::XParameterSet> >("daqttcs");
-
-  BOOST_FOREACH(swco::XParameterSet& ps, vPSets) {
+  BOOST_FOREACH(auto& dStub, system->getStub().daqttcs) {
     DaqTTCManager* daqttc;
     try {
-      daqttc = swco::Factory::get()->bake<DaqTTCManager>(ps);
+      daqttc = swco::Factory::get()->make<DaqTTCManager>(dStub.creator, dStub);
     } catch (swatch::core::exception& xc) {
-      std::stringstream xss;
-      xss << "Failed to create DaqTTCManager: " << std::endl << xc.what();
+      std::ostringstream xss;
+      xss << "Failed to create DaqTTCManager (id: '" << dStub.id << "'): " << std::endl << xc.what();
       throw SystemCreationFailed(xss.str());
     }
     system->add(daqttc);
   }
 }
 
+/*
 //---
-void SystemCreator::addServices(System* system, const swatch::core::XParameterSet& aPars) {
-  xdata::Vector<swco::XParameterSet> vPSets;
+void SystemCreator::addServices(System* system) {
   
-  // Carry on only if there are services to build
-  if ( not aPars.has("services") ) return;
-	
-  vPSets = aPars.get<xdata::Vector<swco::XParameterSet> >("services");
-  BOOST_FOREACH(swco::XParameterSet& ps,vPSets) {
-    Service* a = swco::Factory::get()->bake<Service>(ps);
+  BOOST_FOREACH(auto& sStub, system->getStub().services) {
+    Service* s = swco::Factory::get()->make<Service>(sStub);
   
-    system->add(a);
+    system->add(s);
   }
 }
+*/
 
 
 //---
-void SystemCreator::addLinks(swatch::system::System* system, const swatch::core::XParameterSet& aPars) {
-  // Carry on only if there are no links to build
-  if ( not aPars.has("links") )
-    return;
-  
-  xdata::Vector<processor::LinkBag> vLinks = aPars.get<xdata::Vector<processor::LinkBag> >("links");
+void SystemCreator::addLinks(swatch::system::System* system) {
 
-  BOOST_FOREACH(const processor::LinkBag& linkBag, vLinks) {
-    processor::OutputPort* srcPort = system->getObj<processor::OutputPort>(linkBag.bag.src.value_);
-    processor::InputPort*  dstPort = system->getObj<processor::InputPort>(linkBag.bag.dst.value_);
+  BOOST_FOREACH(auto& lStub, system->getStub().links) {
+    try {
+      processor::OutputPort* srcPort = system->getObj<processor::OutputPort>(lStub.src);
+      processor::InputPort*  dstPort = system->getObj<processor::InputPort>(lStub.dst);
     
-    processor::Link * link = new processor::Link(linkBag.bag.name.value_, srcPort, dstPort);
-    system->add(link);
+      processor::Link * link = new processor::Link(lStub.id, srcPort,dstPort);
+      system->add(link);
+    }
+    catch (swatch::core::exception& e) {
+      std::ostringstream oss;
+      oss << "Failed to create internal link (id: '" << lStub.id << "'): " << std::endl << e.what();
+      throw SystemCreationFailed(oss.str());
+    }
   }
 }
 

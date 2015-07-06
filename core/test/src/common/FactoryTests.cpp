@@ -28,15 +28,20 @@ namespace core {
 namespace test {
 
 // Dummy Creator interface
+/*
 class SimpleCreator : public ObjFactory::CreatorInterface {
 public:
     virtual swatch::core::Object* operator()(const std::string& aId, const swatch::core::XParameterSet& params);
 };
-
+*/
+class SimpleCreator : public ObjFactory::CreatorInterface {
+public:
+    virtual swatch::core::Object* operator()( const swatch::core::AbstractStub& aStub );
+};
 
 swatch::core::Object*
-SimpleCreator::operator ()(const std::string& aId, const swatch::core::XParameterSet& params) {
-    swatch::core::test::SimpleObject* so = new swatch::core::test::SimpleObject(aId, params);
+SimpleCreator::operator ()( const swatch::core::AbstractStub& aStub ) {
+    swatch::core::test::SimpleObject* so = new swatch::core::test::SimpleObject(aStub);
     so->setValue(1234.5678);
     return so;
 }
@@ -55,10 +60,10 @@ BOOST_AUTO_TEST_SUITE( CoreTestSuite )
 BOOST_AUTO_TEST_CASE( FactoryTest ) {
     
     ObjFactory* f = ObjFactory::get();
-        
-    swatch::core::XParameterSet none;
+    swatch::core::AbstractStub d1("d1");    
+//    swatch::core::XParameterSet none;
     swatch::core::Object* obj;
-    obj = f->make("swatch::core::test::SimpleObject","d1", none);
+    obj = f->make<swatch::core::Object>("swatch::core::test::SimpleObject",d1);
     
     BOOST_CHECK( typeid(obj) == typeid(swatch::core::Object*) );
     
@@ -66,7 +71,7 @@ BOOST_AUTO_TEST_CASE( FactoryTest ) {
     
     delete obj;
     
-    obj = f->make("swatch::core::test::SimpleCreator","d1", none);
+    obj = f->make<swatch::core::Object>("swatch::core::test::SimpleCreator",d1);
     
     BOOST_CHECK( typeid(obj) == typeid(swatch::core::Object*) );
     

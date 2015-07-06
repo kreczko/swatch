@@ -42,24 +42,21 @@ namespace swatch {
 namespace mp7 {
 
 
-MP7Processor::MP7Processor(const std::string& id, const swatch::core::XParameterSet& aPars) :
-    Processor(id, aPars),
+MP7Processor::MP7Processor(const swatch::core::AbstractStub& aStub) :
+    Processor(aStub),
     driver_(0x0)
 {
     // Add commands
     Register<MP7ResetCommand>("reset");
     Register<MP7SetupLinks>("mgts");
     Register<MP7AlignLinks>("align");
-
     
     Register<MP7ConfigureLoopback>("loopback");
 
-    // Add operations
-    
     // Extract stub, and create driver
-    processor::ProcessorStub& stub = aPars.get<processor::ProcessorBag>("stub").bag;
+    const processor::ProcessorStub& stub = getStub();
 
-    uhal::HwInterface board = uhal::ConnectionManager::getDevice(id, stub.uri, stub.addressTable) ;
+    uhal::HwInterface board = uhal::ConnectionManager::getDevice(stub.id, stub.uri, stub.addressTable) ;
     driver_ = new ::mp7::MP7Controller(board);
     
     // Build subcomponents
@@ -68,11 +65,11 @@ MP7Processor::MP7Processor(const std::string& id, const swatch::core::XParameter
     Add( new swpro::LinkInterface() );
     
     // Add input and output ports
-    std::vector<processor::ProcessorPortBag>::iterator it;
-    for(it = stub.rxPorts.begin(); it != stub.rxPorts.end(); it++)
-      linkInterface().addInput(new MP7RxPort(it->bag.name, it->bag.number, *this));
-    for(it = stub.txPorts.begin(); it != stub.txPorts.end(); it++)
-      linkInterface().addOutput(new MP7TxPort(it->bag.name, it->bag.number, *this));
+//    std::vector<processor::ProcessorPortStub>::iterator it;
+    for(auto it = stub.rxPorts.begin(); it != stub.rxPorts.end(); it++)
+      linkInterface().addInput(new MP7RxPort(it->id, it->number, *this));
+    for(auto it = stub.txPorts.begin(); it != stub.txPorts.end(); it++)
+      linkInterface().addOutput(new MP7TxPort(it->id, it->number, *this));
 
     LOG(swlog::kNotice) << "MP7 Processor '" << this->id() << "' built: firmware 0x" << std::hex << retrieveFirmwareVersion() << std::endl;
 }

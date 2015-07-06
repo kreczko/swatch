@@ -251,8 +251,7 @@ int main(int argc, char const *argv[]) {
     // x.add(new TTCErrorGenerator(10) );
 
         
-    swpro::ProcessorStub stubTemplate;
-    stubTemplate.name = "";
+    swpro::ProcessorStub stubTemplate("");
     stubTemplate.creator = "swatch::processor::test::IPBusProcessor";
     stubTemplate.addressTable = addrtab;
     stubTemplate.uri = "";
@@ -261,25 +260,25 @@ int main(int argc, char const *argv[]) {
     
     
     // x is ready for testing
-    swpro::ProcessorBag p0bag;
-    p0bag.bag= stubTemplate;
+    swpro::ProcessorStub p0stub(stubTemplate);
+    p0stub.id = "Processor 0";
     
     std::stringstream ssURI;
     ssURI << "ipbusudp-2.0://127.0.0.1:" << 50010;
-    p0bag.bag.uri = ssURI.str();
+    p0stub.uri = ssURI.str();
 
-    swatch::core::XParameterSet params;
     swatch::core::XParameterSet empty_params;
-    params.add("name", xdata::String("Processor 0"));
-    params.add("class", p0bag.bag.creator);
-    params.add("stub",p0bag);
-    params.add("poweron", xpoweron);
+//    swatch::core::XParameterSet params;
+//    params.add("name", xdata::String("Processor 0"));
+//    params.add("class", p0bag.creator);
+//    params.add("stub",p0bag);
+//    params.add("poweron", xpoweron);
 
 
     // Fun starts here
     swpro::Processor *p0 = 0x0;
     try {
-        p0 = new swpro::test::IPBusProcessor(p0bag.bag.name, params);
+        p0 = new swpro::test::IPBusProcessor(p0stub);
         LOG(swlog::kNotice) << ">> Processor " << p0->id() << " created";
 
     } catch (uhal::exception::exception &e) {

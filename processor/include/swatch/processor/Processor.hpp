@@ -11,6 +11,7 @@
 // Swatch Headers
 #include "swatch/core/ActionableObject.hpp"
 #include "swatch/core/exception.hpp"
+#include "ProcessorStub.hpp"
 
 namespace swatch {
 
@@ -31,9 +32,11 @@ class LinkInterface;
  */
 class Processor : public core::ActionableObject {
 protected:
-  Processor(const std::string& aId, const core::XParameterSet& params = core::XParameterSet());
+  Processor(const swatch::core::AbstractStub& );
 public:
     virtual ~Processor();
+    
+    const ProcessorStub& getStub() const;
 
     /**
      * Return the board slot number
@@ -78,6 +81,8 @@ protected:
     core::Metric<uint64_t>& metricFirmwareVersion_;
     
 private:
+  
+    ProcessorStub stub_;
 
     uint32_t slot_;
     

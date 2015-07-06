@@ -45,7 +45,7 @@ namespace swatch {
 namespace processor {
 namespace test {
 
-
+/* TO DELETE 
 IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::XParameterSet& params) :
     Processor(id, params) {
     using namespace swatch::core;
@@ -80,13 +80,7 @@ IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::XParam
         std::string path = "channels.rx" + boost::lexical_cast<std::string>(k);
 
         a.insert("path", xdata::String(path));
-
-/*        IPBusRxChannel* rx = new IPBusRxChannel(strPrintf("rx%02d", k), hw(), a);
-        linkInterface()->addInput(rx);
-//        inputChannels_.push_back(new IPBusRxChannel(hw(), a));
-
-        LOG(swlog::kDebug) << "rx ch[" << k << "]: size " << rx->getBufferSize();
-*/    }
+    }
 
     for (size_t k(0); k < nOutputs; ++k) {
         XParameterSet a, ctrl, buf;
@@ -94,16 +88,59 @@ IPBusProcessor::IPBusProcessor(const std::string& id, const swatch::core::XParam
 
         a.insert("path", xdata::String(path));
 
-        
-/*        IPBusTxChannel* tx = new IPBusTxChannel(strPrintf("tx%02d", k), hw(), a);
-        linkInterface()->addOutput(tx);
-//        outputChannels_.push_back(new IPBusTxChannel(hw(), a));
-
-        LOG(swlog::kDebug) << "tx ch[" << k << "]: size " << tx->getBufferSize();
-*/    }
+    }
     
     
 }
+
+ */
+
+IPBusProcessor::IPBusProcessor(const swatch::core::AbstractStub& aStub ) :
+    Processor(aStub) {
+    using namespace swatch::core;
+    using namespace boost::assign;
+    
+    // Add commands
+    Register<IPBusResetCommand>("reset");
+    Register<IPBusConfigureCommand>("configure");
+    Register<IPBusCapture>("capture");
+    
+    // Extract stub
+    const swpro::ProcessorStub& stub = getStub();
+
+    // Build the driver and interfaces
+    hw_ = new uhal::HwInterface( uhal::ConnectionManager::getDevice(stub.id, stub.uri, stub.addressTable) );
+    Add( new processor::LinkInterface() );
+
+    // build the list of links based on the firmware informations
+    uhal::ValWord<uint32_t> n_rx = hw().getNode("ctrl.infos.nRx").read();
+    uhal::ValWord<uint32_t> n_tx = hw().getNode("ctrl.infos.nTx").read();
+    hw().dispatch();
+
+    uint32_t nInputs = n_rx;
+    uint32_t nOutputs = n_tx;
+
+    LOG(swlog::kDebug) << "Detected " << nInputs << " rx and " << nOutputs << " tx channels.";
+
+    for (size_t k(0); k < nInputs; ++k) {
+        XParameterSet a;
+        std::string path = "channels.rx" + boost::lexical_cast<std::string>(k);
+
+        a.insert("path", xdata::String(path));
+    }
+
+    for (size_t k(0); k < nOutputs; ++k) {
+        XParameterSet a, ctrl, buf;
+        std::string path = "channels.tx" + boost::lexical_cast<std::string>(k);
+
+        a.insert("path", xdata::String(path));
+
+    }
+    
+    
+}
+
+
 
 
 IPBusProcessor::~IPBusProcessor() {

@@ -30,7 +30,7 @@ class ActionableObject : public MonitorableObject {
 public:
   explicit ActionableObject( const std::string& aId );
 
-  ActionableObject( const std::string& aId, const XParameterSet& aParams );
+//  ActionableObject( const std::string& aId, const XParameterSet& aParams );
     
   virtual ~ActionableObject();
 

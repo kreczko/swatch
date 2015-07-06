@@ -14,10 +14,12 @@ ActionableObject::ActionableObject( const std::string& aId ) :
 {
 }
 
-ActionableObject::ActionableObject( const std::string& aId , const XParameterSet& aParams ) :
-    MonitorableObject( aId , aParams )
+/*
+ActionableObject::ActionableObject( const AbstractStub& aStub ) :
+    MonitorableObject( aStub )
 {
 }
+*/
 
 //------------------------------------------------------------------------------------
 

@@ -17,7 +17,7 @@ namespace processor {
 
 std::ostream& operator<<(std::ostream& os, const swatch::processor::LinkStub& pd ) {
     
-    os << "LinkStub[" << pd.name << "]:\n"
+    os << "LinkStub[" << pd.id << "]:\n"
        << "   - source port = " << pd.src << "\n"
        << "   - destination port = " << pd.dst << "\n"
        << std::flush;

@@ -19,24 +19,24 @@ namespace swatch {
 namespace system {
 
 swatch::core::Object*
-SystemLoggingCreator::operator()(const std::string& aId, const swatch::core::XParameterSet& aPars) {
-    LOG(swlog::kNotice) << "SystemLoggingCreator: Building System " << aId;
-    System* sys = createSystem(aId, aPars);
+SystemLoggingCreator::operator()(const swatch::core::AbstractStub& aStub ) {
+    LOG(swlog::kNotice) << "SystemLoggingCreator: Building System " << aStub.id;
+    System* sys = createSystem(aStub);
 
     LOG(swlog::kNotice) << "SystemLoggingCreator: Building Crates";
-    addCrates(sys, aPars);
+    addCrates(sys);
     
     LOG(swlog::kNotice) << "SystemLoggingCreator: Building Processors";
-    addProcessors(sys, aPars);
+    addProcessors(sys);
 
     LOG(swlog::kNotice) << "SystemLoggingCreator: Building DaqTTC";
-    addDaqTTCs(sys, aPars);
+    addDaqTTCs(sys);
     
-    LOG(swlog::kNotice) << "SystemLoggingCreator: Building Services";
-    addServices(sys, aPars);
+//    LOG(swlog::kNotice) << "SystemLoggingCreator: Building Services";
+//    addServices(sys);
 
     LOG(swlog::kNotice) << "SystemLoggingCreator: Building Links";
-    addLinks(sys, aPars);
+    addLinks(sys);
     
     return sys;
 }

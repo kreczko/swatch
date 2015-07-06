@@ -47,9 +47,9 @@ using namespace boost::assign;
     ptree pt;
 
     read_json(swco::shellExpandPath("${SWATCH_ROOT}/test/etc/swatch/test/testdb.json"), pt);
-    XParameterSet sysset = swatch::system::treeToSystemPars(pt);
+    swsys::SystemStub sysset = swatch::system::treeToSystemPars(pt);
 
-    swatch::system::System* mysys = swatch::core::Factory::get()->bake<swatch::system::System>("swatch::system::SystemCreator", sysset.get<xdata::String>("name"), sysset);
+    swatch::system::System* mysys = swco::Factory::get()->make<swsys::System>("swatch::system::SystemCreator", sysset);
     cout << "Here's a brand new system: " << mysys << endl; 
     
     return 0;

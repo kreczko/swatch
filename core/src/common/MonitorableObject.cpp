@@ -3,6 +3,7 @@
 
 
 #include "boost/foreach.hpp"
+#include "swatch/core/AbstractStub.hpp"
 
 
 using namespace std;
@@ -16,11 +17,12 @@ MonitorableObject::MonitorableObject( const std::string& aId ) :
 {
 }
 
-
+/*
 MonitorableObject::MonitorableObject( const std::string& aId , const XParameterSet& aParams ) :
     Object( aId , aParams )
 {
 }
+*/
 
 
 MonitorableObject::~MonitorableObject()

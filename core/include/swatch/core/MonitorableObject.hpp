@@ -20,6 +20,7 @@
 
 // BOOST Headers
 #include "boost/unordered_map.hpp"
+#include "AbstractStub.hpp"
 
 
 namespace swatch {
@@ -30,8 +31,8 @@ class MonitorableObject : public Object {
 public:
   explicit MonitorableObject( const std::string& aId );
 
-  MonitorableObject( const std::string& aId, const XParameterSet& aParams );
-    
+//  MonitorableObject( const std::string& aId, const XParameterSet& aParams );
+
   virtual ~MonitorableObject();
     
   /**

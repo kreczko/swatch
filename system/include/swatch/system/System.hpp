@@ -16,6 +16,7 @@
 
 // Swatch Headers
 #include "swatch/core/ActionableObject.hpp"
+#include "swatch/system/SystemStub.hpp"
 
 
 // Forward declarations
@@ -38,8 +39,10 @@ public:
   
   typedef boost::unordered_map<std::string, Crate*> CratesMap;
 
-    System( const std::string& aId, const core::XParameterSet& params = core::XParameterSet() );
+    System( const swatch::core::AbstractStub& aStub );
     virtual ~System();
+    
+    const SystemStub& getStub() const;
     
     void add( processor::Processor* aProcessor );
     void add( system::DaqTTCManager* aAMC13 );
@@ -57,8 +60,15 @@ public:
 
 
 protected:
-    
+  
     virtual void implementUpdateMetrics() {}
+
+    //! List of external ports
+    // std::deque<SysPorts*> mPorts;
+    
+
+private:
+    SystemStub stub_;
 
     //! List of processors
     std::deque<processor::Processor*> processors_;
@@ -71,15 +81,9 @@ protected:
     
     //! List of internal links
     std::deque<processor::Link*> links_; 
-    
-    //! List of external ports
-    // std::deque<SysPorts*> mPorts;
-    
+
     //! Map of crates
     CratesMap cratesMap_;
-
-
-
 };
 
 }

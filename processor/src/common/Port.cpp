@@ -21,7 +21,7 @@ InputPort::InputPort( const std::string& aId) :
     metricCRCErrors_( registerMetric<uint32_t>("crcErrors", core::GreaterThanCondition<uint32_t>(0)) )        
 {
 }
-
+/*
 InputPort::InputPort( const std::string& aId, const core::XParameterSet& params ) : 
     MonitorableObject(aId, params),
     metricIsLocked_( registerMetric<bool>("isLocked", core::EqualCondition<bool>(false)) ),
@@ -29,7 +29,7 @@ InputPort::InputPort( const std::string& aId, const core::XParameterSet& params 
     metricCRCErrors_( registerMetric<uint32_t>("crcErrors", core::GreaterThanCondition<uint32_t>(0)) )        
 {
 }
-
+*/
 
 
 const std::vector<std::string> InputPort::defaultMetrics = { "isLocked", "isAligned", "crcErrors" };
@@ -40,13 +40,15 @@ OutputPort::OutputPort( const std::string& aId ) :
     metricIsOperating_( registerMetric<bool>("isOperating", core::EqualCondition<bool>(false)) )
 {
 }
-    
+
+
+/*
 OutputPort::OutputPort( const std::string& aId, const core::XParameterSet& params ) :
     MonitorableObject(aId, params),
     metricIsOperating_( registerMetric<bool>("isOperating", core::EqualCondition<bool>(false)) )
 {
 }
-
+*/
 
 const std::vector<std::string> OutputPort::defaultMetrics = { "isOperating" };
 

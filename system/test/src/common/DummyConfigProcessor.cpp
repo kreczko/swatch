@@ -62,8 +62,8 @@ public:
 
 
 
-DummyConfigProcessor::DummyConfigProcessor(const std::string& id, const swatch::core::XParameterSet& params) :
-Processor(id, params)
+DummyConfigProcessor::DummyConfigProcessor(const swatch::core::AbstractStub& aStub) :
+Processor(aStub)
 {
 
   core::Command* lDummy1 = Register<DummyConfigCommand>("dummy_1");

@@ -16,7 +16,7 @@ namespace test {
 
 class DummyAMC13Manager : public system::DaqTTCManager {
 public:
-    DummyAMC13Manager( const std::string& aId, const core::XParameterSet& aPars );
+    DummyAMC13Manager( const swatch::core::AbstractStub& aStub );
     virtual ~DummyAMC13Manager();
 
     virtual uint32_t getSlot() const;

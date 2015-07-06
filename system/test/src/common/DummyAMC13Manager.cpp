@@ -32,21 +32,15 @@ namespace swatch {
 namespace system {
 namespace test {
 
-DummyAMC13Manager::DummyAMC13Manager( const std::string& aId, const core::XParameterSet& aPars ) : system::DaqTTCManager(aId,aPars) {
+DummyAMC13Manager::DummyAMC13Manager( const swatch::core::AbstractStub& aStub ) : system::DaqTTCManager(aStub) {
     LOG(swlog::kInfo) << "Building a DummyAMC13Service";
     
     LOG(swlog::kDebug) << "Id:" << this->id();;
-    LOG(swlog::kDebug) << "XParameterSet:";
-    
-    BOOST_FOREACH( const std::string& k, aPars.keys() ) {
 
-        LOG(swlog::kDebug) << "   " << k << " : " << aPars[k];
-    }
+    const swsys::DaqTTCStub& stub = getStub();
 
-    swsys::DaqTTCBag& stub = aPars.get<swsys::DaqTTCBag>("stub");
-
-    crate_ = stub.bag.crate;
-    slot_ = stub.bag.slot;
+    crate_ = stub.crate;
+    slot_ = stub.slot;
 }
 
 DummyAMC13Manager::~DummyAMC13Manager() {

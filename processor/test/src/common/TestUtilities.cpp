@@ -82,8 +82,8 @@ BOOST_AUTO_TEST_CASE(SliceSyntaxParsingTests) {
 BOOST_AUTO_TEST_CASE(SliceSyntaxPortStubTests){
   std::cout << "ProcessorTestSuite.SliceSyntaxPortStubTests" << std::endl;
 
-  xdata::Vector<swatch::processor::ProcessorPortBag> result;
-  std::vector<swatch::processor::ProcessorPortBag> expected;
+  std::vector<swatch::processor::ProcessorPortStub> result;
+  std::vector<swatch::processor::ProcessorPortStub> expected;
   
   expandPortSliceSyntax("myPort_rx[0:10]", "[10:60:5]", result);
   // Generated expected vector (i used for port name, j is port number)
@@ -93,17 +93,16 @@ BOOST_AUTO_TEST_CASE(SliceSyntaxPortStubTests){
     std::ostringstream oss;
     oss << "myPort_rx" << std::setw(2) << std::setfill('0') << i;
     
-    ProcessorPortBag b;
-    b.bag.name = oss.str();
-    b.bag.number = j;   
+    ProcessorPortStub b(oss.str());
+    b.number = j;   
     expected.push_back(b);
   }
 
   BOOST_CHECK_EQUAL(result.size(), expected.size());
   for( size_t i = 0; i < std::min(result.size(), expected.size()); i++ )
   {
-    BOOST_CHECK_EQUAL(std::string(result[i].bag.name), std::string(expected[i].bag.name));
-    BOOST_CHECK_EQUAL(unsigned(result[i].bag.number), unsigned(expected[i].bag.number));
+    BOOST_CHECK_EQUAL(std::string(result[i].id), std::string(expected[i].id));
+    BOOST_CHECK_EQUAL(unsigned(result[i].number), unsigned(expected[i].number));
   }
 
   
@@ -123,8 +122,8 @@ BOOST_AUTO_TEST_CASE(SliceSyntaxPortStubTests){
 BOOST_AUTO_TEST_CASE(SliceSyntaxLinkStubTests) {
   std::cout << "ProcessorTestSuite.SliceSyntaxLinkStubTests" << std::endl;
   
-  xdata::Vector<swatch::processor::LinkBag> result;
-  std::vector<swatch::processor::LinkBag> expected;
+  std::vector<swatch::processor::LinkStub> result;
+  std::vector<swatch::processor::LinkStub> expected;
   
   expandLinkSliceSyntax("myLink_[0:10]", "mySrcPort_[0:20:2]", "myDstPort_[200:0:-20]", result);
   // Generate expected vector
@@ -135,16 +134,15 @@ BOOST_AUTO_TEST_CASE(SliceSyntaxLinkStubTests) {
     std::ostringstream oss;
     oss << "myLink_" << std::setw(2) << std::setfill('0') << i;
     
-    LinkBag b;
-    b.bag.name = oss.str();
+    LinkStub b(oss.str());
 
     oss.str("");
     oss << "mySrcPort_" << std::setw(2) << std::setfill('0') << j;
-    b.bag.src = oss.str();
+    b.src = oss.str();
     
     oss.str("");
     oss << "myDstPort_" << std::setw(3) << std::setfill('0') << k;
-    b.bag.dst = oss.str();
+    b.dst = oss.str();
     
     expected.push_back(b);
   }
@@ -152,9 +150,9 @@ BOOST_AUTO_TEST_CASE(SliceSyntaxLinkStubTests) {
   BOOST_CHECK_EQUAL(result.size(), expected.size());
   for( size_t i = 0; i < std::min(result.size(), expected.size()); i++ )
   {
-    BOOST_CHECK_EQUAL(std::string(result[i].bag.name), std::string(expected[i].bag.name));
-    BOOST_CHECK_EQUAL(std::string(result[i].bag.src), std::string(expected[i].bag.src));
-    BOOST_CHECK_EQUAL(std::string(result[i].bag.dst), std::string(expected[i].bag.dst));
+    BOOST_CHECK_EQUAL(std::string(result[i].id), std::string(expected[i].id));
+    BOOST_CHECK_EQUAL(std::string(result[i].src), std::string(expected[i].src));
+    BOOST_CHECK_EQUAL(std::string(result[i].dst), std::string(expected[i].dst));
   }
 
 

@@ -35,7 +35,7 @@ SWATCH_REGISTER_CLASS(swatch::processor::test::DummyProcessor);
 namespace swatch {
 namespace processor {
 namespace test {
-
+/* TO DELETE 
 DummyProcessor::DummyProcessor(const std::string& id,
     const swatch::core::XParameterSet& params) :
         Processor(id, params),
@@ -51,6 +51,23 @@ DummyProcessor::DummyProcessor(const std::string& id,
   for(it = stub.txPorts.begin(); it != stub.txPorts.end(); it++)
     linkInterface().addOutput(new DummyTxPort(it->bag.name));
 }
+ */
+
+
+DummyProcessor::DummyProcessor(const swatch::core::AbstractStub& aStub) :
+  Processor(aStub),
+  ranTests_() {
+  
+  Add( new processor::LinkInterface() );
+
+  const ProcessorStub& stub = getStub();
+  
+  for(auto it = stub.rxPorts.begin(); it != stub.rxPorts.end(); it++)
+    linkInterface().addInput(new DummyRxPort(it->id));
+  for(auto it = stub.txPorts.begin(); it != stub.txPorts.end(); it++)
+    linkInterface().addOutput(new DummyTxPort(it->id));
+}
+
 
 DummyProcessor::~DummyProcessor() {
 }
@@ -77,12 +94,14 @@ std::string DummyProcessor::firmwareInfo() const {
   return "none";
 }
 
-
-swatch::core::XParameterSet DummyProcessor::generateParams() {
+// TO DELETE
+//swatch::core::XParameterSet DummyProcessor::generateParams() {
+ProcessorStub DummyProcessor::generateParams( const std::string& aId ) {
   const std::string addrtab = "file://processor/test/etc/swatch/processor/test/dummy.xml";
 
-  swatch::processor::ProcessorStub stubTemplate;
-  stubTemplate.name = "";
+  swatch::processor::ProcessorStub stubTemplate(aId);
+  // TO DELETE
+  //  stubTemplate.name = "";
   stubTemplate.creator = "swatch::processor::test::DummyProcessor";
   stubTemplate.addressTable = addrtab;
   stubTemplate.uri = "";
@@ -98,7 +117,8 @@ swatch::core::XParameterSet DummyProcessor::generateParams() {
   stubTemplate.txPorts.push_back( getPortBag("txA", 0) );
   stubTemplate.txPorts.push_back( getPortBag("txB", 5) );
   stubTemplate.txPorts.push_back( getPortBag("txC", 10) );
-  
+
+/* TO DELETE  
   // x is ready for testing
   swatch::processor::ProcessorBag p0bag;
   p0bag.bag = stubTemplate;
@@ -108,6 +128,9 @@ swatch::core::XParameterSet DummyProcessor::generateParams() {
   params.add("class", p0bag.bag.creator);
   params.add("stub", p0bag);
   return params;
+ */
+  
+  return stubTemplate;
 }
 
 
@@ -117,11 +140,11 @@ void DummyProcessor::implementUpdateMetrics()
 }
 
 
-xdata::Bag<ProcessorPortStub> DummyProcessor::getPortBag(const std::string& name, size_t number)
+ProcessorPortStub DummyProcessor::getPortBag(const std::string& name, size_t number)
 {
-  xdata::Bag<ProcessorPortStub> b;
-  b.bag.name = name;
-  b.bag.number = number;
+//  xdata::Bag<ProcessorPortStub> b;
+  ProcessorPortStub b(name);
+  b.number = number;
   return b;
 }
 

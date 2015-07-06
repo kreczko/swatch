@@ -10,40 +10,37 @@
 
 // C++ Headers
 #include <iosfwd>
- 
-// XDAQ Headers
-#include "xdata/Bag.h"
-#include "xdata/String.h"
 
+// Swatch Headers
+#include "swatch/core/AbstractStub.hpp"
 
 namespace swatch {
 namespace processor {
 
 
 //! Structure that holds data required to build a link
-struct LinkStub {
 
-    void registerFields(xdata::Bag<LinkStub> *bag) {
-        bag->addField("name", &name);
-        bag->addField("src", &src);
-        bag->addField("dst", &dst);
-    }
+class LinkStub : public swatch::core::AbstractStub {
+public:
 
-    //! Name of the link
-    xdata::String  name;
+  LinkStub(const std::string& aId) :
+    AbstractStub(aId) { }
 
-    //! Name of the source port
-    xdata::String  src;
-    
-    //! Name of the destination port
-    xdata::String  dst;
+  virtual ~LinkStub() { }
+
+
+  //! Name of the source port
+  std::string src;
+
+  //! Name of the destination port
+  std::string dst;
 };
 
 
-typedef xdata::Bag<LinkStub> LinkBag;
+//typedef xdata::Bag<LinkStub> LinkBag;
 
 
-std::ostream& operator<<(std::ostream& os, const swatch::processor::LinkStub& pd );
+std::ostream& operator<<(std::ostream& os, const swatch::processor::LinkStub& pd);
 
 
 } // namespace processor

@@ -11,12 +11,15 @@
 
 // C++ Headers
 #include <string>
-#include "swatch/core/XParameterSet.hpp"
+// #include "swatch/core/XParameterSet.hpp"
 
 // Boost Headers
 #include <boost/noncopyable.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/shared_ptr.hpp>
+
+// Swatch Headers
+#include "swatch/core/AbstractStub.hpp"
 
 // Standard factory registration macros
 #define _SWATCH_ABSTRACT_REGISTER_CLASS( productname, classname ) \
@@ -46,32 +49,53 @@ public:
     
     static AbstractFactory* get();
 
+    /*
     T* make( const std::string& aCreatorId, const std::string& aId, const swatch::core::XParameterSet& params );
 
     T* make( const swatch::core::XParameterSet& params );
-
-    template<typename P>
-    P* bake( const std::string& aCreatorId, const std::string& aId, const swatch::core::XParameterSet& params );
-
-    template<typename P>
-    P* bake( const swatch::core::XParameterSet& params );
+     */
     
+    /*
+    template<typename P = T>
+    P* make( const std::string& aCreatorId, const std::string& aId, const swatch::core::XParameterSet& params );
+
+    template<typename P = T>
+    P* make( const swatch::core::XParameterSet& params );
+    */
+   
+    template<typename P>
+    P* make( const std::string& aCreatorId, const AbstractStub& aStub );
+
+    /*
     class CreatorInterface {
     public:
         virtual T* operator()( const std::string& aId, const swatch::core::XParameterSet& params ) = 0;
     };
-    
+    */
 
+    
+    class CreatorInterface {
+    public:
+        virtual T* operator()( const AbstractStub& aStub ) = 0;
+    };
+    
 private:
     /**
      * Basic creator class
      * 
      * @tparam D Product type, must be derived from T
      */
+    /*
     template<typename D>
     class BasicCreator : public CreatorInterface {
     public:
         virtual T* operator() ( const std::string& aId, const swatch::core::XParameterSet& params );
+    };
+     */
+    template<typename D>
+    class BasicCreator : public CreatorInterface {
+    public:
+        virtual T* operator() ( const AbstractStub& aStub );
     };
     
     template<typename K>

@@ -20,24 +20,28 @@
 
 
 namespace swatch {
+namespace processor {
+
+class LinkStub;
+
+}
 namespace system {
 
 class System;
+class CrateStub;
 
-//class SystemCreator : public swatch::system::SystemFactory::CreatorInterface {
 class SystemCreator : public swatch::core::Factory::CreatorInterface {
 public:
-//    virtual swatch::system::System* operator()(const std::string& aId, const swatch::core::XParameterSet& params);
-    virtual swatch::core::Object* operator()(const std::string& aId, const swatch::core::XParameterSet& params);
+    virtual swatch::core::Object* operator()(const swatch::core::AbstractStub& aStub);
 
 protected:
-    virtual swatch::system::System* createSystem(const std::string& aId, const swatch::core::XParameterSet& params);
-    virtual void addProcessors(swatch::system::System* system, const swatch::core::XParameterSet& params);
-    virtual void addDaqTTCs(swatch::system::System* system, const swatch::core::XParameterSet& params);
-    virtual void addServices(swatch::system::System* system, const swatch::core::XParameterSet& params);
-    virtual void addCrates(swatch::system::System* system, const swatch::core::XParameterSet& params);
-    virtual void addCrate(swatch::system::System* system, const swatch::core::XParameterSet& params);
-    virtual void addLinks(swatch::system::System* system, const swatch::core::XParameterSet& params);    
+    virtual swatch::system::System* createSystem(const swatch::core::AbstractStub& aStub);
+    virtual void addProcessors(swatch::system::System* system);
+    virtual void addDaqTTCs(swatch::system::System* system);
+//    virtual void addServices(swatch::system::System* system);
+    virtual void addCrates(swatch::system::System* system);
+    virtual void addCrate(swatch::system::System* system, const swatch::system::CrateStub& aStub );
+    virtual void addLinks(swatch::system::System* system );    
 };
 
 DEFINE_SWATCH_EXCEPTION(SystemCreationFailed);

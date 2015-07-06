@@ -18,6 +18,7 @@
 #include "swatch/processor/Processor.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
 #include "swatch/system/Crate.hpp"
+#include "swatch/system/CrateStub.hpp"
 #include "swatch/processor/test/DummyProcessor.hpp"
 #include "swatch/system/test/DummyAMC13Manager.hpp"
 #include "swatch/logger/Log.hpp"
@@ -41,18 +42,19 @@ BOOST_AUTO_TEST_SUITE( CrateTestSuite )
 
 BOOST_AUTO_TEST_CASE(SlotCanOnlyBeTakenOnce) {
   LOG(kInfo) << "Running CrateTestSuite/SlotCanOnlyBeTakenOnce";
-	Crate* crate = new Crate("myCrate");
+  CrateStub cs("crateA");
+	Crate* crate = new Crate(cs);
 
-	XParameterSet a1, a2;
-	ProcessorBag b;
-	b.bag.crate = xdata::String("crateA");
-	b.bag.slot =  xdata::UnsignedInteger(1);
+//	XParameterSet a1, a2;
+	ProcessorStub ps1("proc1"), ps2("proc2");
+	ps1.crate = "crateA";
+	ps1.slot =  1;
+	ps2.crate = "crateA";
+	ps2.slot =  1;
 
-	a1.add("stub", b);
-	a2.add("stub", b);
 
-	DummyProcessor* p1 = new DummyProcessor("calol2-10", a1);
-	DummyProcessor* p2 = new DummyProcessor("calol2-13", a2);
+	DummyProcessor* p1 = new DummyProcessor(ps1);
+	DummyProcessor* p2 = new DummyProcessor(ps2);
 
 	crate->add(p1);
 	BOOST_CHECK_EQUAL(crate->isSlotTaken(1), true);
@@ -61,29 +63,16 @@ BOOST_AUTO_TEST_CASE(SlotCanOnlyBeTakenOnce) {
 
 BOOST_AUTO_TEST_CASE(SlotOutOfRange) {
   LOG(kInfo) << "Running CrateTestSuite/SlotOutOfRange";
-	Crate* crate = new Crate("myCrate");
 
-	XParameterSet a1;
-	ProcessorBag b;
-	b.bag.crate = xdata::String("crateA");
-	b.bag.slot =  xdata::UnsignedInteger(999999);
-	a1.add("stub", b);
-	DummyProcessor* p1 = new DummyProcessor("calol2-10", a1);
+  CrateStub cs("crateA");
+	Crate* crate = new Crate(cs);
+
+  ProcessorStub ps("proc");
+	ps.crate = "crateA";
+	ps.slot =  999999;
+	DummyProcessor* p1 = new DummyProcessor(ps);
 
 	BOOST_CHECK_THROW(crate->add(p1), CrateSlotOutOfRange);
-}
-
-BOOST_AUTO_TEST_CASE(PassesParamsToObject) {
-  LOG(kInfo) << "Running CrateTestSuite/PassesParamsToObject";
-	XParameterSet params  = XParameterSet();
-	params.insert("name", xdata::String("crate1"));
-	params.insert("type", xdata::String("test-crate"));
-	Crate * crate = new Crate("dev1", params);
-	XParameterSet pset = crate->pset();
-	BOOST_CHECK_EQUAL(pset.has("name"), true);
-	BOOST_CHECK_EQUAL(pset.has("type"), true);
-	BOOST_CHECK(pset.get<xdata::String>("name") == "crate1");
-	BOOST_CHECK(pset.get<xdata::String>("type") == "test-crate");
 }
 
 BOOST_AUTO_TEST_SUITE_END()

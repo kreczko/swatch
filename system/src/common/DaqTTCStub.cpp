@@ -17,7 +17,7 @@ namespace system {
 
 std::ostream& operator<<(std::ostream& os, const swatch::system::DaqTTCStub& sd ) {
     
-    os << "DaqTTCStub[" << sd.name << "]:\n"
+    os << "DaqTTCStub[" << sd.id << "]:\n"
        << "   - Uses creator = " << sd.creator << "\n"
        << "   - Uri [T1] = " << sd.uriT1 << "\n"
        << "   - Address Table [T1] = " << sd.addressTableT1 << "\n"

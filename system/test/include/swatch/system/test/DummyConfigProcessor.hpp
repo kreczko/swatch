@@ -23,7 +23,7 @@ namespace test {
 
 class DummyConfigProcessor : public swatch::processor::Processor {
 public:
-  DummyConfigProcessor(const std::string& id, const swatch::core::XParameterSet& params);
+  DummyConfigProcessor(const swatch::core::AbstractStub& aStub );
     virtual ~DummyConfigProcessor();
 
     virtual uint64_t firmwareVersion() const;

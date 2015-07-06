@@ -20,31 +20,23 @@ namespace swatch {
 namespace system {
 
 //---
-swatch::core::XParameterSet
-treeToCratePars(const boost::property_tree::ptree& t) {
+swatch::system::CrateStub
+treeToCrateStub(const boost::property_tree::ptree& t) {
 
-    swatch::core::XParameterSet cratePars;
-    CrateStub astub;
+    CrateStub astub(t.get<std::string>("CRATE NAME"));
     
-    astub.name = t.get<std::string>("CRATE NAME");
     astub.location = t.get<std::string>("CRATE LOCATION");
     astub.description = t.get<std::string>("CRATE DESCRIPTION");
     
-    CrateBag abag;
-    abag.bag = astub;
-    cratePars.add("name", abag.bag.name);
-    cratePars.add("stub", abag );
-    return cratePars;
+    return astub;
 }
   
 
 //---
-swatch::core::XParameterSet
-treeToDaqTTCPars(const boost::property_tree::ptree& t) {
-    swatch::core::XParameterSet amc13Set;
-    DaqTTCStub astub;
+swatch::system::DaqTTCStub
+treeToDaqTTCStub(const boost::property_tree::ptree& t) {
+    DaqTTCStub astub(t.get<std::string>("SERVICE NAME"));
 
-    astub.name           = t.get<std::string>("SERVICE NAME");
     astub.creator        = t.get<std::string>("SERVICE CREATOR");
     astub.uriT1          = t.get<std::string>("URI T1");
     astub.addressTableT1 = t.get<std::string>("ADDRESS TABLE T1"); // FIXME
@@ -53,17 +45,11 @@ treeToDaqTTCPars(const boost::property_tree::ptree& t) {
     astub.crate          = t.get<std::string>("CRATE NAME");
     astub.slot           = t.get<uint32_t>("CRATE SLOT");
 
-    DaqTTCBag abag;
-    abag.bag = astub;
-
-    amc13Set.add("name", abag.bag.name);
-    amc13Set.add("class", abag.bag.creator);
-    amc13Set.add("stub", abag);
-    return amc13Set;
+    return astub;
 }
 
 //---
-swatch::core::XParameterSet 
+swatch::system::SystemStub 
 treeToSystemPars( const boost::property_tree::ptree& t ) {
 
     using boost::property_tree::ptree;
@@ -71,39 +57,49 @@ treeToSystemPars( const boost::property_tree::ptree& t ) {
     using swatch::core::XParameterSet;
     using swatch::core::shellExpandPath;
 
-    XParameterSet sysPars;
+//    XParameterSet sysPars;
 
     const ptree &pt_system = t.get_child("SYSTEM");
-    sysPars.add("name", xdata::String(pt_system.get<std::string>("NAME")));
-    sysPars.add("class", xdata::String(pt_system.get<std::string>("CREATOR")));
+    SystemStub aStub(pt_system.get<std::string>("NAME"));
+//    sysPars.add("name", xdata::String(pt_system.get<std::string>("NAME")));
+    aStub.creator = pt_system.get<std::string>("CREATOR");
 
-    xdata::Vector<XParameterSet> crateSets;
+//    xdata::Vector<XParameterSet> crateSets;
+//    std::vector<CrateStub> crateStubs; 
     BOOST_FOREACH( const ptree::value_type &v, pt_system.get_child("CRATES")) {
-      core::XParameterSet crateSet = swatch::system::treeToCratePars(v.second);
-      crateSets.push_back(crateSet);
+//      CrateStub cStubs = swatch::system::treeToCratePars(v.second);
+      aStub.crates.emplace_back(
+        swatch::system::treeToCrateStub(v.second)
+      );
     }
-    sysPars.add("crates", crateSets);
+//    sysPars.add("crates", crateSets);
     
-    xdata::Vector<XParameterSet> processorSets;
+//    xdata::Vector<XParameterSet> processorSets;
     BOOST_FOREACH( const ptree::value_type &v, pt_system.get_child("PROCESSORS")) {
-        core::XParameterSet procSet = swatch::processor::treeToProcessorPars(v.second);
-        processorSets.push_back(procSet);
+//        core::XParameterSet procSet = swatch::processor::treeToProcessorPars(v.second);
+      aStub.processors.emplace_back(
+        swatch::processor::treeToProcessorStub(v.second)
+      );
     }
-    sysPars.add("processors",processorSets);
+//    sysPars.add("processors",processorSets);
 
-    xdata::Vector<XParameterSet> daqTTCSets;
+//    xdata::Vector<XParameterSet> daqTTCSets;
     BOOST_FOREACH( const ptree::value_type &v, pt_system.get_child("DAQTTCS")) {
-        core::XParameterSet amc13Set = swatch::system::treeToDaqTTCPars(v.second);
-        daqTTCSets.push_back(amc13Set);
+//        core::XParameterSet amc13Set = swatch::system::treeToDaqTTCPars(v.second);
+//        daqTTCSets.push_back(amc13Set);
+        
+        aStub.daqttcs.emplace_back(
+          swatch::system::treeToDaqTTCStub(v.second)
+        );
     }
-    sysPars.add("daqttcs",daqTTCSets);
+//    sysPars.add("daqttcs",daqTTCSets);
 
     
-    xdata::Vector<processor::LinkBag> linkBags;
+//    xdata::Vector<processor::LinkBag> linkBags;
     BOOST_FOREACH( const ptree::value_type& v, pt_system.get_child("LINKS")) {
-        swatch::processor::treeToLinkPars(v.second, linkBags);
+        swatch::processor::treeToLinkStub(v.second, aStub.links);
     }
-    sysPars.add("links", linkBags);
+//    sysPars.add("links", linkBags);
     
     /* Enable if need services
     xdata::Vector<XParameterSet> serviceSets;
@@ -114,7 +110,7 @@ treeToSystemPars( const boost::property_tree::ptree& t ) {
     sysPars.add("services",serviceSets);
     */
    
-    return sysPars;
+    return aStub;
 }
 
       

@@ -18,7 +18,7 @@ namespace mp7 {
 
 class MP7NullAlgoProcessor: public MP7Processor {
 public:
-    MP7NullAlgoProcessor(const std::string& id, const swatch::core::XParameterSet& aPars);
+    MP7NullAlgoProcessor(const swatch::core::AbstractStub& aStub);
 
     ~MP7NullAlgoProcessor();
 };

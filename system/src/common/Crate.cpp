@@ -25,18 +25,25 @@ namespace swatch {
 namespace system {
 
 
-Crate::Crate(const std::string aId, const core::XParameterSet& aPars)
-: ObjectView(aId, aPars), mch_(NULL), amc13_(NULL), amcs_(12, NULL), min_(1), max_(12) {
+Crate::Crate(const swatch::core::AbstractStub& aStub) :
+  ObjectView(aStub.id), 
+  stub_(dynamic_cast<const CrateStub&>(aStub)), 
+  mch_(NULL), 
+  amc13_(NULL), 
+  amcs_(12, NULL), min_(1), max_(12) {
 }
+
 
 Crate::~Crate() {
 }
+
 
 void
 Crate::add(system::DaqTTCManager* aAMC13) {
     amc13_ = aAMC13;
     addObj( aAMC13, "amc13" );
 }
+
 
 void
 Crate::add(processor::Processor* aProcessor) {
@@ -62,6 +69,7 @@ Crate::add(processor::Processor* aProcessor) {
     addObj(aProcessor, core::strPrintf("amc%02d", slot));
 }
 
+
 processor::Processor*
 Crate::amc(uint32_t slot) {
 
@@ -74,6 +82,7 @@ Crate::amc(uint32_t slot) {
     return amcs_[slot-min_];
 }
 
+
 std::vector<uint32_t>
 Crate::getPopulatedSlots() const {
     std::vector<uint32_t> slots = getAMCSlots();
@@ -81,6 +90,7 @@ Crate::getPopulatedSlots() const {
     if ( amc13_ ) slots.push_back(amc13_->getSlot());
     return slots;
 }
+
 
 std::vector<uint32_t>
 Crate::getAMCSlots() const {
@@ -92,12 +102,14 @@ Crate::getAMCSlots() const {
     return slots;
 }
 
+
 bool Crate::isSlotTaken( uint32_t slot ) const {
-	return amcs_[slot - min_] != NULL;
+  return amcs_[slot - min_] != NULL;
 }
 
 
-}
+const CrateStub& Crate::getStub() const {
+  return stub_; 
 }
 
 
@@ -108,4 +120,8 @@ operator<<(std::ostream& os, const swatch::system::Crate& cv) {
         os << " amc[" << (int)i << "](" << cv.amcs_[i] << ")"; 
     }
     return os;
+}
+
+
+}
 }

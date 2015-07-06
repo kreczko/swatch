@@ -21,8 +21,9 @@ using namespace std;
 namespace swatch {
 namespace system {
 
-DaqTTCManager::DaqTTCManager(const std::string& aId, const core::XParameterSet& aPars) : 
-  swatch::core::ActionableObject(aId, aPars),
+DaqTTCManager::DaqTTCManager(const swatch::core::AbstractStub& aStub ) : 
+  swatch::core::ActionableObject(aStub.id),
+  stub_(dynamic_cast<const DaqTTCStub&>(aStub)),
   ttcMetricClockFreq_( registerMetric<double>("clkFreq", core::InvRangeCondition<double>(39.9e6, 40.1e6)) ),
   ttcMetricBC0Counter_( registerMetric<uint32_t>("bc0Counter") ),
   ttcMetricBC0Errors_( registerMetric<uint32_t>("bc0Errors", core::GreaterThanCondition<uint32_t>(0)) ),
@@ -35,6 +36,9 @@ DaqTTCManager::DaqTTCManager(const std::string& aId, const core::XParameterSet& 
 DaqTTCManager::~DaqTTCManager() {
 }
 
+const DaqTTCStub& DaqTTCManager::getStub() const {
+  return stub_;
+}
 
 const std::vector<std::string> DaqTTCManager::defaultMetrics = { "clkFreq", "bc0Counter", "bc0Errors", "ttcSingleBitErrors", "ttcDoubleBitErrors"};
 

@@ -12,7 +12,7 @@
 namespace swatch {
 namespace processor {
 
-Link::Link(const std::string& aId, OutputPort* aSrc, InputPort* aDst, const core::XParameterSet& params) :
+Link::Link(const std::string& aId, OutputPort* aSrc, InputPort* aDst) :
     ObjectView( aId ), 
     src_(aSrc), 
     dst_(aDst)
