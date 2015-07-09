@@ -7,19 +7,17 @@
 
 #include "swatch/system/DaqTTCManager.hpp"
 
-// Boost Headers
+
+// boost headers
 #include "boost/foreach.hpp"
 
 // SWATCH headers
 #include "swatch/core/MetricConditions.hpp"
 
 
-// Namespace resolution
-using namespace std;
-
-
 namespace swatch {
 namespace system {
+
 
 DaqTTCManager::DaqTTCManager(const swatch::core::AbstractStub& aStub ) : 
   swatch::core::ActionableObject(aStub.id),
@@ -36,11 +34,13 @@ DaqTTCManager::DaqTTCManager(const swatch::core::AbstractStub& aStub ) :
 DaqTTCManager::~DaqTTCManager() {
 }
 
+
 const DaqTTCStub& DaqTTCManager::getStub() const {
   return stub_;
 }
 
-const std::vector<std::string> DaqTTCManager::defaultMetrics = { "clkFreq", "bc0Counter", "bc0Errors", "ttcSingleBitErrors", "ttcDoubleBitErrors"};
+
+const std::vector<std::string> DaqTTCManager::defaultMetrics = {"clkFreq", "bc0Counter", "bc0Errors", "ttcSingleBitErrors", "ttcDoubleBitErrors"};
 
 
 } // namespace system

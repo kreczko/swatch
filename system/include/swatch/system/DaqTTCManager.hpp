@@ -2,21 +2,23 @@
  * @file    DaqTTCManager.hpp
  * @author  Alessandro Thea
  * @date    July 2014
- *
  */
 
 #ifndef __SWATCH_SYSTEM_DAQTTCMANAGER_HPP__
-#define	__SWATCH_SYSTEM_DAQTTCMANAGER_HPP__
+#define __SWATCH_SYSTEM_DAQTTCMANAGER_HPP__
 
-// Swatch Headers
-#include "swatch/core/Object.hpp"
-#include "swatch/core/ActionableObject.hpp"
-#include "swatch/system/DaqTTCManager.hpp"
-#include "DaqTTCStub.hpp"
+
+// C++ headers
 #include <string>
+
+// SWATCH headers
+#include "swatch/core/ActionableObject.hpp"
+#include "swatch/system/DaqTTCStub.hpp"
+
 
 namespace swatch {
 namespace system {
+
 
 class DaqTTCManager : public core::ActionableObject {
 protected:
@@ -37,33 +39,21 @@ public:
 
     virtual void configureClock(const std::string& mode) = 0;
 
-    /*
-    /// Reads measured TTC clock frequency (in Hz) 
-    virtual double ttcClockFreq() const = 0;
-    
-    /// Reads TTC BC0 counter
-    virtual uint32_t ttcBC0Counter() const = 0;
-    
-    /// Reads TTC BC error counter
-    virtual uint32_t ttcBC0Errors() const = 0;
-    
-    /// Reads TTC single-bit error counter
-    virtual uint32_t ttcSingleBitErrors() const = 0;
-    
-    /// Reads TTC double-bit error counter
-    virtual uint32_t ttcDoubleBitErrors() const = 0;
-    */
-    
     static const std::vector<std::string> defaultMetrics;
 
 private:
     DaqTTCStub stub_;
 
 protected:
+    //! Metric for measured TTC clock frequency [Hz]
     core::Metric<double>& ttcMetricClockFreq_;
+    //! Metric for TTC BC0 counter
     core::Metric<uint32_t>& ttcMetricBC0Counter_;
+    //! Metric for TTC BC error counter
     core::Metric<uint32_t>& ttcMetricBC0Errors_;
+    //! Metric for TTC single-bit error counter
     core::Metric<uint32_t>& ttcMetricSingleBitErrors_;
+    //! Metric for TTC double-bit error counter
     core::Metric<uint32_t>& ttcMetricDoubleBitErrors_;
     
 private:
