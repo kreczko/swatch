@@ -23,11 +23,11 @@ DummyProcessorCommand::~DummyProcessorCommand() {
 //  delete dummy_proc_;
 }
 
-core::Command::State DummyProcessorCommand::code(swco::XParameterSet& params) ///Should take const reference but xdata::serializable is const-correctness broken
+core::Command::State DummyProcessorCommand::code(const swco::XParameterSet& params) ///Should take const reference but xdata::serializable is const-correctness broken
 {
   DummyProcessor* res = getParent<DummyProcessor>();
 
-  std::string todo = params.get<xdata::String>("todo");
+  std::string todo = params.get<xdata::String>("todo").value_;
   if (todo == "getCrateId") {
     setProgress(0.9049, "Dummy command did something");
     setResult(xdata::String(res->getCrateId()));

@@ -19,11 +19,14 @@
 // Swatch Headers
 #include "swatch/core/Functionoid.hpp"
 #include "swatch/core/XParameterSet.hpp"
+#include "swatch/core/ReadOnlyXParameterSet.hpp"
+#include "swatch/core/ReadWriteXParameterSet.hpp"
 
 // Forward declarations
 namespace xdata {
 class Serializable;
 }
+
 
 namespace swatch {
 namespace core {
@@ -47,7 +50,7 @@ public:
 
     virtual ~Command();
 
-    void exec( XParameterSet& params , const bool& aUseThreadPool = true ); ///Should take const reference but xdata::serializable is const-correctness broken
+    void exec( const XParameterSet& params , const bool& aUseThreadPool = true );
    
     virtual void reset();
 
@@ -58,13 +61,13 @@ public:
     template<typename T>
     void registerParameter(const std::string name, const T& defaultValue);
 
-    const XParameterSet& getDefaultParams() const;
+    const ReadWriteXParameterSet& getDefaultParams() const;
     
     const xdata::Serializable& getDefaultResult() const;
 
 protected:
     // user defined code for execution
-    virtual State code( XParameterSet& params ) = 0; ///Should take const reference but xdata::serializable is const-correctness broken
+    virtual State code( const XParameterSet& params ) = 0; ///Should take const reference but xdata::serializable is const-correctness broken
 
     template<typename T>
     Command( const std::string& aId , const T& aDefault );
@@ -84,12 +87,14 @@ private:
      * Merges a parameter set with the default parameter set.
      * Default values are only used if not present in params.
      */
-    XParameterSet mergeParametersWithDefaults( XParameterSet& params) const;
+    ReadOnlyXParameterSet mergeParametersWithDefaults(const XParameterSet& params) const;
 
     // thread safe exception catching wrapper for code()
-    void runCode( XParameterSet& params );
+    void runCode( const XParameterSet& params );
 
-    XParameterSet parameters_;
+    ReadWriteXParameterSet defaultParams_;
+
+    ReadOnlyXParameterSet runningParams_;
 
     xdata::Serializable* const defaultResult_;
 

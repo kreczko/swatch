@@ -34,10 +34,9 @@ Command::Command( const std::string& aId , const T& aDefault ) :
 
 template<typename T>
 void Command::registerParameter(const std::string name, const T& defaultValue){
-  if (parameters_.has(name))
-    parameters_.set(name, defaultValue);
-  else
-    parameters_.add(name, defaultValue);
+  if (defaultParams_.has(name))
+    defaultParams_.erase(name);
+  defaultParams_.add(name, defaultValue);
 }
 
 

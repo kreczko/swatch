@@ -109,7 +109,7 @@ namespace core {
 
     GateKeeper* mGateKeeper;
 
-    typedef std::vector< XParameterSet > tParameterSets;
+    typedef std::vector< ReadOnlyXParameterSet > tParameterSets;
     tParameterSets mCachedParameters;
 
 //     static std::string mCommandSequenceComplete;

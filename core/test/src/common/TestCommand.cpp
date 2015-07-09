@@ -48,7 +48,7 @@ struct CommandTestSetup {
 
   DummyHandler handler;
   Command* print, *error, *nothing;
-  XParameterSet params;
+  ReadWriteXParameterSet params;
 };
 
 BOOST_AUTO_TEST_SUITE( CommandTestSuite)
@@ -58,14 +58,14 @@ BOOST_AUTO_TEST_CASE(TestConstructor) {
   DummyHandler handler = DummyHandler();
   swatch::core::Command* test = handler.Register<DummyCommand>("Test");
   
-  BOOST_CHECK(test->getDefaultParams().get<xdata::Integer>("aa").equals(xdata::Integer(15)));
+  BOOST_CHECK_EQUAL(test->getDefaultParams().get<xdata::Integer>("aa").value_ , 15);
 }
 
 BOOST_FIXTURE_TEST_CASE(TestTodo,  CommandTestSetup) {
   LOG(kInfo) << "Running CommandTestSuite/TestTodo";
-  BOOST_CHECK(print->getDefaultParams().get<xdata::String>("todo") == "print");
-  BOOST_CHECK(error->getDefaultParams().get<xdata::String>("todo") == "error");
-  BOOST_CHECK(nothing->getDefaultParams().get<xdata::String>("todo") == "nothing");
+  BOOST_CHECK_EQUAL(print->getDefaultParams().get<xdata::String>("todo").value_, "print");
+  BOOST_CHECK_EQUAL(error->getDefaultParams().get<xdata::String>("todo").value_, "error");
+  BOOST_CHECK_EQUAL(nothing->getDefaultParams().get<xdata::String>("todo").value_,  "nothing");
 }
 
 BOOST_FIXTURE_TEST_CASE(TestRunPrint,  CommandTestSetup) {

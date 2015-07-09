@@ -23,7 +23,7 @@ public:
   DummyProcessorCommand(const std::string& aId, const T& aDefault);
   virtual ~DummyProcessorCommand();
 
-  virtual State code(swatch::core::XParameterSet& params); ///Should take const reference but xdata::serializable is const-correctness broken
+  virtual State code(const swatch::core::XParameterSet& params);
 };
 
 template<typename T>

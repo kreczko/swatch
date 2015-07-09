@@ -14,12 +14,6 @@ ActionableObject::ActionableObject( const std::string& aId ) :
 {
 }
 
-/*
-ActionableObject::ActionableObject( const AbstractStub& aStub ) :
-    MonitorableObject( aStub )
-{
-}
-*/
 
 //------------------------------------------------------------------------------------
 

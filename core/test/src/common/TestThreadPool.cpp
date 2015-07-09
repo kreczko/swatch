@@ -58,7 +58,7 @@ public:
 
   DummyHandler handler;
   Command *cmd1, *cmd2, *cmd3;
-  XParameterSet params;
+  ReadOnlyXParameterSet params;
   unsigned int wait_time_in_ms;
 };
 

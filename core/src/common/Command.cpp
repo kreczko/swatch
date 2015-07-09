@@ -1,9 +1,15 @@
 #include "swatch/core/Command.hpp"
+
+
+// boost headers
+#include "boost/foreach.hpp"
+
+// XDAQ headers
+#include "xdata/Serializable.h"
+
+// SWATCH headers
 #include "swatch/core/ThreadPool.hpp"
 
-
-// XDAQ Headers
-#include "xdata/Serializable.h"
 
 namespace swatch {
 namespace core {
@@ -21,6 +27,7 @@ std::ostream& operator<<(std::ostream& out, swatch::core::Command::State s) {
   return out;
 }
 
+
 //---
 Command::~Command() {
   if ( defaultResult_ ) delete defaultResult_;
@@ -29,13 +36,13 @@ Command::~Command() {
 
 //---
 void 
-Command::exec( XParameterSet& params  , const bool& aUseThreadPool ) ///Should take const reference but xdata::serializable is const-correctness broken
+Command::exec( const XParameterSet& params  , const bool& aUseThreadPool ) 
 { 
   // Reset the status before doing anything
   reset();
 
   // merge with default settings
-  XParameterSet p = mergeParametersWithDefaults(params);
+  runningParams_ = mergeParametersWithDefaults(params);
 
   // Execute the command protected by a very generic try/catch
   try {
@@ -45,11 +52,11 @@ Command::exec( XParameterSet& params  , const bool& aUseThreadPool ) ///Should t
       state_ = kScheduled;
       
       ThreadPool& pool = ThreadPool::getInstance();
-      pool.addTask<Command>(this, &Command::runCode, p);
+      pool.addTask<Command>(this, &Command::runCode, runningParams_);
     }
     else{
       // otherwise execute in same thread
-      this->runCode(p);
+      this->runCode(runningParams_);
     }
   } catch ( const std::exception& e ) {
     // TODO: log the error to error msg (or not?)
@@ -58,7 +65,7 @@ Command::exec( XParameterSet& params  , const bool& aUseThreadPool ) ///Should t
   }
 }
 
-void Command::runCode(XParameterSet& params) {
+void Command::runCode(const XParameterSet& params) {
   // 1) Declare that I'm running
   {
     boost::unique_lock<boost::mutex> lock(mutex_);
@@ -88,7 +95,7 @@ void Command::runCode(XParameterSet& params) {
     boost::unique_lock<boost::mutex> lock(mutex_);
     gettimeofday(&execEndTime_, NULL);
     state_ = kError;
-    statusMsg_ = std::string("ERROR - An exception occurred in Command::code(): ") + e.what();
+    statusMsg_ = std::string("ERROR - An exception of type '" + demangleName(typeid(e).name()) + "' was thrown in Command::code(): ") + e.what();
   }
 }
 
@@ -177,7 +184,6 @@ void Command::setResult( const xdata::Serializable& aResult ){
   result_->setValue(aResult);
 }
 
-
 //---
 void Command::setStatusMsg(const std::string& aMsg) {
   boost::unique_lock<boost::mutex> lock(mutex_);
@@ -190,8 +196,8 @@ xdata::Serializable& Command::defaultResult(){
 }
 
 
-const XParameterSet& Command::getDefaultParams() const {
-  return parameters_;
+const ReadWriteXParameterSet& Command::getDefaultParams() const {
+  return defaultParams_;
 }
 
 
@@ -200,9 +206,16 @@ const xdata::Serializable& Command::getDefaultResult() const {
 }
 
 
-XParameterSet Command::mergeParametersWithDefaults( XParameterSet& params ) const {
-  XParameterSet merged = XParameterSet(params);
-  merged.update(parameters_);
+ReadOnlyXParameterSet Command::mergeParametersWithDefaults( const XParameterSet& params ) const {
+  ReadOnlyXParameterSet merged = ReadOnlyXParameterSet(params);
+  
+  std::set<std::string> keys = defaultParams_.keys();
+  BOOST_FOREACH(const std::string& k, keys)
+  {
+    if ( ! merged.has(k))
+      merged.adopt(k, defaultParams_);
+  }
+  
   return merged;
 }
 

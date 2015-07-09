@@ -57,7 +57,7 @@ core::Command::State IPBusResetCommand::code() {
       return kError;
     }
     
-    std::string config = getDefaultParams().get<xdata::String>("mode");
+    std::string config = getDefaultParams().get<xdata::String>("mode").value_;
 
     // p->ctrl()->configureClock(clock); 
     p->hw().getNode("ttc.stat.clk40Locked").write(true);
@@ -108,7 +108,7 @@ core::Command::State IPBusConfigureCommand::code() {
       return kError;
     }
     
-    std::string config = getDefaultParams().get<xdata::String>("mode");
+    std::string config = getDefaultParams().get<xdata::String>("mode").value_;
 
     IPBusProcessor* p = getParent<IPBusProcessor>();
 

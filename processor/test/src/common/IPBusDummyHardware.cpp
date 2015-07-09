@@ -163,7 +163,7 @@ void
 IPBusDummyHardware::load(const swatch::core::XParameterSet& map) {
 
   BOOST_FOREACH(const std::string& p, map.keys()) {
-    hw().getNode(p).write(map.get<xdata::UnsignedInteger>(p));
+    hw().getNode(p).write(map.get<xdata::UnsignedInteger>(p).value_);
   }
 
   hw().dispatch();

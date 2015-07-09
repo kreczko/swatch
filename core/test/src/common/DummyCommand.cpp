@@ -25,7 +25,7 @@ DummyCommand::~DummyCommand() {
 //  delete dummy_proc_;
 }
 
-Command::State DummyCommand::code(XParameterSet& params) ///Should take const reference but xdata::serializable is const-correctness broken
+Command::State DummyCommand::code(const XParameterSet& params) ///Should take const reference but xdata::serializable is const-correctness broken
 {
   DummyHandler* res = getParent<DummyHandler>();
 
@@ -33,7 +33,7 @@ Command::State DummyCommand::code(XParameterSet& params) ///Should take const re
     LOG(logger::kInfo) << n << " : " << getDefaultParams()[n];
   }
 
-  std::string todo = params.get<xdata::String>("todo");
+  std::string todo = params.parameterAsString("todo");
   if (todo == "print") {
 
     res->setSomething("|12345|");
@@ -57,7 +57,7 @@ Command::State DummyCommand::code(XParameterSet& params) ///Should take const re
   else if (todo == "thread")
   {
     setProgress(0.01, "Dummy command just started");
-    unsigned int milliseconds(params.get<xdata::Integer>("milliseconds"));
+    unsigned int milliseconds(params.get<xdata::Integer>("milliseconds").value_);
     for (unsigned int i = 0; i < milliseconds; ++i) {
       boost::this_thread::sleep_for(boost::chrono::milliseconds(1));
 //      usleep(1); // takes microseconds

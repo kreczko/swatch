@@ -40,7 +40,7 @@ struct ProcessorCommandTestSetup {
 
   DummyProcessor resource;
   swct::DummyCommand* get_crate;
-  swatch::core::XParameterSet params;
+  swatch::core::ReadWriteXParameterSet params;
 
 };
 
@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_SUITE( ProcessorCommandTestSuite)
 // we want to make sure that the factory can use this
 BOOST_FIXTURE_TEST_CASE(TestTodo,  ProcessorCommandTestSetup) {
   LOG(kInfo) << "Running ProcessorCommandTestSuite/TestTodo";
-  BOOST_CHECK_EQUAL(get_crate->getDefaultParams().get<xdata::String>("todo").toString(), "getCrateId");
+  BOOST_CHECK_EQUAL(get_crate->getDefaultParams().parameterAsString("todo"), "getCrateId");
 }
 
 BOOST_FIXTURE_TEST_CASE(TestRunGetCrate,  ProcessorCommandTestSetup) {

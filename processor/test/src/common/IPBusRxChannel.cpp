@@ -22,7 +22,7 @@ IPBusRxChannel::IPBusRxChannel(std::string aId, uhal::HwInterface& hwif, const s
 IPBusComponent(hwif) {
     // cout << "Create Rx Channels" << endl;
     
-    std::string path = params.get<xdata::String>("path");
+    std::string path = params.get<xdata::String>("path").value_;
 
     ctrlpath_ = path + ".ctrl";
     datapath_ = path + ".data";

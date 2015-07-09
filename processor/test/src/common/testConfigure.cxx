@@ -213,7 +213,7 @@ int main(int argc, char const *argv[]) {
 
     uint32_t nRx(4), nTx(2);
     
-    swco::XParameterSet xpoweron;
+    swco::ReadWriteXParameterSet xpoweron;
 
     // 'Scalars'
     xpoweron.add("ctrl.id.fwrev", xdata::UnsignedInteger(0x44332211) );
@@ -267,7 +267,7 @@ int main(int argc, char const *argv[]) {
     ssURI << "ipbusudp-2.0://127.0.0.1:" << 50010;
     p0stub.uri = ssURI.str();
 
-    swatch::core::XParameterSet empty_params;
+    swatch::core::ReadWriteXParameterSet empty_params;
 //    swatch::core::XParameterSet params;
 //    params.add("name", xdata::String("Processor 0"));
 //    params.add("class", p0bag.creator);
@@ -319,7 +319,7 @@ int main(int argc, char const *argv[]) {
     }
 
     LOG(swlog::kNotice) << "//_ Step 1 ___ Testing resets __________________________________";
-    swatch::core::XParameterSet mode;
+    swatch::core::ReadWriteXParameterSet mode;
     
     LOG(swlog::kNotice) << ">> Resetting on internal clock";
     

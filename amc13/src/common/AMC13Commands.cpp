@@ -40,11 +40,11 @@ AMC13ResetCommand::~AMC13ResetCommand() {
 
 
 //---
-core::Command::State AMC13ResetCommand::code(core::XParameterSet& params) {
+core::Command::State AMC13ResetCommand::code(const core::XParameterSet& params) {
 
     AMC13Manager* amc13 = getParent<AMC13Manager>();
    
-    std::string mode = params.get<xdata::String>("mode");
+    std::string mode = params.get<xdata::String>("mode").value_;
 
     using ::amc13::AMC13Simple;
   

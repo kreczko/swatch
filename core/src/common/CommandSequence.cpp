@@ -68,13 +68,17 @@ void CommandSequence::UpdateParameterCache()
   for( tCommandVector::iterator lIt( mCommands.begin()) ; lIt != mCommands.end() ; ++lIt )
   {
     Command& lCommand( getCommand( *lIt ) );
-    XParameterSet lParams( lCommand.getDefaultParams() );
+    ReadOnlyXParameterSet lParams( lCommand.getDefaultParams() );
 
     std::set< std::string > lKeys( lParams.keys() );
     for( std::set< std::string >::iterator lIt2( lKeys.begin() ); lIt2!=lKeys.end(); ++lIt2 )
     {
       GateKeeper::tParameter lData( mGateKeeper->get( id() , lCommand.id() , *lIt2 , getTables() ) );
-      lParams.update( *lIt2 , *lData );
+      if ( lData.get() != NULL )
+      {
+        lParams.erase(*lIt2);
+        lParams.adopt( *lIt2 , lData );
+      }
     }
     mCachedParameters.push_back( lParams );
   }

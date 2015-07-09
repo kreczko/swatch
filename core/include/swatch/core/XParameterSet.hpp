@@ -1,7 +1,7 @@
 /**
  * @file    XParameterSet.hpp
  * @author  Alessandro Thea
- * @brief   Generic contailer for xdata::Serializable objects
+ * @brief   Generic container interface for xdata::Serializable objects
  * @date    February 2015
  *
  */
@@ -9,16 +9,9 @@
 #ifndef __SWATCH_CORE_XPARAMETERSET_HPP__
 #define __SWATCH_CORE_XPARAMETERSET_HPP__
 
-// C++ Headers
-#include <typeinfo>
-
-// Boost Headers
-#include <boost/unordered_map.hpp>
-
-#include <boost/mpl/assert.hpp>
 
 // XDAQ Headers
-#include <xdata/Serializable.h>
+#include "xdata/Serializable.h"
 
 // Swatch Headers
 #include "swatch/core/exception.hpp"
@@ -26,203 +19,59 @@
 
 namespace swatch {
 namespace core {
-class XParameterSet;
-}
-}
 
 
-namespace swatch {
-namespace core {
+class XParameterSet; 
+    
+std::ostream& operator<< ( std::ostream& aStr , const swatch::core::XParameterSet& aXParameterSet );
 
-std::ostream& operator<< ( std::ostream& aStr , swatch::core::XParameterSet& aXParameterSet );
 
-//! Generic container for xdata::Serializable objects   
-class XParameterSet : public xdata::Serializable {
+//! Generic container (read-only) interface for containers of xdata::Serializable objects   
+class XParameterSet {
 public:
 
-  friend std::ostream& (operator<<) ( std::ostream& aStr , swatch::core::XParameterSet& aXParameterSet );
+  friend std::ostream& (operator<<) ( std::ostream& aStr , const swatch::core::XParameterSet& aXParameterSet );
 
   XParameterSet();
+
   XParameterSet(const XParameterSet& orig);
+
   virtual ~XParameterSet();
 
   /**
-   * Assignment operator
+   * Size of the collection
+   * @return Number of stored parameters
    */
-  XParameterSet& operator=( const XParameterSet& );
-  
-  bool operator==( const XParameterSet& ) const;
-  /**
-   * Clear content
-   */
-  void clear();
+  virtual size_t size() const = 0;
 
   /**
-   * List of parameters names stored.
-   * @return vector of parameter names
+   * List of names of stored parameters.
+   * @return names of stored parameters
    */
-  std::set<std::string> keys() const;
+  virtual std::set<std::string> keys() const = 0;
 
-  /**
-   * Size of the set
-   * @return Return container size
-   */
-  size_t size() const;
+  //! Returns whether parameter with given name exists
+  virtual bool has( const std::string& name ) const = 0;
 
-  /**
-   * Count elements with a specific key
-   * 
-   * @param name Parameter name
-   * @return Number of occurrencies of "name"
-   */
-  bool has( const std::string& name ) const;
+  //! Retrieve reference to parameter with specified name; throws XParameterNotFound if doesn't contain a parameter with specified name
+  virtual const xdata::Serializable& get( const std::string& name ) const = 0;
 
+  //! Retrieve reference to parameter with specified name; throws XParameterNotFound if doesn't contain a parameter with specified name
+  virtual const xdata::Serializable& operator[]( const std::string& name ) const = 0;
 
-  virtual std::string type() const;
-  virtual void setValue(const xdata::Serializable& s);
-  virtual int equals(const xdata::Serializable&); // To be implemented
-  virtual std::string toString() throw (xdata::exception::Exception);
-  virtual void fromString(const std::string&) throw (xdata::exception::Exception);
-
-  /**
-   * Adopt a parameter in the set. 
-   * The parameter set takes the ownership of the pointer. The pointer must be a derived from xdata::Serializable
-   * 
-   * @param name Parameter name
-   * @param data Pointer to import in the set
-   */
+  //! Retrieve reference to parameter with specified name; throws XParameterFailedCast if dynamic cast fails; throws XParameterNotFound if doesn't contain a parameter with specified name
   template<typename T>
-  void adopt( const std::string& name , T* data );
+  const T& get( const std::string& name ) const;
+  
+  //! Retrieves string representation of parameter with specified name - i.e. the result of calling xdata::Serializable::toString() method; throws XParameterNotFound if doesn't contain a parameter with specified name
+  virtual std::string parameterAsString(const std::string& name) const = 0;
 
   /**
-   * Add a parameter to the set, copying data into the data
+   * Removes parameter of specified name from the list of variables.
    * 
-   * @param name Parameter name
-   * @param data Value to copy in the set.
+   * @param name ParameterSet entry to delete
    */
-  template<typename T>
-  void add( const std::string& name , const T& data );
-
-
-  /**
-   * Sets the value of a parameter in the set. The parameter must exist.
-   * 
-   * @param name Parameter name
-   * @param data Value to copy in the set.
-   */
-  void set( const std::string& name , const xdata::Serializable& data );
-
-  /**
-   * Pop an entry from the set
-   * 
-   * @param name Parameter to pop.
-   * @return Pointer to the entry removed.
-   */
-  template<typename T>
-  T* pop( const std::string& name );  
-  
-  /**
-   * Pops 'name' from the list of variable and 
-   * 
-   * @param name Variable to extract
-   * @return Pointer to the popped variable
-   */
-  xdata::Serializable* pop( const std::string& name );
-  
-  /**
-   * Erases 'name' from the list of variables.
-   * 
-   * @param name Variable to delete
-   */
-  void erase( const std::string& name );
-  
-  xdata::Serializable& get( const std::string& name );
-
-  const xdata::Serializable& get( const std::string& name ) const;
-
-  xdata::Serializable& operator[]( const std::string& name );
-
-  const xdata::Serializable& operator[]( const std::string& name ) const;
-
-  template<typename T>
-  T& get( const std::string& name );
-
-  template<typename T>
-  T& get( const std::string& name ) const;
-
-  void update( const std::string& name, const xdata::Serializable& data );
-  
-  /**
-   * Updates this parameter set with another one.
-   * Existing values are not overwritten!
-   */
-  void update( const XParameterSet& other );
-
-  class Inserter {
-  public:
-
-    template<typename T>
-    Inserter& operator()(const std::string& aKey, const T& aValue);
-    
-  private:
-
-    Inserter(XParameterSet* ps);
-
-    XParameterSet *xps_;
-
-    friend class XParameterSet;
-
-  };
-
-  template<typename T>
-  Inserter insert(const std::string& aKey, const T& aValue);
-
-  
-private:
-
-  template<typename T>
-  static xdata::Serializable* cloner_( const xdata::Serializable* other );
-
-  typedef xdata::Serializable* (*XCloner)( const xdata::Serializable* );
-
-  struct XEntry {
-
-    /**
-     * Standard constructor
-     *  
-     * @param t Type info pointer
-     * @param c Cloner function pointer
-     * @param s Data to store in the entry
-     */
-    XEntry( const std::type_info* t, XCloner c, xdata::Serializable* s );
-    
-    /**
-     * Copy constructor
-     * The object pointer is not copied but a new instance is created instead.
-     * 
-     * @param orig Entry to copy from
-     */
-    XEntry( const XEntry& orig );
-
-    bool operator==(const XEntry &other) const;
-
-    // ! 
-    const std::type_info* typeinfo;
-
-    //!
-    xdata::Serializable* (*cloner)( const xdata::Serializable* );
-
-    //!
-    xdata::Serializable* object;
-  };
-  
-  typedef boost::unordered_map<std::string, XEntry> EntryMap;
-  
-  std::pair<EntryMap::iterator,bool> emplace( const std::string& name, const std::type_info* t, XCloner c, xdata::Serializable* s );
-  std::pair<EntryMap::iterator,bool> emplace( const std::string& name, const XEntry& );
-
-  //! Map storing the values
-  EntryMap entries_;
+  virtual void erase( const std::string& name ) = 0;
 
 };
 

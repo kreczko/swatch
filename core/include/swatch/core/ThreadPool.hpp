@@ -75,7 +75,7 @@ public:
    * @param param: parameter set to be passed to the object function
    */
   template<class OBJECT>
-  void addTask( OBJECT* cmd , boost::function<void(OBJECT*, XParameterSet&)> function , XParameterSet& param );
+  void addTask( OBJECT* cmd , boost::function<void(OBJECT*, const XParameterSet&)> function , const XParameterSet& param );
 
 
   /**

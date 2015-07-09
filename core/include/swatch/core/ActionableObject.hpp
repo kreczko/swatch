@@ -6,8 +6,8 @@
  *
  */
 
-#ifndef __SWATCH_TEST_ActionableObject_HPP__
-#define __SWATCH_TEST_ActionableObject_HPP__
+#ifndef __SWATCH_CORE_ActionableObject_HPP__
+#define __SWATCH_CORE_ActionableObject_HPP__
 
 // SWATCH Headers
 #include "swatch/core/exception.hpp"

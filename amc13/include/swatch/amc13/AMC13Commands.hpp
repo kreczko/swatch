@@ -22,7 +22,7 @@ public:
 
     virtual ~AMC13ResetCommand();
 
-    virtual State code(core::XParameterSet& params);
+    virtual State code(const core::XParameterSet& params);
     
 };
 

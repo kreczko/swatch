@@ -14,7 +14,7 @@ namespace swcot = swatch::core::test;
 
 int main(int argc, char const *argv[]) {
   swcot::DummyHandler handler;
-  swco::XParameterSet params;
+  swco::ReadWriteXParameterSet params;
 
   LOG(swlo::kInfo) << "resource : smthg = " << handler.something() << " - num = " << handler.number(); 
 

@@ -39,7 +39,7 @@ MP7ResetCommand::~MP7ResetCommand() {
 }
 
 //---
-core::Command::State MP7ResetCommand::code(core::XParameterSet& params) {
+core::Command::State MP7ResetCommand::code(const core::XParameterSet& params) {
 
   MP7Processor* p = getParent<MP7Processor>();
   setProgress(0.,"Resetting");
@@ -69,7 +69,7 @@ MP7SetupLinks::~MP7SetupLinks() {
 
 
 //---
-core::Command::State MP7SetupLinks::code(core::XParameterSet& params) {
+core::Command::State MP7SetupLinks::code(const core::XParameterSet& params) {
   
   MP7Processor* p = getParent<MP7Processor>();
   ::mp7::ChannelsManager mgr = p->driver().channelMgr();
@@ -77,9 +77,9 @@ core::Command::State MP7SetupLinks::code(core::XParameterSet& params) {
   setProgress(0.,"Configuring links");
 
 //  p->driver().configureLinks(loopback, orbittag, invpol)
-  bool loopback = params.get<xdata::Boolean>("loopback");
-  bool orbittag = params.get<xdata::Boolean>("orbitTag");
-  bool invPol = params.get<xdata::Boolean>("invertPolarity");
+  bool loopback = params.get<xdata::Boolean>("loopback").value_;
+  bool orbittag = params.get<xdata::Boolean>("orbitTag").value_;
+  bool invPol = params.get<xdata::Boolean>("invertPolarity").value_;
 
   if ( loopback ) {
     ::mp7::orbit::Point zero;
@@ -117,14 +117,14 @@ MP7AlignLinks::~MP7AlignLinks() {
 }
 
 //---
-core::Command::State MP7AlignLinks::code(core::XParameterSet& params) {
+core::Command::State MP7AlignLinks::code(const core::XParameterSet& params) {
 
   MP7Processor* p = getParent<MP7Processor>();
   ::mp7::ChannelsManager mgr = p->driver().channelMgr();
 
   
-  xdata::Boolean& autoAlign = params.get<xdata::Boolean>("autoAlign");
-  xdata::UnsignedInteger& alignBx = params.get<xdata::UnsignedInteger>("alignBx");
+  bool autoAlign = params.get<xdata::Boolean>("autoAlign").value_;
+  const xdata::UnsignedInteger& alignBx = params.get<xdata::UnsignedInteger>("alignBx");
   
   if ( !autoAlign ) {
     if ( alignBx.isNaN() or not alignBx.isFinite()) {
@@ -143,12 +143,12 @@ core::Command::State MP7AlignLinks::code(core::XParameterSet& params) {
     setStatusMsg("Links aligned somewhere" );
     return kDone;
   } else {
-    setProgress(0.2, "Aligning links to " + alignBx.toString());
+    setProgress(0.2, "Aligning links to " + boost::lexical_cast<std::string>(alignBx.value_));
 
-    ::mp7::orbit::Point p( alignBx );
+    ::mp7::orbit::Point p( alignBx.value_ );
     mgr.alignLinks(p);
     
-    setStatusMsg("Links aligned to " + alignBx.toString() );
+    setStatusMsg("Links aligned to " + boost::lexical_cast<std::string>(alignBx.value_) );
     return kDone;
   }
   
@@ -171,7 +171,7 @@ MP7ConfigureLoopback::~MP7ConfigureLoopback() {
 
 
 //---
-core::Command::State MP7ConfigureLoopback::code(core::XParameterSet& params) {
+core::Command::State MP7ConfigureLoopback::code(const core::XParameterSet& params) {
   MP7Processor* p = getParent<MP7Processor>();
   ::mp7::ChannelsManager mgr = p->driver().channelMgr();
   

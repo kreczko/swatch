@@ -123,18 +123,17 @@ IPBusProcessor::IPBusProcessor(const swatch::core::AbstractStub& aStub ) :
     LOG(swlog::kDebug) << "Detected " << nInputs << " rx and " << nOutputs << " tx channels.";
 
     for (size_t k(0); k < nInputs; ++k) {
-        XParameterSet a;
+        ReadWriteXParameterSet a;
         std::string path = "channels.rx" + boost::lexical_cast<std::string>(k);
 
-        a.insert("path", xdata::String(path));
+        a.add("path", xdata::String(path));
     }
 
     for (size_t k(0); k < nOutputs; ++k) {
-        XParameterSet a, ctrl, buf;
+        ReadWriteXParameterSet a, ctrl, buf;
         std::string path = "channels.tx" + boost::lexical_cast<std::string>(k);
 
-        a.insert("path", xdata::String(path));
-
+        a.add("path", xdata::String(path));
     }
     
     

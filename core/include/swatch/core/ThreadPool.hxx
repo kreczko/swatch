@@ -6,10 +6,10 @@ namespace core {
 
 template<class OBJECT>
 void ThreadPool::addTask(OBJECT* cmd,
-    boost::function<void(OBJECT*, XParameterSet&)> function,
-    XParameterSet& param) {
+    boost::function<void(OBJECT*, const XParameterSet&)> function,
+    const XParameterSet& param) {
   // create packed_task
-  boost::packaged_task<void> task(boost::bind(function, cmd, param));
+  boost::packaged_task<void> task(boost::bind(function, cmd, boost::ref(param)));
   {
     // lock mutex
     boost::lock_guard<boost::mutex> guard(queue_mutex_);

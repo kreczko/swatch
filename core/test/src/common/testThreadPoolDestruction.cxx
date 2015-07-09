@@ -32,7 +32,7 @@ struct CommandTestSetup {
 
   swatch::core::test::DummyHandler handler;
   swatch::core::Command* print, *error, *nothing;
-  swatch::core::XParameterSet params;
+  swatch::core::ReadWriteXParameterSet params;
 };
 
 
@@ -40,7 +40,7 @@ int main( int argc, const char* argv[] )
 {
   CommandTestSetup setup;
 
-  swatch::core::XParameterSet params;
+  swatch::core::ReadWriteXParameterSet params;
 
   setup.print->exec( setup.params );
 

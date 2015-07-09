@@ -21,7 +21,7 @@ public:
 
   virtual ~MP7ResetCommand();
 
-  virtual State code(core::XParameterSet& params);
+  virtual State code(const core::XParameterSet& params);
 
 };
 
@@ -32,7 +32,7 @@ public:
     
   virtual ~MP7SetupLinks();
 
-  virtual State code(core::XParameterSet& params);
+  virtual State code(const core::XParameterSet& params);
 
 };
 
@@ -44,7 +44,7 @@ public:
 
   virtual ~MP7AlignLinks();
 
-  virtual State code( core::XParameterSet& params);
+  virtual State code(const core::XParameterSet& params);
 };
 
 
@@ -55,7 +55,7 @@ public:
 
   virtual ~MP7ConfigureLoopback();
 
-  virtual State code(core::XParameterSet& params);
+  virtual State code(const core::XParameterSet& params);
 
 };
 
