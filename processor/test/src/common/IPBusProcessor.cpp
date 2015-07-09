@@ -163,6 +163,9 @@ uhal::HwInterface& IPBusProcessor::hw() const {
     return *hw_;
 }
 
+IPBusTTC& IPBusProcessor::ttc() {
+  return dynamic_cast<IPBusTTC&>(Processor::ttc());
+}
 
 /*------------------------------------------------------------------------------
  * IPBus Algos

@@ -31,7 +31,7 @@ public:
      */
     virtual ~AlgoInterface() {}
 
-    virtual void reset() = 0;
+//    virtual void reset() = 0;
 };
 
 } // namespace processor

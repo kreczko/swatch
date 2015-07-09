@@ -32,11 +32,11 @@ public:
      */
     virtual ~TTCInterface() {}
     
-    // Clear all counters
-    virtual void clearCounters() = 0;
-    
-    // Clear error counters
-    virtual void clearErrors() = 0;
+//    // Clear all counters
+//    virtual void clearCounters() = 0;
+//    
+//    // Clear error counters
+//    virtual void clearErrors() = 0;
 
 
 protected:

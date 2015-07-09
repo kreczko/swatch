@@ -26,6 +26,8 @@ namespace swatch {
 namespace processor {
 namespace test {
 
+class IPBusTTC;
+    
 //----------------------------------------------------------------------------//
 class IPBusProcessor : public swatch::processor::Processor {
 public:
@@ -40,6 +42,8 @@ public:
 
     uhal::HwInterface& hw() const;
 
+    virtual IPBusTTC& ttc();
+    
 protected:
     virtual void implementUpdateMetrics() {}
     
