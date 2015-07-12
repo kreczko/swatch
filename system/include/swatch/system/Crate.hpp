@@ -8,8 +8,11 @@
 #ifndef __SWATCH_SYSTEM_CRATEVIEW_HPP__
 #define	__SWATCH_SYSTEM_CRATEVIEW_HPP__
 
+
+#include "swatch/core/exception.hpp"
 #include "swatch/core/Object.hpp"
-#include "CrateStub.hpp"
+#include "swatch/system/CrateStub.hpp"
+
 
 namespace swatch {
 namespace processor {

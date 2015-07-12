@@ -13,6 +13,9 @@
 #include "pugixml/pugixml.hpp"
 
 
+#include "swatch/core/Utilities.hpp"
+
+
 namespace swatch {
 namespace core {
 

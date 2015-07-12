@@ -20,6 +20,8 @@
 
 // Swatch Headers
 #include "swatch/core/AbstractStub.hpp"
+#include "swatch/core/exception.hpp"
+
 
 // Standard factory registration macros
 #define _SWATCH_ABSTRACT_REGISTER_CLASS( productname, classname ) \

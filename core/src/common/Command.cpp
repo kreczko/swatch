@@ -3,6 +3,7 @@
 
 // boost headers
 #include "boost/foreach.hpp"
+#include "boost/lexical_cast.hpp"
 
 // XDAQ headers
 #include "xdata/Serializable.h"

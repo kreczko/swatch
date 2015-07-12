@@ -6,18 +6,17 @@
  *
  */
 
-#ifndef __SWATCH_TEST_OBJECT_HPP__
-#define	__SWATCH_TEST_OBJECT_HPP__
+#ifndef __SWATCH_CORE_OBJECT_HPP__
+#define	__SWATCH_CORE_OBJECT_HPP__
+
 
 // Standard Headers
 #include <typeinfo>
-#include <ostream>
+#include <iosfwd>
 
 // Boost Headers
 #include "boost/unordered_map.hpp"
-#include "boost/lexical_cast.hpp"
 
-#include "swatch/core/XParameterSet.hpp"
 
 namespace swatch
 {
@@ -142,12 +141,6 @@ namespace swatch
         */
         explicit Object ( const std::string& aId );
 
-//        /**
-//          Constructor with parameter set
-//          @param aId The ID string of the object
-//          @param params A parameter set associated with the objects
-//        */
-//        Object ( const std::string& aId, const XParameterSet& params );
 
         /**
           Destructor
@@ -298,8 +291,6 @@ namespace swatch
 
         ObjectView ( const std::string& aId );
 
-//        ObjectView ( const std::string& aId, const XParameterSet& aSet );
-
         virtual ~ObjectView();
 
       protected:
@@ -341,5 +332,5 @@ namespace swatch
 
 
 
-#endif	/* __SWATCH_TEST_OBJECT_HPP__ */
+#endif	/* __SWATCH_CORE_OBJECT_HPP__ */
 

@@ -1,20 +1,21 @@
-#include <boost/unordered/unordered_map.hpp>
 
 #include "swatch/core/Object.hpp"
+
+
+#include <iostream>
+
 #include "swatch/core/Utilities.hpp"
 
+
 using namespace std;
+
 
 namespace swatch {
 namespace core {
 
+
 Object::Object(const std::string& aId) : id_(aId), parent_(0x0) {
 }
-
-
-//Object::Object(const std::string& aId, const XParameterSet& params) :
-//  id_(aId), parent_(0x0), pSet_(params) {
-//}
 
 
 Object::~Object() {
@@ -176,12 +177,6 @@ Object& Object::getObj(const std::string& aId) const {
 
   return it->second->getObj(child);
 }
-
-/*
-const XParameterSet& Object::pset() const {
-  return pSet_;
-}
-*/
 
 
 // TODO: include self
