@@ -44,6 +44,7 @@ treeToDaqTTCStub(const boost::property_tree::ptree& t) {
     astub.addressTableT2 = t.get<std::string>("ADDRESS TABLE T2"); // FIXME
     astub.crate          = t.get<std::string>("CRATE NAME");
     astub.slot           = t.get<uint32_t>("CRATE SLOT");
+    astub.fedId          = t.get<uint16_t>("FED ID");
 
     return astub;
 }

@@ -30,6 +30,22 @@ private:
 
 
 template<typename DataType>
+class NotEqualCondition : public MetricCondition<DataType> {
+public:
+    NotEqualCondition(const DataType& aValue);
+    ~NotEqualCondition();
+    
+    void print(std::ostream& aStream) const;
+    
+    bool operator()(const DataType& aValue) const;
+    
+private:
+    const DataType value_;    
+};
+
+
+
+template<typename DataType>
 class RangeCondition : public MetricCondition<DataType> {
 public:
     RangeCondition(const DataType& aLower, const DataType& aUpper);

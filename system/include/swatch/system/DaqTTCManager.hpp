@@ -32,6 +32,8 @@ public:
 
     const std::string& getCrateId() const;
 
+    uint16_t getFedId() const;
+
     virtual void reset() = 0;
     
     /// Enables ttc commands on the given slots
@@ -55,7 +57,9 @@ protected:
     core::Metric<uint32_t>& ttcMetricSingleBitErrors_;
     //! Metric for TTC double-bit error counter
     core::Metric<uint32_t>& ttcMetricDoubleBitErrors_;
-    
+    //! Metric for FED ID
+    core::Metric<uint16_t>& daqMetricFedId_;
+
 private:
     DaqTTCManager( const DaqTTCManager& other ); // non copyable
     DaqTTCManager& operator=( const DaqTTCManager& ); // non copyable

@@ -214,6 +214,7 @@ void AMC13Manager::implementUpdateMetrics()
   setMetricValue<>(ttcMetricBC0Errors_, driver_->read(AMC13::T2,"STATUS.TTC.BCNT_ERROR"));
   setMetricValue<>(ttcMetricSingleBitErrors_, driver_->read(AMC13::T2,"STATUS.TTC.SBIT_ERROR"));
   setMetricValue<>(ttcMetricDoubleBitErrors_, driver_->read(AMC13::T2,"STATUS.TTC.MBIT_ERROR"));
+  setMetricValue<>(daqMetricFedId_, (uint16_t) driver_->read(AMC13::T1,"CONF.ID.FED_ID"));
 }
 
 

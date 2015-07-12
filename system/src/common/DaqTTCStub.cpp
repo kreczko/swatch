@@ -25,6 +25,7 @@ std::ostream& operator<<(std::ostream& os, const swatch::system::DaqTTCStub& sd 
        << "   - Address Table [T2] = " << sd.addressTableT2 << "\n"
        << "   - Crate ID = " << sd.crate << "\n"
        << "   - Crate Slot = " << sd.slot 
+       << "   - FED ID = " << sd.fedId << "\n"
        << std::flush;
 
     return os;

@@ -23,8 +23,8 @@ DaqTTCManager::DaqTTCManager(const swatch::core::AbstractStub& aStub ) :
   ttcMetricBC0Counter_( registerMetric<uint32_t>("bc0Counter") ),
   ttcMetricBC0Errors_( registerMetric<uint32_t>("bc0Errors", core::GreaterThanCondition<uint32_t>(0)) ),
   ttcMetricSingleBitErrors_( registerMetric<uint32_t>("ttcSingleBitErrors", core::GreaterThanCondition<uint32_t>(0)) ),
-  ttcMetricDoubleBitErrors_( registerMetric<uint32_t>("ttcDoubleBitErrors", core::GreaterThanCondition<uint32_t>(0)) )
-{
+  ttcMetricDoubleBitErrors_( registerMetric<uint32_t>("ttcDoubleBitErrors", core::GreaterThanCondition<uint32_t>(0)) ),
+  daqMetricFedId_( registerMetric<uint16_t>("fedId", core::NotEqualCondition<uint16_t>(stub_.fedId)) ) {
 }
 
 
@@ -47,10 +47,12 @@ const std::string& DaqTTCManager::getCrateId() const {
 }
 
 
+uint16_t DaqTTCManager::getFedId() const {
+  return stub_.fedId;
+}
 
 
-const std::vector<std::string> DaqTTCManager::defaultMetrics = {"clkFreq", "bc0Counter", "bc0Errors", "ttcSingleBitErrors", "ttcDoubleBitErrors"};
-
+const std::vector<std::string> DaqTTCManager::defaultMetrics = {"clkFreq", "bc0Counter", "bc0Errors", "ttcSingleBitErrors", "ttcDoubleBitErrors", "fedId"};
 
 } // namespace system
 } // namespace swatch

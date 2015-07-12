@@ -40,6 +40,9 @@ public:
   //! Slot where the board is installed 
   uint32_t slot;
 
+  //! ID for this FED
+  uint16_t fedId;
+
   //! Uri to access the hardware resource
   std::string uriT1;
 
@@ -64,4 +67,4 @@ std::ostream& operator<<(std::ostream& os, const swatch::system::DaqTTCStub& sd)
 } // namespace swatch
 
 
-#endif /* __SWATCH_SYSTEM_AMC13SERVICESTUB__ */
+#endif /* __SWATCH_SYSTEM_DAQTTCSTUB_HPP__ */

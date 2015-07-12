@@ -37,6 +37,27 @@ void EqualCondition<DataType>::print(std::ostream& aStream) const {
 }
 
 
+/* ---  NotEqualCondition  --- */
+
+template<typename DataType>
+NotEqualCondition<DataType>::NotEqualCondition(const DataType& aValue) : 
+value_(aValue) {
+}
+
+template<typename DataType>
+NotEqualCondition<DataType>::~NotEqualCondition() {}
+
+template<typename DataType>
+bool NotEqualCondition<DataType>::operator()(const DataType& aValue) const {
+  return (value_ != aValue);
+}
+
+template<typename DataType>
+void NotEqualCondition<DataType>::print(std::ostream& aStream) const {
+  aStream << " != " << value_;
+}
+
+
 /* ---  RangeCondition  --- */
 
 
