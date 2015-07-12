@@ -26,36 +26,25 @@ using namespace std;
 namespace swlog = swatch::logger;
 namespace swsys = swatch::system;
 
+
 SWATCH_REGISTER_CLASS(swatch::system::test::DummyAMC13Manager);
 
 namespace swatch {
 namespace system {
 namespace test {
 
-DummyAMC13Manager::DummyAMC13Manager( const swatch::core::AbstractStub& aStub ) : system::DaqTTCManager(aStub) {
+
+DummyAMC13Manager::DummyAMC13Manager( const swatch::core::AbstractStub& aStub ) : 
+  system::DaqTTCManager(aStub) {
     LOG(swlog::kInfo) << "Building a DummyAMC13Service";
     
-    LOG(swlog::kDebug) << "Id:" << this->id();;
-
-    const swsys::DaqTTCStub& stub = getStub();
-
-    crate_ = stub.crate;
-    slot_ = stub.slot;
+    LOG(swlog::kDebug) << "Id:" << this->id();
 }
+
 
 DummyAMC13Manager::~DummyAMC13Manager() {
 
   
-}
-
-uint32_t
-DummyAMC13Manager::getSlot() const {
-    return slot_;
-}
-
-const std::string&
-DummyAMC13Manager::getCrateId() const {
-    return crate_;
 }
 
 
@@ -75,9 +64,11 @@ DummyAMC13Manager::enableTTC(const std::vector<uint32_t>& aSlots) {
     
 }
 
+
 void DummyAMC13Manager::configureClock(const std::string& mode) {
 
 }
+
 
 /*
 double DummyAMC13Manager::ttcClockFreq() const {

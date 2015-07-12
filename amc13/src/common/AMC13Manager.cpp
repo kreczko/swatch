@@ -50,9 +50,6 @@ AMC13Manager::AMC13Manager(const swatch::core::AbstractStub& aStub) :
 
     const system::DaqTTCStub& desc = getStub();
 
-    crate_ = desc.crate;
-    slot_  = desc.slot;
-
     uhal::HwInterface t1 = uhal::ConnectionManager::getDevice("T1", desc.uriT1, desc.addressTableT1);
     uhal::HwInterface t2 = uhal::ConnectionManager::getDevice("T2", desc.uriT2, desc.addressTableT2);
 
@@ -72,20 +69,6 @@ AMC13Manager::~AMC13Manager() {
 
 
 //---
-uint32_t
-AMC13Manager::getSlot() const {
-    return slot_;
-}
-
-
-//---
-const std::string&
-AMC13Manager::getCrateId() const {
-    return crate_;
-}
-
-
-//---
 void
 AMC13Manager::enableTTC(const std::vector<uint32_t>& slots) {
     uint32_t mask(0x0);
@@ -97,6 +80,7 @@ AMC13Manager::enableTTC(const std::vector<uint32_t>& slots) {
     driver_->AMCInputEnable(mask);
 
 }
+
 
 //---
 void AMC13Manager::reset() {

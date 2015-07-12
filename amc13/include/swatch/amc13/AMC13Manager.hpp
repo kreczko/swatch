@@ -25,10 +25,6 @@ class AMC13Manager : public swatch::system::DaqTTCManager {
 public:
     AMC13Manager( const swatch::core::AbstractStub& aStub );
     ~AMC13Manager();
-
-    virtual uint32_t getSlot() const;
-
-    virtual const std::string& getCrateId() const;
     
     virtual void reset();
     
@@ -54,11 +50,6 @@ protected:
     virtual void implementUpdateMetrics();
     
 private:
-
-    uint32_t slot_;
-    
-    std::string crate_;
-    
     ::amc13::AMC13* driver_;
 };
 

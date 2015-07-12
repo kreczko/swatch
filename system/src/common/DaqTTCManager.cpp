@@ -8,9 +8,6 @@
 #include "swatch/system/DaqTTCManager.hpp"
 
 
-// boost headers
-#include "boost/foreach.hpp"
-
 // SWATCH headers
 #include "swatch/core/MetricConditions.hpp"
 
@@ -38,6 +35,18 @@ DaqTTCManager::~DaqTTCManager() {
 const DaqTTCStub& DaqTTCManager::getStub() const {
   return stub_;
 }
+
+
+uint32_t DaqTTCManager::getSlot() const {
+  return stub_.slot; 
+}
+
+
+const std::string& DaqTTCManager::getCrateId() const {
+  return stub_.crate;
+}
+
+
 
 
 const std::vector<std::string> DaqTTCManager::defaultMetrics = {"clkFreq", "bc0Counter", "bc0Errors", "ttcSingleBitErrors", "ttcDoubleBitErrors"};

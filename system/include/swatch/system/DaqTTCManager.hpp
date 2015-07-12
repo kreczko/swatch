@@ -28,9 +28,9 @@ public:
     
     const DaqTTCStub& getStub() const;
     
-    virtual uint32_t getSlot() const = 0;
+    uint32_t getSlot() const;
 
-    virtual const std::string& getCrateId() const = 0;
+    const std::string& getCrateId() const;
 
     virtual void reset() = 0;
     

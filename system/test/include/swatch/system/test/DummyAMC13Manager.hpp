@@ -19,10 +19,6 @@ public:
     DummyAMC13Manager( const swatch::core::AbstractStub& aStub );
     virtual ~DummyAMC13Manager();
 
-    virtual uint32_t getSlot() const;
-
-    virtual const std::string& getCrateId() const;
-    
     virtual void reset();
     
     /// Enables ttc commands on the given slots
@@ -48,14 +44,9 @@ public:
     */
     
 private:
-
     virtual void implementUpdateMetrics();
-    
-    uint32_t slot_;
-    
-    std::string crate_;
-
 };
+
 } // namespace test
 } // namespace system
 } // namespace swatch
