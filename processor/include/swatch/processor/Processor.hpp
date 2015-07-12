@@ -5,13 +5,15 @@
  * @date    1July 2014
  */
 
-#ifndef __SWATCH_TEST_PROCESSOR_HPP__
-#define	__SWATCH_TEST_PROCESSOR_HPP__
+#ifndef __SWATCH_PROCESSOR_PROCESSOR_HPP__
+#define __SWATCH_PROCESSOR_PROCESSOR_HPP__
 
-// Swatch Headers
+
+// SWATCH headers
 #include "swatch/core/ActionableObject.hpp"
 #include "swatch/core/exception.hpp"
-#include "ProcessorStub.hpp"
+#include "swatch/processor/ProcessorStub.hpp"
+
 
 namespace swatch {
 
@@ -27,15 +29,12 @@ class ReadoutInterface;
 class AlgoInterface;
 class LinkInterface;
 
-/**
- *  @class Processor
- */
 class Processor : public core::ActionableObject {
 protected:
   Processor(const swatch::core::AbstractStub& );
 public:
     virtual ~Processor();
-    
+ 
     const ProcessorStub& getStub() const;
 
     /**
@@ -50,7 +49,7 @@ public:
      */
     const std::string& getCrateId() const;
 
-    //! Constant corresponing to no slot being assigned
+    //! Constant corresponding to no slot being assigned
     static const uint32_t NoSlot;
 
     /**
@@ -62,8 +61,11 @@ public:
     virtual std::string firmwareInfo() const = 0; 
 
     TTCInterface& ttc();
+    
     ReadoutInterface& readout();
+    
     AlgoInterface& algo();
+    
     LinkInterface& linkInterface();
     
     static const std::vector<std::string> defaultMetrics;
@@ -113,5 +115,5 @@ DEFINE_SWATCH_EXCEPTION(LinkInterfaceAlreadyDefined);
 }
 }
 
-#endif	/* __SWATCH_TEST_PROCESSOR_HPP__ */
+#endif	/* __SWATCH_PROCESSOR_PROCESSOR_HPP__ */
 
