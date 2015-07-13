@@ -67,7 +67,7 @@ public:
 
 protected:
     // user defined code for execution
-    virtual State code( const XParameterSet& params ) = 0; ///Should take const reference but xdata::serializable is const-correctness broken
+    virtual State code( const XParameterSet& params ) = 0;
 
     template<typename T>
     Command( const std::string& aId , const T& aDefault );

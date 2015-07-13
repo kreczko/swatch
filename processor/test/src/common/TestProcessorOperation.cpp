@@ -5,16 +5,17 @@
  *      Author: kreczko
  */
 #include <boost/test/unit_test.hpp>
-#include <boost/foreach.hpp>
-// swatch headers
+
+// XDAQ headers
+#include "xdata/Integer.h"
+#include "xdata/String.h"
+
+// SWATCH headers
 #include "swatch/core/Operation.hpp"
 #include "swatch/logger/Log.hpp"
 #include "swatch/processor/test/DummyProcessor.hpp"
 #include "swatch/processor/test/DummyProcessorOperation.hpp"
-#include "swatch/core/test/DummyHandler.hpp"
-//xdaq headers
-#include <xdata/Integer.h>
-#include <xdata/String.h>
+
 
 using namespace swatch::logger;
 namespace swct = swatch::core::test;

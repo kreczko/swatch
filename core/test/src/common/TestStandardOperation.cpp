@@ -6,14 +6,14 @@
  */
 #include <boost/test/unit_test.hpp>
 
-// swatch headers
-#include "swatch/core/test/DummyHandler.hpp"
+// SWATCH headers
+#include "swatch/core/test/DummyActionableObject.hpp"
+#include "swatch/core/test/DummyStandardOperation.hpp"
 #include "swatch/logger/Log.hpp"
 
 #include <xdata/Integer.h>
 #include <xdata/String.h>
-#include "../../../include/swatch/core/StandardOperation.hpp"
-#include "../../include/swatch/core/test/DummyStandardOperation.hpp"
+
 
 using namespace swatch::logger;
 namespace swatch {
@@ -37,7 +37,7 @@ struct StandardOperationTestSetup {
   ~StandardOperationTestSetup(){
   }
 
-  DummyHandler handler;
+  DummyActionableObject handler;
   swatch::core::FSM fsm;
   swatch::core::Operation *common, *custom, *test;
 
@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_SUITE( StandardOperationTestSuite )
 
 BOOST_AUTO_TEST_CASE(TestConstructor) {
   LOG(kInfo) << "Running StandardOperationTestSuite/TestConstructor";
-  DummyHandler handler = DummyHandler();
+  DummyActionableObject handler;
   swatch::core::StandardOperation* common = handler.Register<DummyStandardOperation>("Common");
   BOOST_CHECK_EQUAL(common->getCurrentState(), "HALTED");
 }

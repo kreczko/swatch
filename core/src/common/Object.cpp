@@ -21,9 +21,14 @@ Object::Object(const std::string& aId) : id_(aId), parent_(0x0) {
 Object::~Object() {
   objectsChart_.clear();
 
-  for (std::deque< Object* >::iterator it(children_.begin()); it != children_.end(); ++it) {
-    //        cout << "Deleting " << ( *it )->typeName() << " addr=" << *it << " uid=" << ( *it )->uid() << endl;
-    delete *it;
+  for (std::deque< std::pair<Object*,Deleter*> >::iterator it(children_.begin()); it != children_.end(); ++it) {
+    if ( it->second != NULL )
+    {
+      (*it->second)(it->first);
+      delete it->second;
+    }
+    else
+      delete it->first;
   }
 }
 
@@ -54,7 +59,7 @@ void Object::addObj(Object* aChild) {
   }
 
   //    cout << this->id() << " - Adding " << aChild->id() << endl;
-  children_.push_back(aChild);
+  children_.push_back(std::make_pair(aChild, (Deleter*)NULL));
   objectsChart_.insert(std::make_pair(aChild->id(), aChild));
 }
 
@@ -104,8 +109,8 @@ void Object::getAncestors(std::deque<const Object*>& aGenealogy) const {
 void Object::print(std::ostream& aStr, const uint32_t& aIndent) const {
   aStr << '\n' << std::string(aIndent, ' ') << "- [" << typeName() << "] " << id_;
 
-  for (std::deque<Object*>::const_iterator lIt = children_.begin(); lIt != children_.end(); ++lIt) {
-    (**lIt).print(aStr, aIndent + 1);
+  for (std::deque< std::pair<Object*,Deleter*> >::const_iterator lIt = children_.begin(); lIt != children_.end(); ++lIt) {
+    (*lIt->first).print(aStr, aIndent + 1);
   }
 }
 
@@ -119,10 +124,10 @@ void Object::getCharts(const std::string& basePath, boost::unordered_map<std::st
   }
 
   // 2) Add children's children (ad infinitum) by recursive calls
-  std::deque<Object*>::const_iterator it;
+  std::deque< std::pair<Object*,Deleter*> >::const_iterator it;
 
   for (it = children_.begin(); it != children_.end(); ++it) {
-    (*it)->getCharts(prefix + (*it)->id_, chart);
+    it->first->getCharts(prefix + it->first->id_, chart);
   }
 }
 
@@ -259,7 +264,7 @@ Object* Object::iterator::operator->() const {
 }
 
 Object& Object::iterator::value() const {
-  return ( itStack_.size()) ? (**itStack_[0]) : (*begin_);
+  return ( itStack_.size()) ? ( * itStack_[0]->first) : (*begin_);
 }
 
 Object::iterator& Object::iterator::operator++() {
@@ -301,15 +306,15 @@ bool Object::iterator::next() {
   }
 
   //We are already in the tree...
-  if ((**itStack_[0]).children_.size()) {
+  if (itStack_[0]->first->children_.size()) {
     // Entry has children, recurse...
-    itStack_.push_front((**itStack_[0]).children_.begin());
+    itStack_.push_front(itStack_[0]->first->children_.begin());
     return true;
   }
 
   // No children so go to the next entry on this level
   while (itStack_.size()) {
-    if (++(itStack_[0]) != ((itStack_.size() == 1) ? (*begin_) : (**itStack_[1])).children_.end()) {
+    if (++(itStack_[0]) != ((itStack_.size() == 1) ? (*begin_) : (*itStack_[1]->first)).children_.end()) {
       // Next entry on this level is valid - return
       return true;
     }

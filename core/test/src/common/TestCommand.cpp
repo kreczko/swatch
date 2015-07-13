@@ -10,7 +10,7 @@
 #include "swatch/core/Command.hpp"
 #include "swatch/logger/Log.hpp"
 #include "swatch/core/test/DummyCommand.hpp"
-#include "swatch/core/test/DummyHandler.hpp"
+#include "swatch/core/test/DummyActionableObject.hpp"
 //xdaq headers
 #include <xdata/Integer.h>
 #include <xdata/String.h>
@@ -34,7 +34,8 @@ struct CommandTestSetup {
     handler.Register<DummyCommand>("dummy_print");//, new DummyCommand(&handler, xdata::Integer(-33)));
     handler.Register<DummyCommand>("dummy_error");//, new DummyCommand(&handler, xdata::Integer(-33)));
     handler.Register<DummyCommand>("dummy_nada");//, new DummyCommand(&handler, xdata::Integer(-33)));
-
+    handler.Register<DummyCommand>("sleep");
+    
     print = handler.getCommand("dummy_print");
     error = handler.getCommand("dummy_error");
     nothing = handler.getCommand("dummy_nada");
@@ -46,7 +47,7 @@ struct CommandTestSetup {
   ~CommandTestSetup(){
   }
 
-  DummyHandler handler;
+  DummyActionableObject handler;
   Command* print, *error, *nothing;
   ReadWriteXParameterSet params;
 };
@@ -55,7 +56,7 @@ BOOST_AUTO_TEST_SUITE( CommandTestSuite)
 // although commands will be created via a factory in the end,
 // we want to make sure that the factory can use this
 BOOST_AUTO_TEST_CASE(TestConstructor) {
-  DummyHandler handler = DummyHandler();
+  DummyActionableObject handler;
   swatch::core::Command* test = handler.Register<DummyCommand>("Test");
   
   BOOST_CHECK_EQUAL(test->getDefaultParams().get<xdata::Integer>("aa").value_ , 15);

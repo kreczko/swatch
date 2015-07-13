@@ -1,23 +1,23 @@
-#include "swatch/logger/Log.hpp"
-#include "swatch/core/xoperators.hpp"
-#include "swatch/core/test/DummyHandler.hpp"
-#include "swatch/processor/test/DummyProcessor.hpp"
+
+#include "swatch/processor/test/DummyProcessorOperation.hpp"
+
 
 #include <xdata/Integer.h>
 #include <xdata/String.h>
-#include <boost/foreach.hpp>
-#include "../../include/swatch/processor/test/DummyProcessorOperation.hpp"
+
+#include "swatch/logger/Log.hpp"
 #include "swatch/core/FSM.hpp"
+#include "swatch/processor/test/DummyProcessor.hpp"
+
 
 namespace swatch {
 namespace processor {
 namespace test {
+
 DummyProcessorOperation::DummyProcessorOperation(const std::string& aId) :
-        DummyOperation(aId) {
+  DummyOperation(aId) {
   // since DummyOperation sets states, lets clear it all up
   fsm_->clear();
-//   registerParameter("aa", xdata::Integer(15));
-//   registerParameter("todo", xdata::String(""));
   std::string halted("HALTED");
   std::string tested("TESTED");
 
@@ -29,9 +29,10 @@ DummyProcessorOperation::DummyProcessorOperation(const std::string& aId) :
   fsm_->addStateTransition<DummyProcessorOperation>(halted, tested, "test", this, &DummyProcessorOperation::test);
 }
 
+
 DummyProcessorOperation::~DummyProcessorOperation() {
-//  delete dummy_proc_;
 }
+
 
 void DummyProcessorOperation::test(toolbox::Event::Reference event) {
   DummyProcessor* res = getParent<DummyProcessor>();

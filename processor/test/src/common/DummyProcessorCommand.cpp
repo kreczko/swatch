@@ -1,29 +1,31 @@
-#include "swatch/logger/Log.hpp"
-#include "swatch/core/xoperators.hpp"
-#include "swatch/core/test/DummyHandler.hpp"
 #include "swatch/processor/test/DummyProcessorCommand.hpp"
+
+
+#include "xdata/Integer.h"
+#include "xdata/String.h"
+
+#include "swatch/logger/Log.hpp"
 #include "swatch/processor/test/DummyProcessor.hpp"
 
-#include <xdata/Integer.h>
-#include <xdata/String.h>
-#include <boost/foreach.hpp>
 
 namespace swco = swatch::core;
 
 namespace swatch {
 namespace processor {
 namespace test {
+
+
 DummyProcessorCommand::DummyProcessorCommand(const std::string& aId) :
         DummyCommand(aId, xdata::String("")) {
   registerParameter("aa", xdata::Integer(15));
   registerParameter("todo", xdata::String(""));
 }
 
+
 DummyProcessorCommand::~DummyProcessorCommand() {
-//  delete dummy_proc_;
 }
 
-core::Command::State DummyProcessorCommand::code(const swco::XParameterSet& params) ///Should take const reference but xdata::serializable is const-correctness broken
+core::Command::State DummyProcessorCommand::code(const swco::XParameterSet& params)
 {
   DummyProcessor* res = getParent<DummyProcessor>();
 
@@ -42,6 +44,8 @@ core::Command::State DummyProcessorCommand::code(const swco::XParameterSet& para
     return kWarning;
   }
 }
+
+
 } // namespace test
 } // namespace processor
 } // namespace swatch

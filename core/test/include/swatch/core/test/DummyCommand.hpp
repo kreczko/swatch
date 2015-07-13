@@ -17,6 +17,7 @@
 namespace swatch {
 namespace core {
 namespace test {
+
 class DummyCommand: public swatch::core::Command {
 public:
   DummyCommand( const std::string& aId );

@@ -9,8 +9,9 @@
 // swatch headers
 #include "swatch/core/ThreadPool.hpp"
 #include "swatch/logger/Log.hpp"
+
 #include "swatch/core/test/DummyCommand.hpp"
-#include "swatch/core/test/DummyHandler.hpp"
+#include "swatch/core/test/DummyActionableObject.hpp"
 
 using namespace swatch::logger;
 using namespace swatch::core;
@@ -22,23 +23,22 @@ namespace test {
 struct ThreadPoolSetup {
 public:
   ThreadPoolSetup() :
-          handler(),
           cmd1(),
           cmd2(),
           cmd3(),
           params(),
           wait_time_in_ms(10) {
-    handler.Register<DummyCommand>("cmd1");
-    handler.Register<DummyCommand>("cmd2");
-    handler.Register<DummyCommand>("cmd3");
+    handler1.Register<DummyCommand>("cmd");
+    handler2.Register<DummyCommand>("cmd");
+    handler3.Register<DummyCommand>("cmd");
 
-    cmd1 = handler.getCommand("cmd1");
-    cmd2 = handler.getCommand("cmd2");
-    cmd3 = handler.getCommand("cmd3");
+    cmd1 = handler1.getCommand("cmd");
+    cmd2 = handler2.getCommand("cmd");
+    cmd3 = handler3.getCommand("cmd");
 
-    ((DummyCommand*) cmd1)->registerParameter("todo", xdata::String("thread"));
-    ((DummyCommand*) cmd2)->registerParameter("todo", xdata::String("thread"));
-    ((DummyCommand*) cmd3)->registerParameter("todo", xdata::String("thread"));
+    ((DummyCommand*) cmd1)->registerParameter("todo", xdata::String("sleep"));
+    ((DummyCommand*) cmd2)->registerParameter("todo", xdata::String("sleep"));
+    ((DummyCommand*) cmd3)->registerParameter("todo", xdata::String("sleep"));
 
     ((DummyCommand*) cmd1)->registerParameter("milliseconds",
         xdata::Integer(wait_time_in_ms));
@@ -56,7 +56,7 @@ public:
 
   }
 
-  DummyHandler handler;
+  DummyActionableObject handler1, handler2, handler3;
   Command *cmd1, *cmd2, *cmd3;
   ReadOnlyXParameterSet params;
   unsigned int wait_time_in_ms;

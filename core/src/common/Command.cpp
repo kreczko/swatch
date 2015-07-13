@@ -9,8 +9,9 @@
 #include "xdata/Serializable.h"
 
 // SWATCH headers
+#include "swatch/core/ActionableObject.hpp"
 #include "swatch/core/ThreadPool.hpp"
-
+#include "swatch/logger/Log.hpp"
 
 namespace swatch {
 namespace core {
@@ -38,15 +39,29 @@ Command::~Command() {
 //---
 void 
 Command::exec( const XParameterSet& params  , const bool& aUseThreadPool ) 
-{ 
-  // Reset the status before doing anything
+{
+  // Request sole control of the resource
+  std::pair<bool, const Functionoid*> requestResult = getParent<ActionableObject>()->requestControlOfResource(this);
+  if ( ! requestResult.first ){
+    std::ostringstream oss;
+    oss << "Could not run command '" << id() << "' on resource '" << getParent()->path() << "'. ";
+
+    if (requestResult.second)
+      oss << "Resource currently busy running functionoid '" << requestResult.second->id() << "'.";
+    else
+      oss << "Actions currently disabled on this resource.";
+
+    throw std::runtime_error(oss.str());
+  }
+
+  // Reset the status before doing anything else
   reset();
 
   // merge with default settings
   runningParams_ = mergeParametersWithDefaults(params);
 
   // Execute the command protected by a very generic try/catch
-  try {
+  try {    
     // if threadpool is to be used
     if ( aUseThreadPool ){
       boost::unique_lock<boost::mutex> lock(mutex_);
@@ -60,6 +75,7 @@ Command::exec( const XParameterSet& params  , const bool& aUseThreadPool )
       this->runCode(runningParams_);
     }
   } catch ( const std::exception& e ) {
+    getParent<ActionableObject>()->releaseControlOfResource(this);
     // TODO: log the error to error msg (or not?)
     // Then rethrow the exception on to the higher layers of code.
     throw;
@@ -97,6 +113,12 @@ void Command::runCode(const XParameterSet& params) {
     gettimeofday(&execEndTime_, NULL);
     state_ = kError;
     statusMsg_ = std::string("ERROR - An exception of type '" + demangleName(typeid(e).name()) + "' was thrown in Command::code(): ") + e.what();
+  }
+  
+  // 3) Release control of the resource
+  const Functionoid* releaseResult = getParent<ActionableObject>()->releaseControlOfResource(this);
+  if (releaseResult != NULL) {
+    LOG(swatch::logger::kError) << "Did not successfully release resource '" << getParent()->path() << "' from at end of runCode method for command '" << id() << "'";
   }
 }
 

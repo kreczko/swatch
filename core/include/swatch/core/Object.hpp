@@ -7,14 +7,15 @@
  */
 
 #ifndef __SWATCH_CORE_OBJECT_HPP__
-#define	__SWATCH_CORE_OBJECT_HPP__
+#define __SWATCH_CORE_OBJECT_HPP__
 
 
-// Standard Headers
+// Standard headers
 #include <typeinfo>
 #include <iosfwd>
 
-// Boost Headers
+// boost headers
+#include "boost/type_traits/is_base_of.hpp"
 #include "boost/unordered_map.hpp"
 
 
@@ -44,13 +45,25 @@ namespace swatch
     class Object
     {
       public:
+          
+        //! Functor interface used for destruction of objects in object tree (allows deletion to be delayed until all threads are done with the object)
+        class Deleter
+        {
+        public:
+            Deleter() {}
+            virtual ~Deleter() {}
+            
+            virtual void operator()(Object* aObject) = 0;
+        };
+
+          
         /**
           Class to iterate over the children of an object
         */
         class iterator : public std::iterator< std::forward_iterator_tag , Object >
         {
             friend class Object;
-            typedef std::deque< std::deque< Object* >::const_iterator > Stack;
+            typedef std::deque< std::deque< std::pair<Object*,Deleter*> >::const_iterator > Stack;
           public:
             /**
               Default constructor
@@ -132,6 +145,7 @@ namespace swatch
             Stack itStack_;
         };
 
+        
         friend std::ostream& ( operator<< ) ( std::ostream& aStr , const swatch::core::Object& aObject );
         friend class Functionoid;
 
@@ -228,9 +242,18 @@ namespace swatch
         void addObj ( Object* aChild );
 
         /**
+          Add a new object as a child of the current Object
+          @warning the parent takes ownership of the child, and takes repsonsibility for deleting it using the supplied functor
+          @param aChild a pointer to a new Object
+          @param aDeleter a functor that inherits from Object::Deleter. Must be copy-constructible. The functor's void operator()(Object*) method will be called later in order to delete this object
+        */
+        template <class T>
+        void addObj ( Object* aChild, T aDeleter);
+        
+        /**
           Container for child objects. Deleted by destructor
         */
-        std::deque< Object* > children_;
+        std::deque< std::pair< Object*, Deleter* > > children_;
 
         /**
           Map of children
@@ -308,7 +331,23 @@ namespace swatch
       return dynamic_cast<T*> ( & this->getObj ( aId ) );
     }
 
+    template<class T>
+    void Object::addObj (Object* aChild, T aDeleter)
+    {
+      BOOST_STATIC_ASSERT_MSG( (boost::is_base_of<Object::Deleter, T >::value) , "class T must be a descendant of swatch::core::Object::Deleter" );
 
+      aChild->setParent(this);
+
+      // Insure the child does not have a twin
+      if (objectsChart_.find(aChild->id()) != objectsChart_.end()) {
+        throw std::runtime_error(aChild->id() + " already exists in this family");
+      }
+
+      children_.push_back(std::make_pair(aChild, new T(aDeleter)));
+      objectsChart_.insert(std::make_pair(aChild->id(), aChild));
+    }
+
+    
 //     template<typename T>
 //     std::deque<T*> Object::getChildrenOfType()
 //     {

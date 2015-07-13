@@ -27,19 +27,20 @@ namespace system {
 
 
 //---
-System::System( const swatch::core::AbstractStub& aStub )
-: ActionableObject(aStub.id), stub_(dynamic_cast<const swatch::system::SystemStub&>(aStub)) {
+System::System( const swatch::core::AbstractStub& aStub ) : 
+  ActionableObject(aStub.id), 
+  stub_(dynamic_cast<const swatch::system::SystemStub&>(aStub)) {
 }
-
 
 //---
 System::~System() {
 }
 
+
+//---
 const SystemStub& System::getStub() const {
   return stub_;
 }
-
 
 //---
 System::CratesMap&
@@ -58,7 +59,7 @@ System::add(processor::Processor* aProcessor) {
     }
 
     // build a family
-    this->addObj(aProcessor);
+    this->addObj(aProcessor, core::ActionableObject::Deleter());
 
     // but keep it aside
     processors_.push_back(aProcessor);
@@ -82,7 +83,7 @@ System::add(system::DaqTTCManager* aAMC13) {
     if (aAMC13 == NULL)
         throw std::invalid_argument("AMC13 pointer is NULL!");
     // build a family
-    this->addObj(aAMC13);
+    this->addObj(aAMC13, core::ActionableObject::Deleter());
     
     // but keep it aside
     daqTtc_.push_back(aAMC13);
@@ -132,15 +133,12 @@ System::add( Crate* crate ){
 	cratesMap_[crate->id()] = crate;
 }
 
-
 //---
 std::deque<processor::Processor*>&
 System::getProcessors() {
     return processors_;
 }
 
-
-//---
 std::deque<DaqTTCManager*>&
 System::getDaqTTC() {
     return daqTtc_;

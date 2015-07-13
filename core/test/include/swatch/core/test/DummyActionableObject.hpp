@@ -1,28 +1,26 @@
 /**
- * @file    DummyHandler.hpp
+ * @file    DummyActionableObject.hpp
  * @author  Alessandro Thea
- * @brief   ActionableObject class
  * @date    February 2015
  *
  */
 
-#ifndef SWATCH_CORE_TEST_DUMMYHANDLER_HPP
-#define SWATCH_CORE_TEST_DUMMYHANDLER_HPP
+#ifndef SWATCH_CORE_TEST_DUMMYACTIONABLEOBJECT_HPP
+#define SWATCH_CORE_TEST_DUMMYACTIONABLEOBJECT_HPP
+
 
 #include "swatch/core/ActionableObject.hpp"
+
 
 namespace swatch {
 namespace core {
 namespace test {
 
-class DummyHandler: public swatch::core::ActionableObject {
+class DummyActionableObject: public swatch::core::ActionableObject {
 public:
-  DummyHandler();
+  DummyActionableObject();
 
-  virtual ~DummyHandler();
-
-//  void Register(std::string aName, Command* aCmd);
-//  void registerController(std::string name, Controller* ctrl);
+  virtual ~DummyActionableObject();
 
   uint32_t number() const;
 
@@ -35,15 +33,19 @@ public:
   void fail();
 
 private:
-    
+
   void implementUpdateMetrics() {}
     
   std::string something_;
   uint32_t number_;
+  
+  DummyActionableObject( const DummyActionableObject& other ); // non copyable
+  DummyActionableObject& operator=( const DummyActionableObject& ); // non copyable
+
 };
 
 } /* namespace test */
 } /* namespace core */
 } /* namespace swatch */
 
-#endif /* SWATCH_CORE_TEST_DUMMYHANDLER_HPP */
+#endif /* SWATCH_CORE_TEST_DUMMYACTIONABLEOBJECT_HPP */

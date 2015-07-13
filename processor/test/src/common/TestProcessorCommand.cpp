@@ -5,16 +5,17 @@
  *      Author: kreczko
  */
 #include <boost/test/unit_test.hpp>
-#include <boost/foreach.hpp>
-// swatch headers
-#include "swatch/core/test/DummyCommand.hpp"
-#include "swatch/logger/Log.hpp"
-#include "swatch/processor/test/DummyProcessor.hpp"
-#include "swatch/processor/test/DummyProcessorCommand.hpp"
-#include "swatch/core/test/DummyHandler.hpp"
-//xdaq headers
+
+// XDAQ headers
 #include <xdata/Integer.h>
 #include <xdata/String.h>
+
+// SWATCH headers
+#include "swatch/logger/Log.hpp"
+#include "swatch/core/test/DummyCommand.hpp"
+#include "swatch/processor/test/DummyProcessor.hpp"
+#include "swatch/processor/test/DummyProcessorCommand.hpp"
+
 
 using namespace swatch::logger;
 namespace swct = swatch::core::test;
@@ -34,7 +35,7 @@ struct ProcessorCommandTestSetup {
 
     get_crate->registerParameter("todo", xdata::String("getCrateId"));
   }
-  
+
   ~ProcessorCommandTestSetup(){
   }
 

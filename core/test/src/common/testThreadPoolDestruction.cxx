@@ -3,7 +3,7 @@
 #include "swatch/core/ThreadPool.hpp"
 #include "swatch/core/XParameterSet.hpp"
 #include "swatch/core/test/DummyCommand.hpp"
-#include "swatch/core/test/DummyHandler.hpp"
+#include "swatch/core/test/DummyActionableObject.hpp"
 
 
 using namespace swatch::core::test;
@@ -30,7 +30,7 @@ struct CommandTestSetup {
   ~CommandTestSetup(){
   }
 
-  swatch::core::test::DummyHandler handler;
+  swatch::core::test::DummyActionableObject handler;
   swatch::core::Command* print, *error, *nothing;
   swatch::core::ReadWriteXParameterSet params;
 };

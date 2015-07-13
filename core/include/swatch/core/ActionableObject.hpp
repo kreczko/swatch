@@ -30,8 +30,6 @@ class ActionableObject : public MonitorableObject {
 public:
   explicit ActionableObject( const std::string& aId );
 
-//  ActionableObject( const std::string& aId, const XParameterSet& aParams );
-    
   virtual ~ActionableObject();
 
   /**
@@ -48,7 +46,7 @@ public:
 
   /**
    * List of operation names stored.
-   * @return set of oepration names
+   * @return set of operation names
    */
   std::set<std::string> getOperations() const;
 
@@ -64,17 +62,42 @@ public:
   void Register(const std::string& aId , Command* aCommand );
   void Register(const std::string& aId , Operation* aOperation );
 
-
+  bool isEnabled() const;
+  
+  const Functionoid* getActiveFunctionoid() const;
+  
   typedef boost::unordered_map< std::string , CommandSequence* > tCommandSequenceMap;
   typedef boost::unordered_map< std::string , Command* > tCommandMap;
   typedef boost::unordered_map< std::string , Operation* > tOperationMap;
-     
-protected:
 
+  class Deleter : public Object::Deleter {
+  public:
+    Deleter() {}
+    ~Deleter() {}
+    
+    void operator()(Object* aObject);
+  };
+  
 private:
+  //! Disables all future actions from running on this resource
+  void disableActions();
+
   tCommandSequenceMap mCommandSequences;
   tCommandMap mCommands;
   tOperationMap mOperations;
+  
+  mutable boost::mutex mMutex;
+  //! Indicates which functionoid (Command/CommandSequence/Operation) is currently active; NULL value indicates that no functionoids are currently active.
+  const Functionoid* mActiveFunctionoid;
+  //! Indicates whether or not actions are allowed on this resource anymore (actions become disabled once the deleter is )
+  bool mEnabled;
+
+  std::pair<bool, Functionoid const * > requestControlOfResource(Functionoid const * const aFunctionoid);
+  Functionoid const * releaseControlOfResource(Functionoid const * const aFunctionoid);
+  
+  friend class Command;
+  friend class CommandSequence;
+  friend class Operation;
 };
 
 DEFINE_SWATCH_EXCEPTION(CommandSequenceAlreadyExistsInActionableObject);

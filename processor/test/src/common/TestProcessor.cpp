@@ -5,9 +5,6 @@
 #include "swatch/processor/LinkInterface.hpp"
 #include "swatch/processor/test/DummyProcessor.hpp"
 
-// Namespace resolution
-using std::cout;
-using std::endl;
 
 
 namespace swatch {
@@ -22,7 +19,7 @@ BOOST_AUTO_TEST_CASE(CreationTest) {
   
   DummyProcessor p(DummyProcessor::generateParams("dummy"));
 
-  BOOST_CHECK_EQUAL(p.getSlot(), 0);
+  BOOST_CHECK_EQUAL(p.getSlot(), uint32_t(0));
   BOOST_CHECK_EQUAL(p.getCrateId(), "s2g20-10");
 
   // Input and output ports

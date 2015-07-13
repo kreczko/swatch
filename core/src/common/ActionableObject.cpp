@@ -1,6 +1,12 @@
 
 #include "swatch/core/ActionableObject.hpp"
-#include <boost/foreach.hpp>
+
+
+#include "boost/foreach.hpp"
+
+#include "swatch/core/Utilities.hpp"
+#include "swatch/logger/Log.hpp"
+
 
 using namespace std;
 
@@ -10,7 +16,9 @@ namespace core {
 //------------------------------------------------------------------------------------
 
 ActionableObject::ActionableObject( const std::string& aId ) :
-    MonitorableObject( aId  )
+  MonitorableObject( aId  ),
+  mActiveFunctionoid(NULL),
+  mEnabled(true)
 {
 }
 
@@ -104,7 +112,69 @@ void ActionableObject::Register( const std::string& aId , Operation* aOperation 
   mOperations.insert( std::make_pair( aId , aOperation ) );
 }
 
+
+bool ActionableObject::isEnabled() const {
+  boost::lock_guard<boost::mutex> lGuard(mMutex);
+  return mEnabled;
+}
+
+
+const Functionoid* ActionableObject::getActiveFunctionoid() const {
+  boost::lock_guard<boost::mutex> lGuard(mMutex);
+  return mActiveFunctionoid;
+}
+
 //------------------------------------------------------------------------------------
+
+
+void ActionableObject::Deleter::operator ()(Object* aObject) {
+  if(ActionableObject* lActionableObj = dynamic_cast<ActionableObject*>(aObject))
+  {
+    LOG(swatch::logger::kNotice) << "ActionableObject deleter being called on object '" << aObject->path() << "'";
+
+    lActionableObj->disableActions();
+
+    //TODO (low-ish priority): Eventually replace this "spinning" do-loop with a more efficient implementation based on ActionableObject/Functionoid methods that use conditional variables behind-the-scenes 
+    do {
+    } while ( lActionableObj->getActiveFunctionoid() != NULL );
+
+    LOG(swatch::logger::kNotice) << "ActionableObject deleter now thinks that object '" << aObject->path() << "' has finished all commands";
+    
+    delete lActionableObj;
+  }
+  else{
+    LOG(swatch::logger::kWarning) << "ActionableObject::Deleter being used on object '" << aObject->path() << "' of type '" << swatch::core::demangleName(typeid(aObject).name()) << "' that doesn't inherit from ActionableObject";
+    delete aObject;
+  }
+}
+
+
+void ActionableObject::disableActions(){
+  boost::lock_guard<boost::mutex> lGuard(mMutex);
+  mEnabled = false;
+}
+
+
+std::pair<bool, const Functionoid *  > ActionableObject::requestControlOfResource(Functionoid const * const aFunctionoid) {
+  boost::lock_guard<boost::mutex> lGuard(mMutex);
+  if (! mEnabled )
+    return std::make_pair(false, (const Functionoid*) NULL);
+  else if ( this->mActiveFunctionoid != NULL)
+    return std::pair<bool, const Functionoid*>(false, mActiveFunctionoid);
+  else {
+    mActiveFunctionoid = aFunctionoid;
+    return std::pair<bool, const Functionoid*>(true, mActiveFunctionoid);
+  }
+}
+
+
+const Functionoid * ActionableObject::releaseControlOfResource(Functionoid const * const aFunctionoid){  
+  boost::lock_guard<boost::mutex> lGuard(mMutex);
+  if (aFunctionoid == mActiveFunctionoid)
+    mActiveFunctionoid = NULL;
+  
+  return mActiveFunctionoid;
+}
 
 
 }

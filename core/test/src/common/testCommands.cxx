@@ -6,14 +6,14 @@
 #include "swatch/logger/Log.hpp"
 #include "swatch/core/xoperators.hpp"
 #include "swatch/core/test/DummyCommand.hpp"
-#include "swatch/core/test/DummyHandler.hpp"
+#include "swatch/core/test/DummyActionableObject.hpp"
 
 namespace swlo = swatch::logger;
 namespace swco = swatch::core;
 namespace swcot = swatch::core::test;
 
 int main(int argc, char const *argv[]) {
-  swcot::DummyHandler handler;
+  swcot::DummyActionableObject handler;
   swco::ReadWriteXParameterSet params;
 
   LOG(swlo::kInfo) << "resource : smthg = " << handler.something() << " - num = " << handler.number(); 

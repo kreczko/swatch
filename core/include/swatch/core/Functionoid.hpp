@@ -20,16 +20,6 @@
 #include "swatch/core/Object.hpp"
 
 
-//Forward declarations
-namespace swatch {
-  namespace processor {
-    class Processor;
-  }
-  namespace system {
-    class System;
-  }
-}
-
 namespace swatch {
 namespace core {
 

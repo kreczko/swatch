@@ -1,6 +1,6 @@
 #include "swatch/logger/Log.hpp"
 #include "swatch/core/xoperators.hpp"
-#include "swatch/core/test/DummyHandler.hpp"
+#include "swatch/core/test/DummyActionableObject.hpp"
 
 #include "swatch/core/test/DummyOperation.hpp"
 #include "swatch/core/exception.hpp"
@@ -58,33 +58,33 @@ DummyOperation::~DummyOperation() {
 }
 
 void DummyOperation::configure() {
-  DummyHandler* res = getParent<DummyHandler>();
+  DummyActionableObject* res = getParent<DummyActionableObject>();
   res->setNumber(42);
   res->setSomething("I have been configured");
 }
 
 void DummyOperation::coldReset() {
-  DummyHandler* res = getParent<DummyHandler>();
+  DummyActionableObject* res = getParent<DummyActionableObject>();
   res->setSomething("I am cold...");
 }
 
 void DummyOperation::enable() {
-  DummyHandler* res = getParent<DummyHandler>();
+  DummyActionableObject* res = getParent<DummyActionableObject>();
   res->setSomething("I am enabled...");
 }
 
 void DummyOperation::stop() {
-  DummyHandler* res = getParent<DummyHandler>();
+  DummyActionableObject* res = getParent<DummyActionableObject>();
   res->setSomething("somebody stop me...");
 }
 
 void DummyOperation::suspend() {
-  DummyHandler* res = getParent<DummyHandler>();
+  DummyActionableObject* res = getParent<DummyActionableObject>();
   res->setSomething("I have been suspended!");
 }
 
 void DummyOperation::fail() {
-  DummyHandler* res = getParent<DummyHandler>();
+  DummyActionableObject* res = getParent<DummyActionableObject>();
   res->fail();
 }
 
