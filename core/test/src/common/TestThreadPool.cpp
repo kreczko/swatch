@@ -23,41 +23,28 @@ namespace test {
 struct ThreadPoolSetup {
 public:
   ThreadPoolSetup() :
-          cmd1(),
-          cmd2(),
-          cmd3(),
-          params(),
-          wait_time_in_ms(10) {
-    handler1.Register<DummyCommand>("cmd");
-    handler2.Register<DummyCommand>("cmd");
-    handler3.Register<DummyCommand>("cmd");
+      cmd1( handler1.registerFunctionoid<DummyCommand>("cmd") ),
+      cmd2( handler2.registerFunctionoid<DummyCommand>("cmd") ),
+      cmd3( handler3.registerFunctionoid<DummyCommand>("cmd") ),
+      params(),
+      wait_time_in_ms(10)
+  {
+    cmd1.registerParameter("todo", xdata::String("sleep"));
+    cmd2.registerParameter("todo", xdata::String("sleep"));
+    cmd3.registerParameter("todo", xdata::String("sleep"));
 
-    cmd1 = handler1.getCommand("cmd");
-    cmd2 = handler2.getCommand("cmd");
-    cmd3 = handler3.getCommand("cmd");
-
-    ((DummyCommand*) cmd1)->registerParameter("todo", xdata::String("sleep"));
-    ((DummyCommand*) cmd2)->registerParameter("todo", xdata::String("sleep"));
-    ((DummyCommand*) cmd3)->registerParameter("todo", xdata::String("sleep"));
-
-    ((DummyCommand*) cmd1)->registerParameter("milliseconds",
-        xdata::Integer(wait_time_in_ms));
-    ((DummyCommand*) cmd2)->registerParameter("milliseconds",
-        xdata::Integer(wait_time_in_ms));
-    ((DummyCommand*) cmd3)->registerParameter("milliseconds",
-        xdata::Integer(wait_time_in_ms));
-
-//     cmd1->setUseThreadPool(true);
-//     cmd2->setUseThreadPool(true);
-//     cmd3->setUseThreadPool(true);
+    cmd1.registerParameter("milliseconds", xdata::Integer(wait_time_in_ms));
+    cmd2.registerParameter("milliseconds", xdata::Integer(wait_time_in_ms));
+    cmd3.registerParameter("milliseconds", xdata::Integer(wait_time_in_ms));
 
   }
-  ~ThreadPoolSetup() {
 
-  }
+  ~ThreadPoolSetup() {}
 
   DummyActionableObject handler1, handler2, handler3;
-  Command *cmd1, *cmd2, *cmd3;
+  Command& cmd1;
+  Command& cmd2;
+  Command& cmd3;
   ReadOnlyXParameterSet params;
   unsigned int wait_time_in_ms;
 };
@@ -70,10 +57,10 @@ BOOST_FIXTURE_TEST_CASE(TolerantPool1, ThreadPoolSetup) {
   // does not finish queue
   // does not forcefully terminate running commands
   ThreadPool::getInstance(2, false, false);
-  cmd1->exec(params);
-  cmd2->exec(params);
-  cmd3->exec(params);
-  LOG(kInfo) << "cmd1 " << cmd1->getStatus().getProgress();
+  cmd1.exec(params);
+  cmd2.exec(params);
+  cmd3.exec(params);
+  LOG(kInfo) << "cmd1 " << cmd1.getStatus().getProgress();
   // now wait for a bit
   // in 5ms cmd1 and cmd2 should start and due to nature of the pool finish
   // but cmd3 should not even start
@@ -81,11 +68,11 @@ BOOST_FIXTURE_TEST_CASE(TolerantPool1, ThreadPoolSetup) {
   // delete pool, forces all running commands to finish
   ThreadPool::reset();
 
-  BOOST_CHECK_EQUAL(cmd1->getState(), Command::kDone);
-  BOOST_CHECK_EQUAL(cmd2->getState(), Command::kDone);
+  BOOST_CHECK_EQUAL(cmd1.getState(), Command::kDone);
+  BOOST_CHECK_EQUAL(cmd2.getState(), Command::kDone);
   // cmd3 should be in scheduled state
-  BOOST_CHECK_EQUAL(cmd3->getState(), Command::kScheduled);
-  BOOST_CHECK_EQUAL(cmd3->getStatus().getProgress(), 0);
+  BOOST_CHECK_EQUAL(cmd3.getState(), Command::kScheduled);
+  BOOST_CHECK_EQUAL(cmd3.getStatus().getProgress(), 0);
 }
 
 BOOST_FIXTURE_TEST_CASE(TolerantPool2, ThreadPoolSetup) {
@@ -95,10 +82,10 @@ BOOST_FIXTURE_TEST_CASE(TolerantPool2, ThreadPoolSetup) {
   // does not finish queue
   // does not forcefully terminate running commands
   ThreadPool::getInstance(2, false, false);
-  cmd1->exec(params);
-  cmd2->exec(params);
-  cmd3->exec(params);
-  LOG(kInfo) << "cmd1 " << cmd1->getStatus().getProgress();
+  cmd1.exec(params);
+  cmd2.exec(params);
+  cmd3.exec(params);
+  LOG(kInfo) << "cmd1 " << cmd1.getStatus().getProgress();
   // now wait for a bit
   // in 18ms cmd1 and cmd2 should finish
   // and cmd3 start
@@ -107,10 +94,10 @@ BOOST_FIXTURE_TEST_CASE(TolerantPool2, ThreadPoolSetup) {
   // delete pool, forces all running commands to finish
   ThreadPool::reset();
 
-  BOOST_CHECK_EQUAL(cmd1->getState(), Command::kDone);
-  BOOST_CHECK_EQUAL(cmd2->getState(), Command::kDone);
+  BOOST_CHECK_EQUAL(cmd1.getState(), Command::kDone);
+  BOOST_CHECK_EQUAL(cmd2.getState(), Command::kDone);
   // cmd3 should be done as well (since it started)
-  BOOST_CHECK_EQUAL(cmd3->getState(), Command::kDone);
+  BOOST_CHECK_EQUAL(cmd3.getState(), Command::kDone);
 }
 
 BOOST_FIXTURE_TEST_CASE(GoodGuyPool, ThreadPoolSetup) {
@@ -119,9 +106,9 @@ BOOST_FIXTURE_TEST_CASE(GoodGuyPool, ThreadPoolSetup) {
   // create thread pool with 2 threads
   // this pool will wait until the queue is complete
   ThreadPool::getInstance(2, true, false);
-  cmd1->exec(params);
-  cmd2->exec(params);
-  cmd3->exec(params);
+  cmd1.exec(params);
+  cmd2.exec(params);
+  cmd3.exec(params);
   // now wait for a bit
   // in 5ms cmd1 and cmd2 should start but not finish
   // and cmd3 should not start
@@ -130,12 +117,12 @@ BOOST_FIXTURE_TEST_CASE(GoodGuyPool, ThreadPoolSetup) {
   // delete pool, forces all running commands to finish
   ThreadPool::reset();
 
-  BOOST_CHECK_EQUAL(cmd1->getState(), Command::kDone);
-  BOOST_CHECK_EQUAL(cmd2->getState(), Command::kDone);
+  BOOST_CHECK_EQUAL(cmd1.getState(), Command::kDone);
+  BOOST_CHECK_EQUAL(cmd2.getState(), Command::kDone);
   // cmd3 should be done as well for this nice pool
-  BOOST_CHECK_EQUAL(cmd3->getState(), Command::kDone);
+  BOOST_CHECK_EQUAL(cmd3.getState(), Command::kDone);
   // with more than 1% progress
-  BOOST_CHECK_GT(cmd3->getStatus().getProgress(), 0.99);
+  BOOST_CHECK_GT(cmd3.getStatus().getProgress(), 0.99);
 }
 
 /*

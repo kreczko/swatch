@@ -36,7 +36,7 @@ CommandSequence* ActionableObject::getCommandSequence( const std::string& aId )
   try {
     return mCommandSequences.at( aId );
   } catch ( const std::out_of_range& e ) {
-    throw CommandSequenceNotFoundInActionableObject( "Unable to find CommandSequence with Id '"+aId+"'" );
+    throw CommandSequenceNotFoundInActionableObject( "Unable to find CommandSequence with ID '"+aId+"' in object '" + path() + "'" );
   }
   return NULL; //Stop the compiler complaining
 }
@@ -46,7 +46,7 @@ Command* ActionableObject::getCommand( const std::string& aId )
   try {
     return mCommands.at( aId );
   } catch ( const std::out_of_range& e ) {
-    throw CommandNotFoundInActionableObject( "Unable to find Command with Id '"+aId+"'" );
+    throw CommandNotFoundInActionableObject( "Unable to find Command with ID '"+aId+"' in object '" + path() + "'" );
   }
   return NULL; //Stop the compiler complaining
 }
@@ -56,7 +56,7 @@ Operation* ActionableObject::getOperation( const std::string& aId )
   try {
     return mOperations.at( aId );
   } catch ( const std::out_of_range& e ) {
-    throw OperationNotFoundInActionableObject( "Unable to find Operation with Id '"+aId+"'" );
+    throw OperationNotFoundInActionableObject( "Unable to find Operation with ID '"+aId+"' in object '" + path() + "'");
   }
   return NULL; //Stop the compiler complaining
 }
@@ -92,24 +92,38 @@ std::set<std::string> ActionableObject::getOperations() const
 
 //------------------------------------------------------------------------------------
 
-void ActionableObject::Register( const std::string& aId , CommandSequence* aCommandSequence )
+CommandSequence& ActionableObject::registerFunctionoid( const std::string& aId , CommandSequence* aCommandSequence )
 {
-  if (mCommandSequences.count(aId)) throw CommandSequenceAlreadyExistsInActionableObject( "CommandSequence With Id '"+aId+"' Already Exists" );
+  if (mCommandSequences.count(aId)) {
+    delete aCommandSequence;
+    throw CommandSequenceAlreadyExistsInActionableObject( "CommandSequence With ID '"+aId+"' already exists" );
+  }
   this->addObj(aCommandSequence);
   mCommandSequences.insert( std::make_pair( aId , aCommandSequence ) );
+  return *aCommandSequence;
 }
 
-void ActionableObject::Register( const std::string& aId , Command* aCommand )
+
+Command& ActionableObject::registerFunctionoid( const std::string& aId , Command* aCommand )
 {
-  if (mCommands.count(aId)) throw CommandAlreadyExistsInActionableObject( "Command With Id '"+aId+"' Already Exists" );
+  if (mCommands.count(aId)){
+    delete aCommand;
+    throw CommandAlreadyExistsInActionableObject( "Command With ID '"+aId+"' already exists" );
+  }
   this->addObj(aCommand);
   mCommands.insert( std::make_pair( aId , aCommand ) );
+  return *aCommand;
 }
 
-void ActionableObject::Register( const std::string& aId , Operation* aOperation ) {
-  if (mOperations.count(aId)) throw OperationAlreadyExistsInActionableObject( "Operation With Id '"+aId+"' Already Exists" );
+
+Operation& ActionableObject::registerFunctionoid( const std::string& aId , Operation* aOperation ) {
+  if (mOperations.count(aId)){
+    delete aOperation;
+    throw OperationAlreadyExistsInActionableObject( "Operation With ID '"+aId+"' already exists" );
+  }
   this->addObj(aOperation);
   mOperations.insert( std::make_pair( aId , aOperation ) );
+  return *aOperation;
 }
 
 

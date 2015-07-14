@@ -26,21 +26,18 @@ namespace test {
 
 struct ProcessorCommandTestSetup {
   ProcessorCommandTestSetup():
-  resource(DummyProcessor::generateParams("dummy")),
-  get_crate(),
-  params() {
-    resource.Register<DummyProcessorCommand>("dummy_getcrate");
-
-    get_crate = (swct::DummyCommand*) resource.getCommand("dummy_getcrate");
-
-    get_crate->registerParameter("todo", xdata::String("getCrateId"));
+    resource(DummyProcessor::generateParams("dummy")),
+    get_crate( resource.registerFunctionoid<DummyProcessorCommand>("dummy_getcrate")),
+    params() 
+  {
+    get_crate.registerParameter("todo", xdata::String("getCrateId"));
   }
 
   ~ProcessorCommandTestSetup(){
   }
 
   DummyProcessor resource;
-  swct::DummyCommand* get_crate;
+  swatch::core::Command& get_crate;
   swatch::core::ReadWriteXParameterSet params;
 
 };
@@ -50,17 +47,17 @@ BOOST_AUTO_TEST_SUITE( ProcessorCommandTestSuite)
 // we want to make sure that the factory can use this
 BOOST_FIXTURE_TEST_CASE(TestTodo,  ProcessorCommandTestSetup) {
   LOG(kInfo) << "Running ProcessorCommandTestSuite/TestTodo";
-  BOOST_CHECK_EQUAL(get_crate->getDefaultParams().parameterAsString("todo"), "getCrateId");
+  BOOST_CHECK_EQUAL(get_crate.getDefaultParams().parameterAsString("todo"), "getCrateId");
 }
 
 BOOST_FIXTURE_TEST_CASE(TestRunGetCrate,  ProcessorCommandTestSetup) {
   LOG(kInfo) << "Running ProcessorCommandTestSuite/TestRunGetCrate";
-  get_crate->exec( params );
+  get_crate.exec( params );
 
   do {
-  } while ( (get_crate->getState() == swatch::core::Command::kScheduled) || (get_crate->getState() == swatch::core::Command::kRunning) );
+  } while ( (get_crate.getState() == swatch::core::Command::kScheduled) || (get_crate.getState() == swatch::core::Command::kRunning) );
 
-  core::CommandStatus status = get_crate->getStatus();
+  core::CommandStatus status = get_crate.getStatus();
   BOOST_CHECK_EQUAL(status.getProgress(), 1.0);
   BOOST_CHECK_EQUAL(status.getStatusMsg(), "Dummy command successfully completed");
   BOOST_CHECK_EQUAL(status.getState(), swatch::core::Command::kDone);

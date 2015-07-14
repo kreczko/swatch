@@ -31,6 +31,11 @@ public:
   void setSomething(std::string something);
 
   void fail();
+  
+  // Expose registerFunctionoid template method as public for tests
+  template< typename T>
+  T& registerFunctionoid( const std::string& aId ) { return ActionableObject::registerFunctionoid<T>(aId); }
+
 
 private:
 

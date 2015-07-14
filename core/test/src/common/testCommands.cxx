@@ -18,7 +18,7 @@ int main(int argc, char const *argv[]) {
 
   LOG(swlo::kInfo) << "resource : smthg = " << handler.something() << " - num = " << handler.number(); 
 
-  handler.Register<swcot::DummyCommand>("dummy");
+  handler.registerFunctionoid<swcot::DummyCommand>("dummy");
 
   LOG(swlo::kNotice) << "Registered commands ";
   BOOST_FOREACH( const std::string& cmdname, handler.getCommands() ) {

@@ -29,12 +29,12 @@ struct ActionableObjectTestSetup {
   handler( new DummyActionableObject() ),
   deleter( new ActionableObject::Deleter() )
   { 
-    handler->Register<DummyCommand>("dummy_1");//, new DummyCommand(&handler));
-    handler->Register<DummyCommand>("dummy_2");//, new DummyCommand(&handler));
-    handler->Register<DummyCommand>("dummy_3");//, new DummyCommand(&handler));
-    handler->Register<DummySleepCommand>("sleep");
-    handler->Register<DummyOperation>("test_1");
-    handler->Register<DummyOperation>("test_2");
+    handler->registerFunctionoid<DummyCommand>("dummy_1");//, new DummyCommand(&handler));
+    handler->registerFunctionoid<DummyCommand>("dummy_2");//, new DummyCommand(&handler));
+    handler->registerFunctionoid<DummyCommand>("dummy_3");//, new DummyCommand(&handler));
+    handler->registerFunctionoid<DummySleepCommand>("sleep");
+    handler->registerFunctionoid<DummyOperation>("test_1");
+    handler->registerFunctionoid<DummyOperation>("test_2");
   }
   
   ~ActionableObjectTestSetup(){
@@ -55,11 +55,11 @@ BOOST_AUTO_TEST_SUITE( ActionableObjectTestSuite)
 BOOST_FIXTURE_TEST_CASE(TestRegisterCommand,  ActionableObjectTestSetup) {
   LOG(kInfo) << "Running ActionableObjectTestSuite/TestRegisterCommand";
   size_t n_commands = handler->getCommands().size();
-  Command* registeredCmd = handler->Register<DummyCommand>("dummy_5000");
+  Command& registeredCmd = handler->registerFunctionoid<DummyCommand>("dummy_5000");
   
   size_t n_commands_after = handler->getCommands().size();
   BOOST_CHECK_EQUAL(n_commands_after, n_commands + 1);
-  BOOST_CHECK_EQUAL( handler->getCommand("dummy_5000"), registeredCmd);
+  BOOST_CHECK_EQUAL( handler->getCommand("dummy_5000"), & registeredCmd);
 }
 
 
@@ -73,7 +73,7 @@ BOOST_FIXTURE_TEST_CASE(TestGetCommand,  ActionableObjectTestSetup) {
 BOOST_FIXTURE_TEST_CASE(TestRegisterOperation,  ActionableObjectTestSetup) {
   LOG(kInfo) << "Running ActionableObjectTestSuite/TestRegisterOperation";
   size_t n_ctrl = handler->getOperations().size();
-  handler->Register<DummyOperation>("dummy_5000");
+  handler->registerFunctionoid<DummyOperation>("dummy_5000");
   size_t n_ctrl_after = handler->getOperations().size();
   BOOST_CHECK_EQUAL(n_ctrl_after, n_ctrl + 1);
 }

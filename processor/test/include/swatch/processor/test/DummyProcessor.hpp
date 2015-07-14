@@ -41,6 +41,10 @@ public:
     void test1();
     void test2();
 
+    // Expose registerFunctionoid template method as public for tests
+    template< typename T>
+    T& registerFunctionoid( const std::string& aId ) { return ActionableObject::registerFunctionoid<T>(aId); }
+
 //    static swatch::core::XParameterSet generateParams();
     static ProcessorStub generateParams( const std::string& aId );
 

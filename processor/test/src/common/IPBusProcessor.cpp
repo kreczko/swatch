@@ -101,16 +101,16 @@ IPBusProcessor::IPBusProcessor(const swatch::core::AbstractStub& aStub ) :
     using namespace boost::assign;
     
     // Add commands
-    Register<IPBusResetCommand>("reset");
-    Register<IPBusConfigureCommand>("configure");
-    Register<IPBusCapture>("capture");
+    registerFunctionoid<IPBusResetCommand>("reset");
+    registerFunctionoid<IPBusConfigureCommand>("configure");
+    registerFunctionoid<IPBusCapture>("capture");
     
     // Extract stub
     const swpro::ProcessorStub& stub = getStub();
 
     // Build the driver and interfaces
     hw_ = new uhal::HwInterface( uhal::ConnectionManager::getDevice(stub.id, stub.uri, stub.addressTable) );
-    Add( new processor::LinkInterface() );
+    registerInterface( new processor::LinkInterface() );
 
     // build the list of links based on the firmware informations
     uhal::ValWord<uint32_t> n_rx = hw().getNode("ctrl.infos.nRx").read();

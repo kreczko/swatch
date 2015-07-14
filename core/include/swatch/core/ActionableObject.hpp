@@ -55,13 +55,6 @@ public:
   Command* getCommand( const std::string& aId );
   Operation* getOperation( const std::string& aId );
 
-  template< typename T>
-  T* Register( const std::string& aId );
-
-  void Register( const std::string& aId , CommandSequence* aCommandSequence );
-  void Register(const std::string& aId , Command* aCommand );
-  void Register(const std::string& aId , Operation* aOperation );
-
   bool isEnabled() const;
   
   const Functionoid* getActiveFunctionoid() const;
@@ -77,6 +70,18 @@ public:
     
     void operator()(Object* aObject);
   };
+  
+protected:
+  //! Register the supplied command, command sequence or operation class in this object, with specified ID; the class is constructed on the heap, using the ID as the only constructor argument.
+  template< typename T>
+  T& registerFunctionoid( const std::string& aId );
+
+  //! Register the supplied command sequence in this object, with specified ID; this object takes ownership of the command sequence.
+  CommandSequence& registerFunctionoid(const std::string& aId , CommandSequence* aCommandSequence );
+  //! Register the supplied command in this object, with specified ID; this object takes ownership of the command sequence.
+  Command& registerFunctionoid(const std::string& aId , Command* aCommand );
+  //! Register the supplied operation in this object, with specified ID; this object takes ownership of the command sequence.
+  Operation& registerFunctionoid(const std::string& aId , Operation* aOperation );    
   
 private:
   //! Disables all future actions from running on this resource

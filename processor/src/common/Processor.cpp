@@ -117,33 +117,49 @@ const std::vector<std::string> Processor::defaultMonitorableObjects = { "ttc", "
 
 
 //---
-void Processor::Add( TTCInterface* aTTCInterface )
+TTCInterface& Processor::registerInterface( TTCInterface* aTTCInterface )
 {
-  if( ttc_ ) throw TTCInterfaceAlreadyDefined( "TTCInterface already defined" );
+  if( ttc_ ){
+    delete aTTCInterface;
+    throw ProcessorInterfaceAlreadyDefined( "TTCInterface already defined for processor '" + path() + "'" );
+  }
   this->addObj(aTTCInterface);
   ttc_ = aTTCInterface;
+  return *ttc_;
 }
 
 
-void Processor::Add( ReadoutInterface* aReadoutInterface )
+ReadoutInterface& Processor::registerInterface( ReadoutInterface* aReadoutInterface )
 {
-  if( readout_ ) throw ReadoutInterfaceAlreadyDefined( "ReadoutInterface already defined" );
+  if( readout_ ){
+    delete aReadoutInterface;
+    throw ProcessorInterfaceAlreadyDefined( "ReadoutInterface already defined for processor '" + path() + "'" );
+  }
   this->addObj(aReadoutInterface);
   readout_ = aReadoutInterface;
+  return *readout_;
 }
 
-void Processor::Add( AlgoInterface* aAlgoInterface )
+AlgoInterface& Processor::registerInterface( AlgoInterface* aAlgoInterface )
 {
-  if( algo_ ) throw AlgoInterfaceAlreadyDefined( "AlgoInterface already defined" );
+  if( algo_ ){
+    delete aAlgoInterface;
+    throw ProcessorInterfaceAlreadyDefined( "AlgoInterface already defined for processor '" + path() + "'" );
+  }
   this->addObj(aAlgoInterface);
   algo_ = aAlgoInterface;
+  return *algo_;
 }
 
-void Processor::Add( LinkInterface* aLinkInterface )
+LinkInterface& Processor::registerInterface( LinkInterface* aLinkInterface )
 {
-  if( links_ ) throw LinkInterfaceAlreadyDefined( "LinkInterface already defined" );
+  if( links_ ){
+    delete aLinkInterface;
+    throw ProcessorInterfaceAlreadyDefined( "LinkInterface already defined for processor '" + path() + "'" );
+  }
   this->addObj(aLinkInterface);
   links_ = aLinkInterface;
+  return *links_;
 }
 
 

@@ -18,27 +18,24 @@ using namespace swatch::logger;
 namespace swatch {
 namespace core {
 namespace test {
-struct OperationTestSetup {
+
+  
+  struct OperationTestSetup {
   OperationTestSetup():
-  handler(){
-    handler.Register<DummyOperation>("common");
-    handler.Register<DummyOperation>("custom");
-    handler.Register<DummyOperation>("test");
-
-    common = handler.getOperation("common");
-    custom = handler.getOperation("custom");
-    test = handler.getOperation("test");
-
-/*    ((DummyOperation*) common)->registerParam("todo", xdata::String("common"));
-    ((DummyOperation*) custom)->registerParam("todo", xdata::String("custom"));
-    ((DummyOperation*) test)->registerParam("todo", xdata::String("test"));*/
+    handler(), 
+    common( handler.registerFunctionoid<DummyOperation>("common") ),
+    custom( handler.registerFunctionoid<DummyOperation>("custom") ),
+    test( handler.registerFunctionoid<DummyOperation>("test") )
+  {
   }
+
   ~OperationTestSetup(){
   }
 
   DummyActionableObject handler;
-  swatch::core::FSM fsm;
-  swatch::core::Operation* common, *custom, *test;
+  swatch::core::Operation& common;
+  swatch::core::Operation& custom;
+  swatch::core::Operation& test;
 
 };
 
@@ -47,8 +44,8 @@ BOOST_AUTO_TEST_SUITE( OperationTestSuite )
 BOOST_AUTO_TEST_CASE(TestConstructor) {
   LOG(kInfo) << "Running OperationTestSuite/TestConstructor";
   DummyActionableObject handler;
-  swatch::core::Operation* common = handler.Register<DummyOperation>("Common");
-  BOOST_CHECK_EQUAL(common->getCurrentState(), "HALTED");
+  swatch::core::Operation& common = handler.registerFunctionoid<DummyOperation>("Common");
+  BOOST_CHECK_EQUAL(common.getCurrentState(), "HALTED");
 }
 
 // BOOST_FIXTURE_TEST_CASE(TestTodo,  OperationTestSetup) {
@@ -61,57 +58,57 @@ BOOST_AUTO_TEST_CASE(TestConstructor) {
 
 BOOST_FIXTURE_TEST_CASE(TestColdReset,  OperationTestSetup) {
   LOG(kInfo) << "Running OperationTestSuite/TestColdReset";
-  BOOST_CHECK_EQUAL(common->getCurrentState(), "HALTED");
-  common->executeTransition("coldReset");
-  BOOST_CHECK_EQUAL(common->getCurrentState(), "HALTED");
+  BOOST_CHECK_EQUAL(common.getCurrentState(), "HALTED");
+  common.executeTransition("coldReset");
+  BOOST_CHECK_EQUAL(common.getCurrentState(), "HALTED");
   BOOST_CHECK_EQUAL(handler.something(), "I am cold...");
 }
 
 BOOST_FIXTURE_TEST_CASE(TestConfigure,  OperationTestSetup) {
   LOG(kInfo) << "Running OperationTestSuite/TestConfigure";
-  BOOST_CHECK_EQUAL(common->getCurrentState(), "HALTED");
-  common->executeTransition("configure");
-  BOOST_CHECK_EQUAL(common->getCurrentState(), "CONFIGURED");
+  BOOST_CHECK_EQUAL(common.getCurrentState(), "HALTED");
+  common.executeTransition("configure");
+  BOOST_CHECK_EQUAL(common.getCurrentState(), "CONFIGURED");
   BOOST_CHECK_EQUAL(handler.number(), uint32_t(42));
   BOOST_CHECK_EQUAL(handler.something(), "I have been configured");
 }
 
 BOOST_FIXTURE_TEST_CASE(TestInvalidEnable,  OperationTestSetup) {
   LOG(kInfo) << "Running OperationTestSuite/TestInvalidEnable";
-  BOOST_CHECK_EQUAL(common->getCurrentState(), "HALTED");
+  BOOST_CHECK_EQUAL(common.getCurrentState(), "HALTED");
   // invalid
-  BOOST_CHECK_THROW(common->executeTransition("enable"), swatch::core::exception);
+  BOOST_CHECK_THROW(common.executeTransition("enable"), swatch::core::exception);
 }
 
 BOOST_FIXTURE_TEST_CASE(TestWalkThrough,  OperationTestSetup) {
   LOG(kInfo) << "Running OperationTestSuite/TestWalkThrough";
-  BOOST_CHECK_EQUAL(common->getCurrentState(), "HALTED");
+  BOOST_CHECK_EQUAL(common.getCurrentState(), "HALTED");
   // configure
-  common->executeTransition("configure");
-  BOOST_CHECK_EQUAL(common->getCurrentState(), "CONFIGURED");
+  common.executeTransition("configure");
+  BOOST_CHECK_EQUAL(common.getCurrentState(), "CONFIGURED");
   // enable
-  common->executeTransition("enable");
-  BOOST_CHECK_EQUAL(common->getCurrentState(), "ENABLED");
+  common.executeTransition("enable");
+  BOOST_CHECK_EQUAL(common.getCurrentState(), "ENABLED");
   BOOST_CHECK_EQUAL(handler.something(), "I am enabled...");
   // stop
-  common->executeTransition("stop");
-  BOOST_CHECK_EQUAL(common->getCurrentState(), "CONFIGURED");
+  common.executeTransition("stop");
+  BOOST_CHECK_EQUAL(common.getCurrentState(), "CONFIGURED");
   // enable
-  common->executeTransition("enable");
-  BOOST_CHECK_EQUAL(common->getCurrentState(), "ENABLED");
+  common.executeTransition("enable");
+  BOOST_CHECK_EQUAL(common.getCurrentState(), "ENABLED");
   // suspend
-  common->executeTransition("suspend");
-  BOOST_CHECK_EQUAL(common->getCurrentState(), "SUSPENDED");
+  common.executeTransition("suspend");
+  BOOST_CHECK_EQUAL(common.getCurrentState(), "SUSPENDED");
   // stop
-  common->executeTransition("stop");
-  BOOST_CHECK_EQUAL(common->getCurrentState(), "CONFIGURED");
+  common.executeTransition("stop");
+  BOOST_CHECK_EQUAL(common.getCurrentState(), "CONFIGURED");
 }
 
 BOOST_FIXTURE_TEST_CASE(TestFailWithException,  OperationTestSetup) {
   LOG(kInfo) << "Running OperationTestSuite/TestFailWithException";
-  BOOST_CHECK_EQUAL(common->getCurrentState(), "HALTED");
+  BOOST_CHECK_EQUAL(common.getCurrentState(), "HALTED");
 //   invalid
-  BOOST_CHECK_THROW(common->executeTransition("failWithException"), swatch::core::exception);
+  BOOST_CHECK_THROW(common.executeTransition("failWithException"), swatch::core::exception);
 //  BOOST_CHECK_THROW(common->executeTransition("fail"), swatch::core::exception);
 }
 

@@ -25,18 +25,15 @@ namespace processor {
 namespace test {
 struct ProcessorOperationTestSetup {
   ProcessorOperationTestSetup():
-  resource(DummyProcessor::generateParams("BigDummy")){
-    resource.Register<DummyProcessorOperation>("testing");
-
-    testing = (swct::DummyOperation*) resource.getOperation("testing");
-//     testing->registerParam("todo", xdata::String("test"));
+    resource(DummyProcessor::generateParams("BigDummy")),
+    testing(resource.registerFunctionoid<DummyProcessorOperation>("testing"))
+  {
   }
-  ~ProcessorOperationTestSetup(){
-  }
+  
+  ~ProcessorOperationTestSetup() {}
 
   DummyProcessor resource;
-  swct::DummyOperation* testing;
-
+  swct::DummyOperation& testing;
 };
 
 BOOST_AUTO_TEST_SUITE( ProcessorOperationTestSuite)
@@ -50,10 +47,10 @@ BOOST_AUTO_TEST_SUITE( ProcessorOperationTestSuite)
 
 BOOST_FIXTURE_TEST_CASE(TestOperation,  ProcessorOperationTestSetup) {
   LOG(kInfo) << "Running ProcessorOperationTestSuite/TestOperation";
-  BOOST_CHECK_EQUAL(testing->getCurrentState(), "HALTED");
+  BOOST_CHECK_EQUAL(testing.getCurrentState(), "HALTED");
   // test
-  testing->executeTransition("test");
-  BOOST_CHECK_EQUAL(testing->getCurrentState(), "TESTED");
+  testing.executeTransition("test");
+  BOOST_CHECK_EQUAL(testing.getCurrentState(), "TESTED");
   BOOST_CHECK_EQUAL(resource.ranTests().size(), size_t(2));
 }
 

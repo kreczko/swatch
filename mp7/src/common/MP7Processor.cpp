@@ -47,11 +47,11 @@ MP7Processor::MP7Processor(const swatch::core::AbstractStub& aStub) :
     driver_(0x0)
 {
     // Add commands
-    Register<MP7ResetCommand>("reset");
-    Register<MP7SetupLinks>("mgts");
-    Register<MP7AlignLinks>("align");
+    registerFunctionoid<MP7ResetCommand>("reset");
+    registerFunctionoid<MP7SetupLinks>("mgts");
+    registerFunctionoid<MP7AlignLinks>("align");
     
-    Register<MP7ConfigureLoopback>("loopback");
+    registerFunctionoid<MP7ConfigureLoopback>("loopback");
 
     // Extract stub, and create driver
     const processor::ProcessorStub& stub = getStub();
@@ -60,12 +60,11 @@ MP7Processor::MP7Processor(const swatch::core::AbstractStub& aStub) :
     driver_ = new ::mp7::MP7Controller(board);
     
     // Build subcomponents
-    Add( new MP7TTCInterface( *driver_ ) ); 
-    Add( new MP7ReadoutInterface(*driver_) );
-    Add( new swpro::LinkInterface() );
+    registerInterface( new MP7TTCInterface( *driver_ ) ); 
+    registerInterface( new MP7ReadoutInterface(*driver_) );
+    registerInterface( new swpro::LinkInterface() );
     
     // Add input and output ports
-//    std::vector<processor::ProcessorPortStub>::iterator it;
     for(auto it = stub.rxPorts.begin(); it != stub.rxPorts.end(); it++)
       linkInterface().addInput(new MP7RxPort(it->id, it->number, *this));
     for(auto it = stub.txPorts.begin(); it != stub.txPorts.end(); it++)

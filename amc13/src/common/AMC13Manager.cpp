@@ -45,8 +45,8 @@ AMC13Manager::AMC13Manager(const swatch::core::AbstractStub& aStub) :
     swatch::system::DaqTTCManager(aStub),
     driver_(0x0) {
   
-    Register<AMC13ResetCommand>("reset");
-    Register<AMC13Configure>("configure");
+    registerFunctionoid<AMC13ResetCommand>("reset");
+    registerFunctionoid<AMC13Configure>("configure");
 
     const system::DaqTTCStub& desc = getStub();
 

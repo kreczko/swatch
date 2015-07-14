@@ -20,7 +20,7 @@ MP7NullAlgoProcessor::MP7NullAlgoProcessor(const swatch::core::AbstractStub& aSt
     MP7Processor(aStub)
 {
   //! Add algo interface
-  Add( new MP7NullAlgo(this->driver()) );
+  registerInterface( new MP7NullAlgo(this->driver()) );
 }
 
 

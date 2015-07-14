@@ -58,7 +58,7 @@ DummyProcessor::DummyProcessor(const swatch::core::AbstractStub& aStub) :
   Processor(aStub),
   ranTests_() {
   
-  Add( new processor::LinkInterface() );
+  registerInterface( new processor::LinkInterface() );
 
   const ProcessorStub& stub = getStub();
   

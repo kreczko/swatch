@@ -26,29 +26,26 @@ namespace test {
 
 struct CommandTestSetup {
   CommandTestSetup():
-  handler(),
-  print(),
-  error(),
-  nothing(),
-  params(){
-    handler.Register<DummyCommand>("dummy_print");//, new DummyCommand(&handler, xdata::Integer(-33)));
-    handler.Register<DummyCommand>("dummy_error");//, new DummyCommand(&handler, xdata::Integer(-33)));
-    handler.Register<DummyCommand>("dummy_nada");//, new DummyCommand(&handler, xdata::Integer(-33)));
-    handler.Register<DummyCommand>("sleep");
-    
-    print = handler.getCommand("dummy_print");
-    error = handler.getCommand("dummy_error");
-    nothing = handler.getCommand("dummy_nada");
+    handler(),
+    print( handler.registerFunctionoid<DummyCommand>("dummy_print") ),
+    error( handler.registerFunctionoid<DummyCommand>("dummy_error") ),
+    nothing( handler.registerFunctionoid<DummyCommand>("dummy_nada") ),
+    params()
+  {
+    handler.registerFunctionoid<DummyCommand>("sleep");
 
-    ((DummyCommand*) print)->registerParameter("todo", xdata::String("print"));
-    ((DummyCommand*) error)->registerParameter("todo", xdata::String("error"));
-    ((DummyCommand*) nothing)->registerParameter("todo", xdata::String("nothing"));
+    print.registerParameter("todo", xdata::String("print"));
+    error.registerParameter("todo", xdata::String("error"));
+    nothing.registerParameter("todo", xdata::String("nothing"));
   }
+  
   ~CommandTestSetup(){
   }
 
   DummyActionableObject handler;
-  Command* print, *error, *nothing;
+  Command& print;
+  Command& error;
+  Command& nothing;
   ReadWriteXParameterSet params;
 };
 
@@ -57,27 +54,27 @@ BOOST_AUTO_TEST_SUITE( CommandTestSuite)
 // we want to make sure that the factory can use this
 BOOST_AUTO_TEST_CASE(TestConstructor) {
   DummyActionableObject handler;
-  swatch::core::Command* test = handler.Register<DummyCommand>("Test");
+  swatch::core::Command& test = handler.registerFunctionoid<DummyCommand>("Test");
   
-  BOOST_CHECK_EQUAL(test->getDefaultParams().get<xdata::Integer>("aa").value_ , 15);
+  BOOST_CHECK_EQUAL(test.getDefaultParams().get<xdata::Integer>("aa").value_ , 15);
 }
 
 BOOST_FIXTURE_TEST_CASE(TestTodo,  CommandTestSetup) {
   LOG(kInfo) << "Running CommandTestSuite/TestTodo";
-  BOOST_CHECK_EQUAL(print->getDefaultParams().get<xdata::String>("todo").value_, "print");
-  BOOST_CHECK_EQUAL(error->getDefaultParams().get<xdata::String>("todo").value_, "error");
-  BOOST_CHECK_EQUAL(nothing->getDefaultParams().get<xdata::String>("todo").value_,  "nothing");
+  BOOST_CHECK_EQUAL(print.getDefaultParams().get<xdata::String>("todo").value_, "print");
+  BOOST_CHECK_EQUAL(error.getDefaultParams().get<xdata::String>("todo").value_, "error");
+  BOOST_CHECK_EQUAL(nothing.getDefaultParams().get<xdata::String>("todo").value_,  "nothing");
 }
 
 BOOST_FIXTURE_TEST_CASE(TestRunPrint,  CommandTestSetup) {
   LOG(kInfo) << "Running CommandTestSuite/TestRunPrint";
-  print->exec( params );
+  print.exec( params );
 
   do {
-  } while ( (print->getState() == swatch::core::Command::kScheduled) || (print->getState() == swatch::core::Command::kRunning) );
+  } while ( (print.getState() == swatch::core::Command::kScheduled) || (print.getState() == swatch::core::Command::kRunning) );
 
 
-  CommandStatus status = print->getStatus();
+  CommandStatus status = print.getStatus();
   BOOST_CHECK_EQUAL(status.getProgress(), 1.0);
   BOOST_REQUIRE_EQUAL(status.getState(), Command::kDone);
   BOOST_CHECK_EQUAL(status.getResult()->type(), "int");
@@ -87,12 +84,12 @@ BOOST_FIXTURE_TEST_CASE(TestRunPrint,  CommandTestSetup) {
 
 BOOST_FIXTURE_TEST_CASE(TestRunNothing,  CommandTestSetup) {
   LOG(kInfo) << "Running CommandTestSuite/TestRunNothing";
-  nothing->exec( params );
+  nothing.exec( params );
 
   do {
-  } while ( (nothing->getState() == swatch::core::Command::kScheduled) || (nothing->getState() == swatch::core::Command::kRunning) );
+  } while ( (nothing.getState() == swatch::core::Command::kScheduled) || (nothing.getState() == swatch::core::Command::kRunning) );
 
-  CommandStatus status = nothing->getStatus();
+  CommandStatus status = nothing.getStatus();
   BOOST_CHECK_EQUAL(status.getProgress(), 1.0);
   BOOST_CHECK_EQUAL(status.getState(), Command::kWarning);
   BOOST_CHECK_EQUAL(status.getStatusMsg(), "Nothing was done");
@@ -100,12 +97,12 @@ BOOST_FIXTURE_TEST_CASE(TestRunNothing,  CommandTestSetup) {
 
 BOOST_FIXTURE_TEST_CASE(TestRunError,  CommandTestSetup) {
   LOG(kInfo) << "Running CommandTestSuite/TestRunError";
-  error->exec( params );
+  error.exec( params );
 
   do {
-  } while ( (error->getState() == swatch::core::Command::kScheduled) || (error->getState() == swatch::core::Command::kRunning) );
+  } while ( (error.getState() == swatch::core::Command::kScheduled) || (error.getState() == swatch::core::Command::kRunning) );
 
-  CommandStatus status = error->getStatus();
+  CommandStatus status = error.getStatus();
   BOOST_CHECK_CLOSE(status.getProgress(), 0.5049, 0.0001);
   BOOST_CHECK_EQUAL(status.getState(), Command::kError);
   BOOST_CHECK_EQUAL(status.getStatusMsg(), "But ended up in error");

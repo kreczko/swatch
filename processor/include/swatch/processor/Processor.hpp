@@ -74,10 +74,10 @@ public:
     
 protected:
 
-    void Add( TTCInterface* aTTCInterface );
-    void Add( ReadoutInterface* aReadoutInterface );
-    void Add( AlgoInterface* aAlgoInterface );
-    void Add( LinkInterface* aLinkInterface );
+    TTCInterface& registerInterface( TTCInterface* aTTCInterface );
+    ReadoutInterface& registerInterface( ReadoutInterface* aReadoutInterface );
+    AlgoInterface& registerInterface( AlgoInterface* aAlgoInterface );
+    LinkInterface& registerInterface( LinkInterface* aLinkInterface );
 
     //! Firmware version metric
     core::Metric<uint64_t>& metricFirmwareVersion_;
@@ -107,10 +107,7 @@ private:
 };
 
 
-DEFINE_SWATCH_EXCEPTION(TTCInterfaceAlreadyDefined);
-DEFINE_SWATCH_EXCEPTION(ReadoutInterfaceAlreadyDefined);
-DEFINE_SWATCH_EXCEPTION(AlgoInterfaceAlreadyDefined);
-DEFINE_SWATCH_EXCEPTION(LinkInterfaceAlreadyDefined);
+DEFINE_SWATCH_EXCEPTION(ProcessorInterfaceAlreadyDefined);
 
 }
 }
