@@ -23,10 +23,10 @@ namespace system {
 swatch::system::CrateStub
 treeToCrateStub(const boost::property_tree::ptree& t) {
 
-    CrateStub astub(t.get<std::string>("CRATE NAME"));
+    CrateStub astub(t.get<std::string>("NAME"));
     
-    astub.location = t.get<std::string>("CRATE LOCATION");
-    astub.description = t.get<std::string>("CRATE DESCRIPTION");
+    astub.location = t.get<std::string>("LOCATION");
+    astub.description = t.get<std::string>("DESCRIPTION");
     
     return astub;
 }
@@ -35,9 +35,9 @@ treeToCrateStub(const boost::property_tree::ptree& t) {
 //---
 swatch::system::DaqTTCStub
 treeToDaqTTCStub(const boost::property_tree::ptree& t) {
-    DaqTTCStub astub(t.get<std::string>("SERVICE NAME"));
+    DaqTTCStub astub(t.get<std::string>("NAME"));
 
-    astub.creator        = t.get<std::string>("SERVICE CREATOR");
+    astub.creator        = t.get<std::string>("CREATOR");
     astub.uriT1          = t.get<std::string>("URI T1");
     astub.addressTableT1 = t.get<std::string>("ADDRESS TABLE T1"); // FIXME
     astub.uriT2          = t.get<std::string>("URI T2");
