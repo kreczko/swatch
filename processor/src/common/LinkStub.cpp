@@ -9,8 +9,6 @@
 
 #include <ostream>
 
-#include "swatch/core/xoperators.hpp"
-
 
 namespace swatch {
 namespace processor {

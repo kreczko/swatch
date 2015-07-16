@@ -42,10 +42,10 @@ public:
 
     uhal::HwInterface& hw() const;
 
-    virtual IPBusTTC& ttc();
+    virtual IPBusTTC& getTTC();
     
 protected:
-    virtual void implementUpdateMetrics() {}
+    virtual void retrieveMetricValues() {}
     
 private:
 

@@ -1,7 +1,6 @@
 /**
    @file    Utilities.hpp
    @author  Alessandro Thea
-   @brief   Brief description
    @date    22/07/14
  */
 

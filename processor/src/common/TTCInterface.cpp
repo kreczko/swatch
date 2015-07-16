@@ -1,7 +1,6 @@
 /* 
  * File:   TTCInterface.cpp
  * Author: Tom Williams
- * 
  * Created May 2015
  */
 

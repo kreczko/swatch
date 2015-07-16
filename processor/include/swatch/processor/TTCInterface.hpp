@@ -19,17 +19,12 @@
 namespace swatch {
 namespace processor {
 
-//! @FIXME A class derived from swatch::processor::Processor used as a base class for concrete type of uTCA processors
-
+//! Abstract class defining the TTC component interface of a processor
 class TTCInterface: public core::MonitorableObject {
 protected:
-
     TTCInterface();
 
 public:
-    /**
-     * Destructor Made virtual to delegate this task to this class's children and avoid potential run time errors
-     */
     virtual ~TTCInterface() {}
     
 //    // Clear all counters

@@ -1,15 +1,14 @@
 /**
  * @file    AMC13ServiceDescriptor.cpp
  * @author  Alessandro Thea
- * @brief   Brief description
  * @date    11/11/14
  */
 
-
 #include "swatch/system/DaqTTCStub.hpp"
 
-// Swatch Headers
-#include "swatch/core/xoperators.hpp"
+
+#include <ostream>
+
 
 namespace swatch {
 namespace system {

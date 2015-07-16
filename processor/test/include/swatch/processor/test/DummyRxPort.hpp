@@ -30,7 +30,7 @@ public:
   virtual uint32_t getCRCErrors() const;
   */
 
-  virtual void implementUpdateMetrics();
+  virtual void retrieveMetricValues();
   
 };
 

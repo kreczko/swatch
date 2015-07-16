@@ -73,7 +73,7 @@ void CommandSequence::UpdateParameterCache()
     std::set< std::string > lKeys( lParams.keys() );
     for( std::set< std::string >::iterator lIt2( lKeys.begin() ); lIt2!=lKeys.end(); ++lIt2 )
     {
-      GateKeeper::tParameter lData( mGateKeeper->get( id() , lCommand.id() , *lIt2 , getTables() ) );
+      GateKeeper::tParameter lData( mGateKeeper->get( getPath() , lCommand.getId() , *lIt2 , getTables() ) );
       if ( lData.get() != NULL )
       {
         lParams.erase(*lIt2);
@@ -212,7 +212,7 @@ CommandSequence& CommandSequence::run( const std::string& aCommand )
 //   mCommands.push_back( aCommand );
 //   return *this;
   ActionableObject* lParent( getParent<ActionableObject>()  );
-  return run( lParent->getCommand( aCommand ) );
+  return run( & lParent->getCommand( aCommand ) );
 }
 
 CommandSequence& CommandSequence::then ( const std::string& aCommand )

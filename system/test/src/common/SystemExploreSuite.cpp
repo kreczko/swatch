@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_CASE(ExploreSystem) {
     LOG(kDebug) << "======================";
     Object::iterator itObj;
     for (itObj = system->begin(); itObj != system->end(); ++itObj) {
-        LOG(kDebug) << " * " << itObj->path();
+        LOG(kDebug) << " * " << itObj->getPath();
     }
     LOG(kDebug) << "";
     
@@ -138,14 +138,14 @@ BOOST_AUTO_TEST_CASE(ExploreSystem) {
     vector< string >::const_iterator itN;
     BOOST_FOREACH( string name, names ) {
         Object& o = system->getObj(name);
-        LOG(kDebug) << "Found " << name << " : " << o.path() << " of type " << o.typeName();
+        LOG(kDebug) << "Found " << name << " : " << o.getPath() << " of type " << o.getTypeName();
     }
     LOG(kDebug) << "Multi-hop getter";
     LOG(kDebug) << "================";
     Object& o = system->getObj("crateC").getObj("amc01").getObj("links").getObj("tx00");
-    LOG(kDebug) << "Testing  crate1 + dummy-13 + tx00: " << o.path() << " of type " << o.typeName();
-    BOOST_CHECK_EQUAL(o.path(),"mysys.dummy-10.links.tx00");
-    BOOST_CHECK_EQUAL(o.typeName(),"swatch::processor::test::DummyTxPort");
+    LOG(kDebug) << "Testing  crate1 + dummy-13 + tx00: " << o.getPath() << " of type " << o.getTypeName();
+    BOOST_CHECK_EQUAL(o.getPath(),"mysys.dummy-10.links.tx00");
+    BOOST_CHECK_EQUAL(o.getTypeName(),"swatch::processor::test::DummyTxPort");
 
 
     LOG(kDebug) << "";
@@ -153,7 +153,7 @@ BOOST_AUTO_TEST_CASE(ExploreSystem) {
     LOG(kDebug) << "========================";
     
     BOOST_FOREACH( Processor* p, system->getProcessors() ) {
-        LOG(kDebug) << p->id() << " of type " << p->typeName() << ": crate=" << p->getCrateId();
+        LOG(kDebug) << p->getId() << " of type " << p->getTypeName() << ": crate=" << p->getCrateId();
     }
     LOG(kDebug) << "";
     

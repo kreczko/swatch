@@ -1,28 +1,25 @@
 /**
  * @file    ProcessorStub.hpp
  * @author  Alessandro Thea
- * @brief   Brief description
  * @date    09/11/14
  */
-
 
 #ifndef __SWATCH_PROCESSOR_PROCESSORSTUB_HPP__
 #define __SWATCH_PROCESSOR_PROCESSORSTUB_HPP__
 
-// C++ Headers
-#include <ostream>
+
+// C++ headers
+#include <iosfwd>
 #include <vector>
-// Swatch Headers
+
+// SWATCH headers
 #include "swatch/core/AbstractStub.hpp"
+
 
 namespace swatch {
 namespace processor {
 
-/**
- * @class ProcessorPortStub
- * @brief Structure to hold data to build a Processor port.
- * 
- */
+//! Structure to hold data to build a Processor port.
 class ProcessorPortStub : public swatch::core::AbstractStub {
 public:
 
@@ -35,18 +32,11 @@ public:
 };
 
 
-//typedef xdata::Bag<ProcessorPortStub> ProcessorPortBag;
-
-/**
- * @class ProcessorStub
- * @brief Struct to hold the data to construct a processor
- */
-
+//! Structure that holds the data required to construct a processor
 class ProcessorStub : public swatch::core::AbstractStub {
 public:
 
-  ProcessorStub(const std::string& aId) :
-    AbstractStub(aId) { }
+  ProcessorStub(const std::string& aId);
 
   virtual ~ProcessorStub() { }
 
@@ -73,7 +63,6 @@ public:
 
   //! List of transmitter port bags
   std::vector<ProcessorPortStub> txPorts;
-
 };
 
 std::ostream& operator<<(std::ostream& os, const swatch::processor::ProcessorStub& pd);

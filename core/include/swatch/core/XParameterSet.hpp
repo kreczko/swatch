@@ -1,21 +1,21 @@
 /**
  * @file    XParameterSet.hpp
  * @author  Alessandro Thea
- * @brief   Generic container interface for xdata::Serializable objects
  * @date    February 2015
- *
  */
 
 #ifndef __SWATCH_CORE_XPARAMETERSET_HPP__
 #define __SWATCH_CORE_XPARAMETERSET_HPP__
 
 
-// XDAQ Headers
-#include "xdata/Serializable.h"
-
 // Swatch Headers
 #include "swatch/core/exception.hpp"
 
+
+// Forward declarations
+namespace xdata {
+class Serializable;
+}
 
 namespace swatch {
 namespace core {

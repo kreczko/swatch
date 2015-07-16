@@ -3,7 +3,6 @@
 
 
 #include "boost/foreach.hpp"
-#include "swatch/core/AbstractStub.hpp"
 
 
 using namespace std;
@@ -16,13 +15,6 @@ MonitorableObject::MonitorableObject( const std::string& aId ) :
     Object( aId )
 {
 }
-
-/*
-MonitorableObject::MonitorableObject( const std::string& aId , const XParameterSet& aParams ) :
-    Object( aId , aParams )
-{
-}
-*/
 
 
 MonitorableObject::~MonitorableObject()
@@ -49,7 +41,7 @@ AbstractMetric& MonitorableObject::getMetric( const std::string& aId )
   try {
     return *metrics_.at( aId );
   } catch ( const std::out_of_range& e ) {
-    throw MetricNotFoundInMonitorableObject("MonitorableObject \"" + this->path() + "\" does not contain metric of ID \"" + aId + "\"");
+    throw MetricNotFoundInMonitorableObject("MonitorableObject \"" + getPath() + "\" does not contain metric of ID \"" + aId + "\"");
   }
 }
 
@@ -82,7 +74,7 @@ void MonitorableObject::updateMetrics()
   gettimeofday(&startTime, NULL);
 
   try{
-    this->implementUpdateMetrics();
+    this->retrieveMetricValues();
     
     // TODO: should lock a mutex ??
     updateErrorMsg_.clear();

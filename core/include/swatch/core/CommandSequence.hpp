@@ -1,13 +1,11 @@
 /**
  * @file    CommandSequence.hpp
  * @author  arose
- * @brief   
  * @date    May 2015
- *
  */
 
-#ifndef __SWATCH_CORE_CommandSequence_HPP__
-#define __SWATCH_CORE_CommandSequence_HPP__
+#ifndef __SWATCH_CORE_COMMANDSEQUENCE_HPP__
+#define __SWATCH_CORE_COMMANDSEQUENCE_HPP__
 
 #include "swatch/core/Object.hpp"
 #include "swatch/core/Command.hpp"
@@ -128,4 +126,4 @@ DEFINE_SWATCH_EXCEPTION( NoParentDefined );
 } /* namespace core */
 } /* namespace swatch */
 
-#endif /* __SWATCH_CORE_CommandSequence_HPP__ */
+#endif /* __SWATCH_CORE_COMMANDSEQUENCE_HPP__ */

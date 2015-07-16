@@ -58,7 +58,7 @@ namespace swatch
             std::set< std::string > lKeys( lCommand.getDefaultParams().keys() );
             for( std::set< std::string >::iterator lIt3( lKeys.begin() ); lIt3!=lKeys.end(); ++lIt3 )
             {
-              get ( lCommandSequence->id() , lCommand.id() , *lIt3 , lTables );
+              get ( lCommandSequence->getId() , lCommand.getId() , *lIt3 , lTables );
             }
           }
 

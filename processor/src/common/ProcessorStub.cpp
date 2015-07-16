@@ -1,18 +1,22 @@
-/**
- * @file    ProcessorDescriptor.hpp
- * @author  Alessandro Thea
- * @brief   Brief description
- * @date    11/11/14
- */
 
 #include "swatch/processor/ProcessorStub.hpp"
 
-// XDAQ Headers
-#include "swatch/core/xoperators.hpp"
+
+// Standard headers
+#include <ostream>
+
+// SWATCH headers
+#include "swatch/processor/Processor.hpp"
+
 
 namespace swatch {
 namespace processor {
 
+ProcessorStub::ProcessorStub(const std::string& aId) :
+  AbstractStub(aId),
+  slot(Processor::NoSlot)
+{ }
+  
 std::ostream& operator<<(std::ostream& os, const swatch::processor::ProcessorStub& pd ) {
     
     os << "ProcessorDescriptor[" << pd.id << "]:\n"

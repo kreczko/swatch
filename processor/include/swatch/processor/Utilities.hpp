@@ -12,7 +12,6 @@
 #include "boost/property_tree/ptree_fwd.hpp"
 
 // SWATCH headers
-#include "swatch/core/XParameterSet.hpp"
 #include "swatch/processor/LinkStub.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
 

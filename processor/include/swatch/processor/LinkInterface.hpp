@@ -1,11 +1,7 @@
 /**
  * @file    LinkInterface.hpp
  * @author  Alessandro Thea
- * @brief   Device, class representing the trigger network node.
  * @date    20.08.2014
- *
- * Detailed description
- *
  */
 
 #ifndef __SWATCH_PROCESSOR_LINKINTERFACE_HPP__
@@ -22,14 +18,12 @@ namespace processor {
 class InputPort;
 class OutputPort;
 
-/**
- *  Trigger network device
- */
-class LinkInterface: public core::MonitorableObject {
+//! Abstract class defining the optical link component interface of a processor
+ class LinkInterface: public core::MonitorableObject {
 public:
     LinkInterface();
-    virtual ~LinkInterface();
 
+    virtual ~LinkInterface();
 
     /**
      * Number of input channels
@@ -43,9 +37,9 @@ public:
      */
     uint32_t getNumOutputs() const;
 
-    std::deque<InputPort*>& getInputs();
+    const std::deque<InputPort*>& getInputs();
 
-    std::deque<OutputPort*>& getOutputs();
+    const std::deque<OutputPort*>& getOutputs();
 
     InputPort& getInput( const std::string& aId );
     OutputPort& getOutput( const std::string& aId );
@@ -58,9 +52,8 @@ public:
     void addInput( InputPort* aInput );
     void addOutput( OutputPort*  aOutput );
     
-    
 protected:
-    void implementUpdateMetrics() {}
+    void retrieveMetricValues() {}
 
 private:
     tInputPortDeque inputs_;

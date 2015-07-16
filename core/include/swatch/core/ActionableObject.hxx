@@ -1,5 +1,11 @@
+
+#ifndef __SWATCH_CORE_ACTIONABLEOBJECT_HXX__
+#define	__SWATCH_CORE_ACTIONABLEOBJECT_HXX__
+
+
 #include <boost/type_traits/is_base_of.hpp>
 #include <boost/static_assert.hpp>
+
 
 namespace swatch {
 namespace core {
@@ -14,6 +20,7 @@ T& ActionableObject::registerFunctionoid( const std::string& aId )
 }
 
 
+}
+}
 
-}
-}
+#endif  /* __SWATCH_CORE_ACTIONABLEOBJECT_HXX__ */

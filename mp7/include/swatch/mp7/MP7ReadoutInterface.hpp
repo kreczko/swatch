@@ -28,7 +28,7 @@ public:
     ~MP7ReadoutInterface();
     
 protected:
-    virtual void implementUpdateMetrics();
+    virtual void retrieveMetricValues();
     
 private:
     ::mp7::MP7Controller& driver_;

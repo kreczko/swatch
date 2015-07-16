@@ -9,8 +9,9 @@
 #ifndef __SWATCH_CORE_ABSTRACTFACTORY_HXX__
 #define	__SWATCH_CORE_ABSTRACTFACTORY_HXX__
 
-#include "xdata/String.h"
+
 #include "swatch/core/Utilities.hpp"
+
 
 namespace swatch {
 namespace core {

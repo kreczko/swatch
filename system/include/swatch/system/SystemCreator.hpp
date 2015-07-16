@@ -1,22 +1,15 @@
 /*
- * SystemCreator.hpp
- *
- *  Created on: 1 Oct 2014
- *      Author: kreczko
- *
- *  The default creator class for swatch::system::System.
- *
- *  The current required structure for the XParameterSet is defined in
- *  swatch/test/etc/testdb.json.
- *
+ * File:   SystemCreator.hpp
+ * Author: L. Kreczko
+ * Date:   Oct 2014
  */
 
 #ifndef __SWATCH_SYSTEM_SYSTEMCREATOR_HPP__
 #define __SWATCH_SYSTEM_SYSTEMCREATOR_HPP__
 
 
-#include "swatch/core/Factory.hpp"
 #include "swatch/core/exception.hpp"
+#include "swatch/core/Factory.hpp"
 
 
 namespace swatch {
@@ -30,6 +23,7 @@ namespace system {
 class System;
 class CrateStub;
 
+//! The default creator class for swatch::system::System
 class SystemCreator : public swatch::core::Factory::CreatorInterface {
 public:
     virtual swatch::core::Object* operator()(const swatch::core::AbstractStub& aStub);

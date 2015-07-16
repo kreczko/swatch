@@ -57,7 +57,7 @@ AMC13Manager::AMC13Manager(const swatch::core::AbstractStub& aStub) :
 
     uint32_t vT1 = driver_->read(AMC13::T1, "STATUS.FIRMWARE_VERS");
     uint32_t vT2 = driver_->read(AMC13::T2, "STATUS.FIRMWARE_VERS");
-    LOG(swlo::kNotice) << "AMC13 Service '" << id() << "' built. T1 ver: 0x" << std::hex << vT1 << " T2 ver: 0x" << std::hex << vT2;
+    LOG(swlo::kNotice) << "AMC13 Service '" << getId() << "' built. T1 ver: 0x" << std::hex << vT1 << " T2 ver: 0x" << std::hex << vT2;
 
 }
 
@@ -207,7 +207,7 @@ uint32_t AMC13Manager::ttcDoubleBitErrors() const {
 }
 */
 
-void AMC13Manager::implementUpdateMetrics()
+void AMC13Manager::retrieveMetricValues()
 {
   setMetricValue<>(ttcMetricClockFreq_, (double) driver_->read(AMC13::T2,"STATUS.TTC.CLK_FREQ")*50 ); 
   setMetricValue<>(ttcMetricBC0Counter_, driver_->read(AMC13::T2,"STATUS.TTC.BC0_COUNTER"));

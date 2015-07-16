@@ -17,7 +17,7 @@ MP7ReadoutInterface::~MP7ReadoutInterface() {
 }
 
 
-void MP7ReadoutInterface::implementUpdateMetrics()
+void MP7ReadoutInterface::retrieveMetricValues()
 {
 }
 

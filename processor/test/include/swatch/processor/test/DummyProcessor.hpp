@@ -49,7 +49,7 @@ public:
     static ProcessorStub generateParams( const std::string& aId );
 
 protected:
-    virtual void implementUpdateMetrics();
+    virtual void retrieveMetricValues();
 
 private:
 

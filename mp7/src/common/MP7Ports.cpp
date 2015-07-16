@@ -42,7 +42,7 @@ MP7RxPort::~MP7RxPort() {
 
 
 //---
-void MP7RxPort::implementUpdateMetrics()
+void MP7RxPort::retrieveMetricValues()
 {
   // Select the link, and calculate channel's local ID (within quad) ...
   datapath_.selectLink(this->channelID_);
@@ -102,7 +102,7 @@ MP7TxPort::~MP7TxPort() {
 
 
 //---
-void MP7TxPort::implementUpdateMetrics()
+void MP7TxPort::retrieveMetricValues()
 {  
   /* IS OPERATING */
   datapath_.selectLink(channelID_);

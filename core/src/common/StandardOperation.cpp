@@ -34,8 +34,10 @@ StandardOperation::StandardOperation( const std::string& aId ) :
   addTransition( Suspended,    Configured,   Stop,      mDummyCommandSequence );
 }
 
+
 StandardOperation::~StandardOperation() {
 }
+
 
 // Static members
 // static const std::string mHalted, mSynchronised, mConnected, mConfigured, mEnabled, mSuspended, mFailed;

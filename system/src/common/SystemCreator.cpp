@@ -5,9 +5,6 @@
 // boost headers
 #include "boost/foreach.hpp"
 
-// XDAQ headers
-#include "xdata/Vector.h"
-
 // SWATCH headers
 #include "swatch/core/Factory.hpp"
 
@@ -25,8 +22,8 @@
 
 
 namespace swco = swatch::core;
-//namespace swsys = swatch::system;
 namespace swpro = swatch::processor;
+
 
 SWATCH_REGISTER_CREATOR(swatch::system::SystemCreator);
 

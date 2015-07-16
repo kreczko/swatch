@@ -18,7 +18,7 @@ void MP7NullAlgo::reset(){
 }
 
 
-void MP7NullAlgo::implementUpdateMetrics() {
+void MP7NullAlgo::retrieveMetricValues() {
 }
 
 

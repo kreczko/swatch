@@ -1,9 +1,10 @@
 #include "swatch/core/XParameterSet.hpp"
 
+
 // C++ headers
 #include <typeinfo>
 
-// Boost headers
+// boost headers
 #include "boost/foreach.hpp"
 
 // XDAQ headers

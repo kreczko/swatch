@@ -222,7 +222,7 @@ BOOST_AUTO_TEST_CASE(BuildFullCrate) {
     Crate* crate = lSystem->getObj<Crate>("s2x3g18");
     
     // Was correct crate was created?
-    BOOST_CHECK(crate->id() == "s2x3g18" );
+    BOOST_CHECK(crate->getId() == "s2x3g18" );
     
     // Was one and only crate was created
     // TODO

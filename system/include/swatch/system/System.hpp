@@ -1,20 +1,21 @@
 /* 
  * File:   System.hpp
  * Author: ale
- *
+ * Date:   July 2014
  * Created on July 13, 2014, 11:20 AM
  */
 
 #ifndef __SWATCH_SYSTEM_SYSTEM_HPP__
 #define	__SWATCH_SYSTEM_SYSTEM_HPP__
 
-// C++ Headers
+
+// C++ headers
 #include <string>
 
 // boost headers
 #include <boost/unordered_map.hpp>
 
-// Swatch Headers
+// SWATCH headers
 #include "swatch/core/ActionableObject.hpp"
 #include "swatch/system/SystemStub.hpp"
 
@@ -23,8 +24,8 @@
 namespace swatch {
 
 namespace processor {
-	class Processor;
-  class Link;
+class Processor;
+class Link;
 }
 
 namespace system {
@@ -33,39 +34,36 @@ class Crate;
 class Service;
 class DaqTTCManager;
 
-//! Generic class to build a 
+//! Generic class representing a system of one ore mores processors
 class System : public core::ActionableObject {
 public:
   
   typedef boost::unordered_map<std::string, Crate*> CratesMap;
 
-    System( const swatch::core::AbstractStub& aStub );
-    virtual ~System();
+  System( const swatch::core::AbstractStub& aStub );
+  virtual ~System();
     
-    const SystemStub& getStub() const;
+  const SystemStub& getStub() const;
     
-    void add( processor::Processor* aProcessor );
-    void add( system::DaqTTCManager* aAMC13 );
-    void add( processor::Link* aLink );
-    void add( system::Service* aService );
-    void add( system::Crate* crate );
+  void add( processor::Processor* aProcessor );
+  void add( system::DaqTTCManager* aAMC13 );
+  void add( processor::Link* aLink );
+  void add( system::Service* aService );
+  void add( system::Crate* aCrate );
     
-    std::deque<processor::Processor*>& getProcessors() ;
-    std::deque<Service*>& getServices();
-    std::deque<DaqTTCManager*>& getDaqTTC();
-    std::deque<processor::Link*>& getLinks();
-    CratesMap& getCrates();
+  const std::deque<processor::Processor*>& getProcessors() ;
+  const std::deque<Service*>& getServices();
+  const std::deque<DaqTTCManager*>& getDaqTTC();
+  const std::deque<processor::Link*>& getLinks();
+  const CratesMap& getCrates();
     
-    bool hasCrate(const std::string& crate_id) const;
-
+  bool hasCrate(const std::string& aCrateId) const;
 
 protected:
-  
-    virtual void implementUpdateMetrics() {}
+  virtual void retrieveMetricValues() {}
 
-    //! List of external ports
-    // std::deque<SysPorts*> mPorts;
-    
+  //! List of external ports
+  // std::deque<SysPorts*> mPorts;    
 
 private:
     SystemStub stub_;

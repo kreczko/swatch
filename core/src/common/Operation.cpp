@@ -56,7 +56,7 @@ void Operation::addTransition(const std::string& from, const std::string& to, co
   void (CommandSequence::*lExec)() =  &CommandSequence::threadless_exec;
   bool (CommandSequence::*lPrecondition)() = &CommandSequence::precondition;
   ActionableObject* lParent( getParent<ActionableObject>()  );
-  fsm_->addTransition( from , to , event , lParent->getCommandSequence( aCommandSequenceId ) , lPrecondition , lExec );
+  fsm_->addTransition( from , to , event , & lParent->getCommandSequence( aCommandSequenceId ) , lPrecondition , lExec );
 }
 
 

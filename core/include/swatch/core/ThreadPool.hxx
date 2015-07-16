@@ -1,3 +1,7 @@
+
+#ifndef __SWATCH_CORE_THREADPOOL_HXX__
+#define __SWATCH_CORE_THREADPOOL_HXX__
+
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
 
@@ -42,3 +46,4 @@ void ThreadPool::addTask( OBJECT* cmd , boost::function<void(OBJECT*)> function 
 } // namespace core
 } // namespace swatch
 
+#endif /* __SWATCH_CORE_THREADPOOL_HXX__ */

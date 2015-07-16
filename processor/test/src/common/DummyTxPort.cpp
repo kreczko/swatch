@@ -25,7 +25,7 @@ bool DummyTxPort::isOperating() const {
 }
  */
 
-void DummyTxPort::implementUpdateMetrics() {
+void DummyTxPort::retrieveMetricValues() {
   setMetricValue<>(metricIsOperating_, true);
 }
 } // namespace test

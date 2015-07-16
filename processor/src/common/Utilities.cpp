@@ -8,6 +8,9 @@
 #include "swatch/processor/Utilities.hpp"
 
 
+// C++ headers
+#include <iomanip>
+
 // boost headers
 #include "boost/foreach.hpp"
 #include "boost/lexical_cast.hpp"
@@ -161,8 +164,6 @@ std::vector<std::string> expandPortSliceSyntax(const std::string& aString)
     }
     return results;
 }
-
-
 
 
 } // namespace processor

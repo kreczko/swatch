@@ -61,9 +61,9 @@ int main(int argc, char** argv) {
 
     std::cout << lGateKeeper << std::endl;
 
-    std::deque<swatch::processor::Processor*>& lProcessors( lSystem->getProcessors() );
+    const std::deque<swatch::processor::Processor*>& lProcessors( lSystem->getProcessors() );
 
-    for( std::deque<swatch::processor::Processor*>::iterator lIt( lProcessors.begin()) ; lIt!=lProcessors.end() ; ++lIt )
+    for( std::deque<swatch::processor::Processor*>::const_iterator lIt( lProcessors.begin()) ; lIt!=lProcessors.end() ; ++lIt )
     {
       std::set<std::string> lCommandSequences( (**lIt).getCommandSequences() );
 
@@ -71,7 +71,7 @@ int main(int argc, char** argv) {
       {
         std::cout << std::string( 100 , '-' ) << std::endl;
         std::cout << *lIt2 << std::endl;
-        swatch::core::CommandSequence* lCommandSequence( (**lIt).getCommandSequence( *lIt2 ) );
+        swatch::core::CommandSequence& lCommandSequence( (**lIt).getCommandSequence( *lIt2 ) );
       
 //         std::set<std::string> lParams = lCommandSequence->getParams();
 // 
@@ -93,7 +93,7 @@ int main(int argc, char** argv) {
 //         params.add( "sequence_1.dummy_1.aa" , xdata::Integer(123) );
 //         params.add( "sequence_1.dummy_2.aa" , xdata::Integer(321) );
 
-        lCommandSequence->exec();
+        lCommandSequence.exec();
 //         std::cout << lCommandSequence->getProgress() << std::endl;
 //         std::cout << lCommandSequence->getOverallProgress() << std::endl;
 //         std::cout << lCommandSequence->getProgressMsg() << std::endl;

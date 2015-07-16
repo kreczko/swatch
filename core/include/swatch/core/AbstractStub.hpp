@@ -1,16 +1,16 @@
 /**
  * @file    AbstractStub.hpp
  * @author  Alessandro Thea
- * @brief   Template class to provide support for abstract classes
  * @date    July 2015
- *
  */
 
 #ifndef __SWATCH_CORE_ABSTRACTSTUB_HPP__
 #define	__SWATCH_CORE_ABSTRACTSTUB_HPP__
 
+
 // C++ Headers
 #include <string>
+
 
 namespace swatch {
 namespace core {

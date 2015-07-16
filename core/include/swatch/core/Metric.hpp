@@ -26,6 +26,11 @@ template<typename DataType>
 class MetricCondition;
 
 
+/**
+ * Metric encapsulating monitoring data of given type
+ * 
+ * @tparam DataType type of the monitoring data
+ */
 template<typename DataType>
 class Metric : public AbstractMetric {
     
@@ -36,13 +41,13 @@ public:
     
     /*!
      * Construct the Metric 
-     * @param aErrorCondition ...
-     * @param aWarningCondition ...
+     * @param aErrorCondition Functor used to determine if the metric's value indicates an error; the Metric takes ownership of this condition object. NULL value represents no error condition.
+     * @param aWarningCondition Functor used to determine if the metric's value indicates a warning; the Metric takes ownership of this condition object. NULL value represents no warning condition.
      */
     Metric(MetricCondition<DataType>* aErrorCondition, MetricCondition<DataType>* aWarnCondition = NULL);
 
     ~Metric();
-    
+
     MetricSnapshot getValue() const;
     
     //! Returns time at which metric's value was last updated
@@ -62,7 +67,7 @@ private:
     timeval updateTimestamp_;
     
     // TODO: Maybe eventually update to read-write mutex if needed ???
-    //! Mutex used to stop corruption of data_ and updateErrorMsg_
+    //! Mutex used to stop corruption of value_
     mutable boost::mutex mutex_;
 
     boost::shared_ptr<MetricCondition<DataType> > errorCondition_;
@@ -80,6 +85,11 @@ template<>
 std::string convertMetricDataToString<bool>(bool data);
 
 
+/**
+ * Metric condition for monitoring data of given type
+ * 
+ * @tparam DataType type of the monitoring data
+ */
 template<typename DataType>
 class MetricCondition : public AbstractMetricCondition {
 public:

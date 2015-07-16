@@ -74,27 +74,6 @@ timeval Metric<DataType>::getUpdateTimestamp() const
 }
 
 
-/*
-template<typename DataType, class ParentObjectType>
-void Metric<DataType, ParentObjectType>::update() {
-
-    try{
-        DataType newValue = (obj_.*fRetrieveValue_)();
-
-        // For efficiency, only lock the mutex after the metric value has been retrieved (potentially long operation)
-        boost::lock_guard<boost::mutex> lock(mutex_);
-        value_.reset(new DataType(newValue));
-        updateErrorMsg_.clear();
-    }
-    catch(const std::exception& e)
-    {
-        boost::lock_guard<boost::mutex> lock(mutex_);
-        value_.reset(NULL);
-        updateErrorMsg_ = e.what();
-    }
-}
-*/
-
 template<typename DataType>
 void Metric<DataType>::setValue(const DataType& value) {
     boost::lock_guard<boost::mutex> lock(mutex_);

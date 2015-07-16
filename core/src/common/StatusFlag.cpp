@@ -1,7 +1,7 @@
 /* 
  * File:   StatusFlag.cpp
  * Author: Tom Williams
- * Date: May 2015
+ * Date:   May 2015
  */
 
 #include "swatch/core/StatusFlag.hpp"

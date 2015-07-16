@@ -31,34 +31,33 @@ ActionableObject::~ActionableObject()
 
 //------------------------------------------------------------------------------------
 
-CommandSequence* ActionableObject::getCommandSequence( const std::string& aId )
+CommandSequence& ActionableObject::getCommandSequence( const std::string& aId )
 {
   try {
-    return mCommandSequences.at( aId );
+    return *(mCommandSequences.at( aId ));
   } catch ( const std::out_of_range& e ) {
-    throw CommandSequenceNotFoundInActionableObject( "Unable to find CommandSequence with ID '"+aId+"' in object '" + path() + "'" );
+    throw CommandSequenceNotFoundInActionableObject( "Unable to find CommandSequence with ID '" + aId + "' in object '" + getPath() + "'" );
   }
-  return NULL; //Stop the compiler complaining
 }
 
-Command* ActionableObject::getCommand( const std::string& aId )
+
+Command& ActionableObject::getCommand( const std::string& aId )
 {
   try {
-    return mCommands.at( aId );
+    return *(mCommands.at( aId ));
   } catch ( const std::out_of_range& e ) {
-    throw CommandNotFoundInActionableObject( "Unable to find Command with ID '"+aId+"' in object '" + path() + "'" );
+    throw CommandNotFoundInActionableObject( "Unable to find Command with ID '" + aId + "' in object '" + getPath() + "'" );
   }
-  return NULL; //Stop the compiler complaining
 }
 
-Operation* ActionableObject::getOperation( const std::string& aId )
+
+Operation& ActionableObject::getOperation( const std::string& aId )
 {
   try {
-    return mOperations.at( aId );
+    return *(mOperations.at( aId ));
   } catch ( const std::out_of_range& e ) {
-    throw OperationNotFoundInActionableObject( "Unable to find Operation with ID '"+aId+"' in object '" + path() + "'");
+    throw OperationNotFoundInActionableObject( "Unable to find Operation with ID '" + aId + "' in object '" + getPath() + "'");
   }
-  return NULL; //Stop the compiler complaining
 }
 
 //------------------------------------------------------------------------------------
@@ -144,7 +143,7 @@ const Functionoid* ActionableObject::getActiveFunctionoid() const {
 void ActionableObject::Deleter::operator ()(Object* aObject) {
   if(ActionableObject* lActionableObj = dynamic_cast<ActionableObject*>(aObject))
   {
-    LOG(swatch::logger::kNotice) << "ActionableObject deleter being called on object '" << aObject->path() << "'";
+    LOG(swatch::logger::kNotice) << "ActionableObject deleter being called on object '" << aObject->getPath() << "'";
 
     lActionableObj->disableActions();
 
@@ -152,12 +151,12 @@ void ActionableObject::Deleter::operator ()(Object* aObject) {
     do {
     } while ( lActionableObj->getActiveFunctionoid() != NULL );
 
-    LOG(swatch::logger::kNotice) << "ActionableObject deleter now thinks that object '" << aObject->path() << "' has finished all commands";
+    LOG(swatch::logger::kNotice) << "ActionableObject deleter now thinks that object '" << aObject->getPath() << "' has finished all commands";
     
     delete lActionableObj;
   }
   else{
-    LOG(swatch::logger::kWarning) << "ActionableObject::Deleter being used on object '" << aObject->path() << "' of type '" << swatch::core::demangleName(typeid(aObject).name()) << "' that doesn't inherit from ActionableObject";
+    LOG(swatch::logger::kWarning) << "ActionableObject::Deleter being used on object '" << aObject->getPath() << "' of type '" << aObject->getTypeName() << "' that doesn't inherit from ActionableObject";
     delete aObject;
   }
 }

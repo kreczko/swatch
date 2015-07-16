@@ -1,23 +1,28 @@
 #include "swatch/system/SystemLoggingCreator.hpp"
 
-// Boost Headers
+
+// boost headers
 #include <boost/foreach.hpp>
 
-// Swatch Headers
+// SWATCH headers
 #include "swatch/system/System.hpp"
 #include "swatch/logger/Log.hpp"
 #include "swatch/system/DaqTTCManager.hpp"
+
 
 namespace swlog = swatch::logger;
 namespace swco = swatch::core;
 namespace swsys = swatch::system;
 namespace swpro = swatch::processor;
 
+
 SWATCH_REGISTER_CREATOR(swatch::system::SystemLoggingCreator);
+
 
 namespace swatch {
 namespace system {
 
+  
 swatch::core::Object*
 SystemLoggingCreator::operator()(const swatch::core::AbstractStub& aStub ) {
     LOG(swlog::kNotice) << "SystemLoggingCreator: Building System " << aStub.id;
@@ -40,5 +45,7 @@ SystemLoggingCreator::operator()(const swatch::core::AbstractStub& aStub ) {
     
     return sys;
 }
+
+
 } // namespace system
 } // namespace swatch

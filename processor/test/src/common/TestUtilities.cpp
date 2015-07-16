@@ -1,7 +1,10 @@
 
 #include <boost/test/unit_test.hpp>
 
-// Swatch Headers
+// standard headers
+#include <iomanip>
+
+// SWATCH headers
 #include "swatch/processor/Utilities.hpp"
 
 

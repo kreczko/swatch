@@ -1,22 +1,22 @@
 /* 
  * File:   Port.hpp
  * Author: ale
- *
- * Created on July 21, 2014, 9:57 AM
  */
 
-#ifndef __SWATCH_CORE_PORT_HPP__
-#define	__SWATCH_CORE_PORT_HPP__
+#ifndef __SWATCH_PROCESSOR_PORT_HPP__
+#define	__SWATCH_PROCESSOR_PORT_HPP__
+
 
 #include "swatch/core/MonitorableObject.hpp"
+
 
 namespace swatch {
 namespace processor {
 
+//! Base class defining the interface of an input optical port 
 class InputPort : public core::MonitorableObject {
 protected:
     explicit InputPort( const std::string& aId);
-//    explicit InputPort( const std::string& aId, const core::XParameterSet& params );
 
 public:
     virtual ~InputPort() {}
@@ -29,10 +29,13 @@ protected:
     core::Metric<uint32_t>& metricCRCErrors_;    
 };
 
+
+//! Base class defining the interface of an output optical port 
 class OutputPort : public core::MonitorableObject {
-public:
+protected:
     explicit OutputPort( const std::string& aId );
-//    explicit OutputPort( const std::string& aId, const core::XParameterSet& params );
+
+public:
     virtual ~OutputPort() {}
 
     static const std::vector<std::string> defaultMetrics;
@@ -44,5 +47,5 @@ protected:
 }
 }
 
-#endif	/* __SWATCH_CORE_PORT_HPP__ */
+#endif	/* __SWATCH_PROCESSOR_PORT_HPP__ */
 

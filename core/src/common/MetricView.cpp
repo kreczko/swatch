@@ -22,7 +22,7 @@ namespace swatch {
 namespace core {
 
 MetricView::MetricView(swatch::core::MonitorableObject& aMonObject, const std::string& aRegex) {
-  LOG(swatch::logger::kNotice) << "Creating MetricView from object " << aMonObject.path() << " with regex " << aRegex;
+  LOG(swatch::logger::kDebug) << "Creating MetricView from object " << aMonObject.getPath() << " with regex " << aRegex;
   
   swatch::core::Object::iterator objIt;
   for(objIt = aMonObject.begin(); objIt != aMonObject.end(); objIt++)
@@ -33,13 +33,13 @@ MetricView::MetricView(swatch::core::MonitorableObject& aMonObject, const std::s
       
       BOOST_FOREACH(const std::string& metricId, metrics)
       {
-        const std::string metricPath(monObject->path() + "." + metricId);
+        const std::string metricPath(monObject->getPath() + "." + metricId);
         
         // Check against regex
         boost::cmatch match;
         if ( boost::regex_match (metricPath.c_str(), match, boost::regex(aRegex)))
         {
-          LOG(swatch::logger::kNotice) << "MetricView : metric with path \"" << metricPath << "\" matches regex";
+          LOG(swatch::logger::kDebug) << "MetricView : metric with path \"" << metricPath << "\" matches regex";
           metricsMap_[metricPath] = &(monObject->getMetric(metricId));
           monitorableObjects_.insert(monObject);
         }

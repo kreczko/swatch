@@ -33,7 +33,7 @@ public:
     ::mp7::MP7Controller& driver() { return *driver_; } 
     
 protected:
-    virtual void implementUpdateMetrics();
+    virtual void retrieveMetricValues();
     
 private:
     

@@ -1,10 +1,11 @@
 
+
 namespace swatch {
 namespace core {
 
 template<typename T>
-T* Functionoid::getParent( const uint32_t& aDepth ) {
-  return dynamic_cast<T*>( getAncestor(aDepth) );
+T* Functionoid::getParent() {
+  return dynamic_cast<T*>( getAncestor(1) );
 }
 
 } // namespace core

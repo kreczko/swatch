@@ -80,8 +80,8 @@ core::Command::State IPBusResetCommand::code() {
     p->hw().dispatch();
 
 
-    p->ttc().clearErrors();
-    p->ttc().clearCounters();
+    p->getTTC().clearErrors();
+    p->getTTC().clearCounters();
     
     setStatusMsg("Done!");
     return kDone;
@@ -126,10 +126,10 @@ core::Command::State IPBusConfigureCommand::code() {
    
     if ( config == "capture") {
       // And then buffers
-      BOOST_FOREACH(InputPort* in, p->linkInterface().getInputs() ) {
+      BOOST_FOREACH(InputPort* in, p->getLinkInterface().getInputs() ) {
           dynamic_cast<IPBusRxChannel*>(in)->configureBuffer(BufferInterface::Capture);
       }
-      BOOST_FOREACH( OutputPort* out, p->linkInterface().getOutputs() ) {
+      BOOST_FOREACH( OutputPort* out, p->getLinkInterface().getOutputs() ) {
           dynamic_cast<IPBusTxChannel*>(out)->configureBuffer(BufferInterface::Capture);
       }
     } else {
@@ -170,9 +170,9 @@ core::Command::State IPBusCapture::code() {
 //    sleep(1);
     
     std::vector< std::vector<uint64_t> > data;
-    data.reserve(p->linkInterface().getNumOutputs());
-    BOOST_FOREACH(OutputPort* out, p->linkInterface().getOutputs() ) {
-      LOG(swlog::kDebug) << "Downloading " << out->id();
+    data.reserve(p->getLinkInterface().getNumOutputs());
+    BOOST_FOREACH(OutputPort* out, p->getLinkInterface().getOutputs() ) {
+      LOG(swlog::kDebug) << "Downloading " << out->getId();
       IPBusTxChannel* tx = dynamic_cast<IPBusTxChannel*>(out);
       data.push_back(tx->download());
       

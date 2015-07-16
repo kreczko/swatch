@@ -3,7 +3,6 @@
  * @author  Alessandro Thea
  * @brief   Connection between Devices in the trigger network
  * @date    20.08.2014
- *
  */
 
 #ifndef __SWATCH_PROCESSOR_LINK_HPP__
@@ -18,12 +17,15 @@ namespace processor {
 class InputPort;
 class OutputPort;
 
+//! Rrepresents the connection between an output and input optical port on different processors
 class Link : public core::ObjectView {
 public:
     explicit Link( const std::string& aId, OutputPort* aSrc, InputPort* aDst );
+
     ~Link();
     
     OutputPort* getSrc() { return src_; }
+
     InputPort* getDst() { return dst_; }
     
 protected:

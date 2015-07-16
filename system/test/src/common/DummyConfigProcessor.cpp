@@ -11,7 +11,6 @@
 #include "swatch/logger/Log.hpp"
 #include "swatch/core/Command.hpp"
 #include "swatch/core/Factory.hpp"
-#include "swatch/core/Placeholder.hpp"
 #include "swatch/system/test/DummyConfigProcessor.hpp"
 #include "swatch/processor/ProcessorCommandSequence.hpp"
 
@@ -48,7 +47,7 @@ public:
   {
 
     std::string lParameter = params.get<xdata::String>("parameter").value_;
-    LOG(logger::kInfo) << id() << ".exec() running case with 'parameter'='" << lParameter<<"'";
+    LOG(logger::kInfo) << getId() << ".exec() running case with 'parameter'='" << lParameter<<"'";
     setStatusMsg("Dummy command successfully completed");
     return kDone;
   }

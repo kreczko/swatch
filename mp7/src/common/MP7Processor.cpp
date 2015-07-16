@@ -66,11 +66,11 @@ MP7Processor::MP7Processor(const swatch::core::AbstractStub& aStub) :
     
     // Add input and output ports
     for(auto it = stub.rxPorts.begin(); it != stub.rxPorts.end(); it++)
-      linkInterface().addInput(new MP7RxPort(it->id, it->number, *this));
+      getLinkInterface().addInput(new MP7RxPort(it->id, it->number, *this));
     for(auto it = stub.txPorts.begin(); it != stub.txPorts.end(); it++)
-      linkInterface().addOutput(new MP7TxPort(it->id, it->number, *this));
+      getLinkInterface().addOutput(new MP7TxPort(it->id, it->number, *this));
 
-    LOG(swlog::kNotice) << "MP7 Processor '" << this->id() << "' built: firmware 0x" << std::hex << retrieveFirmwareVersion() << std::endl;
+    LOG(swlog::kNotice) << "MP7 Processor '" << this->getId() << "' built: firmware 0x" << std::hex << retrieveFirmwareVersion() << std::endl;
 }
 
 MP7Processor::~MP7Processor() {
@@ -91,7 +91,7 @@ MP7Processor::firmwareInfo() const {
   return "";
 }
 
-void MP7Processor::implementUpdateMetrics() {
+void MP7Processor::retrieveMetricValues() {
   
   setMetricValue<>(metricFirmwareVersion_, retrieveFirmwareVersion());
 

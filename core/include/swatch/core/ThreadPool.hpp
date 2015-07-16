@@ -3,27 +3,19 @@
  * @author  Luke Kreczko
  * @brief   ThreadPool class to manage threads
  * @date    May 2015
- *
- * The ThreadPool class provides the functionality to create
- * a fixed number of threads and deliver work to them.
- *
- * The thread pool can operate in three different ways:
- * 1. on 'stop' request wait for the queue of tasks to be depleted
- * 2. on 'stop' request wait for running tasks to complete
- * 3. on 'stop' request terminate immediatly (still in development)
- * For more information, see constructor documentation
- *
  */
 
 #ifndef __SWATCH_CORE_THREADPOOL_HPP__
 #define __SWATCH_CORE_THREADPOOL_HPP__
-// C++ Headers
+
+
+// C++ headers
 #include <vector>
 #include <memory>
 #include <deque>
 #include <functional>
 
-// BOOST Headers
+// BOOST headers
 #include <boost/thread/thread.hpp>
 #include <boost/function.hpp>
 #include <boost/thread/mutex.hpp>
@@ -31,10 +23,11 @@
 // need boost 1.57 for this
 //#include <boost/move/unique_ptr.hpp>
 
-// swatch headers
+// SWATCH headers
 #include "swatch/core/exception.hpp"
 #include "swatch/core/Command.hpp"
 #include "swatch/core/XParameterSet.hpp"
+
 
 namespace swatch {
 namespace core {
@@ -51,7 +44,17 @@ private:
   bool run_until_queue_empty_;
 };
 
-// next the threadpool
+
+/* 
+ * @brief The ThreadPool class provides the functionality to create
+ * a fixed number of threads and deliver work to them.
+ *
+ * The thread pool can operate in three different ways:
+ * 1. on 'stop' request wait for the queue of tasks to be depleted
+ * 2. on 'stop' request wait for running tasks to complete
+ * 3. on 'stop' request terminate immediatly (still in development)
+ * For more information, see constructor documentation
+*/
 class ThreadPool {
 public:
   /**
@@ -69,7 +72,7 @@ public:
   virtual ~ThreadPool();
 
   /**
-   * Function to add a task to the queue.
+   * Adds a task to the pool's queue.
    * @param cmd: pointer to the object
    * @param function: reference to the object function
    * @param param: parameter set to be passed to the object function
@@ -79,7 +82,7 @@ public:
 
 
   /**
-   * Function to add a task to the queue.
+   * Add a task to the pool's queue.
    * @param cmd: pointer to the object
    * @param function: reference to the object function
    */

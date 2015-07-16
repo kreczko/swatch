@@ -50,7 +50,7 @@ public:
     */
     
 protected:
-    virtual void implementUpdateMetrics();
+    virtual void retrieveMetricValues();
     
 private:
     

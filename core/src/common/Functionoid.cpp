@@ -1,9 +1,3 @@
-/*
- * Functionoid.cpp
- *
- *  Created on: 16 Feb 2015
- *      Author: arose
- */
 
 #include "swatch/core/Functionoid.hpp"
 
@@ -21,8 +15,8 @@ Functionoid::~Functionoid() {
 }
 
 
-Object* Functionoid::getParent( const uint32_t& aDepth ) {
-  return getAncestor(aDepth);
+Object* Functionoid::getParent() {
+  return getAncestor(1);
 }
 
 

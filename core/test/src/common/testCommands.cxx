@@ -22,21 +22,21 @@ int main(int argc, char const *argv[]) {
 
   LOG(swlo::kNotice) << "Registered commands ";
   BOOST_FOREACH( const std::string& cmdname, handler.getCommands() ) {
-    LOG(swlo::kInfo) << " * " << cmdname << ": result type = " << handler.getCommand(cmdname)->getDefaultResult().type();
+    LOG(swlo::kInfo) << " * " << cmdname << ": result type = " << handler.getCommand(cmdname).getDefaultResult().type();
   }
   
   LOG(swlo::kInfo) << "dummy: " << handler.getCommand("dummy");
 
-  swco::Command* cmd = handler.getCommand("dummy");
+  swco::Command& cmd = handler.getCommand("dummy");
 
   LOG(swlo::kNotice) << " --- --- --- ";
-  cmd->exec(params);
+  cmd.exec(params);
 
   do {
-  } while ( (cmd->getState() == swatch::core::Command::kScheduled) || (cmd->getState() == swatch::core::Command::kRunning) );
+  } while ( (cmd.getState() == swatch::core::Command::kScheduled) || (cmd.getState() == swatch::core::Command::kRunning) );
 
   {
-    swco::CommandStatus status = cmd->getStatus();
+    swco::CommandStatus status = cmd.getStatus();
     LOG(swlo::kInfo) << "progress: " << status.getProgress();
     LOG(swlo::kInfo) << "status: " << status.getState() << " - " << status.getStatusMsg();
     LOG(swlo::kInfo) << "result: " << status.getResultAsString();
@@ -45,16 +45,15 @@ int main(int argc, char const *argv[]) {
   LOG(swlo::kInfo) << "resource : smthg = " << handler.something() << " - num = " << handler.number();
 
   LOG(swlo::kNotice) << " --- --- --- ";  
-  cmd->reset();
   params.add("todo", xdata::String("print"));
 
-  cmd->exec(params);
+  cmd.exec(params);
 
   do {
-  } while ( (cmd->getState() == swatch::core::Command::kScheduled) || (cmd->getState() == swatch::core::Command::kRunning) );
+  } while ( (cmd.getState() == swatch::core::Command::kScheduled) || (cmd.getState() == swatch::core::Command::kRunning) );
 
   {
-    swco::CommandStatus status = cmd->getStatus();
+    swco::CommandStatus status = cmd.getStatus();
     LOG(swlo::kInfo) << "progress: " << status.getProgress();
     LOG(swlo::kInfo) << "status: " << status.getState() << " - " << status.getStatusMsg();
     LOG(swlo::kInfo) << "result: " << status.getResultAsString();
@@ -63,15 +62,14 @@ int main(int argc, char const *argv[]) {
   LOG(swlo::kInfo) << "resource : smthg = " << handler.something() << " - num = " << handler.number();
 
   LOG(swlo::kNotice) << " --- --- --- ";
-  cmd->reset();
   params["todo"] = xdata::String("error");
-  cmd->exec(params);
+  cmd.exec(params);
 
   do {
-  } while ( (cmd->getState() == swatch::core::Command::kScheduled) || (cmd->getState() == swatch::core::Command::kRunning) );
+  } while ( (cmd.getState() == swatch::core::Command::kScheduled) || (cmd.getState() == swatch::core::Command::kRunning) );
 
   {
-    swco::CommandStatus status = cmd->getStatus();
+    swco::CommandStatus status = cmd.getStatus();
     LOG(swlo::kInfo) << "progress: " << status.getProgress();
     LOG(swlo::kInfo) << "status: " << status.getState() << " - " << status.getStatusMsg();
     LOG(swlo::kInfo) << "result: " << status.getResultAsString();

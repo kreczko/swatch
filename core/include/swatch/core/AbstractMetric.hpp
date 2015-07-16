@@ -28,7 +28,7 @@ class MonitorableObject;
 /*!
  * @brief Represents some set of monitoring data that is retrieved from hardware.
  * 
- * This class is intended to contain the value of some monitoring data, providing
+ * This class is intended to contain the value of some monitoring data, provide
  * an interface to update the stored data value, and an interface to access that 
  * stored data value, along with a corresponding status flag that expresses whether
  * or not the value lies within some internally-stored limits
@@ -42,7 +42,7 @@ public:
     //! Returns metric value, status flag, and error/warning conditions, within a swatch::core::MetricSnapshot object. (THREAD SAFE)
     virtual MetricSnapshot getValue() const = 0;
     
-    //! Returns time at which metric's value was last updated
+    //! Returns time at which metric's value was last updated. (THREAD SAFE)
     virtual timeval getUpdateTimestamp() const = 0;
 
     
@@ -66,6 +66,7 @@ protected:
 std::ostream& operator<<(std::ostream& aOut, const AbstractMetricCondition& aCondition);
 
 
+//! Base class for error/warning conditions stored in metric classes (that inherit from AbstractMetric).
 class AbstractMetricCondition {
 public:
     AbstractMetricCondition();
@@ -91,8 +92,10 @@ public:
     //! Returns time at which metric's value was last updated
     timeval getUpdateTimestamp() const;
     
+    //! Returns metric's warning condition; NULL returned if metric doesn't have any warning condition
     const AbstractMetricCondition* getWarningCondition() const;
     
+    //! Returns metric's error condition; NULL returned if metric doesn't have any error condition
     const AbstractMetricCondition* getErrorCondition() const;
     
 private:
@@ -110,4 +113,3 @@ private:
 
 
 #endif	/* __SWATCH_CORE_ABSTRACTMETRIC_HPP__ */
-

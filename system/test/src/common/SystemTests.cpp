@@ -132,7 +132,7 @@ BOOST_FIXTURE_TEST_CASE(BuildSystemWithDefaultCreator, Params){
 //    swsys::System * system = swsys::SystemFactory::get()->make("swatch::system::SystemLoggingCreator", ps_system.get<xdata::String>("name"), ps_system);
     // swsys::System * system = swco::Factory::get()->make<swsys::System>("swatch::system::SystemLoggingCreator", ps_system.get<xdata::String>("name"), ps_system);
     swsys::System * system = swco::Factory::get()->make<swsys::System>("swatch::system::SystemLoggingCreator", sys);
-    BOOST_CHECK_EQUAL(system->id(), "mysystem");
+    BOOST_CHECK_EQUAL(system->getId(), "mysystem");
     BOOST_CHECK_EQUAL(system->getProcessors().size(), size_t(3));
     BOOST_CHECK_EQUAL(system->getDaqTTC().size(), size_t(1));
     // detailed tests for the content of processors and services
@@ -145,7 +145,7 @@ BOOST_FIXTURE_TEST_CASE(AddCrate, Params) {
     swsys::System * system = new swsys::System(empty);
     system->add(crate);
     swsys::Crate * stored_crate = system->getObj<swsys::Crate>("crateA");
-    BOOST_CHECK_EQUAL(crate->id(), stored_crate->id() );
+    BOOST_CHECK_EQUAL(crate->getId(), stored_crate->getId() );
 }
 
 BOOST_FIXTURE_TEST_CASE(AddCrateToMap, Params) {
@@ -155,7 +155,7 @@ BOOST_FIXTURE_TEST_CASE(AddCrateToMap, Params) {
     system->add(crate);
     swsys::System::CratesMap crates = system->getCrates();
     // check if map contains the object ID
-    bool is_crate_in_map = crates.find(crate->id()) != crates.end();
+    bool is_crate_in_map = crates.find(crate->getId()) != crates.end();
     BOOST_CHECK_EQUAL(is_crate_in_map, true );
 }
 
@@ -215,7 +215,7 @@ BOOST_FIXTURE_TEST_CASE(HasCrate, Params) {
 BOOST_FIXTURE_TEST_CASE(AddAMC13Service, Params) {
   LOG(kInfo) << "Running SystemTestSuite/AddAMC13Service";
   swsys::DaqTTCManager * amc13 = swco::Factory::get()->make<swsys::DaqTTCManager>(dts.creator,dts);
-  std::string service_name = amc13->id();
+  std::string service_name = amc13->getId();
   swsys::System * system = new swsys::System(empty);
   // before we can add amc13 we need to add crateA
   swsys::Crate * crateA = new swsys::Crate(cA);
@@ -227,7 +227,7 @@ BOOST_FIXTURE_TEST_CASE(AddAMC13Service, Params) {
   BOOST_CHECK_EQUAL(system->getDaqTTC().size(), size_t(1));
 
   swsys::DaqTTCManager * stored_service = system->getObj<swsys::DaqTTCManager>(service_name);
-  BOOST_CHECK_EQUAL(amc13->id(), stored_service->id() );
+  BOOST_CHECK_EQUAL(amc13->getId(), stored_service->getId() );
 }
 
 BOOST_AUTO_TEST_SUITE_END()

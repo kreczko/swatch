@@ -32,36 +32,36 @@ Object::~Object() {
   }
 }
 
-const std::type_info& Object::type() const {
-  return typeid ( *this);
+
+std::string Object::getTypeName() const {
+  return demangleName(typeid(*this).name());
 }
 
-std::string Object::typeName() const {
-  return demangleName(this->type().name());
-}
 
 void Object::setParent(Object* aParent) {
   if (parent_) {
     stringstream ss;
-    ss << "Cannot set ancestor of " << this->path() << ". Already set to " << parent_->path();
+    ss << "Cannot set ancestor of " << this->getPath() << ". Already set to " << parent_->getPath();
     throw runtime_error(ss.str());
   }
 
   parent_ = aParent;
 }
 
+
 void Object::addObj(Object* aChild) {
   aChild->setParent(this);
 
   // Insure the child does not have a twin
-  if (objectsChart_.find(aChild->id()) != objectsChart_.end()) {
-    throw std::runtime_error(aChild->id() + " already exists in this family");
+  if (objectsChart_.find(aChild->getId()) != objectsChart_.end()) {
+    throw std::runtime_error(aChild->getId() + " already exists in this family");
   }
 
   //    cout << this->id() << " - Adding " << aChild->id() << endl;
   children_.push_back(std::make_pair(aChild, (Deleter*)NULL));
-  objectsChart_.insert(std::make_pair(aChild->id(), aChild));
+  objectsChart_.insert(std::make_pair(aChild->getId(), aChild));
 }
+
 
 Object* Object::getAncestor(const uint32_t& aDepth) {
   if (!aDepth) {
@@ -75,11 +75,13 @@ Object* Object::getAncestor(const uint32_t& aDepth) {
   return parent_-> getAncestor(aDepth - 1);
 }
 
-const std::string& Object::id() const {
+
+const std::string& Object::getId() const {
   return id_;
 }
 
-const std::string Object::path() const {
+
+std::string Object::getPath() const {
   std::deque< const Object* > lGenealogy;
   getAncestors(lGenealogy);
   std::string lRet;
@@ -98,6 +100,7 @@ const std::string Object::path() const {
   return lRet;
 }
 
+
 void Object::getAncestors(std::deque<const Object*>& aGenealogy) const {
   aGenealogy.push_front(this);
 
@@ -106,13 +109,15 @@ void Object::getAncestors(std::deque<const Object*>& aGenealogy) const {
   }
 }
 
+
 void Object::print(std::ostream& aStr, const uint32_t& aIndent) const {
-  aStr << '\n' << std::string(aIndent, ' ') << "- [" << typeName() << "] " << id_;
+  aStr << '\n' << std::string(aIndent, ' ') << "- [" << getTypeName() << "] " << id_;
 
   for (std::deque< std::pair<Object*,Deleter*> >::const_iterator lIt = children_.begin(); lIt != children_.end(); ++lIt) {
     (*lIt->first).print(aStr, aIndent + 1);
   }
 }
+
 
 void Object::getCharts(const std::string& basePath, boost::unordered_map<std::string, Object*>& chart) const {
   std::string prefix(basePath.empty() ? "" : basePath + '.');
@@ -131,6 +136,7 @@ void Object::getCharts(const std::string& basePath, boost::unordered_map<std::st
   }
 }
 
+
 std::vector<std::string> Object::getChildren() const {
   std::vector<std::string> names;
   names.reserve(objectsChart_.size());
@@ -141,6 +147,7 @@ std::vector<std::string> Object::getChildren() const {
 
   return names;
 }
+
 
 std::vector<std::string> Object::getDescendants() const {
   boost::unordered_map<std::string, Object*> chart;
@@ -155,6 +162,7 @@ std::vector<std::string> Object::getDescendants() const {
 
   return names;
 }
+
 
 Object& Object::getObj(const std::string& aId) const {
   std::size_t pos;
@@ -186,23 +194,24 @@ Object& Object::getObj(const std::string& aId) const {
 
 // TODO: include self
 
-std::vector<std::string>
-Object::getPaths() const {
+std::vector<std::string> Object::getPaths() const {
   std::vector<std::string> names;
   names.reserve(objectsChart_.size());
   boost::unordered_map<std::string, Object*>::const_iterator it;
 
   for (it = objectsChart_.begin(); it != objectsChart_.end(); ++it) {
-    names.push_back(it->second->path());
+    names.push_back(it->second->getPath());
   }
 
   return names;
 }
 
+
 Object::iterator Object::begin() {
   Object::iterator lIt(this);
   return lIt;
 }
+
 
 Object::iterator Object::end() {
   Object::iterator lIt;
@@ -227,17 +236,19 @@ ObjectView::~ObjectView() {
   //    mObjectsChart.clear();
 }
 
+
 void ObjectView::addObj(Object* aChild, const std::string& aAlias) {
   // Insure the child does not have a twin
-  if (objectsChart_.find(aChild->id()) != objectsChart_.end()) {
-    throw std::runtime_error(aChild->id() + " already exists in this family");
+  if (objectsChart_.find(aChild->getId()) != objectsChart_.end()) {
+    throw std::runtime_error(aChild->getId() + " already exists in this family");
   }
 
   objectsChart_.insert(std::make_pair(aAlias, aChild));
 }
 
+
 void ObjectView::addObj(Object* aChild) {
-  this->addObj(aChild, aChild->id());
+  this->addObj(aChild, aChild->getId());
 }
 
 
@@ -246,31 +257,39 @@ void ObjectView::addObj(Object* aChild) {
 Object::iterator::iterator() : begin_() {
 }
 
+
 Object::iterator::iterator(Object* aBegin) : begin_(aBegin) {
 }
+
 
 Object::iterator::iterator(const iterator& aOrig) : begin_(aOrig.begin_), itStack_(aOrig.itStack_) {
 }
 
+
 Object::iterator::~iterator() {
 }
+
 
 Object& Object::iterator::operator*() const {
   return value();
 }
 
+
 Object* Object::iterator::operator->() const {
   return & (value());
 }
+
 
 Object& Object::iterator::value() const {
   return ( itStack_.size()) ? ( * itStack_[0]->first) : (*begin_);
 }
 
+
 Object::iterator& Object::iterator::operator++() {
   next();
   return *this;
 }
+
 
 Object::iterator Object::iterator::operator++(int) {
   Object::iterator lTemp(*this);
@@ -278,13 +297,16 @@ Object::iterator Object::iterator::operator++(int) {
   return lTemp;
 }
 
+
 bool Object::iterator::operator!=(const Object::iterator& aIt) const {
   return !(*this == aIt);
 }
 
+
 bool Object::iterator::operator==(const Object::iterator& aIt) const {
   return ( aIt.begin_ == begin_) && (aIt.itStack_ == itStack_);
 }
+
 
 bool Object::iterator::next() {
   // Null iterator can't be incremented...
@@ -327,6 +349,7 @@ bool Object::iterator::next() {
   begin_ = NULL;
   return false;
 }
+
 
 std::ostream& operator<<(std::ostream& aStr, const swatch::core::Object& aObject) {
   aObject.print(aStr);

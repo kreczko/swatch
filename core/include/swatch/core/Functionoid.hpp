@@ -6,12 +6,9 @@
  *
  */
 
-#ifndef __SWATCH_CORE_Functionoid_HPP__
-#define __SWATCH_CORE_Functionoid_HPP__
+#ifndef __SWATCH_CORE_FUNCTIONOID_HPP__
+#define __SWATCH_CORE_FUNCTIONOID_HPP__
 
-// C++ Headers
-#include <deque>
-#include <set>
 
 // XDAQ Headers
 #include <xdata/Serializable.h>
@@ -23,19 +20,20 @@
 namespace swatch {
 namespace core {
 
-  class Functionoid : public Object {
-  public:
-    /// Constructor
-    Functionoid( const std::string& aId );
+class Functionoid : public Object {
+public:
+  /// Constructor
+  Functionoid( const std::string& aId );
 
-    /// Destructor
-    virtual ~Functionoid();
+  /// Destructor
+  virtual ~Functionoid();
 
-  protected:
-    Object* getParent( const uint32_t& aDepth=1 );
-    template<typename T> T* getParent( const uint32_t& aDepth=1 );		
+protected:
+  Object* getParent();
 
+  template<typename T> T* getParent();
 };
+
 
 } /* namespace core */
 } /* namespace swatch */

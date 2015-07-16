@@ -1,7 +1,7 @@
 
 
-#ifndef __SWATCH_CORE_StandardOperation_HPP__
-#define __SWATCH_CORE_StandardOperation_HPP__
+#ifndef __SWATCH_CORE_STANDARDOPERATION_HPP__
+#define __SWATCH_CORE_STANDARDOPERATION_HPP__
 
 #include <string>
 
@@ -22,10 +22,6 @@ public:
   static const std::string Halted, Synchronised, Connected, Configured, Enabled, Suspended, Failed;
   static const std::string ColdReset, Setup, Connect, Configure, Enable, Suspend, Stop;
 
-
-protected:
-
-
 private:
 
   class DummyCommandSequence : public CommandSequence
@@ -36,12 +32,10 @@ private:
       std::vector<std::string>* setTables();
   };
 
-
   DummyCommandSequence mDummyCommandSequence;
-
 };
 
 } /* namespace core */
 } /* namespace swatch */
 
-#endif /* __SWATCH_CORE_StandardOperation_HPP__ */
+#endif /* __SWATCH_CORE_STANDARDOPERATION_HPP__ */

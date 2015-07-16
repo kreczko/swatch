@@ -29,7 +29,7 @@ public:
     virtual void reset();
 
 protected:
-    virtual void implementUpdateMetrics();
+    virtual void retrieveMetricValues();
 };
  
 } // namespace mp7

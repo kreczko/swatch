@@ -47,7 +47,7 @@ public:
     */
 
 protected:
-    virtual void implementUpdateMetrics();
+    virtual void retrieveMetricValues();
     
 private:
     ::amc13::AMC13* driver_;

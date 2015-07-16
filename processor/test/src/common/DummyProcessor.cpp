@@ -63,9 +63,9 @@ DummyProcessor::DummyProcessor(const swatch::core::AbstractStub& aStub) :
   const ProcessorStub& stub = getStub();
   
   for(auto it = stub.rxPorts.begin(); it != stub.rxPorts.end(); it++)
-    linkInterface().addInput(new DummyRxPort(it->id));
+    getLinkInterface().addInput(new DummyRxPort(it->id));
   for(auto it = stub.txPorts.begin(); it != stub.txPorts.end(); it++)
-    linkInterface().addOutput(new DummyTxPort(it->id));
+    getLinkInterface().addOutput(new DummyTxPort(it->id));
 }
 
 
@@ -134,7 +134,7 @@ ProcessorStub DummyProcessor::generateParams( const std::string& aId ) {
 }
 
 
-void DummyProcessor::implementUpdateMetrics()
+void DummyProcessor::retrieveMetricValues()
 {
   setMetricValue<uint64_t>(metricFirmwareVersion_, 0);
 }

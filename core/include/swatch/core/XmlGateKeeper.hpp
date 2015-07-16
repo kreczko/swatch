@@ -38,7 +38,6 @@ class XmlGateKeeper : public GateKeeper {
     std::pair< std::string , GateKeeper::tParameter > CreateParameter( pugi::xml_node& aEntry );
     std::pair< std::string , GateKeeper::tTable > CreateTable( pugi::xml_node& aTable );
 
-
     std::string mFileName;
 };
 

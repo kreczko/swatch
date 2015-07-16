@@ -1,25 +1,27 @@
 /**
  * @file    SystemStub.cpp
  * @author  Alessandro Thea
- * @brief   Brief description
  * @date    11/11/14
  */
 
-
 #include "swatch/system/SystemStub.hpp"
+
+
+#include <ostream>
+
 
 namespace swatch {
 namespace system {
 
   
 std::ostream& operator<<(std::ostream& os, const swatch::system::SystemStub& sd ) {
-    
-    os << "SystemStub[" << sd.id << "]:\n"
+
+  os << "SystemStub[" << sd.id << "]:\n"
 //       << "   - Location = " << sd.location << "\n"
 //       << "   - Description = " << sd.description << "\n"
-       << std::flush;
+     << std::flush;
 
-    return os;
+  return os;
 }
 
 

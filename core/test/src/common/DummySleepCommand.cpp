@@ -39,11 +39,11 @@ Command::State DummySleepCommand::code(const XParameterSet& params)
     boost::this_thread::sleep_for(boost::chrono::milliseconds(millisecPerSleep));
     
     std::ostringstream oss;
-    oss << "Dummy sleep command for object '" << res->path() << "' progressed. " << i << " of " << n << " sleeps done; " << (n - i) * millisecPerSleep << " milli sec remain";
+    oss << "Dummy sleep command for object '" << res->getPath() << "' progressed. " << i << " of " << n << " sleeps done; " << (n - i) * millisecPerSleep << " milli sec remain";
     setProgress( float(i) / n, oss.str());
   }
   
-  setStatusMsg("Dummy sleep command for object '" + res->path() + "' completed");
+  setStatusMsg("Dummy sleep command for object '" + res->getPath() + "' completed");
     return kDone;
 }
 

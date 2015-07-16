@@ -1,9 +1,7 @@
 /**
  * @file    XParameterSet.hxx
  * @author  Alessandro Thea
- * @brief   Generic container for xdata::Serializable objects
  * @date    February 2015
- *
  */
 
 #ifndef __SWATCH_CORE_XPARAMETERSET_HXX__

@@ -30,7 +30,7 @@ public:
   virtual ~MP7RxPort();
 
 protected:
-  virtual void implementUpdateMetrics();
+  virtual void retrieveMetricValues();
   
 private:
   //! Pointer to the main resource
@@ -50,7 +50,7 @@ public:
     virtual ~MP7TxPort();
     
 protected:
-    virtual void implementUpdateMetrics();
+    virtual void retrieveMetricValues();
 
 private:
     //! Pointer to the main resource

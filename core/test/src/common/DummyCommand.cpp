@@ -64,7 +64,7 @@ Command::State DummyCommand::code(const XParameterSet& params)
       setProgress(0.01 + 0.99 * float(i) / milliseconds, "Dummy command progressed");
     }
 
-    setStatusMsg("Thread command " + id() + " completed");
+    setStatusMsg("Thread command " + getId() + " completed");
     return kDone;
   }
   else

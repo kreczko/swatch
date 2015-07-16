@@ -107,22 +107,22 @@ BOOST_AUTO_TEST_CASE(ObjectIdPathTests) {
   
   TestFamily family;
   
-  BOOST_CHECK_EQUAL( family.granpa->id(), "granpa");
-  BOOST_CHECK_EQUAL( family.granpa->path(), "granpa");
+  BOOST_CHECK_EQUAL( family.granpa->getId(), "granpa");
+  BOOST_CHECK_EQUAL( family.granpa->getPath(), "granpa");
   
-  BOOST_CHECK_EQUAL( family.parentA->id(), "parentA");
-  BOOST_CHECK_EQUAL( family.parentB->id(), "parentB");
-  BOOST_CHECK_EQUAL( family.parentA->path(), "granpa.parentA");
-  BOOST_CHECK_EQUAL( family.parentB->path(), "granpa.parentB");
+  BOOST_CHECK_EQUAL( family.parentA->getId(), "parentA");
+  BOOST_CHECK_EQUAL( family.parentB->getId(), "parentB");
+  BOOST_CHECK_EQUAL( family.parentA->getPath(), "granpa.parentA");
+  BOOST_CHECK_EQUAL( family.parentB->getPath(), "granpa.parentB");
   
-  BOOST_CHECK_EQUAL( family.kidA1->id(), "kidA1");
-  BOOST_CHECK_EQUAL( family.kidA2->id(), "kidA2");
-  BOOST_CHECK_EQUAL( family.kidB1->id(), "kidB1");
-  BOOST_CHECK_EQUAL( family.kidB2->id(), "kidB2");
-  BOOST_CHECK_EQUAL( family.kidA1->path(), "granpa.parentA.kidA1");
-  BOOST_CHECK_EQUAL( family.kidA2->path(), "granpa.parentA.kidA2");
-  BOOST_CHECK_EQUAL( family.kidB1->path(), "granpa.parentB.kidB1");
-  BOOST_CHECK_EQUAL( family.kidB2->path(), "granpa.parentB.kidB2");
+  BOOST_CHECK_EQUAL( family.kidA1->getId(), "kidA1");
+  BOOST_CHECK_EQUAL( family.kidA2->getId(), "kidA2");
+  BOOST_CHECK_EQUAL( family.kidB1->getId(), "kidB1");
+  BOOST_CHECK_EQUAL( family.kidB2->getId(), "kidB2");
+  BOOST_CHECK_EQUAL( family.kidA1->getPath(), "granpa.parentA.kidA1");
+  BOOST_CHECK_EQUAL( family.kidA2->getPath(), "granpa.parentA.kidA2");
+  BOOST_CHECK_EQUAL( family.kidB1->getPath(), "granpa.parentB.kidB1");
+  BOOST_CHECK_EQUAL( family.kidB2->getPath(), "granpa.parentB.kidB2");
 }
 
 

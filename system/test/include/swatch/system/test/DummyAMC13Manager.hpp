@@ -44,7 +44,7 @@ public:
     */
     
 private:
-    virtual void implementUpdateMetrics();
+    virtual void retrieveMetricValues();
 };
 
 } // namespace test

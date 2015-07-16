@@ -9,16 +9,15 @@
 #ifndef __SWATCH_CORE_ABSTRACTFACTORY_HPP__
 #define	__SWATCH_CORE_ABSTRACTFACTORY_HPP__
 
-// C++ Headers
+// C++ headers
 #include <string>
-// #include "swatch/core/XParameterSet.hpp"
 
-// Boost Headers
+// boost headers
 #include <boost/noncopyable.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/shared_ptr.hpp>
 
-// Swatch Headers
+// SWATCH headers
 #include "swatch/core/AbstractStub.hpp"
 #include "swatch/core/exception.hpp"
 
@@ -36,6 +35,7 @@ template<> bool swatch::core::CreatorRegistrationHelper< productname, creatornam
 namespace swatch {
 namespace core {
 
+///! Template class to provide support for factory-style creation of abstract classes
 template<typename T>
 class AbstractFactory : public boost::noncopyable {
 private:
@@ -103,11 +103,9 @@ private:
     template<typename K>
     bool add(const std::string& aCreatorName);
     
-    private:
-        
+private:        
     static AbstractFactory* me_;
     boost::unordered_map<std::string, boost::shared_ptr<CreatorInterface> > creators_;
-
 };
 
 
@@ -153,8 +151,7 @@ struct CreatorRegistrationHelper {
 DEFINE_SWATCH_EXCEPTION(CreatorNotFound)
 DEFINE_SWATCH_EXCEPTION(FailedFactoryCast)
 
-#include "AbstractFactory.hxx"
+#include "swatch/core/AbstractFactory.hxx"
 
 
 #endif	/* __SWATCH_CORE_ABSTRACTFACTORY_HPP__ */
-

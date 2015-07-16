@@ -2,7 +2,6 @@
  * @file    exception.hpp
  * @author  Alessandro Thea
  * @date    July 2014
- *
  */
 
 #ifndef __SWATCH_CORE_EXCEPTION_HPP__
@@ -87,9 +86,6 @@ private:
 
 };
 
-
-//! Add here exception derived classes
-// DEFINE_SWATCH_EXCEPTION(ConfigureError);
 
 } // namespace core
 } // namespace swatch

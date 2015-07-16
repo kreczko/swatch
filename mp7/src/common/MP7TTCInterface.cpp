@@ -39,7 +39,7 @@ void MP7TTCInterface::clearErrors() {
 }
 
 
-void MP7TTCInterface::implementUpdateMetrics()
+void MP7TTCInterface::retrieveMetricValues()
 {
   setMetricValue<>(metricBunchCounter_, driver_.getTTC().readBunchCounter());
   setMetricValue<>(metricOrbitCounter_, driver_.getTTC().readOrbitCounter());

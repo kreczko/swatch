@@ -44,10 +44,10 @@ Command::exec( const XParameterSet& params  , const bool& aUseThreadPool )
   std::pair<bool, const Functionoid*> requestResult = getParent<ActionableObject>()->requestControlOfResource(this);
   if ( ! requestResult.first ){
     std::ostringstream oss;
-    oss << "Could not run command '" << id() << "' on resource '" << getParent()->path() << "'. ";
+    oss << "Could not run command '" << getId() << "' on resource '" << getParent()->getPath() << "'. ";
 
     if (requestResult.second)
-      oss << "Resource currently busy running functionoid '" << requestResult.second->id() << "'.";
+      oss << "Resource currently busy running functionoid '" << requestResult.second->getId() << "'.";
     else
       oss << "Actions currently disabled on this resource.";
 
@@ -118,7 +118,7 @@ void Command::runCode(const XParameterSet& params) {
   // 3) Release control of the resource
   const Functionoid* releaseResult = getParent<ActionableObject>()->releaseControlOfResource(this);
   if (releaseResult != NULL) {
-    LOG(swatch::logger::kError) << "Did not successfully release resource '" << getParent()->path() << "' from at end of runCode method for command '" << id() << "'";
+    LOG(swatch::logger::kError) << "Did not successfully release resource '" << getParent()->getPath() << "' from at end of runCode method for command '" << getId() << "'";
   }
 }
 
@@ -211,11 +211,6 @@ void Command::setResult( const xdata::Serializable& aResult ){
 void Command::setStatusMsg(const std::string& aMsg) {
   boost::unique_lock<boost::mutex> lock(mutex_);
   statusMsg_ = aMsg;
-}
-
-
-xdata::Serializable& Command::defaultResult(){
-  return *defaultResult_;
 }
 
 

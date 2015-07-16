@@ -2,7 +2,7 @@
  * @file    Processor.hpp
  * @author  Alessandro Thea
  * @brief   Processor abstract interface
- * @date    1July 2014
+ * @date    1 July 2014
  */
 
 #ifndef __SWATCH_PROCESSOR_PROCESSOR_HPP__
@@ -24,10 +24,12 @@ class XParameterSet;
 
 namespace processor {
 
+// Forward declarations
 class TTCInterface;
 class ReadoutInterface;
 class AlgoInterface;
 class LinkInterface;
+
 
 class Processor : public core::ActionableObject {
 protected:
@@ -38,35 +40,39 @@ public:
     const ProcessorStub& getStub() const;
 
     /**
-     * Return the board slot number
-     * @return 
+     * Returns the board slot number
+     * @return the board's slot number in the crate
      */
     uint32_t getSlot() const;
     
     /**
-     * Processor crate id getter
-     * @return String with the name of the crate
+     * Processor crate ID getter
+     * @return ID of the crate this processor that this processor is in
      */
     const std::string& getCrateId() const;
 
     //! Constant corresponding to no slot being assigned
     static const uint32_t NoSlot;
 
-    /**
-     * Additional firmware information.
-     * The string is meant to be informative for the user
-     * @details [long description]
-     * @return String containing additional firmware informations
-     */
-    virtual std::string firmwareInfo() const = 0; 
+//    /**
+//     * Additional firmware information.
+//     * The string is meant to be informative for the user
+//     * @details [long description]
+//     * @return String containing additional firmware informations
+//     */
+//    virtual std::string firmwareInfo() const = 0; 
 
-    TTCInterface& ttc();
+    //! Returns this processor's TTC interface
+    TTCInterface& getTTC();
     
-    ReadoutInterface& readout();
+    //! Returns this processor's readout interface
+    ReadoutInterface& getReadout();
     
-    AlgoInterface& algo();
+    //! Returns this processor's algo interface
+    AlgoInterface& getAlgo();
     
-    LinkInterface& linkInterface();
+    //! Returns this processor's link interface
+    LinkInterface& getLinkInterface();
     
     static const std::vector<std::string> defaultMetrics;
 
@@ -74,9 +80,16 @@ public:
     
 protected:
 
+    //! Register the supplied (heap-allocated) TTC interface in this processor; the processor base class takes ownership of the TTC interface instance.
     TTCInterface& registerInterface( TTCInterface* aTTCInterface );
+
+    //! Register the supplied (heap-allocated) readout interface in this processor; the processor base class takes ownership of the readout interface instance.
     ReadoutInterface& registerInterface( ReadoutInterface* aReadoutInterface );
+
+    //! Register the supplied (heap-allocated) algo interface in this processor; the processor base class takes ownership of the algo interface instance.
     AlgoInterface& registerInterface( AlgoInterface* aAlgoInterface );
+
+    //! Register the supplied (heap-allocated) link interface in this processor; the processor base class takes ownership of the link interface instance.
     LinkInterface& registerInterface( LinkInterface* aLinkInterface );
 
     //! Firmware version metric
@@ -86,19 +99,16 @@ private:
   
     ProcessorStub stub_;
 
-    uint32_t slot_;
-    
-    std::string crateId_;
-    
     //! TTC control interface
     TTCInterface* ttc_;
 
     //! Readout control interface
     ReadoutInterface* readout_;
 
-    //!
+    //! Algorithm control interface
     AlgoInterface* algo_;
 
+    //! Optical link interface
     LinkInterface* links_;
 
 private:

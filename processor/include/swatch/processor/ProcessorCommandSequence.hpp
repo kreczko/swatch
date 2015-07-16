@@ -1,7 +1,6 @@
 /**
  * @file    ProcessorCommandSequence.hpp
  * @author  arose
- * @brief   
  * @date    May 2015
  *
  */

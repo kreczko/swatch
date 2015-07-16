@@ -1,28 +1,26 @@
 /**
  * @file    DAQTTCStub.hpp
  * @author  Alessandro Thea
- * @brief   Brief description
  * @date    11/11/14
  */
 
 #ifndef __SWATCH_SYSTEM_DAQTTCSTUB_HPP__
 #define __SWATCH_SYSTEM_DAQTTCSTUB_HPP__
 
-// C++ Headers
-#include <ostream>
-#include <stdint.h>
-#include <vector>
 
-// Swatch Headers
+// C++ headers
+#include <iosfwd>
+#include <stdint.h>
+
+// SWATCH headers
 #include "swatch/core/AbstractStub.hpp"
+
 
 namespace swatch {
 namespace system {
 
-/**
- * @class DaqTTCStub
- * @brief Struct to hold the data to construct a DaqTTCManager object
- */
+
+//! Structure that holds the data required to build a DaqTTCManager
 class DaqTTCStub : public swatch::core::AbstractStub {
 public:
 
@@ -56,8 +54,6 @@ public:
   std::string addressTableT2;
 
 };
-
-//typedef xdata::Bag<DaqTTCStub> DaqTTCBag;
 
 
 std::ostream& operator<<(std::ostream& os, const swatch::system::DaqTTCStub& sd);

@@ -5,16 +5,16 @@
  * @date    11/11/14
  */
 
-
 #include "swatch/system/Utilities.hpp"
 
-// Swatch Headers
+
+// SWATCH headers
 #include "swatch/processor/Utilities.hpp"
 #include "swatch/system/DaqTTCStub.hpp"
 #include "swatch/system/CrateStub.hpp"
 
-// Boost Headers
-#include <boost/foreach.hpp>
+// boost headers
+#include "boost/foreach.hpp"
 
 namespace swatch {
 namespace system {
@@ -55,8 +55,7 @@ treeToSystemPars( const boost::property_tree::ptree& t ) {
 
     using boost::property_tree::ptree;
     using boost::property_tree::json_parser::read_json;
-    using swatch::core::XParameterSet;
-    using swatch::core::shellExpandPath;
+
 
 //    XParameterSet sysPars;
 

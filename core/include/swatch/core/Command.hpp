@@ -1,7 +1,6 @@
 /**
  * @file    Command.hpp
  * @author  Alessandro Thea
- * @brief   Command, class representing the trigger network node.
  * @date    February 2015
  *
  */
@@ -18,9 +17,9 @@
 
 // Swatch Headers
 #include "swatch/core/Functionoid.hpp"
-#include "swatch/core/XParameterSet.hpp"
 #include "swatch/core/ReadOnlyXParameterSet.hpp"
 #include "swatch/core/ReadWriteXParameterSet.hpp"
+
 
 // Forward declarations
 namespace xdata {
@@ -34,8 +33,10 @@ namespace core {
 
 class ActionableObject;
 class CommandStatus;
+class CommandSequence;
 
 
+//! Represents a one-shot action on a resource (a class that inherits from swatch::core::ActionableObject)
 class Command : public Functionoid {
 public:
 
@@ -50,12 +51,18 @@ public:
 
     virtual ~Command();
 
-    void exec( const XParameterSet& params , const bool& aUseThreadPool = true );
-   
-    virtual void reset();
+    /** 
+     * Run this command, using the supplied set of parameters
+     * 
+     * @param aParams Map of parameter values; any default parameters for this command that aren't included in this argument will be merged into the set supplied to the code method
+     * @param aUseThreadPool Run the command asynchronously in the swatch::core::ThreadPool ; if equals false, then the command is run synchronously
+     */
+    void exec( const XParameterSet& aParams , const bool& aUseThreadPool = true );
 
+    //! Returns current state of this command
     State getState() const;
 
+    //! Returns snapshot of this command's current status (state flag value, running time, progress fraction, status message and result) as a CommandStatus instance
     CommandStatus getStatus() const;
     
     template<typename T>
@@ -66,23 +73,28 @@ public:
     const xdata::Serializable& getDefaultResult() const;
 
 protected:
-    // user defined code for execution
+    //! user-defined code for execution
     virtual State code( const XParameterSet& params ) = 0;
 
     template<typename T>
     Command( const std::string& aId , const T& aDefault );
 
-    xdata::Serializable& defaultResult();
-
+    //! Set command's current fractional progress; valid range [0,1]
     void setProgress( float aProgress );
     
+    //! Set command's current fractional progress (valid range [0,1]), and status message
     void setProgress( float aProgress, const std::string& aMsg );
 
+    //! Set value of result from current command execution
     void setResult( const xdata::Serializable& aResult );
 
+    //! Set command's status message
     void setStatusMsg( const std::string& aMsg );
 
 private:
+
+    void reset();
+
     /**
      * Merges a parameter set with the default parameter set.
      * Default values are only used if not present in params.
@@ -120,18 +132,18 @@ private:
 
     //! Used to clone default result into result_ at start of execution, just before the code method is called
     ResultXCloner resultCloner_;
+    
+    friend class CommandSequence;
 };
 
 std::ostream& operator<<(std::ostream& out, swatch::core::Command::State s);
-
-typedef boost::unordered_map<std::string, Command*> CommandMap;
 
 
 //! Provides a snapshot of the progress/status of a swatch::core::Command
 class CommandStatus {
     
 public:
-    //! Returns status of command execution
+    //! Returns state of command execution (scheduled, running, warning, error, done, ...)
     Command::State getState() const;
     
     //! Returns command's running time in seconds

@@ -38,7 +38,7 @@ DummyAMC13Manager::DummyAMC13Manager( const swatch::core::AbstractStub& aStub ) 
   system::DaqTTCManager(aStub) {
     LOG(swlog::kInfo) << "Building a DummyAMC13Service";
     
-    LOG(swlog::kDebug) << "Id:" << this->id();
+    LOG(swlog::kDebug) << "Id:" << this->getId();
 }
 
 
@@ -93,7 +93,7 @@ uint32_t DummyAMC13Manager::ttcDoubleBitErrors() const {
 */
 
 
-void DummyAMC13Manager::implementUpdateMetrics() {
+void DummyAMC13Manager::retrieveMetricValues() {
   setMetricValue<double>(ttcMetricClockFreq_, 4e7);
   setMetricValue<uint32_t>(ttcMetricBC0Counter_, 42);
   setMetricValue<uint32_t>(ttcMetricBC0Errors_, 0);

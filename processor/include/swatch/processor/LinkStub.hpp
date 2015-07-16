@@ -8,10 +8,10 @@
 #define __SWATCH_PROCESSOR_LINKSTUB_HPP__
 
 
-// C++ Headers
+// C++ headers
 #include <iosfwd>
 
-// Swatch Headers
+// SWATCH headers
 #include "swatch/core/AbstractStub.hpp"
 
 namespace swatch {
@@ -19,7 +19,6 @@ namespace processor {
 
 
 //! Structure that holds data required to build a link
-
 class LinkStub : public swatch::core::AbstractStub {
 public:
 
@@ -35,9 +34,6 @@ public:
   //! Name of the destination port
   std::string dst;
 };
-
-
-//typedef xdata::Bag<LinkStub> LinkBag;
 
 
 std::ostream& operator<<(std::ostream& os, const swatch::processor::LinkStub& pd);

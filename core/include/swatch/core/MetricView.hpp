@@ -27,7 +27,7 @@ public:
     
     ~MetricView();
     
-    //! Update values of all metrics in this view
+    //! Update values of all metrics in this view; calls updateMetrics() method of all associated monitorable objects
     void update();
     
     //! Number of metrics in the view

@@ -187,13 +187,13 @@ void printStatus( swpro::TTCInterface* ttc ) {
 */} 
 
 void printStatus( swpro::Processor* p ) {
-    LOG(swlog::kInfo) << "Processor " << p->id();
+    LOG(swlog::kInfo) << "Processor " << p->getId();
     LOG(swlog::kInfo) << ">> Info";
 //    LOG(swlog::kInfo) << "Firmware version : 0x"  << std::hex << p->firmwareVersion() << std::dec;
-    LOG(swlog::kInfo) << "Inputs  : " << p->linkInterface().getNumInputs();
-    LOG(swlog::kInfo) << "Outputs : " << p->linkInterface().getNumOutputs();
+    LOG(swlog::kInfo) << "Inputs  : " << p->getLinkInterface().getNumInputs();
+    LOG(swlog::kInfo) << "Outputs : " << p->getLinkInterface().getNumOutputs();
     LOG(swlog::kInfo) << ">> TTC";
-    printStatus( & p->ttc() );
+    printStatus( & p->getTTC() );
 }
 
 
@@ -279,7 +279,7 @@ int main(int argc, char const *argv[]) {
     swpro::Processor *p0 = 0x0;
     try {
         p0 = new swpro::test::IPBusProcessor(p0stub);
-        LOG(swlog::kNotice) << ">> Processor " << p0->id() << " created";
+        LOG(swlog::kNotice) << ">> Processor " << p0->getId() << " created";
 
     } catch (uhal::exception::exception &e) {
         // Crap, let's get out here
@@ -291,7 +291,7 @@ int main(int argc, char const *argv[]) {
 
     LOG(swlog::kDebug) << "Input channels scan";
     // Test rx upload and download
-    BOOST_FOREACH( swpro::InputPort* in, p0->linkInterface().getInputs() ) {        
+    BOOST_FOREACH( swpro::InputPort* in, p0->getLinkInterface().getInputs() ) {
         swpro::test::IPBusRxChannel* rx = dynamic_cast<swpro::test::IPBusRxChannel*>(in);
         std::vector<uint64_t> v(rx->getBufferSize(),0x5555);
         // cout << "v.size() = " << v.size() << endl;
@@ -305,7 +305,7 @@ int main(int argc, char const *argv[]) {
 
     LOG(swlog::kDebug) << "Output channels scan";
     // Test tx channels injection and 
-    BOOST_FOREACH( swpro::OutputPort* out, p0->linkInterface().getOutputs() ) {        
+    BOOST_FOREACH( swpro::OutputPort* out, p0->getLinkInterface().getOutputs() ) {
         swpro::test::IPBusTxChannel* tx = dynamic_cast<swpro::test::IPBusTxChannel*>(out);
 
         std::vector<uint64_t> v(tx->getBufferSize(),0x5555);
@@ -323,7 +323,7 @@ int main(int argc, char const *argv[]) {
     
     LOG(swlog::kNotice) << ">> Resetting on internal clock";
     
-    swct::DummyCommand* reset = (swct::DummyCommand*) p0->getCommand("reset");
+    swct::DummyCommand* reset = p0->getObj<swct::DummyCommand>("reset");
     reset->registerParameter("mode", xdata::String("internal"));
 
     BOOST_FOREACH( const std::string& s, reset->getDefaultParams().keys() ) {
@@ -341,13 +341,13 @@ int main(int argc, char const *argv[]) {
     
     LOG(swlog::kNotice) << ">> Take a nap (1 sec)";
     sleep(1);
-    printStatus( & p0->ttc() );
+    printStatus( & p0->getTTC() );
 
     
     LOG(swlog::kNotice) << "//_ Step 2 ___ Testing config __________________________________";
 
     
-    swct::DummyCommand* cfgCmd = (swct::DummyCommand*) p0->getCommand("configure");
+    swct::DummyCommand* cfgCmd = p0->getObj<swct::DummyCommand>("configure");
     cfgCmd->registerParameter("mode", xdata::String("capture"));
     BOOST_FOREACH( const std::string& s, cfgCmd->getDefaultParams().keys() ) {
       LOG(swlog::kInfo) << " - " << s << ": " << cfgCmd->getDefaultParams()[s];
@@ -361,7 +361,7 @@ int main(int argc, char const *argv[]) {
       return -1;
     }
     
-    p0->getCommand("capture")->exec(empty_params);
+    p0->getCommand("capture").exec(empty_params);
 
     LOG(swlog::kNotice) << "//_ Destruction ________________________________________________";
     

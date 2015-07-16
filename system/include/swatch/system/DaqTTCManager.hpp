@@ -23,6 +23,7 @@ namespace system {
 class DaqTTCManager : public core::ActionableObject {
 protected:
     explicit DaqTTCManager( const swatch::core::AbstractStub& aStub );
+
 public:
     virtual ~DaqTTCManager();
     

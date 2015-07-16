@@ -35,15 +35,11 @@ Processor::Processor( const swatch::core::AbstractStub& aStub) :
     ActionableObject(aStub.id),
     metricFirmwareVersion_( registerMetric<uint64_t>("firmwareVersion") ),
     stub_(dynamic_cast<const processor::ProcessorStub&>(aStub)),
-    slot_(NoSlot),
     ttc_(NULL),
     readout_(NULL),
     algo_(NULL),
     links_(NULL)
 {
-  // Set crate and slot number from processor stub  
-  crateId_ = stub_.crate;
-  slot_ = stub_.slot;
 }
 
 Processor::~Processor() {
@@ -59,22 +55,22 @@ const ProcessorStub& Processor::getStub() const {
 //---
 uint32_t
 Processor::getSlot() const {
-  return slot_;
+  return stub_.slot;
 }
 
 
 //---
 const std::string&
 Processor::getCrateId() const {
-  return crateId_;
+  return stub_.crate;
 }
 
 
 //---
 TTCInterface&
-Processor::ttc() {
+Processor::getTTC() {
   if (ttc_ == NULL)
-    throw std::runtime_error("Processor \""+this->path()+"\" has not registered any TTC interface object");
+    throw std::runtime_error("Processor \"" + getPath() + "\" has not registered any TTC interface object");
   else
     return *ttc_;
 }
@@ -82,9 +78,9 @@ Processor::ttc() {
 
 //---
 ReadoutInterface&
-Processor::readout() {
+Processor::getReadout() {
   if (readout_ == NULL)
-    throw std::runtime_error("Processor \""+this->path()+"\" has not registered any readout interface object");
+    throw std::runtime_error("Processor \"" + getPath() + "\" has not registered any readout interface object");
   else
     return *readout_;
 }
@@ -92,9 +88,9 @@ Processor::readout() {
 
 //---
 AlgoInterface&
-Processor::algo() {
+Processor::getAlgo() {
   if (algo_ == NULL)
-    throw std::runtime_error("Processor \""+this->path()+"\" has not registered any algo interface object");
+    throw std::runtime_error("Processor \"" + getPath() + "\" has not registered any algo interface object");
   else
     return *algo_;
 }
@@ -102,15 +98,17 @@ Processor::algo() {
 
 //---
 LinkInterface&
-Processor::linkInterface() {
+Processor::getLinkInterface() {
   if (links_ == NULL)
-    throw std::runtime_error("Processor \""+this->path()+"\" has not registered any link interface object");
+    throw std::runtime_error("Processor \"" + getPath() + "\" has not registered any link interface object");
   else
     return *links_;
 }
 
+
 //---
 const std::vector<std::string> Processor::defaultMetrics = { "firmwareVersion" };
+
 
 //---
 const std::vector<std::string> Processor::defaultMonitorableObjects = { "ttc", "links", "readout", "algo" };
@@ -121,7 +119,7 @@ TTCInterface& Processor::registerInterface( TTCInterface* aTTCInterface )
 {
   if( ttc_ ){
     delete aTTCInterface;
-    throw ProcessorInterfaceAlreadyDefined( "TTCInterface already defined for processor '" + path() + "'" );
+    throw ProcessorInterfaceAlreadyDefined( "TTCInterface already defined for processor '" + getPath() + "'" );
   }
   this->addObj(aTTCInterface);
   ttc_ = aTTCInterface;
@@ -133,29 +131,31 @@ ReadoutInterface& Processor::registerInterface( ReadoutInterface* aReadoutInterf
 {
   if( readout_ ){
     delete aReadoutInterface;
-    throw ProcessorInterfaceAlreadyDefined( "ReadoutInterface already defined for processor '" + path() + "'" );
+    throw ProcessorInterfaceAlreadyDefined( "ReadoutInterface already defined for processor '" + getPath() + "'" );
   }
   this->addObj(aReadoutInterface);
   readout_ = aReadoutInterface;
   return *readout_;
 }
 
+
 AlgoInterface& Processor::registerInterface( AlgoInterface* aAlgoInterface )
 {
   if( algo_ ){
     delete aAlgoInterface;
-    throw ProcessorInterfaceAlreadyDefined( "AlgoInterface already defined for processor '" + path() + "'" );
+    throw ProcessorInterfaceAlreadyDefined( "AlgoInterface already defined for processor '" + getPath() + "'" );
   }
   this->addObj(aAlgoInterface);
   algo_ = aAlgoInterface;
   return *algo_;
 }
 
+
 LinkInterface& Processor::registerInterface( LinkInterface* aLinkInterface )
 {
   if( links_ ){
     delete aLinkInterface;
-    throw ProcessorInterfaceAlreadyDefined( "LinkInterface already defined for processor '" + path() + "'" );
+    throw ProcessorInterfaceAlreadyDefined( "LinkInterface already defined for processor '" + getPath() + "'" );
   }
   this->addObj(aLinkInterface);
   links_ = aLinkInterface;

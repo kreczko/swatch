@@ -59,14 +59,14 @@ BOOST_FIXTURE_TEST_CASE(TestRegisterCommand,  ActionableObjectTestSetup) {
   
   size_t n_commands_after = handler->getCommands().size();
   BOOST_CHECK_EQUAL(n_commands_after, n_commands + 1);
-  BOOST_CHECK_EQUAL( handler->getCommand("dummy_5000"), & registeredCmd);
+  BOOST_CHECK_EQUAL( & handler->getCommand("dummy_5000"), & registeredCmd);
 }
 
 
 BOOST_FIXTURE_TEST_CASE(TestGetCommand,  ActionableObjectTestSetup) {
   LOG(kInfo) << "Running ActionableObjectTestSuite/TestGetCommand";
-  Command* dummy_1 = handler->getCommand("dummy_1");
-  BOOST_CHECK_EQUAL(dummy_1->getState(), 0);
+  Command& dummy_1 = handler->getCommand("dummy_1");
+  BOOST_CHECK_EQUAL(dummy_1.getState(), 0);
 }
 
 
@@ -81,8 +81,8 @@ BOOST_FIXTURE_TEST_CASE(TestRegisterOperation,  ActionableObjectTestSetup) {
 
 BOOST_FIXTURE_TEST_CASE(TestGetOperation,  ActionableObjectTestSetup) {
   LOG(kInfo) << "Running ActionableObjectTestSuite/TestGetOperation";
-  Operation* test_1 = handler->getOperation("test_1");
-  BOOST_CHECK_EQUAL(test_1->getCurrentState(), "HALTED");
+  Operation& test_1 = handler->getOperation("test_1");
+  BOOST_CHECK_EQUAL(test_1.getCurrentState(), "HALTED");
 }
 
 
@@ -91,13 +91,13 @@ BOOST_AUTO_TEST_CASE(TestSafeDeletionOfBusyActionableObject) {
     ActionableObjectTestSetup setup;
     LOG(kInfo) << "Running ActionableObjectTestSuite/TestSafeDeletionOfBusyActionableObject";
   
-    Command* sleepCommand = setup.handler->getCommand("sleep");
+    Command& sleepCommand = setup.handler->getCommand("sleep");
   
     ReadWriteXParameterSet params;
     params.add("n", xdata::UnsignedInteger(5000));
     params.add("millisecPerSleep", xdata::UnsignedInteger(5));
   
-    sleepCommand->exec(params);
+    sleepCommand.exec(params);
 
     boost::this_thread::sleep_for(boost::chrono::milliseconds(25));
   }

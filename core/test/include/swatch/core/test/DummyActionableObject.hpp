@@ -39,7 +39,7 @@ public:
 
 private:
 
-  void implementUpdateMetrics() {}
+  void retrieveMetricValues() {}
     
   std::string something_;
   uint32_t number_;

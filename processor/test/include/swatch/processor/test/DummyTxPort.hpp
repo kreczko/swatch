@@ -24,7 +24,7 @@ public:
   virtual bool isOperating() const;
    */
   
-  virtual void implementUpdateMetrics();
+  virtual void retrieveMetricValues();
 };
 } // namespace test
 } // namespace processor

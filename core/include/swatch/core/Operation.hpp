@@ -3,12 +3,12 @@
  *
  *  Created on: 16 Feb 2015
  *      Author: kreczko
- *
- * The Operation (dev name) class is used as a mediator for classes that inherit from swatch::processor::Processor.
  */
 
 #ifndef __SWATCH_CORE_OPERATION_HPP__
 #define __SWATCH_CORE_OPERATION_HPP__
+
+
 // C++ Headers
 #include <string>
 
@@ -20,18 +20,19 @@
 #include "swatch/core/FSM.hpp"
 #include "swatch/core/XParameterSet.hpp"
 
+
 namespace swatch {
 namespace core {
   class ActionableObject;
   class CommandSequence;  
 
+  
 /*
- * @brief Represents the multi-command operations (FSMs) of classes that inherit from swatch::core::ActionResource.
+ * @brief Represents the multi-command operations (FSMs) on resources (classes that inherit from swatch::core::ActionableObject).
  * It provides a Finite State Machine (swatch::core::FSM) to cycle through pre-defined
  * (in an implementation of Operation) states and call Operation methods that are associated transitions.
  * The Operation methods then use the Handler resource to manipulate the hardware underneath.
  */
-
 class Operation : public Functionoid {
 public:
 
@@ -61,10 +62,9 @@ protected:
 
   FSM* fsm_;
 
-private:
-
 };
-typedef boost::unordered_map<std::string, Operation*> OperationMap;
+
+
 } /* namespace core */
 } /* namespace swatch */
 

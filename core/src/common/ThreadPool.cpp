@@ -5,8 +5,11 @@ using namespace swatch::logger;
 
 namespace swatch {
 namespace core {
+
+
 boost::mutex ThreadPool::mutex_;
 ThreadPool* ThreadPool::instance_ = NULL;
+
 
 ThreadPool& ThreadPool::getInstance(size_t n_threads,
     bool run_until_queue_empty, bool force_thread_cancellation) {
@@ -18,11 +21,13 @@ ThreadPool& ThreadPool::getInstance(size_t n_threads,
   return *ThreadPool::instance_;
 }
 
+
 void ThreadPool::reset() {
   boost::unique_lock<boost::mutex> lock(ThreadPool::mutex_);
   delete ThreadPool::instance_;
   ThreadPool::instance_ = NULL;
 }
+
 
 ThreadPool::ThreadPool(size_t n_threads, bool run_until_queue_empty,
     bool force_thread_cancellation) :
@@ -36,6 +41,7 @@ ThreadPool::ThreadPool(size_t n_threads, bool run_until_queue_empty,
   for (size_t i = 0; i < n_threads_; ++i)
     workers_.create_thread(Worker(*this, run_until_queue_empty));
 }
+
 
 ThreadPool::~ThreadPool() {
   {
@@ -57,11 +63,13 @@ ThreadPool::~ThreadPool() {
     workers_.join_all();
 }
 
+
 Worker::Worker(ThreadPool &pool, bool run_until_queue_empty) :
         pool_(pool),
         run_until_queue_empty_(run_until_queue_empty) {
 
 }
+
 
 void Worker::operator()() {
   boost::packaged_task<void> task;
@@ -91,6 +99,7 @@ void Worker::operator()() {
     }
   }
 }
+
 
 } // namespace core
 } // namespace swatch

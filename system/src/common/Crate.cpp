@@ -1,22 +1,23 @@
 /* 
- * File:   CrateView.cpp
+ * File:   Crate.cpp
  * Author: ale
- * 
- * Created on July 21, 2014, 10:12 AM
+ * Date: July 2014
  */
 
 #include "swatch/system/Crate.hpp"
 
-// Swatch Headers
+
+// C++ headers
+#include <sstream>
+
+// boost headers
+#include <boost/foreach.hpp>
+
+// SWATCH headers
 #include "swatch/processor/Processor.hpp"
 #include "swatch/system/Service.hpp"
 #include "swatch/system/DaqTTCManager.hpp"
 
-// Boost Headers
-#include <boost/foreach.hpp>
-
-// C++ Headers
-#include <sstream>
 
 // Namespace resolution
 using namespace std;
@@ -52,15 +53,15 @@ Crate::add(processor::Processor* aProcessor) {
     uint32_t slot = aProcessor->getSlot();
     if (slot < min_ || slot > max_) {
         stringstream ss;
-        ss << "Crate '"<< id() << "': Slot " << slot << " out of range";
+        ss << "Crate '"<< getId() << "': Slot " << slot << " out of range";
         throw CrateSlotOutOfRange(ss.str());
     }    
 
     // Check if the slot is available
     if ( isSlotTaken(slot) ) {
         stringstream ss;
-        ss << this->id() << ": Cannot add card " << aProcessor->id() << " to slot " << slot
-                << ". Slot already assigned to card " << this->amcs_[slot-min_]->id();
+        ss << this->getId() << ": Cannot add card " << aProcessor->getId() << " to slot " << slot
+                << ". Slot already assigned to card " << this->amcs_[slot-min_]->getId();
         throw CrateSlotTaken(ss.str());
     }
     
@@ -75,7 +76,7 @@ Crate::amc(uint32_t slot) {
 
     if (slot < min_ || slot > max_) {
         stringstream ss;
-        ss << "Crate '"<< id() << "': Slot " << slot << " out of range";
+        ss << "Crate '"<< getId() << "': Slot " << slot << " out of range";
         
         throw CrateSlotOutOfRange(ss.str());
     }

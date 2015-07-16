@@ -6,8 +6,8 @@
  *
  */
 
-#ifndef __SWATCH_CORE_ActionableObject_HPP__
-#define __SWATCH_CORE_ActionableObject_HPP__
+#ifndef __SWATCH_CORE_ACTIONABLEOBJECT_HPP__
+#define __SWATCH_CORE_ACTIONABLEOBJECT_HPP__
 
 // SWATCH Headers
 #include "swatch/core/exception.hpp"
@@ -26,6 +26,7 @@
 namespace swatch {
 namespace core {
 
+//! An object representing a resource on which commands, operations and command sequences run
 class ActionableObject : public MonitorableObject {
 public:
   explicit ActionableObject( const std::string& aId );
@@ -33,36 +34,43 @@ public:
   virtual ~ActionableObject();
 
   /**
-    * List of Configuration Sequence names stored.
-    * @return set of command names
+    * Names of stored command sequences.
+    * @return set of command sequence names
     */    
   std::set< std::string > getCommandSequences() const;
 
   /**
-    * List of command names stored.
+    * Names of stored commands.
     * @return set of command names
     */
   std::set<std::string> getCommands() const;
 
   /**
-   * List of operation names stored.
+   * Names of stored operations.
    * @return set of operation names
    */
   std::set<std::string> getOperations() const;
 
+  //! Get registered command sequence of specified ID
+  CommandSequence& getCommandSequence( const std::string& aId );
 
-  CommandSequence* getCommandSequence( const std::string& aId );
-  Command* getCommand( const std::string& aId );
-  Operation* getOperation( const std::string& aId );
+  //! Get registered command of specified ID
+  Command& getCommand( const std::string& aId );
 
+  //! Get registered command of specified ID
+  Operation& getOperation( const std::string& aId );
+
+  //! Returns whether or not actions (i.e. commands, command sequences, operations) are currently enabled on this resource
   bool isEnabled() const;
-  
+
+  //! Returns the currently running (or scheduled) action (i.e. commands, command sequences, operations); returns NULL if no action is currently scheduled/running
   const Functionoid* getActiveFunctionoid() const;
   
   typedef boost::unordered_map< std::string , CommandSequence* > tCommandSequenceMap;
   typedef boost::unordered_map< std::string , Command* > tCommandMap;
   typedef boost::unordered_map< std::string , Operation* > tOperationMap;
 
+  //! Deleter functor that only deletes the actionable object after all commands, command sequences and operations have finished running
   class Deleter : public Object::Deleter {
   public:
     Deleter() {}
@@ -118,5 +126,5 @@ DEFINE_SWATCH_EXCEPTION(OperationNotFoundInActionableObject);
 
 #include "swatch/core/ActionableObject.hxx"
 
-#endif  /* __SWATCH_TEST_ActionableObject_HPP__ */
+#endif  /* __SWATCH_CORE_ACTIONABLEOBJECT_HPP__ */
 

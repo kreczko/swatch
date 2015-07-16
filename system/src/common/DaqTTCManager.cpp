@@ -1,8 +1,7 @@
 /* 
  * File:   DaqTTCManager.cpp
  * Author: ale
- * 
- * Created on July 28, 2014, 12:13 AM
+ * Date:   July 2014
  */
 
 #include "swatch/system/DaqTTCManager.hpp"
