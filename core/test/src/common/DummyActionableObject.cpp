@@ -44,7 +44,7 @@ std::string DummyActionableObject::something() const {
 }
 
 
-uint32_t DummyActionableObject::number() const {
+uint32_t DummyActionableObject::getNumber() const {
   return number_;
 }
 

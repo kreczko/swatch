@@ -7,121 +7,155 @@
 #ifndef __SWATCH_CORE_COMMANDSEQUENCE_HPP__
 #define __SWATCH_CORE_COMMANDSEQUENCE_HPP__
 
-#include "swatch/core/Object.hpp"
-#include "swatch/core/Command.hpp"
+
+#include "swatch/core/Functionoid.hpp"
+#include "swatch/core/ReadOnlyXParameterSet.hpp"
 
 #include "boost/date_time/posix_time/posix_time_types.hpp"
-#include <boost/thread/mutex.hpp>
-// #include "boost/any.hpp"
-
+#include "boost/thread/mutex.hpp"
 
 #include <vector>
-#include <set>
 
 
 namespace swatch {
 namespace core {
-  class GateKeeper;
-  class Operation;
+
+class Command;
+class CommandStatus;
+class CommandSequenceStatus;
+class GateKeeper;
+class Operation;
 
 
-///TODO : In the configure method, who has ownership of the xdata::Serializable* - the source table or the destination parameter set????!
-  class CommandSequence : public Functionoid {
-    friend class GateKeeper;
-    friend class Operation;
+//! Represents a sequence of commands, executed in succession.
+class CommandSequence : public Functionoid {
+  friend class GateKeeper;
+  friend class Operation;
 
-  public:
+public:
+  //! Represents state of command sequence execution
+  enum State {
+    kInitial,
+    kScheduled,
+    kRunning,
+    kDone,
+    kWarning,
+    kError
+  }; 
 
-    enum Status {
-        kDone,
-        kRunning,
-        kFailed
-    }; 
+  CommandSequence( const std::string& aId );
 
-    /// Constructor
-    CommandSequence( const std::string& aId );
-
-    /// Destructor
-    virtual ~CommandSequence();
+  virtual ~CommandSequence();
   
-    /**
-      Utility function to add a command to the command sequence
-      @param aCommand a command to add to the command sequence
-    */
-    CommandSequence& run( Command* aCommand );
-    CommandSequence& then( Command* aCommand );
-    CommandSequence& operator() ( Command* aCommand );
+  /**
+    Utility function to add a command to the command sequence
+    @param aCommand a command to add to the command sequence
+  */
+  CommandSequence& run( Command& aCommand );
+  CommandSequence& then( Command& aCommand );
+  CommandSequence& operator() ( Command& aCommand );
 
-    CommandSequence& run( const std::string& aCommand );
-    CommandSequence& then( const std::string& aCommand );
-    CommandSequence& operator() ( const std::string& aCommand );
+  CommandSequence& run( const std::string& aCommand );
+  CommandSequence& then( const std::string& aCommand );
+  CommandSequence& operator() ( const std::string& aCommand );
 
-//     std::set<std::string> getParams();
-    const std::vector<std::string>& getTables();
+  const std::vector<std::string>& getTables();
+  
+  const std::vector<Command*> getCommands() const;
+  
+  /**
+   * Run the command sequence, extracting the parameters for each command from the supplied gatekeeper
+   * 
+   * @param aGateKeeper Gatekeeper that will be used to extract the 
+   * @param aUseThreadPool Run the sequence asynchronously in the swatch::core::ThreadPool ; if equals false, then the sequence is run synchronously (i.e. only )
+   */
+  void exec(GateKeeper& aGateKeeper, const bool& aUseThreadPool = true ); 
 
+  //! Returns current state of this command sequence
+  State getState() const;
+  
+  //! Returns snapshot of this command's current status (state flag value, running time, current command, overall progress fraction)
+  CommandSequenceStatus getStatus() const;
 
-    const Command* getCurrentCommand();
-
-    Status getStatus() const;
-
-    float getProgress();
-    std::vector< const xdata::Serializable* > getResults();
-
-    /**
-      Run the configuration sequence
-    */
-    virtual void exec( const bool& aUseThreadPool = true ); 
-
-    /**
-      Reset the configuration commands
-    */
-    virtual void reset();
-
-  protected:
-    virtual std::vector<std::string>* setTables() = 0;
+protected:
+  virtual std::vector<std::string>* setTables() = 0;
 
 
-  private:
-    virtual bool precondition();
-    virtual void threadless_exec(); 
+private:
+//  ///! Reset the commands
+//  void reset();
 
-    // thread safe exception catching wrapper for code()
-    void runCode();
+  virtual bool precondition();
 
-    void setGateKeeper( GateKeeper* aGateKeeper );
+  //! thread safe exception catching wrapper for code()
+  void runCommands();
 
-    void UpdateParameterCache();
+  void updateParameterCache(GateKeeper& aGateKeeper);
 
+  std::vector<std::string>* mTables;
 
-//     Command& getCommand( boost::any& aCommand ) const;
-    Command& getCommand( Command* aCommand ) const;
+  typedef std::vector< Command* > tCommandVector;
 
+  tCommandVector mCommands;
 
-    std::vector<std::string>* mTables;
+  typedef std::vector< ReadOnlyXParameterSet > tParameterSets;
+  tParameterSets mCachedParameters;
 
-    typedef std::vector< Command* > tCommandVector;
-//     typedef std::vector< boost::any > tCommandVector;
+  /// The last time a table was updated from the Gatekeeper
+  boost::posix_time::ptime mParamUpdateTime;
 
-    tCommandVector mCommands;
-    tCommandVector::iterator mIt;
+  mutable boost::mutex mMutex; //mObjectMutex
+  
+  State mState;
 
-    GateKeeper* mGateKeeper;
+  tCommandVector::iterator mCommandIt;
 
-    typedef std::vector< ReadOnlyXParameterSet > tParameterSets;
-    tParameterSets mCachedParameters;
+  boost::posix_time::ptime mExecStartTime;
+  boost::posix_time::ptime mExecEndTime;
+  
+  std::vector<CommandStatus> mStatusOfCompletedCommands;
+};
 
-//     static std::string mCommandSequenceComplete;
+// DEFINE_SWATCH_EXCEPTION( NoParentDefined );
 
-    /// The last time a table was updated from the Gatekeeper
-    boost::posix_time::ptime mUpdateTime;
+std::ostream& operator<<(std::ostream& out, swatch::core::CommandSequence::State s);
 
-    boost::mutex mIteratorMutex ; //mObjectMutex
+//! Provides a snapshot of the progress/status of a swatch::core::CommandSequence
+class CommandSequenceStatus {
+public:
+    //! Returns state of command sequence execution (scheduled, running, warning, error, done, ...)
+    CommandSequence::State getState() const;
+    
+    //! Returns sequence's running time in seconds
+    float getRunningTime() const;
+    
+    //! Returns fraction progress of sequence - range [0,1] inclusive - 
+    float getProgress() const;
+    
+    //! Returns current command
+    const Command* getCurrentCommand() const;
 
-    Status mStatus;
-  };
+    //! Returns count of commands that have already completed execution (regardless of whether their final state is kDone, kWarning, or kError)
+    size_t getNumberOfCompletedCommands() const;
+    
+    //! Returns results of the command in the sequence that have already completed execution
+    const std::vector<const xdata::Serializable*>& getResults() const;
 
-DEFINE_SWATCH_EXCEPTION( NoGateKeeperDefined );  
-DEFINE_SWATCH_EXCEPTION( NoParentDefined );  
+    //! Returns status of commands that have started/completed execution 
+    const std::vector<CommandStatus>& getCommandStatus() const;
+    
+private:
+    CommandSequenceStatus(CommandSequence::State aState, float aRunningTime, const Command* aCurrentCommand, const std::vector<CommandStatus>& aFinishedCommandStatuses, const size_t& aTotalNumberOfCommands);
+
+    CommandSequence::State mState;
+    float mRunningTime;
+    const Command* mCurrentCommand;
+    float mProgress;
+    std::vector<const xdata::Serializable*> mResults;
+    std::vector<CommandStatus> mCommandStatuses;
+
+    friend class CommandSequence;
+};
 
 } /* namespace core */
 } /* namespace swatch */

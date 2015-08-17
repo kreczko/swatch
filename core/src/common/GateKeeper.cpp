@@ -1,7 +1,12 @@
 
 #include "swatch/core/GateKeeper.hpp"
-#include "swatch/core/CommandSequence.hpp"
+
+
 #include "boost/date_time/posix_time/posix_time.hpp"
+
+#include "swatch/core/Command.hpp"
+#include "swatch/core/CommandSequence.hpp"
+
 
 namespace swatch
 {
@@ -30,7 +35,6 @@ namespace swatch
 
         if ( lCommandSequence )
         {
-          lCommandSequence->setGateKeeper ( this );
           const std::vector<std::string>& lTables = lCommandSequence->getTables();
 
           for ( std::vector<std::string>::const_iterator lIt2 ( lTables.begin() ) ; lIt2!=lTables.end() ; ++lIt2 )
@@ -52,9 +56,9 @@ namespace swatch
           }
 
 
-          for( CommandSequence::tCommandVector::iterator lIt2( lCommandSequence->mCommands.begin()) ; lIt2 != lCommandSequence->mCommands.end() ; ++lIt2 )
+          for( CommandSequence::tCommandVector::const_iterator lIt2( lCommandSequence->getCommands().begin()) ; lIt2 != lCommandSequence->getCommands().end() ; ++lIt2 )
           {
-            Command& lCommand( lCommandSequence->getCommand( *lIt2 ) ); //Utility function
+            Command& lCommand = **lIt2; //Utility function
             std::set< std::string > lKeys( lCommand.getDefaultParams().keys() );
             for( std::set< std::string >::iterator lIt3( lKeys.begin() ); lIt3!=lKeys.end(); ++lIt3 )
             {

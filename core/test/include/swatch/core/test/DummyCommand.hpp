@@ -1,8 +1,7 @@
 /**
  * @file    DummyCommand.hpp
- * @author  Alessandro Thea
- * @brief   ActionableObject class
- * @date    February 2015
+ * @author  Tom Williams
+ * @date    August 2015
  *
  */
 
@@ -18,6 +17,7 @@ namespace swatch {
 namespace core {
 namespace test {
 
+//! Dummy command whose code method is used to test the implementation of the command base class 
 class DummyCommand: public swatch::core::Command {
 public:
   DummyCommand( const std::string& aId );
@@ -26,12 +26,20 @@ public:
 
   virtual Command::State code( const XParameterSet& params); 
 
+  static const xdata::Integer defaultResult;
+  static const std::string finalMsgUseResource;
+  static const std::string finalMsgSleep;
+  static const std::string finalMsgWarning;
+  static const std::string finalMsgError;
+  static const std::string exceptionMsg;
+  static const float finalProgressError;
+  static const float finalProgressThrow;  
 };
 
 template<typename T>
 DummyCommand::DummyCommand( const std::string& aId , const T& aDefault) :
        swatch::core::Command( aId , aDefault) {
-  registerParameter("aa", xdata::Integer(15));
+  registerParameter("x", xdata::Integer(defaultResult));
   registerParameter("todo", xdata::String(""));
 }
 

@@ -22,7 +22,7 @@ public:
 
   virtual ~DummyActionableObject();
 
-  uint32_t number() const;
+  uint32_t getNumber() const;
 
   void setNumber(uint32_t number);
 

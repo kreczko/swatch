@@ -73,14 +73,13 @@ Processor(aStub)
 
   //Define the sequence through pointers to commands - run, then and operator() are all aliases
   core::CommandSequence& lSequence1 = registerFunctionoid<processor::ProcessorCommandSequence>( "sequence_1" );
-  lSequence1.run( &lDummy1 ).then( &lDummy2 )( &lDummy3 );
+  lSequence1.run( lDummy1 ).then( lDummy2 )( lDummy3 );
 
   //Define the sequence through command ids - run, then and operator() are all aliases
   core::CommandSequence& lSequence2 = registerFunctionoid<processor::ProcessorCommandSequence>( "sequence_2" );
   lSequence2.run( "dummy_4" ).then( "dummy_5" )( "dummy_6" );
-
-
 }
+
 
 DummyConfigProcessor::~DummyConfigProcessor() {
 }

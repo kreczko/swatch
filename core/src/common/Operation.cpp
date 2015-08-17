@@ -35,7 +35,7 @@ const std::map<std::string, std::string> Operation::getStateTransitions(const st
   return fsm_->getStateTransitions(s);
 }
 
-void Operation::executeTransition(const std::string name){
+void Operation::executeTransition(const std::string& name){
     fsm_->executeTransition(name);
 }
 
@@ -44,6 +44,7 @@ std::string Operation::getCurrentState() const {
 }
 
 
+/*
 void Operation::addTransition(const std::string& from, const std::string& to, const std::string& event, CommandSequence& aCommandSequence )
 {
   void (CommandSequence::*lExec)() =  &CommandSequence::threadless_exec;
@@ -58,7 +59,7 @@ void Operation::addTransition(const std::string& from, const std::string& to, co
   ActionableObject* lParent( getParent<ActionableObject>()  );
   fsm_->addTransition( from , to , event , & lParent->getCommandSequence( aCommandSequenceId ) , lPrecondition , lExec );
 }
-
+*/
 
 } /* namespace core */
 } /* namespace swatch */

@@ -46,7 +46,9 @@ Libraries =	\
 	logxmlappender \
 	logudpappender \
 	peer \
-	boost_regex
+	boost_regex \
+	pthread \
+	boost_thread
 #	tcpla \
 	
 

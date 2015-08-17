@@ -23,6 +23,7 @@ StandardOperation::StandardOperation( const std::string& aId ) :
   fsm_->setInitialState(Halted);
   fsm_->reset();
 
+/*
   addTransition( Halted,       Halted,       ColdReset, mDummyCommandSequence );
   addTransition( Halted,       Synchronised, Setup,     mDummyCommandSequence );
   addTransition( Synchronised, Connected,    Connect,   mDummyCommandSequence );
@@ -32,6 +33,7 @@ StandardOperation::StandardOperation( const std::string& aId ) :
   addTransition( Enabled,      Configured,   Stop,      mDummyCommandSequence );
   addTransition( Suspended,    Enabled,      Enable,    mDummyCommandSequence );
   addTransition( Suspended,    Configured,   Stop,      mDummyCommandSequence );
+ */
 }
 
 

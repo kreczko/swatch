@@ -16,7 +16,7 @@ int main(int argc, char const *argv[]) {
   swcot::DummyActionableObject handler;
   swco::ReadWriteXParameterSet params;
 
-  LOG(swlo::kInfo) << "resource : smthg = " << handler.something() << " - num = " << handler.number(); 
+  LOG(swlo::kInfo) << "resource : smthg = " << handler.something() << " - num = " << handler.getNumber(); 
 
   handler.registerFunctionoid<swcot::DummyCommand>("dummy");
 
@@ -42,7 +42,7 @@ int main(int argc, char const *argv[]) {
     LOG(swlo::kInfo) << "result: " << status.getResultAsString();
   }
   
-  LOG(swlo::kInfo) << "resource : smthg = " << handler.something() << " - num = " << handler.number();
+  LOG(swlo::kInfo) << "resource : smthg = " << handler.something() << " - num = " << handler.getNumber();
 
   LOG(swlo::kNotice) << " --- --- --- ";  
   params.add("todo", xdata::String("print"));
@@ -59,7 +59,7 @@ int main(int argc, char const *argv[]) {
     LOG(swlo::kInfo) << "result: " << status.getResultAsString();
   }
   
-  LOG(swlo::kInfo) << "resource : smthg = " << handler.something() << " - num = " << handler.number();
+  LOG(swlo::kInfo) << "resource : smthg = " << handler.something() << " - num = " << handler.getNumber();
 
   LOG(swlo::kNotice) << " --- --- --- ";
   params["todo"] = xdata::String("error");
@@ -75,7 +75,7 @@ int main(int argc, char const *argv[]) {
     LOG(swlo::kInfo) << "result: " << status.getResultAsString();
   }
   
-  LOG(swlo::kInfo) << "resource : smthg = " << handler.something() << " - num = " << handler.number();
+  LOG(swlo::kInfo) << "resource : smthg = " << handler.something() << " - num = " << handler.getNumber();
 
   /* code */
   return 0;

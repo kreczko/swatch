@@ -9,13 +9,13 @@
 #define __SWATCH_CORE_OPERATION_HPP__
 
 
-// C++ Headers
+// C++ headers
 #include <string>
 
 // boost headers
 #include <boost/unordered_map.hpp>
 
-// Swatch Headers
+// SWATCH headers
 #include "swatch/core/Functionoid.hpp"
 #include "swatch/core/FSM.hpp"
 #include "swatch/core/XParameterSet.hpp"
@@ -38,7 +38,7 @@ public:
 
   virtual ~Operation();
 
-  void executeTransition(const std::string);
+  void executeTransition(const std::string&);
 
   std::string getCurrentState() const;
 
@@ -52,11 +52,12 @@ public:
 
   std::string getStatus() const;
 
-
+/*
   void addTransition(const std::string& from, const std::string& to, const std::string& event, CommandSequence& aCommandSequence );
 
   void addTransition(const std::string& from, const std::string& to, const std::string& event, const std::string& aCommandSequenceId );
-
+*/
+  
 protected:
   Operation( const std::string& aId );
 

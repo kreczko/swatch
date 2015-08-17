@@ -13,6 +13,8 @@
 #include "swatch/core/ThreadPool.hpp"
 #include "swatch/logger/Log.hpp"
 
+
+
 namespace swatch {
 namespace core {
 
@@ -61,7 +63,7 @@ Command::exec( const XParameterSet& params  , const bool& aUseThreadPool )
   runningParams_ = mergeParametersWithDefaults(params);
 
   // Execute the command protected by a very generic try/catch
-  try {    
+  try {
     // if threadpool is to be used
     if ( aUseThreadPool ){
       boost::unique_lock<boost::mutex> lock(mutex_);
@@ -151,12 +153,12 @@ CommandStatus Command::getStatus() const {
     result = result_;
   
   float runningTime = 0.0;
-  timeval endTime;
   switch (state_) {
     case kInitial :
     case kScheduled : 
       break;
     default:
+      timeval endTime;
       if (state_ == kRunning)
         gettimeofday(&endTime, NULL);
       else

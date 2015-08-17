@@ -13,6 +13,7 @@
 #include "swatch/core/Factory.hpp"
 #include "swatch/processor/LinkInterface.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
+#include "swatch/processor/ProcessorCommandSequence.hpp"
 
 // SWATCH MP7 headers
 #include "swatch/mp7/MP7Commands.hpp"
@@ -47,12 +48,15 @@ MP7Processor::MP7Processor(const swatch::core::AbstractStub& aStub) :
     driver_(0x0)
 {
     // Add commands
-    registerFunctionoid<MP7ResetCommand>("reset");
-    registerFunctionoid<MP7SetupLinks>("mgts");
+    core::Command& resetCommand = registerFunctionoid<MP7ResetCommand>("reset");
+    core::Command& mgtsCommand = registerFunctionoid<MP7SetupLinks>("mgts");
     registerFunctionoid<MP7AlignLinks>("align");
     
     registerFunctionoid<MP7ConfigureLoopback>("loopback");
-
+    
+    // Add command sequences
+    registerFunctionoid<processor::ProcessorCommandSequence>("resetThenMGTs").run(resetCommand).then(mgtsCommand);
+    
     // Extract stub, and create driver
     const processor::ProcessorStub& stub = getStub();
 

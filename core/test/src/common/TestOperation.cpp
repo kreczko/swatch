@@ -69,7 +69,7 @@ BOOST_FIXTURE_TEST_CASE(TestConfigure,  OperationTestSetup) {
   BOOST_CHECK_EQUAL(common.getCurrentState(), "HALTED");
   common.executeTransition("configure");
   BOOST_CHECK_EQUAL(common.getCurrentState(), "CONFIGURED");
-  BOOST_CHECK_EQUAL(handler.number(), uint32_t(42));
+  BOOST_CHECK_EQUAL(handler.getNumber(), uint32_t(42));
   BOOST_CHECK_EQUAL(handler.something(), "I have been configured");
 }
 

@@ -1,9 +1,11 @@
 
 #include "swatch/core/XmlGateKeeper.hpp"
-#include <boost/lexical_cast.hpp>
+
 
 #include <fstream>
 #include <iostream>
+
+#include <boost/lexical_cast.hpp>
 
 #include <xdata/Integer.h>
 #include <xdata/String.h>
@@ -13,6 +15,7 @@
 #include "pugixml/pugixml.hpp"
 
 
+#include "swatch/logger/Log.hpp"
 #include "swatch/core/Utilities.hpp"
 
 
@@ -30,7 +33,8 @@ namespace core {
 
     if ( not lLoadResult )
     {
-      std::cout << "Error description: " << lLoadResult.description() << std::endl;
+      LOG(swatch::logger::kError) << "Error reading XML file '" << aFileName << "'. Details: " << lLoadResult.description() << std::endl;
+      throw XmlFileError("Error reading XML file '" + aFileName + "' : " + lLoadResult.description());
     }
 
     pugi::xml_node lRun( lXmlDoc.child("db").find_child_by_attribute( "run", "key", aKey.c_str() ) );

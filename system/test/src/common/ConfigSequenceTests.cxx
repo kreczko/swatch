@@ -93,7 +93,7 @@ int main(int argc, char** argv) {
 //         params.add( "sequence_1.dummy_1.aa" , xdata::Integer(123) );
 //         params.add( "sequence_1.dummy_2.aa" , xdata::Integer(321) );
 
-        lCommandSequence.exec();
+        lCommandSequence.exec(lGateKeeper);
 //         std::cout << lCommandSequence->getProgress() << std::endl;
 //         std::cout << lCommandSequence->getOverallProgress() << std::endl;
 //         std::cout << lCommandSequence->getProgressMsg() << std::endl;

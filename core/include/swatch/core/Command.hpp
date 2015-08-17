@@ -163,10 +163,10 @@ public:
 private:
     CommandStatus(Command::State aState, float aRunningTime, float aProgress, const std::string& aStatusMsg, const boost::shared_ptr<xdata::Serializable>& aResult);
 
-    const Command::State state_;
-    const float runningTime_;
-    const float progress_;
-    const std::string statusMsg_;
+    Command::State state_;
+    float runningTime_;
+    float progress_;
+    std::string statusMsg_;
     boost::shared_ptr<xdata::Serializable> result_;
 
     friend class Command;

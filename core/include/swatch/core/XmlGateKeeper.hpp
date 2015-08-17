@@ -42,6 +42,7 @@ class XmlGateKeeper : public GateKeeper {
 };
 
 DEFINE_SWATCH_EXCEPTION ( UnknownDataType );
+DEFINE_SWATCH_EXCEPTION ( XmlFileError );
 
 
 } /* namespace core */
