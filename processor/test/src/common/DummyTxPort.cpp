@@ -1,18 +1,21 @@
-/*
- * DummyRxPort.cpp
- */
 
 #include "swatch/processor/test/DummyTxPort.hpp"
+#include "swatch/processor/test/DummyDriver.hpp"
+
 
 namespace swatch {
 namespace processor {
 namespace test {
 
-DummyTxPort::DummyTxPort(const std::string& aId) :
-OutputPort(aId){
+DummyTxPort::DummyTxPort(const std::string& aId, uint32_t aNumber, DummyDriver& aDriver) :
+  OutputPort(aId),
+  channelID_(aNumber),
+  driver_(aDriver)
+{
 }
 
-DummyTxPort::~DummyTxPort() {
+DummyTxPort::~DummyTxPort()
+{
 }
 
 /*
@@ -25,9 +28,11 @@ bool DummyTxPort::isOperating() const {
 }
  */
 
-void DummyTxPort::retrieveMetricValues() {
-  setMetricValue<>(metricIsOperating_, true);
+void DummyTxPort::retrieveMetricValues()
+{
+  setMetricValue<>(metricIsOperating_, driver_.isTxPortOperating(channelID_));
 }
+
 } // namespace test
 } // namespace processor
 } // namespace swatch

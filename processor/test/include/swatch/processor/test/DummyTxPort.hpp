@@ -1,21 +1,21 @@
-/*
- * DymmyRxPort.hpp
- */
 
-#ifndef SWATCH_PROCESSOR_TEST_DUMMYTXPORT_HPP
-#define SWATCH_PROCESSOR_TEST_DUMMYTXPORT_HPP
+#ifndef __SWATCH_PROCESSOR_TEST_DUMMYTXPORT_HPP__
+#define __SWATCH_PROCESSOR_TEST_DUMMYTXPORT_HPP__
+
+
 #include "swatch/processor/Port.hpp"
+
 
 namespace swatch {
 namespace processor {
 namespace test {
-/**
- * @class DummyTxPort
- * @brief Dummy ouput port implementation
- */
+    
+class DummyDriver;
+
+//! Dummy output port implementation (used for testing)
 class DummyTxPort : public OutputPort {
 public:
-  DummyTxPort ( const std::string& aId);
+  DummyTxPort (const std::string& aId, uint32_t aNumber, DummyDriver& aDriver);
   virtual ~DummyTxPort ();
 
   /*
@@ -25,8 +25,14 @@ public:
    */
   
   virtual void retrieveMetricValues();
+  
+private:
+  uint32_t channelID_;
+  DummyDriver& driver_;
 };
+
 } // namespace test
 } // namespace processor
 } // namespace swatch
+
 #endif /* SWATCH_PROCESSOR_TEST_DUMMYTXPORT_HPP */

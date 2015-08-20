@@ -14,11 +14,13 @@ namespace processor {
 class ReadoutInterface: public core::MonitorableObject {
 protected:
 
-    ReadoutInterface() : core::MonitorableObject( "readout" ) {}
+  ReadoutInterface();
 
 public:
 
-    virtual ~ReadoutInterface() {}
+  virtual ~ReadoutInterface();
+
+  static const std::vector<std::string>  defaultMetrics;
 };
 
 

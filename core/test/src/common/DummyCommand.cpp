@@ -20,13 +20,7 @@ const xdata::Integer DummyCommand::defaultResult(-1);
 
 const std::string DummyCommand::finalMsgUseResource("Dummy command successfully used resource");
 const std::string DummyCommand::finalMsgSleep("Dummy command finished sleeping");
-const std::string DummyCommand::finalMsgWarning("Dummy command did something, but ended up in warning");
-const std::string DummyCommand::finalMsgError("Dummy command did something, but ended up in error");
-const std::string DummyCommand::exceptionMsg("My test exception message");
-const float DummyCommand::finalProgressError(0.5049);
-const float DummyCommand::finalProgressThrow(0.4032);  
-
-  
+ 
   
 DummyCommand::DummyCommand(const std::string& aId) :
   Command(aId, defaultResult) {
@@ -67,26 +61,83 @@ Command::State DummyCommand::code(const XParameterSet& params)
     setStatusMsg(finalMsgSleep);
     return kDone;
   }
-  else if (todo == "warning") 
-  {
-    setProgress(0.5049, finalMsgWarning);
-    return kWarning;
-  }
-  else if (todo == "error") 
-  {
-    setProgress(finalProgressError, finalMsgError);
-    return kError;
-  }
-  else if (todo == "throw")
-  {
-    setProgress(finalProgressThrow);
-    throw std::runtime_error(exceptionMsg);
-  }
   else
   {
     return kDone;
   }
 }
+
+
+//-----------------------//
+/*  DummyWarningCommand  */
+
+const xdata::Integer DummyWarningCommand::defaultResult(-1);
+const std::string DummyWarningCommand::finalMsg("Dummy command did something, but ended up in warning");
+
+DummyWarningCommand::DummyWarningCommand(const std::string& aId) :
+  Command(aId, defaultResult)
+{
+}
+
+
+DummyWarningCommand::~DummyWarningCommand()
+{
+}
+
+
+Command::State DummyWarningCommand::code(const XParameterSet& params)
+{
+  setProgress(0.5049, finalMsg);
+  return kWarning;
+}
+
+
+
+//---------------------//
+/*  DummyErrorCommand  */
+
+const xdata::Integer DummyErrorCommand::defaultResult(-1);
+const std::string DummyErrorCommand::finalMsg("Dummy command did something, but ended up in error");
+const float DummyErrorCommand::finalProgress(0.5049);
+
+DummyErrorCommand::DummyErrorCommand(const std::string& aId) :
+  Command(aId, defaultResult)
+{
+}
+
+DummyErrorCommand::~DummyErrorCommand()
+{
+}
+
+Command::State DummyErrorCommand::code(const XParameterSet& params)
+{
+  setProgress(finalProgress, finalMsg);
+  return kError;
+}
+
+
+//---------------------//
+/*  DummyThrowCommand  */
+
+const xdata::Integer DummyThrowCommand::defaultResult(-1);
+const std::string DummyThrowCommand::exceptionMsg("My test exception message");
+const float DummyThrowCommand::finalProgress(0.4032);  
+
+DummyThrowCommand::DummyThrowCommand(const std::string& aId) :
+  Command(aId, defaultResult)
+{
+}
+
+DummyThrowCommand::~DummyThrowCommand()
+{
+}
+
+Command::State DummyThrowCommand::code(const XParameterSet& params)
+{
+  setProgress(finalProgress);
+  throw std::runtime_error(exceptionMsg);
+}
+
 
 } /* namespace test */
 } /* namespace core */

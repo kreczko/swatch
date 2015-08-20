@@ -1,21 +1,25 @@
 /**
  * @file    DummyProcessor.hpp
  * @author  Alessandro Thea
- * @brief   Brief description
- * @date    
  */
 
-#include "uhal/ConnectionManager.hpp"
+#include "swatch/processor/test/DummyProcessor.hpp"
 
-// Swatch Headers
+// SWATCH headers
 #include "swatch/logger/Log.hpp"
 #include "swatch/core/Factory.hpp"
-//#include "swatch/processor/ProcessorFactory.hpp"
 #include "swatch/processor/LinkInterface.hpp"
+#include "swatch/processor/ProcessorCommandSequence.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
-#include "swatch/processor/test/DummyProcessor.hpp"
+
+#include "swatch/processor/test/DummyAlgo.hpp"
+#include "swatch/processor/test/DummyDriver.hpp"
+#include "swatch/processor/test/DummyProcessorCommands.hpp"
+#include "swatch/processor/test/DummyProcessorOperation.hpp"
+#include "swatch/processor/test/DummyReadout.hpp"
 #include "swatch/processor/test/DummyRxPort.hpp"
 #include "swatch/processor/test/DummyTxPort.hpp"
+#include "swatch/processor/test/DummyTTC.hpp"
 
 // XDAQ Headers
 #include "xdata/String.h"
@@ -56,16 +60,37 @@ DummyProcessor::DummyProcessor(const std::string& id,
 
 DummyProcessor::DummyProcessor(const swatch::core::AbstractStub& aStub) :
   Processor(aStub),
-  ranTests_() {
-  
+  driver_(new DummyDriver()),
+  ranTests_()
+{
+  // 1) Interfaces
+  registerInterface( new DummyTTC(*driver_) );
+  registerInterface( new DummyReadoutInterface(*driver_) );
+  registerInterface( new DummyAlgo(*driver_) );
   registerInterface( new processor::LinkInterface() );
-
+  
   const ProcessorStub& stub = getStub();
   
   for(auto it = stub.rxPorts.begin(); it != stub.rxPorts.end(); it++)
-    getLinkInterface().addInput(new DummyRxPort(it->id));
+    getLinkInterface().addInput(new DummyRxPort(it->id, it->number, *driver_));
   for(auto it = stub.txPorts.begin(); it != stub.txPorts.end(); it++)
-    getLinkInterface().addOutput(new DummyTxPort(it->id));
+    getLinkInterface().addOutput(new DummyTxPort(it->id, it->number, *driver_));
+
+  // 2) Commands
+  core::Command& reboot = registerFunctionoid<DummyResetCommand>("reboot");
+  core::Command& reset = registerFunctionoid<DummyResetCommand>("reset");
+  core::Command& cfgTx = registerFunctionoid<DummyConfigureTxCommand>("configureTx");
+  core::Command& cfgRx = registerFunctionoid<DummyConfigureRxCommand>("configureRx");
+  core::Command& cfgDaq = registerFunctionoid<DummyConfigureDaqCommand>("configureDaq");
+  core::Command& cfgAlgo = registerFunctionoid<DummyConfigureAlgoCommand>("configureAlgo");
+
+  // 3) Command sequences
+  registerFunctionoid<ProcessorCommandSequence>("configureStep1").run(reboot)(reset)(cfgDaq)(cfgTx);
+  registerFunctionoid<ProcessorCommandSequence>("configureStep2").run(cfgRx);
+  registerFunctionoid<ProcessorCommandSequence>("configureStep3").run(cfgAlgo);
+
+  // 4) Operations
+  registerFunctionoid<DummyProcessorOperation>("testing");
 }
 
 
@@ -136,7 +161,7 @@ ProcessorStub DummyProcessor::generateParams( const std::string& aId ) {
 
 void DummyProcessor::retrieveMetricValues()
 {
-  setMetricValue<uint64_t>(metricFirmwareVersion_, 0);
+  setMetricValue<uint64_t>(metricFirmwareVersion_, driver_->getFirmwareVersion());
 }
 
 

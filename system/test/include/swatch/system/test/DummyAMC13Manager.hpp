@@ -6,25 +6,32 @@
  */
 
 #ifndef __SWATCH_SYSTEM_DUMMYAMC13MANAGER_HPP__
-#define	__SWATCH_SYSTEM_DUMMYAMC13MANAGER_HPP__
+#define __SWATCH_SYSTEM_DUMMYAMC13MANAGER_HPP__
+
 
 #include "swatch/system/DaqTTCManager.hpp"
+
 
 namespace swatch {
 namespace system {
 namespace test {
 
+class DummyAMC13Driver;
+
 class DummyAMC13Manager : public system::DaqTTCManager {
 public:
     DummyAMC13Manager( const swatch::core::AbstractStub& aStub );
+
     virtual ~DummyAMC13Manager();
 
     virtual void reset();
     
     /// Enables ttc commands on the given slots
     virtual void enableTTC( const std::vector<uint32_t> & aSlots );
-    
+
     virtual void configureClock(const std::string& mode);
+    
+    DummyAMC13Driver& getDriver() { return *driver_;}
     
     /*
         /// Reads measured TTC clock frequency (in Hz) 
@@ -42,9 +49,11 @@ public:
     /// Reads TTC double-bit error counter
     virtual uint32_t ttcDoubleBitErrors() const;
     */
-    
+
 private:
     virtual void retrieveMetricValues();
+    
+    boost::scoped_ptr<DummyAMC13Driver> driver_;
 };
 
 } // namespace test

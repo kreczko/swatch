@@ -21,7 +21,6 @@ namespace test {
 class DummyCommand: public swatch::core::Command {
 public:
   DummyCommand( const std::string& aId );
-  template<typename T>  DummyCommand( const std::string& aId , const T& aDefault);
   virtual ~DummyCommand();
 
   virtual Command::State code( const XParameterSet& params); 
@@ -29,20 +28,48 @@ public:
   static const xdata::Integer defaultResult;
   static const std::string finalMsgUseResource;
   static const std::string finalMsgSleep;
-  static const std::string finalMsgWarning;
-  static const std::string finalMsgError;
-  static const std::string exceptionMsg;
-  static const float finalProgressError;
-  static const float finalProgressThrow;  
 };
 
-template<typename T>
-DummyCommand::DummyCommand( const std::string& aId , const T& aDefault) :
-       swatch::core::Command( aId , aDefault) {
-  registerParameter("x", xdata::Integer(defaultResult));
-  registerParameter("todo", xdata::String(""));
-}
 
+//! Dummy command written for unit tests; code method is a no-op that returns warning after setting status.
+class DummyWarningCommand : public swatch::core::Command {
+public:
+  explicit DummyWarningCommand(const std::string& aId);
+  virtual ~DummyWarningCommand();
+  
+  virtual Command::State code(const XParameterSet& params);
+  
+  static const xdata::Integer defaultResult;
+  static const std::string finalMsg;
+};
+
+
+//! Dummy command written for unit tests; code method is a no-op that returns error after setting status.
+class DummyErrorCommand : public swatch::core::Command {
+public:
+  explicit DummyErrorCommand(const std::string& aId);
+  virtual ~DummyErrorCommand();
+  
+  virtual Command::State code(const XParameterSet& params);
+  
+  static const xdata::Integer defaultResult;
+  static const std::string finalMsg;
+  static const float finalProgress;
+};
+
+
+//! Dummy command written for unit tests; code method is a no-op that throws after setting progress.
+class DummyThrowCommand : public swatch::core::Command {
+public:
+    explicit DummyThrowCommand(const std::string& aId);
+    virtual ~DummyThrowCommand();
+    
+    virtual Command::State code(const XParameterSet& params);
+    
+    static const xdata::Integer defaultResult;
+    static const std::string exceptionMsg;
+    static const float finalProgress;
+};
 } /* namespace test */
 } /* namespace core */
 } /* namespace swatch */

@@ -4,7 +4,7 @@
 
 // Swatch Headers
 #include "swatch/core/Object.hpp"
-#include "swatch/core/test/SimpleObject.hpp"
+#include "swatch/core/test/DummyObject.hpp"
 
 // Boost Headers
 #include <boost/assign.hpp>
@@ -21,23 +21,23 @@ struct TestFamily{
   TestFamily();
   ~TestFamily();
   
-  SimpleObject* granpa;
-  SimpleObject* parentA;
-  SimpleObject* kidA1;
-  SimpleObject* kidA2;
-  SimpleObject* parentB;
-  SimpleObject* kidB1;
-  SimpleObject* kidB2;
+  DummyObject* granpa;
+  DummyObject* parentA;
+  DummyObject* kidA1;
+  DummyObject* kidA2;
+  DummyObject* parentB;
+  DummyObject* kidB1;
+  DummyObject* kidB2;
 };
 
 TestFamily::TestFamily() : 
-  granpa(new SimpleObject("granpa")),
-  parentA(new SimpleObject("parentA")),
-  kidA1(new SimpleObject("kidA1")),
-  kidA2(new SimpleObject("kidA2")),
-  parentB(new SimpleObject("parentB")),
-  kidB1(new SimpleObject("kidB1")),
-  kidB2(new SimpleObject("kidB2"))
+  granpa(new DummyObject("granpa")),
+  parentA(new DummyObject("parentA")),
+  kidA1(new DummyObject("kidA1")),
+  kidA2(new DummyObject("kidA2")),
+  parentB(new DummyObject("parentB")),
+  kidB1(new DummyObject("kidB1")),
+  kidB2(new DummyObject("kidB2"))
 {
   granpa->add(parentA);
   parentA->add(kidA1);
@@ -87,16 +87,16 @@ BOOST_AUTO_TEST_CASE(ObjectGetTests) {
 
 
 BOOST_AUTO_TEST_CASE(ObjectAddTests) {
-  SimpleObject anObject("parent");
+  DummyObject anObject("parent");
   
   // Setup: Add a dummy child
-  SimpleObject* child = new SimpleObject("child");
+  DummyObject* child = new DummyObject("child");
   BOOST_CHECK_THROW( anObject.getObj("child"), std::runtime_error);
   anObject.add(child);
   BOOST_CHECK_EQUAL( & anObject.getObj("child"), child);
   
   // Check that Object::add throws when try to add another child with same ID
-  SimpleObject child2("child");
+  DummyObject child2("child");
   BOOST_CHECK_THROW(anObject.add(&child2), std::runtime_error);
 }
 

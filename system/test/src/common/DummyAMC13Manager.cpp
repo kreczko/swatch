@@ -6,28 +6,20 @@
  */
 
 #include "swatch/system/test/DummyAMC13Manager.hpp"
-#include "swatch/core/Factory.hpp"
 
-// Boost Headers
-#include <boost/foreach.hpp>
+// boost headers
+#include "boost/foreach.hpp"
 
-// Swatch Headers
+// SWATCH headers
 #include "swatch/logger/Log.hpp"
-#include "swatch/core/xoperators.hpp"
+#include "swatch/core/Factory.hpp"
 #include "swatch/system/DaqTTCStub.hpp"
-
-// XDAQ Headers
-#include "xdata/Serializable.h"
-#include <xdata/Integer.h>
-
-// Namespace resolution
-using namespace std;
-
-namespace swlog = swatch::logger;
-namespace swsys = swatch::system;
+#include "swatch/system/test/DummyAMC13Driver.hpp"
+#include "swatch/system/test/DummyAMC13ManagerCommands.hpp"
 
 
 SWATCH_REGISTER_CLASS(swatch::system::test::DummyAMC13Manager);
+
 
 namespace swatch {
 namespace system {
@@ -35,16 +27,22 @@ namespace test {
 
 
 DummyAMC13Manager::DummyAMC13Manager( const swatch::core::AbstractStub& aStub ) : 
-  system::DaqTTCManager(aStub) {
-    LOG(swlog::kInfo) << "Building a DummyAMC13Service";
-    
-    LOG(swlog::kDebug) << "Id:" << this->getId();
+  system::DaqTTCManager(aStub),
+  driver_(new DummyAMC13Driver())
+{
+  // 1) Commands
+  registerFunctionoid<DummyAMC13RebootCommand>("reboot");
+  registerFunctionoid<DummyAMC13ResetCommand>("reset");
+  registerFunctionoid<DummyAMC13ConfigureDaqCommand>("configureDaq");
+  registerFunctionoid<DummyAMC13EnableDaqCommand>("enableDaq");
+  
+  // 2) Command sequences
+  //registerFunctionoid<DaqTTCMgrCommandSequence>("resetAndConfigure").run(reset).then(configureDaq);
 }
 
 
-DummyAMC13Manager::~DummyAMC13Manager() {
-
-  
+DummyAMC13Manager::~DummyAMC13Manager()
+{
 }
 
 
@@ -56,11 +54,11 @@ DummyAMC13Manager::reset() {
 void
 DummyAMC13Manager::enableTTC(const std::vector<uint32_t>& aSlots) {
     
-    cout << "Enabling slots ";
+    std::cout << "Enabling slots ";
     BOOST_FOREACH( uint32_t s, aSlots ) {
-        cout << s << " ";
+        std::cout << s << " ";
     }
-    cout << endl;
+    std::cout << std::endl;
     
 }
 
@@ -94,11 +92,15 @@ uint32_t DummyAMC13Manager::ttcDoubleBitErrors() const {
 
 
 void DummyAMC13Manager::retrieveMetricValues() {
-  setMetricValue<double>(ttcMetricClockFreq_, 4e7);
-  setMetricValue<uint32_t>(ttcMetricBC0Counter_, 42);
-  setMetricValue<uint32_t>(ttcMetricBC0Errors_, 0);
-  setMetricValue<uint32_t>(ttcMetricSingleBitErrors_, 0);
-  setMetricValue<uint32_t>(ttcMetricDoubleBitErrors_, 0);
+  DummyAMC13Driver::TTCStatus s = driver_->readTTCStatus();
+  
+  setMetricValue<double>(ttcMetricClockFreq_, s.clockFreq);
+  setMetricValue<uint32_t>(ttcMetricBC0Counter_, s.bc0Counter);
+  setMetricValue<uint32_t>(ttcMetricBC0Errors_, s.errCountBC0);
+  setMetricValue<uint32_t>(ttcMetricSingleBitErrors_, s.errCountSingleBit);
+  setMetricValue<uint32_t>(ttcMetricDoubleBitErrors_, s.errCountDoubleBit);
+  
+  setMetricValue<uint16_t>(daqMetricFedId_, driver_->readFedId());
 }
 
 

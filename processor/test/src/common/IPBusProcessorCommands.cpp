@@ -34,11 +34,9 @@ namespace test {
 
 //---
 IPBusResetCommand::IPBusResetCommand(const std::string& aId) :
-  DummyCommand(aId, xdata::Integer()) {
+  Command(aId, xdata::Integer()) {
   
   registerParameter("mode",xdata::String());
-  
-
 }
 
 
@@ -48,7 +46,7 @@ IPBusResetCommand::~IPBusResetCommand() {
 
 
 //---
-core::Command::State IPBusResetCommand::code() {
+core::Command::State IPBusResetCommand::code(const swatch::core::XParameterSet& params) {
 
     IPBusProcessor* p = getParent<IPBusProcessor>();
     
@@ -91,7 +89,7 @@ core::Command::State IPBusResetCommand::code() {
 
 //---
 IPBusConfigureCommand::IPBusConfigureCommand(const std::string& aId) :
-  DummyCommand(aId, xdata::String()) {
+  Command(aId, xdata::String()) {
   
   registerParameter("mode",xdata::String());
 }
@@ -100,7 +98,7 @@ IPBusConfigureCommand::~IPBusConfigureCommand() {
   
 }
 
-core::Command::State IPBusConfigureCommand::code() {
+core::Command::State IPBusConfigureCommand::code(const swatch::core::XParameterSet& params) {
   
     using namespace swatch::core;
     if ( !getDefaultParams().has("mode") ) {
@@ -153,13 +151,13 @@ core::Command::State IPBusConfigureCommand::code() {
 }
 
 IPBusCapture::IPBusCapture(const std::string& aId) :
-  DummyCommand(aId, xdata::String()) {
+  Command(aId, xdata::String()) {
 }
 
 IPBusCapture::~IPBusCapture() {
 }
 
-core::Command::State IPBusCapture::code() {
+core::Command::State IPBusCapture::code(const swatch::core::XParameterSet& params) {
 
     IPBusProcessor* p = getParent<IPBusProcessor>();
 

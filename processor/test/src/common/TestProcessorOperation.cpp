@@ -26,14 +26,14 @@ namespace test {
 struct ProcessorOperationTestSetup {
   ProcessorOperationTestSetup():
     resource(DummyProcessor::generateParams("BigDummy")),
-    testing(resource.registerFunctionoid<DummyProcessorOperation>("testing"))
+    testing(resource.getOperation("testing"))
   {
   }
   
   ~ProcessorOperationTestSetup() {}
 
   DummyProcessor resource;
-  swct::DummyOperation& testing;
+  swatch::core::Operation& testing;
 };
 
 BOOST_AUTO_TEST_SUITE( ProcessorOperationTestSuite)

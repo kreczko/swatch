@@ -5,57 +5,50 @@
  * @date    
  */
 
-#ifndef SWATCH_PROCESSOR_TEST_DUMMYPROCESSOR_HPP
-#define	SWATCH_PROCESSOR_TEST_DUMMYPROCESSOR_HPP
+#ifndef __SWATCH_PROCESSOR_TEST_DUMMYPROCESSOR_HPP__
+#define	__SWATCH_PROCESSOR_TEST_DUMMYPROCESSOR_HPP__
 
-// Swatch Headers
-#include "swatch/processor/Processor.hpp"
-#include "swatch/processor/ProcessorStub.hpp"
-#include "swatch/core/XParameterSet.hpp"
-#include "swatch/processor/AlgoInterface.hpp"
 
-// uHAL Headers
-#include "uhal/HwInterface.hpp"
-
-// XDAQ headers
-#include "xdata/Bag.h"
-
-// C++ Headers
+// C++ headers
 #include <vector>
+
+// SWATCH headers
+#include "swatch/processor/Processor.hpp"
+
 
 namespace swatch {
 namespace processor {
 namespace test {
 
 //----------------------------------------------------------------------------//
-
+class DummyDriver;
+    
+    
 class DummyProcessor : public swatch::processor::Processor {
 public:
-//  DummyProcessor(const std::string& id, const swatch::core::XParameterSet& params);
-    DummyProcessor( const swatch::core::AbstractStub& aStub );
-    virtual ~DummyProcessor();
+  DummyProcessor( const swatch::core::AbstractStub& aStub );
+  virtual ~DummyProcessor();
 
-    virtual std::string firmwareInfo() const;
+  virtual std::string firmwareInfo() const;
 
-    const std::vector<std::string> ranTests() const;
-    void test1();
-    void test2();
+  const std::vector<std::string> ranTests() const;
+  void test1();
+  void test2();
 
-    // Expose registerFunctionoid template method as public for tests
-    template< typename T>
-    T& registerFunctionoid( const std::string& aId ) { return ActionableObject::registerFunctionoid<T>(aId); }
-
+  DummyDriver& getDriver() {return *driver_;}
+  
 //    static swatch::core::XParameterSet generateParams();
-    static ProcessorStub generateParams( const std::string& aId );
+  static ProcessorStub generateParams( const std::string& aId );
 
 protected:
-    virtual void retrieveMetricValues();
+  virtual void retrieveMetricValues();
 
 private:
-
-    std::vector<std::string> ranTests_;
+  boost::scoped_ptr<DummyDriver> driver_;
+ 
+  std::vector<std::string> ranTests_;
     
-    static ProcessorPortStub getPortBag(const std::string& name, size_t number);
+  static ProcessorPortStub getPortBag(const std::string& name, size_t number);
 };
 
         
