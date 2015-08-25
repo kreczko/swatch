@@ -101,7 +101,7 @@ namespace swatch
         */
         tParameter get ( const std::string& aParam , const std::string& aTable );
 
-        tParameter get ( const std::string& aSequencePath , const std::string& aCommandPath , const std::string& aTable );
+        tParameter get ( const std::string& aSequencePath , const std::string& aCommandPath , const std::string& aParameterId , const std::string& aTable );
 
 
         /// The system for which we are acting as gatekeeper

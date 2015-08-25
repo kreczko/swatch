@@ -59,15 +59,27 @@ namespace core {
     std::string lType( aEntry.attribute("type").value() );
     std::string lValue( aEntry.child_value() );
 
-    GateKeeper::tParameter lParameter;
+    // GateKeeper::tParameter lParameter;
 
-         if( lType == "int" )    { lParameter = GateKeeper::tParameter( new xdata::Integer( boost::lexical_cast<int>(lValue)) );         }
-    else if( lType == "bool" )   { lParameter = GateKeeper::tParameter( new xdata::Boolean( boost::lexical_cast<bool>(lValue)) );        }
-    else if( lType == "float" )  { lParameter = GateKeeper::tParameter( new xdata::Float  ( boost::lexical_cast<float>(lValue)) );       }
-    else if( lType == "string" ) { lParameter = GateKeeper::tParameter( new xdata::String ( boost::lexical_cast<std::string>(lValue)) ); }
+    //      if( lType == "int" )    { lParameter = GateKeeper::tParameter( new xdata::Integer( boost::lexical_cast<int>(lValue)) );         }
+    // else if( lType == "bool" )   { lParameter = GateKeeper::tParameter( new xdata::Boolean( boost::lexical_cast<bool>(lValue)) );        }
+    // else if( lType == "float" )  { lParameter = GateKeeper::tParameter( new xdata::Float  ( boost::lexical_cast<float>(lValue)) );       }
+    // else if( lType == "string" ) { lParameter = GateKeeper::tParameter( new xdata::String ( boost::lexical_cast<std::string>(lValue)) ); }
+    xdata::Serializable* lSerializable(0x0);
+
+         if( lType == "int" )    { lSerializable = new xdata::Integer( ); }
+    else if( lType == "bool" )   { lSerializable = new xdata::Boolean( ); }
+    else if( lType == "float" )  { lSerializable = new xdata::Float  ( ); }
+    else if( lType == "string" ) { lSerializable = new xdata::String ( ); }
     else { throw UnknownDataType( "Unknown Data-Type '" + lType + "'" ); }
 
-    return std::make_pair( lEntryId , lParameter );
+    // exploit fromString to import the value inn the right format (use xdaq::compliant representation)
+    lSerializable->fromString(lValue);
+
+    // lParameter = GateKeeper::tParameter(lSerializable);
+    // return std::make_pair( lEntryId , lParameter );
+    return std::make_pair( lEntryId , GateKeeper::tParameter(lSerializable) );
+    
   }
 //------------------------------------------------------------------------------------------------------------------
   

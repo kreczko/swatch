@@ -188,7 +188,7 @@ CommandSequenceStatus CommandSequence::getStatus() const
   
   const Command* currentCommand =  ( (mCommandIt == mCommands.end()) ? NULL : *mCommandIt);
   
-  return CommandSequenceStatus(mState, runningTime, currentCommand, mStatusOfCompletedCommands, mCommands.size());
+  return CommandSequenceStatus(getPath(), mState, runningTime, currentCommand, mStatusOfCompletedCommands, mCommands.size());
 }
 
 
@@ -287,7 +287,7 @@ void CommandSequence::updateParameterCache(GateKeeper& aGateKeeper)
     std::set< std::string > lKeys( lParams.keys() );
     for( std::set< std::string >::iterator lIt2( lKeys.begin() ); lIt2!=lKeys.end(); ++lIt2 )
     {
-      GateKeeper::tParameter lData( aGateKeeper.get( getPath() , lCommand.getId() , *lIt2 , getTables() ) );
+      GateKeeper::tParameter lData( aGateKeeper.get( getId() , lCommand.getId() , *lIt2 , getTables() ) );
       if ( lData.get() != NULL )
       {
         lParams.erase(*lIt2);
@@ -301,7 +301,8 @@ void CommandSequence::updateParameterCache(GateKeeper& aGateKeeper)
 
 
 
-CommandSequenceStatus::CommandSequenceStatus(CommandSequence::State aState, float aRunningTime, const Command* aCurrentCommand, const std::vector<CommandStatus>& aStatusOfCompletedCommands, const size_t& aTotalNumberOfCommands) : 
+CommandSequenceStatus::CommandSequenceStatus(const std::string& aPath, CommandSequence::State aState, float aRunningTime, const Command* aCurrentCommand, const std::vector<CommandStatus>& aStatusOfCompletedCommands, const size_t& aTotalNumberOfCommands) : 
+  mPath(aPath),
   mState(aState),
   mRunningTime(aRunningTime),
   mCurrentCommand(aCurrentCommand),
@@ -312,10 +313,16 @@ CommandSequenceStatus::CommandSequenceStatus(CommandSequence::State aState, floa
   {
     mCommandStatuses.push_back(mCurrentCommand->getStatus());
     mProgress += ( mCommandStatuses.back().getProgress() / float(aTotalNumberOfCommands) );
+
   } 
  
   for(auto it = aStatusOfCompletedCommands.begin(); it != aStatusOfCompletedCommands.end(); it++)
     mResults.push_back(it->getResult());
+}
+
+const std::string&
+CommandSequenceStatus::getSequencePath() const {
+  return mPath;
 }
 
 
@@ -341,7 +348,6 @@ const Command* CommandSequenceStatus::getCurrentCommand() const
 {
   return mCurrentCommand;
 }
-
 
 size_t CommandSequenceStatus::getNumberOfCompletedCommands() const
 {

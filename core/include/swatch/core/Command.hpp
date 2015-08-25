@@ -143,6 +143,10 @@ std::ostream& operator<<(std::ostream& out, swatch::core::Command::State s);
 class CommandStatus {
     
 public:
+  
+    //! Returns the path of the command
+    const std::string& getCommandPath() const;
+    
     //! Returns state of command execution (scheduled, running, warning, error, done, ...)
     Command::State getState() const;
     
@@ -161,8 +165,9 @@ public:
     std::string getResultAsString() const;
     
 private:
-    CommandStatus(Command::State aState, float aRunningTime, float aProgress, const std::string& aStatusMsg, const boost::shared_ptr<xdata::Serializable>& aResult);
+    CommandStatus(const std::string& aPath, Command::State aState, float aRunningTime, float aProgress, const std::string& aStatusMsg, const boost::shared_ptr<xdata::Serializable>& aResult);
 
+    std::string path_;
     Command::State state_;
     float runningTime_;
     float progress_;

@@ -169,7 +169,7 @@ CommandStatus Command::getStatus() const {
       break;
   }
     
-  return CommandStatus(state_, runningTime, progress_, statusMsg_, result);
+  return CommandStatus(getPath(), state_, runningTime, progress_, statusMsg_, result);
 }
 
 
@@ -239,40 +239,53 @@ ReadOnlyXParameterSet Command::mergeParametersWithDefaults( const XParameterSet&
   return merged;
 }
 
+// ---
+const std::string&
+CommandStatus::getCommandPath() const {
+  return path_;
+}
 
-
-
-Command::State CommandStatus::getState() const {
+// ---
+Command::State
+CommandStatus::getState() const {
   return state_;
 }
     
-
-float CommandStatus::getRunningTime() const {
+// ---
+float
+CommandStatus::getRunningTime() const {
   return runningTime_;
 }
 
-
-float CommandStatus::getProgress() const {
+// ---
+float
+CommandStatus::getProgress() const {
   return progress_;
 }
 
-
-const std::string& CommandStatus::getStatusMsg() const {
+// ---
+const
+std::string& CommandStatus::getStatusMsg() const {
   return statusMsg_;
 }
 
 
-const xdata::Serializable* const CommandStatus::getResult() const {
+//---
+const xdata::Serializable*
+const CommandStatus::getResult() const {
   return result_.get();
 }
 
 
-std::string CommandStatus::getResultAsString() const {
+//---
+std::string
+CommandStatus::getResultAsString() const {
   return result_->toString();
 }
     
-
-CommandStatus::CommandStatus(Command::State aState, float aRunningTime, float aProgress, const std::string& aStatusMsg, const boost::shared_ptr<xdata::Serializable>& aResult) :
+//---
+CommandStatus::CommandStatus(const std::string& aPath, Command::State aState, float aRunningTime, float aProgress, const std::string& aStatusMsg, const boost::shared_ptr<xdata::Serializable>& aResult) :
+  path_(aPath),
   state_(aState),
   runningTime_(aRunningTime),
   progress_(aProgress),

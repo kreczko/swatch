@@ -122,7 +122,7 @@ namespace swatch
 //     }
 
 
-    GateKeeper::tParameter GateKeeper::get ( const std::string& aSequencePath , const std::string& aCommandPath , const std::string& aTable )
+    GateKeeper::tParameter GateKeeper::get ( const std::string& aSequencePath , const std::string& aCommandPath , const std::string& aParameterId , const std::string& aTable )
     {
       tParameter lData;
       lData = get( aSequencePath , aTable );
@@ -135,8 +135,14 @@ namespace swatch
       if ( lData )
       {
         return lData;  //perfectly acceptable for specific table not hold the requested data, just try the table with the next highest priority
-      }   
+      }
 
+      lData = get( aParameterId , aTable );
+      if ( lData )
+      {
+        return lData;  //perfectly acceptable for specific table not hold the requested data, just try the table with the next highest priority
+      }
+            
       return tParameter(); 
     }
 
@@ -149,7 +155,7 @@ namespace swatch
 
       //See if the value was set at Run-time
       tParameter lData;
-      lData = get( lSequencePath , lCommandPath , mRuntimeTableLabel );
+      lData = get( lSequencePath , lCommandPath , aParameterId, mRuntimeTableLabel );
       if ( lData )
       {
         return lData;  //perfectly acceptable for specific table not hold the requested data, just try the table with the next highest priority
@@ -158,7 +164,8 @@ namespace swatch
       //We could add runtime overriding of values to the GateKeeper and check them first...
       for ( std::vector<std::string>::const_iterator lIt ( aTables.begin() ) ; lIt!=aTables.end() ; ++lIt )
       {
-        lData = get(  lSequencePath , lCommandPath , *lIt );
+        std::cout << "Searching : " << lSequencePath << ", " << lCommandPath << " in  " << *lIt << std::endl;
+        lData = get(  lSequencePath , lCommandPath , aParameterId, *lIt );
         if ( lData )
         {
           return lData;  //perfectly acceptable for specific table not hold the requested data, just try the table with the next highest priority

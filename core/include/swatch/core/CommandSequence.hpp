@@ -123,6 +123,8 @@ std::ostream& operator<<(std::ostream& out, swatch::core::CommandSequence::State
 //! Provides a snapshot of the progress/status of a swatch::core::CommandSequence
 class CommandSequenceStatus {
 public:
+  
+  const std::string& getSequencePath() const;
     //! Returns state of command sequence execution (scheduled, running, warning, error, done, ...)
     CommandSequence::State getState() const;
     
@@ -145,8 +147,9 @@ public:
     const std::vector<CommandStatus>& getCommandStatus() const;
     
 private:
-    CommandSequenceStatus(CommandSequence::State aState, float aRunningTime, const Command* aCurrentCommand, const std::vector<CommandStatus>& aFinishedCommandStatuses, const size_t& aTotalNumberOfCommands);
+    CommandSequenceStatus(const std::string& aPath, CommandSequence::State aState, float aRunningTime, const Command* aCurrentCommand, const std::vector<CommandStatus>& aFinishedCommandStatuses, const size_t& aTotalNumberOfCommands);
 
+    std::string mPath;
     CommandSequence::State mState;
     float mRunningTime;
     const Command* mCurrentCommand;

@@ -19,6 +19,7 @@
 // MP7 Core Headers
 #include "mp7/MP7Controller.hpp"
 #include "mp7/PathConfigurator.hpp"
+#include "mp7/exception.hpp"
 
 
 namespace swatch {
@@ -44,10 +45,15 @@ core::Command::State MP7ResetCommand::code(const core::XParameterSet& params) {
   MP7Processor* p = getParent<MP7Processor>();
   setProgress(0.,"Resetting");
 
+  try {
   // TODO: acquire lock
   std::string mode = "external";
   p->driver().reset(mode, mode, mode);
-
+  } catch ( ::mp7::exception &e ) {
+    
+    setStatusMsg("Reset failed: "+e.description());
+    return kError;
+  }
   setStatusMsg("Reset completed");
   return kDone;
 }
