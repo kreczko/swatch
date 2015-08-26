@@ -40,23 +40,26 @@ public:
 
   virtual ~ProcessorStub() { }
 
+  //! Class to create the Processor object
+  std::string creator;
+
   //! Type of the Processor
   std::string hwtype;
 
-  //! Class to create the Processor object
-  std::string creator;
+  //! Role of the processor
+  std::string role;
+  
+  //! Uri to access the hardware resource
+  std::string uri;
+
+  //! Address table
+  std::string addressTable;
 
   //! Id of the uTCA crate where the Processor is installed 
   std::string crate;
 
   //! Slot where the board is installed 
   uint32_t slot;
-
-  //! Uri to access the hardware resource
-  std::string uri;
-
-  //! Address table
-  std::string addressTable;
 
   //! List of receiver port bags
   std::vector<ProcessorPortStub> rxPorts;

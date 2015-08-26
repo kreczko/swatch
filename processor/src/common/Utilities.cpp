@@ -44,8 +44,9 @@ treeToProcessorStub(const boost::property_tree::ptree& t) {
   
   
     ProcessorStub pStub(t.get<std::string>("NAME"));
-    pStub.hwtype       = t.get<std::string>("HARDWARE TYPE");
     pStub.creator      = t.get<std::string>("CREATOR");
+    pStub.hwtype       = t.get<std::string>("HARDWARE TYPE");
+    pStub.role         = t.get<std::string>("ROLE");
     pStub.uri          = t.get<std::string>("URI");
     pStub.addressTable = t.get<std::string>("ADDRESS TABLE");
     pStub.crate        = t.get<std::string>("CRATE NAME");

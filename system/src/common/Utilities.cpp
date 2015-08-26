@@ -38,6 +38,7 @@ treeToDaqTTCStub(const boost::property_tree::ptree& t) {
     DaqTTCStub astub(t.get<std::string>("NAME"));
 
     astub.creator        = t.get<std::string>("CREATOR");
+    astub.role           = t.get<std::string>("ROLE");
     astub.uriT1          = t.get<std::string>("URI T1");
     astub.addressTableT1 = t.get<std::string>("ADDRESS TABLE T1"); // FIXME
     astub.uriT2          = t.get<std::string>("URI T2");

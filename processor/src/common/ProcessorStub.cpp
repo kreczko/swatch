@@ -22,6 +22,7 @@ std::ostream& operator<<(std::ostream& os, const swatch::processor::ProcessorStu
     os << "ProcessorDescriptor[" << pd.id << "]:\n"
        << "   - User creator = " << pd.creator << "\n"
        << "   - Hardware type = " << pd.hwtype << "\n"
+       << "   - Role = " << pd.role << "\n"
        << "   - Uri = " << pd.uri << "\n"
        << "   - Address table = " << pd.addressTable << "\n"
        << "   - Crate ID = " << pd.crate << "\n"

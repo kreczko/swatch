@@ -32,15 +32,9 @@ public:
   //! Class to create the DaqTTC object
   std::string creator;
 
-  //! Id of the uTCA crate where the DaqTTC is installed 
-  std::string crate;
-
-  //! Slot where the board is installed 
-  uint32_t slot;
-
-  //! ID for this FED
-  uint16_t fedId;
-
+  //! Role of the DaqTTC object
+  std::string role;
+  
   //! Uri to access the hardware resource
   std::string uriT1;
 
@@ -52,6 +46,15 @@ public:
 
   //! Address table
   std::string addressTableT2;
+
+  //! Id of the uTCA crate where the DaqTTC is installed 
+  std::string crate;
+
+  //! Slot where the board is installed 
+  uint32_t slot;
+
+  //! ID for this FED
+  uint16_t fedId;
 
 };
 
