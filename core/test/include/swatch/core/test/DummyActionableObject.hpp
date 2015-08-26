@@ -20,6 +20,8 @@ class DummyActionableObject: public swatch::core::ActionableObject {
 public:
   DummyActionableObject();
 
+  DummyActionableObject(const std::string& aId);
+
   virtual ~DummyActionableObject();
 
   uint32_t getNumber() const;
@@ -36,6 +38,8 @@ public:
   template< typename T>
   T& registerFunctionoid( const std::string& aId ) { return ActionableObject::registerFunctionoid<T>(aId); }
 
+  template< typename ObjType, typename DeleterType>
+  ObjType& add( ObjType* aChild , DeleterType aDeleter);
 
 private:
 
@@ -48,6 +52,14 @@ private:
   DummyActionableObject& operator=( const DummyActionableObject& ); // non copyable
 
 };
+
+template< typename ObjType, typename DeleterType>
+ObjType& DummyActionableObject::add( ObjType* aChild , DeleterType aDeleter)
+{ 
+  const std::string& childId = getId();
+  this->Object::addObj(aChild, aDeleter);
+  return *getObj<ObjType>(childId);
+}
 
 } /* namespace test */
 } /* namespace core */

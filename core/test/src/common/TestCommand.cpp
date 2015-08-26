@@ -63,7 +63,7 @@ BOOST_FIXTURE_TEST_CASE(TestDefaultParams, CommandTestSetup) {
 
 BOOST_FIXTURE_TEST_CASE(TestSuccessfulCommand,  CommandTestSetup) {
   LOG(kInfo) << "Running CommandTestSuite/TestSuccessfulCommand";
-  BOOST_CHECK_NE(obj.getNumber(), 54);
+  BOOST_CHECK_NE(obj.getNumber(), size_t(54));
   
   params.add("todo", xdata::String("useResource"));
   params.add("x", xdata::Integer(42));

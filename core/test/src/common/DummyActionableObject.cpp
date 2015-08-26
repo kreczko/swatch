@@ -17,9 +17,18 @@ namespace test {
 
 
 DummyActionableObject::DummyActionableObject() :
-        ActionableObject("Dummy"),
-        something_("something"),
-        number_(0){
+  ActionableObject("Dummy"),
+  something_("something"),
+  number_(0) {
+// Commands and Operations should be registered here
+}
+
+
+
+DummyActionableObject::DummyActionableObject(const std::string& aId) :
+  ActionableObject(aId),
+  something_("something"),
+  number_(0) {
 // Commands and Operations should be registered here
 }
 

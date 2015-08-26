@@ -62,7 +62,6 @@ protected:
   Operation( const std::string& aId );
 
   FSM* fsm_;
-
 };
 
 
