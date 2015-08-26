@@ -2,7 +2,7 @@
 #include <boost/test/unit_test.hpp>
 
 // Swatch Headers
-#include "swatch/processor/LinkInterface.hpp"
+#include "swatch/processor/PortCollection.hpp"
 #include "swatch/processor/test/DummyAlgo.hpp"
 #include "swatch/processor/test/DummyReadout.hpp"
 #include "swatch/processor/test/DummyProcessor.hpp"
@@ -26,7 +26,7 @@ BOOST_AUTO_TEST_CASE(TestProcessorComponentAccess) {
   BOOST_CHECK( typeid(p.getAlgo()) == typeid(DummyAlgo) );
   BOOST_CHECK( typeid(p.getReadout()) == typeid(DummyReadoutInterface) );
   BOOST_CHECK( typeid(p.getTTC()) == typeid(DummyTTC) );
-  BOOST_CHECK( typeid(p.getLinkInterface()) == typeid(swatch::processor::LinkInterface) );
+  BOOST_CHECK( typeid(p.getPorts()) == typeid(swatch::processor::PortCollection) );
 }
 
 
@@ -42,17 +42,17 @@ BOOST_AUTO_TEST_CASE(CreationTest) {
   BOOST_CHECK_EQUAL(p.getCrateId(), p.getStub().crate);
 
   // Input and output ports
-  BOOST_CHECK_EQUAL(p.getLinkInterface().getNumInputs(), size_t(5));
-  BOOST_CHECK_NO_THROW(p.getLinkInterface().getInput("rxA"));
-  BOOST_CHECK_NO_THROW(p.getLinkInterface().getInput("rxB"));
-  BOOST_CHECK_NO_THROW(p.getLinkInterface().getInput("rxC"));
-  BOOST_CHECK_NO_THROW(p.getLinkInterface().getInput("rxD"));
-  BOOST_CHECK_NO_THROW(p.getLinkInterface().getInput("rxE"));
+  BOOST_CHECK_EQUAL(p.getPorts().getNumInputs(), size_t(5));
+  BOOST_CHECK_NO_THROW(p.getPorts().getInput("rxA"));
+  BOOST_CHECK_NO_THROW(p.getPorts().getInput("rxB"));
+  BOOST_CHECK_NO_THROW(p.getPorts().getInput("rxC"));
+  BOOST_CHECK_NO_THROW(p.getPorts().getInput("rxD"));
+  BOOST_CHECK_NO_THROW(p.getPorts().getInput("rxE"));
 
-  BOOST_CHECK_EQUAL(p.getLinkInterface().getNumOutputs(), size_t(3));
-  BOOST_CHECK_NO_THROW(p.getLinkInterface().getOutput("txA"));
-  BOOST_CHECK_NO_THROW(p.getLinkInterface().getOutput("txB"));
-  BOOST_CHECK_NO_THROW(p.getLinkInterface().getOutput("txC"));
+  BOOST_CHECK_EQUAL(p.getPorts().getNumOutputs(), size_t(3));
+  BOOST_CHECK_NO_THROW(p.getPorts().getOutput("txA"));
+  BOOST_CHECK_NO_THROW(p.getPorts().getOutput("txB"));
+  BOOST_CHECK_NO_THROW(p.getPorts().getOutput("txC"));
 }
 
 

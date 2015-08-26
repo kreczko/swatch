@@ -1,11 +1,11 @@
 /**
- * @file    LinkInterface.hpp
+ * @file    PortCollection.hpp
  * @author  Alessandro Thea
  * @date    20.08.2014
  */
 
-#ifndef __SWATCH_PROCESSOR_LINKINTERFACE_HPP__
-#define __SWATCH_PROCESSOR_LINKINTERFACE_HPP__
+#ifndef __SWATCH_PROCESSOR_PORTCOLLECTION_HPP__
+#define __SWATCH_PROCESSOR_PORTCOLLECTION_HPP__
 
 
 // SWATCH headers
@@ -19,11 +19,11 @@ class InputPort;
 class OutputPort;
 
 //! Abstract class defining the optical link component interface of a processor
- class LinkInterface: public core::MonitorableObject {
+ class PortCollection : public core::MonitorableObject {
 public:
-    LinkInterface();
+    PortCollection();
 
-    virtual ~LinkInterface();
+    virtual ~PortCollection();
 
     /**
      * Number of input channels
@@ -63,5 +63,5 @@ private:
 }
 }
 
-#endif	/* __SWATCH_CORE_DEVICE_HPP__ */
+#endif	/* __SWATCH_PROCESSOR_PORTCOLLECTION_HPP__ */
 

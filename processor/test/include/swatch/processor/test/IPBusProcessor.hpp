@@ -8,19 +8,17 @@
 #ifndef __SWATCH_PROCESSOR_TEST_IPBUSPROCESSOR_HPP__
 #define	__SWATCH_PROCESSOR_TEST_IPBUSPROCESSOR_HPP__
 
-// Swatch Headers
-#include "swatch/processor/LinkInterface.hpp"
-#include "swatch/processor/Processor.hpp"
+
+// SWATCH headers
 #include "swatch/core/XParameterSet.hpp"
-
 #include "swatch/processor/AlgoInterface.hpp"
-
+#include "swatch/processor/PortCollection.hpp"
+#include "swatch/processor/Processor.hpp"
 #include "swatch/processor/test/IPBusComponent.hpp"
 
-// uHAL Headers
+// uHAL headers
 #include "uhal/HwInterface.hpp"
 
-// C++ Headers
 
 namespace swatch {
 namespace processor {

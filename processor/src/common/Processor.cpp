@@ -17,7 +17,7 @@
 #include "swatch/core/AbstractStub.hpp"
 #include "swatch/core/Utilities.hpp"
 #include "swatch/processor/AlgoInterface.hpp"
-#include "swatch/processor/LinkInterface.hpp"
+#include "swatch/processor/PortCollection.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
 #include "swatch/processor/ReadoutInterface.hpp"
 #include "swatch/processor/TTCInterface.hpp"
@@ -38,7 +38,7 @@ Processor::Processor( const swatch::core::AbstractStub& aStub) :
     ttc_(NULL),
     readout_(NULL),
     algo_(NULL),
-    links_(NULL)
+    ports_(NULL)
 {
 }
 
@@ -97,12 +97,12 @@ Processor::getAlgo() {
 
 
 //---
-LinkInterface&
-Processor::getLinkInterface() {
-  if (links_ == NULL)
+PortCollection&
+Processor::getPorts() {
+  if (ports_ == NULL)
     throw std::runtime_error("Processor \"" + getPath() + "\" has not registered any link interface object");
   else
-    return *links_;
+    return *ports_;
 }
 
 
@@ -111,7 +111,7 @@ const std::vector<std::string> Processor::defaultMetrics = { "firmwareVersion" }
 
 
 //---
-const std::vector<std::string> Processor::defaultMonitorableObjects = { "ttc", "links", "readout", "algo" };
+const std::vector<std::string> Processor::defaultMonitorableObjects = { "ttc", "ports", "readout", "algo" };
 
 
 //---
@@ -151,15 +151,15 @@ AlgoInterface& Processor::registerInterface( AlgoInterface* aAlgoInterface )
 }
 
 
-LinkInterface& Processor::registerInterface( LinkInterface* aLinkInterface )
+PortCollection& Processor::registerInterface( PortCollection* aPortCollection )
 {
-  if( links_ ){
-    delete aLinkInterface;
-    throw ProcessorInterfaceAlreadyDefined( "LinkInterface already defined for processor '" + getPath() + "'" );
+  if( ports_ ){
+    delete aPortCollection;
+    throw ProcessorInterfaceAlreadyDefined( "PortCollection already defined for processor '" + getPath() + "'" );
   }
-  this->addObj(aLinkInterface);
-  links_ = aLinkInterface;
-  return *links_;
+  this->addObj(aPortCollection);
+  ports_ = aPortCollection;
+  return *ports_;
 }
 
 

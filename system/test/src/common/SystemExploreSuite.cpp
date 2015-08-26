@@ -73,8 +73,8 @@ struct SystemSetupA {
         
         vector< pair<string, string> > links;
         push_back(links)
-                ("dummy-10.links.tx00", "dummy-13.links.rx01")
-                ("dummy-10.links.tx01", "dummy-13.links.rx00");
+                ("dummy-10.ports.tx00", "dummy-13.ports.rx01")
+                ("dummy-10.ports.tx01", "dummy-13.ports.rx00");
         unsigned int lid;
 
         vector< pair<string, string> >::iterator lIt;

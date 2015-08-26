@@ -11,7 +11,7 @@
 // SWATCH headers
 #include "swatch/logger/Log.hpp"
 #include "swatch/core/Factory.hpp"
-#include "swatch/processor/LinkInterface.hpp"
+#include "swatch/processor/PortCollection.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
 #include "swatch/processor/ProcessorCommandSequence.hpp"
 
@@ -66,13 +66,13 @@ MP7Processor::MP7Processor(const swatch::core::AbstractStub& aStub) :
     // Build subcomponents
     registerInterface( new MP7TTCInterface( *driver_ ) ); 
     registerInterface( new MP7ReadoutInterface(*driver_) );
-    registerInterface( new swpro::LinkInterface() );
+    registerInterface( new swpro::PortCollection() );
     
     // Add input and output ports
     for(auto it = stub.rxPorts.begin(); it != stub.rxPorts.end(); it++)
-      getLinkInterface().addInput(new MP7RxPort(it->id, it->number, *this));
+      getPorts().addInput(new MP7RxPort(it->id, it->number, *this));
     for(auto it = stub.txPorts.begin(); it != stub.txPorts.end(); it++)
-      getLinkInterface().addOutput(new MP7TxPort(it->id, it->number, *this));
+      getPorts().addOutput(new MP7TxPort(it->id, it->number, *this));
 
     LOG(swlog::kNotice) << "MP7 Processor '" << this->getId() << "' built: firmware 0x" << std::hex << retrieveFirmwareVersion() << std::endl;
 }

@@ -8,7 +8,7 @@
 // SWATCH headers
 #include "swatch/logger/Log.hpp"
 #include "swatch/core/Factory.hpp"
-#include "swatch/processor/LinkInterface.hpp"
+#include "swatch/processor/PortCollection.hpp"
 #include "swatch/processor/ProcessorCommandSequence.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
 
@@ -39,23 +39,6 @@ SWATCH_REGISTER_CLASS(swatch::processor::test::DummyProcessor);
 namespace swatch {
 namespace processor {
 namespace test {
-/* TO DELETE 
-DummyProcessor::DummyProcessor(const std::string& id,
-    const swatch::core::XParameterSet& params) :
-        Processor(id, params),
-        ranTests_() {
-
-  Add( new processor::LinkInterface() );
-
-  ProcessorStub& stub = params.get<ProcessorBag>("stub").bag;
-  
-  std::vector<ProcessorPortBag>::iterator it;
-  for(it = stub.rxPorts.begin(); it != stub.rxPorts.end(); it++)
-    linkInterface().addInput(new DummyRxPort(it->bag.name));
-  for(it = stub.txPorts.begin(); it != stub.txPorts.end(); it++)
-    linkInterface().addOutput(new DummyTxPort(it->bag.name));
-}
- */
 
 
 DummyProcessor::DummyProcessor(const swatch::core::AbstractStub& aStub) :
@@ -67,14 +50,14 @@ DummyProcessor::DummyProcessor(const swatch::core::AbstractStub& aStub) :
   registerInterface( new DummyTTC(*driver_) );
   registerInterface( new DummyReadoutInterface(*driver_) );
   registerInterface( new DummyAlgo(*driver_) );
-  registerInterface( new processor::LinkInterface() );
+  registerInterface( new processor::PortCollection() );
   
   const ProcessorStub& stub = getStub();
   
   for(auto it = stub.rxPorts.begin(); it != stub.rxPorts.end(); it++)
-    getLinkInterface().addInput(new DummyRxPort(it->id, it->number, *driver_));
+    getPorts().addInput(new DummyRxPort(it->id, it->number, *driver_));
   for(auto it = stub.txPorts.begin(); it != stub.txPorts.end(); it++)
-    getLinkInterface().addOutput(new DummyTxPort(it->id, it->number, *driver_));
+    getPorts().addOutput(new DummyTxPort(it->id, it->number, *driver_));
 
   // 2) Commands
   core::Command& reboot = registerFunctionoid<DummyResetCommand>("reboot");

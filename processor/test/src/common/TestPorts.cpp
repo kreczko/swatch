@@ -2,8 +2,8 @@
 #include <boost/test/unit_test.hpp>
 
 // SWATCH headers
-#include "swatch/processor/LinkInterface.hpp"
 #include "swatch/processor/Port.hpp"
+#include "swatch/processor/PortCollection.hpp"
 #include "swatch/processor/test/DummyProcessor.hpp"
 
 
@@ -23,7 +23,7 @@ BOOST_AUTO_TEST_CASE(TestInputPortDefaultMetricsList) {
 
   for(auto it=InputPort::defaultMetrics.begin(); it != InputPort::defaultMetrics.end(); it++)
   {
-    BOOST_CHECK_NO_THROW(p.getLinkInterface().getInput("rxA").getMetric(*it));
+    BOOST_CHECK_NO_THROW(p.getPorts().getInput("rxA").getMetric(*it));
   }
 }
 
@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_CASE(TestOutputPortDefaultMetricsList) {
 
   for(auto it=OutputPort::defaultMetrics.begin(); it != OutputPort::defaultMetrics.end(); it++)
   {
-    BOOST_CHECK_NO_THROW(p.getLinkInterface().getOutput("txA").getMetric(*it));
+    BOOST_CHECK_NO_THROW(p.getPorts().getOutput("txA").getMetric(*it));
   }
 }
 

@@ -28,7 +28,7 @@ namespace processor {
 class TTCInterface;
 class ReadoutInterface;
 class AlgoInterface;
-class LinkInterface;
+class PortCollection;
 
 
 class Processor : public core::ActionableObject {
@@ -72,7 +72,7 @@ public:
     AlgoInterface& getAlgo();
     
     //! Returns this processor's link interface
-    LinkInterface& getLinkInterface();
+    PortCollection& getPorts();
     
     static const std::vector<std::string> defaultMetrics;
 
@@ -90,7 +90,7 @@ protected:
     AlgoInterface& registerInterface( AlgoInterface* aAlgoInterface );
 
     //! Register the supplied (heap-allocated) link interface in this processor; the processor base class takes ownership of the link interface instance.
-    LinkInterface& registerInterface( LinkInterface* aLinkInterface );
+    PortCollection& registerInterface( PortCollection* aPortCollection );
 
     //! Firmware version metric
     core::Metric<uint64_t>& metricFirmwareVersion_;
@@ -109,7 +109,7 @@ private:
     AlgoInterface* algo_;
 
     //! Optical link interface
-    LinkInterface* links_;
+    PortCollection* ports_;
 
 private:
     Processor( const Processor& other ); // non copyable

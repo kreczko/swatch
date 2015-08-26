@@ -9,7 +9,7 @@
 #include <xdata/Integer.h>
 
 // Swatch Headers
-#include "swatch/processor/LinkInterface.hpp"
+#include "swatch/processor/PortCollection.hpp"
 #include "swatch/processor/test/IPBusProcessorCommands.hpp"
 #include "swatch/processor/test/IPBusProcessor.hpp"
 #include "swatch/processor/test/IPBusTTC.hpp"
@@ -124,10 +124,10 @@ core::Command::State IPBusConfigureCommand::code(const swatch::core::XParameterS
    
     if ( config == "capture") {
       // And then buffers
-      BOOST_FOREACH(InputPort* in, p->getLinkInterface().getInputs() ) {
+      BOOST_FOREACH(InputPort* in, p->getPorts().getInputs() ) {
           dynamic_cast<IPBusRxChannel*>(in)->configureBuffer(BufferInterface::Capture);
       }
-      BOOST_FOREACH( OutputPort* out, p->getLinkInterface().getOutputs() ) {
+      BOOST_FOREACH( OutputPort* out, p->getPorts().getOutputs() ) {
           dynamic_cast<IPBusTxChannel*>(out)->configureBuffer(BufferInterface::Capture);
       }
     } else {
@@ -168,8 +168,8 @@ core::Command::State IPBusCapture::code(const swatch::core::XParameterSet& param
 //    sleep(1);
     
     std::vector< std::vector<uint64_t> > data;
-    data.reserve(p->getLinkInterface().getNumOutputs());
-    BOOST_FOREACH(OutputPort* out, p->getLinkInterface().getOutputs() ) {
+    data.reserve(p->getPorts().getNumOutputs());
+    BOOST_FOREACH(OutputPort* out, p->getPorts().getOutputs() ) {
       LOG(swlog::kDebug) << "Downloading " << out->getId();
       IPBusTxChannel* tx = dynamic_cast<IPBusTxChannel*>(out);
       data.push_back(tx->download());
