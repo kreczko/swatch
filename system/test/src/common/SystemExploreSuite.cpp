@@ -134,7 +134,7 @@ BOOST_AUTO_TEST_CASE(ExploreSystem) {
     LOG(kDebug) << "Testing getters and aliases";
     LOG(kDebug) << "===========================";
     vector<string> names;
-    names += "dummy-10.links.tx00", "link000.src", "crateC.amc01.links.tx00";
+    names += "dummy-10.ports.tx00", "link000.src", "crateC.amc01.ports.tx00";
     vector< string >::const_iterator itN;
     BOOST_FOREACH( string name, names ) {
         Object& o = system->getObj(name);
@@ -142,9 +142,9 @@ BOOST_AUTO_TEST_CASE(ExploreSystem) {
     }
     LOG(kDebug) << "Multi-hop getter";
     LOG(kDebug) << "================";
-    Object& o = system->getObj("crateC").getObj("amc01").getObj("links").getObj("tx00");
+    Object& o = system->getObj("crateC").getObj("amc01").getObj("ports").getObj("tx00");
     LOG(kDebug) << "Testing  crate1 + dummy-13 + tx00: " << o.getPath() << " of type " << o.getTypeName();
-    BOOST_CHECK_EQUAL(o.getPath(),"mysys.dummy-10.links.tx00");
+    BOOST_CHECK_EQUAL(o.getPath(),"mysys.dummy-10.ports.tx00");
     BOOST_CHECK_EQUAL(o.getTypeName(),"swatch::processor::test::DummyTxPort");
 
 
