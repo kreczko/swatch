@@ -2,6 +2,7 @@
 
 
 #include <iostream>
+#include <vector>
 
 #include "swatch/core/ActionableObject.hpp"
 #include "swatch/core/Command.hpp"
@@ -301,18 +302,17 @@ void CommandSequence::updateParameterCache(GateKeeper& aGateKeeper)
 
 
 
-CommandSequenceStatus::CommandSequenceStatus(const std::string& aPath, CommandSequence::State aState, float aRunningTime, const Command* aCurrentCommand, const std::vector<CommandStatus>& aStatusOfCompletedCommands, const size_t& aTotalNumberOfCommands) : 
+CommandSequenceStatus::CommandSequenceStatus(const std::string& aPath, CommandSequence::State aState, float aRunningTime, const Command* aCurrentCommand, const std::vector<CommandStatus>& aStatusOfCompletedCommands,  size_t aTotalNumberOfCommands) : 
   mPath(aPath),
   mState(aState),
   mRunningTime(aRunningTime),
-  mCurrentCommand(aCurrentCommand),
-  mProgress( float(aStatusOfCompletedCommands.size()) / float(aTotalNumberOfCommands) ),
+  mTotalNumberOfCommands( aTotalNumberOfCommands ),
   mCommandStatuses(aStatusOfCompletedCommands)
 {
-  if (mCurrentCommand != NULL)
+  if (aCurrentCommand != NULL)
   {
-    mCommandStatuses.push_back(mCurrentCommand->getStatus());
-    mProgress += ( mCommandStatuses.back().getProgress() / float(aTotalNumberOfCommands) );
+    mCommandStatuses.push_back(aCurrentCommand->getStatus());
+    mTotalNumberOfCommands += ( mCommandStatuses.back().getProgress() / float(aTotalNumberOfCommands) );
 
   } 
  
@@ -340,18 +340,24 @@ float CommandSequenceStatus::getRunningTime() const
 
 float CommandSequenceStatus::getProgress() const
 {
-  return mProgress;
+  return float(mCommandStatuses.size() - ( mCommandStatuses.back().getState() == Command::kRunning) ) / float(mTotalNumberOfCommands);
+
 }
 
 
-const Command* CommandSequenceStatus::getCurrentCommand() const
-{
-  return mCurrentCommand;
-}
+// const Command* CommandSequenceStatus::getCurrentCommand() const
+// {
+//   return mCurrentCommand;
+// }
 
-size_t CommandSequenceStatus::getNumberOfCompletedCommands() const
-{
+size_t
+CommandSequenceStatus::getNumberOfCompletedCommands() const {
   return mResults.size();
+}
+
+size_t
+CommandSequenceStatus::getTotalNumberOfCommands() const {
+  return mTotalNumberOfCommands;
 }
 
 

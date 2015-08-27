@@ -133,12 +133,12 @@ public:
     
     //! Returns fraction progress of sequence - range [0,1] inclusive - 
     float getProgress() const;
-    
-    //! Returns current command
-    const Command* getCurrentCommand() const;
 
     //! Returns count of commands that have already completed execution (regardless of whether their final state is kDone, kWarning, or kError)
     size_t getNumberOfCompletedCommands() const;
+
+    //! Number of commands in the sequence
+    size_t getTotalNumberOfCommands() const;
     
     //! Returns results of the command in the sequence that have already completed execution
     const std::vector<const xdata::Serializable*>& getResults() const;
@@ -147,13 +147,13 @@ public:
     const std::vector<CommandStatus>& getCommandStatus() const;
     
 private:
-    CommandSequenceStatus(const std::string& aPath, CommandSequence::State aState, float aRunningTime, const Command* aCurrentCommand, const std::vector<CommandStatus>& aFinishedCommandStatuses, const size_t& aTotalNumberOfCommands);
+    CommandSequenceStatus(const std::string& aPath, CommandSequence::State aState, float aRunningTime, const Command* aCurrentCommand, const std::vector<CommandStatus>& aFinishedCommandStatuses, size_t aTotalNumberOfCommands);
 
     std::string mPath;
     CommandSequence::State mState;
     float mRunningTime;
-    const Command* mCurrentCommand;
-    float mProgress;
+    // const Command* mCurrentCommand;
+    size_t mTotalNumberOfCommands;
     std::vector<const xdata::Serializable*> mResults;
     std::vector<CommandStatus> mCommandStatuses;
 

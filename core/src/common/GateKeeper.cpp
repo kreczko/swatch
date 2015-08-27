@@ -164,7 +164,7 @@ namespace swatch
       //We could add runtime overriding of values to the GateKeeper and check them first...
       for ( std::vector<std::string>::const_iterator lIt ( aTables.begin() ) ; lIt!=aTables.end() ; ++lIt )
       {
-        std::cout << "Searching : " << lSequencePath << ", " << lCommandPath << " in  " << *lIt << std::endl;
+        std::cout << "Searching : " << lSequencePath << ", " << lCommandPath << ", " << aParameterId << " in  " << *lIt << std::endl;
         lData = get(  lSequencePath , lCommandPath , aParameterId, *lIt );
         if ( lData )
         {
