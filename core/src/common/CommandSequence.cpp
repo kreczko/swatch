@@ -312,8 +312,6 @@ CommandSequenceStatus::CommandSequenceStatus(const std::string& aPath, CommandSe
   if (aCurrentCommand != NULL)
   {
     mCommandStatuses.push_back(aCurrentCommand->getStatus());
-    mTotalNumberOfCommands += ( mCommandStatuses.back().getProgress() / float(aTotalNumberOfCommands) );
-
   } 
  
   for(auto it = aStatusOfCompletedCommands.begin(); it != aStatusOfCompletedCommands.end(); it++)
@@ -340,15 +338,13 @@ float CommandSequenceStatus::getRunningTime() const
 
 float CommandSequenceStatus::getProgress() const
 {
-  return float(mCommandStatuses.size() - ( mCommandStatuses.back().getState() == Command::kRunning) ) / float(mTotalNumberOfCommands);
-
+  if (mCommandStatuses.empty())
+    return 0.0;
+  else if (mResults.size() == mTotalNumberOfCommands)
+    return 1.0;
+  else
+    return ( float(mResults.size()) + mCommandStatuses.back().getProgress() ) / float(mTotalNumberOfCommands);
 }
-
-
-// const Command* CommandSequenceStatus::getCurrentCommand() const
-// {
-//   return mCurrentCommand;
-// }
 
 size_t
 CommandSequenceStatus::getNumberOfCompletedCommands() const {
@@ -371,28 +367,6 @@ const std::vector<CommandStatus>& CommandSequenceStatus::getCommandStatus() cons
 {
   return mCommandStatuses;
 }
-
-// std::set< std::string > CommandSequence::getParams()
-// {
-//   std::set< std::string > lKeys, lAllKeys;
-//   for( tCommandVector::iterator lIt( mCommands.begin()) ; lIt != mCommands.end() ; ++lIt )
-//   {
-//     Command& lCommand( getCommand( *lIt ) );
-//     lKeys = lCommand.getDefaultParams().keys();
-//     for( std::set< std::string >::iterator lIt2( lKeys.begin() ); lIt2!=lKeys.end(); ++lIt2 )
-//     {
-//       lAllKeys.insert( id() + "." + lCommand.id() + "." + *lIt2 );
-//     }
-//   }
-//   return lAllKeys;
-// }
-
-
-
-
-
-
-// std::string CommandSequence::mCommandSequenceComplete = std::string( "CommandSequence complete" );
 
 } /* namespace core */
 } /* namespace swatch */
