@@ -63,6 +63,19 @@ void Object::addObj(Object* aChild) {
 }
 
 
+const Object* Object::getAncestor(const uint32_t& aDepth) const {
+  if (!aDepth) {
+    return this;
+  }
+
+  if (!parent_) {
+    return NULL;
+  }
+
+  return parent_-> getAncestor(aDepth - 1);
+}
+
+
 Object* Object::getAncestor(const uint32_t& aDepth) {
   if (!aDepth) {
     return this;

@@ -38,29 +38,32 @@ Command::~Command() {
 }
 
 
+const swatch::core::ActionableObject& Command::getResource() const {
+  const swatch::core::ActionableObject* lParent = getParent<ActionableObject>();
+  
+  if (lParent != NULL)
+    return *lParent;
+  else
+    throw InvalidResource("Command '"+getPath()+"' does not have a registered resource (actionable object parent)");
+}
+
+
 //---
 void 
-Command::exec( const XParameterSet& params  , const bool& aUseThreadPool ) 
+Command::exec( const XParameterSet& aParams  , const bool& aUseThreadPool ) 
 {
-  // Request sole control of the resource
-  std::pair<bool, const Functionoid*> requestResult = getParent<ActionableObject>()->requestControlOfResource(this);
-  if ( ! requestResult.first ){
-    std::ostringstream oss;
-    oss << "Could not run command '" << getId() << "' on resource '" << getParent()->getPath() << "'. ";
+  boost::shared_ptr<ActionableObject::BusyGuard> lActionGuard(new ActionableObject::BusyGuard(*getParent<ActionableObject>(),*this));
 
-    if (requestResult.second)
-      oss << "Resource currently busy running functionoid '" << requestResult.second->getId() << "'.";
-    else
-      oss << "Actions currently disabled on this resource.";
+  exec(lActionGuard, aParams, aUseThreadPool);
+}
 
-    throw std::runtime_error(oss.str());
-  }
 
-  // Reset the status before doing anything else
-  reset();
-
-  // merge with default settings
-  runningParams_ = mergeParametersWithDefaults(params);
+//---
+void 
+Command::exec(const boost::shared_ptr<ActionableObject::BusyGuard>& aActionGuard, const XParameterSet& params  , const bool& aUseThreadPool ) 
+{
+  // Reset the status before doing anything else, merging user-supplied parameter values with default values
+  resetForRunning(params);
 
   // Execute the command protected by a very generic try/catch
   try {
@@ -70,21 +73,21 @@ Command::exec( const XParameterSet& params  , const bool& aUseThreadPool )
       state_ = kScheduled;
       
       ThreadPool& pool = ThreadPool::getInstance();
-      pool.addTask<Command>(this, &Command::runCode, runningParams_);
+      pool.addTask<Command,ActionableObject::BusyGuard>(this, &Command::runCode, aActionGuard, runningParams_);
     }
     else{
       // otherwise execute in same thread
-      this->runCode(runningParams_);
+      this->runCode(aActionGuard, runningParams_);
     }
   } catch ( const std::exception& e ) {
-    getParent<ActionableObject>()->releaseControlOfResource(this);
     // TODO: log the error to error msg (or not?)
     // Then rethrow the exception on to the higher layers of code.
     throw;
   }
 }
 
-void Command::runCode(const XParameterSet& params) {
+
+void Command::runCode(boost::shared_ptr<ActionableObject::BusyGuard> aActionGuard, const XParameterSet& params) {
   // 1) Declare that I'm running
   {
     boost::unique_lock<boost::mutex> lock(mutex_);
@@ -117,21 +120,19 @@ void Command::runCode(const XParameterSet& params) {
     statusMsg_ = std::string("ERROR - An exception of type '" + demangleName(typeid(e).name()) + "' was thrown in Command::code(): ") + e.what();
   }
   
-  // 3) Release control of the resource
-  const Functionoid* releaseResult = getParent<ActionableObject>()->releaseControlOfResource(this);
-  if (releaseResult != NULL) {
-    LOG(swatch::logger::kError) << "Did not successfully release resource '" << getParent()->getPath() << "' from at end of runCode method for command '" << getId() << "'";
-  }
+  // 3) Release control of the resource - by destruction of the ActionGuard.
 }
 
 //---
-void Command::reset() {
+void Command::resetForRunning(const XParameterSet& params) {
   boost::unique_lock<boost::mutex> lock(mutex_);
-  state_ = kInitial;
+  state_ = kScheduled;
   progress_ = 0.0;
   statusMsg_ = "";
   
   result_.reset(resultCloner_(defaultResult_));
+  
+  runningParams_ = mergeParametersWithDefaults(params);
 }
 
 
@@ -169,7 +170,7 @@ CommandStatus Command::getStatus() const {
       break;
   }
     
-  return CommandStatus(getPath(), state_, runningTime, progress_, statusMsg_, result);
+  return CommandStatus(getPath(), state_, runningTime, progress_, statusMsg_, runningParams_, result);
 }
 
 
@@ -271,6 +272,12 @@ std::string& CommandStatus::getStatusMsg() const {
 
 
 //---
+const XParameterSet& CommandStatus::getParameters() const {
+  return params_;
+}
+
+    
+//---
 const xdata::Serializable*
 const CommandStatus::getResult() const {
   return result_.get();
@@ -284,12 +291,13 @@ CommandStatus::getResultAsString() const {
 }
     
 //---
-CommandStatus::CommandStatus(const std::string& aPath, Command::State aState, float aRunningTime, float aProgress, const std::string& aStatusMsg, const boost::shared_ptr<xdata::Serializable>& aResult) :
+CommandStatus::CommandStatus(const std::string& aPath, Command::State aState, float aRunningTime, float aProgress, const std::string& aStatusMsg, const ReadOnlyXParameterSet& aParams, const boost::shared_ptr<xdata::Serializable>& aResult) :
   path_(aPath),
   state_(aState),
   runningTime_(aRunningTime),
   progress_(aProgress),
   statusMsg_(aStatusMsg),
+  params_(aParams),
   result_(aResult)
 {
 }

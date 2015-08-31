@@ -165,6 +165,12 @@ bool System::hasCrate(const std::string& crate_id) const{
 }
 
 
+//---
+const std::vector<std::string>& System::getGateKeeperTables() const 
+{
+  return gateKeeperTables_;
+}
+
 } // end ns system
 } // end ns swatch
 

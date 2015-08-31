@@ -1,9 +1,12 @@
-
+ 
 #include "swatch/core/ActionableObject.hpp"
 
 
 #include "boost/foreach.hpp"
 
+#include "swatch/core/Command.hpp"
+#include "swatch/core/CommandSequence.hpp"
+#include "swatch/core/Operation.hpp"
 #include "swatch/core/Utilities.hpp"
 #include "swatch/logger/Log.hpp"
 
@@ -91,15 +94,25 @@ std::set<std::string> ActionableObject::getOperations() const
 
 //------------------------------------------------------------------------------------
 
-CommandSequence& ActionableObject::registerFunctionoid( const std::string& aId , CommandSequence* aCommandSequence )
-{
+CommandSequence& ActionableObject::registerCommandSequence( const std::string& aId, const std::string& aFirstCommandId, const std::string& aFirstCommandAlias)
+{ 
   if (mCommandSequences.count(aId)) {
-    delete aCommandSequence;
     throw CommandSequenceAlreadyExistsInActionableObject( "CommandSequence With ID '"+aId+"' already exists" );
   }
-  this->addObj(aCommandSequence);
-  mCommandSequences.insert( std::make_pair( aId , aCommandSequence ) );
-  return *aCommandSequence;
+  CommandSequence* lSequence = new CommandSequence(aId, *this, aFirstCommandId, aFirstCommandAlias);
+  mCommandSequences.insert( std::make_pair( aId , lSequence ) );
+  return *lSequence;
+}
+
+
+CommandSequence& ActionableObject::registerCommandSequence( const std::string& aId, Command& aFirstCommand, const std::string& aFirstCommandAlias)
+{ 
+  if (mCommandSequences.count(aId)) {
+    throw CommandSequenceAlreadyExistsInActionableObject( "CommandSequence With ID '"+aId+"' already exists" );
+  }
+  CommandSequence* lSequence = new CommandSequence(aId, *this, aFirstCommand, aFirstCommandAlias);
+  mCommandSequences.insert( std::make_pair( aId , lSequence ) );
+  return *lSequence;
 }
 
 
@@ -168,25 +181,44 @@ void ActionableObject::disableActions(){
 }
 
 
-std::pair<bool, const Functionoid *  > ActionableObject::requestControlOfResource(Functionoid const * const aFunctionoid) {
-  boost::lock_guard<boost::mutex> lGuard(mMutex);
-  if (! mEnabled )
-    return std::make_pair(false, (const Functionoid*) NULL);
-  else if ( this->mActiveFunctionoid != NULL)
-    return std::pair<bool, const Functionoid*>(false, mActiveFunctionoid);
-  else {
-    mActiveFunctionoid = aFunctionoid;
-    return std::pair<bool, const Functionoid*>(true, mActiveFunctionoid);
-  }
+
+ActionableObject::BusyGuard::BusyGuard(ActionableObject& aResource, const Functionoid& aFunctionoid) : 
+  mResource(aResource),
+  mAction(aFunctionoid)
+{
+  boost::lock_guard<boost::mutex> lGuard(aResource.mMutex);
+  LOG(swatch::logger::kDebug) << "ActionableObject::BusyGuard CTOR for resource '" << mResource.getPath() << "', functionoid '" << mAction.getId() <<"'";
+
+  // Claim the resource if free; else throw if can't get sole control of it
+  if ( aResource.mEnabled && ( aResource.mActiveFunctionoid == NULL ) )
+    aResource.mActiveFunctionoid = &aFunctionoid;
+  else
+  {
+    std::ostringstream oss;
+    oss << "Could not run action '" << aFunctionoid.getId() << "' on resource '" << aResource.getPath() << "'. ";
+
+    if ( aResource.mActiveFunctionoid != NULL )
+      oss << "Resource currently busy running functionoid '" << aResource.mActiveFunctionoid->getId() << "'.";
+    else
+      oss << "Actions currently disabled on this resource.";
+
+   LOG(swatch::logger::kNotice) << oss.str();
+   throw ActionableObjectIsBusy(oss.str());
+  } 
 }
 
 
-const Functionoid * ActionableObject::releaseControlOfResource(Functionoid const * const aFunctionoid){  
-  boost::lock_guard<boost::mutex> lGuard(mMutex);
-  if (aFunctionoid == mActiveFunctionoid)
-    mActiveFunctionoid = NULL;
-  
-  return mActiveFunctionoid;
+ActionableObject::BusyGuard::~BusyGuard()
+{
+  boost::lock_guard<boost::mutex> lGuard(mResource.mMutex);
+  LOG(swatch::logger::kDebug) << "ActionableObject::BusyGuard DTOR for resource '" << mResource.getPath() << "', functionoid '" << mAction.getId() <<"'";
+  if (&mAction == mResource.mActiveFunctionoid)
+    mResource.mActiveFunctionoid = NULL;
+  else
+  {
+    const std::string activeFuncId(mResource.mActiveFunctionoid == NULL ? "NULL" : "'" + mResource.mActiveFunctionoid->getId() + "'");
+    LOG(swatch::logger::kError) << "Unexpected active functionoid " << activeFuncId << " in ActionGuard destructor for resource '" << mResource.getPath() << "', functionoid '" << mAction.getId() << "'";
+  }
 }
 
 

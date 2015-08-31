@@ -50,7 +50,7 @@ public:
   void add( processor::Link* aLink );
   void add( system::Service* aService );
   void add( system::Crate* aCrate );
-    
+
   const std::deque<processor::Processor*>& getProcessors() ;
   const std::deque<Service*>& getServices();
   const std::deque<DaqTTCManager*>& getDaqTTC();
@@ -59,6 +59,9 @@ public:
     
   bool hasCrate(const std::string& aCrateId) const;
 
+  const std::vector<std::string>& getGateKeeperTables() const;
+
+  
 protected:
   virtual void retrieveMetricValues() {}
 
@@ -82,6 +85,8 @@ private:
 
     //! Map of crates
     CratesMap cratesMap_;
+    
+    std::vector<std::string> gateKeeperTables_;
 };
 
 }

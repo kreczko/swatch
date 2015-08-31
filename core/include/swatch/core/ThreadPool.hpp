@@ -75,10 +75,11 @@ public:
    * Adds a task to the pool's queue.
    * @param cmd: pointer to the object
    * @param function: reference to the object function
+   * @param resourceGuard: shared pointer to RAII-style guard object corresponding for resource's "busy" state resource
    * @param param: parameter set to be passed to the object function
    */
-  template<class OBJECT>
-  void addTask( OBJECT* cmd , boost::function<void(OBJECT*, const XParameterSet&)> function , const XParameterSet& param );
+  template<class OBJECT, class ResourceGuardType>
+  void addTask( OBJECT* cmd , boost::function<void(OBJECT*, boost::shared_ptr<ResourceGuardType>, const XParameterSet&)> function , const boost::shared_ptr<ResourceGuardType>& resourceGuard, const XParameterSet& param );
 
 
   /**
@@ -86,8 +87,8 @@ public:
    * @param cmd: pointer to the object
    * @param function: reference to the object function
    */
-  template<class OBJECT>
-  void addTask( OBJECT* cmd , boost::function<void(OBJECT*)> function );
+  template<class OBJECT, class ResourceGuardType>
+  void addTask( OBJECT* cmd , boost::function<void(OBJECT*, boost::shared_ptr<ResourceGuardType>)> function, const boost::shared_ptr<ResourceGuardType>& resourceGuard );
 
 
 private:

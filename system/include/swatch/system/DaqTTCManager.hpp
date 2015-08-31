@@ -44,9 +44,13 @@ public:
 
     static const std::vector<std::string> defaultMetrics;
 
+    virtual const std::vector<std::string>& getGateKeeperTables() const;
+
 private:
     DaqTTCStub stub_;
 
+    mutable std::vector<std::string> gateKeeperTables_;
+    
 protected:
     //! Metric for measured TTC clock frequency [Hz]
     core::Metric<double>& ttcMetricClockFreq_;

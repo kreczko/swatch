@@ -14,6 +14,7 @@
 #include <boost/foreach.hpp>
 
 // SWATCH headers
+#include "swatch/core/Utilities.hpp"
 #include "swatch/processor/Processor.hpp"
 #include "swatch/system/Service.hpp"
 #include "swatch/system/DaqTTCManager.hpp"

@@ -26,61 +26,61 @@ namespace swatch
     GateKeeper::~GateKeeper()
     {}
 
-    bool GateKeeper::preload()
-    {
-      // Iterate over all objects under the top level: if they are CommandSequences, claim them and cache the resources they will use
-      for ( Object::iterator lIt ( mToplevel->begin() ); lIt != mToplevel->end(); ++ lIt )
-      {
-        CommandSequence* lCommandSequence ( dynamic_cast< CommandSequence* > ( & ( *lIt ) ) );
-
-        if ( lCommandSequence )
-        {
-          const std::vector<std::string>& lTables = lCommandSequence->getTables();
-
-          for ( std::vector<std::string>::const_iterator lIt2 ( lTables.begin() ) ; lIt2!=lTables.end() ; ++lIt2 )
-          {
-            tTableCache::iterator lTableIt ( mCache.find ( *lIt2 ) );
-
-            if ( lTableIt != mCache.end() )
-            {
-              continue;
-            }
-
-            tTable lTable ( getTable ( mKey , *lIt2 ) ); //perfectly acceptable to return NULL - no such table exists
-
-            if ( lTable )
-            {
-              mCache.insert ( std::make_pair ( *lIt2 , lTable ) );  //Could use add method here for clarity, but there is no point rechecking the existence of the Id in the cache
-              mUpdateTime = boost::posix_time::microsec_clock::universal_time();
-            }
-          }
-
-
-          for( CommandSequence::tCommandVector::const_iterator lIt2( lCommandSequence->getCommands().begin()) ; lIt2 != lCommandSequence->getCommands().end() ; ++lIt2 )
-          {
-            Command& lCommand = **lIt2; //Utility function
-            std::set< std::string > lKeys( lCommand.getDefaultParams().keys() );
-            for( std::set< std::string >::iterator lIt3( lKeys.begin() ); lIt3!=lKeys.end(); ++lIt3 )
-            {
-              get ( lCommandSequence->getId() , lCommand.getId() , *lIt3 , lTables );
-            }
-          }
-
-//          std::set<std::string> lParams = lCommandSequence->getParams();
-//          for ( std::set<std::string>::const_iterator lIt2 ( lParams.begin() ) ; lIt2!=lParams.end() ; ++lIt2 )
+//    bool GateKeeper::preload()
+//    {
+//      // Iterate over all objects under the top level: if they are CommandSequences, claim them and cache the resources they will use
+//      for ( Object::iterator lIt ( mToplevel->begin() ); lIt != mToplevel->end(); ++ lIt )
+//      {
+//        CommandSequence* lCommandSequence ( dynamic_cast< CommandSequence* > ( & ( *lIt ) ) );
+//
+//        if ( lCommandSequence )
+//        {
+//          const std::vector<std::string>& lTables = lCommandSequence->getTables();
+//
+//          for ( std::vector<std::string>::const_iterator lIt2 ( lTables.begin() ) ; lIt2!=lTables.end() ; ++lIt2 )
 //          {
-//             get ( *lIt2 , lTables );
+//            tTableCache::iterator lTableIt ( mCache.find ( *lIt2 ) );
+//
+//            if ( lTableIt != mCache.end() )
+//            {
+//              continue;
+//            }
+//
+//            tTable lTable ( getTable ( mKey , *lIt2 ) ); //perfectly acceptable to return NULL - no such table exists
+//
+//            if ( lTable )
+//            {
+//              mCache.insert ( std::make_pair ( *lIt2 , lTable ) );  //Could use add method here for clarity, but there is no point rechecking the existence of the Id in the cache
+//              mUpdateTime = boost::posix_time::microsec_clock::universal_time();
+//            }
 //          }
-        }
-      }
+//
+//
+//          for( CommandSequence::tCommandVector::const_iterator lIt2( lCommandSequence->getCommands().begin()) ; lIt2 != lCommandSequence->getCommands().end() ; ++lIt2 )
+//          {
+//            Command& lCommand = **lIt2; //Utility function
+//            std::set< std::string > lKeys( lCommand.getDefaultParams().keys() );
+//            for( std::set< std::string >::iterator lIt3( lKeys.begin() ); lIt3!=lKeys.end(); ++lIt3 )
+//            {
+//              get ( lCommandSequence->getId() , lCommand.getId() , *lIt3 , lTables );
+//            }
+//          }
+//
+////          std::set<std::string> lParams = lCommandSequence->getParams();
+////          for ( std::set<std::string>::const_iterator lIt2 ( lParams.begin() ) ; lIt2!=lParams.end() ; ++lIt2 )
+////          {
+////             get ( *lIt2 , lTables );
+////          }
+//        }
+//      }
+//
+//      return true;
+//    }
 
-      return true;
-    }
 
-
-    GateKeeper::tParameter GateKeeper::get ( const std::string& aParam , const std::string& aTable )
+    GateKeeper::tParameter GateKeeper::get ( const std::string& aParam , const std::string& aTable ) const
     {
-      tTableCache::iterator lTable ( mCache.find ( aTable ) );
+      tTableCache::const_iterator lTable ( mCache.find ( aTable ) );
 
       if ( lTable == mCache.end() )
       {
@@ -122,7 +122,7 @@ namespace swatch
 //     }
 
 
-    GateKeeper::tParameter GateKeeper::get ( const std::string& aSequencePath , const std::string& aCommandPath , const std::string& aParameterId , const std::string& aTable )
+    GateKeeper::tParameter GateKeeper::get ( const std::string& aSequencePath , const std::string& aCommandPath , const std::string& aParameterId , const std::string& aTable ) const
     {
       tParameter lData;
       lData = get( aSequencePath , aTable );
@@ -147,7 +147,7 @@ namespace swatch
     }
 
 
-    GateKeeper::tParameter GateKeeper::get ( const std::string& aSequenceId , const std::string& aCommandId , const std::string& aParameterId , const std::vector<std::string>& aTables )
+    GateKeeper::tParameter GateKeeper::get ( const std::string& aSequenceId , const std::string& aCommandId , const std::string& aParameterId , const std::vector<std::string>& aTables ) const
     {
 
       std::string lCommandPath( aCommandId + "." + aParameterId );

@@ -28,7 +28,6 @@ Command::Command( const std::string& aId , const T& aDefault ) :
 {
   // T must be derived from xdata::Serializable
   BOOST_STATIC_ASSERT((boost::is_base_of<xdata::Serializable, T>::value));
-  reset();
 }
 
 

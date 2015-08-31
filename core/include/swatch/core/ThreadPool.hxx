@@ -8,12 +8,13 @@
 namespace swatch {
 namespace core {
 
-template<class OBJECT>
+template<class OBJECT, class ResourceGuardType>
 void ThreadPool::addTask(OBJECT* cmd,
-    boost::function<void(OBJECT*, const XParameterSet&)> function,
+    boost::function<void(OBJECT*, boost::shared_ptr<ResourceGuardType>, const XParameterSet&)> function,
+    const boost::shared_ptr<ResourceGuardType>& resourceGuard,
     const XParameterSet& param) {
   // create packed_task
-  boost::packaged_task<void> task(boost::bind(function, cmd, boost::ref(param)));
+  boost::packaged_task<void> task(boost::bind(function, cmd, resourceGuard, boost::ref(param)));
   {
     // lock mutex
     boost::lock_guard<boost::mutex> guard(queue_mutex_);
@@ -26,10 +27,10 @@ void ThreadPool::addTask(OBJECT* cmd,
   condition_.notify_one();
 }
 
-template<class OBJECT>
-void ThreadPool::addTask( OBJECT* cmd , boost::function<void(OBJECT*)> function ) {
+template<class OBJECT, class ResourceGuardType>
+void ThreadPool::addTask( OBJECT* cmd , boost::function<void(OBJECT*, boost::shared_ptr<ResourceGuardType>)> function, const boost::shared_ptr<ResourceGuardType>& resourceGuard ) {
   // create packed_task
-  boost::packaged_task<void> task(boost::bind(function, cmd));
+  boost::packaged_task<void> task(boost::bind(function, cmd, resourceGuard));
   {
     // lock mutex
     boost::lock_guard<boost::mutex> guard(queue_mutex_);

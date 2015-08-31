@@ -24,6 +24,8 @@ public:
 
   virtual ~DummyActionableObject();
 
+  virtual const std::vector<std::string>& getGateKeeperTables() const;
+
   uint32_t getNumber() const;
 
   void setNumber(uint32_t number);
@@ -47,6 +49,8 @@ private:
     
   std::string something_;
   uint32_t number_;
+  
+  mutable std::vector<std::string> gateKeeperTables_;
   
   DummyActionableObject( const DummyActionableObject& other ); // non copyable
   DummyActionableObject& operator=( const DummyActionableObject& ); // non copyable

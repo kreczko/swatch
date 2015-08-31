@@ -10,9 +10,9 @@
 // Swatch Headers
 #include "swatch/logger/Log.hpp"
 #include "swatch/core/Command.hpp"
+#include "swatch/core/CommandSequence.hpp"
 #include "swatch/core/Factory.hpp"
 #include "swatch/system/test/DummyConfigProcessor.hpp"
-#include "swatch/processor/ProcessorCommandSequence.hpp"
 
 // XDAQ Headers
 #include "xdata/String.h"
@@ -72,12 +72,12 @@ Processor(aStub)
   registerFunctionoid<DummyConfigCommand>("dummy_6");
 
   //Define the sequence through pointers to commands - run, then and operator() are all aliases
-  core::CommandSequence& lSequence1 = registerFunctionoid<processor::ProcessorCommandSequence>( "sequence_1" );
-  lSequence1.run( lDummy1 ).then( lDummy2 )( lDummy3 );
+  core::CommandSequence& lSequence1 = registerCommandSequence( "sequence_1", lDummy1 );
+  lSequence1.run( lDummy2 )( lDummy3 );
 
   //Define the sequence through command ids - run, then and operator() are all aliases
-  core::CommandSequence& lSequence2 = registerFunctionoid<processor::ProcessorCommandSequence>( "sequence_2" );
-  lSequence2.run( "dummy_4" ).then( "dummy_5" )( "dummy_6" );
+  core::CommandSequence& lSequence2 = registerCommandSequence( "sequence_2", "dummy_4" );
+  lSequence2.then( "dummy_5" )( "dummy_6" );
 }
 
 

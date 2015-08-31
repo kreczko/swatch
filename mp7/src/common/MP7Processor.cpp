@@ -10,10 +10,10 @@
 
 // SWATCH headers
 #include "swatch/logger/Log.hpp"
+#include "swatch/core/CommandSequence.hpp"
 #include "swatch/core/Factory.hpp"
 #include "swatch/processor/PortCollection.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
-#include "swatch/processor/ProcessorCommandSequence.hpp"
 
 // SWATCH MP7 headers
 #include "swatch/mp7/MP7Commands.hpp"
@@ -55,11 +55,7 @@ MP7Processor::MP7Processor(const swatch::core::AbstractStub& aStub) :
     registerFunctionoid<MP7ConfigureLoopback>("loopback");
     
     // Add command sequences
-    registerFunctionoid<processor::ProcessorCommandSequence>("resetThenMGTs")
-        .run(resetCommand)
-        .then(mgtsCommand)
-        .then(align)
-    ;
+    registerCommandSequence("resetThenMGTs", resetCommand).then(mgtsCommand).then(align);
     
     // Extract stub, and create driver
     const processor::ProcessorStub& stub = getStub();

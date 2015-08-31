@@ -24,15 +24,15 @@ public:
 
 private:
 
-  class DummyCommandSequence : public CommandSequence
-  {
-    public:
-      DummyCommandSequence(); 
-      void exec();
-      std::vector<std::string>* setTables();
-  };
-
-  DummyCommandSequence mDummyCommandSequence;
+//  class DummyCommandSequence : public CommandSequence
+//  {
+//    public:
+//      DummyCommandSequence(); 
+//      void exec();
+//      std::vector<std::string>* setTables();
+//  };
+//
+//  DummyCommandSequence mDummyCommandSequence;
 };
 
 } /* namespace core */

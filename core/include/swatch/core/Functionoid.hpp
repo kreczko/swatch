@@ -14,6 +14,7 @@
 #include <xdata/Serializable.h>
 
 // Swatch Headers
+#include "swatch/core/exception.hpp"
 #include "swatch/core/Object.hpp"
 
 
@@ -29,11 +30,16 @@ public:
   virtual ~Functionoid();
 
 protected:
+  const Object* getParent() const ;
+
   Object* getParent();
+
+  template<typename T> const T* getParent() const ;
 
   template<typename T> T* getParent();
 };
 
+DEFINE_SWATCH_EXCEPTION(InvalidResource);
 
 } /* namespace core */
 } /* namespace swatch */

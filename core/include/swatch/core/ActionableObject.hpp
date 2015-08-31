@@ -12,9 +12,6 @@
 // SWATCH Headers
 #include "swatch/core/exception.hpp"
 #include "swatch/core/MonitorableObject.hpp"
-#include "swatch/core/CommandSequence.hpp"
-#include "swatch/core/Command.hpp"
-#include "swatch/core/Operation.hpp"
 
 // STL Headers
 #include <set>
@@ -25,6 +22,12 @@
 
 namespace swatch {
 namespace core {
+
+
+class Command;
+class CommandSequence;
+class Operation;
+
 
 //! An object representing a resource on which commands, operations and command sequences run
 class ActionableObject : public MonitorableObject {
@@ -60,6 +63,8 @@ public:
   //! Get registered command of specified ID
   Operation& getOperation( const std::string& aId );
 
+  virtual const std::vector<std::string>& getGateKeeperTables() const = 0;
+  
   //! Returns whether or not actions (i.e. commands, command sequences, operations) are currently enabled on this resource
   bool isEnabled() const;
 
@@ -84,8 +89,10 @@ protected:
   template< typename T>
   T& registerFunctionoid( const std::string& aId );
 
-  //! Register the supplied command sequence in this object, with specified ID; this object takes ownership of the command sequence.
-  CommandSequence& registerFunctionoid(const std::string& aId , CommandSequence* aCommandSequence );
+  //! Register the a command sequence in this object, with specified ID
+  CommandSequence& registerCommandSequence(const std::string& aId, const std::string& aFirstCommandId, const std::string& aFirstCommandAlias="");
+  //! Register the a command sequence in this object, with specified ID
+  CommandSequence& registerCommandSequence(const std::string& aId, Command& aFirstCommand, const std::string& aFirstCommandAlias="");
   //! Register the supplied command in this object, with specified ID; this object takes ownership of the command sequence.
   Command& registerFunctionoid(const std::string& aId , Command* aCommand );
   //! Register the supplied operation in this object, with specified ID; this object takes ownership of the command sequence.
@@ -105,8 +112,22 @@ private:
   //! Indicates whether or not actions are allowed on this resource anymore (actions become disabled once the deleter is )
   bool mEnabled;
 
-  std::pair<bool, Functionoid const * > requestControlOfResource(Functionoid const * const aFunctionoid);
-  Functionoid const * releaseControlOfResource(Functionoid const * const aFunctionoid);
+  class BusyGuard {
+  public:
+    BusyGuard(ActionableObject& aResource, const Functionoid&);
+    
+    ~BusyGuard();
+      
+  private:
+    ActionableObject& mResource;
+    const Functionoid& mAction;
+    
+    BusyGuard(const BusyGuard&); // non-copyable
+    BusyGuard& operator=(const BusyGuard&); // non-assignable
+  };
+
+//  std::pair<bool, Functionoid const * > requestControlOfResource(Functionoid const * const aFunctionoid);
+//  Functionoid const * releaseControlOfResource(Functionoid const * const aFunctionoid);
   
   friend class Command;
   friend class CommandSequence;
@@ -120,6 +141,9 @@ DEFINE_SWATCH_EXCEPTION(OperationAlreadyExistsInActionableObject);
 DEFINE_SWATCH_EXCEPTION(CommandSequenceNotFoundInActionableObject);
 DEFINE_SWATCH_EXCEPTION(CommandNotFoundInActionableObject);
 DEFINE_SWATCH_EXCEPTION(OperationNotFoundInActionableObject);
+
+DEFINE_SWATCH_EXCEPTION(ActionableObjectIsBusy);
+DEFINE_SWATCH_EXCEPTION(ParameterNotFound);
 
 } // namespace core
 } // namespace swatch

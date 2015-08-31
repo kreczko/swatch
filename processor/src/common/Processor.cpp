@@ -115,6 +115,25 @@ const std::vector<std::string> Processor::defaultMonitorableObjects = { "ttc", "
 
 
 //---
+const std::vector<std::string>& Processor::getGateKeeperTables() const
+{
+  // Can't set the table names in constructor, since don't know parent at that time ...
+  // ... instead, have to set tables names first time this method is called
+  if( gateKeeperTables_.empty() )
+  {
+    gateKeeperTables_.push_back(getPath());
+
+    std::string basePath = getPath();
+    basePath.resize(basePath.size() - getId().size());
+    gateKeeperTables_.push_back(basePath + getStub().role);
+    gateKeeperTables_.push_back(basePath + "processors");
+    gateKeeperTables_.push_back(basePath + getStub().hwtype);
+  }
+  return gateKeeperTables_;
+}
+
+
+//---
 TTCInterface& Processor::registerInterface( TTCInterface* aTTCInterface )
 {
   if( ttc_ ){

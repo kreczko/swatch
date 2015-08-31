@@ -53,7 +53,7 @@ public:
 
     //! Constant corresponding to no slot being assigned
     static const uint32_t NoSlot;
-
+    
 //    /**
 //     * Additional firmware information.
 //     * The string is meant to be informative for the user
@@ -77,7 +77,9 @@ public:
     static const std::vector<std::string> defaultMetrics;
 
     static const std::vector<std::string> defaultMonitorableObjects;
-    
+
+    virtual const std::vector<std::string>& getGateKeeperTables() const;
+
 protected:
 
     //! Register the supplied (heap-allocated) TTC interface in this processor; the processor base class takes ownership of the TTC interface instance.
@@ -111,6 +113,8 @@ private:
     //! Optical link interface
     PortCollection* ports_;
 
+    mutable std::vector<std::string> gateKeeperTables_;
+    
 private:
     Processor( const Processor& other ); // non copyable
     Processor& operator=( const Processor& ); // non copyable

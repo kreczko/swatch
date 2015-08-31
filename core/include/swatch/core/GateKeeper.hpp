@@ -56,11 +56,11 @@ namespace swatch
         virtual ~GateKeeper();
 
 
-        /**
-          Method to retreive the list of data which are going to be required and preload it to check that everything is there
-          @return whether we were successful or not
-        */
-        bool preload();
+//        /**
+//          Method to retreive the list of data which are going to be required and preload it to check that everything is there
+//          @return whether we were successful or not
+//        */
+//        bool preload();
 
         /**
           Pure virtual method which derived classes must implement to create an xdata table from a given ID
@@ -76,7 +76,7 @@ namespace swatch
           @return the requested data, or throw if the key is not found in any table
         */
 //         tParameter get ( const std::string& aParam , const std::vector<std::string>& aTables );
-        tParameter get ( const std::string& aSequenceId , const std::string& aCommandId , const std::string& aParameterId , const std::vector<std::string>& aTables );
+        tParameter get ( const std::string& aSequenceId , const std::string& aCommandId , const std::string& aParameterId , const std::vector<std::string>& aTables ) const;
 
 
         const boost::posix_time::ptime& lastUpdated();
@@ -99,9 +99,9 @@ namespace swatch
           @param aTable A table identifier (which may or may not exist) to look in for the requested parameters
           @return the requested data, or throw if the key is not found in any table
         */
-        tParameter get ( const std::string& aParam , const std::string& aTable );
+        tParameter get ( const std::string& aParam , const std::string& aTable ) const;
 
-        tParameter get ( const std::string& aSequencePath , const std::string& aCommandPath , const std::string& aParameterId , const std::string& aTable );
+        tParameter get ( const std::string& aSequencePath , const std::string& aCommandPath , const std::string& aParameterId , const std::string& aTable ) const;
 
 
         /// The system for which we are acting as gatekeeper

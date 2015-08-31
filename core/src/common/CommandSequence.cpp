@@ -9,7 +9,7 @@
 #include "swatch/core/GateKeeper.hpp"
 #include "swatch/core/XParameterSet.hpp"
 #include "swatch/core/ThreadPool.hpp"
-
+#include "swatch/logger/Log.hpp"
 
 
 namespace swatch {
@@ -29,70 +29,86 @@ std::ostream& operator<<(std::ostream& out, swatch::core::CommandSequence::State
 }
   
   
-CommandSequence::CommandSequence( const std::string& aId ) :
+CommandSequence::CommandSequence( const std::string& aId, ActionableObject& aResource, const std::string& aFirstCommandId, const std::string& aFirstCommandAlias) :
   Functionoid( aId ),
-  mTables( NULL ),
+  mResource(aResource),
   mCommands(),
   mCachedParameters(),
   mParamUpdateTime() ,
-  mState( kDone ),
+  mState( kInitial ),
   mCommandIt( mCommands.end() )
-{  
+{
+  aResource.addObj(this);
+
+  run(aFirstCommandId, aFirstCommandAlias);
+}
+
+
+CommandSequence::CommandSequence( const std::string& aId, ActionableObject& aResource, Command& aFirstCommand, const std::string& aFirstCommandAlias) :
+  Functionoid( aId ),
+  mResource(aResource),
+  mCommands(),
+  mCachedParameters(),
+  mParamUpdateTime() ,
+  mState( kInitial ),
+  mCommandIt( mCommands.end() )
+{
+  aResource.addObj(this);
+  
+  run(aFirstCommand, aFirstCommandAlias);
 }
 
 
 CommandSequence::~CommandSequence() {
-  if( mTables ) delete mTables;
 }
 
 
-CommandSequence& CommandSequence::run( Command& aCommand )
+CommandSequence& CommandSequence::run( Command& aCommand, const std::string& aAlias )
 {
-  mCommands.push_back( & aCommand );
+  if( &aCommand.getResource() != &mResource )
+  {
+    throw InvalidResource("Cannot add command '" + aCommand.getId() + "' (resource: "+aCommand.getResource().getPath()+") ' to sequence of resource '" + mResource.getPath() + "'");
+  }
+  mCommands.push_back( std::make_pair(&aCommand, aAlias) );
   mCommandIt = mCommands.end();
   return *this;
 }
 
 
-CommandSequence& CommandSequence::then ( Command& aCommand )
+CommandSequence& CommandSequence::then ( Command& aCommand, const std::string& aAlias )
 {
-  return run( aCommand );
+  return run( aCommand, aAlias );
 }
 
 
-CommandSequence& CommandSequence::operator() ( Command& aCommand )
+CommandSequence& CommandSequence::operator() ( Command& aCommand, const std::string& aAlias )
 {
-  return run( aCommand );
+  return run( aCommand, aAlias );
 }
 
 
-CommandSequence& CommandSequence::run( const std::string& aCommand )
+CommandSequence& CommandSequence::run( const std::string& aCommand, const std::string& aAlias )
 {
-  ActionableObject* lParent( getParent<ActionableObject>()  );
-  return run( lParent->getCommand( aCommand ) );
+  Command& lCommand = mResource.getCommand( aCommand );
+  mCommands.push_back( std::make_pair(&lCommand, aAlias) );
+  mCommandIt = mCommands.end();
+  return *this;
 }
 
 
-CommandSequence& CommandSequence::then ( const std::string& aCommand )
+CommandSequence& CommandSequence::then ( const std::string& aCommand, const std::string& aAlias )
 {
-  return run( aCommand );
+  return run( aCommand, aAlias );
 }
 
 
-CommandSequence& CommandSequence::operator() ( const std::string& aCommand )
+CommandSequence& CommandSequence::operator() ( const std::string& aCommand, const std::string& aAlias )
 {
-  return run( aCommand );
+  return run( aCommand, aAlias );
 }
 
 
-const std::vector<std::string>& CommandSequence::getTables()
-{
-  if( !mTables ) mTables = setTables();
-  return *mTables;
-}
-
-
-const std::vector<Command*> CommandSequence::getCommands() const 
+const std::vector< std::pair<Command*, std::string> >& CommandSequence::getCommands() const 
 {
   return mCommands;
 }
@@ -118,12 +134,25 @@ const std::vector<Command*> CommandSequence::getCommands() const
 
 
 
-void CommandSequence::exec(GateKeeper& aGateKeeper, const bool& aUseThreadPool )
+void CommandSequence::exec(const GateKeeper& aGateKeeper, const bool& aUseThreadPool )
 {
-  // 1) TODO: Request sole control of the resource - then must change later code from calling "Command::exec" to calling "Command::runCode" / similar
+  // 1) Request sole control of the resource
+  boost::shared_ptr<ActionableObject::BusyGuard> lActionGuard(new ActionableObject::BusyGuard(*getParent<ActionableObject>(),*this));
+
+  // 2) Extract parameters from gatekeeper
+    updateParameterCache(aGateKeeper);
+// FIXME: Re-implement parameter cache at some future date; disabled by Tom on 28th August, since ...
+//        ... current logic doesn't work correctly with different gatekeepers - need to change to ...
+//        ... updating cache if either gatekeeper filename/runkey different or cache update timestamp older than gatekeeper.lastUpdated 
+//  // Is our cache of parameters up to date?
+//  boost::posix_time::ptime lUpdateTime( aGateKeeper.lastUpdated() );
+//  if( mParamUpdateTime != lUpdateTime )
+//  {
+//    updateParameterCache(aGateKeeper);
+//    mParamUpdateTime = lUpdateTime; // We are up to date :)
+//  }
   
-  
-  // 2) Reset the status of this sequence's state variables
+  // 3) Reset the status of this sequence's state variables
   {
     boost::unique_lock<boost::mutex> lock( mMutex );
     mState = kInitial;
@@ -132,27 +161,17 @@ void CommandSequence::exec(GateKeeper& aGateKeeper, const bool& aUseThreadPool )
     mStatusOfCompletedCommands.reserve(mCommands.size());
   }  
 
-  
-  // 3) Extract parameters from gatekeeper
-  // Is our cache of parameters up to date?
-  boost::posix_time::ptime lUpdateTime( aGateKeeper.lastUpdated() );
-  if( mParamUpdateTime != lUpdateTime )
-  {
-    updateParameterCache(aGateKeeper);
-    mParamUpdateTime = lUpdateTime; // We are up to date :)
-  }
-
-  // 3) Execute the command
+  // 4) Execute the command
   if ( aUseThreadPool){
     boost::unique_lock<boost::mutex> lock(mMutex);
     mState = kScheduled;
     
     ThreadPool& pool = ThreadPool::getInstance();
-    pool.addTask<CommandSequence>( this , &CommandSequence::runCommands );
+    pool.addTask<CommandSequence, ActionableObject::BusyGuard>( this , &CommandSequence::runCommands, lActionGuard);
   }
   else{
     // otherwise execute in same thread
-    this->runCommands();
+    this->runCommands(lActionGuard);
   }
 }
 
@@ -187,7 +206,7 @@ CommandSequenceStatus CommandSequence::getStatus() const
       break;
   }
   
-  const Command* currentCommand =  ( (mCommandIt == mCommands.end()) ? NULL : *mCommandIt);
+  const Command* currentCommand =  ( (mCommandIt == mCommands.end()) ? NULL : mCommandIt->first);
   
   return CommandSequenceStatus(getPath(), mState, runningTime, currentCommand, mStatusOfCompletedCommands, mCommands.size());
 }
@@ -213,7 +232,7 @@ bool CommandSequence::precondition()
 }
 
 
-void CommandSequence::runCommands()
+void CommandSequence::runCommands(boost::shared_ptr<ActionableObject::BusyGuard> aGuard)
 {
   // 1) Declare that I'm running 
   {
@@ -229,9 +248,9 @@ void CommandSequence::runCommands()
     
     while( true ) 
     {
-      (*mCommandIt)->exec( *lIt , false ); // False = run the commands in this thread!
+      mCommandIt->first->exec(aGuard, *lIt , false ); // False = run the commands in this thread!
       //FIXME: Make exec method return CommandStatus to remove any possibility of race condition ?
-      CommandStatus status = (*mCommandIt)->getStatus();
+      CommandStatus status = mCommandIt->first->getStatus();
       
       boost::unique_lock<boost::mutex> lock(mMutex);
       mStatusOfCompletedCommands.push_back(status);
@@ -275,24 +294,32 @@ void CommandSequence::runCommands()
 }
 
 
-void CommandSequence::updateParameterCache(GateKeeper& aGateKeeper)
+void CommandSequence::updateParameterCache(const GateKeeper& aGateKeeper)
 {
+  boost::unique_lock<boost::mutex> lock( mMutex );
+
   mCachedParameters.clear();
   mCachedParameters.reserve( mCommands.size() );
 
   for( tCommandVector::iterator lIt( mCommands.begin()) ; lIt != mCommands.end() ; ++lIt )
   {
-    Command& lCommand( **lIt );
-    ReadOnlyXParameterSet lParams( lCommand.getDefaultParams() );
+    Command& lCommand( *lIt->first );
+    const std::string& lCommandAlias = (lIt->second.empty() ? lCommand.getId() : lIt->second);
+    ReadOnlyXParameterSet lParams;
 
-    std::set< std::string > lKeys( lParams.keys() );
+    std::set< std::string > lKeys( lCommand.getDefaultParams().keys() );
     for( std::set< std::string >::iterator lIt2( lKeys.begin() ); lIt2!=lKeys.end(); ++lIt2 )
     {
-      GateKeeper::tParameter lData( aGateKeeper.get( getId() , lCommand.getId() , *lIt2 , getTables() ) );
+      GateKeeper::tParameter lData( aGateKeeper.get( getId() , lCommandAlias , *lIt2 , getParent<swatch::core::ActionableObject>()->getGateKeeperTables() ) );
       if ( lData.get() != NULL )
       {
-        lParams.erase(*lIt2);
         lParams.adopt( *lIt2 , lData );
+      }
+      else{
+        std::ostringstream oss;
+        oss << "Could not find value of parameter '" << *lIt2 << "' for command with alias '" << lCommandAlias << "' in sequence '" << getId() << "' of resource '" << getParent<swatch::core::ActionableObject>()->getId() << "'";
+        LOG(swatch::logger::kError) << oss.str();
+        throw ParameterNotFound(oss.str());
       }
     }
     mCachedParameters.push_back( lParams );

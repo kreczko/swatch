@@ -53,6 +53,24 @@ uint16_t DaqTTCManager::getFedId() const {
 
 const std::vector<std::string> DaqTTCManager::defaultMetrics = {"clkFreq", "bc0Counter", "bc0Errors", "ttcSingleBitErrors", "ttcDoubleBitErrors", "fedId"};
 
+
+const std::vector<std::string>& DaqTTCManager::getGateKeeperTables() const
+{
+  // Can't set the table names in constructor, since don't know parent at that time ...
+  // ... instead, have to set tables names first time this method is called
+  if( gateKeeperTables_.empty() )
+  {
+    gateKeeperTables_.push_back(getPath());
+
+    std::string basePath = getPath();
+    basePath.resize(basePath.size() - getId().size());
+    gateKeeperTables_.push_back(basePath + getStub().role);
+    gateKeeperTables_.push_back(basePath + "daqttcs");
+  }
+  return gateKeeperTables_;
+
+}
+
 } // namespace system
 } // namespace swatch
 

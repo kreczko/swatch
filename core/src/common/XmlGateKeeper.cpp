@@ -8,6 +8,7 @@
 #include <boost/lexical_cast.hpp>
 
 #include <xdata/Integer.h>
+#include <xdata/UnsignedInteger.h>
 #include <xdata/String.h>
 #include <xdata/Boolean.h>
 #include <xdata/Float.h>
@@ -63,6 +64,7 @@ namespace core {
     xdata::Serializable* lSerializable(0x0);
 
          if( lType == "int" )    { lSerializable = new xdata::Integer( ); }
+    else if( lType == "uint" )   { lSerializable = new xdata::UnsignedInteger( ); }
     else if( lType == "bool" )   { lSerializable = new xdata::Boolean( ); }
     else if( lType == "float" )  { lSerializable = new xdata::Float  ( ); }
     else if( lType == "string" ) { lSerializable = new xdata::String ( ); }

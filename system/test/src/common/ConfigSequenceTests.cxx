@@ -12,6 +12,7 @@
 #include "swatch/logger/Log.hpp"
 #include "swatch/core/XParameterSet.hpp"
 #include "swatch/core/xoperators.hpp"
+#include "swatch/core/CommandSequence.hpp"
 #include "swatch/core/Factory.hpp"
 
 #include "swatch/core/XmlGateKeeper.hpp"
@@ -57,7 +58,7 @@ int main(int argc, char** argv) {
 
 //    swatch::core::test::DummyGateKeeper lGateKeeper( lSystem );
     swatch::core::XmlGateKeeper lGateKeeper( lSystem , "${SWATCH_ROOT}/system/test/cfg/db.xml" , "RunKey1" );
-    lGateKeeper.preload();
+//    lGateKeeper.preload();
 
     std::cout << lGateKeeper << std::endl;
 

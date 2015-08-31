@@ -72,8 +72,14 @@ Worker::Worker(ThreadPool &pool, bool run_until_queue_empty) :
 
 
 void Worker::operator()() {
-  boost::packaged_task<void> task;
-  while (true) {
+  while (true)
+  {
+    // N.B: Declare task object within the loop, so that it's destroyed after task has completed ...
+    // ... otherwise if task object isn't destroyed after task has completed execution, then ...
+    // ... the object instances that form arguments of the task (e.g. shared_ptr<ActionableObject::BusyGuard>) ...
+    // ... will still exist until the worker is given its next 
+    boost::packaged_task<void> task;
+    
     {
       // get lock
       boost::unique_lock<boost::mutex> lock(pool_.queue_mutex_);
@@ -95,7 +101,7 @@ void Worker::operator()() {
     try {
       task();
     } catch (std::exception& e) {
-      LOG(kError) << e.what();
+      LOG(swatch::logger::kError) << e.what();
     }
   }
 }

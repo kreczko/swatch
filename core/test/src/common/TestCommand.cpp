@@ -27,21 +27,18 @@ namespace test {
 
 struct CommandTestSetup {
   CommandTestSetup():
-    obj(),
-    cmd( obj.registerFunctionoid<DummyCommand>("dummy_cmd") ),
-    warning_cmd( obj.registerFunctionoid<DummyWarningCommand>("dummy_warning_cmd") ),
-    error_cmd( obj.registerFunctionoid<DummyErrorCommand>("dummy_error_cmd") ),
-    throw_cmd( obj.registerFunctionoid<DummyThrowCommand>("dummy_throw_cmd") )
+    obj( new DummyActionableObject(), ActionableObject::Deleter() ),
+    cmd( obj->registerFunctionoid<DummyCommand>("dummy_cmd") ),
+    warning_cmd( obj->registerFunctionoid<DummyWarningCommand>("dummy_warning_cmd") ),
+    error_cmd( obj->registerFunctionoid<DummyErrorCommand>("dummy_error_cmd") ),
+    throw_cmd( obj->registerFunctionoid<DummyThrowCommand>("dummy_throw_cmd") )
   {
-//    print.registerParameter("todo", xdata::String("print"));
-//    error.registerParameter("todo", xdata::String("error"));
-//    nothing.registerParameter("todo", xdata::String("nothing"));
   }
   
   ~CommandTestSetup(){
   }
 
-  DummyActionableObject obj;
+  boost::shared_ptr<DummyActionableObject> obj;
   Command& cmd;
   Command& warning_cmd;
   Command& error_cmd;
@@ -61,9 +58,28 @@ BOOST_FIXTURE_TEST_CASE(TestDefaultParams, CommandTestSetup) {
 
 
 
+BOOST_FIXTURE_TEST_CASE(TestCommandInitialState,  CommandTestSetup) {
+  LOG(kInfo) << "Running CommandTestSuite/TestCommandInitialState";
+
+  const std::vector<const Command*> cmds = { &cmd, &warning_cmd, &error_cmd, &throw_cmd};
+  
+  for(auto it=cmds.begin(); it != cmds.end(); it++)
+  {
+    BOOST_CHECK_EQUAL( (*it)->getState(), Command::kInitial );
+    
+    CommandStatus s = (*it)->getStatus();
+    BOOST_CHECK_EQUAL(s.getState(), Command::kInitial);
+    BOOST_CHECK_EQUAL(s.getProgress(), 0.0);
+    BOOST_CHECK_EQUAL(s.getStatusMsg(), "initialised");
+    BOOST_CHECK_EQUAL(s.getParameters().size(), size_t(0));
+    BOOST_CHECK_EQUAL(s.getResult(), (const xdata::Serializable*)NULL);
+  }
+}
+
+
 BOOST_FIXTURE_TEST_CASE(TestSuccessfulCommand,  CommandTestSetup) {
   LOG(kInfo) << "Running CommandTestSuite/TestSuccessfulCommand";
-  BOOST_CHECK_NE(obj.getNumber(), size_t(54));
+  BOOST_CHECK_NE(obj->getNumber(), size_t(54));
   
   params.add("todo", xdata::String("useResource"));
   params.add("x", xdata::Integer(42));
@@ -72,15 +88,17 @@ BOOST_FIXTURE_TEST_CASE(TestSuccessfulCommand,  CommandTestSetup) {
   do {
   } while ( (cmd.getState() == Command::kScheduled) || (cmd.getState() == Command::kRunning) );
 
-  BOOST_CHECK_EQUAL(obj.getNumber(), uint32_t(54));
+  BOOST_CHECK_EQUAL(obj->getNumber(), uint32_t(54));
   
   CommandStatus s = cmd.getStatus();
   BOOST_CHECK_EQUAL(s.getState(), Command::kDone);
   BOOST_CHECK_EQUAL(s.getProgress(), 1.0);
   BOOST_CHECK_EQUAL(s.getStatusMsg(), DummyCommand::finalMsgUseResource);
+  BOOST_CHECK_EQUAL(s.getParameters().size(), size_t(2));
+  BOOST_CHECK_EQUAL(s.getParameters().get<xdata::Integer>("x").value_, 42);
+  BOOST_CHECK_EQUAL(s.getParameters().get<xdata::String>("todo").value_, "useResource");
   BOOST_REQUIRE(s.getResult() != NULL);
-  BOOST_CHECK_EQUAL(s.getResultAsString(), params.get("x").toString());
-  
+  BOOST_CHECK_EQUAL(s.getResultAsString(), params.get("x").toString());  
 }
 
 
@@ -96,6 +114,7 @@ BOOST_FIXTURE_TEST_CASE(TestCommandWarning,  CommandTestSetup) {
   BOOST_CHECK_EQUAL(s.getState(), Command::kWarning);
   BOOST_CHECK_EQUAL(s.getProgress(), 1.0);
   BOOST_CHECK_EQUAL(s.getStatusMsg(), DummyWarningCommand::finalMsg);
+  //BOOST_CHECK_EQUAL(s.getParameters().size(), size_t(0));
   BOOST_REQUIRE(s.getResult() != NULL);
   BOOST_CHECK_EQUAL(s.getResultAsString(), boost::lexical_cast<std::string>(DummyWarningCommand::defaultResult.value_));
 }
@@ -113,6 +132,7 @@ BOOST_FIXTURE_TEST_CASE(TestCommandError,  CommandTestSetup) {
   BOOST_CHECK_EQUAL(s.getState(), Command::kError);
   BOOST_CHECK_EQUAL(s.getProgress(), DummyErrorCommand::finalProgress);
   BOOST_CHECK_EQUAL(s.getStatusMsg(), DummyErrorCommand::finalMsg);
+  BOOST_CHECK_EQUAL(s.getParameters().size(), size_t(0));
   BOOST_REQUIRE(s.getResult() != NULL);
   BOOST_CHECK_EQUAL(s.getResultAsString(), boost::lexical_cast<std::string>(DummyErrorCommand::defaultResult.value_));
 }
@@ -130,6 +150,7 @@ BOOST_FIXTURE_TEST_CASE(TestThrowingCommand,  CommandTestSetup) {
   BOOST_CHECK_EQUAL(s.getState(), Command::kError);
   BOOST_CHECK_EQUAL(s.getProgress(), DummyThrowCommand::finalProgress);
   BOOST_CHECK_EQUAL(s.getStatusMsg(), "ERROR - An exception of type 'std::runtime_error' was thrown in Command::code(): " + DummyThrowCommand::exceptionMsg);
+  BOOST_CHECK_EQUAL(s.getParameters().size(), size_t(0));
   BOOST_REQUIRE(s.getResult() != NULL);
   BOOST_CHECK_EQUAL(s.getResultAsString(), boost::lexical_cast<std::string>(DummyThrowCommand::defaultResult.value_));
 }

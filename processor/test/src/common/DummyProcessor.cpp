@@ -7,11 +7,10 @@
 
 // SWATCH headers
 #include "swatch/logger/Log.hpp"
+#include "swatch/core/CommandSequence.hpp"
 #include "swatch/core/Factory.hpp"
 #include "swatch/processor/PortCollection.hpp"
-#include "swatch/processor/ProcessorCommandSequence.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
-
 #include "swatch/processor/test/DummyAlgo.hpp"
 #include "swatch/processor/test/DummyDriver.hpp"
 #include "swatch/processor/test/DummyProcessorCommands.hpp"
@@ -68,9 +67,9 @@ DummyProcessor::DummyProcessor(const swatch::core::AbstractStub& aStub) :
   core::Command& cfgAlgo = registerFunctionoid<DummyConfigureAlgoCommand>("configureAlgo");
 
   // 3) Command sequences
-  registerFunctionoid<ProcessorCommandSequence>("configureStep1").run(reboot)(reset)(cfgDaq)(cfgTx);
-  registerFunctionoid<ProcessorCommandSequence>("configureStep2").run(cfgRx);
-  registerFunctionoid<ProcessorCommandSequence>("configureStep3").run(cfgAlgo);
+  registerCommandSequence("configureStep1",reboot).then(reset)(cfgDaq)(cfgTx);
+  registerCommandSequence("configureStep2", cfgRx);
+  registerCommandSequence("configureStep3", cfgAlgo);
 
   // 4) Operations
   registerFunctionoid<DummyProcessorOperation>("testing");

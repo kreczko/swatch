@@ -15,9 +15,15 @@ Functionoid::~Functionoid() {
 }
 
 
+const Object* Functionoid::getParent() const {
+  return getAncestor(1);
+}
+
 Object* Functionoid::getParent() {
   return getAncestor(1);
 }
+
+
 
 
 } /* namespace core */

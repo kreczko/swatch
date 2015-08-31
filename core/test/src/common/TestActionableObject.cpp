@@ -66,7 +66,7 @@ BOOST_FIXTURE_TEST_CASE(TestRegisterCommand,  ActionableObjectTestSetup) {
 BOOST_FIXTURE_TEST_CASE(TestGetCommand,  ActionableObjectTestSetup) {
   LOG(kInfo) << "Running ActionableObjectTestSuite/TestGetCommand";
   Command& dummy_1 = handler->getCommand("dummy_1");
-  BOOST_CHECK_EQUAL(dummy_1.getState(), 0);
+  BOOST_CHECK_EQUAL(dummy_1.getState(), Command::kInitial);
 }
 
 

@@ -241,6 +241,13 @@ private:
     @param aDepth the depth of the target to retrieve (0=current, 1=parent, 2=grandparent, ...)
     @return the target object or NULL if no such target exists
   */
+  const Object* getAncestor ( const uint32_t& aDepth = 1 ) const;
+
+  /**
+    Return the ancestor (parent, grandparent, ...) of the object at specified depth
+    @param aDepth the depth of the target to retrieve (0=current, 1=parent, 2=grandparent, ...)
+    @return the target object or NULL if no such target exists
+  */
   Object* getAncestor ( const uint32_t& aDepth = 1 );
 
   /**

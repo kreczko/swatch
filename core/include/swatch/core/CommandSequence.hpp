@@ -8,6 +8,7 @@
 #define __SWATCH_CORE_COMMANDSEQUENCE_HPP__
 
 
+#include "swatch/core/ActionableObject.hpp"
 #include "swatch/core/Functionoid.hpp"
 #include "swatch/core/ReadOnlyXParameterSet.hpp"
 
@@ -43,25 +44,27 @@ public:
     kError
   }; 
 
-  CommandSequence( const std::string& aId );
+  CommandSequence( const std::string& aId, ActionableObject& aResource, const std::string& aFirstCommandId, const std::string& aFirstCommandAlias="");
+
+  CommandSequence( const std::string& aId, ActionableObject& aResource, Command& aFirstCommand, const std::string& aFirstCommandAlias="");
 
   virtual ~CommandSequence();
   
   /**
     Utility function to add a command to the command sequence
     @param aCommand a command to add to the command sequence
+    @param aAlias an alias to use for that command when looking up parameters in gatekeeper; the command's ID string is used if alias is empty
   */
-  CommandSequence& run( Command& aCommand );
-  CommandSequence& then( Command& aCommand );
-  CommandSequence& operator() ( Command& aCommand );
+  CommandSequence& run( Command& aCommand, const std::string& aAlias="");
+  CommandSequence& then( Command& aCommand, const std::string& aAlias="");
+  CommandSequence& operator() ( Command& aCommand, const std::string& aAlias="");
 
-  CommandSequence& run( const std::string& aCommand );
-  CommandSequence& then( const std::string& aCommand );
-  CommandSequence& operator() ( const std::string& aCommand );
-
-  const std::vector<std::string>& getTables();
   
-  const std::vector<Command*> getCommands() const;
+  CommandSequence& run( const std::string& aCommand, const std::string& aAlias="");
+  CommandSequence& then( const std::string& aCommand, const std::string& aAlias="");
+  CommandSequence& operator() ( const std::string& aCommand, const std::string& aAlias="");
+  
+  const std::vector<std::pair<Command*, std::string> >& getCommands() const;
   
   /**
    * Run the command sequence, extracting the parameters for each command from the supplied gatekeeper
@@ -69,16 +72,13 @@ public:
    * @param aGateKeeper Gatekeeper that will be used to extract the 
    * @param aUseThreadPool Run the sequence asynchronously in the swatch::core::ThreadPool ; if equals false, then the sequence is run synchronously (i.e. only )
    */
-  void exec(GateKeeper& aGateKeeper, const bool& aUseThreadPool = true ); 
+  void exec(const GateKeeper& aGateKeeper, const bool& aUseThreadPool = true ); 
 
   //! Returns current state of this command sequence
   State getState() const;
   
   //! Returns snapshot of this command's current status (state flag value, running time, current command, overall progress fraction)
   CommandSequenceStatus getStatus() const;
-
-protected:
-  virtual std::vector<std::string>* setTables() = 0;
 
 
 private:
@@ -87,14 +87,16 @@ private:
 
   virtual bool precondition();
 
-  //! thread safe exception catching wrapper for code()
-  void runCommands();
+  //! thread safe exception-catching wrapper for code()
+  void runCommands(boost::shared_ptr<ActionableObject::BusyGuard> aGuard);
 
-  void updateParameterCache(GateKeeper& aGateKeeper);
+  //! Updates the cache of parameter sets used for running commands; throws ParameterNotFound if gatekeeper can't find value of any parameter  
+  void updateParameterCache(const GateKeeper& aGateKeeper);
 
-  std::vector<std::string>* mTables;
+  
+  ActionableObject& mResource;  
 
-  typedef std::vector< Command* > tCommandVector;
+  typedef std::vector< std::pair< Command*, std::string > > tCommandVector;
 
   tCommandVector mCommands;
 

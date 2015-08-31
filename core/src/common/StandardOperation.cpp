@@ -62,19 +62,19 @@ const std::string StandardOperation::Stop("STOP");
 
 
 
-StandardOperation::DummyCommandSequence::DummyCommandSequence() :
-CommandSequence( "DummyCommandSequence" )
-{}
-
-void StandardOperation::DummyCommandSequence::exec()
-{
-  std::cout << "Dummy exec" << std::endl;
-}
-
-std::vector<std::string>* StandardOperation::DummyCommandSequence::setTables()
-{
-  return NULL;
-}
+//StandardOperation::DummyCommandSequence::DummyCommandSequence() :
+//CommandSequence( "DummyCommandSequence" )
+//{}
+//
+//void StandardOperation::DummyCommandSequence::exec()
+//{
+//  std::cout << "Dummy exec" << std::endl;
+//}
+//
+//std::vector<std::string>* StandardOperation::DummyCommandSequence::setTables()
+//{
+//  return NULL;
+//}
 
 
 
