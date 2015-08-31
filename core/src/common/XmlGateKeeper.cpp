@@ -60,11 +60,6 @@ namespace core {
     std::string lValue( aEntry.child_value() );
 
     // GateKeeper::tParameter lParameter;
-
-    //      if( lType == "int" )    { lParameter = GateKeeper::tParameter( new xdata::Integer( boost::lexical_cast<int>(lValue)) );         }
-    // else if( lType == "bool" )   { lParameter = GateKeeper::tParameter( new xdata::Boolean( boost::lexical_cast<bool>(lValue)) );        }
-    // else if( lType == "float" )  { lParameter = GateKeeper::tParameter( new xdata::Float  ( boost::lexical_cast<float>(lValue)) );       }
-    // else if( lType == "string" ) { lParameter = GateKeeper::tParameter( new xdata::String ( boost::lexical_cast<std::string>(lValue)) ); }
     xdata::Serializable* lSerializable(0x0);
 
          if( lType == "int" )    { lSerializable = new xdata::Integer( ); }
