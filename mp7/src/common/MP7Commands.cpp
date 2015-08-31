@@ -12,6 +12,7 @@
 #include "xdata/Boolean.h"
 #include "xdata/Integer.h"
 #include "xdata/UnsignedInteger.h"
+#include "xdata/String.h"
 
 // Swatch headers
 #include "swatch/mp7/MP7Processor.hpp"
@@ -31,6 +32,7 @@ MP7ResetCommand::MP7ResetCommand(const std::string& aId) :
     Command(aId, xdata::Integer() ) {
 
     // Integer result?
+    registerParameter("clockSource",xdata::String("external"));
 
 }
 
@@ -45,10 +47,11 @@ core::Command::State MP7ResetCommand::code(const core::XParameterSet& params) {
   MP7Processor* p = getParent<MP7Processor>();
   setProgress(0.,"Resetting");
 
+  std::string mode = params.get<xdata::String>("clockSource").value_;
   try {
   // TODO: acquire lock
-  std::string mode = "external";
-  p->driver().reset(mode, mode, mode);
+    // std::string mode = "external";
+    p->driver().reset(mode, mode, mode);
   } catch ( ::mp7::exception &e ) {
     
     setStatusMsg("Reset failed: "+e.description());
@@ -115,6 +118,7 @@ MP7AlignLinks::MP7AlignLinks(const std::string& aId) :
 
   registerParameter("autoAlign",xdata::Boolean(true));
   registerParameter("alignBx",xdata::UnsignedInteger());
+  registerParameter("alignCycle",xdata::UnsignedInteger());
 
 }
 
@@ -131,6 +135,7 @@ core::Command::State MP7AlignLinks::code(const core::XParameterSet& params) {
   
   bool autoAlign = params.get<xdata::Boolean>("autoAlign").value_;
   const xdata::UnsignedInteger& alignBx = params.get<xdata::UnsignedInteger>("alignBx");
+  const xdata::UnsignedInteger& alignCycle = params.get<xdata::UnsignedInteger>("alignCycle");
   
   if ( !autoAlign ) {
     if ( alignBx.isNaN() or not alignBx.isFinite()) {
@@ -149,12 +154,12 @@ core::Command::State MP7AlignLinks::code(const core::XParameterSet& params) {
     setStatusMsg("Links aligned somewhere" );
     return kDone;
   } else {
-    setProgress(0.2, "Aligning links to " + boost::lexical_cast<std::string>(alignBx.value_));
+    setProgress(0.2, "Aligning links to " + boost::lexical_cast<std::string>(alignBx.value_) +"/"+ boost::lexical_cast<std::string>(alignCycle.value_));
 
-    ::mp7::orbit::Point p( alignBx.value_ );
+    ::mp7::orbit::Point p( alignBx.value_, alignCycle.value_ );
     mgr.alignLinks(p);
     
-    setStatusMsg("Links aligned to " + boost::lexical_cast<std::string>(alignBx.value_) );
+    setStatusMsg("Links aligned to " + boost::lexical_cast<std::string>(alignBx.value_) +"/"+ boost::lexical_cast<std::string>(alignCycle.value_));
     return kDone;
   }
   
