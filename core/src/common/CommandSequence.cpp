@@ -139,8 +139,6 @@ void CommandSequence::exec(const GateKeeper& aGateKeeper, const bool& aUseThread
   // 1) Request sole control of the resource
   boost::shared_ptr<ActionableObject::BusyGuard> lActionGuard(new ActionableObject::BusyGuard(*getParent<ActionableObject>(),*this));
 
-  // 2) Extract parameters from gatekeeper
-    updateParameterCache(aGateKeeper);
 // FIXME: Re-implement parameter cache at some future date; disabled by Tom on 28th August, since ...
 //        ... current logic doesn't work correctly with different gatekeepers - need to change to ...
 //        ... updating cache if either gatekeeper filename/runkey different or cache update timestamp older than gatekeeper.lastUpdated 
@@ -152,16 +150,21 @@ void CommandSequence::exec(const GateKeeper& aGateKeeper, const bool& aUseThread
 //    mParamUpdateTime = lUpdateTime; // We are up to date :)
 //  }
   
-  // 3) Reset the status of this sequence's state variables
+  // 2) Reset the status of this sequence's state variables
   {
     boost::unique_lock<boost::mutex> lock( mMutex );
+
+    // Extract parameters first, so that don't change state if a parameter is missing
+    std::vector<std::pair<std::string,std::string> > missingParams;
+    extractParameters(aGateKeeper, mCachedParameters, missingParams, true);
+
     mState = kInitial;
     mCommandIt = mCommands.end();
     mStatusOfCompletedCommands.clear();
     mStatusOfCompletedCommands.reserve(mCommands.size());
   }  
 
-  // 4) Execute the command
+  // 3) Execute the command
   if ( aUseThreadPool){
     boost::unique_lock<boost::mutex> lock(mMutex);
     mState = kScheduled;
@@ -290,23 +293,29 @@ void CommandSequence::runCommands(boost::shared_ptr<ActionableObject::BusyGuard>
     mExecStartTime = boost::posix_time::microsec_clock::universal_time();
   }
   
-  // TODO: 3) Release the resource
+  // 3) The resource is released by destruction of BusyGuard
 }
 
 
-void CommandSequence::updateParameterCache(const GateKeeper& aGateKeeper)
+void CommandSequence::checkForMissingParameters(const GateKeeper& aGateKeeper, std::vector<ReadOnlyXParameterSet>& aParamSets, std::vector<std::pair<std::string,std::string> >& aMissingParams) const
 {
-  boost::unique_lock<boost::mutex> lock( mMutex );
+  extractParameters(aGateKeeper, aParamSets, aMissingParams, false);
+}
 
-  mCachedParameters.clear();
-  mCachedParameters.reserve( mCommands.size() );
 
-  for( tCommandVector::iterator lIt( mCommands.begin()) ; lIt != mCommands.end() ; ++lIt )
+void CommandSequence::extractParameters(const GateKeeper& aGateKeeper, std::vector<ReadOnlyXParameterSet>& aParamSets, std::vector<std::pair<std::string,std::string> >& aMissingParams, bool throwOnMissing) const
+{
+  aParamSets.clear();
+  aParamSets.reserve( mCommands.size() );
+
+  aMissingParams.clear();
+
+  for( tCommandVector::const_iterator lIt( mCommands.begin()) ; lIt != mCommands.end() ; ++lIt )
   {
     Command& lCommand( *lIt->first );
     const std::string& lCommandAlias = (lIt->second.empty() ? lCommand.getId() : lIt->second);
-    ReadOnlyXParameterSet lParams;
 
+    ReadOnlyXParameterSet lParams;
     std::set< std::string > lKeys( lCommand.getDefaultParams().keys() );
     for( std::set< std::string >::iterator lIt2( lKeys.begin() ); lIt2!=lKeys.end(); ++lIt2 )
     {
@@ -315,14 +324,17 @@ void CommandSequence::updateParameterCache(const GateKeeper& aGateKeeper)
       {
         lParams.adopt( *lIt2 , lData );
       }
-      else{
+      else if (throwOnMissing) {
         std::ostringstream oss;
         oss << "Could not find value of parameter '" << *lIt2 << "' for command with alias '" << lCommandAlias << "' in sequence '" << getId() << "' of resource '" << getParent<swatch::core::ActionableObject>()->getId() << "'";
         LOG(swatch::logger::kError) << oss.str();
         throw ParameterNotFound(oss.str());
       }
+      else {
+        aMissingParams.push_back(std::make_pair(lCommandAlias, *lIt2));
+      }
     }
-    mCachedParameters.push_back( lParams );
+    aParamSets.push_back( lParams );
   }
 }
 

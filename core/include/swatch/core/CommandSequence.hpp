@@ -80,18 +80,22 @@ public:
   //! Returns snapshot of this command's current status (state flag value, running time, current command, overall progress fraction)
   CommandSequenceStatus getStatus() const;
 
+  
+  void checkForMissingParameters(const GateKeeper& aGateKeeper, std::vector<ReadOnlyXParameterSet>& aParamSets, std::vector<std::pair<std::string,std::string> >& aMissingParams) const;
 
 private:
-//  ///! Reset the commands
-//  void reset();
+  /*!
+   * Extracts from gatekeeper the parameter sets for running commands 
+   * @param aParamSets vector containing the extracted parameter sets
+   * @param aMissingParams vector of missing parameters for each command
+   * @param aThrowOnMissing if true, then throws ParameterNotFound if gatekeeper can't find value of any parameter
+   */
+  void extractParameters(const GateKeeper& aGateKeeper, std::vector<ReadOnlyXParameterSet>& aParamSets, std::vector<std::pair<std::string, std::string> >& aMissingParams, bool throwOnMissing) const;
 
   virtual bool precondition();
 
   //! thread safe exception-catching wrapper for code()
   void runCommands(boost::shared_ptr<ActionableObject::BusyGuard> aGuard);
-
-  //! Updates the cache of parameter sets used for running commands; throws ParameterNotFound if gatekeeper can't find value of any parameter  
-  void updateParameterCache(const GateKeeper& aGateKeeper);
 
   
   ActionableObject& mResource;  
