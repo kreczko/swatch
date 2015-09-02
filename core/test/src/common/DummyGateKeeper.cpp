@@ -11,8 +11,8 @@ namespace swatch {
 namespace core {
 namespace test {
 
-  DummyGateKeeper::DummyGateKeeper( Object* aToplevel ):
-    core::GateKeeper( aToplevel , 0 )
+  DummyGateKeeper::DummyGateKeeper():
+    core::GateKeeper( 0 )
   {}
 
   DummyGateKeeper::~DummyGateKeeper()

@@ -21,7 +21,7 @@ class DummyGateKeeper : public core::GateKeeper {
   public:
 
     /// Constructor
-    DummyGateKeeper( Object* aToplevel );
+    DummyGateKeeper();
 
     /// Destructor
     virtual ~DummyGateKeeper();

@@ -13,8 +13,7 @@ namespace swatch
   namespace core
   {
 
-    GateKeeper::GateKeeper ( Object* aToplevel , const std::string& aKey ) :
-      mToplevel ( aToplevel ),
+    GateKeeper::GateKeeper ( const std::string& aKey ) :
       mKey ( aKey ),
       mCache(),
       mUpdateTime()

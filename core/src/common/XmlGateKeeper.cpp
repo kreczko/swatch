@@ -24,8 +24,8 @@ namespace swatch {
 namespace core {
 
 //------------------------------------------------------------------------------------------------------------------
-  XmlGateKeeper::XmlGateKeeper( Object* aToplevel , const std::string& aFileName , const std::string& aKey ):
-    GateKeeper( aToplevel , aKey ),
+  XmlGateKeeper::XmlGateKeeper( const std::string& aFileName , const std::string& aKey ):
+    GateKeeper( aKey ),
     mFileName( swatch::core::shellExpandPath(aFileName) )
   {
 

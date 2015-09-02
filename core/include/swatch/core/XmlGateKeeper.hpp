@@ -26,7 +26,7 @@ class XmlGateKeeper : public GateKeeper {
   public:
 
     /// Constructor
-    XmlGateKeeper( Object* aToplevel , const std::string& aFileName , const std::string& aKey );
+    XmlGateKeeper( const std::string& aFileName , const std::string& aKey );
 
     /// Destructor
     virtual ~XmlGateKeeper();

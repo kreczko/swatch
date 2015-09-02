@@ -50,7 +50,7 @@ namespace swatch
           @param aToplevel The system for which we are acting as gatekeeper
           @param aKey A global run-identifier
         */
-        GateKeeper ( Object* aToplevel , const std::string& aKey );
+        GateKeeper ( const std::string& aKey );
 
         /// Destructor
         virtual ~GateKeeper();
@@ -102,10 +102,6 @@ namespace swatch
         tParameter get ( const std::string& aParam , const std::string& aTable ) const;
 
         tParameter get ( const std::string& aSequencePath , const std::string& aCommandPath , const std::string& aParameterId , const std::string& aTable ) const;
-
-
-        /// The system for which we are acting as gatekeeper
-        Object* mToplevel;
 
         /// The global run-identifier
         std::string mKey;

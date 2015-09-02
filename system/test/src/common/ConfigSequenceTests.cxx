@@ -57,7 +57,7 @@ int main(int argc, char** argv) {
     std::cout << *lSystem << std::endl;
 
 //    swatch::core::test::DummyGateKeeper lGateKeeper( lSystem );
-    swatch::core::XmlGateKeeper lGateKeeper( lSystem , "${SWATCH_ROOT}/system/test/cfg/db.xml" , "RunKey1" );
+    swatch::core::XmlGateKeeper lGateKeeper( "${SWATCH_ROOT}/system/test/cfg/db.xml" , "RunKey1" );
 //    lGateKeeper.preload();
 
     std::cout << lGateKeeper << std::endl;
