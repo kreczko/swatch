@@ -15,6 +15,15 @@
 
 namespace swatch {
 namespace amc13 {
+    
+class AMC13RebootCommand : public swatch::core::Command {
+public:
+    AMC13RebootCommand(const std::string& aId);
+    
+    virtual ~AMC13RebootCommand();
+    
+    virtual State code(const core::XParameterSet& params);
+};
 
 class AMC13ResetCommand : public swatch::core::Command {
 public:

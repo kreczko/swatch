@@ -26,6 +26,53 @@ namespace swatch {
 namespace amc13 {
 
 //---
+AMC13RebootCommand::AMC13RebootCommand(const std::string& aId) : 
+  Command(aId, xdata::Boolean()) {
+}
+  
+
+//---
+AMC13RebootCommand::~AMC13RebootCommand() {
+}
+
+
+//---
+core::Command::State AMC13RebootCommand::code(const core::XParameterSet& params) {
+  AMC13Manager* amc13 = getParent<AMC13Manager>();
+  
+  setStatusMsg("Loading FW from flash");
+  
+  ::amc13::AMC13& driver = * amc13->driver();
+  
+  driver.getFlash()->loadFlash();
+  
+  setProgress(0.5, "Waiting for T1 & 2 to wake up again");
+
+  
+  // Sleep for 2 seconds first ...
+  boost::this_thread::sleep( boost::chrono::seconds(2) );
+  
+  for(size_t i=1; i<=15; i++)
+  {
+    try {
+      uint32_t vT1 = driver_->read(AMC13::T1, "STATUS.FIRMWARE_VERS");
+      uint32_t vT2 = driver_->read(AMC13::T2, "STATUS.FIRMWARE_VERS");
+      
+      std::ostringstream oss;
+      oss << "Firmware versions - T1: 0x" << std::hex << vT1 << ", T2: 0x" << vT2;
+      setStatusMsg("AMC13 is alive! " + oss.str());
+      return kDone;
+    catch (const uhal::exception& e){
+    }
+    boost::this_thread::sleep( boost::chrono::seconds(1));
+  }
+  
+  setStatusMsg("AMC13 did not wake up after reboot");
+  return kError;
+}
+
+
+//---
 AMC13ResetCommand::AMC13ResetCommand(const std::string& aId) :
   Command(aId, xdata::Integer()) {
  

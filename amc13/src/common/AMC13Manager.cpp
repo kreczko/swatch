@@ -45,6 +45,7 @@ AMC13Manager::AMC13Manager(const swatch::core::AbstractStub& aStub) :
     swatch::system::DaqTTCManager(aStub),
     driver_(0x0) {
   
+    registerFunctionoid<AMC13RebootCommand>("reboot");
     registerFunctionoid<AMC13ResetCommand>("reset");
     registerFunctionoid<AMC13Configure>("configure");
 
