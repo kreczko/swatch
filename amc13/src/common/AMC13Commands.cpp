@@ -9,6 +9,7 @@
 
 
 // XDAQ Headers
+#include "xdata/Boolean.h"
 #include "xdata/Integer.h"
 #include "xdata/String.h"
 
@@ -27,7 +28,7 @@ namespace amc13 {
 
 //---
 AMC13RebootCommand::AMC13RebootCommand(const std::string& aId) : 
-  Command(aId, xdata::Boolean()) {
+  Command(aId, xdata::Boolean(false)) {
 }
   
 
@@ -42,7 +43,7 @@ core::Command::State AMC13RebootCommand::code(const core::XParameterSet& params)
   
   setStatusMsg("Loading FW from flash");
   
-  ::amc13::AMC13& driver = * amc13->driver();
+  ::amc13::AMC13& driver = amc13->driver();
   
   driver.getFlash()->loadFlash();
   
@@ -50,21 +51,23 @@ core::Command::State AMC13RebootCommand::code(const core::XParameterSet& params)
 
   
   // Sleep for 2 seconds first ...
-  boost::this_thread::sleep( boost::chrono::seconds(2) );
+  boost::this_thread::sleep_for( boost::chrono::seconds(2) );
   
   for(size_t i=1; i<=15; i++)
   {
     try {
-      uint32_t vT1 = driver_->read(AMC13::T1, "STATUS.FIRMWARE_VERS");
-      uint32_t vT2 = driver_->read(AMC13::T2, "STATUS.FIRMWARE_VERS");
+      uint32_t vT1 = driver.read(::amc13::AMC13::T1, "STATUS.FIRMWARE_VERS");
+      uint32_t vT2 = driver.read(::amc13::AMC13::T2, "STATUS.FIRMWARE_VERS");
       
       std::ostringstream oss;
       oss << "Firmware versions - T1: 0x" << std::hex << vT1 << ", T2: 0x" << vT2;
+      setResult(xdata::Boolean(true));
       setStatusMsg("AMC13 is alive! " + oss.str());
       return kDone;
-    catch (const uhal::exception& e){
     }
-    boost::this_thread::sleep( boost::chrono::seconds(1));
+    catch (const uhal::exception::exception& e){
+    }
+    boost::this_thread::sleep_for( boost::chrono::seconds(1));
   }
   
   setStatusMsg("AMC13 did not wake up after reboot");
