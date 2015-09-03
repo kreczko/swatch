@@ -51,6 +51,9 @@ protected:
     
 private:
     ::amc13::AMC13* driver_;
+
+    swatch::core::Metric<uint32_t>& fwVersionT1_;
+    swatch::core::Metric<uint32_t>& fwVersionT2_;
 };
 
 } // namespace amc13
