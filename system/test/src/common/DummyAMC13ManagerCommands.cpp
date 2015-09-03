@@ -17,13 +17,39 @@ namespace system {
 namespace test {
 
 
+/////////////////////////
+/*  DummyAMC13Command  */
+
+DummyAMC13Command::DummyAMC13Command(const std::string& aId) : 
+  Command(aId, xdata::Boolean(true))
+{
+  registerParameter("cmdDuration", xdata::UnsignedInteger(10));
+}
+
+DummyAMC13Command::~DummyAMC13Command()
+{
+}
+
+void DummyAMC13Command::sleep(const core::XParameterSet& aParams)
+{
+  const size_t nrSeconds = aParams.get<xdata::UnsignedInteger>("cmdDuration").value_;
+
+  for(size_t i=0; i<(nrSeconds*4); i++)
+  {
+    std::ostringstream oss;
+    oss << "Done " << i << " of " << (nrSeconds*4) << " things";
+    setProgress(float(i)/float(nrSeconds*4), oss.str());
+    boost::this_thread::sleep_for(boost::chrono::milliseconds(250));
+  }
+}
+
+
 ///////////////////////////////
 /*  DummyAMC13RebootCommand  */
 
 DummyAMC13RebootCommand::DummyAMC13RebootCommand(const std::string& aId) : 
-  Command(aId, xdata::Boolean(true))
+  DummyAMC13Command(aId)
 {
-  registerParameter("cmdDuration", xdata::UnsignedInteger(10));
 }
 
 DummyAMC13RebootCommand::~DummyAMC13RebootCommand()
@@ -32,7 +58,7 @@ DummyAMC13RebootCommand::~DummyAMC13RebootCommand()
 
 core::Command::State DummyAMC13RebootCommand::code(const swatch::core::XParameterSet& aParams)
 { 
-  boost::this_thread::sleep_for(boost::chrono::seconds(aParams.get<xdata::UnsignedInteger>("cmdDuration").value_));
+  sleep(aParams);
 
   DummyAMC13Driver& driver = getParent<DummyAMC13Manager>()->getDriver();
   
@@ -46,10 +72,9 @@ core::Command::State DummyAMC13RebootCommand::code(const swatch::core::XParamete
 /*  DummyAMC13ResetCommand  */
 
 DummyAMC13ResetCommand::DummyAMC13ResetCommand(const std::string& aId) : 
-  Command(aId, xdata::Boolean(true))
+  DummyAMC13Command(aId)
 {
   registerParameter("clkErrorTimeout", xdata::UnsignedInteger(60));
-  registerParameter("cmdDuration", xdata::UnsignedInteger(10));
 }
 
 DummyAMC13ResetCommand::~DummyAMC13ResetCommand()
@@ -58,7 +83,7 @@ DummyAMC13ResetCommand::~DummyAMC13ResetCommand()
 
 core::Command::State DummyAMC13ResetCommand::code(const swatch::core::XParameterSet& aParams)
 {
-  boost::this_thread::sleep_for(boost::chrono::seconds(aParams.get<xdata::UnsignedInteger>("cmdDuration").value_));
+  sleep(aParams);
 
   DummyAMC13Driver& driver = getParent<DummyAMC13Manager>()->getDriver();
   
@@ -74,9 +99,8 @@ core::Command::State DummyAMC13ResetCommand::code(const swatch::core::XParameter
 /*  DummyConfigureDaqCommand  */
 
 DummyAMC13ConfigureDaqCommand::DummyAMC13ConfigureDaqCommand(const std::string& aId) : 
-  Command(aId, xdata::Boolean(true))
+  DummyAMC13Command(aId)
 {
-  registerParameter("cmdDuration", xdata::UnsignedInteger(10));
 }
 
 DummyAMC13ConfigureDaqCommand::~DummyAMC13ConfigureDaqCommand()
@@ -85,8 +109,8 @@ DummyAMC13ConfigureDaqCommand::~DummyAMC13ConfigureDaqCommand()
 
 core::Command::State DummyAMC13ConfigureDaqCommand::code(const swatch::core::XParameterSet& aParams)
 {
-  boost::this_thread::sleep_for(boost::chrono::seconds(aParams.get<xdata::UnsignedInteger>("cmdDuration").value_));
-
+  sleep(aParams);
+  
   DummyAMC13Manager* mgr = getParent<DummyAMC13Manager>();
 
   mgr->getDriver().configureDaq(mgr->getStub().fedId);
@@ -99,10 +123,9 @@ core::Command::State DummyAMC13ConfigureDaqCommand::code(const swatch::core::XPa
 /*  DummyEnableDaqCommand  */
 
 DummyAMC13EnableDaqCommand::DummyAMC13EnableDaqCommand(const std::string& aId) : 
-  Command(aId, xdata::Boolean(true))
+  DummyAMC13Command(aId)
 {
   registerParameter("daqErrorTimeout", xdata::UnsignedInteger(60));
-  registerParameter("cmdDuration", xdata::UnsignedInteger(10));
 }
 
 DummyAMC13EnableDaqCommand::~DummyAMC13EnableDaqCommand()
@@ -111,7 +134,7 @@ DummyAMC13EnableDaqCommand::~DummyAMC13EnableDaqCommand()
 
 core::Command::State DummyAMC13EnableDaqCommand::code(const swatch::core::XParameterSet& aParams)
 {
-  boost::this_thread::sleep_for(boost::chrono::seconds(aParams.get<xdata::UnsignedInteger>("cmdDuration").value_));
+  sleep(aParams);
 
   DummyAMC13Driver& driver = getParent<DummyAMC13Manager>()->getDriver();
   

@@ -18,9 +18,18 @@
 namespace swatch {
 namespace processor {
 namespace test {
+
     
+class DummyProcCommand : public swatch::core::Command {
+public:
+  DummyProcCommand(const std::string& aId);
+  ~DummyProcCommand();
+  
+  void sleep(const core::XParameterSet& aParams);
+};
+
     
-class DummyRebootCommand : public swatch::core::Command {
+class DummyRebootCommand : public DummyProcCommand {
 public:
   DummyRebootCommand(const std::string& aId);
   ~DummyRebootCommand();
@@ -28,7 +37,7 @@ public:
   virtual State code(const swatch::core::XParameterSet& );
 };
     
-class DummyResetCommand : public swatch::core::Command {
+class DummyResetCommand : public DummyProcCommand {
 public:
   DummyResetCommand(const std::string& aId);
   ~DummyResetCommand();
@@ -36,7 +45,7 @@ public:
   virtual State code(const swatch::core::XParameterSet& );
 };
 
-class DummyConfigureTxCommand : public swatch::core::Command {
+class DummyConfigureTxCommand : public DummyProcCommand {
 public:
   DummyConfigureTxCommand(const std::string& aId);
   ~DummyConfigureTxCommand();
@@ -44,7 +53,7 @@ public:
   virtual State code(const swatch::core::XParameterSet& params);
 };
 
-class DummyConfigureRxCommand : public swatch::core::Command {
+class DummyConfigureRxCommand : public DummyProcCommand {
 public:
   DummyConfigureRxCommand(const std::string& aId);
   ~DummyConfigureRxCommand();
@@ -53,7 +62,7 @@ public:
 };
 
 
-class DummyConfigureDaqCommand : public swatch::core::Command {
+class DummyConfigureDaqCommand : public DummyProcCommand {
 public:
   DummyConfigureDaqCommand(const std::string& aId);
   ~DummyConfigureDaqCommand();
@@ -62,7 +71,7 @@ public:
 };
 
 
-class DummyConfigureAlgoCommand : public swatch::core::Command {
+class DummyConfigureAlgoCommand : public DummyProcCommand {
 public:
   DummyConfigureAlgoCommand(const std::string& aId);
   ~DummyConfigureAlgoCommand();

@@ -41,7 +41,7 @@ DummyDriver::TTCStatus DummyDriver::getTTCStatus() const
 
 DummyDriver::RxPortStatus DummyDriver::getRxPortStatus(uint32_t channelId) const 
 {
-  if ( isInvalidTimeOrAfterErrorTime(timestampConfigureRx_,errorTimeRx_) )
+  if ( isInvalidTimeOrAfterErrorTime(timestampReset_,errorTimeClk_) || isInvalidTimeOrAfterErrorTime(timestampConfigureRx_,errorTimeRx_) )
     return RxPortStatus(false, false, 42);
   else
     return RxPortStatus(true, true, 0);
@@ -50,7 +50,12 @@ DummyDriver::RxPortStatus DummyDriver::getRxPortStatus(uint32_t channelId) const
 
 bool DummyDriver::isTxPortOperating(uint32_t channelId) const
 {
-  return ! isInvalidTimeOrAfterErrorTime(timestampConfigureTx_, errorTimeTx_);       
+  if ( isInvalidTimeOrAfterErrorTime(timestampReset_,errorTimeClk_) )
+    return false;
+  else if ( isInvalidTimeOrAfterErrorTime(timestampConfigureTx_, errorTimeTx_) )
+    return false;
+  else
+    return true;
 }
 
 

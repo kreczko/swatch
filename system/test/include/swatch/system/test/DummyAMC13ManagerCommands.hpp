@@ -10,8 +10,15 @@ namespace swatch {
 namespace system {
 namespace test {
     
+class DummyAMC13Command : public swatch::core::Command {
+public:
+  DummyAMC13Command(const std::string& aId);
+  ~DummyAMC13Command();
+  
+  void sleep(const core::XParameterSet& aParams);
+};
     
-class DummyAMC13RebootCommand : public swatch::core::Command {
+class DummyAMC13RebootCommand : public DummyAMC13Command {
 public:
   DummyAMC13RebootCommand(const std::string& aId);
   ~DummyAMC13RebootCommand();
@@ -19,7 +26,7 @@ public:
   virtual State code(const swatch::core::XParameterSet& );
 };
     
-class DummyAMC13ResetCommand : public swatch::core::Command {
+class DummyAMC13ResetCommand : public DummyAMC13Command {
 public:
   DummyAMC13ResetCommand(const std::string& aId);
   ~DummyAMC13ResetCommand();
@@ -27,7 +34,7 @@ public:
   virtual State code(const swatch::core::XParameterSet& );
 };
 
-class DummyAMC13ConfigureDaqCommand : public swatch::core::Command {
+class DummyAMC13ConfigureDaqCommand : public DummyAMC13Command {
 public:
   DummyAMC13ConfigureDaqCommand(const std::string& aId);
   ~DummyAMC13ConfigureDaqCommand();
@@ -35,7 +42,7 @@ public:
   virtual State code(const swatch::core::XParameterSet& params);
 };
 
-class DummyAMC13EnableDaqCommand : public swatch::core::Command {
+class DummyAMC13EnableDaqCommand : public DummyAMC13Command {
 public:
   DummyAMC13EnableDaqCommand(const std::string& aId);
   ~DummyAMC13EnableDaqCommand();
