@@ -36,6 +36,17 @@ std::vector<std::string> MonitorableObject::getMetrics() const
 }
 
 
+const AbstractMetric& MonitorableObject::getMetric( const std::string& aId ) const
+{
+  try {
+    return *metrics_.at( aId );
+  } catch ( const std::out_of_range& e ) {
+    throw MetricNotFoundInMonitorableObject("MonitorableObject \"" + getPath() + "\" does not contain metric of ID \"" + aId + "\"");
+  }
+}
+
+
+
 AbstractMetric& MonitorableObject::getMetric( const std::string& aId )
 {
   try {

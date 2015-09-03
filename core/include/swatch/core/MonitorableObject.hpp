@@ -37,6 +37,9 @@ public:
   std::vector< std::string > getMetrics() const;
 
   //! Retrieve metric with given ID
+  const AbstractMetric& getMetric( const std::string& aId ) const;
+
+  //! Retrieve metric with given ID
   AbstractMetric& getMetric( const std::string& aId );
 
   //! Get overall object status based on status flags of child Metrics and child MonitorableObjects; returns kNoLimit in case there are no metrics.
