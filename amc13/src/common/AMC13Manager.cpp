@@ -213,8 +213,8 @@ uint32_t AMC13Manager::ttcDoubleBitErrors() const {
 
 void AMC13Manager::retrieveMetricValues()
 {
-  setMetricValue<>(fwVersionT1_, driver_.read(::amc13::AMC13::T1, "STATUS.FIRMWARE_VERS"));
-  setMetricValue<>(fwVersionT2_, driver_.read(::amc13::AMC13::T2, "STATUS.FIRMWARE_VERS"));
+  setMetricValue<>(fwVersionT1_, driver_->read(::amc13::AMC13::T1, "STATUS.FIRMWARE_VERS"));
+  setMetricValue<>(fwVersionT2_, driver_->read(::amc13::AMC13::T2, "STATUS.FIRMWARE_VERS"));
 
   setMetricValue<>(ttcMetricClockFreq_, (double) driver_->read(AMC13::T2,"STATUS.TTC.CLK_FREQ")*50 ); 
   setMetricValue<>(ttcMetricBC0Counter_, driver_->read(AMC13::T2,"STATUS.TTC.BC0_COUNTER"));
