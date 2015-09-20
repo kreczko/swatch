@@ -12,54 +12,12 @@
 
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/qi_grammar.hpp>
-    
-
-using namespace std;
-
-
-//using namespace std;
-//using namespace BOOST_SPIRIT_CLASSIC_NS;
-//using namespace phoenix;
-//
-//
-//struct push_back_impl
-//{
-//    template <typename Container, typename Item>
-//    struct result
-//    {
-//        typedef void type;
-//    };
-//
-//    template <typename Container, typename Item>
-//    void operator()(Container& c, Item const& item) const
-//    {
-//        c.push_back(item);
-//    }
-//};
-//
-//function<push_back_impl> const push_back = push_back_impl();
-//
-//bool
-//parse_numbers(char const* str, vector<double>& v)
-//{
-//    return parse(str,
-//
-//        //  Begin grammar
-//        (
-//            real_p[push_back(var(v), arg1)]
-//                >> *(',' >> real_p[push_back(var(v), arg1)])
-//        )
-//        ,
-//        //  End grammar
-//
-//        space_p).full;
-//}
-
 #include <boost/iterator/counting_iterator.hpp>
 #include <boost/spirit/include/phoenix_core.hpp>
 #include <boost/spirit/include/phoenix_bind.hpp>
 #include <boost/spirit/include/phoenix_operator.hpp>
 
+using namespace std;
 
 
 struct IntListGrammar : boost::spirit::qi::grammar<std::string::const_iterator, std::vector<int>(), boost::spirit::ascii::space_type >
