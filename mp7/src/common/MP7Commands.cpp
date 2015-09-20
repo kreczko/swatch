@@ -75,7 +75,8 @@ MP7ResetCommand::~MP7ResetCommand() {
 core::Command::State MP7ResetCommand::code(const core::XParameterSet& params) {
 
   MP7Processor* p = getParent<MP7Processor>();
-  setProgress(0.,"Resetting");
+  ::mp7::MP7Controller& driver = p->driver();
+  setProgress(0.,"Resetting clocks");
 
   std::string mode = params.get<xdata::String>("clockSource").value_;
   std::string clkCfg = params.get<xdata::String>("clockConfig").value_;
@@ -83,13 +84,27 @@ core::Command::State MP7ResetCommand::code(const core::XParameterSet& params) {
   try {
   // TODO: acquire lock
     // std::string mode = "external";
-    p->driver().reset(mode, clkCfg, ttcCfg);
+    driver.reset(mode, clkCfg, ttcCfg);
   } catch ( ::mp7::exception &e ) {
     
     setStatusMsg("Reset failed: "+e.description());
     return kError;
   }
-  setStatusMsg("Reset completed");
+  
+  // Reset MGTs
+  setProgress(0.5,"Resetting MGTs");
+  driver.channelMgr().resetLinks();
+  
+  // Reset AMC13 block
+  setProgress(0.68,"Resetting AMC-AMC13 Link");
+  driver.getReadout().resetAMC13Block();
+  
+  
+  setProgress(0.83,"Resetting AMC-AMC13 Link");
+  driver.resetPayload();
+
+  setProgress(1.,"Reset completed");
+   
   return kDone;
 }
 
