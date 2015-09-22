@@ -46,6 +46,7 @@ public:
 
 };
 
+/*
 //---
 class MP7SetupMGTs : public MP7PortsCommand {
 public:
@@ -56,7 +57,7 @@ public:
   virtual State code(const core::XParameterSet& params);
 
 };
-
+*/
 
 //---
 class MP7AlignLinks : public MP7PortsCommand {

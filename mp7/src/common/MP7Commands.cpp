@@ -109,6 +109,7 @@ core::Command::State MP7ResetCommand::code(const core::XParameterSet& params) {
 }
 
 
+/* MP7SetupMGTs doesn't compile w/ mp7sw v1.8.4pre1
 // --------------------------------------------------------
 MP7SetupMGTs::MP7SetupMGTs(const std::string& aId) :
   MP7PortsCommand(aId, xdata::Integer()) {
@@ -158,6 +159,7 @@ MP7SetupMGTs::code(const core::XParameterSet& params) {
   setStatusMsg("Links configured");
   return kDone;
 }
+*/
 
 
 //---
