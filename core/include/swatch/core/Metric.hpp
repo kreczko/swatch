@@ -25,7 +25,6 @@ class MonitorableObject;
 template<typename DataType>
 class MetricCondition;
 
-
 /**
  * Metric encapsulating monitoring data of given type
  * 
@@ -53,11 +52,15 @@ public:
     //! Returns time at which metric's value was last updated
     timeval getUpdateTimestamp() const;
 
-private:
+    MonitoringStatus getMonitoringStatus() const;
+    void setMonitoringStatus(MonitoringStatus status);
+
+protected:
 
     //! Set the value of the metric
     void setValue(const DataType& value);
     
+private:
     //! Set the value of the metric to being unknown
     void setValueUnknown();
     
@@ -74,6 +77,8 @@ private:
     boost::shared_ptr<MetricCondition<DataType> > warnCondition_;
     
     friend class MonitorableObject;
+
+    swatch::core::MonitoringStatus monitoringStatus_;
 };
 
 

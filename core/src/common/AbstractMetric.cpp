@@ -39,13 +39,17 @@ std::ostream& operator<<(std::ostream& aOut, const AbstractMetricCondition& aCon
 
 
 
-MetricSnapshot::MetricSnapshot(swatch::core::StatusFlag flag, const std::string& value, timeval updateTime, boost::shared_ptr<AbstractMetricCondition> errCond, boost::shared_ptr<AbstractMetricCondition> warnCond) : 
-  flag_(flag),
-  value_(value),
-  updateTimestamp_(updateTime),
-  errorCondition_(errCond),
-  warnCondition_(warnCond)
-{
+MetricSnapshot::MetricSnapshot(swatch::core::StatusFlag flag,
+    const std::string& value, timeval updateTime,
+    boost::shared_ptr<AbstractMetricCondition> errCond,
+    boost::shared_ptr<AbstractMetricCondition> warnCond,
+    swatch::core::MonitoringStatus m_status) :
+        flag_(flag),
+        value_(value),
+        updateTimestamp_(updateTime),
+        errorCondition_(errCond),
+        warnCondition_(warnCond),
+        monitoringStatus_(m_status){
 }
 
 
@@ -71,6 +75,10 @@ const AbstractMetricCondition* MetricSnapshot::getWarningCondition() const {
 
 const AbstractMetricCondition* MetricSnapshot::getErrorCondition() const {
   return errorCondition_.get();
+}
+
+swatch::core::MonitoringStatus MetricSnapshot::getMonitoringStatus() const {
+  return monitoringStatus_;
 }
 
 

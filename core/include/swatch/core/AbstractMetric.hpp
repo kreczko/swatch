@@ -24,6 +24,16 @@ class AbstractMetricCondition;
 class MetricSnapshot;
 class MonitorableObject;
 
+/**
+ * Flag for deciding if failures of MonitorableObject will affect the parent.
+ * If set to kENABLED they will (default behaviour) and if set to kNON_CRITICAL
+ * they will not.
+ */
+enum MonitoringStatus {
+  kEnabled,
+  kNonCritical,
+};
+
 
 /*!
  * @brief Represents some set of monitoring data that is retrieved from hardware.
@@ -81,7 +91,10 @@ protected:
 
 class MetricSnapshot {
 public:
-    MetricSnapshot(swatch::core::StatusFlag, const std::string&, timeval, boost::shared_ptr<AbstractMetricCondition>, boost::shared_ptr<AbstractMetricCondition>);
+  MetricSnapshot(swatch::core::StatusFlag, const std::string&, timeval,
+      boost::shared_ptr<AbstractMetricCondition>,
+      boost::shared_ptr<AbstractMetricCondition>,
+      swatch::core::MonitoringStatus m_status = MonitoringStatus::kEnabled);
 
     //! Returns status flag deduced from comparing the stored value with limits
     swatch::core::StatusFlag getStatus() const;
@@ -98,12 +111,15 @@ public:
     //! Returns metric's error condition; NULL returned if metric doesn't have any error condition
     const AbstractMetricCondition* getErrorCondition() const;
     
+    swatch::core::MonitoringStatus getMonitoringStatus() const;
+
 private:
     const swatch::core::StatusFlag flag_;
     const std::string value_; //TODO ??? Update to boost shared_ptr to actual data value (without templating class, just templating CTOR) ???
     const timeval updateTimestamp_;
     const boost::shared_ptr<AbstractMetricCondition> errorCondition_;
     const boost::shared_ptr<AbstractMetricCondition> warnCondition_;
+    const swatch::core::MonitoringStatus monitoringStatus_;
 };
 
 

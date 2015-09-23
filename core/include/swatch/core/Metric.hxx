@@ -22,17 +22,25 @@ namespace core {
 
 template<typename DataType>
 Metric<DataType>::Metric() :
-  value_(NULL)
+  value_(NULL),
+  updateTimestamp_(),
+  mutex_(),
+  errorCondition_(),
+  warnCondition_(),
+  monitoringStatus_(MonitoringStatus::kEnabled)
 {
 }
 
 
 template<typename DataType>
-Metric<DataType>::Metric(MetricCondition<DataType>* aErrorCondition, MetricCondition<DataType>* aWarnCondition) : 
-  value_(NULL),
-  errorCondition_(aErrorCondition),
-  warnCondition_(aWarnCondition)
-{
+Metric<DataType>::Metric(MetricCondition<DataType>* aErrorCondition,
+    MetricCondition<DataType>* aWarnCondition) :
+        value_(NULL),
+        updateTimestamp_(),
+        mutex_(),
+        errorCondition_(aErrorCondition),
+        warnCondition_(aWarnCondition),
+        monitoringStatus_(MonitoringStatus::kEnabled) {
 }
 
 
@@ -62,7 +70,7 @@ MetricSnapshot Metric<DataType>::getValue() const {
         value = convertMetricDataToString(*value_);
     }
     
-    return MetricSnapshot(flag, value, updateTimestamp_, errorCondition_, warnCondition_);
+    return MetricSnapshot(flag, value, updateTimestamp_, errorCondition_, warnCondition_, monitoringStatus_);
 }
 
 
@@ -89,6 +97,17 @@ void Metric<DataType>::setValueUnknown() {
     value_.reset(NULL);
 }
 
+template<typename DataType>
+MonitoringStatus Metric<DataType>::getMonitoringStatus() const{
+  boost::lock_guard<boost::mutex> lock(mutex_);
+  return monitoringStatus_;
+}
+
+template<typename DataType>
+void Metric<DataType>::setMonitoringStatus(MonitoringStatus status){
+  boost::lock_guard<boost::mutex> lock(mutex_);
+  monitoringStatus_ = status;
+}
 
 template<typename DataType>
 std::string convertMetricDataToString(DataType data)

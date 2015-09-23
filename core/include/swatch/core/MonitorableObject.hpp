@@ -48,6 +48,9 @@ public:
   //! Update values of this object's metrics
   void updateMetrics();
 
+  void setMonitoringStatus(const swatch::core::MonitoringStatus m_status);
+  swatch::core::MonitoringStatus getMonitoringStatus() const;
+
 protected:
 
   /*!
@@ -91,6 +94,7 @@ private:
 
   //! Stores details in case error occurs when updating the metric values
   std::string updateErrorMsg_;
+  swatch::core::MonitoringStatus monitoringStatus_;
 };
 
 DEFINE_SWATCH_EXCEPTION(MetricAlreadyExistsInMonitorableObject);

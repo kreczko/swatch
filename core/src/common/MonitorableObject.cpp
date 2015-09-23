@@ -12,7 +12,10 @@ namespace core {
 
   
 MonitorableObject::MonitorableObject( const std::string& aId ) :
-    Object( aId )
+    Object( aId ),
+    metrics_(),
+    updateErrorMsg_(""),
+    monitoringStatus_(MonitoringStatus::kEnabled)
 {
 }
 
@@ -67,12 +70,16 @@ StatusFlag MonitorableObject::getStatus() const
   {
     if(swatch::core::MonitorableObject* monObj = dynamic_cast<swatch::core::MonitorableObject*>(& this->getObj(*it)))
     {
-      result = result & monObj->getStatus();
+      // only enabled children contribute to the status
+      if (monObj->getMonitoringStatus() == MonitoringStatus::kEnabled)
+        result = result & monObj->getStatus();
     }
   }
   
   BOOST_FOREACH( tMetricMap::value_type p, metrics_) {
-    result = result & p.second->getValue().getStatus();
+    // only enabled metrics contribute to the status
+    if (p.second->getValue().getMonitoringStatus() == MonitoringStatus::kEnabled)
+      result = result & p.second->getValue().getStatus();
   }
   
   return result;
@@ -104,6 +111,14 @@ void MonitorableObject::updateMetrics()
       p.second->setValueUnknown();
   }
   
+}
+
+void MonitorableObject::setMonitoringStatus(const swatch::core::MonitoringStatus m_status){
+  monitoringStatus_ = m_status;
+}
+
+swatch::core::MonitoringStatus MonitorableObject::getMonitoringStatus() const {
+  return monitoringStatus_;
 }
 
 
