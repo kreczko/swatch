@@ -58,7 +58,7 @@ MetricSnapshot Metric<DataType>::getValue() const {
     
     if (this->value_ != NULL)
     {
-        if ( (errorCondition_ == NULL) && (warnCondition_ == NULL) )
+    if ((errorCondition_ == NULL) && (warnCondition_ == NULL))
             flag = kNoLimit;
         else if ( errorCondition_ && (*errorCondition_)(*value_))
             flag = kError;
@@ -70,6 +70,9 @@ MetricSnapshot Metric<DataType>::getValue() const {
         value = convertMetricDataToString(*value_);
     }
     
+    if (monitoringStatus_ == MonitoringStatus::kDisabled)
+      flag = kNoLimit; //disabled metrics always return kNoLimit
+
     return MetricSnapshot(flag, value, updateTimestamp_, errorCondition_, warnCondition_, monitoringStatus_);
 }
 

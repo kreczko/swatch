@@ -32,6 +32,7 @@ class MonitorableObject;
 enum MonitoringStatus {
   kEnabled,
   kNonCritical,
+  kDisabled,
 };
 
 
@@ -54,6 +55,9 @@ public:
     
     //! Returns time at which metric's value was last updated. (THREAD SAFE)
     virtual timeval getUpdateTimestamp() const = 0;
+
+    //! Returns the monitoring status as defined in enum MonitoringStatus
+    virtual MonitoringStatus getMonitoringStatus() const = 0;
 
     
 protected:

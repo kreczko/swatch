@@ -104,10 +104,13 @@ void MonitorableObject::updateMetrics()
   }
 
   BOOST_FOREACH(tMetricMap::value_type p, metrics_) {
-    timeval lastUpdateTime = p.second->getUpdateTimestamp(); 
-    if((lastUpdateTime.tv_sec == startTime.tv_sec) && (lastUpdateTime.tv_usec < startTime.tv_usec))
-      p.second->setValueUnknown();
-    else if(lastUpdateTime.tv_sec < startTime.tv_sec)
+    timeval lastUpdateTime = p.second->getUpdateTimestamp();
+    // last update before start time equals failure
+    bool failedUpdate = timercmp(&lastUpdateTime, &startTime, <);
+    bool isEnabled = p.second->getMonitoringStatus()
+        != MonitoringStatus::kDisabled;
+    // only set the value to unknown for enabled metrics
+    if (failedUpdate && isEnabled)
       p.second->setValueUnknown();
   }
   
