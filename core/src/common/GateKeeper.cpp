@@ -1,9 +1,14 @@
 
 #include "swatch/core/GateKeeper.hpp"
 
+// Boost Headers
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/range/algorithm/copy.hpp>
+#include <boost/range/adaptor/map.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/foreach.hpp>
 
-#include "boost/date_time/posix_time/posix_time.hpp"
-
+// Swatch Headers
 #include "swatch/core/Command.hpp"
 #include "swatch/core/CommandSequence.hpp"
 
@@ -221,10 +226,14 @@ namespace swatch
         aStr << lDelimeter << std::endl;
         aStr << "TABLE : " << lTableIt->first << std::endl;
         aStr << lDelimeter << std::endl;
-        for( GateKeeper::tParameters::const_iterator lIt ( lTableIt->second->begin() ); lIt != lTableIt->second->end() ; ++lIt )
-        {
-          aStr << "  " << lIt->first << " : " << lIt->second->toString() << std::endl;          
+
+        std::set<std::string> names;
+        boost::copy(*(lTableIt->second) | boost::adaptors::map_keys, std::inserter(names, names.begin()));
+
+        BOOST_FOREACH( const std::string& name, names ) {
+          aStr << " " << name << " : " << lTableIt->second->at(name)->toString() << std::endl;
         }
+
         aStr << lDelimeter << std::endl;
       }
       return aStr;
