@@ -12,6 +12,7 @@ CACTUS_PLATFORM=$(shell /usr/bin/python -c "import platform; print platform.plat
 CACTUS_OS="unknown.os"
 # XDAQ config
 XDAQ_ROOT ?= /opt/xdaq
+DEBUG ?= 1
 
 # OS Identification
 UNAME=$(strip $(shell uname -s))
