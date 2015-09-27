@@ -52,8 +52,8 @@ public:
     //! Returns time at which metric's value was last updated
     timeval getUpdateTimestamp() const;
 
-    MonitoringStatus getMonitoringStatus() const;
-    void setMonitoringStatus(MonitoringStatus status);
+    monitoring::Status getMonitoringStatus() const;
+    void setMonitoringStatus(monitoring::Status status);
 
 protected:
 
@@ -78,7 +78,7 @@ private:
     
     friend class MonitorableObject;
 
-    swatch::core::MonitoringStatus monitoringStatus_;
+    swatch::core::monitoring::Status monitoringStatus_;
 };
 
 

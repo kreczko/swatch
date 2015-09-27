@@ -12,7 +12,7 @@
 
 #include "boost/lexical_cast.hpp"
 #include "boost/thread/lock_guard.hpp"
-#include "Metric.hpp"
+//#include "Metric.hpp"
 
 
 
@@ -27,7 +27,7 @@ Metric<DataType>::Metric() :
   mutex_(),
   errorCondition_(),
   warnCondition_(),
-  monitoringStatus_(MonitoringStatus::kEnabled)
+  monitoringStatus_(monitoring::kEnabled)
 {
 }
 
@@ -40,7 +40,7 @@ Metric<DataType>::Metric(MetricCondition<DataType>* aErrorCondition,
         mutex_(),
         errorCondition_(aErrorCondition),
         warnCondition_(aWarnCondition),
-        monitoringStatus_(MonitoringStatus::kEnabled) {
+        monitoringStatus_(monitoring::kEnabled) {
 }
 
 
@@ -70,7 +70,7 @@ MetricSnapshot Metric<DataType>::getValue() const {
         value = convertMetricDataToString(*value_);
     }
     
-    if (monitoringStatus_ == MonitoringStatus::kDisabled)
+    if (monitoringStatus_ == monitoring::kDisabled)
       flag = kNoLimit; //disabled metrics always return kNoLimit
 
     return MetricSnapshot(flag, value, updateTimestamp_, errorCondition_, warnCondition_, monitoringStatus_);
@@ -101,13 +101,13 @@ void Metric<DataType>::setValueUnknown() {
 }
 
 template<typename DataType>
-MonitoringStatus Metric<DataType>::getMonitoringStatus() const{
+monitoring::Status Metric<DataType>::getMonitoringStatus() const{
   boost::lock_guard<boost::mutex> lock(mutex_);
   return monitoringStatus_;
 }
 
 template<typename DataType>
-void Metric<DataType>::setMonitoringStatus(MonitoringStatus status){
+void Metric<DataType>::setMonitoringStatus(monitoring::Status status){
   boost::lock_guard<boost::mutex> lock(mutex_);
   monitoringStatus_ = status;
 }

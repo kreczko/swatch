@@ -15,7 +15,7 @@ MonitorableObject::MonitorableObject( const std::string& aId ) :
     Object( aId ),
     metrics_(),
     updateErrorMsg_(""),
-    monitoringStatus_(MonitoringStatus::kEnabled)
+    monitoringStatus_(monitoring::kEnabled)
 {
 }
 
@@ -71,14 +71,14 @@ StatusFlag MonitorableObject::getStatus() const
     if(swatch::core::MonitorableObject* monObj = dynamic_cast<swatch::core::MonitorableObject*>(& this->getObj(*it)))
     {
       // only enabled children contribute to the status
-      if (monObj->getMonitoringStatus() == MonitoringStatus::kEnabled)
+      if (monObj->getMonitoringStatus() == monitoring::kEnabled)
         result = result & monObj->getStatus();
     }
   }
   
   BOOST_FOREACH( tMetricMap::value_type p, metrics_) {
     // only enabled metrics contribute to the status
-    if (p.second->getValue().getMonitoringStatus() == MonitoringStatus::kEnabled)
+    if (p.second->getValue().getMonitoringStatus() == monitoring::kEnabled)
       result = result & p.second->getValue().getStatus();
   }
   
@@ -108,7 +108,7 @@ void MonitorableObject::updateMetrics()
     // last update before start time equals failure
     bool failedUpdate = timercmp(&lastUpdateTime, &startTime, <);
     bool isEnabled = p.second->getMonitoringStatus()
-        != MonitoringStatus::kDisabled;
+        != monitoring::kDisabled;
     // only set the value to unknown for enabled metrics
     if (failedUpdate && isEnabled)
       p.second->setValueUnknown();
@@ -116,11 +116,12 @@ void MonitorableObject::updateMetrics()
   
 }
 
-void MonitorableObject::setMonitoringStatus(const swatch::core::MonitoringStatus m_status){
+void MonitorableObject::setMonitoringStatus(const swatch::core::monitoring::Status m_status){
   monitoringStatus_ = m_status;
 }
 
-swatch::core::MonitoringStatus MonitorableObject::getMonitoringStatus() const {
+swatch::core::monitoring::Status
+MonitorableObject::getMonitoringStatus() const {
   return monitoringStatus_;
 }
 

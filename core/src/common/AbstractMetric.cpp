@@ -43,7 +43,7 @@ MetricSnapshot::MetricSnapshot(swatch::core::StatusFlag flag,
     const std::string& value, timeval updateTime,
     boost::shared_ptr<AbstractMetricCondition> errCond,
     boost::shared_ptr<AbstractMetricCondition> warnCond,
-    swatch::core::MonitoringStatus m_status) :
+    swatch::core::monitoring::Status m_status) :
         flag_(flag),
         value_(value),
         updateTimestamp_(updateTime),
@@ -77,7 +77,7 @@ const AbstractMetricCondition* MetricSnapshot::getErrorCondition() const {
   return errorCondition_.get();
 }
 
-swatch::core::MonitoringStatus MetricSnapshot::getMonitoringStatus() const {
+swatch::core::monitoring::Status MetricSnapshot::getMonitoringStatus() const {
   return monitoringStatus_;
 }
 

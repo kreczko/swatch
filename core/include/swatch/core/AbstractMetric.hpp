@@ -29,11 +29,13 @@ class MonitorableObject;
  * If set to kENABLED they will (default behaviour) and if set to kNON_CRITICAL
  * they will not.
  */
-enum MonitoringStatus {
+namespace monitoring {
+enum Status {
   kEnabled,
   kNonCritical,
   kDisabled,
 };
+}
 
 
 /*!
@@ -57,7 +59,7 @@ public:
     virtual timeval getUpdateTimestamp() const = 0;
 
     //! Returns the monitoring status as defined in enum MonitoringStatus
-    virtual MonitoringStatus getMonitoringStatus() const = 0;
+    virtual monitoring::Status getMonitoringStatus() const = 0;
 
     
 protected:
@@ -98,7 +100,7 @@ public:
   MetricSnapshot(swatch::core::StatusFlag, const std::string&, timeval,
       boost::shared_ptr<AbstractMetricCondition>,
       boost::shared_ptr<AbstractMetricCondition>,
-      swatch::core::MonitoringStatus m_status = MonitoringStatus::kEnabled);
+      swatch::core::monitoring::Status m_status = monitoring::kEnabled);
 
     //! Returns status flag deduced from comparing the stored value with limits
     swatch::core::StatusFlag getStatus() const;
@@ -115,7 +117,7 @@ public:
     //! Returns metric's error condition; NULL returned if metric doesn't have any error condition
     const AbstractMetricCondition* getErrorCondition() const;
     
-    swatch::core::MonitoringStatus getMonitoringStatus() const;
+    swatch::core::monitoring::Status getMonitoringStatus() const;
 
 private:
     const swatch::core::StatusFlag flag_;
@@ -123,7 +125,7 @@ private:
     const timeval updateTimestamp_;
     const boost::shared_ptr<AbstractMetricCondition> errorCondition_;
     const boost::shared_ptr<AbstractMetricCondition> warnCondition_;
-    const swatch::core::MonitoringStatus monitoringStatus_;
+    const swatch::core::monitoring::Status monitoringStatus_;
 };
 
 
