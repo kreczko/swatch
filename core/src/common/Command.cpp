@@ -110,14 +110,18 @@ void Command::runCode(boost::shared_ptr<ActionableObject::BusyGuard> aActionGuar
         break;
       default : 
         state_ = kError;
-        statusMsg_ = "ERROR - Command::code() method returned invalid Status enum value '" + boost::lexical_cast<std::string>(s) + "'   \n Original status message was: " + statusMsg_;
+        statusMsg_ = "Command::code() method returned invalid Status enum value '" + boost::lexical_cast<std::string>(s) + "'   \n Original status message was: " + statusMsg_;
+        // FIXME: replace with proper logging
+        LOG(swatch::logger::kError) << getResource().getId() << "." << getId() << " : " << statusMsg_;
     }
   }
   catch (const std::exception& e) {
     boost::unique_lock<boost::mutex> lock(mutex_);
     gettimeofday(&execEndTime_, NULL);
     state_ = kError;
-    statusMsg_ = std::string("ERROR - An exception of type '" + demangleName(typeid(e).name()) + "' was thrown in Command::code(): ") + e.what();
+    statusMsg_ = std::string("An exception of type '" + demangleName(typeid(e).name()) + "' was thrown in Command::code(): ") + e.what();
+    // FIXME: replace with proper logging
+    LOG(swatch::logger::kError) << getResource().getId() << "." << getId() << " : " << statusMsg_;
   }
   
   // 3) Release control of the resource - by destruction of the ActionGuard.
@@ -202,6 +206,10 @@ Command::setProgress(float aProgress, const std::string& aMsg ) {
   boost::unique_lock<boost::mutex> lock(mutex_);
   progress_ = aProgress;
   statusMsg_ = aMsg;
+
+  // FIXME: replace with proper logging
+  LOG(swatch::logger::kInfo) << getResource().getId() << "." << getId() << " : " << aMsg;
+
 }
 
 
@@ -214,9 +222,12 @@ void Command::setResult( const xdata::Serializable& aResult ){
 void Command::setStatusMsg(const std::string& aMsg) {
   boost::unique_lock<boost::mutex> lock(mutex_);
   statusMsg_ = aMsg;
+
+  // FIXME: replace with proper logging
+  LOG(swatch::logger::kInfo) << getResource().getId() << "." << getId() << " : " << aMsg;
 }
 
-
+// ---
 const ReadWriteXParameterSet& Command::getDefaultParams() const {
   return defaultParams_;
 }
