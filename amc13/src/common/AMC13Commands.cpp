@@ -12,6 +12,7 @@
 #include "xdata/Boolean.h"
 #include "xdata/Integer.h"
 #include "xdata/String.h"
+#include "xdata/UnsignedInteger.h"
 
 // Swatch Headers
 #include "swatch/amc13/AMC13Manager.hpp"
@@ -27,18 +28,17 @@ namespace swatch {
 namespace amc13 {
 
 //---
-AMC13RebootCommand::AMC13RebootCommand(const std::string& aId) : 
+RebootCommand::RebootCommand(const std::string& aId) : 
   Command(aId, xdata::Boolean(false)) {
 }
-  
 
 //---
-AMC13RebootCommand::~AMC13RebootCommand() {
+RebootCommand::~RebootCommand() {
 }
 
 
 //---
-core::Command::State AMC13RebootCommand::code(const core::XParameterSet& params) {
+core::Command::State RebootCommand::code(const core::XParameterSet& params) {
   AMC13Manager* amc13 = getParent<AMC13Manager>();
   
   setStatusMsg("Loading FW from flash");
@@ -76,52 +76,159 @@ core::Command::State AMC13RebootCommand::code(const core::XParameterSet& params)
 
 
 //---
-AMC13ResetCommand::AMC13ResetCommand(const std::string& aId) :
+ResetCommand::ResetCommand(const std::string& aId) :
   Command(aId, xdata::Integer()) {
  
-  registerParameter("mode", xdata::String());
+  // TTC orbit counter encoding
+  registerParameter("resyncCmd", xdata::UnsignedInteger(0x4));
+  // TTC Resync encoding
+  registerParameter("ocrCmd", xdata::UnsignedInteger(0x8));
+  // Bunch counter reset offset
+  registerParameter("bcnOffset", xdata::UnsignedInteger(0xdec-24));
+
 }
 
 
 //---
-AMC13ResetCommand::~AMC13ResetCommand() {
+ResetCommand::~ResetCommand() {
 
 }
 
 
 //---
-core::Command::State AMC13ResetCommand::code(const core::XParameterSet& params) {
+core::Command::State ResetCommand::code(const core::XParameterSet& params) {
 
-    AMC13Manager* amc13 = getParent<AMC13Manager>();
+    AMC13Manager* amc13mgr = getParent<AMC13Manager>();
    
-    std::string mode = params.get<xdata::String>("mode").value_;
+    uint32_t resyncCmd = params.get<xdata::UnsignedInteger>("resyncCmd").value_;
+    uint32_t ocrCmd    = params.get<xdata::UnsignedInteger>("ocrCmd").value_;
+    uint32_t bcnOffset = params.get<xdata::UnsignedInteger>("bcnOffset").value_;
 
-    using ::amc13::AMC13Simple;
-  
-    if ( mode == "ttsloopback" ) {
-        amc13->driver().reset(AMC13Simple::T1);
-        amc13->driver().reset(AMC13Simple::T2);
-        LOG(swlo::kInfo) << "Enabling local TTC";
-        amc13->driver().localTtcSignalEnable(true);
-        
-    } else if ( mode == "external" ) {
-        amc13->driver().reset(AMC13Simple::T1);
-        amc13->driver().reset(AMC13Simple::T2);
-        LOG(swlo::kInfo) << "Enabling external TTC input" << std::endl;
-        amc13->driver().localTtcSignalEnable(false);
-    } else {
-      std::ostringstream oss;
-        oss << "Unknown option " << mode;
-        LOG(swlo::kError) << oss.str();
-        setStatusMsg(oss.str());
-        return kError;
-    }
+    ::amc13::AMC13& board = amc13mgr->driver();
     
-    // and check the status
-    // amc13->driver()->getStatus()->Report(1);
+    // Reset T1 chip
+    board.reset(::amc13::AMC13Simple::T1);
+
+    // Reset T2 chip
+    board.reset(::amc13::AMC13Simple::T2);
     
+    // Take the board out of run mode
+    board.endRun();
+
+    // Disable SFP outputs
+    board.sfpOutputEnable(0);
+    
+    // Disable AMC13-AMC connection
+    board.AMCInputEnable(0);
+    
+    // Bunch counter offset
+    board.setBcnOffset(bcnOffset);
+
+    // configure TTC commands
+    board.setOcrCommand(ocrCmd);
+
+    // Replace with python bindings when they come out...
+    board.write(::amc13::AMC13Simple::T1,"CONF.TTC.RESYNC.COMMAND",resyncCmd); 
+    
+    // Disable any TTS mask
+    board.ttsDisableMask(0x0);
+    
+    // Disable local triggers
+    board.localTtcSignalEnable(false);
+    
+    // Disable monitor buffer backpressure
+    board.monBufBackPressEnable(false);
+
+    // activate TTC output to all AMCs
+    board.enableAllTTC();
+
     return kDone;
 }
+
+// --------------------------------------------------------
+ConfigureCommand::ConfigureCommand(const std::string& aId) :
+core::Command(aId, xdata::Integer()) {
+  // slots, fedId, slink, localTtc=False
+  // Fed id
+  registerParameter("fedId", xdata::UnsignedInteger(0xfff));
+  // Slinks
+  registerParameter("slinkMask", xdata::UnsignedInteger(0x0));
+  // Local ttc configuration
+  registerParameter("localTTC", xdata::Boolean(false));
+}
+
+// --------------------------------------------------------
+ConfigureCommand::~ConfigureCommand() {
+
+}
+
+core::Command::State 
+ConfigureCommand::code(const core::XParameterSet& params) {
+
+  uint32_t fedId = params.get<xdata::UnsignedInteger>("fedId").value_;
+  uint32_t slinkMask = params.get<xdata::UnsignedInteger>("slinkMask").value_;
+  uint32_t localTTC = params.get<xdata::UnsignedInteger>("localTTC").value_;
+  
+  AMC13Manager* amc13mgr = getParent<AMC13Manager>();
+
+  ::amc13::AMC13& board = amc13mgr->driver();
+
+  // TODO: replace with a proper parameters
+  uint32_t bitmask = 0x0;
+  board.AMCInputEnable(bitmask);
+  
+  // FIXME: Take fedId from stub?
+  // Set FED ID
+  board.setFEDid(fedId);
+  
+  // Enable SFPs
+  board.sfpOutputEnable(slinkMask);
+  
+  // Enable daq link if any of the SFPs is enabled
+  board.daqLinkEnable( slinkMask != 0);
+  
+  // Reset counters
+  board.resetCounters();
+
+  // Reset T1, just in case
+  board.reset(::amc13::AMC13Simple::T1);
+
+  // Do we need this in this command?
+  if ( localTTC ) board.localTtcSignalEnable(true);
+
+  return kDone;
+}
+
+StartCommand::StartCommand(const std::string& aId) :
+core::Command(aId, xdata::Integer()) {
+}
+
+StartCommand::~StartCommand() {
+}
+
+core::Command::State
+StartCommand::code(const core::XParameterSet& params) {
+  getParent<AMC13Manager>()->driver().startRun();
+  
+  return kDone;
+}
+
+StopCommand::StopCommand(const std::string& aId) :
+core::Command(aId, xdata::Integer()) {
+
+}
+
+StopCommand::~StopCommand() {
+
+}
+
+core::Command::State
+StopCommand::code(const core::XParameterSet& params) {
+  getParent<AMC13Manager>()->driver().endRun();
+
+  return kDone;
+}
+
 
 
 } // namespace amc13

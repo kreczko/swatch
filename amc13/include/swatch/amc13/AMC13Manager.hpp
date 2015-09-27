@@ -26,11 +26,11 @@ public:
     AMC13Manager( const swatch::core::AbstractStub& aStub );
     ~AMC13Manager();
     
-    virtual void reset();
+//    virtual void reset();
     
-    virtual void configureClock(const std::string& mode);
+//    virtual void configureClock(const std::string& mode);
 
-    virtual void enableTTC(const std::vector<uint32_t>& aSlots);
+//    virtual void enableTTC(const std::vector<uint32_t>& aSlots);
 
     ::amc13::AMC13& driver() { return *driver_; }
 

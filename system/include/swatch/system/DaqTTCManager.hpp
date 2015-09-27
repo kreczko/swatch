@@ -35,12 +35,12 @@ public:
 
     uint16_t getFedId() const;
 
-    virtual void reset() = 0;
+    // virtual void reset() = 0;
     
-    /// Enables ttc commands on the given slots
-    virtual void enableTTC( const std::vector<uint32_t> & aSlots ) = 0;
+    // /// Enables ttc commands on the given slots
+    // virtual void enableTTC( const std::vector<uint32_t> & aSlots ) = 0;
 
-    virtual void configureClock(const std::string& mode) = 0;
+    // virtual void configureClock(const std::string& mode) = 0;
 
     static const std::vector<std::string> defaultMetrics;
 

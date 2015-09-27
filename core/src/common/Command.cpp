@@ -81,6 +81,10 @@ Command::exec(const boost::shared_ptr<ActionableObject::BusyGuard>& aActionGuard
     }
   } catch ( const std::exception& e ) {
     // TODO: log the error to error msg (or not?)
+
+    // FIXME: replace with proper logging
+    LOG(swatch::logger::kError) << getResource().getId() << "." << getId() << " : " << ( e.what() != 0x0 ? e.what() : "" ) ;
+
     // Then rethrow the exception on to the higher layers of code.
     throw;
   }

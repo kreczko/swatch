@@ -16,24 +16,52 @@
 namespace swatch {
 namespace amc13 {
     
-class AMC13RebootCommand : public swatch::core::Command {
+class RebootCommand : public swatch::core::Command {
 public:
-    AMC13RebootCommand(const std::string& aId);
+    RebootCommand(const std::string& aId);
     
-    virtual ~AMC13RebootCommand();
+    virtual ~RebootCommand();
     
     virtual State code(const core::XParameterSet& params);
 };
 
-class AMC13ResetCommand : public swatch::core::Command {
+class ResetCommand : public swatch::core::Command {
 public:
-    AMC13ResetCommand(const std::string& aId);
+    ResetCommand(const std::string& aId);
 
-    virtual ~AMC13ResetCommand();
+    virtual ~ResetCommand();
 
     virtual State code(const core::XParameterSet& params);
     
 };
+
+class ConfigureCommand : public swatch::core::Command {
+public:
+    ConfigureCommand(const std::string& aId) ;
+    virtual ~ConfigureCommand();
+    
+    virtual State code(const core::XParameterSet& params);
+
+};
+
+class StartCommand : public swatch::core::Command {
+public:
+    StartCommand(const std::string& aId);
+    virtual ~StartCommand();
+
+    virtual State code(const core::XParameterSet& params);
+
+};
+
+class StopCommand : public swatch::core::Command {
+public:
+    StopCommand(const std::string& aId);
+    virtual ~StopCommand();
+    
+    virtual State code(const core::XParameterSet& params);
+
+};
+
 
 } // namespace amc13
 } // namespace swatch

@@ -48,8 +48,8 @@ AMC13Manager::AMC13Manager(const swatch::core::AbstractStub& aStub) :
     fwVersionT2_( registerMetric<uint32_t>("fwVersionT2"))
 {
   
-    registerFunctionoid<AMC13RebootCommand>("reboot");
-    registerFunctionoid<AMC13ResetCommand>("reset");
+    registerFunctionoid<RebootCommand>("reboot");
+    registerFunctionoid<ResetCommand>("reset");
     registerFunctionoid<AMC13Configure>("configure");
 
     const system::DaqTTCStub& desc = getStub();
@@ -58,6 +58,8 @@ AMC13Manager::AMC13Manager(const swatch::core::AbstractStub& aStub) :
     uhal::HwInterface t2 = uhal::ConnectionManager::getDevice("T2", desc.uriT2, desc.addressTableT2);
 
     driver_ = new AMC13(t1, t2);
+
+    
 
     uint32_t vT1 = driver_->read(AMC13::T1, "STATUS.FIRMWARE_VERS");
     uint32_t vT2 = driver_->read(AMC13::T2, "STATUS.FIRMWARE_VERS");
@@ -71,7 +73,7 @@ AMC13Manager::~AMC13Manager() {
   delete driver_;
 }
 
-
+/*
 //---
 void
 AMC13Manager::enableTTC(const std::vector<uint32_t>& slots) {
@@ -188,7 +190,6 @@ AMC13Manager::configureClock(const std::string& mode) {
   
 }
 
-/*
 double AMC13Manager::ttcClockFreq() const {
   uint32_t regValue = driver_->read(amc13::AMC13::T2,"STATUS.TTC.CLK_FREQ");
   return ((double)regValue*50);
