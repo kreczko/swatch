@@ -9,6 +9,7 @@
 #include <boost/foreach.hpp>
 
 // Swatch Headers
+#include "swatch/logger/Log.hpp"
 #include "swatch/core/Command.hpp"
 #include "swatch/core/CommandSequence.hpp"
 
@@ -168,7 +169,7 @@ namespace swatch
       //We could add runtime overriding of values to the GateKeeper and check them first...
       for ( std::vector<std::string>::const_iterator lIt ( aTables.begin() ) ; lIt!=aTables.end() ; ++lIt )
       {
-        std::cout << "Searching : " << lSequencePath << ", " << lCommandPath << ", " << aParameterId << " in  " << *lIt << std::endl;
+        LOG(logger::kDebug) << "Searching : " << lSequencePath << ", " << lCommandPath << ", " << aParameterId << " in  " << *lIt << std::endl;
         lData = get(  lSequencePath , lCommandPath , aParameterId, *lIt );
         if ( lData )
         {
