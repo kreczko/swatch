@@ -1,4 +1,4 @@
-#include "swatch/mp7/toolbox/IntListGrammar.hpp"
+#include "swatch/core/toolbox/IntListGrammar.hpp"
 
 #include <boost/iterator/counting_iterator.hpp>
 #include <boost/spirit/include/phoenix_core.hpp>
@@ -7,7 +7,7 @@
 
 
 namespace swatch {
-namespace mp7 {
+namespace core {
 namespace toolbox {
 
 // --------------------------------------------------------
@@ -39,6 +39,6 @@ void IntListGrammar::push_back_range(std::vector<int>& v, int aFirst, int aLast)
 
 
 } // namespace toolbox 
-} // namespace mp7 
+} // namespace core 
 } // namespace swatch
 

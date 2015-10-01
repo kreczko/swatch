@@ -12,7 +12,7 @@
 #include <boost/spirit/include/qi_grammar.hpp>
 
 namespace swatch {
-namespace mp7 {
+namespace core {
 namespace toolbox {
 
 struct IntListGrammar : boost::spirit::qi::grammar<std::string::const_iterator, std::vector<int>(), boost::spirit::ascii::space_type >
@@ -29,7 +29,7 @@ struct IntListGrammar : boost::spirit::qi::grammar<std::string::const_iterator, 
 };
 
 } // namespace tools
-} // namespace mp7
+} // namespace core
 } // namespace swatch
 
 

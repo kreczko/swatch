@@ -5,6 +5,7 @@
  */
 
 #include "swatch/system/DaqTTCStub.hpp"
+#include "swatch/logger/Log.hpp"
 
 
 #include <ostream>
@@ -25,6 +26,7 @@ std::ostream& operator<<(std::ostream& os, const swatch::system::DaqTTCStub& sd 
        << "   - Crate ID = " << sd.crate << "\n"
        << "   - Crate Slot = " << sd.slot 
        << "   - FED ID = " << sd.fedId << "\n"
+       << "   - AMC SLOTS = " << swatch::logger::shortVecFmt(sd.amcSlots)
        << std::flush;
 
     return os;

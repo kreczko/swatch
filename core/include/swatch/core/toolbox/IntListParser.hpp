@@ -12,7 +12,7 @@
 #include <string>
 
 namespace swatch {
-namespace mp7 {
+namespace core {
 namespace toolbox {
 
 struct IntListParser {
@@ -24,7 +24,7 @@ struct UIntListParser {
 };
 
 } // namespace tools
-} // namespace mp7
+} // namespace core
 } // namespace swatch
 
 

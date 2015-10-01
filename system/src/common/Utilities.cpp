@@ -35,19 +35,23 @@ treeToCrateStub(const boost::property_tree::ptree& t) {
 //---
 swatch::system::DaqTTCStub
 treeToDaqTTCStub(const boost::property_tree::ptree& t) {
-    DaqTTCStub astub(t.get<std::string>("NAME"));
+    DaqTTCStub aStub(t.get<std::string>("NAME"));
 
-    astub.creator        = t.get<std::string>("CREATOR");
-    astub.role           = t.get<std::string>("ROLE");
-    astub.uriT1          = t.get<std::string>("URI T1");
-    astub.addressTableT1 = t.get<std::string>("ADDRESS TABLE T1"); // FIXME
-    astub.uriT2          = t.get<std::string>("URI T2");
-    astub.addressTableT2 = t.get<std::string>("ADDRESS TABLE T2"); // FIXME
-    astub.crate          = t.get<std::string>("CRATE NAME");
-    astub.slot           = t.get<uint32_t>("CRATE SLOT");
-    astub.fedId          = t.get<uint16_t>("FED ID");
-
-    return astub;
+    aStub.creator        = t.get<std::string>("CREATOR");
+    aStub.role           = t.get<std::string>("ROLE");
+    aStub.uriT1          = t.get<std::string>("URI T1");
+    aStub.addressTableT1 = t.get<std::string>("ADDRESS TABLE T1"); // FIXME
+    aStub.uriT2          = t.get<std::string>("URI T2");
+    aStub.addressTableT2 = t.get<std::string>("ADDRESS TABLE T2"); // FIXME
+    aStub.crate          = t.get<std::string>("CRATE NAME");
+    aStub.slot           = t.get<uint32_t>("CRATE SLOT");
+    aStub.fedId          = t.get<uint16_t>("FED ID");
+    BOOST_FOREACH( const auto &v, t.get_child("AMC SLOTS")) {
+      aStub.amcSlots.emplace_back(
+        v.second.get_value<uint32_t>()
+      );
+    }
+    return aStub;
 }
 
 //---

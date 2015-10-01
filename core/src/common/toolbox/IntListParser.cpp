@@ -6,13 +6,13 @@
  */
 
 
-#include "swatch/mp7/toolbox/IntListParser.hpp"
+#include "swatch/core/toolbox/IntListParser.hpp"
 
 // SWATCH Headers
-#include "swatch/mp7/toolbox/IntListGrammar.hpp"
+#include "swatch/core/toolbox/IntListGrammar.hpp"
 
 namespace swatch {
-namespace mp7 {
+namespace core {
 namespace toolbox {
 
 // --------------------------------------------------------
@@ -50,5 +50,5 @@ UIntListParser::parse(const std::string& aStringList) {
 }
 
 } // namespace toolbox 
-} // namespace mp7 
+} // namespace core 
 } // namespace swatch

@@ -11,6 +11,7 @@
 // C++ headers
 #include <iosfwd>
 #include <stdint.h>
+#include <vector>
 
 // SWATCH headers
 #include "swatch/core/AbstractStub.hpp"
@@ -56,6 +57,8 @@ public:
   //! ID for this FED
   uint16_t fedId;
 
+  //! Connected backplane links
+  std::vector<uint32_t> amcSlots;
 };
 
 
