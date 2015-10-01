@@ -12,7 +12,6 @@
 // Swatch Headers
 #include "swatch/system/DaqTTCManager.hpp"
 
-
 // Forward declaration
 namespace amc13 {
 class AMC13;
@@ -21,40 +20,34 @@ class AMC13;
 namespace swatch {
 namespace amc13 {
 
+class TTCInterface;
+
 class AMC13Manager : public swatch::system::DaqTTCManager {
 public:
-    AMC13Manager( const swatch::core::AbstractStub& aStub );
-    ~AMC13Manager();
-    
-//    virtual void reset();
-    
-//    virtual void configureClock(const std::string& mode);
+  AMC13Manager(const swatch::core::AbstractStub& aStub);
+  ~AMC13Manager();
 
-//    virtual void enableTTC(const std::vector<uint32_t>& aSlots);
-
-    ::amc13::AMC13& driver() { return *driver_; }
-
-    /*
-    virtual double ttcClockFreq() const;
-    
-    virtual uint32_t ttcBC0Counter() const;
-    
-    virtual uint32_t ttcBC0Errors() const;
-    
-    virtual uint32_t ttcSingleBitErrors() const;
-    
-    virtual uint32_t ttcDoubleBitErrors() const;
-    */
+  ::amc13::AMC13& driver() {
+    return *mDriver;
+  }
 
 protected:
-    virtual void retrieveMetricValues();
-    
-private:
-    ::amc13::AMC13* driver_;
 
-    swatch::core::Metric<uint32_t>& fwVersionT1_;
-    swatch::core::Metric<uint32_t>& fwVersionT2_;
+  virtual void retrieveMetricValues();
+
+  //! Register the supplied (heap-allocated) TTC interface in this processor; the processor base class takes ownership of the TTC interface instance.
+  TTCInterface& registerInterface( TTCInterface* aTTCInterface );
+
+private:
+  ::amc13::AMC13* mDriver;
+
+  TTCInterface* mTTC;
+
+  swatch::core::Metric<uint32_t>& mFwVersionT1;
+  swatch::core::Metric<uint32_t>& mFwVersionT2_;
 };
+
+DEFINE_SWATCH_EXCEPTION(DaqTTCManagerInterfaceAlreadyDefined);
 
 } // namespace amc13
 } // namespace swatch

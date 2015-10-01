@@ -35,10 +35,19 @@ public:
     
 };
 
-class ConfigureCommand : public swatch::core::Command {
+class ConfigureTTCCommand : public swatch::core::Command {
 public:
-    ConfigureCommand(const std::string& aId) ;
-    virtual ~ConfigureCommand();
+    ConfigureTTCCommand(const std::string& aId) ;
+    virtual ~ConfigureTTCCommand();
+    
+    virtual State code(const core::XParameterSet& params);
+
+};
+
+class ConfigureDAQCommand : public swatch::core::Command {
+public:
+    ConfigureDAQCommand(const std::string& aId) ;
+    virtual ~ConfigureDAQCommand();
     
     virtual State code(const core::XParameterSet& params);
 

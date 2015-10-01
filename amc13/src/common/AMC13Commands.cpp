@@ -21,6 +21,9 @@
 // AMC13 Headers
 #include "amc13/AMC13.hh"
 
+// Boost Headers
+#include <boost/foreach.hpp>
+
 
 namespace swlo = swatch::logger;
 
@@ -78,14 +81,6 @@ core::Command::State RebootCommand::code(const core::XParameterSet& params) {
 //---
 ResetCommand::ResetCommand(const std::string& aId) :
   Command(aId, xdata::Integer()) {
- 
-  // TTC orbit counter encoding
-  registerParameter("resyncCmd", xdata::UnsignedInteger(0x4));
-  // TTC Resync encoding
-  registerParameter("ocrCmd", xdata::UnsignedInteger(0x8));
-  // Bunch counter reset offset
-  registerParameter("bcnOffset", xdata::UnsignedInteger(0xdec-24));
-
 }
 
 
@@ -100,10 +95,6 @@ core::Command::State ResetCommand::code(const core::XParameterSet& params) {
 
     AMC13Manager* amc13mgr = getParent<AMC13Manager>();
    
-    uint32_t resyncCmd = params.get<xdata::UnsignedInteger>("resyncCmd").value_;
-    uint32_t ocrCmd    = params.get<xdata::UnsignedInteger>("ocrCmd").value_;
-    uint32_t bcnOffset = params.get<xdata::UnsignedInteger>("bcnOffset").value_;
-
     ::amc13::AMC13& board = amc13mgr->driver();
     
     // Reset T1 chip
@@ -120,21 +111,15 @@ core::Command::State ResetCommand::code(const core::XParameterSet& params) {
     
     // Disable AMC13-AMC connection
     board.AMCInputEnable(0);
-    
-    // Bunch counter offset
-    board.setBcnOffset(bcnOffset);
-
-    // configure TTC commands
-    board.setOcrCommand(ocrCmd);
-
-    // Replace with python bindings when they come out...
-    board.write(::amc13::AMC13Simple::T1,"CONF.TTC.RESYNC.COMMAND",resyncCmd); 
-    
+        
     // Disable any TTS mask
     board.ttsDisableMask(0x0);
-    
+
     // Disable local triggers
     board.localTtcSignalEnable(false);
+    
+    // Disable fake data generation
+    board.fakeDataEnable(false);
     
     // Disable monitor buffer backpressure
     board.monBufBackPressEnable(false);
@@ -145,29 +130,76 @@ core::Command::State ResetCommand::code(const core::XParameterSet& params) {
     return kDone;
 }
 
-// --------------------------------------------------------
-ConfigureCommand::ConfigureCommand(const std::string& aId) :
-core::Command(aId, xdata::Integer()) {
-  // slots, fedId, slink, localTtc=False
-  // Fed id
-  registerParameter("fedId", xdata::UnsignedInteger(0xfff));
-  // Slinks
-  registerParameter("slinkMask", xdata::UnsignedInteger(0x0));
+
+//---
+ConfigureTTCCommand::ConfigureTTCCommand(const std::string& aId) :
+  Command(aId, xdata::Integer()) {
+ 
+  // TTC orbit counter encoding
+  registerParameter("resyncCmd", xdata::UnsignedInteger(0x4));
+  // TTC Resync encoding
+  registerParameter("ocrCmd", xdata::UnsignedInteger(0x8));
   // Local ttc configuration
   registerParameter("localTTC", xdata::Boolean(false));
 }
 
+
+//---
+ConfigureTTCCommand::~ConfigureTTCCommand() {
+}
+
+
+//---
+core::Command::State
+ConfigureTTCCommand::code(const core::XParameterSet& params) {
+
+    AMC13Manager* amc13mgr = getParent<AMC13Manager>();
+   
+    uint32_t resyncCmd = params.get<xdata::UnsignedInteger>("resyncCmd").value_;
+    uint32_t ocrCmd    = params.get<xdata::UnsignedInteger>("ocrCmd").value_;
+    uint32_t localTTC = params.get<xdata::Boolean>("localTTC").value_;
+
+    ::amc13::AMC13& board = amc13mgr->driver();
+    
+    // configure TTC commands
+    board.setOcrCommand(ocrCmd);
+    board.write(::amc13::AMC13Simple::T1,"CONF.TTC.OCR_MASK",0x0);
+
+    // Replace with python bindings when they come out...
+    board.write(::amc13::AMC13Simple::T1,"CONF.TTC.RESYNC.COMMAND",resyncCmd);
+    board.write(::amc13::AMC13Simple::T1,"CONF.TTC.RESYNC.MASK",0x0);
+    
+    // Do we need this in this command?
+    if ( localTTC ) board.localTtcSignalEnable(true);
+  
+    // activate TTC output to all AMCs
+    board.enableAllTTC();
+
+    return kDone;
+}
+
+
 // --------------------------------------------------------
-ConfigureCommand::~ConfigureCommand() {
+ConfigureDAQCommand::ConfigureDAQCommand(const std::string& aId) :
+core::Command(aId, xdata::Integer()) {
+  // slots, fedId, slink, localTtc=False
+  // Slinks
+  registerParameter("slinkMask", xdata::UnsignedInteger(0x0));
+  // Bunch counter reset offset
+  registerParameter("bcnOffset", xdata::UnsignedInteger(0xdec-24));
+}
+
+// --------------------------------------------------------
+ConfigureDAQCommand::~ConfigureDAQCommand() {
 
 }
 
+// --------------------------------------------------------
 core::Command::State 
-ConfigureCommand::code(const core::XParameterSet& params) {
+ConfigureDAQCommand::code(const core::XParameterSet& params) {
 
-  uint32_t fedId = params.get<xdata::UnsignedInteger>("fedId").value_;
   uint32_t slinkMask = params.get<xdata::UnsignedInteger>("slinkMask").value_;
-  uint32_t localTTC = params.get<xdata::UnsignedInteger>("localTTC").value_;
+  uint32_t bcnOffset = params.get<xdata::UnsignedInteger>("bcnOffset").value_;
   
   AMC13Manager* amc13mgr = getParent<AMC13Manager>();
 
@@ -175,11 +207,13 @@ ConfigureCommand::code(const core::XParameterSet& params) {
 
   // TODO: replace with a proper parameters
   uint32_t bitmask = 0x0;
+  BOOST_FOREACH( uint32_t s, amc13mgr->getStub().amcSlots) {
+    bitmask |= ( 1<< (s-1) );
+  }
   board.AMCInputEnable(bitmask);
   
-  // FIXME: Take fedId from stub?
   // Set FED ID
-  board.setFEDid(fedId);
+  board.setFEDid(amc13mgr->getStub().fedId);
   
   // Enable SFPs
   board.sfpOutputEnable(slinkMask);
@@ -187,25 +221,31 @@ ConfigureCommand::code(const core::XParameterSet& params) {
   // Enable daq link if any of the SFPs is enabled
   board.daqLinkEnable( slinkMask != 0);
   
+  // Bunch counter offset
+  board.setBcnOffset(bcnOffset);
+
   // Reset counters
   board.resetCounters();
 
   // Reset T1, just in case
   board.reset(::amc13::AMC13Simple::T1);
 
-  // Do we need this in this command?
-  if ( localTTC ) board.localTtcSignalEnable(true);
-
   return kDone;
 }
 
+
+// --------------------------------------------------------
 StartCommand::StartCommand(const std::string& aId) :
 core::Command(aId, xdata::Integer()) {
 }
 
+
+// --------------------------------------------------------
 StartCommand::~StartCommand() {
 }
 
+
+// --------------------------------------------------------
 core::Command::State
 StartCommand::code(const core::XParameterSet& params) {
   getParent<AMC13Manager>()->driver().startRun();
@@ -213,15 +253,20 @@ StartCommand::code(const core::XParameterSet& params) {
   return kDone;
 }
 
+
+// --------------------------------------------------------
 StopCommand::StopCommand(const std::string& aId) :
 core::Command(aId, xdata::Integer()) {
 
 }
 
+// --------------------------------------------------------
 StopCommand::~StopCommand() {
 
 }
 
+
+// --------------------------------------------------------
 core::Command::State
 StopCommand::code(const core::XParameterSet& params) {
   getParent<AMC13Manager>()->driver().endRun();

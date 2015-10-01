@@ -65,7 +65,7 @@ MP7Processor::MP7Processor(const swatch::core::AbstractStub& aStub) :
     
     // Build subcomponents
     registerInterface( new MP7TTCInterface( *driver_ ) ); 
-    registerInterface( new MP7ReadoutInterface(*driver_) );
+    registerInterface( new MP7ReadoutInterface( *driver_) );
     registerInterface( new swpro::PortCollection() );
     
     // Add input and output ports

@@ -41,54 +41,10 @@ DummyAMC13Manager::DummyAMC13Manager( const swatch::core::AbstractStub& aStub ) 
 }
 
 
-DummyAMC13Manager::~DummyAMC13Manager()
-{
+DummyAMC13Manager::~DummyAMC13Manager() {
 }
 
 
-void
-DummyAMC13Manager::reset() {
-}
-
-
-void
-DummyAMC13Manager::enableTTC(const std::vector<uint32_t>& aSlots) {
-    
-    std::cout << "Enabling slots ";
-    BOOST_FOREACH( uint32_t s, aSlots ) {
-        std::cout << s << " ";
-    }
-    std::cout << std::endl;
-    
-}
-
-
-void DummyAMC13Manager::configureClock(const std::string& mode) {
-
-}
-
-
-/*
-double DummyAMC13Manager::ttcClockFreq() const {
-  return 4e7;
-}
-
-uint32_t DummyAMC13Manager::ttcBC0Counter() const {
-  return 42;
-}
-
-uint32_t DummyAMC13Manager::ttcBC0Errors() const {
-  return 0;
-}    
-
-uint32_t DummyAMC13Manager::ttcSingleBitErrors() const {
-  return 0;
-}    
-
-uint32_t DummyAMC13Manager::ttcDoubleBitErrors() const {
-  return 0;
-}
-*/
 
 
 void DummyAMC13Manager::retrieveMetricValues() {
