@@ -62,12 +62,12 @@ namespace swatch
 //        */
 //        bool preload();
 
-        /**
-          Pure virtual method which derived classes must implement to create an xdata table from a given ID
-          @param aId the ID of the table to create
-          @return the new xdata table
-        */
-        virtual tTable getTable ( const std::string& aKey , const std::string& aId ) = 0;
+//        /**
+//          Pure virtual method which derived classes must implement to create an xdata table from a given ID
+//          @param aId the ID of the table to create
+//          @return the new xdata table
+//        */
+//        virtual tTable getTable ( const std::string& aKey , const std::string& aId ) = 0;
 
         /**
           Method to retreive configuration data from a specified path

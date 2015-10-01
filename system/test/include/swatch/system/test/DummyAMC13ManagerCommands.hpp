@@ -17,7 +17,8 @@ public:
   
   void sleep(const core::XParameterSet& aParams);
 };
-    
+
+
 class DummyAMC13RebootCommand : public DummyAMC13Command {
 public:
   DummyAMC13RebootCommand(const std::string& aId);
@@ -25,7 +26,8 @@ public:
         
   virtual State code(const swatch::core::XParameterSet& );
 };
-    
+
+
 class DummyAMC13ResetCommand : public DummyAMC13Command {
 public:
   DummyAMC13ResetCommand(const std::string& aId);
@@ -33,6 +35,7 @@ public:
         
   virtual State code(const swatch::core::XParameterSet& );
 };
+
 
 class DummyAMC13ConfigureDaqCommand : public DummyAMC13Command {
 public:
@@ -42,10 +45,20 @@ public:
   virtual State code(const swatch::core::XParameterSet& params);
 };
 
-class DummyAMC13EnableDaqCommand : public DummyAMC13Command {
+
+class DummyAMC13StartDaqCommand : public DummyAMC13Command {
 public:
-  DummyAMC13EnableDaqCommand(const std::string& aId);
-  ~DummyAMC13EnableDaqCommand();
+  DummyAMC13StartDaqCommand(const std::string& aId);
+  ~DummyAMC13StartDaqCommand();
+  
+  virtual State code(const swatch::core::XParameterSet& params);
+};
+
+
+class DummyAMC13StopDaqCommand : public DummyAMC13Command {
+public:
+  DummyAMC13StopDaqCommand(const std::string& aId);
+  ~DummyAMC13StopDaqCommand();
   
   virtual State code(const swatch::core::XParameterSet& params);
 };

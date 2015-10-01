@@ -17,7 +17,6 @@
 
 // SWATCH MP7 headers
 #include "swatch/mp7/MP7Commands.hpp"
-#include "swatch/mp7/MP7Operations.hpp"
 #include "swatch/mp7/MP7Ports.hpp"
 #include "swatch/mp7/MP7ReadoutInterface.hpp"
 #include "swatch/mp7/MP7TTCInterface.hpp"

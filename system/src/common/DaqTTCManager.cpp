@@ -9,10 +9,50 @@
 
 // SWATCH headers
 #include "swatch/core/MetricConditions.hpp"
+#include "swatch/core/StateMachine.hpp"
 
 
 namespace swatch {
 namespace system {
+
+const std::string RunControlFSM::kId = "runControl";
+const std::string RunControlFSM::kStateInitial = "HALTED";
+const std::string RunControlFSM::kStateError = "ERROR";
+const std::string RunControlFSM::kStateClockOK = "clockOK";
+const std::string RunControlFSM::kStateCfg = "configured";
+const std::string RunControlFSM::kStateRunning = "running";
+const std::string RunControlFSM::kStatePaused = "paused";
+
+const std::string RunControlFSM::kTrColdReset = "coldReset";
+const std::string RunControlFSM::kTrClockSetup = "clockSetup";
+const std::string RunControlFSM::kTrCfgDaq = "cfgDaq";
+const std::string RunControlFSM::kTrStart = "start";
+const std::string RunControlFSM::kTrPause = "pause";
+const std::string RunControlFSM::kTrResume = "resume";
+const std::string RunControlFSM::kTrStop = "stop";
+
+RunControlFSM::RunControlFSM(core::StateMachine& aFSM) : 
+  fsm( addStates(aFSM) ),
+  coldReset( fsm.addTransition(kTrColdReset, kStateInitial, kStateInitial) ),
+  clockSetup( fsm.addTransition(kTrClockSetup, kStateInitial, kStateClockOK) ),
+  cfgDaq( fsm.addTransition(kTrCfgDaq, kStateClockOK, kStateCfg)),
+  start( fsm.addTransition(kTrStart, kStateCfg, kStateRunning) ),
+  pause( fsm.addTransition(kTrPause, kStateRunning, kStatePaused) ),
+  resume( fsm.addTransition(kTrResume, kStatePaused, kStateRunning) ),
+  stopFromPaused( fsm.addTransition(kTrStop, kStatePaused, kStateCfg) ),
+  stopFromRunning( fsm.addTransition(kTrStop, kStateRunning, kStateCfg) )
+{
+}
+
+
+core::StateMachine& RunControlFSM::addStates(core::StateMachine& aFSM)
+{
+  aFSM.addState(kStateClockOK);
+  aFSM.addState(kStateCfg);
+  aFSM.addState(kStateRunning);
+  aFSM.addState(kStatePaused);
+  return aFSM;
+}
 
 
 DaqTTCManager::DaqTTCManager(const swatch::core::AbstractStub& aStub ) : 
@@ -23,7 +63,9 @@ DaqTTCManager::DaqTTCManager(const swatch::core::AbstractStub& aStub ) :
   ttcMetricBC0Errors_( registerMetric<uint32_t>("bc0Errors", core::GreaterThanCondition<uint32_t>(0)) ),
   ttcMetricSingleBitErrors_( registerMetric<uint32_t>("ttcSingleBitErrors", core::GreaterThanCondition<uint32_t>(0)) ),
   ttcMetricDoubleBitErrors_( registerMetric<uint32_t>("ttcDoubleBitErrors", core::GreaterThanCondition<uint32_t>(0)) ),
-  daqMetricFedId_( registerMetric<uint16_t>("fedId", core::NotEqualCondition<uint16_t>(stub_.fedId)) ) {
+  daqMetricFedId_( registerMetric<uint16_t>("fedId", core::NotEqualCondition<uint16_t>(stub_.fedId)) ),
+  mRunControl( registerStateMachine(RunControlFSM::kId, RunControlFSM::kStateInitial, RunControlFSM::kStateError) )
+{
 }
 
 

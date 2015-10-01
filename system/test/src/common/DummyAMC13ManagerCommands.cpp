@@ -119,20 +119,20 @@ core::Command::State DummyAMC13ConfigureDaqCommand::code(const swatch::core::XPa
 }
 
 
-/////////////////////////////
-/*  DummyEnableDaqCommand  */
+////////////////////////////
+/*  DummyStartDaqCommand  */
 
-DummyAMC13EnableDaqCommand::DummyAMC13EnableDaqCommand(const std::string& aId) : 
+DummyAMC13StartDaqCommand::DummyAMC13StartDaqCommand(const std::string& aId) : 
   DummyAMC13Command(aId)
 {
   registerParameter("daqErrorTimeout", xdata::UnsignedInteger(60));
 }
 
-DummyAMC13EnableDaqCommand::~DummyAMC13EnableDaqCommand()
+DummyAMC13StartDaqCommand::~DummyAMC13StartDaqCommand()
 {
 }
 
-core::Command::State DummyAMC13EnableDaqCommand::code(const swatch::core::XParameterSet& aParams)
+core::Command::State DummyAMC13StartDaqCommand::code(const swatch::core::XParameterSet& aParams)
 {
   sleep(aParams);
 
@@ -140,8 +140,28 @@ core::Command::State DummyAMC13EnableDaqCommand::code(const swatch::core::XParam
   
   size_t timeout = aParams.get<xdata::UnsignedInteger>("daqErrorTimeout").value_;
 
-  driver.enableDaq(timeout);
+  driver.startDaq(timeout);
   
+  return kDone;
+}
+
+
+////////////////////////////
+/*  DummyStartDaqCommand  */
+
+DummyAMC13StopDaqCommand::DummyAMC13StopDaqCommand(const std::string& aId) : 
+  DummyAMC13Command(aId)
+{
+}
+
+DummyAMC13StopDaqCommand::~DummyAMC13StopDaqCommand()
+{
+}
+
+core::Command::State DummyAMC13StopDaqCommand::code(const swatch::core::XParameterSet& aParams)
+{
+  sleep(aParams);
+
   return kDone;
 }
 

@@ -39,18 +39,11 @@ class CommandStatus;
 class Command : public Functionoid {
 public:
 
-    enum State {
-        kInitial,
-        kScheduled,
-        kRunning,
-        kError,
-        kWarning,
-        kDone,
-    }; 
-
     virtual ~Command();
 
-    const swatch::core::ActionableObject& getResource() const;
+    const ActionableObject& getResource() const;
+
+    ActionableObject& getResource();
 
     /** 
      * Run this command, using the supplied set of parameters
@@ -69,7 +62,7 @@ public:
     void exec(const boost::shared_ptr<ActionableObject::BusyGuard>& aGuard, const XParameterSet& aParams , const bool& aUseThreadPool = true );
 
     //! Returns current state of this command
-    State getState() const;
+    ActionStatus::State getState() const;
 
     //! Returns snapshot of this command's current status (state flag value, running time, progress fraction, status message and result) as a CommandStatus instance
     CommandStatus getStatus() const;
@@ -83,7 +76,7 @@ public:
     
 protected:
     //! user-defined code for execution
-    virtual State code( const XParameterSet& params ) = 0;
+    virtual ActionStatus::State code( const XParameterSet& params ) = 0;
 
     template<typename T>
     Command( const std::string& aId , const T& aDefault );
@@ -120,7 +113,7 @@ private:
 
     xdata::Serializable* const defaultResult_;
 
-    State state_;
+    ActionStatus::State state_;
 
     timeval execStartTime_;
     timeval execEndTime_;
@@ -144,22 +137,10 @@ private:
     ResultXCloner resultCloner_;
 };
 
-std::ostream& operator<<(std::ostream& out, swatch::core::Command::State s);
-
 
 //! Provides a snapshot of the progress/status of a swatch::core::Command
-class CommandStatus {
-    
+class CommandStatus : public ActionStatus {
 public:
-  
-    //! Returns the path of the command
-    const std::string& getCommandPath() const;
-    
-    //! Returns state of command execution (scheduled, running, warning, error, done, ...)
-    Command::State getState() const;
-    
-    //! Returns command's running time in seconds
-    float getRunningTime() const;
 
     //! Returns fractional progress of command; range [0,1]
     float getProgress() const;
@@ -176,11 +157,8 @@ public:
     std::string getResultAsString() const;
     
 private:
-    CommandStatus(const std::string& aPath, Command::State aState, float aRunningTime, float aProgress, const std::string& aStatusMsg, const ReadOnlyXParameterSet& aParamSet, const boost::shared_ptr<xdata::Serializable>& aResult);
+    CommandStatus(const std::string& aPath, ActionStatus::State aState, float aRunningTime, float aProgress, const std::string& aStatusMsg, const ReadOnlyXParameterSet& aParamSet, const boost::shared_ptr<xdata::Serializable>& aResult);
 
-    std::string path_;
-    Command::State state_;
-    float runningTime_;
     float progress_;
     std::string statusMsg_;
     ReadOnlyXParameterSet params_;

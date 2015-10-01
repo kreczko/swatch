@@ -9,12 +9,12 @@
 #include "swatch/logger/Log.hpp"
 #include "swatch/core/CommandSequence.hpp"
 #include "swatch/core/Factory.hpp"
+#include "swatch/core/StateMachine.hpp"
 #include "swatch/processor/PortCollection.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
 #include "swatch/processor/test/DummyAlgo.hpp"
 #include "swatch/processor/test/DummyDriver.hpp"
 #include "swatch/processor/test/DummyProcessorCommands.hpp"
-#include "swatch/processor/test/DummyProcessorOperation.hpp"
 #include "swatch/processor/test/DummyReadout.hpp"
 #include "swatch/processor/test/DummyRxPort.hpp"
 #include "swatch/processor/test/DummyTxPort.hpp"
@@ -67,12 +67,16 @@ DummyProcessor::DummyProcessor(const swatch::core::AbstractStub& aStub) :
   core::Command& cfgAlgo = registerFunctionoid<DummyConfigureAlgoCommand>("configureAlgo");
 
   // 3) Command sequences
-  registerCommandSequence("configureStep1",reboot).then(reset)(cfgDaq)(cfgTx);
-  registerCommandSequence("configureStep2", cfgRx);
-  registerCommandSequence("configureStep3", cfgAlgo);
+  core::CommandSequence& cfgSeq = registerCommandSequence("configSeq1",reboot).then(reset).then(cfgDaq).then(cfgTx);
+  core::CommandSequence& cfgRxSeq = registerCommandSequence("configRxSeq", cfgRx);
+  core::CommandSequence& cfgAlgoSeq = registerCommandSequence("configAlgoSeq", cfgAlgo);
 
   // 4) Operations
-  registerFunctionoid<DummyProcessorOperation>("testing");
+  mRunControl.coldReset.add(reboot);
+  mRunControl.setup.add(cfgSeq);
+  mRunControl.preconfigure.add(cfgAlgoSeq);
+  mRunControl.connect.add(cfgRxSeq);
+  mRunControl.fsm.addTransition("dummyNoOp", RunControlFSM::kStateCfg, RunControlFSM::kStateInitial);
 }
 
 

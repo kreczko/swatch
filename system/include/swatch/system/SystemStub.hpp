@@ -28,11 +28,16 @@ public:
   SystemStub(const std::string& aId) :
     AbstractStub(aId) { }
 
+  SystemStub(const std::string& aId, const std::string& aCreator) :
+    AbstractStub(aId),
+    creator(aCreator)
+  { }
+
   virtual ~SystemStub() { }
 
-  //! Description of the crate
+  //! Name of system class
   std::string creator;
-
+  
   std::vector<swatch::system::CrateStub> crates;
 
   std::vector<swatch::processor::ProcessorStub> processors;

@@ -6,7 +6,7 @@
  */
 
 #include "swatch/mp7/MP7Commands.hpp"
-#include "swatch/mp7/toolbox/IntListParser.hpp"
+#include "swatch/core/toolbox/IntListParser.hpp"
 
 // XDAQ Headers
 #include "xdata/Boolean.h"
@@ -45,7 +45,7 @@ MP7PortsCommand::channelsMgr( const core::XParameterSet& params ) {
   std::string channelMask = params.get<xdata::String>(kPortSelection).value_;
   
   // TODO: what if the mask is empty?
-  std::vector<uint32_t> mask = toolbox::UIntListParser::parse(channelMask);
+  std::vector<uint32_t> mask = core::toolbox::UIntListParser::parse(channelMask);
   
   MP7Processor* p = getParent<MP7Processor>();
   

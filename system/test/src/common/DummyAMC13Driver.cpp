@@ -43,7 +43,7 @@ void DummyAMC13Driver::reboot()
 {
   timestampReset_ = ptime();
   timestampConfigureDaq_ = ptime();
-  timestampEnableDaq_ = ptime();
+  timestampStartDaq_ = ptime();
   
   fedId_ = 0;
 }
@@ -55,7 +55,7 @@ void DummyAMC13Driver::reset(size_t errorTime)
   errorTimeClk_ = errorTime;
 
   timestampConfigureDaq_ = ptime();
-  timestampEnableDaq_ = ptime();
+  timestampStartDaq_ = ptime();
   fedId_ = 0;
 }
 
@@ -71,14 +71,14 @@ void DummyAMC13Driver::configureDaq(uint16_t fedId)
 }
 
 
-void DummyAMC13Driver::enableDaq(size_t errorTime)
+void DummyAMC13Driver::startDaq(size_t errorTime)
 {
   if (timestampReset_.is_not_a_date_time() )
     throw std::runtime_error("Couldn't enable daq - no clock!");
   else if (timestampConfigureDaq_.is_not_a_date_time())
     throw std::runtime_error("Couldn't enable daq - my daq block isn't configured!");
   else {
-    timestampEnableDaq_ = boost::posix_time::microsec_clock::universal_time();
+    timestampStartDaq_ = boost::posix_time::microsec_clock::universal_time();
     errorTimeDaq_ = errorTime;
   }
 }

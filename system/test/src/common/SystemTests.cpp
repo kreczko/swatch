@@ -44,8 +44,8 @@ using swatch::processor::test::DummyProcessor;
 
 struct Params {
     Params() :
-    sys("mysystem"),
-    empty("empty"),
+    sysStub("mysystem"),
+    emptyStub("empty"),
 
      cA("crateA"),
      cB("crateB"),
@@ -59,7 +59,7 @@ struct Params {
       
         // based on swatch/test/etc/testdb.json
 //        ps_system.insert("name", xdata::String("calol2"));
-
+        sysStub.creator = "swatch::system::System";
         
         cA.location = "MyCrateLocation";
         cA.description = "MyCrateDescription";
@@ -67,7 +67,7 @@ struct Params {
         cB.location = "AnotherLocation";
         cB.description = "AnotherDescription";
 
-        sys.crates += cA, cB;
+        sysStub.crates += cA, cB;
         
         // Define a processor template
         swpro::ProcessorStub pTmpl("template");
@@ -96,7 +96,7 @@ struct Params {
         p3.slot = 3;
         p3.uri = "ipbusudp-2.0://127.0.0.1:50003";
         
-        sys.processors += p1,p2,p3;
+        sysStub.processors += p1,p2,p3;
 
         // swsys::DaqTTCStub dtm("AMC13-1");
 
@@ -109,7 +109,7 @@ struct Params {
         dts.slot    = 13;       
         
 
-        sys.daqttcs += dts;
+        sysStub.daqttcs += dts;
     }
     
     
@@ -118,7 +118,7 @@ struct Params {
     }
 
 
-    swsys::SystemStub sys, empty;
+    swsys::SystemStub sysStub, emptyStub;
     swsys::CrateStub cA, cB;
     swpro::ProcessorStub p1,p2,p3;
     swsys::DaqTTCStub dts;
@@ -131,28 +131,27 @@ BOOST_FIXTURE_TEST_CASE(BuildSystemWithDefaultCreator, Params){
   LOG(kInfo) << "Running SystemTestSuite/BuildSystemWithDefaultCreator";
 //    swsys::System * system = swsys::SystemFactory::get()->make("swatch::system::SystemLoggingCreator", ps_system.get<xdata::String>("name"), ps_system);
     // swsys::System * system = swco::Factory::get()->make<swsys::System>("swatch::system::SystemLoggingCreator", ps_system.get<xdata::String>("name"), ps_system);
-    swsys::System * system = swco::Factory::get()->make<swsys::System>("swatch::system::SystemLoggingCreator", sys);
-    BOOST_CHECK_EQUAL(system->getId(), "mysystem");
-    BOOST_CHECK_EQUAL(system->getProcessors().size(), size_t(3));
-    BOOST_CHECK_EQUAL(system->getDaqTTC().size(), size_t(1));
+    swsys::System system(sysStub);
+    BOOST_CHECK_EQUAL(system.getId(), "mysystem");
+    BOOST_CHECK_EQUAL(system.getProcessors().size(), size_t(3));
+    BOOST_CHECK_EQUAL(system.getDaqTTC().size(), size_t(1));
     // detailed tests for the content of processors and services
     // should be done in the respective Creator tests.
 }
 
 BOOST_FIXTURE_TEST_CASE(AddCrate, Params) {
   LOG(kInfo) << "Running SystemTestSuite/AddCrate";
-    swsys::Crate * crate = new swsys::Crate(cA);
-    swsys::System * system = new swsys::System(empty);
-    system->add(crate);
+    emptyStub.crates.push_back(cA);
+    swsys::System * system = new swsys::System(emptyStub);
     swsys::Crate * stored_crate = system->getObj<swsys::Crate>("crateA");
-    BOOST_CHECK_EQUAL(crate->getId(), stored_crate->getId() );
+    BOOST_CHECK_EQUAL(cA.id, stored_crate->getId() );
 }
 
 BOOST_FIXTURE_TEST_CASE(AddCrateToMap, Params) {
   LOG(kInfo) << "Running SystemTestSuite/AddCrateToMap";
     swsys::Crate * crate = new swsys::Crate(cA);
-    swsys::System * system = new swsys::System(empty);
-    system->add(crate);
+    emptyStub.crates.push_back(cA);
+    swsys::System * system = new swsys::System(emptyStub);
     swsys::System::CratesMap crates = system->getCrates();
     // check if map contains the object ID
     bool is_crate_in_map = crates.find(crate->getId()) != crates.end();
@@ -160,32 +159,32 @@ BOOST_FIXTURE_TEST_CASE(AddCrateToMap, Params) {
 }
 
 BOOST_FIXTURE_TEST_CASE(AddCrateShouldNotOverwrite, Params) {
-    swsys::Crate * crateA = new swsys::Crate(cA);
-    swsys::Crate * crateAprime = new swsys::Crate(cA);
+  LOG(kInfo) << "Running SystemTestSuite/AddCrateShouldNotOverwrite";
 
+  swpro::ProcessorStub sPro("MP-10");
+  sPro.creator = "swatch::processor::test::DummyProcessor";
+  sPro.crate = "crateA";
+  sPro.slot  = 1;
 
-    swpro::ProcessorStub sPro("MP-10");
-    sPro.crate = "crateA";
-    sPro.slot  = 1;
+  emptyStub.crates.push_back(cA);
+  emptyStub.processors.push_back(sPro);
+  swsys::System sys(emptyStub);
 
+  const swsys::Crate* crateA = sys.getCrates().find(cA.id)->second;
+  BOOST_CHECK_EQUAL(crateA->getPopulatedSlots().size(), size_t(1));
 
-
-    DummyProcessor* p = new DummyProcessor(sPro);
-    crateA->add(p);
-    BOOST_CHECK_EQUAL(crateA->getPopulatedSlots().size(), size_t(1));
-
-    swsys::System * system = new swsys::System(empty);
-    system->add(crateA);
-    BOOST_CHECK_THROW(system->add(crateAprime), std::runtime_error);
+  emptyStub.crates.push_back(cA);
+  BOOST_CHECK_THROW(swsys::System lSystem(emptyStub), std::runtime_error);
 }
 
+/*
 BOOST_FIXTURE_TEST_CASE(AddCrateNULLPointerShouldThrowException, Params) {
-    swsys::System * system = new swsys::System(empty);
+    swsys::System * system = new swsys::System(emptyStub);
     BOOST_CHECK_THROW(system->add((swsys::Crate*) NULL), std::invalid_argument);
 }
 
 BOOST_FIXTURE_TEST_CASE(AddProcessorNULLPointerShouldThrowException, Params) {
-    swsys::System * system = new swsys::System(empty);
+    swsys::System * system = new swsys::System(emptyStub);
     BOOST_CHECK_THROW(system->add((swpro::Processor*) NULL), std::invalid_argument);
 }
 
@@ -203,31 +202,29 @@ BOOST_FIXTURE_TEST_CASE(AddLinkNULLPointerShouldThrowException, Params) {
     swsys::System * system = new swsys::System(empty);
     BOOST_CHECK_THROW(system->add((swpro::Link*) NULL), std::invalid_argument);
 }
+ */
+
 
 BOOST_FIXTURE_TEST_CASE(HasCrate, Params) {
-    swsys::Crate * crate = new swsys::Crate(cA);
-    swsys::System * system = new swsys::System(empty);
-    system->add(crate);
+    emptyStub.crates.push_back(cA);
+    swsys::System * system = new swsys::System(emptyStub);
     BOOST_CHECK_EQUAL(system->hasCrate("crateA"), true );
     BOOST_CHECK_EQUAL(system->hasCrate("MyImaginaryCrate"), false );
 }
 
 BOOST_FIXTURE_TEST_CASE(AddAMC13Service, Params) {
   LOG(kInfo) << "Running SystemTestSuite/AddAMC13Service";
-  swsys::DaqTTCManager * amc13 = swco::Factory::get()->make<swsys::DaqTTCManager>(dts.creator,dts);
-  std::string service_name = amc13->getId();
-  swsys::System * system = new swsys::System(empty);
-  // before we can add amc13 we need to add crateA
-  swsys::Crate * crateA = new swsys::Crate(cA);
-  system->add(crateA);
-  BOOST_CHECK_EQUAL(system->getServices().size(), size_t(0));
-  BOOST_CHECK_EQUAL(system->getDaqTTC().size(), size_t(0));
-  system->add(amc13);
-  BOOST_CHECK_EQUAL(system->getServices().size(), size_t(0));
-  BOOST_CHECK_EQUAL(system->getDaqTTC().size(), size_t(1));
 
-  swsys::DaqTTCManager * stored_service = system->getObj<swsys::DaqTTCManager>(service_name);
-  BOOST_CHECK_EQUAL(amc13->getId(), stored_service->getId() );
+  emptyStub.crates.push_back(cA);
+  emptyStub.daqttcs.push_back(dts);
+  swsys::System system(emptyStub);
+
+  BOOST_CHECK_EQUAL(system.getServices().size(), size_t(0));
+  BOOST_CHECK_EQUAL(system.getDaqTTC().size(), size_t(1));
+
+  swsys::DaqTTCManager * stored_service = system.getObj<swsys::DaqTTCManager>(dts.id);
+  BOOST_REQUIRE( stored_service != NULL );
+  BOOST_CHECK_EQUAL(dts.id, stored_service->getId() );
 }
 
 BOOST_AUTO_TEST_SUITE_END()

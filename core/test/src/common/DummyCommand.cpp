@@ -18,14 +18,17 @@ namespace test {
 
 const xdata::Integer DummyCommand::defaultResult(-1);
 
+const std::string DummyCommand::paramX("x");
+const std::string DummyCommand::paramToDo("todo");
+
 const std::string DummyCommand::finalMsgUseResource("Dummy command successfully used resource");
 const std::string DummyCommand::finalMsgSleep("Dummy command finished sleeping");
  
   
 DummyCommand::DummyCommand(const std::string& aId) :
   Command(aId, defaultResult) {
-  registerParameter("x", xdata::Integer(15));
-  registerParameter("todo", xdata::String(""));
+  registerParameter(paramX, xdata::Integer(15));
+  registerParameter(paramToDo, xdata::String(""));
 }
 
 

@@ -16,13 +16,13 @@ namespace swsys = swatch::system;
 namespace swpro = swatch::processor;
 
 
-SWATCH_REGISTER_CREATOR(swatch::system::SystemLoggingCreator);
+//SWATCH_REGISTER_CREATOR(swatch::system::SystemLoggingCreator);
 
 
 namespace swatch {
 namespace system {
 
-  
+/* 
 swatch::core::Object*
 SystemLoggingCreator::operator()(const swatch::core::AbstractStub& aStub ) {
     LOG(swlog::kNotice) << "SystemLoggingCreator: Building System " << aStub.id;
@@ -43,8 +43,11 @@ SystemLoggingCreator::operator()(const swatch::core::AbstractStub& aStub ) {
     LOG(swlog::kNotice) << "SystemLoggingCreator: Building Links";
     addLinks(sys);
     
+    sys->registerActions();
+    
     return sys;
 }
+*/
 
 
 } // namespace system

@@ -19,7 +19,7 @@ template<typename T>
 Command::Command( const std::string& aId , const T& aDefault ) :
         Functionoid( aId ),
         defaultResult_(new T(aDefault)),
-        state_(kInitial),
+        state_(ActionStatus::kInitial),
         progress_(0.),
         statusMsg_("initialised"),
         result_(),

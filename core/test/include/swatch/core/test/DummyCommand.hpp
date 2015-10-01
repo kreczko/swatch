@@ -26,6 +26,8 @@ public:
   virtual Command::State code( const XParameterSet& params); 
 
   static const xdata::Integer defaultResult;
+  static const std::string paramX;
+  static const std::string paramToDo;
   static const std::string finalMsgUseResource;
   static const std::string finalMsgSleep;
 };

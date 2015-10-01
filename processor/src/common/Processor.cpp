@@ -34,6 +34,7 @@ const uint32_t Processor::NoSlot =  0x7fffffffL;
 Processor::Processor( const swatch::core::AbstractStub& aStub) :
     ActionableObject(aStub.id),
     metricFirmwareVersion_( registerMetric<uint64_t>("firmwareVersion") ),
+    mRunControl( RunControlFSM(*this) ),
     stub_(dynamic_cast<const processor::ProcessorStub&>(aStub)),
     ttc_(NULL),
     readout_(NULL),
@@ -130,6 +131,40 @@ const std::vector<std::string>& Processor::getGateKeeperTables() const
     gateKeeperTables_.push_back(basePath + getStub().hwtype);
   }
   return gateKeeperTables_;
+}
+
+
+//---
+const std::string Processor::RunControlFSM::kId = "runControl";
+const std::string Processor::RunControlFSM::kStateInitial = "initial";
+const std::string Processor::RunControlFSM::kStateError = "error";
+const std::string Processor::RunControlFSM::kStateSync = "synchronised";
+const std::string Processor::RunControlFSM::kStatePreCfg = "preconfigured";
+const std::string Processor::RunControlFSM::kStateCfg = "configured";
+
+const std::string Processor::RunControlFSM::kTrColdReset = "coldReset";
+const std::string Processor::RunControlFSM::kTrSetup = "setup";
+const std::string Processor::RunControlFSM::kTrPreCfg = "preconfigure";
+const std::string Processor::RunControlFSM::kTrConnect = "connect";
+
+//---
+Processor::RunControlFSM::RunControlFSM(Processor& aProc) : 
+  fsm ( createFSM(aProc) ),
+  coldReset ( fsm.addTransition(kTrColdReset, kStateInitial, kStateInitial) ),
+  setup( fsm.addTransition(kTrSetup, kStateInitial, kStateSync ) ),
+  preconfigure( fsm.addTransition(kTrPreCfg, kStateSync, kStatePreCfg) ),
+  connect( fsm.addTransition(kTrConnect, kStatePreCfg, kStateCfg) )
+{  
+}
+
+//---
+core::StateMachine& Processor::RunControlFSM::createFSM(Processor& aProc)
+{
+  core::StateMachine& lOp = aProc.registerStateMachine(kId, kStateInitial, kStateError);
+  lOp.addState(kStateSync);
+  lOp.addState(kStatePreCfg);
+  lOp.addState(kStateCfg);
+  return lOp;
 }
 
 

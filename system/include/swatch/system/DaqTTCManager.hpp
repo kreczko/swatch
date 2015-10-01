@@ -13,11 +13,49 @@
 
 // SWATCH headers
 #include "swatch/core/ActionableObject.hpp"
+#include "swatch/core/StateMachine.hpp"
 #include "swatch/system/DaqTTCStub.hpp"
 
 
 namespace swatch {
 namespace system {
+
+    
+class DaqTTCManager;
+
+
+struct RunControlFSM {
+  static const std::string kId;
+  static const std::string kStateInitial;
+  static const std::string kStateError;
+  static const std::string kStateClockOK;
+  static const std::string kStateCfg;
+  static const std::string kStateRunning;
+  static const std::string kStatePaused;
+
+  static const std::string kTrColdReset;
+  static const std::string kTrClockSetup;
+  static const std::string kTrCfgDaq;
+  static const std::string kTrStart;
+  static const std::string kTrPause;
+  static const std::string kTrResume;
+  static const std::string kTrStop;
+
+  core::StateMachine& fsm;
+  core::StateMachine::Transition& coldReset;
+  core::StateMachine::Transition& clockSetup;    
+  core::StateMachine::Transition& cfgDaq;    
+  core::StateMachine::Transition& start;    
+  core::StateMachine::Transition& pause;    
+  core::StateMachine::Transition& resume;    
+  core::StateMachine::Transition& stopFromPaused;    
+  core::StateMachine::Transition& stopFromRunning;    
+
+  RunControlFSM(core::StateMachine& aFSM);
+  
+private:
+  static core::StateMachine& addStates(core::StateMachine& aFSM);
+};
 
 
 class DaqTTCManager : public core::ActionableObject {
@@ -65,11 +103,14 @@ protected:
     //! Metric for FED ID
     core::Metric<uint16_t>& daqMetricFedId_;
 
+    RunControlFSM mRunControl;
+    
 private:
     DaqTTCManager( const DaqTTCManager& other ); // non copyable
     DaqTTCManager& operator=( const DaqTTCManager& ); // non copyable
 
 };
+
 
 } // namespace system
 } // namespace swatch

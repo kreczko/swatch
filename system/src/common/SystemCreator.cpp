@@ -25,12 +25,13 @@ namespace swco = swatch::core;
 namespace swpro = swatch::processor;
 
 
-SWATCH_REGISTER_CREATOR(swatch::system::SystemCreator);
+//SWATCH_REGISTER_CREATOR(swatch::system::SystemCreator);
 
 
 namespace swatch {
 namespace system {
 
+/*
 //---
 //swatch::system::System*
 swatch::core::Object*
@@ -41,7 +42,10 @@ SystemCreator::operator()(const swatch::core::AbstractStub& aStub) {
     addProcessors(sys);
     addDaqTTCs(sys);
 //    addServices(sys);
-    addLinks(sys);      
+    addLinks(sys);
+
+    sys->registerActions();
+
     return sys;
 }
 
@@ -49,8 +53,16 @@ SystemCreator::operator()(const swatch::core::AbstractStub& aStub) {
 //---
 swatch::system::System*
 SystemCreator::createSystem(const swatch::core::AbstractStub& aStub){
-    System* sys = new System(aStub);
+  try {
+    const SystemStub& sysStub = dynamic_cast<const swatch::system::SystemStub&>(aStub);
+    System* sys = swco::Factory::get()->make<System>(sysStub.className, sysStub);
     return sys;
+  }
+  catch ( swatch::core::exception& xc ) {
+    std::ostringstream xss;
+    xss << "Failed to create System (id: '" << aStub.id << "'):" << std::endl << xc.what();
+    throw SystemCreationFailed(xss.str());
+  }
 }
 
 
@@ -105,17 +117,17 @@ void SystemCreator::addDaqTTCs(System* system) {
   }
 }
 
-/*
-//---
-void SystemCreator::addServices(System* system) {
-  
-  BOOST_FOREACH(auto& sStub, system->getStub().services) {
-    Service* s = swco::Factory::get()->make<Service>(sStub);
-  
-    system->add(s);
-  }
-}
-*/
+
+////---
+//void SystemCreator::addServices(System* system) {
+//  
+//  BOOST_FOREACH(auto& sStub, system->getStub().services) {
+//    Service* s = swco::Factory::get()->make<Service>(sStub);
+//  
+//    system->add(s);
+//  }
+//}
+
 
 
 //---
@@ -136,6 +148,6 @@ void SystemCreator::addLinks(swatch::system::System* system) {
     }
   }
 }
-
+*/
 } // namespace system
 } // namespace swatch

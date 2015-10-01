@@ -40,6 +40,7 @@ using namespace swatch::system::test;
 
 using swatch::processor::test::DummyProcessor;
 
+/*
 struct SystemSetupA {
     SystemSetupA() :
         system(0x0),
@@ -181,3 +182,4 @@ BOOST_AUTO_TEST_CASE(ExploreSystem) {
 } 
 
 BOOST_AUTO_TEST_SUITE_END()
+*/

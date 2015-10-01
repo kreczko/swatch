@@ -33,6 +33,7 @@
 using namespace swatch::logger;
 using swatch::processor::test::DummyProcessor;
 
+/*
 BOOST_AUTO_TEST_SUITE( SystemConstructionTestSuite )
 
 BOOST_AUTO_TEST_CASE(BuildMiniSystem) {// this is not a test
@@ -246,5 +247,5 @@ BOOST_AUTO_TEST_CASE(BuildFullCrate) {
     BOOST_TEST_MESSAGE("Destructor");
     delete lSystem;
 }
-
 BOOST_AUTO_TEST_SUITE_END()
+*/

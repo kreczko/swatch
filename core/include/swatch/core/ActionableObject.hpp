@@ -23,15 +23,49 @@
 namespace swatch {
 namespace core {
 
-
+ 
+class ActionableSystem;
 class Command;
 class CommandSequence;
-class Operation;
+class StateMachine;
+class SystemStateMachine;
 
 
-//! An object representing a resource on which commands, operations and command sequences run
+//! An object representing a resource on which commands, command sequences, and transitions run
 class ActionableObject : public MonitorableObject {
+  class BusyGuard;
 public:
+    
+  class State {
+  public:
+    State();
+
+    //! Returns whether or not actions (i.e. commands, command sequences, transitions) are currently enabled on this resource
+    bool isEnabled() const;
+    const StateMachine* getEngagedFSM() const;
+    const std::string& getState() const;
+    //! Returns the currently running (or scheduled) actions (i.e. commands, command sequences, transitions); returns NULL if no action is currently scheduled/running
+    const std::vector<const Functionoid*>& getActions() const;
+    template<class T>
+    const T* getAction() const;
+
+  private:
+    //! Indicates whether or not actions are allowed on this resource anymore (actions become disabled once the deleter is)
+    bool mEnabled;
+    const StateMachine* mEngagedFSM;
+    std::string mState;
+    //! Indicates which functionoids (Command/CommandSequence/(System)Transition) are currently active; NULL value indicates that no functionoids are currently active.
+    std::vector<const Functionoid*> mActions;
+    //FIXME: Must fix any logic that checks if object is running transition
+
+    // Friendship for classes/methods that will need to change object's state
+    friend class ActionableSystem;
+    friend class ActionableObject;
+    friend class StateMachine;
+    friend class SystemStateMachine;
+    friend class BusyGuard;
+  };
+
   explicit ActionableObject( const std::string& aId );
 
   virtual ~ActionableObject();
@@ -49,10 +83,10 @@ public:
   std::set<std::string> getCommands() const;
 
   /**
-   * Names of stored operations.
-   * @return set of operation names
+   * Names of stored state machines.
+   * @return set of state machine names
    */
-  std::set<std::string> getOperations() const;
+  std::set<std::string> getStateMachines() const;
 
   //! Get registered command sequence of specified ID
   CommandSequence& getCommandSequence( const std::string& aId );
@@ -60,22 +94,20 @@ public:
   //! Get registered command of specified ID
   Command& getCommand( const std::string& aId );
 
-  //! Get registered command of specified ID
-  Operation& getOperation( const std::string& aId );
+  //! Get registered state machine of specified ID
+  StateMachine& getStateMachine( const std::string& aId );
 
   virtual const std::vector<std::string>& getGateKeeperTables() const = 0;
   
-  //! Returns whether or not actions (i.e. commands, command sequences, operations) are currently enabled on this resource
-  bool isEnabled() const;
-
-  //! Returns the currently running (or scheduled) action (i.e. commands, command sequences, operations); returns NULL if no action is currently scheduled/running
-  const Functionoid* getActiveFunctionoid() const;
+  State getState() const;
+  
+  void engageStateMachine(const std::string& aStateMachine);
   
   typedef boost::unordered_map< std::string , CommandSequence* > tCommandSequenceMap;
   typedef boost::unordered_map< std::string , Command* > tCommandMap;
-  typedef boost::unordered_map< std::string , Operation* > tOperationMap;
+  typedef boost::unordered_map< std::string , StateMachine* > tStateMachineMap;
 
-  //! Deleter functor that only deletes the actionable object after all commands, command sequences and operations have finished running
+  //! Deleter functor that only deletes the actionable object after all commands, command sequences and transitions have finished running
   class Deleter : public Object::Deleter {
   public:
     Deleter() {}
@@ -83,9 +115,9 @@ public:
     
     void operator()(Object* aObject);
   };
-  
+
 protected:
-  //! Register the supplied command, command sequence or operation class in this object, with specified ID; the class is constructed on the heap, using the ID as the only constructor argument.
+  //! Register the supplied command class in this object, with specified ID; the class is constructed on the heap, using the ID as the only constructor argument.
   template< typename T>
   T& registerFunctionoid( const std::string& aId );
 
@@ -95,8 +127,8 @@ protected:
   CommandSequence& registerCommandSequence(const std::string& aId, Command& aFirstCommand, const std::string& aFirstCommandAlias="");
   //! Register the supplied command in this object, with specified ID; this object takes ownership of the command sequence.
   Command& registerFunctionoid(const std::string& aId , Command* aCommand );
-  //! Register the supplied operation in this object, with specified ID; this object takes ownership of the command sequence.
-  Operation& registerFunctionoid(const std::string& aId , Operation* aOperation );    
+  //! Register the supplied state machine in this object, with specified ID; this object takes ownership of the state machine.
+  StateMachine& registerStateMachine(const std::string& aId, const std::string& aInitialState, const std::string& aErrorState );    
   
 private:
   //! Disables all future actions from running on this resource
@@ -104,46 +136,55 @@ private:
 
   tCommandSequenceMap mCommandSequences;
   tCommandMap mCommands;
-  tOperationMap mOperations;
-  
+  tStateMachineMap mFSMs;
+
   mutable boost::mutex mMutex;
-  //! Indicates which functionoid (Command/CommandSequence/Operation) is currently active; NULL value indicates that no functionoids are currently active.
-  const Functionoid* mActiveFunctionoid;
-  //! Indicates whether or not actions are allowed on this resource anymore (actions become disabled once the deleter is )
-  bool mEnabled;
+  State mState;
 
   class BusyGuard {
   public:
-    BusyGuard(ActionableObject& aResource, const Functionoid&);
-    
+    BusyGuard(ActionableObject& aResource, const Functionoid&, const BusyGuard* aOuterGuard=NULL);
+    BusyGuard(ActionableObject& aResource, const boost::unique_lock<boost::mutex>& aLockGuard, const Functionoid&, const BusyGuard* aOuterGuard=NULL);
+
     ~BusyGuard();
-      
+    
+    // Throws if 
+    void check(const ActionableObject& aResource, const Functionoid& aAction) const;
+    
   private:
     ActionableObject& mResource;
     const Functionoid& mAction;
+    const BusyGuard* mOuterGuard;
+    
+    void initialise(const boost::unique_lock<boost::mutex>& aLockGuard);
     
     BusyGuard(const BusyGuard&); // non-copyable
     BusyGuard& operator=(const BusyGuard&); // non-assignable
   };
 
-//  std::pair<bool, Functionoid const * > requestControlOfResource(Functionoid const * const aFunctionoid);
-//  Functionoid const * releaseControlOfResource(Functionoid const * const aFunctionoid);
-  
+  friend class ActionableSystem;
   friend class Command;
   friend class CommandSequence;
-  friend class Operation;
+  friend class CommandVec;
+  friend class StateMachine;
+  friend class SystemTransition;
+  friend class SystemStateMachine;
 };
 
 DEFINE_SWATCH_EXCEPTION(CommandSequenceAlreadyExistsInActionableObject);
 DEFINE_SWATCH_EXCEPTION(CommandAlreadyExistsInActionableObject);
-DEFINE_SWATCH_EXCEPTION(OperationAlreadyExistsInActionableObject);
+DEFINE_SWATCH_EXCEPTION(StateMachineAlreadyExistsInActionableObject);
 
 DEFINE_SWATCH_EXCEPTION(CommandSequenceNotFoundInActionableObject);
 DEFINE_SWATCH_EXCEPTION(CommandNotFoundInActionableObject);
-DEFINE_SWATCH_EXCEPTION(OperationNotFoundInActionableObject);
+DEFINE_SWATCH_EXCEPTION(StateMachineNotFoundInActionableObject);
 
 DEFINE_SWATCH_EXCEPTION(ActionableObjectIsBusy);
 DEFINE_SWATCH_EXCEPTION(ParameterNotFound);
+DEFINE_SWATCH_EXCEPTION(ResourceInWrongState);
+DEFINE_SWATCH_EXCEPTION(ResourceInWrongStateMachine);
+DEFINE_SWATCH_EXCEPTION(WrongBusyGuard);
+
 
 } // namespace core
 } // namespace swatch

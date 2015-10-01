@@ -18,19 +18,6 @@
 namespace swatch {
 namespace core {
 
-std::ostream& operator<<(std::ostream& out, swatch::core::Command::State s) {
-  switch (s) {
-    case swatch::core::Command::kInitial   : out << "Initial"; break;
-    case swatch::core::Command::kScheduled : out << "Scheduled"; break;
-    case swatch::core::Command::kRunning   : out << "Running"; break;
-    case swatch::core::Command::kWarning   : out << "Warning"; break;
-    case swatch::core::Command::kError     : out << "Error"; break;
-    case swatch::core::Command::kDone      : out << "Done"; break;
-    default : out << "Unknown value of swatch::core::Command::Status enum"; 
-  }
-  return out;
-}
-
 
 //---
 Command::~Command() {
@@ -38,8 +25,20 @@ Command::~Command() {
 }
 
 
-const swatch::core::ActionableObject& Command::getResource() const {
-  const swatch::core::ActionableObject* lParent = getParent<ActionableObject>();
+//---
+const ActionableObject& Command::getResource() const {
+  const ActionableObject* lParent = getParent<ActionableObject>();
+  
+  if (lParent != NULL)
+    return *lParent;
+  else
+    throw InvalidResource("Command '"+getPath()+"' does not have a registered resource (actionable object parent)");
+}
+
+
+//---
+ActionableObject& Command::getResource() {
+  ActionableObject* lParent = getParent<ActionableObject>();
   
   if (lParent != NULL)
     return *lParent;
@@ -52,7 +51,7 @@ const swatch::core::ActionableObject& Command::getResource() const {
 void 
 Command::exec( const XParameterSet& aParams  , const bool& aUseThreadPool ) 
 {
-  boost::shared_ptr<ActionableObject::BusyGuard> lActionGuard(new ActionableObject::BusyGuard(*getParent<ActionableObject>(),*this));
+  boost::shared_ptr<ActionableObject::BusyGuard> lActionGuard(new ActionableObject::BusyGuard(getResource(),*this));
 
   exec(lActionGuard, aParams, aUseThreadPool);
 }
@@ -60,8 +59,10 @@ Command::exec( const XParameterSet& aParams  , const bool& aUseThreadPool )
 
 //---
 void 
-Command::exec(const boost::shared_ptr<ActionableObject::BusyGuard>& aActionGuard, const XParameterSet& params  , const bool& aUseThreadPool ) 
+Command::exec(const boost::shared_ptr<ActionableObject::BusyGuard>& aBusyGuard, const XParameterSet& params  , const bool& aUseThreadPool ) 
 {
+  aBusyGuard->check(getResource(), *this);
+
   // Reset the status before doing anything else, merging user-supplied parameter values with default values
   resetForRunning(params);
 
@@ -70,14 +71,14 @@ Command::exec(const boost::shared_ptr<ActionableObject::BusyGuard>& aActionGuard
     // if threadpool is to be used
     if ( aUseThreadPool ){
       boost::unique_lock<boost::mutex> lock(mutex_);
-      state_ = kScheduled;
+      state_ = ActionStatus::kScheduled;
       
       ThreadPool& pool = ThreadPool::getInstance();
-      pool.addTask<Command,ActionableObject::BusyGuard>(this, &Command::runCode, aActionGuard, runningParams_);
+      pool.addTask<Command,ActionableObject::BusyGuard>(this, &Command::runCode, aBusyGuard, runningParams_);
     }
     else{
       // otherwise execute in same thread
-      this->runCode(aActionGuard, runningParams_);
+      this->runCode(aBusyGuard, runningParams_);
     }
   } catch ( const std::exception& e ) {
     // TODO: log the error to error msg (or not?)
@@ -95,25 +96,25 @@ void Command::runCode(boost::shared_ptr<ActionableObject::BusyGuard> aActionGuar
   // 1) Declare that I'm running
   {
     boost::unique_lock<boost::mutex> lock(mutex_);
-    state_ = kRunning;
+    state_ = ActionStatus::kRunning;
     gettimeofday(&execStartTime_, NULL);
   }
   
   // 2) Run the code, handling any exceptions
   try {
-    State s = this->code(params);
+    ActionStatus::State s = this->code(params);
     
     boost::unique_lock<boost::mutex> lock(mutex_);
     gettimeofday(&execEndTime_, NULL);
     switch (s) { 
-      case kDone :
-      case kWarning :
+      case ActionStatus::kDone :
+      case ActionStatus::kWarning :
         progress_ = 1.0;
       case kError : 
         state_ = s;
         break;
       default : 
-        state_ = kError;
+        state_ = ActionStatus::kError;
         statusMsg_ = "Command::code() method returned invalid Status enum value '" + boost::lexical_cast<std::string>(s) + "'   \n Original status message was: " + statusMsg_;
         // FIXME: replace with proper logging
         LOG(swatch::logger::kError) << getResource().getId() << "." << getId() << " : " << statusMsg_;
@@ -122,7 +123,7 @@ void Command::runCode(boost::shared_ptr<ActionableObject::BusyGuard> aActionGuar
   catch (const std::exception& e) {
     boost::unique_lock<boost::mutex> lock(mutex_);
     gettimeofday(&execEndTime_, NULL);
-    state_ = kError;
+    state_ = ActionStatus::kError;
     statusMsg_ = std::string("An exception of type '" + demangleName(typeid(e).name()) + "' was thrown in Command::code(): ") + e.what();
     // FIXME: replace with proper logging
     LOG(swatch::logger::kError) << getResource().getId() << "." << getId() << " : " << statusMsg_;
@@ -134,7 +135,7 @@ void Command::runCode(boost::shared_ptr<ActionableObject::BusyGuard> aActionGuar
 //---
 void Command::resetForRunning(const XParameterSet& params) {
   boost::unique_lock<boost::mutex> lock(mutex_);
-  state_ = kScheduled;
+  state_ = ActionStatus::kScheduled;
   progress_ = 0.0;
   statusMsg_ = "";
   
@@ -145,7 +146,7 @@ void Command::resetForRunning(const XParameterSet& params) {
 
 
 //---
-Command::State
+ActionStatus::State
 Command::getState() const {
   boost::unique_lock<boost::mutex> lock(mutex_);
   return state_;
@@ -158,17 +159,17 @@ CommandStatus Command::getStatus() const {
   
   // Only let user see the result once the command has completed (since its contents can change before then) ...
   boost::shared_ptr<xdata::Serializable> result((xdata::Serializable*) NULL);
-  if ( (state_ == kDone) || (state_ == kWarning) || (state_ == kError))
+  if ( (state_ == ActionStatus::kDone) || (state_ == ActionStatus::kWarning) || (state_ == ActionStatus::kError))
     result = result_;
   
   float runningTime = 0.0;
   switch (state_) {
-    case kInitial :
-    case kScheduled : 
+    case ActionStatus::kInitial :
+    case ActionStatus::kScheduled : 
       break;
     default:
       timeval endTime;
-      if (state_ == kRunning)
+      if (state_ == ActionStatus::kRunning)
         gettimeofday(&endTime, NULL);
       else
         endTime = execEndTime_;
@@ -256,24 +257,6 @@ ReadOnlyXParameterSet Command::mergeParametersWithDefaults( const XParameterSet&
 }
 
 // ---
-const std::string&
-CommandStatus::getCommandPath() const {
-  return path_;
-}
-
-// ---
-Command::State
-CommandStatus::getState() const {
-  return state_;
-}
-    
-// ---
-float
-CommandStatus::getRunningTime() const {
-  return runningTime_;
-}
-
-// ---
 float
 CommandStatus::getProgress() const {
   return progress_;
@@ -306,10 +289,8 @@ CommandStatus::getResultAsString() const {
 }
     
 //---
-CommandStatus::CommandStatus(const std::string& aPath, Command::State aState, float aRunningTime, float aProgress, const std::string& aStatusMsg, const ReadOnlyXParameterSet& aParams, const boost::shared_ptr<xdata::Serializable>& aResult) :
-  path_(aPath),
-  state_(aState),
-  runningTime_(aRunningTime),
+CommandStatus::CommandStatus(const std::string& aPath, ActionStatus::State aState, float aRunningTime, float aProgress, const std::string& aStatusMsg, const ReadOnlyXParameterSet& aParams, const boost::shared_ptr<xdata::Serializable>& aResult) :
+  ActionStatus(aPath, aState, aRunningTime),
   progress_(aProgress),
   statusMsg_(aStatusMsg),
   params_(aParams),

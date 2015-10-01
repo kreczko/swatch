@@ -32,14 +32,14 @@ public:
   
   void configureDaq(uint16_t fedId);
 
-  void enableDaq(size_t errorTime);
+  void startDaq(size_t errorTime);
   
 private:
   typedef boost::posix_time::ptime ptime;
     
   ptime timestampReset_;
   ptime timestampConfigureDaq_;
-  ptime timestampEnableDaq_;
+  ptime timestampStartDaq_;
   
   size_t errorTimeClk_;
   size_t errorTimeDaq_;

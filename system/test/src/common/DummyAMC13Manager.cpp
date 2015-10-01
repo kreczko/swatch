@@ -13,6 +13,7 @@
 // SWATCH headers
 #include "swatch/logger/Log.hpp"
 #include "swatch/core/Factory.hpp"
+#include "swatch/core/StateMachine.hpp"
 #include "swatch/system/DaqTTCStub.hpp"
 #include "swatch/system/test/DummyAMC13Driver.hpp"
 #include "swatch/system/test/DummyAMC13ManagerCommands.hpp"
@@ -31,13 +32,25 @@ DummyAMC13Manager::DummyAMC13Manager( const swatch::core::AbstractStub& aStub ) 
   driver_(new DummyAMC13Driver())
 {
   // 1) Commands
-  registerFunctionoid<DummyAMC13RebootCommand>("reboot");
-  registerFunctionoid<DummyAMC13ResetCommand>("reset");
-  registerFunctionoid<DummyAMC13ConfigureDaqCommand>("configureDaq");
-  registerFunctionoid<DummyAMC13EnableDaqCommand>("enableDaq");
+  core::Command& reboot = registerFunctionoid<DummyAMC13RebootCommand>("reboot");
+  core::Command& reset = registerFunctionoid<DummyAMC13ResetCommand>("reset");
+  core::Command& cfgDaq = registerFunctionoid<DummyAMC13ConfigureDaqCommand>("configureDaq");
+  core::Command& startDaq = registerFunctionoid<DummyAMC13StartDaqCommand>("startDaq");
+  core::Command& stopDaq = registerFunctionoid<DummyAMC13StopDaqCommand>("stopDaq");
   
   // 2) Command sequences
   //registerFunctionoid<DaqTTCMgrCommandSequence>("resetAndConfigure").run(reset).then(configureDaq);
+  
+  
+  
+  mRunControl.coldReset.add(reboot);
+  mRunControl.clockSetup.add(reset);
+  mRunControl.cfgDaq.add(cfgDaq);
+  mRunControl.start.add(startDaq);
+  //mRunControl.pause;
+  //mRunControl.resume;
+  mRunControl.stopFromPaused.add(stopDaq);
+  mRunControl.stopFromRunning.add(stopDaq);
 }
 
 

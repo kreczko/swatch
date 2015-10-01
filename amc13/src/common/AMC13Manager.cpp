@@ -13,7 +13,6 @@
 #include "swatch/logger/Log.hpp"
 #include "swatch/system/DaqTTCStub.hpp"
 #include "swatch/amc13/AMC13Commands.hpp"
-#include "swatch/amc13/AMC13Operations.hpp"
 #include "swatch/amc13/TTCInterface.hpp"
 #include "swatch/core/CommandSequence.hpp"
 
@@ -40,11 +39,11 @@ namespace amc13 {
 
 // --------------------------------------------------------
 AMC13Manager::AMC13Manager(const swatch::core::AbstractStub& aStub) :
-swatch::system::DaqTTCManager(aStub),
-mDriver(0x0),
-mTTC(0x0),
-mFwVersionT1(registerMetric<uint32_t>("fwVersionT1")),
-mFwVersionT2_(registerMetric<uint32_t>("fwVersionT2")) {
+  swatch::system::DaqTTCManager(aStub),
+  mDriver(0x0),
+  mTTC(0x0),
+  mFwVersionT1(registerMetric<uint32_t>("fwVersionT1")),
+  mFwVersionT2_(registerMetric<uint32_t>("fwVersionT2")) {
 
   using ::amc13::AMC13;
 

@@ -79,6 +79,19 @@ void DummyActionableObject::fail() {
 }
 
 
+CommandSequence& DummyActionableObject::registerCommandSequence(const std::string& aId, const std::string& aFirstCmdId) {
+  return ActionableObject::registerCommandSequence(aId, aFirstCmdId);
+}
+
+CommandSequence& DummyActionableObject::registerCommandSequence(const std::string& aId, Command& aFirstCmd) {
+  return ActionableObject::registerCommandSequence(aId, aFirstCmd);
+}
+
+
+StateMachine& DummyActionableObject::registerOperation(const std::string& aId, const std::string& aInitialState, const std::string& aErrorState) {
+  return ActionableObject::registerStateMachine(aId, aInitialState, aErrorState);
+}
+
 } /* namespace test */
 } /* namespace core */
 } /* namespace swatch */

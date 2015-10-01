@@ -12,6 +12,7 @@
 // SWATCH headers
 #include "swatch/core/ActionableObject.hpp"
 #include "swatch/core/exception.hpp"
+#include "swatch/core/StateMachine.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
 
 
@@ -19,6 +20,7 @@ namespace swatch {
 
 namespace core {
 class AbstractMetric;
+class StateMachine;
 class XParameterSet;
 }
 
@@ -35,6 +37,7 @@ class Processor : public core::ActionableObject {
 protected:
   Processor(const swatch::core::AbstractStub& );
 public:
+    
     virtual ~Processor();
  
     const ProcessorStub& getStub() const;
@@ -80,6 +83,33 @@ public:
 
     virtual const std::vector<std::string>& getGateKeeperTables() const;
 
+    struct RunControlFSM {
+      static const std::string kId;
+      static const std::string kStateInitial;
+      static const std::string kStateError;
+      static const std::string kStateSync;
+      static const std::string kStatePreCfg;
+      static const std::string kStateCfg;
+    
+      static const std::string kTrColdReset;
+      static const std::string kTrSetup;
+      static const std::string kTrPreCfg;
+      static const std::string kTrConnect;
+      
+      core::StateMachine& fsm;
+      core::StateMachine::Transition& coldReset;
+      core::StateMachine::Transition& setup;
+      core::StateMachine::Transition& preconfigure;
+      core::StateMachine::Transition& connect;
+
+      RunControlFSM(Processor& aProc);
+      
+    private:
+      static core::StateMachine& createFSM(Processor& aProc);
+      //non-copyable
+      //non-assignable
+    };
+    
 protected:
 
     //! Register the supplied (heap-allocated) TTC interface in this processor; the processor base class takes ownership of the TTC interface instance.
@@ -96,10 +126,11 @@ protected:
 
     //! Firmware version metric
     core::Metric<uint64_t>& metricFirmwareVersion_;
-    
+
+    RunControlFSM mRunControl;
+
 private:
-  
-    ProcessorStub stub_;
+    const ProcessorStub stub_;
 
     //! TTC control interface
     TTCInterface* ttc_;

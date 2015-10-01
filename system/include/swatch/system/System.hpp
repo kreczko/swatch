@@ -16,7 +16,7 @@
 #include <boost/unordered_map.hpp>
 
 // SWATCH headers
-#include "swatch/core/ActionableObject.hpp"
+#include "swatch/core/ActionableSystem.hpp"
 #include "swatch/system/SystemStub.hpp"
 
 
@@ -34,8 +34,44 @@ class Crate;
 class Service;
 class DaqTTCManager;
 
+struct SysRunControlFSM {
+  static const std::string kId;
+  static const std::string kStateInitial;
+  static const std::string kStateError;
+  static const std::string kStateSync;
+  static const std::string kStatePreCfg;
+  static const std::string kStateCfg;
+  static const std::string kStateRunning;
+  static const std::string kStatePaused;
+
+  static const std::string kTrColdReset;
+  static const std::string kTrSetup;
+  static const std::string kTrPreCfg;
+  static const std::string kTrConnect;
+  static const std::string kTrStart;
+  static const std::string kTrPause;
+  static const std::string kTrResume;
+  static const std::string kTrStop;
+  
+  core::SystemStateMachine& fsm;
+  core::SystemTransition& coldReset;
+  core::SystemTransition& setup;
+  core::SystemTransition& preconfigure;
+  core::SystemTransition& connect;
+  core::SystemTransition& start;
+  core::SystemTransition& pause;
+  core::SystemTransition& resume;
+  core::SystemTransition& stopFromPaused;
+  core::SystemTransition& stopFromRunning;
+  
+  SysRunControlFSM(core::SystemStateMachine& aFSM);
+  
+private:
+  static core::SystemStateMachine& addStates(core::SystemStateMachine& aFSM);
+};
+
 //! Generic class representing a system of one ore mores processors
-class System : public core::ActionableObject {
+class System : public core::ActionableSystem {
 public:
   
   typedef boost::unordered_map<std::string, Crate*> CratesMap;
@@ -45,12 +81,6 @@ public:
     
   const SystemStub& getStub() const;
     
-  void add( processor::Processor* aProcessor );
-  void add( system::DaqTTCManager* aAMC13 );
-  void add( processor::Link* aLink );
-  void add( system::Service* aService );
-  void add( system::Crate* aCrate );
-
   const std::deque<processor::Processor*>& getProcessors() ;
   const std::deque<Service*>& getServices();
   const std::deque<DaqTTCManager*>& getDaqTTC();
@@ -59,17 +89,28 @@ public:
     
   bool hasCrate(const std::string& aCrateId) const;
 
-  const std::vector<std::string>& getGateKeeperTables() const;
-
-  
 protected:
   virtual void retrieveMetricValues() {}
 
+  
+  SysRunControlFSM mRunControl;
   //! List of external ports
   // std::deque<SysPorts*> mPorts;    
 
 private:
-    SystemStub stub_;
+    
+    void add( processor::Processor* aProcessor );
+    void add( system::DaqTTCManager* aAMC13 );
+    void add( processor::Link* aLink );
+    void add( system::Service* aService );
+    void add( system::Crate* aCrate );
+  
+    void addCrates();
+    void addProcessors();
+    void addDaqTTCs();
+    void addLinks();
+
+    const SystemStub stub_;
 
     //! List of processors
     std::deque<processor::Processor*> processors_;
@@ -85,9 +126,9 @@ private:
 
     //! Map of crates
     CratesMap cratesMap_;
-    
-    std::vector<std::string> gateKeeperTables_;
 };
+
+DEFINE_SWATCH_EXCEPTION(SystemConstructionFailed);
 
 }
 }

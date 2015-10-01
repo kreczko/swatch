@@ -23,6 +23,7 @@ namespace system {
 class System;
 class CrateStub;
 
+/*
 //! The default creator class for swatch::system::System
 class SystemCreator : public swatch::core::Factory::CreatorInterface {
 public:
@@ -37,8 +38,7 @@ protected:
     virtual void addCrate(swatch::system::System* system, const swatch::system::CrateStub& aStub );
     virtual void addLinks(swatch::system::System* system );    
 };
-
-DEFINE_SWATCH_EXCEPTION(SystemCreationFailed);
+*/
 
 } // namespace system
 } // namespace swatch

@@ -40,6 +40,15 @@ public:
   template< typename T>
   T& registerFunctionoid( const std::string& aId ) { return ActionableObject::registerFunctionoid<T>(aId); }
 
+  // Expose registerCommandSequence method as public for tests
+  CommandSequence& registerCommandSequence(const std::string& aId, const std::string& aFirstCmdId);
+  
+  // Expose registerCommandSequence method as public for tests
+  CommandSequence& registerCommandSequence(const std::string& aId, Command& aFirstCmd);
+
+  // Expose registerOperation method as public for tests
+  StateMachine& registerOperation(const std::string& aId, const std::string& aInitialState, const std::string& aErrorState);
+
   template< typename ObjType, typename DeleterType>
   ObjType& add( ObjType* aChild , DeleterType aDeleter);
 
