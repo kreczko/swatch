@@ -119,15 +119,15 @@ BOOST_AUTO_TEST_CASE(TestAddTransitionSteps) {
   BOOST_CHECK_EQUAL(&(tA.add(cmd)), &tA);
   BOOST_CHECK_EQUAL(tA.size(), size_t(1));
   BOOST_CHECK_EQUAL(&tA.begin()->get(), &cmd);
-  BOOST_CHECK_EQUAL( tA.begin()->getAlias(), "");
+  // BOOST_CHECK_EQUAL( tA.begin()->getAlias(), "");
   BOOST_CHECK_EQUAL( tA.begin()->getNamespace(), "");
 
   // 3) Add aliased command to transition
   BOOST_CHECK_EQUAL(&(tA.add(cmd, "dummyAlias")), &tA);
   BOOST_CHECK_EQUAL(tA.size(), size_t(2));
   BOOST_CHECK_EQUAL(&(tA.begin()+1)->get(), &cmd);
-  BOOST_CHECK_EQUAL( (tA.begin()+1)->getAlias(), "dummyAlias");
-  BOOST_CHECK_EQUAL( (tA.begin()+1)->getNamespace(), "");
+  // BOOST_CHECK_EQUAL( (tA.begin()+1)->getAlias(), "dummyAlias");
+  BOOST_CHECK_EQUAL( (tA.begin()+1)->getNamespace(), "dummyAlias");
 
   // 3) Add command sequence to transition
   BOOST_CHECK_EQUAL(&(tA.add(cmdSeq)), &tA);
@@ -136,7 +136,7 @@ BOOST_AUTO_TEST_CASE(TestAddTransitionSteps) {
   for(auto lIt2=(tA.begin()+2); lIt1!=cmdSeq.end(); lIt1++, lIt2++)
   {
     BOOST_CHECK_EQUAL(&lIt1->get(), &lIt2->get());
-    BOOST_CHECK_EQUAL(lIt1->getAlias(), lIt2->getAlias());
+    // BOOST_CHECK_EQUAL(lIt1->getAlias(), lIt2->getAlias());
     BOOST_CHECK_EQUAL(lIt1->getNamespace(), lIt2->getNamespace());
   }
 }

@@ -32,19 +32,17 @@ class CommandVec : public Functionoid {
 protected:
   CommandVec( const std::string& aId, ActionableObject& aResource);
   
-  void addCommand(Command& aCommand, const std::string& aNamespace, const std::string& aAlias);
+  void addCommand(Command& aCommand, const std::string& aNamespace);
   
-  void addCommand(const std::string& aCommand, const std::string& aNamespace, const std::string& aAlias);
+  void addCommand(const std::string& aCommand, const std::string& aNamespace);
 
 public:  
   virtual ~CommandVec();
   
   class Element {
   public:
-    Element(Command& aCommand, const std::string& aNamespace, const std::string& aAlias);
+    Element(Command& aCommand, const std::string& aNamespace);
     ~Element();
-    
-    const std::string& getAlias() const;
     
     const std::string& getNamespace() const;
     
@@ -52,7 +50,6 @@ public:
     
   private:
     Command* mCmd;
-    std::string mAlias;
     std::string mNamespace;
     friend class CommandVec;
   };

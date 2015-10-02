@@ -28,21 +28,21 @@ CommandVec::CommandVec( const std::string& aId, ActionableObject& aResource) :
 }
 
 
-void CommandVec::addCommand(Command& aCommand, const std::string& aNamespace, const std::string& aAlias)
+void CommandVec::addCommand(Command& aCommand, const std::string& aNamespace)
 {
   if( &aCommand.getResource() != &mResource )
   {
     throw InvalidResource("Cannot add command '" + aCommand.getId() + "' (resource: "+aCommand.getResource().getPath()+") ' to sequence of resource '" + mResource.getPath() + "'");
   }
-  mCommands.push_back( Element(aCommand, aNamespace, aAlias) );
+  mCommands.push_back( Element(aCommand, aNamespace) );
   mCommandIt = mCommands.end();
 }
 
 
-void CommandVec::addCommand(const std::string& aCommand, const std::string& aNamespace, const std::string& aAlias)
+void CommandVec::addCommand(const std::string& aCommand, const std::string& aNamespace)
 {
   Command& lCommand = mResource.getCommand( aCommand );
-  mCommands.push_back( Element(lCommand, aNamespace, aAlias) );
+  mCommands.push_back( Element(lCommand, aNamespace) );
   mCommandIt = mCommands.end();
 }
 
@@ -51,9 +51,8 @@ CommandVec::~CommandVec() {
 }
 
 
-CommandVec::Element::Element(Command& aCommand, const std::string& aNamespace, const std::string& aAlias) :
+CommandVec::Element::Element(Command& aCommand, const std::string& aNamespace) :
   mCmd(&aCommand),
-  mAlias(aAlias),
   mNamespace(aNamespace)
 {
 }
@@ -61,12 +60,6 @@ CommandVec::Element::Element(Command& aCommand, const std::string& aNamespace, c
 
 CommandVec::Element::~Element()
 {
-}
-
-
-const std::string& CommandVec::Element::getAlias() const
-{
-  return mAlias;
 }
 
 const std::string& CommandVec::Element::getNamespace() const
@@ -303,25 +296,25 @@ void CommandVec::extractParameters(const GateKeeper& aGateKeeper, std::vector<Re
   for( tCommandVector::const_iterator lIt( mCommands.begin()) ; lIt != mCommands.end() ; ++lIt )
   {
     const Command& lCommand( lIt->get() );
-    const std::string& lCommandAlias = (lIt->getAlias().empty() ? lCommand.getId() : lIt->getAlias());
+//    const std::string& lCommandAlias = (lIt->getAlias().empty() ? lCommand.getId() : lIt->getAlias());
 
     ReadOnlyXParameterSet lParams;
     std::set< std::string > lKeys( lCommand.getDefaultParams().keys() );
     for( std::set< std::string >::iterator lIt2( lKeys.begin() ); lIt2!=lKeys.end(); ++lIt2 )
     {
-      GateKeeper::tParameter lData( aGateKeeper.get( getId() , lCommandAlias , *lIt2 , mResource.getGateKeeperTables() ) );
+      GateKeeper::tParameter lData( aGateKeeper.get( lIt->getNamespace() , lCommand.getId() , *lIt2 , mResource.getGateKeeperTables() ) );
       if ( lData.get() != NULL )
       {
         lParams.adopt( *lIt2 , lData );
       }
       else if (throwOnMissing) {
         std::ostringstream oss;
-        oss << "Could not find value of parameter '" << *lIt2 << "' for command with alias '" << lCommandAlias << "' in sequence '" << getId() << "' of resource '" << getResource().getId() << "'";
+        oss << "Could not find value of parameter '" << *lIt2 << "' for command '" << lCommand.getId() << "' in namespace '" << lIt->getNamespace() << "' of resource '" << getResource().getId() << "'";
         LOG(swatch::logger::kError) << oss.str();
         throw ParameterNotFound(oss.str());
       }
       else {
-        aMissingParams.push_back(std::make_pair(lCommandAlias, *lIt2));
+        aMissingParams.push_back(std::make_pair(lCommand.getId(), *lIt2));
       }
     }
     aParamSets.push_back( lParams );

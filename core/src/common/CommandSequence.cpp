@@ -38,29 +38,29 @@ CommandSequence::~CommandSequence() {
 }
 
 
-CommandSequence& CommandSequence::run( Command& aCommand, const std::string& aAlias )
+CommandSequence& CommandSequence::run( Command& aCommand, const std::string& aNamespace )
 {
-  addCommand(aCommand, getId(), aAlias);
+  addCommand(aCommand, (aNamespace.empty() ? getId() : aNamespace) );
   return *this;
 }
 
 
-CommandSequence& CommandSequence::then ( Command& aCommand, const std::string& aAlias )
+CommandSequence& CommandSequence::then ( Command& aCommand, const std::string& aNamespace )
 {
-  return run( aCommand, aAlias );
+  return run( aCommand, (aNamespace.empty() ? getId() : aNamespace) );
 }
 
 
-CommandSequence& CommandSequence::run( const std::string& aCommand, const std::string& aAlias )
+CommandSequence& CommandSequence::run( const std::string& aCommand, const std::string& aNamespace )
 {
-  addCommand(aCommand, getId(), aAlias);
+  addCommand(aCommand, (aNamespace.empty() ? getId() : aNamespace));
   return *this;
 }
 
 
-CommandSequence& CommandSequence::then ( const std::string& aCommand, const std::string& aAlias )
+CommandSequence& CommandSequence::then ( const std::string& aCommand, const std::string& aNamespace )
 {
-  return run( aCommand, aAlias );
+  return run( aCommand, (aNamespace.empty() ? getId() : aNamespace) );
 }
 
 

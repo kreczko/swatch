@@ -65,7 +65,7 @@ public:
     
     StateMachine& getStateMachine();
 
-    Transition& add(Command& aCmd, const std::string& aAlias="");
+    Transition& add(Command& aCmd, const std::string& aNamespace="");
     Transition& add(CommandSequence& aSequence);
 
   private:

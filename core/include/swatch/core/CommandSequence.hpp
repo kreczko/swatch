@@ -23,8 +23,8 @@ class StateMachine;
 //! Represents a sequence of commands, executed in succession.
 class CommandSequence : public CommandVec {
 public:
-  CommandSequence( const std::string& aId, ActionableObject& aResource, const std::string& aFirstCommandId, const std::string& aFirstCommandAlias="");
-  CommandSequence( const std::string& aId, ActionableObject& aResource, Command& aFirstCommand, const std::string& aFirstCommandAlias="");
+  CommandSequence( const std::string& aId, ActionableObject& aResource, const std::string& aFirstCommandId, const std::string& aFirstCommandNamespace="");
+  CommandSequence( const std::string& aId, ActionableObject& aResource, Command& aFirstCommand, const std::string& aFirstCommandNamespace="");
 
   virtual ~CommandSequence();
   
@@ -33,11 +33,11 @@ public:
     @param aCommand a command to add to the command sequence
     @param aAlias an alias to use for that command when looking up parameters in gatekeeper; the command's ID string is used if alias is empty
   */
-  CommandSequence& run( Command& aCommand, const std::string& aAlias="");
-  CommandSequence& then( Command& aCommand, const std::string& aAlias="");
+  CommandSequence& run( Command& aCommand, const std::string& aNamespace="");
+  CommandSequence& then( Command& aCommand, const std::string& aNamespace="");
 
-  CommandSequence& run( const std::string& aCommand, const std::string& aAlias="");
-  CommandSequence& then( const std::string& aCommand, const std::string& aAlias="");
+  CommandSequence& run( const std::string& aCommand, const std::string& aNamespace="");
+  CommandSequence& then( const std::string& aCommand, const std::string& aNamespace="");
 };
 
 

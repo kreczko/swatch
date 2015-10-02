@@ -201,9 +201,9 @@ StateMachine& StateMachine::Transition::getStateMachine()
 }
 
 
-StateMachine::Transition& StateMachine::Transition::add(Command& aCmd, const std::string& aAlias)
+StateMachine::Transition& StateMachine::Transition::add(Command& aCmd, const std::string& aNamespace)
 {
-  addCommand(aCmd, "", aAlias);
+  addCommand(aCmd, aNamespace);
   return *this;
 }
 
@@ -213,7 +213,7 @@ StateMachine::Transition& StateMachine::Transition::add(CommandSequence& aSequen
   CommandVec::const_iterator lIt = aSequence.begin();
   std::vector<Command*> lCmds = aSequence.getCommands();
   for(auto lIt2=lCmds.begin(); lIt2!=lCmds.end(); lIt++, lIt2++)
-    addCommand(*(*lIt2), aSequence.getId(), lIt->getAlias());
+    addCommand(*(*lIt2), lIt->getNamespace());
   return *this;
 }
 
