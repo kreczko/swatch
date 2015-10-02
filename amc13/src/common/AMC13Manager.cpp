@@ -47,15 +47,24 @@ AMC13Manager::AMC13Manager(const swatch::core::AbstractStub& aStub) :
 
   using ::amc13::AMC13;
 
-
-  registerFunctionoid<RebootCommand>("rebootCmd");
+  // Commands
+  core::Command& coldResetCmd = registerFunctionoid<RebootCommand>("rebootCmd");
   core::Command& resetCmd = registerFunctionoid<ResetCommand>("resetCmd");
-  core::Command& cfgTTCCmd = registerFunctionoid<ConfigureTTCCommand>("configureTCCCmd");
-  core::Command& cfgDAQCmd = registerFunctionoid<ConfigureDAQCommand>("configureDAQCmd");
-  registerFunctionoid<StartCommand>("startCmd");
-  registerFunctionoid<StopCommand>("stopCmd");
+  core::Command& cfgTTCCmd = registerFunctionoid<ConfigureTTCCommand>("configTCCCmd");
+  core::Command& cfgDAQCmd = registerFunctionoid<ConfigureDAQCommand>("configDAQCmd");
+  core::Command& startCmd = registerFunctionoid<StartCommand>("startCmd");
+  core::Command& stopCmd = registerFunctionoid<StopCommand>("stopCmd");
 
-  registerCommandSequence("configureDAQSeq", resetCmd).then(cfgTTCCmd).then(cfgDAQCmd);
+  // Sequences
+  registerCommandSequence("configSeq", resetCmd).then(cfgTTCCmd).then(cfgDAQCmd);
+
+  // State machine
+  mRunControl.coldReset.add(coldResetCmd);
+  mRunControl.clockSetup.add(resetCmd).add(cfgTTCCmd);
+  mRunControl.cfgDaq.add(cfgDAQCmd);
+  mRunControl.start.add(startCmd);
+  mRunControl.stopFromPaused.add(stopCmd);
+  mRunControl.stopFromRunning.add(stopCmd);
 
   const system::DaqTTCStub& desc = getStub();
 
