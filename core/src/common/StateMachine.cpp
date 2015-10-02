@@ -212,8 +212,9 @@ StateMachine::Transition& StateMachine::Transition::add(CommandSequence& aSequen
 {
   CommandVec::const_iterator lIt = aSequence.begin();
   std::vector<Command*> lCmds = aSequence.getCommands();
-  for(auto lIt2=lCmds.begin(); lIt2!=lCmds.end(); lIt++, lIt2++)
+  for(auto lIt2=lCmds.begin(); lIt2!=lCmds.end(); lIt++, lIt2++) {
     addCommand(*(*lIt2), lIt->getNamespace());
+  }
   return *this;
 }
 
