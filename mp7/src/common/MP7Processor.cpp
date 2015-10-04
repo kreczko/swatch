@@ -48,13 +48,7 @@ MP7Processor::MP7Processor(const swatch::core::AbstractStub& aStub) :
 {
     // Add commands
     core::Command& resetCommand = registerFunctionoid<MP7ResetCommand>("reset");
-//    core::Command& mgtsCommand = registerFunctionoid<MP7SetupMGTs>("mgts");
     core::Command& align = registerFunctionoid<MP7AlignLinks>("align");
-    
-//    registerFunctionoid<MP7ConfigureLoopback>("loopback");
-    
-    // Add command sequences
-//    registerCommandSequence("resetThenMGTs", resetCommand).then(mgtsCommand).then(align);
     
     // Extract stub, and create driver
     const processor::ProcessorStub& stub = getStub();

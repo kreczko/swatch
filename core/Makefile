@@ -31,24 +31,39 @@ LibraryPaths = lib \
 
 Libraries =	\
 	toolbox \
-	xcept \
 	log4cplus \
-	config \
-	asyncresolv \
-	xdaq \
 	xdata \
-	xerces-c \
+	config \
+	xcept \
 	xoap \
-	mimetic \
-	cgicc \
-	xgi\
+	asyncresolv \
 	uuid \
-	logxmlappender \
-	logudpappender \
-	peer \
+	xerces-c \
+	mimetic \
 	boost_regex \
 	pthread \
 	boost_thread
+
+# Libraries =	\
+# 	toolbox \
+# 	xcept \
+# 	log4cplus \
+# 	config \
+# 	asyncresolv \
+# 	xdaq \
+# 	xdata \
+# 	xerces-c \
+# 	xoap \
+# 	mimetic \
+# 	cgicc \
+# 	xgi\
+# 	uuid \
+# 	logxmlappender \
+# 	logudpappender \
+# 	peer \
+# 	boost_regex \
+# 	pthread \
+# 	boost_thread
 #	tcpla \
 	
 
