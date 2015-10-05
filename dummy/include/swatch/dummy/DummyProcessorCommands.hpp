@@ -6,18 +6,15 @@
  *
  */
 
-#ifndef __SWATCH_PROCESSOR_TEST_DUMMYPROCESSORCOMMAND_HPP__
-#define __SWATCH_PROCESSOR_TEST_DUMMYPROCESSORCOMMAND_HPP__
+#ifndef __SWATCH_DUMMY_DUMMYPROCESSORCOMMAND_HPP__
+#define __SWATCH_DUMMY_DUMMYPROCESSORCOMMAND_HPP__
 
-#include "swatch/core/test/DummyCommand.hpp"
-#include "swatch/core/ActionableObject.hpp"
-#include <xdata/Integer.h>
-#include <xdata/String.h>
+
+#include "swatch/core/Command.hpp"
 
 
 namespace swatch {
-namespace processor {
-namespace test {
+namespace dummy {
 
     
 class DummyProcCommand : public swatch::core::Command {
@@ -79,8 +76,7 @@ public:
   State code(const swatch::core::XParameterSet& params);       
 };
 
-} // namespace test
-} // namespace processor
+} // namespace dummy
 } // namespace swatch
 
-#endif /* __SWATCH_PROCESSOR_TEST_DUMMYPROCESSORCOMMAND_HPP__ */
+#endif /* __SWATCH_DUMMY_DUMMYPROCESSORCOMMAND_HPP__ */

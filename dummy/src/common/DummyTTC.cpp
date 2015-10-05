@@ -1,12 +1,13 @@
 
-#include "swatch/processor/test/DummyTTC.hpp"
-#include "swatch/processor/test/DummyDriver.hpp"
+#include "swatch/dummy/DummyTTC.hpp"
+#include "swatch/dummy/DummyProcDriver.hpp"
+
 
 namespace swatch {
-namespace processor {
-namespace test {
+namespace dummy {
 
-DummyTTC::DummyTTC(DummyDriver& aDriver) :
+
+DummyTTC::DummyTTC(DummyProcDriver& aDriver) :
   TTCInterface(),
   driver_(aDriver)
 {
@@ -20,7 +21,7 @@ DummyTTC::~DummyTTC()
 
 void DummyTTC::retrieveMetricValues()
 {
-  DummyDriver::TTCStatus s = driver_.getTTCStatus();
+  DummyProcDriver::TTCStatus s = driver_.getTTCStatus();
   
   setMetricValue<>(metricBunchCounter_, s.bunchCounter);
   setMetricValue<>(metricEventCounter_, s.eventCounter);
@@ -34,6 +35,6 @@ void DummyTTC::retrieveMetricValues()
   setMetricValue<>(metricDoubleBitErrors_, s.errDoubleBit);
 }
 
-} // namespace test
-} // namespace processor
+
+} // namespace dummy
 } // namespace swatch

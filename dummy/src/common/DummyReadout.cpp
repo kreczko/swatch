@@ -1,12 +1,12 @@
 
-#include "swatch/processor/test/DummyReadout.hpp"
+#include "swatch/dummy/DummyReadout.hpp"
 
 
 namespace swatch {
-namespace processor {
-namespace test {
+namespace dummy {
 
-DummyReadoutInterface::DummyReadoutInterface(DummyDriver& aDriver) :
+
+DummyReadoutInterface::DummyReadoutInterface(DummyProcDriver& aDriver) :
   ReadoutInterface(),
   driver_(aDriver)
 {
@@ -26,6 +26,6 @@ void DummyReadoutInterface::retrieveMetricValues()
 //  setMetricValue<>(metricCRCErrors_, uint32_t(0));
 }
 
-} // namespace test
-} // namespace processor
+
+} // namespace dummy
 } // namespace swatch

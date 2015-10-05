@@ -1,12 +1,12 @@
 
-#include "swatch/processor/test/DummyAlgo.hpp"
+#include "swatch/dummy/DummyAlgo.hpp"
 
 
 namespace swatch {
-namespace processor {
-namespace test {
+namespace dummy {
 
-DummyAlgo::DummyAlgo(DummyDriver& aDriver) :
+
+DummyAlgo::DummyAlgo(DummyProcDriver& aDriver) :
   AlgoInterface(),
   driver_(aDriver)
 {
@@ -23,6 +23,5 @@ void DummyAlgo::retrieveMetricValues()
   //TODO: extract status from driver
 }
 
-} // namespace test
-} // namespace processor
+} // namespace dummy
 } // namespace swatch

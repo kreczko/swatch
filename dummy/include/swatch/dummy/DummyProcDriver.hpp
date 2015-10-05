@@ -1,6 +1,6 @@
 
-#ifndef __SWATCH_PROCESSOR_TEST_DUMMYDRIVER_HPP__
-#define	__SWATCH_PROCESSOR_TEST_DUMMYDRIVER_HPP__
+#ifndef __SWATCH_DUMMY_DUMMYDRIVER_HPP__
+#define	__SWATCH_DUMMY_DUMMYDRIVER_HPP__
 
 
 // boost headers
@@ -8,20 +8,19 @@
 
 
 namespace swatch {
-namespace processor {
-namespace test {
+namespace dummy {
 
     
-class DummyDriver{
+class DummyProcDriver{
 public:
   
   // Forward declarations
   struct TTCStatus;
   struct RxPortStatus;
     
-  DummyDriver();
+  DummyProcDriver();
 
-  virtual ~DummyDriver();
+  virtual ~DummyProcDriver();
 
   uint64_t getFirmwareVersion() const;
 
@@ -84,10 +83,9 @@ public:
   };
 };
 
-        
-} // namespace test
-} // namespace processor
+
+} // namespace dummy
 } // namespace swatch
 
-#endif	/* SWATCH_PROCESSOR_TEST_DUMMYPROCESSOR_HPP */
+#endif	/* SWATCH_DUMMY_DUMMYPROCESSOR_HPP */
 

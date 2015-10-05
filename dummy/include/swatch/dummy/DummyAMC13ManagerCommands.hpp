@@ -1,15 +1,15 @@
 
-#ifndef __SWATCH_SYSTEM_TEST_DUMMYAMC13MANAGERCOMMAND_HPP__
-#define __SWATCH_SYSTEM_TEST_DUMMYAMC13MANAGERCOMMAND_HPP__
+#ifndef __SWATCH_DUMMY_DUMMYAMC13MANAGERCOMMAND_HPP__
+#define __SWATCH_DUMMY_DUMMYAMC13MANAGERCOMMAND_HPP__
 
 
 #include "swatch/core/Command.hpp"
 
 
 namespace swatch {
-namespace system {
-namespace test {
-    
+namespace dummy {
+
+
 class DummyAMC13Command : public swatch::core::Command {
 public:
   DummyAMC13Command(const std::string& aId);
@@ -64,8 +64,7 @@ public:
 };
 
 
-} // namespace test
-} // namespace system
+} // namespace dummy
 } // namespace swatch
 
-#endif /* __SWATCH_SYSTEM_TEST_DUMMYAMC13MANAGERCOMMAND_HPP__ */
+#endif /* __SWATCH_DUMMY_DUMMYAMC13MANAGERCOMMAND_HPP__ */

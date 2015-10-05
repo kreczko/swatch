@@ -1,27 +1,27 @@
-#include "swatch/processor/test/DummyDriver.hpp"
+#include "swatch/dummy/DummyProcDriver.hpp"
 
 namespace swatch {
-namespace processor {
-namespace test {
+namespace dummy {
 
-DummyDriver::DummyDriver() 
+
+DummyProcDriver::DummyProcDriver() 
 {
   reboot();
 }
 
 
-DummyDriver::~DummyDriver()
+DummyProcDriver::~DummyProcDriver()
 {
 }
 
 
-uint64_t DummyDriver::getFirmwareVersion() const
+uint64_t DummyProcDriver::getFirmwareVersion() const
 {
   return 0xdeadbeef00001234;
 }
 
 
-DummyDriver::TTCStatus DummyDriver::getTTCStatus() const 
+DummyProcDriver::TTCStatus DummyProcDriver::getTTCStatus() const 
 {
   bool allOK = ! isInvalidTimeOrAfterErrorTime(timestampReset_, errorTimeClk_);
   
@@ -39,7 +39,7 @@ DummyDriver::TTCStatus DummyDriver::getTTCStatus() const
 }
 
 
-DummyDriver::RxPortStatus DummyDriver::getRxPortStatus(uint32_t channelId) const 
+DummyProcDriver::RxPortStatus DummyProcDriver::getRxPortStatus(uint32_t channelId) const 
 {
   if ( isInvalidTimeOrAfterErrorTime(timestampReset_,errorTimeClk_) || isInvalidTimeOrAfterErrorTime(timestampConfigureRx_,errorTimeRx_) )
     return RxPortStatus(false, false, 42);
@@ -48,7 +48,7 @@ DummyDriver::RxPortStatus DummyDriver::getRxPortStatus(uint32_t channelId) const
 }
 
 
-bool DummyDriver::isTxPortOperating(uint32_t channelId) const
+bool DummyProcDriver::isTxPortOperating(uint32_t channelId) const
 {
   if ( isInvalidTimeOrAfterErrorTime(timestampReset_,errorTimeClk_) )
     return false;
@@ -59,7 +59,7 @@ bool DummyDriver::isTxPortOperating(uint32_t channelId) const
 }
 
 
-void DummyDriver::reboot()
+void DummyProcDriver::reboot()
 {
   timestampReset_ = ptime();
   timestampConfigureTx_ = ptime();
@@ -69,7 +69,7 @@ void DummyDriver::reboot()
 }
 
 
-void DummyDriver::reset(size_t errorTime)
+void DummyProcDriver::reset(size_t errorTime)
 {
   timestampReset_ = boost::posix_time::microsec_clock::universal_time();
   errorTimeClk_ = errorTime;
@@ -80,7 +80,7 @@ void DummyDriver::reset(size_t errorTime)
 }
 
 
-void DummyDriver::configureTxPorts(size_t errorTime)
+void DummyProcDriver::configureTxPorts(size_t errorTime)
 {
   if (timestampReset_.is_not_a_date_time())
     throw std::runtime_error("Couldn't configure tx ports - no clock!");
@@ -91,7 +91,7 @@ void DummyDriver::configureTxPorts(size_t errorTime)
 }
 
 
-void DummyDriver::configureRxPorts(size_t errorTime)
+void DummyProcDriver::configureRxPorts(size_t errorTime)
 {
   if (timestampReset_.is_not_a_date_time())
     throw std::runtime_error("Couldn't configure rx ports - no clock!");
@@ -102,7 +102,7 @@ void DummyDriver::configureRxPorts(size_t errorTime)
 }
 
 
-void DummyDriver::configureReadout(size_t errorTime)
+void DummyProcDriver::configureReadout(size_t errorTime)
 {
   if (timestampReset_.is_not_a_date_time())
     throw std::runtime_error("Couldn't configure readout block - no clock!");
@@ -113,7 +113,7 @@ void DummyDriver::configureReadout(size_t errorTime)
 }
 
 
-void DummyDriver::configureAlgo(size_t errorTime)
+void DummyProcDriver::configureAlgo(size_t errorTime)
 {
   if (timestampReset_.is_not_a_date_time())
     throw std::runtime_error("Couldn't configure algo - no clock!");
@@ -124,7 +124,7 @@ void DummyDriver::configureAlgo(size_t errorTime)
 }
 
 
-bool DummyDriver::isInvalidTimeOrAfterErrorTime(const ptime& aStartTime, size_t aSecondsBeforeError)
+bool DummyProcDriver::isInvalidTimeOrAfterErrorTime(const ptime& aStartTime, size_t aSecondsBeforeError)
 {
   if ( aStartTime.is_not_a_date_time() )
     return true;
@@ -136,6 +136,5 @@ bool DummyDriver::isInvalidTimeOrAfterErrorTime(const ptime& aStartTime, size_t 
 }
 
 
-}
 }
 }

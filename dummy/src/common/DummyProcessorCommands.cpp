@@ -1,20 +1,20 @@
-#include "swatch/processor/test/DummyProcessorCommands.hpp"
+
+#include "swatch/dummy/DummyProcessorCommands.hpp"
 
 
 #include "xdata/Boolean.h"
 #include "xdata/UnsignedInteger.h"
 
-#include "swatch/processor/test/DummyProcessor.hpp"
-#include "swatch/processor/test/DummyDriver.hpp"
+#include "swatch/dummy/DummyProcessor.hpp"
+#include "swatch/dummy/DummyProcDriver.hpp"
 
 
 namespace swco = swatch::core;
 
 namespace swatch {
-namespace processor {
-namespace test {
+namespace dummy {
 
-  
+
 ////////////////////////
 /*  DummyProcCommand  */
 
@@ -57,7 +57,7 @@ core::Command::State DummyRebootCommand::code(const swatch::core::XParameterSet&
 {
   sleep( aParams );
   
-  DummyDriver& driver = getParent<DummyProcessor>()->getDriver();
+  DummyProcDriver& driver = getParent<DummyProcessor>()->getDriver();
   
   driver.reboot();
   
@@ -82,7 +82,7 @@ core::Command::State DummyResetCommand::code(const swatch::core::XParameterSet& 
 {
   sleep( aParams );
   
-  DummyDriver& driver = getParent<DummyProcessor>()->getDriver();
+  DummyProcDriver& driver = getParent<DummyProcessor>()->getDriver();
   
   size_t timeout = aParams.get<xdata::UnsignedInteger>("clkErrorTimeout").value_;
 
@@ -109,7 +109,7 @@ core::Command::State DummyConfigureTxCommand::code(const swatch::core::XParamete
 {
   sleep( aParams );
 
-  DummyDriver& driver = getParent<DummyProcessor>()->getDriver();
+  DummyProcDriver& driver = getParent<DummyProcessor>()->getDriver();
   
   size_t timeout = aParams.get<xdata::UnsignedInteger>("txErrorTimeout").value_;
 
@@ -136,7 +136,7 @@ core::Command::State DummyConfigureRxCommand::code(const swatch::core::XParamete
 {
   sleep( aParams );
   
-  DummyDriver& driver = getParent<DummyProcessor>()->getDriver();
+  DummyProcDriver& driver = getParent<DummyProcessor>()->getDriver();
   
   size_t timeout = aParams.get<xdata::UnsignedInteger>("rxErrorTimeout").value_;
 
@@ -163,7 +163,7 @@ core::Command::State DummyConfigureDaqCommand::code(const swatch::core::XParamet
 {
   sleep( aParams );
   
-  DummyDriver& driver = getParent<DummyProcessor>()->getDriver();
+  DummyProcDriver& driver = getParent<DummyProcessor>()->getDriver();
   
   size_t timeout = aParams.get<xdata::UnsignedInteger>("daqErrorTimeout").value_;
 
@@ -190,7 +190,7 @@ core::Command::State DummyConfigureAlgoCommand::code(const swatch::core::XParame
 {
   sleep( aParams );
   
-  DummyDriver& driver = getParent<DummyProcessor>()->getDriver();
+  DummyProcDriver& driver = getParent<DummyProcessor>()->getDriver();
   
   size_t timeout = aParams.get<xdata::UnsignedInteger>("algoErrorTimeout").value_;
 
@@ -200,6 +200,5 @@ core::Command::State DummyConfigureAlgoCommand::code(const swatch::core::XParame
 }
 
 
-} // namespace test
-} // namespace processor
+} // namespace dummy
 } // namespace swatch

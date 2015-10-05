@@ -1,12 +1,9 @@
 
 #include <boost/test/unit_test.hpp>
 
-// Swatch Headers
+// SWATCH headers
 #include "swatch/processor/PortCollection.hpp"
-#include "swatch/processor/test/DummyAlgo.hpp"
-#include "swatch/processor/test/DummyReadout.hpp"
 #include "swatch/processor/test/DummyProcessor.hpp"
-#include "swatch/processor/test/DummyTTC.hpp"
 
 
 

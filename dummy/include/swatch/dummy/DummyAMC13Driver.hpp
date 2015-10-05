@@ -1,6 +1,6 @@
 
-#ifndef __SWATCH_SYSTEM_TEST_DUMMYAMC13DRIVER_HPP__
-#define	__SWATCH_SYSTEM_TEST_DUMMYAMC13DRIVER_HPP__
+#ifndef __SWATCH_DUMMY_DUMMYAMC13DRIVER_HPP__
+#define	__SWATCH_DUMMY_DUMMYAMC13DRIVER_HPP__
 
 
 // boost headers
@@ -8,10 +8,9 @@
 
 
 namespace swatch {
-namespace system {
-namespace test {
+namespace dummy {
 
-    
+ 
 class DummyAMC13Driver {
 public:
   
@@ -28,25 +27,21 @@ public:
 
   void reboot();
   
-  void reset(size_t errorTime);
+  void reset(size_t aWarnAfter, size_t aErrorAfter);
   
   void configureDaq(uint16_t fedId);
 
-  void startDaq(size_t errorTime);
+  void startDaq(size_t aWarnAfter, size_t aErrorAfter);
   
 private:
   typedef boost::posix_time::ptime ptime;
-    
-  ptime timestampReset_;
-  ptime timestampConfigureDaq_;
-  ptime timestampStartDaq_;
   
-  size_t errorTimeClk_;
-  size_t errorTimeDaq_;
-  
+  ptime errTimeReset_;
+  ptime errTimeDaq_;
+  ptime wrnTimeReset_;
+  ptime wrnTimeDaq_;
+
   uint16_t fedId_;
-  
-  static bool isInvalidTimeOrAfterErrorTime(const ptime& aStartTime, size_t aSecondsBeforeError);
   
 public:
   struct TTCStatus {
@@ -59,10 +54,9 @@ public:
   
 };
 
-        
-} // namespace test
-} // namespace system
+
+} // namespace dummy
 } // namespace swatch
 
-#endif	/* SWATCH_PROCESSOR_TEST_DUMMYPROCESSOR_HPP */
+#endif	/* SWATCH_DUMMY_DUMMYAMC13DRIVER_HPP */
 

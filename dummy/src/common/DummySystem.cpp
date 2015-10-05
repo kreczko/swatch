@@ -1,5 +1,5 @@
 
-#include "swatch/system/test/DummySystem.hpp"
+#include "swatch/dummy/DummySystem.hpp"
 
 
 #include "swatch/core/Factory.hpp"
@@ -8,12 +8,11 @@
 #include "swatch/system/DaqTTCManager.hpp"
 
 
-SWATCH_REGISTER_CLASS(swatch::system::test::DummySystem)
+SWATCH_REGISTER_CLASS(swatch::dummy::DummySystem)
 
 
 namespace swatch {
-namespace system {
-namespace test {
+namespace dummy {
 
 DummySystem::DummySystem(const swatch::core::AbstractStub& aStub) : 
   swatch::system::System(aStub)
@@ -21,7 +20,7 @@ DummySystem::DummySystem(const swatch::core::AbstractStub& aStub) :
   typedef processor::Processor::RunControlFSM tProcFSM;
   typedef system::RunControlFSM tDaqTTCFSM;
   
-  SysRunControlFSM& fsm = mRunControl;
+  system::SysRunControlFSM& fsm = mRunControl;
   fsm.coldReset.add(getDaqTTC().begin(), getDaqTTC().end(), tDaqTTCFSM::kStateInitial, tDaqTTCFSM::kTrColdReset)
                .add(getProcessors().begin(), getProcessors().end(), tProcFSM::kStateInitial, tProcFSM::kTrColdReset);
 
@@ -44,11 +43,11 @@ DummySystem::DummySystem(const swatch::core::AbstractStub& aStub) :
   fsm.stopFromRunning.add(getDaqTTC().begin(), getDaqTTC().end(), tDaqTTCFSM::kStateRunning, tDaqTTCFSM::kTrStop);
 }
 
+
 DummySystem::~DummySystem()
 {
 }
 
 
-}
-}
-}
+} // namespace dummy
+} // namespace swatch

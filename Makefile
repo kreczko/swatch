@@ -8,6 +8,7 @@ PACKAGES = \
 	processor/test \
 	system \
 	system/test \
+	dummy \
 	test 
 else ifeq ($(Set), pro)
 PACKAGES = \
@@ -15,6 +16,7 @@ PACKAGES = \
 	core \
 	processor \
 	system \
+	dummy \
 	test \
 	pyswatch
 else ifeq ($(Set), amc13)
@@ -26,7 +28,8 @@ PACKAGES = \
         processor/test \
         system \
         system/test \
-        test \
+        dummy \
+	test \
 	amc13
 else ifeq ($(Set), hwdevel)
 PACKAGES = \
@@ -37,6 +40,7 @@ PACKAGES = \
 	processor/test \
 	system \
 	system/test \
+	dummy \
 	test \
 	amc13 \
 	mp7
