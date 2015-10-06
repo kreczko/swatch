@@ -32,32 +32,24 @@ public:
   
   void reboot();
   
-  void reset(size_t errorTime);
+  void reset(size_t aErrorAfter);
   
-  void configureTxPorts(size_t errorTime);
+  void configureTxPorts(size_t aErrorAfter);
 
-  void configureRxPorts(size_t errorTime);
+  void configureRxPorts(size_t aErrorAfter);
 
-  void configureReadout(size_t errorTime);
+  void configureReadout(size_t aErrorAfter);
 
-  void configureAlgo(size_t errorTime);
+  void configureAlgo(size_t aErrorAfter);
   
 private:
   typedef boost::posix_time::ptime ptime;
     
-  ptime timestampReset_;
-  ptime timestampConfigureTx_;
-  ptime timestampConfigureRx_;
-  ptime timestampConfigureDaq_;
-  ptime timestampConfigureAlgo_;
-  
-  size_t errorTimeClk_;
-  size_t errorTimeDaq_;
-  size_t errorTimeTx_;
-  size_t errorTimeRx_;
-  size_t errorTimeAlgo_;
-  
-  static bool isInvalidTimeOrAfterErrorTime(const ptime& aStartTime, size_t aSecondsBeforeError);
+  ptime errTimeClk_;
+  ptime errTimeTx_;
+  ptime errTimeRx_;
+  ptime errTimeDaq_;
+  ptime errTimeAlgo_;
   
 public:
   struct TTCStatus {
