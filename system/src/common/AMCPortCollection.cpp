@@ -5,11 +5,11 @@
  * Created on October 5, 2015, 4:57 PM
  */
 
-#include "swatch/amc13/AMCPortCollection.hpp"
-#include "swatch/amc13/AMCPort.hpp"
+#include "swatch/dtm/AMCPortCollection.hpp"
+#include "swatch/dtm/AMCPort.hpp"
 
 namespace swatch {
-namespace amc13 {
+namespace dtm {
     
 AMCPortCollection::AMCPortCollection() :
 core::MonitorableObject("amcports") {

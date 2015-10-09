@@ -8,7 +8,7 @@
 #ifndef SWATCH_AMC13_TTCINTERFACE_HPP
 #define	SWATCH_AMC13_TTCINTERFACE_HPP
 
-#include "swatch/core/MonitorableObject.hpp"
+#include "swatch/dtm/TTCInterface.hpp"
 
 namespace amc13 {
   class AMC13;
@@ -17,7 +17,7 @@ namespace amc13 {
 namespace swatch {
 namespace amc13 {
 
-class TTCInterface : public core::MonitorableObject {
+class TTCInterface : public dtm::TTCInterface {
 public:
     TTCInterface( ::amc13::AMC13& aDriver );
     virtual ~TTCInterface( );
@@ -28,16 +28,16 @@ protected:
 private:
     ::amc13::AMC13& mDriver;
 
-    //! Metric for measured TTC clock frequency [Hz]
-    core::Metric<double>& mClockFreq;
-    //! Metric for TTC BC0 counter
-    core::Metric<uint32_t>& mBC0Counter;
-    //! Metric for TTC BC error counter
-    core::Metric<uint32_t>& BC0Errors;
-    //! Metric for TTC single-bit error counter
-    core::Metric<uint32_t>& mSingleBitErrors;
-    //! Metric for TTC double-bit error counter
-    core::Metric<uint32_t>& mDoubleBitErrors;
+//    //! Metric for measured TTC clock frequency [Hz]
+//    core::Metric<double>& mClockFreq;
+//    //! Metric for TTC BC0 counter
+//    core::Metric<uint32_t>& mBC0Counter;
+//    //! Metric for TTC BC error counter
+//    core::Metric<uint32_t>& BC0Errors;
+//    //! Metric for TTC single-bit error counter
+//    core::Metric<uint32_t>& mSingleBitErrors;
+//    //! Metric for TTC double-bit error counter
+//    core::Metric<uint32_t>& mDoubleBitErrors;
     
 
 };

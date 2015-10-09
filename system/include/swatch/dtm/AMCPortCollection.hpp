@@ -5,13 +5,13 @@
  * Created on October 5, 2015, 4:57 PM
  */
 
-#ifndef __SWATCH_AMC13_AMCLINKCOLLECTION_HPP__
-#define	__SWATCH_AMC13_AMCLINKCOLLECTION_HPP__
+#ifndef __SWATCH_DTM_AMCPORTCOLLECTION_HPP__
+#define	__SWATCH_DTM_AMCPORTCOLLECTION_HPP__
 
 #include "swatch/core/MonitorableObject.hpp"
 
 namespace swatch {
-namespace amc13 {
+namespace dtm {
 
 class AMCPort;
 
@@ -36,5 +36,5 @@ private:
 } // namespace amc13
 } // namespace swatch 
 
-#endif	/* __SWATCH_AMC13_AMCLINKCOLLECTION_HPP__ */
+#endif	/* __SWATCH_DTM_AMCPORTCOLLECTION_HPP__ */
 
