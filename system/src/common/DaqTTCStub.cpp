@@ -4,7 +4,7 @@
  * @date    11/11/14
  */
 
-#include "swatch/system/DaqTTCStub.hpp"
+#include "swatch/dtm/DaqTTCStub.hpp"
 #include "swatch/logger/Log.hpp"
 
 
@@ -12,10 +12,10 @@
 
 
 namespace swatch {
-namespace system {
+namespace dtm {
 
 
-std::ostream& operator<<(std::ostream& os, const swatch::system::DaqTTCStub& sd ) {
+std::ostream& operator<<(std::ostream& os, const swatch::dtm::DaqTTCStub& sd ) {
     
     os << "DaqTTCStub[" << sd.id << "]:\n"
        << "   - Uses creator = " << sd.creator << "\n"

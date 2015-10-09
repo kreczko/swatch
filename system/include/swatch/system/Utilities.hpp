@@ -9,19 +9,26 @@
 #include "boost/property_tree/json_parser.hpp"
 
 // SWATCH headers
-#include "swatch/system/DaqTTCStub.hpp"
+#include "swatch/dtm/DaqTTCStub.hpp"
 #include "swatch/system/SystemStub.hpp"
 #include "swatch/system/CrateStub.hpp"
 
 
 namespace swatch {
+namespace dtm {
+
+DaqTTCStub treeToDaqTTCStub( const boost::property_tree::ptree& t );
+
+} // namespace processor
+} // namespace swatch
+
+
+namespace swatch {
 namespace system {
 
-swatch::system::DaqTTCStub treeToDaqTTCStub( const boost::property_tree::ptree& t );
+SystemStub treeToSystemPars( const boost::property_tree::ptree& t );
 
-swatch::system::SystemStub treeToSystemPars( const boost::property_tree::ptree& t );
-
-swatch::system::CrateStub treeToCrateStub( const boost::property_tree::ptree& t );
+CrateStub treeToCrateStub( const boost::property_tree::ptree& t );
 
 } // namespace processor
 } // namespace swatch

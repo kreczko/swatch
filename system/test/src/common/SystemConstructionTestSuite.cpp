@@ -12,7 +12,7 @@
 
 #include "swatch/system/System.hpp"
 #include "swatch/system/Crate.hpp"
-#include "swatch/system/DaqTTCStub.hpp"
+#include "swatch/dtm/DaqTTCStub.hpp"
 #include "swatch/processor/test/DummyProcessor.hpp"
 #include "swatch/system/test/DummyAMC13Manager.hpp"
 #include "swatch/system/test/utilities.hpp"

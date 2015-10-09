@@ -28,11 +28,14 @@ class Processor;
 class Link;
 }
 
+namespace dtm {
+class DaqTTCManager;
+}
+
 namespace system {
 
 class Crate;
 class Service;
-class DaqTTCManager;
 
 struct SysRunControlFSM {
   static const std::string kId;
@@ -83,7 +86,7 @@ public:
     
   const std::deque<processor::Processor*>& getProcessors() ;
   const std::deque<Service*>& getServices();
-  const std::deque<DaqTTCManager*>& getDaqTTC();
+  const std::deque<dtm::DaqTTCManager*>& getDaqTTC();
   const std::deque<processor::Link*>& getLinks();
   const CratesMap& getCrates();
     
@@ -100,7 +103,7 @@ protected:
 private:
     
     void add( processor::Processor* aProcessor );
-    void add( system::DaqTTCManager* aAMC13 );
+    void add( dtm::DaqTTCManager* aAMC13 );
     void add( processor::Link* aLink );
     void add( system::Service* aService );
     void add( system::Crate* aCrate );
@@ -116,7 +119,7 @@ private:
     std::deque<processor::Processor*> processors_;
     
     //! List of AMC13s
-    std::deque<DaqTTCManager*> daqTtc_;
+    std::deque<dtm::DaqTTCManager*> daqTtc_;
     
     //! List of services
     std::deque<Service*> services_;

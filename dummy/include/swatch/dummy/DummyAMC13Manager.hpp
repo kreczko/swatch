@@ -3,7 +3,7 @@
 #define __SWATCH_DUMMY_DUMMYAMC13MANAGER_HPP__
 
 
-#include "swatch/system/DaqTTCManager.hpp"
+#include "swatch/dtm/DaqTTCManager.hpp"
 
 
 namespace swatch {
@@ -12,7 +12,7 @@ namespace dummy {
 
 class DummyAMC13Driver;
 
-class DummyAMC13Manager : public system::DaqTTCManager {
+class DummyAMC13Manager : public dtm::DaqTTCManager {
 public:
     DummyAMC13Manager( const swatch::core::AbstractStub& aStub );
 

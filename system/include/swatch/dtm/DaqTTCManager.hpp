@@ -14,11 +14,11 @@
 // SWATCH headers
 #include "swatch/core/ActionableObject.hpp"
 #include "swatch/core/StateMachine.hpp"
-#include "swatch/system/DaqTTCStub.hpp"
+#include "swatch/dtm/DaqTTCStub.hpp"
 
 
 namespace swatch {
-namespace system {
+namespace dtm {
 
     
 class DaqTTCManager;

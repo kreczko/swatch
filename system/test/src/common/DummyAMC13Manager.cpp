@@ -15,7 +15,7 @@ namespace test {
 
 
 DummyAMC13Manager::DummyAMC13Manager( const swatch::core::AbstractStub& aStub ) : 
-  system::DaqTTCManager(aStub)
+  dtm::DaqTTCManager(aStub)
 {
 }
 

@@ -16,7 +16,7 @@
 #include "swatch/system/Crate.hpp"
 #include "swatch/system/CrateStub.hpp"
 #include "swatch/system/CrateStub.hpp"
-#include "swatch/system/DaqTTCManager.hpp"
+#include "swatch/dtm/DaqTTCManager.hpp"
 #include "swatch/system/Service.hpp"
 #include "swatch/system/System.hpp"
 

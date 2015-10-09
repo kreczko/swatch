@@ -20,11 +20,15 @@ class Processor;
 
 
 namespace swatch {
+
+namespace dtm {
+class DaqTTCManager;
+} // namespace dtm
+
 namespace system {
 
 class Crate;
 class Service;
-class DaqTTCManager;
 
 std::ostream& operator<<(std::ostream& os, const swatch::system::Crate& cv);
 
@@ -34,12 +38,12 @@ public:
     Crate( const swatch::core::AbstractStub& aStub );
     virtual ~Crate();
     
-    void add( system::DaqTTCManager* aAMC13 );
+    void add( dtm::DaqTTCManager* aAMC13 );
     void add( processor::Processor* aProcessor );
     
     processor::Processor* amc( uint32_t slot );
     
-    system::DaqTTCManager* amc13() { return amc13_; }
+    dtm::DaqTTCManager* amc13() { return amc13_; }
     
     std::vector<uint32_t> getPopulatedSlots() const;
     
@@ -51,7 +55,7 @@ public:
 private:
     CrateStub stub_;
     Service* mch_;
-    DaqTTCManager* amc13_;
+    dtm::DaqTTCManager* amc13_;
     std::vector<processor::Processor*> amcs_;
     
     uint32_t min_;

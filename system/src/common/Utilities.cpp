@@ -10,30 +10,17 @@
 
 // SWATCH headers
 #include "swatch/processor/Utilities.hpp"
-#include "swatch/system/DaqTTCStub.hpp"
+#include "swatch/dtm/DaqTTCStub.hpp"
 #include "swatch/system/CrateStub.hpp"
 
 // boost headers
 #include "boost/foreach.hpp"
 
 namespace swatch {
-namespace system {
+namespace dtm {
 
 //---
-swatch::system::CrateStub
-treeToCrateStub(const boost::property_tree::ptree& t) {
-
-    CrateStub astub(t.get<std::string>("NAME"));
-    
-    astub.location = t.get<std::string>("LOCATION");
-    astub.description = t.get<std::string>("DESCRIPTION");
-    
-    return astub;
-}
-  
-
-//---
-swatch::system::DaqTTCStub
+swatch::dtm::DaqTTCStub
 treeToDaqTTCStub(const boost::property_tree::ptree& t) {
     DaqTTCStub aStub(t.get<std::string>("NAME"));
 
@@ -53,6 +40,27 @@ treeToDaqTTCStub(const boost::property_tree::ptree& t) {
     }
     return aStub;
 }
+
+} // namespace system
+} // namespace swatch
+
+
+namespace swatch {
+namespace system {
+
+
+//---
+swatch::system::CrateStub
+treeToCrateStub(const boost::property_tree::ptree& t) {
+
+    CrateStub astub(t.get<std::string>("NAME"));
+    
+    astub.location = t.get<std::string>("LOCATION");
+    astub.description = t.get<std::string>("DESCRIPTION");
+    
+    return astub;
+}
+  
 
 //---
 swatch::system::SystemStub 
@@ -94,7 +102,7 @@ treeToSystemPars( const boost::property_tree::ptree& t ) {
 //        daqTTCSets.push_back(amc13Set);
         
         aStub.daqttcs.emplace_back(
-          swatch::system::treeToDaqTTCStub(v.second)
+          swatch::dtm::treeToDaqTTCStub(v.second)
         );
     }
 //    sysPars.add("daqttcs",daqTTCSets);

@@ -9,7 +9,7 @@
 #include "swatch/logger/Log.hpp"
 #include "swatch/core/Factory.hpp"
 #include "swatch/core/StateMachine.hpp"
-#include "swatch/system/DaqTTCStub.hpp"
+#include "swatch/dtm/DaqTTCStub.hpp"
 #include "swatch/dummy/DummyAMC13Driver.hpp"
 #include "swatch/dummy/DummyAMC13ManagerCommands.hpp"
 
@@ -22,7 +22,7 @@ namespace dummy {
 
 
 DummyAMC13Manager::DummyAMC13Manager( const swatch::core::AbstractStub& aStub ) : 
-  system::DaqTTCManager(aStub),
+  dtm::DaqTTCManager(aStub),
   driver_(new DummyAMC13Driver())
 {
   // 1) Commands

@@ -19,7 +19,7 @@
 #include "swatch/processor/Processor.hpp"
 #include "swatch/system/Crate.hpp"
 #include "swatch/system/Service.hpp"
-#include "swatch/system/DaqTTCManager.hpp"
+#include "swatch/dtm/DaqTTCManager.hpp"
 
 
 SWATCH_REGISTER_CLASS(swatch::system::System)
@@ -109,7 +109,7 @@ const std::deque<processor::Processor*>& System::getProcessors() {
 
 
 //---
-const std::deque<DaqTTCManager*>& System::getDaqTTC() {
+const std::deque<dtm::DaqTTCManager*>& System::getDaqTTC() {
   return daqTtc_;
 }
 
@@ -170,7 +170,7 @@ System::add(processor::Processor* aProcessor) {
 
 //---
 void
-System::add(system::DaqTTCManager* aAMC13) {
+System::add(dtm::DaqTTCManager* aAMC13) {
   if (aAMC13 == NULL)
     throw std::invalid_argument("AMC13 pointer is NULL!");
 
@@ -264,7 +264,7 @@ void System::addDaqTTCs()
   BOOST_FOREACH(auto& dStub, getStub().daqttcs)
   {
     try {
-      DaqTTCManager* mgr = core::Factory::get()->make<DaqTTCManager>(dStub.creator, dStub);
+      dtm::DaqTTCManager* mgr = core::Factory::get()->make<dtm::DaqTTCManager>(dStub.creator, dStub);
       add(mgr);
     }
     catch (const core::exception& e) {

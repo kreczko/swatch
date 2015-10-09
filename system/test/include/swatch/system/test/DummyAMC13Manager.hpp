@@ -3,7 +3,7 @@
 #define __SWATCH_SYSTEM_TEST_DUMMYAMC13MANAGER_HPP__
 
 
-#include "swatch/system/DaqTTCManager.hpp"
+#include "swatch/dtm/DaqTTCManager.hpp"
 
 
 namespace swatch {
@@ -11,7 +11,7 @@ namespace system {
 namespace test {
 
 
-class DummyAMC13Manager : public system::DaqTTCManager {
+class DummyAMC13Manager : public dtm::DaqTTCManager {
 public:
     DummyAMC13Manager( const swatch::core::AbstractStub& aStub );
 

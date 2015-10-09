@@ -27,7 +27,7 @@
 #include "swatch/system/System.hpp"
 #include "swatch/system/Crate.hpp"
 #include "swatch/system/CrateStub.hpp"
-#include "swatch/system/DaqTTCStub.hpp"
+#include "swatch/dtm/DaqTTCStub.hpp"
 #include "swatch/processor/test/DummyProcessor.hpp"
 #include "swatch/system/test/DummyAMC13Manager.hpp"
 #include "swatch/logger/Log.hpp"
@@ -39,6 +39,7 @@ using namespace swatch::system::test;
 namespace swco  = swatch::core;
 namespace swpro = swatch::processor;
 namespace swsys = swatch::system;
+namespace swdtm = swatch::dtm;
 
 using swatch::processor::test::DummyProcessor;
 
@@ -121,7 +122,7 @@ struct Params {
     swsys::SystemStub sysStub, emptyStub;
     swsys::CrateStub cA, cB;
     swpro::ProcessorStub p1,p2,p3;
-    swsys::DaqTTCStub dts;
+    swdtm::DaqTTCStub dts;
 
 };
 
@@ -222,7 +223,7 @@ BOOST_FIXTURE_TEST_CASE(AddAMC13Service, Params) {
   BOOST_CHECK_EQUAL(system.getServices().size(), size_t(0));
   BOOST_CHECK_EQUAL(system.getDaqTTC().size(), size_t(1));
 
-  swsys::DaqTTCManager * stored_service = system.getObj<swsys::DaqTTCManager>(dts.id);
+  swdtm::DaqTTCManager * stored_service = system.getObj<swdtm::DaqTTCManager>(dts.id);
   BOOST_REQUIRE( stored_service != NULL );
   BOOST_CHECK_EQUAL(dts.id, stored_service->getId() );
 }

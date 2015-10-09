@@ -15,7 +15,7 @@
 #include "swatch/processor/ProcessorStub.hpp"
 #include "swatch/processor/LinkStub.hpp"
 #include "swatch/system/CrateStub.hpp"
-#include "swatch/system/DaqTTCStub.hpp"
+#include "swatch/dtm/DaqTTCStub.hpp"
 
 
 namespace swatch {
@@ -42,7 +42,7 @@ public:
 
   std::vector<swatch::processor::ProcessorStub> processors;
 
-  std::vector<swatch::system::DaqTTCStub> daqttcs;
+  std::vector<swatch::dtm::DaqTTCStub> daqttcs;
 
   std::vector<swatch::processor::LinkStub> links;
 };

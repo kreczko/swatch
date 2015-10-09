@@ -4,7 +4,7 @@
  * Date:   July 2014
  */
 
-#include "swatch/system/DaqTTCManager.hpp"
+#include "swatch/dtm/DaqTTCManager.hpp"
 
 
 // SWATCH headers
@@ -13,7 +13,7 @@
 
 
 namespace swatch {
-namespace system {
+namespace dtm {
 
 const std::string RunControlFSM::kId = "runControl";
 const std::string RunControlFSM::kStateInitial = "HALTED";

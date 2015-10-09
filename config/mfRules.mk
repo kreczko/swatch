@@ -57,17 +57,17 @@ _all: ${LibraryTarget} ${Executables} ${ExtraTargets}
 
 # Implicit rule for .cpp -> .o 
 obj/%.o : src/common/%.cpp 
-	${MakeDir} -p $(@D)
+	${MakeDir} $(@D)
 	${CPP} -c ${CxxFlags} ${IncludePaths} $< -o $@
 
 # Implicit rule for .cxx -> .o 
 obj/%.o : src/common/%.cxx 
-	${MakeDir} -p $(@D)
+	${MakeDir} $(@D)
 	${CPP} -c ${CxxFlags} ${IncludePaths} $< -o $@
 	
 # Main target: shared library
 ${LibraryTarget}: ${LibraryObjectFiles}
-	${MakeDir} -p $(@D)
+	${MakeDir} $(@D)
 	${LD} ${LinkFlags} ${DependentLibraries} ${LibraryObjectFiles} -o $@
 
 # Include automatically generated dependencies
@@ -75,7 +75,7 @@ ${LibraryTarget}: ${LibraryObjectFiles}
 	
 # Static Pattern rule for binaries
 ${Executables}: bin/%.exe: obj/%.o ${LibraryTarget}
-	${MakeDir} -p $(@D)
+	${MakeDir} $(@D)
 	${LD} ${ExecutableLinkFlags} ${ExecutableDependentLibraries} $< -o $@
 
 # Include automatically generated dependencies

@@ -18,7 +18,7 @@
 
 
 namespace swatch {
-namespace system {
+namespace dtm {
 
 
 //! Structure that holds the data required to build a DaqTTCManager
@@ -62,7 +62,7 @@ public:
 };
 
 
-std::ostream& operator<<(std::ostream& os, const swatch::system::DaqTTCStub& sd);
+std::ostream& operator<<(std::ostream& os, const swatch::dtm::DaqTTCStub& sd);
 
 
 } // namespace system

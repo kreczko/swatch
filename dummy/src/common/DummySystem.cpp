@@ -5,7 +5,7 @@
 #include "swatch/core/Factory.hpp"
 #include "swatch/core/SystemStateMachine.hpp"
 #include "swatch/processor/Processor.hpp"
-#include "swatch/system/DaqTTCManager.hpp"
+#include "swatch/dtm/DaqTTCManager.hpp"
 
 
 SWATCH_REGISTER_CLASS(swatch::dummy::DummySystem)
@@ -18,7 +18,7 @@ DummySystem::DummySystem(const swatch::core::AbstractStub& aStub) :
   swatch::system::System(aStub)
 {
   typedef processor::Processor::RunControlFSM tProcFSM;
-  typedef system::RunControlFSM tDaqTTCFSM;
+  typedef dtm::RunControlFSM tDaqTTCFSM;
   
   system::SysRunControlFSM& fsm = mRunControl;
   fsm.coldReset.add(getDaqTTC().begin(), getDaqTTC().end(), tDaqTTCFSM::kStateInitial, tDaqTTCFSM::kTrColdReset)
