@@ -10,7 +10,7 @@
 
 
 // Swatch Headers
-#include "swatch/system/DaqTTCManager.hpp"
+#include "swatch/dtm/DaqTTCManager.hpp"
 
 // Forward declaration
 namespace amc13 {
@@ -21,8 +21,10 @@ namespace swatch {
 namespace amc13 {
 
 class TTCInterface;
+class SLinkExpress;
+class AMCPortCollection;
 
-class AMC13Manager : public swatch::system::DaqTTCManager {
+class AMC13Manager : public swatch::dtm::DaqTTCManager {
 public:
   AMC13Manager(const swatch::core::AbstractStub& aStub);
   ~AMC13Manager();
@@ -30,6 +32,12 @@ public:
   ::amc13::AMC13& driver() {
     return *mDriver;
   }
+  
+      //! Returns this amc13's TTC interface
+    TTCInterface& getTTC();
+    
+    //! Returns this amc13's link interface
+    AMCPortCollection& getAMCPorts();
 
 protected:
 
@@ -38,10 +46,18 @@ protected:
   //! Register the supplied (heap-allocated) TTC interface in this processor; the processor base class takes ownership of the TTC interface instance.
   TTCInterface& registerInterface( TTCInterface* aTTCInterface );
 
+  //! Register the supplied (heap-allocated) SLink interface in this processor; the processor base class takes ownership of the TTC interface instance.
+  SLinkExpress& registerInterface( SLinkExpress* aSLink );
+
+  //! Register the supplied (heap-allocated) link interface in this processor; the processor base class takes ownership of the link interface instance.
+  AMCPortCollection& registerInterface( AMCPortCollection* aPortCollection );
+
 private:
   ::amc13::AMC13* mDriver;
 
   TTCInterface* mTTC;
+  SLinkExpress* mSLink;
+  AMCPortCollection* mAMCPorts;
 
   swatch::core::Metric<uint32_t>& mFwVersionT1;
   swatch::core::Metric<uint32_t>& mFwVersionT2_;

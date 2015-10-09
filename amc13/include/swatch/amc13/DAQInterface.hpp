@@ -5,8 +5,8 @@
  * Created on September 21, 2015, 12:21 PM
  */
 
-#ifndef SWATCH_AMC13_DAQINTERFACE_HPP
-#define	SWATCH_AMC13_DAQINTERFACE_HPP
+#ifndef __SWATCH_AMC13_DAQINTERFACE_HPP__
+#define	__SWATCH_AMC13_DAQINTERFACE_HPP__
 
 
 #include "swatch/core/MonitorableObject.hpp"
@@ -26,5 +26,5 @@ private:
 } // namespace swatch
 
 
-#endif	/* SWATCH_AMC13_DAQINTERFACE_HPP */
+#endif	/* __SWATCH_AMC13_DAQINTERFACE_HPP__ */
 

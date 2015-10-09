@@ -11,16 +11,22 @@
 // Swatch Headers
 #include "swatch/core/Factory.hpp"
 #include "swatch/logger/Log.hpp"
-#include "swatch/system/DaqTTCStub.hpp"
+#include "swatch/dtm/DaqTTCStub.hpp"
+#include "swatch/core/CommandSequence.hpp"
+
+
 #include "swatch/amc13/AMC13Commands.hpp"
 #include "swatch/amc13/TTCInterface.hpp"
-#include "swatch/core/CommandSequence.hpp"
+#include "swatch/amc13/SLinkExpress.hpp"
+#include "swatch/amc13/AMCPortCollection.hpp"
 
 // XDAQ headers
 #include "xdata/String.h"
 
 // AMC13 Headers
 #include "amc13/AMC13.hh"
+#include "swatch/amc13/AMCPortCollection.hpp"
+#include "swatch/amc13/AMCPort.hpp"
 
 // Boost Headers
 #include <boost/assign.hpp>
@@ -39,14 +45,33 @@ namespace amc13 {
 
 // --------------------------------------------------------
 AMC13Manager::AMC13Manager(const swatch::core::AbstractStub& aStub) :
-  swatch::system::DaqTTCManager(aStub),
+  swatch::dtm::DaqTTCManager(aStub),
   mDriver(0x0),
   mTTC(0x0),
+  mSLink(0x0),
+  mAMCPorts(0x0),
   mFwVersionT1(registerMetric<uint32_t>("fwVersionT1")),
   mFwVersionT2_(registerMetric<uint32_t>("fwVersionT2")) {
 
+  // Create driver first
   using ::amc13::AMC13;
+  const dtm::DaqTTCStub& desc = getStub();
 
+  uhal::HwInterface t1 = uhal::ConnectionManager::getDevice("T1", desc.uriT1, desc.addressTableT1);
+  uhal::HwInterface t2 = uhal::ConnectionManager::getDevice("T2", desc.uriT2, desc.addressTableT2);
+
+  mDriver = new AMC13(t1, t2);
+
+  // Then Monitoring interfaces
+  registerInterface(new TTCInterface(*mDriver));
+  // Hard-coded id for the moment
+  registerInterface(new SLinkExpress(0,*mDriver));
+  
+  registerInterface(new AMCPortCollection());
+
+  BOOST_FOREACH( uint32_t s, getStub().amcSlots) {
+    getAMCPorts().addPort(new AMCPort(s, *mDriver));
+  }
   // Commands
   core::Command& coldResetCmd = registerFunctionoid<RebootCommand>("rebootCmd");
   core::Command& resetCmd = registerFunctionoid<ResetCommand>("resetCmd");
@@ -66,14 +91,9 @@ AMC13Manager::AMC13Manager(const swatch::core::AbstractStub& aStub) :
   mRunControl.stopFromPaused.add(stopCmd);
   mRunControl.stopFromRunning.add(stopCmd);
 
-  const system::DaqTTCStub& desc = getStub();
 
-  uhal::HwInterface t1 = uhal::ConnectionManager::getDevice("T1", desc.uriT1, desc.addressTableT1);
-  uhal::HwInterface t2 = uhal::ConnectionManager::getDevice("T2", desc.uriT2, desc.addressTableT2);
 
-  mDriver = new AMC13(t1, t2);
 
-  registerInterface(new TTCInterface(*mDriver));
 
 
   uint32_t vT1 = mDriver->read(AMC13::T1, "STATUS.FIRMWARE_VERS");
@@ -90,16 +110,54 @@ AMC13Manager::~AMC13Manager() {
 
 
 // --------------------------------------------------------
+TTCInterface& AMC13Manager::getTTC() {
+  return *mTTC;
+}
+
+
+// --------------------------------------------------------
+AMCPortCollection& AMC13Manager::getAMCPorts() {
+  return *mAMCPorts;
+}
+
+// --------------------------------------------------------
 TTCInterface&
 AMC13Manager::registerInterface(TTCInterface* aTTCInterface) {
   if (mTTC) {
     delete aTTCInterface;
-    throw DaqTTCManagerInterfaceAlreadyDefined("TTCInterface already defined for processor '" + getPath() + "'");
+    throw DaqTTCManagerInterfaceAlreadyDefined("TTCInterface already defined for amc13 '" + getPath() + "'");
   }
   this->addObj(aTTCInterface);
   mTTC = aTTCInterface;
   return *mTTC;
 }
+
+
+// --------------------------------------------------------
+SLinkExpress&
+AMC13Manager::registerInterface(SLinkExpress* aSLink) {
+  if (mSLink) {
+    delete aSLink;
+    throw DaqTTCManagerInterfaceAlreadyDefined("SLink already defined for amc13 '" + getPath() + "'");
+  }
+  this->addObj(aSLink);
+  mSLink = aSLink;
+  return *mSLink;
+}
+
+// --------------------------------------------------------
+AMCPortCollection&
+AMC13Manager::registerInterface( AMCPortCollection* aAMCLinkCollection )
+{
+  if( mAMCPorts ){
+    delete aAMCLinkCollection;
+    throw DaqTTCManagerInterfaceAlreadyDefined( "PortCollection already defined for amc13 '" + getPath() + "'" );
+  }
+  this->addObj(aAMCLinkCollection);
+  mAMCPorts = aAMCLinkCollection;
+  return *mAMCPorts;
+}
+
 
 // --------------------------------------------------------
 void AMC13Manager::retrieveMetricValues() {
@@ -113,7 +171,7 @@ void AMC13Manager::retrieveMetricValues() {
   setMetricValue<>(ttcMetricBC0Errors_, mDriver->read(AMC13::T2, "STATUS.TTC.BCNT_ERROR"));
   setMetricValue<>(ttcMetricSingleBitErrors_, mDriver->read(AMC13::T2, "STATUS.TTC.SBIT_ERROR"));
   setMetricValue<>(ttcMetricDoubleBitErrors_, mDriver->read(AMC13::T2, "STATUS.TTC.MBIT_ERROR"));
-  setMetricValue<>(daqMetricFedId_, (uint16_t) mDriver->read(AMC13::T1, "CONF.ID.FED_ID"));
+  setMetricValue<>(daqMetricFedId_, (uint16_t) mDriver->read(AMC13::T1, "CONF.ID.SOURCE_ID"));
 }
 
 
