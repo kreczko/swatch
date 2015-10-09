@@ -4,8 +4,8 @@
  * @date    11/11/14
  */
 
-#ifndef __SWATCH_SYSTEM_DAQTTCSTUB_HPP__
-#define __SWATCH_SYSTEM_DAQTTCSTUB_HPP__
+#ifndef __SWATCH_DTM_DAQTTCSTUB_HPP__
+#define __SWATCH_DTM_DAQTTCSTUB_HPP__
 
 
 // C++ headers
@@ -69,4 +69,4 @@ std::ostream& operator<<(std::ostream& os, const swatch::dtm::DaqTTCStub& sd);
 } // namespace swatch
 
 
-#endif /* __SWATCH_SYSTEM_DAQTTCSTUB_HPP__ */
+#endif /* __SWATCH_DTM_DAQTTCSTUB_HPP__ */

@@ -4,8 +4,8 @@
  * @date    July 2014
  */
 
-#ifndef __SWATCH_SYSTEM_DAQTTCMANAGER_HPP__
-#define __SWATCH_SYSTEM_DAQTTCMANAGER_HPP__
+#ifndef __SWATCH_DTM_DAQTTCMANAGER_HPP__
+#define __SWATCH_DTM_DAQTTCMANAGER_HPP__
 
 
 // C++ headers
@@ -117,5 +117,5 @@ private:
 
 
 
-#endif	/* __SWATCH_SYSTEM_DAQTTCSERVICE_HPP__ */
+#endif	/* __SWATCH_DTM_DAQTTCMANAGER_HPP__ */
 
