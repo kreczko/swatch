@@ -13,20 +13,19 @@
 #include "swatch/logger/Log.hpp"
 #include "swatch/dtm/DaqTTCStub.hpp"
 #include "swatch/core/CommandSequence.hpp"
+#include "swatch/dtm/AMCPortCollection.hpp"
 
 
 #include "swatch/amc13/AMC13Commands.hpp"
 #include "swatch/amc13/TTCInterface.hpp"
 #include "swatch/amc13/SLinkExpress.hpp"
-#include "swatch/amc13/AMCPortCollection.hpp"
+#include "swatch/amc13/AMCPort.hpp"
 
 // XDAQ headers
 #include "xdata/String.h"
 
 // AMC13 Headers
 #include "amc13/AMC13.hh"
-#include "swatch/amc13/AMCPortCollection.hpp"
-#include "swatch/amc13/AMCPort.hpp"
 
 // Boost Headers
 #include <boost/assign.hpp>
@@ -67,7 +66,7 @@ AMC13Manager::AMC13Manager(const swatch::core::AbstractStub& aStub) :
   // Hard-coded id for the moment
   registerInterface(new SLinkExpress(0,*mDriver));
   
-  registerInterface(new AMCPortCollection());
+  registerInterface(new dtm::AMCPortCollection());
 
   BOOST_FOREACH( uint32_t s, getStub().amcSlots) {
     getAMCPorts().addPort(new AMCPort(s, *mDriver));
@@ -116,7 +115,7 @@ TTCInterface& AMC13Manager::getTTC() {
 
 
 // --------------------------------------------------------
-AMCPortCollection& AMC13Manager::getAMCPorts() {
+dtm::AMCPortCollection& AMC13Manager::getAMCPorts() {
   return *mAMCPorts;
 }
 
@@ -146,15 +145,15 @@ AMC13Manager::registerInterface(SLinkExpress* aSLink) {
 }
 
 // --------------------------------------------------------
-AMCPortCollection&
-AMC13Manager::registerInterface( AMCPortCollection* aAMCLinkCollection )
+dtm::AMCPortCollection&
+AMC13Manager::registerInterface( dtm::AMCPortCollection* aAMCPortCollection )
 {
   if( mAMCPorts ){
-    delete aAMCLinkCollection;
+    delete aAMCPortCollection;
     throw DaqTTCManagerInterfaceAlreadyDefined( "PortCollection already defined for amc13 '" + getPath() + "'" );
   }
-  this->addObj(aAMCLinkCollection);
-  mAMCPorts = aAMCLinkCollection;
+  this->addObj(aAMCPortCollection);
+  mAMCPorts = aAMCPortCollection;
   return *mAMCPorts;
 }
 

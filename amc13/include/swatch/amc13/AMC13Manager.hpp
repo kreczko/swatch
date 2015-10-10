@@ -17,12 +17,17 @@ namespace amc13 {
 class AMC13;
 }
 
+
 namespace swatch {
+
+namespace dtm {
+class AMCPortCollection;
+}
+
 namespace amc13 {
 
 class TTCInterface;
 class SLinkExpress;
-class AMCPortCollection;
 
 class AMC13Manager : public swatch::dtm::DaqTTCManager {
 public:
@@ -37,7 +42,7 @@ public:
     TTCInterface& getTTC();
     
     //! Returns this amc13's link interface
-    AMCPortCollection& getAMCPorts();
+    dtm::AMCPortCollection& getAMCPorts();
 
 protected:
 
@@ -50,14 +55,14 @@ protected:
   SLinkExpress& registerInterface( SLinkExpress* aSLink );
 
   //! Register the supplied (heap-allocated) link interface in this processor; the processor base class takes ownership of the link interface instance.
-  AMCPortCollection& registerInterface( AMCPortCollection* aPortCollection );
+  dtm::AMCPortCollection& registerInterface( dtm::AMCPortCollection* aPortCollection );
 
 private:
   ::amc13::AMC13* mDriver;
 
   TTCInterface* mTTC;
   SLinkExpress* mSLink;
-  AMCPortCollection* mAMCPorts;
+  dtm::AMCPortCollection* mAMCPorts;
 
   swatch::core::Metric<uint32_t>& mFwVersionT1;
   swatch::core::Metric<uint32_t>& mFwVersionT2_;

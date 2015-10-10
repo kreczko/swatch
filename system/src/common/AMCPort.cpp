@@ -44,6 +44,5 @@ AMCPort::~AMCPort() {
 }
 
 
-
 } // namespace amc13
 } // namespace swatch 
