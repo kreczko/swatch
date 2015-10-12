@@ -38,7 +38,7 @@ public:
     std::vector<StateMachine::Transition*> mTransitions;
   };
     
-  SystemTransition(const std::string& aId, SystemStateMachine& aOperation, const std::string& aStartState, const std::string& aEndState);
+  SystemTransition(const std::string& aId, SystemStateMachine& aFSM, const std::string& aStartState, const std::string& aEndState);
   virtual ~SystemTransition();
 
   // Iteration over all steps in the transition
@@ -71,6 +71,8 @@ public:
 
   SystemTransition& add(const std::vector<StateMachine::Transition*>& aTransitions);
 
+  void checkForMissingParameters(const GateKeeper& aGateKeeper, std::map< const StateMachine::Transition*, std::vector<CommandVec::MissingParam> >& aMissingParams) const;
+
   /**
     * Run the transition, extracting the parameters for each child transition from the supplied gatekeeper
     * 
@@ -82,7 +84,7 @@ public:
 private:
   void runSteps(boost::shared_ptr<ActionableSystem::BusyGuard> aGuard);
 
-  SystemStateMachine& mOperation;
+  SystemStateMachine& mFSM;
   const std::string mStartState;
   const std::string mEndState;
   std::vector<Step> mSteps;

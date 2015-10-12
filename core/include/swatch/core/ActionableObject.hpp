@@ -31,32 +31,38 @@ class StateMachine;
 class SystemStateMachine;
 
 
+class AbstractState {
+public:
+  bool isEnabled() const;
+  const std::string& getState() const;
+  const std::vector<const Functionoid*>& getActions() const;
+  template<class T>
+  const T* getAction() const;
+  
+protected:
+  AbstractState();
+
+  //! Indicates whether or not actions are allowed on this resource anymore (actions become disabled once the deleter is)
+  bool mEnabled;
+  std::string mState;
+  //! Indicates which functionoids (Command/CommandSequence/(System)Transition) are currently active; NULL value indicates that no functionoids are currently active.
+  std::vector<const Functionoid*> mActions;
+};
+
 //! An object representing a resource on which commands, command sequences, and transitions run
 class ActionableObject : public MonitorableObject {
   class BusyGuard;
 public:
     
-  class State {
+  class State : public AbstractState {
   public:
     State();
 
-    //! Returns whether or not actions (i.e. commands, command sequences, transitions) are currently enabled on this resource
-    bool isEnabled() const;
     const StateMachine* getEngagedFSM() const;
-    const std::string& getState() const;
-    //! Returns the currently running (or scheduled) actions (i.e. commands, command sequences, transitions); returns NULL if no action is currently scheduled/running
-    const std::vector<const Functionoid*>& getActions() const;
-    template<class T>
-    const T* getAction() const;
 
   private:
-    //! Indicates whether or not actions are allowed on this resource anymore (actions become disabled once the deleter is)
-    bool mEnabled;
-    const StateMachine* mEngagedFSM;
-    std::string mState;
-    //! Indicates which functionoids (Command/CommandSequence/(System)Transition) are currently active; NULL value indicates that no functionoids are currently active.
-    std::vector<const Functionoid*> mActions;
-    //FIXME: Must fix any logic that checks if object is running transition
+
+    const StateMachine* mFSM;
 
     // Friendship for classes/methods that will need to change object's state
     friend class ActionableSystem;
@@ -147,9 +153,6 @@ private:
     BusyGuard(ActionableObject& aResource, const boost::unique_lock<boost::mutex>& aLockGuard, const Functionoid&, const BusyGuard* aOuterGuard=NULL);
 
     ~BusyGuard();
-    
-    // Throws if 
-    void check(const ActionableObject& aResource, const Functionoid& aAction) const;
     
   private:
     ActionableObject& mResource;

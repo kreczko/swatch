@@ -82,7 +82,7 @@ public:
    * @param aGateKeeper Gatekeeper that's used to extract the parameters
    * @param aUseThreadPool Run the command asynchronously in the swatch::core::ThreadPool ; if equals false, then the command is run synchronously
    */
-  void exec(const boost::shared_ptr<ActionableObject::BusyGuard>& aGuard, const GateKeeper& aGateKeeper, const bool& aUseThreadPool = true );
+  void exec(const ActionableObject::BusyGuard* aGuard, const GateKeeper& aGateKeeper, const bool& aUseThreadPool = true );
 
   //! Returns current state of this command sequence
   ActionStatus::State getState() const;
@@ -90,8 +90,15 @@ public:
   //! Returns snapshot of this command's current status (state flag value, running time, current command, overall progress fraction)
   CommandVecStatus getStatus() const;
 
-  
-  void checkForMissingParameters(const GateKeeper& aGateKeeper, std::vector<ReadOnlyXParameterSet>& aParamSets, std::vector<std::pair<std::string,std::string> >& aMissingParams) const;
+  struct MissingParam 
+  {
+    MissingParam(const std::string& aNamespace, const std::string& aCommand, const std::string& aParam);
+    std::string nspace;
+    std::string command;
+    std::string parameter;
+  };
+
+  void checkForMissingParameters(const GateKeeper& aGateKeeper, std::vector<ReadOnlyXParameterSet>& aParamSets, std::vector<MissingParam>& aMissingParams) const;
 
 private:
   /*!
@@ -100,7 +107,7 @@ private:
    * @param aMissingParams vector of missing parameters for each command
    * @param aThrowOnMissing if true, then throws ParameterNotFound if gatekeeper can't find value of any parameter
    */
-  void extractParameters(const GateKeeper& aGateKeeper, std::vector<ReadOnlyXParameterSet>& aParamSets, std::vector<std::pair<std::string, std::string> >& aMissingParams, bool throwOnMissing) const;
+  void extractParameters(const GateKeeper& aGateKeeper, std::vector<ReadOnlyXParameterSet>& aParamSets, std::vector<MissingParam>& aMissingParams, bool throwOnMissing) const;
 
   //! thread safe exception-catching wrapper for code()
   void runCommands(boost::shared_ptr<ActionableObject::BusyGuard> aGuard);
@@ -128,6 +135,11 @@ private:
   std::vector<CommandStatus> mStatusOfCompletedCommands;
   
 };
+
+
+std::ostream& operator << (std::ostream& aOstream, const CommandVec::MissingParam& aMissingParam );
+
+bool operator !=(const CommandVec::MissingParam& l1, const CommandVec::MissingParam& l2);
 
 
 //! Provides a snapshot of the progress/status of a swatch::core::CommandVec

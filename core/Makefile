@@ -30,41 +30,19 @@ LibraryPaths = lib \
 	/lib64
 
 Libraries =	\
-	toolbox \
 	log4cplus \
-	xdata \
-	config \
-	xcept \
-	xoap \
-	asyncresolv \
 	uuid \
+	config \
 	xerces-c \
+	toolbox \
+	xcept \
+	xdata \
+	asyncresolv \
 	mimetic \
+	xoap \
 	boost_regex \
 	pthread \
 	boost_thread
-
-# Libraries =	\
-# 	toolbox \
-# 	xcept \
-# 	log4cplus \
-# 	config \
-# 	asyncresolv \
-# 	xdaq \
-# 	xdata \
-# 	xerces-c \
-# 	xoap \
-# 	mimetic \
-# 	cgicc \
-# 	xgi\
-# 	uuid \
-# 	logxmlappender \
-# 	logudpappender \
-# 	peer \
-# 	boost_regex \
-# 	pthread \
-# 	boost_thread
-#	tcpla \
 	
 
 include ${SWATCH_ROOT}/config/mfRules.mk

@@ -123,12 +123,12 @@ void StateMachine::disengage()
   boost::lock_guard<boost::mutex> lGuard(mResource.mMutex);
   
   // Throw if currently in other state machine
-  if(mResource.mState.mEngagedFSM != this)
+  if(mResource.mState.mFSM != this)
   {
     std::ostringstream oss;
     oss << "Cannot reset resource '" << mResource.getPath() << "' state machine '" << getId() << "'; ";
-    if ( mResource.mState.mEngagedFSM != NULL)
-      oss << "currently in state machine '" << mResource.mState.mEngagedFSM->getPath() << "'";
+    if ( mResource.mState.mFSM != NULL)
+      oss << "currently in state machine '" << mResource.mState.mFSM->getPath() << "'";
     else
       oss << "NOT in any state machine";
     throw ResourceInWrongStateMachine(oss.str());
@@ -139,7 +139,7 @@ void StateMachine::disengage()
     throw ActionableObjectIsBusy("Cannot reset '"+mResource.getPath()+"', state machine '"+getId()+"'; busy running action '"+mResource.mState.mActions.back()->getPath()+"'");  
   
   
-  mResource.mState.mEngagedFSM = NULL;
+  mResource.mState.mFSM = NULL;
   mResource.mState.mState = "";
 }
 
@@ -149,12 +149,12 @@ void StateMachine::reset()
   boost::lock_guard<boost::mutex> lGuard(mResource.mMutex);
   
   // Throw if currently in other state machine
-  if(mResource.mState.mEngagedFSM != this)
+  if(mResource.mState.mFSM != this)
   {
     std::ostringstream oss;
     oss << "Cannot reset '" << mResource.getPath() << "', state machine '" << getId() << "'; ";
-    if ( mResource.mState.mEngagedFSM != NULL)
-      oss << "currently in state machine '" << mResource.mState.mEngagedFSM->getPath() << "'";
+    if ( mResource.mState.mFSM != NULL)
+      oss << "currently in state machine '" << mResource.mState.mFSM->getPath() << "'";
     else
       oss << "NOT in any state machine";
     throw ResourceInWrongStateMachine(oss.str());

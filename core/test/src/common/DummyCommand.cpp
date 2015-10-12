@@ -41,12 +41,13 @@ Command::State DummyCommand::code(const XParameterSet& params)
   DummyActionableObject* res = getParent<DummyActionableObject>();
 
   std::string todo = params.parameterAsString("todo");
+  setResult(params.get("x"));
+
   if (todo == "useResource") {
 
     res->setNumber(54);
     setProgress(0.1);
     
-    setResult(params.get("x"));
     setProgress(0.99, finalMsgUseResource);
     return kDone;
   } 
@@ -60,7 +61,6 @@ Command::State DummyCommand::code(const XParameterSet& params)
       setProgress(0.01 + 0.99 * float(i) / milliseconds, "Dummy command progressed");
     }
 
-    setResult(params.get("x"));
     setStatusMsg(finalMsgSleep);
     return kDone;
   }

@@ -20,7 +20,7 @@ DummyActionableObject::DummyActionableObject() :
   ActionableObject("Dummy"),
   something_("something"),
   number_(0) {
-// Commands and Operations should be registered here
+// Commands, sequences and state machines should be registered here
 }
 
 
@@ -29,7 +29,7 @@ DummyActionableObject::DummyActionableObject(const std::string& aId) :
   ActionableObject(aId),
   something_("something"),
   number_(0) {
-// Commands and Operations should be registered here
+// Commands, sequences and state machines should be registered here
 }
 
 
@@ -88,7 +88,7 @@ CommandSequence& DummyActionableObject::registerCommandSequence(const std::strin
 }
 
 
-StateMachine& DummyActionableObject::registerOperation(const std::string& aId, const std::string& aInitialState, const std::string& aErrorState) {
+StateMachine& DummyActionableObject::registerStateMachine(const std::string& aId, const std::string& aInitialState, const std::string& aErrorState) {
   return ActionableObject::registerStateMachine(aId, aInitialState, aErrorState);
 }
 

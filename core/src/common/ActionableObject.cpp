@@ -16,36 +16,42 @@ using namespace std;
 namespace swatch {
 namespace core {
 
-ActionableObject::State::State() :
-  mEnabled(true),
-  mEngagedFSM(NULL)
-{
-}
-
-bool ActionableObject::State::isEnabled() const
+bool AbstractState::isEnabled() const
 {
   return mEnabled;
 }
 
 
-const StateMachine* ActionableObject::State::getEngagedFSM() const
-{
-  return mEngagedFSM;
-}
-
-
-const std::string& ActionableObject::State::getState() const
+const std::string& AbstractState::getState() const
 {
   return mState;
 }
 
 
-const std::vector<const Functionoid*>& ActionableObject::State::getActions() const
+const std::vector<const Functionoid*>& AbstractState::getActions() const
 {
   return mActions;
 }
 
-  
+
+AbstractState::AbstractState() :
+  mEnabled(true)
+{
+}
+
+
+ActionableObject::State::State() : 
+  AbstractState(),
+  mFSM(NULL)
+{
+}
+
+const StateMachine* ActionableObject::State::getEngagedFSM() const
+{
+  return mFSM;
+}
+
+
 //------------------------------------------------------------------------------------
 
 ActionableObject::ActionableObject( const std::string& aId ) :
@@ -162,9 +168,9 @@ StateMachine& ActionableObject::registerStateMachine( const std::string& aId, co
   if (mFSMs.count(aId))
     throw StateMachineAlreadyExistsInActionableObject( "State machine With ID '"+aId+"' already exists" );
 
-  StateMachine* lOperation = new StateMachine(aId, *this, aInitialState, aErrorState);
-  mFSMs.insert( std::make_pair( aId , lOperation ) );
-  return *lOperation;
+  StateMachine* lFSM = new StateMachine(aId, *this, aInitialState, aErrorState);
+  mFSMs.insert( std::make_pair( aId , lFSM ) );
+  return *lFSM;
 }
 
 
@@ -174,17 +180,18 @@ ActionableObject::State ActionableObject::getState() const {
 }
 
 
-void ActionableObject::engageStateMachine(const std::string& aOperation) {
+void ActionableObject::engageStateMachine(const std::string& aFSM) {
   boost::lock_guard<boost::mutex> lGuard(mMutex);
   
   // Throw if currently in other state machine
   if(mState.getEngagedFSM() != NULL)
     throw ResourceInWrongStateMachine("Cannot engage other state machine; resource '"+getPath()+"' currently in state machine '"+mState.getEngagedFSM()->getId()+"'");
 
-  const StateMachine& lOp = getStateMachine(aOperation);
-  mState.mEngagedFSM = & lOp;
+  const StateMachine& lOp = getStateMachine(aFSM);
+  mState.mFSM = & lOp;
   mState.mState = lOp.getInitialState();
 }
+
 
 //------------------------------------------------------------------------------------
 
@@ -239,15 +246,16 @@ ActionableObject::BusyGuard::BusyGuard(ActionableObject& aResource, const boost:
 
 void ActionableObject::BusyGuard::initialise(const boost::unique_lock<boost::mutex>& aLockGuard)
 {
-  // FIXME: Change these asserts to a throw before release
-  assert ( aLockGuard.mutex() == &mResource.mMutex );
-  assert ( aLockGuard.owns_lock() );
+  if ( aLockGuard.mutex() != &mResource.mMutex)
+    throw std::invalid_argument("BusyGuard's mutex lock guard is for wrong mutex");
+  if ( ! aLockGuard.owns_lock() )
+    throw std::invalid_argument("BusyGuard's mutex lock guard must own the lock");
   
   // Consistency checks on outer busy guard
   if(mOuterGuard != NULL)
   {
     if (&mOuterGuard->mResource != &mResource)
-      throw WrongBusyGuard( "Incompatible outer BusyGuard, resource='"+mOuterGuard->mResource.getPath()+"'. Inner guard resource is'"+mResource.getPath() );
+      throw WrongBusyGuard( "Incompatible outer BusyGuard, resource='"+mOuterGuard->mResource.getPath()+"'. Inner guard resource is '"+mResource.getPath() );
     else if ( mResource.mState.mActions.empty() )
       throw WrongBusyGuard( "Outer BusyGuard used (resource: '"+mResource.getPath()+"', action: '"+mOuterGuard->mAction.getId()+"'), but resource not busy");
     else if ( &mOuterGuard->mAction != mResource.mState.mActions.back() )
@@ -256,10 +264,14 @@ void ActionableObject::BusyGuard::initialise(const boost::unique_lock<boost::mut
   
   LOG(swatch::logger::kNotice) << "'" << mResource.getPath() << "', '" << mAction.getId() << "' : BusyGuard[" << this << "] CTOR";
 
+  // 0) Check that this this action isn't already running
+  if (std::count(mResource.mState.mActions.begin(), mResource.mState.mActions.end(), &mAction) > 0 )
+    throw ActionableObjectIsBusy( "Action '"+mAction.getId()+"' is already running on resource '"+mResource.getPath()+"'" );
+
   // 1) For transitions, check that state machine is engaged, and we're in the right state
   if (const StateMachine::Transition* t = dynamic_cast<const StateMachine::Transition*>(&mAction))
   {
-    if( mResource.mState.mEngagedFSM != & t->getStateMachine())
+    if( mResource.mState.mFSM != & t->getStateMachine())
       throw ResourceInWrongState("Resource '"+mResource.getPath()+"' is not yet engaged in state machine '"+t->getStateMachine().getId()+"'");
     else if ( mResource.mState.mState != t->getStartState() )
       throw ResourceInWrongState("Resource '"+mResource.getPath()+"' is in state '"+mResource.mState.mState+"'; transition '"+t->getId()+"' cannot be run");
@@ -311,14 +323,6 @@ ActionableObject::BusyGuard::~BusyGuard()
   }
 }
 
-
-void ActionableObject::BusyGuard::check(const ActionableObject& aResource, const Functionoid& aAction) const
-{
-  if ( &mResource != &aResource)
-    throw WrongBusyGuard("BusyGuard for '"+mResource.getPath()+"' being used for resource '"+aResource.getPath()+"'");
-  else if ( &mAction != &aAction)
-    throw WrongBusyGuard("BusyGuard for action '"+mAction.getPath()+"' (resource: '"+mResource.getPath()+"') begin used for action '"+mAction.getPath()+"'");
-}
 
 }
 }

@@ -51,17 +51,15 @@ ActionableObject& Command::getResource() {
 void 
 Command::exec( const XParameterSet& aParams  , const bool& aUseThreadPool ) 
 {
-  boost::shared_ptr<ActionableObject::BusyGuard> lActionGuard(new ActionableObject::BusyGuard(getResource(),*this));
-
-  exec(lActionGuard, aParams, aUseThreadPool);
+  exec(NULL, aParams, aUseThreadPool);
 }
 
 
 //---
 void 
-Command::exec(const boost::shared_ptr<ActionableObject::BusyGuard>& aBusyGuard, const XParameterSet& params  , const bool& aUseThreadPool ) 
+Command::exec(const ActionableObject::BusyGuard* aOuterBusyGuard, const XParameterSet& params  , const bool& aUseThreadPool ) 
 {
-  aBusyGuard->check(getResource(), *this);
+  boost::shared_ptr<ActionableObject::BusyGuard> lBusyGuard( new ActionableObject::BusyGuard(getResource(), *this, aOuterBusyGuard) );
 
   // Reset the status before doing anything else, merging user-supplied parameter values with default values
   resetForRunning(params);
@@ -74,11 +72,11 @@ Command::exec(const boost::shared_ptr<ActionableObject::BusyGuard>& aBusyGuard, 
       state_ = ActionStatus::kScheduled;
       
       ThreadPool& pool = ThreadPool::getInstance();
-      pool.addTask<Command,ActionableObject::BusyGuard>(this, &Command::runCode, aBusyGuard, runningParams_);
+      pool.addTask<Command,ActionableObject::BusyGuard>(this, &Command::runCode, lBusyGuard, runningParams_);
     }
     else{
       // otherwise execute in same thread
-      this->runCode(aBusyGuard, runningParams_);
+      this->runCode(lBusyGuard, runningParams_);
     }
   } catch ( const std::exception& e ) {
     // TODO: log the error to error msg (or not?)

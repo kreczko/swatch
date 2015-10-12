@@ -20,14 +20,14 @@ namespace test {
 class DummyGateKeeper : public core::GateKeeper {
   public:
 
-    /// Constructor
-    DummyGateKeeper();
+  /// Constructor
+  DummyGateKeeper();
 
-    /// Destructor
-    virtual ~DummyGateKeeper();
+  /// Destructor
+  virtual ~DummyGateKeeper();
 
-
-    xdata::Table* getTable( const std::string& aId );
+  // Expose gatekeeper "add" method as public for unit testing 
+  void addTable( const std::string& aId, tTable&);
 };
 
 } /* namespace test */

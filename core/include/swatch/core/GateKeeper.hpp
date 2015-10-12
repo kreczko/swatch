@@ -18,7 +18,6 @@
 #include "swatch/core/exception.hpp"
 
 // XDAQ Headers
-#include <xdata/Table.h>
 #include <xdata/Serializable.h>
 
 //BOOST Headers

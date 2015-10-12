@@ -32,9 +32,12 @@ const std::vector<StateMachine::Transition*>& SystemTransition::Step::cget() con
 
 SystemTransition::SystemTransition(const std::string& aId, SystemStateMachine& aOp, const std::string& aStartState, const std::string& aEndState) :
   Functionoid(aId),
-  mOperation(aOp),
+  mFSM(aOp),
   mStartState(aStartState),
-  mEndState(aEndState)
+  mEndState(aEndState),
+  mGateKeeper(NULL),
+  mState(ActionStatus::kInitial),
+  mStepIt(mSteps.end())
 {
 }
 
@@ -97,7 +100,7 @@ SystemTransitionStatus SystemTransition::getStatus() const
       break;
   }
   
-  const Step* currentStep =  ( (mStepIt == mSteps.end()) ? NULL : &*mStepIt);
+  const Step* currentStep =  ( ((mStepIt == mSteps.end()) || (mState == kError)) ? NULL : &*mStepIt);
   
   return SystemTransitionStatus(getPath(), mState, runningTime, currentStep, mStatusOfCompletedSteps, mSteps.size());
 }
@@ -118,13 +121,13 @@ const std::string& SystemTransition::getEndState() const
 
 const SystemStateMachine& SystemTransition::getStateMachine() const
 {
-  return mOperation;
+  return mFSM;
 }
 
 
 SystemStateMachine& SystemTransition::getStateMachine()
 {
-  return mOperation;
+  return mFSM;
 }
 
 
@@ -136,19 +139,22 @@ SystemTransition& SystemTransition::add(const std::vector<StateMachine::Transiti
 
   for(std::vector<StateMachine::Transition*>::const_iterator lIt=aTransitions.begin(); lIt!=aTransitions.end(); lIt++)
   {
+    if(*lIt == NULL)
+      throw InvalidSystemTransition("Element "+boost::lexical_cast<std::string>(lIt-aTransitions.begin())+" of child transition vector is NULL");
+    
     const ActionableObject& lObj = (*lIt)->getStateMachine().getResource();
     
     //Throw if any transitions in vector are not from children of this system
     bool isChild = false;
-    std::vector<std::string> children = mOperation.getResource().getChildren();
+    std::vector<std::string> children = mFSM.getResource().getChildren();
     for(std::vector<std::string>::const_iterator lIt2=children.begin(); lIt2!=children.end(); lIt2++)
     {
-      ActionableObject* lChild = mOperation.getResource().getObj<ActionableObject>(*lIt2);
+      ActionableObject* lChild = mFSM.getResource().getObj<ActionableObject>(*lIt2);
       if( &lObj == lChild )
         isChild = true;
     }
     if(isChild == false)
-      throw InvalidSystemTransition("Cannot add transition on non-child object '"+lObj.getPath()+"' to system state machine '"+mOperation.getPath());
+      throw InvalidSystemTransition("Cannot add transition on non-child object '"+lObj.getPath()+"' to system state machine '"+mFSM.getPath());
     
     
     // Throw if any two transitions in vector are from same child
@@ -160,24 +166,35 @@ SystemTransition& SystemTransition::add(const std::vector<StateMachine::Transiti
     
     // Throw if (for any child) transition is from different state machine than has been registered before
     bool newParticipant = true;
-    for(std::set<const StateMachine*>::const_iterator lIt2 = mOperation.getParticipants().begin(); lIt2 != mOperation.getParticipants().end(); lIt2++)
+    for(std::set<const StateMachine*>::const_iterator lIt2 = mFSM.getParticipants().begin(); lIt2 != mFSM.getParticipants().end(); lIt2++)
     {
       if( (&(*lIt2)->getResource() == &lObj) )
       {
         if (*lIt2 == &(*lIt)->getStateMachine())
           newParticipant = false;
         else
-          throw InvalidSystemTransition("Object '"+lObj.getPath()+"', transition '"+(*lIt)->getId()+"' is inconsistent with transitions already in system-level state machine '"+mOperation.getPath()+"'");
+          throw InvalidSystemTransition("Object '"+lObj.getPath()+"', transition '"+(*lIt)->getId()+"' is inconsistent with transitions already in system-level state machine '"+mFSM.getPath()+"'");
       }
     }
     
-    //FIXME: Throw if any child transition is inconsistent with previous steps from this transition
+    // Throw if any child transition is inconsistent with previous steps from this transition (i.e. if it's start state != end state from transition in previous step)
+    const StateMachine::Transition* lLastTransition = NULL;
+    for(std::vector<Step>::const_iterator lStepIt=mSteps.begin(); lStepIt!=mSteps.end(); lStepIt++)
+    {
+      for(std::vector<StateMachine::Transition*>::const_iterator lIt2=lStepIt->cget().begin(); lIt2!=lStepIt->cget().end(); lIt2++)
+      {
+        if(& (*lIt2)->getResource() == & (*lIt)->getResource())
+          lLastTransition = *lIt2;
+      }
+    }
+    if( (lLastTransition != NULL) && (lLastTransition->getEndState() != (*lIt)->getStartState()))
+      throw InvalidSystemTransition("Object '"+lObj.getPath()+ "', transition '"+(*lIt)->getId()+"' (start state: '"+(*lIt)->getStartState()+"') is incompatible with last transition in same step, '"+lLastTransition->getId()+"' (end state: '"+lLastTransition->getEndState()+"')");
   }
 
   for(std::vector<StateMachine::Transition*>::const_iterator lIt=aTransitions.begin(); lIt!=aTransitions.end(); lIt++)
   {
-    mOperation.mChildFSMs.insert( &(*lIt)->getStateMachine() );
-    mOperation.mNonConstChildFSMs.insert( &(*lIt)->getStateMachine() );
+    mFSM.mChildFSMs.insert( &(*lIt)->getStateMachine() );
+    mFSM.mNonConstChildFSMs.insert( &(*lIt)->getStateMachine() );
   }
   mSteps.push_back( Step(aTransitions) );
   
@@ -185,12 +202,36 @@ SystemTransition& SystemTransition::add(const std::vector<StateMachine::Transiti
 }
 
 
+void SystemTransition::checkForMissingParameters(const GateKeeper& aGateKeeper, std::map<const StateMachine::Transition*, std::vector<CommandVec::MissingParam> >& aMissingParams) const
+{
+  aMissingParams.clear();
+  
+  for(std::vector<Step>::const_iterator lIt=mSteps.begin(); lIt!=mSteps.end(); lIt++)
+  {
+    for(std::vector<StateMachine::Transition*>::const_iterator lIt2=lIt->cget().begin(); lIt2!=lIt->cget().end(); lIt2++)
+    {
+      std::vector<ReadOnlyXParameterSet> lParamSets;
+      std::vector<CommandVec::MissingParam> lMissingParams;
+      (*lIt2)->checkForMissingParameters(aGateKeeper, lParamSets, lMissingParams);
+      if( ! lMissingParams.empty() )
+        aMissingParams[*lIt2] = lMissingParams;
+    }
+  }
+}
+
+
 void SystemTransition::exec(const GateKeeper& aGateKeeper, const bool& aUseThreadPool)
 {
-  // Request control of the resource (incl. children)
-  boost::shared_ptr<ActionableSystem::BusyGuard> lBusyGuard(new ActionableSystem::BusyGuard(mOperation.getResource(), *this));
-  
-  // 1) Reset the status of this transition's state variables
+  // 0) Throw if any parameters are missing from gatekeeper
+  std::map<const StateMachine::Transition*, std::vector<CommandVec::MissingParam> > lMissingParams;
+  checkForMissingParameters(aGateKeeper, lMissingParams);
+  if ( ! lMissingParams.empty() )
+    throw ParameterNotFound("Could not find value of parameters for " + boost::lexical_cast<std::string>(lMissingParams.size()) + " transitions");
+
+  // 1) Request control of the resource (incl. children)
+  boost::shared_ptr<ActionableSystem::BusyGuard> lBusyGuard(new ActionableSystem::BusyGuard(mFSM.getResource(), *this));
+
+  // 2) Reset the status of this transition's state variables
   {
     boost::unique_lock<boost::mutex> lock( mMutex );
 
@@ -205,7 +246,7 @@ void SystemTransition::exec(const GateKeeper& aGateKeeper, const bool& aUseThrea
     mStatusOfCompletedSteps.reserve(mSteps.size());
   }  
 
-  // 2) Execute the command
+  // 3) Execute the command
   if ( aUseThreadPool){
     boost::unique_lock<boost::mutex> lock(mMutex);
     mState = ActionStatus::kScheduled;
@@ -252,8 +293,7 @@ void SystemTransition::runSteps(boost::shared_ptr<ActionableSystem::BusyGuard> a
       {
         StateMachine::Transition& lChildTransition = *(*lIt);
         ActionableObject& lChild = (*lIt)->getStateMachine().getResource();
-        boost::shared_ptr<ActionableObject::BusyGuard> lChildGuard( new ActionableObject::BusyGuard(lChild, lChildTransition, &aGuard->getChildGuard(lChild)) );
-        lChildTransition.exec(lChildGuard, *mGateKeeper); // False = run the commands in this thread!
+        lChildTransition.exec(&aGuard->getChildGuard(lChild), *mGateKeeper); 
       }
       
       // 2.ii) Wait for them all to complete
@@ -413,12 +453,12 @@ void SystemStateMachine::reset()
   // Throw if system/children are not in this state machine or running transition
   checkStateMachineEngagedAndNotInTransition("reset");
 
-  getResource().mOpState = getInitialState();
+  getResource().mState.mState = getInitialState();
   
   for(std::set<StateMachine*>::const_iterator lIt=mNonConstChildFSMs.begin(); lIt!=mNonConstChildFSMs.end(); lIt++)
   {
     ActionableObject& lChild = (*lIt)->getResource();
-    if( lChild.mState.mEngagedFSM == *lIt)
+    if( lChild.mState.mFSM == *lIt)
       lChild.mState.mState = (*lIt)->getInitialState();
   }  
 }
@@ -432,15 +472,15 @@ void SystemStateMachine::disengage()
   checkStateMachineEngagedAndNotInTransition("disengage");
 
 
-  getResource().mEngagedFSM = NULL;
-  getResource().mOpState = "";
+  getResource().mState.mFSM = NULL;
+  getResource().mState.mState = "";
   
   for(std::set<StateMachine*>::const_iterator lIt=mNonConstChildFSMs.begin(); lIt!=mNonConstChildFSMs.end(); lIt++)
   {
     ActionableObject& lChild = (*lIt)->getResource();
-    if( lChild.mState.mEngagedFSM == *lIt)
+    if( lChild.mState.mFSM == *lIt)
     {
-      lChild.mState.mEngagedFSM = NULL;
+      lChild.mState.mFSM = NULL;
       lChild.mState.mState = "";
     }
   }  
@@ -450,34 +490,34 @@ void SystemStateMachine::disengage()
 void SystemStateMachine::checkStateMachineEngagedAndNotInTransition(const std::string& aAction) const
 {
     // Throw if system is not in this state machine
-  if ( getResource().mEngagedFSM != this )
+  if ( getResource().mState.mFSM != this )
   {
     std::ostringstream oss;
     oss << "Cannot " << aAction << " state machine '" << getId() << "' of '" << getResource().getPath() << "'; ";
-    if ( getResource().mEngagedFSM != NULL )
+    if ( getResource().mState.mFSM == NULL )
       oss << "NOT in any state machine.";
     else
-      oss << "currently in state machine '" << getResource().mEngagedFSM->getPath() << "'";
-    throw ResourceInWrongState(oss.str());
+      oss << "currently in state machine '" << getResource().mState.mFSM->getPath() << "'";
+    throw ResourceInWrongStateMachine(oss.str());
   }
   
   // Throw if system or any of the participating children are currently running a transition
-  if(const SystemTransition* t = dynamic_cast<const SystemTransition*>(getResource().mActiveFunctionoid))
+  if(const SystemTransition* t = getResource().mState.getAction<SystemTransition>())
     throw ActionableSystemIsBusy("Cannot "+aAction+" state machine '"+getId()+"'; resource '"+getResource().getPath()+"' is busy in transition '"+t->getId()+"'");
   
   // Throw if any children in wrong state machine, or 
   for(std::set<const StateMachine*>::const_iterator lIt=getParticipants().begin(); lIt!=getParticipants().end(); lIt++)
   {
     const ActionableObject& lChild = (*lIt)->getResource();
-    if(lChild.mState.mEngagedFSM != *lIt)
+    if(lChild.mState.mFSM != *lIt)
     {
       std::ostringstream oss;
       oss << "Cannot " << aAction << " state machine '" << (*lIt)->getId() << "' of '" << (*lIt)->getResource().getPath() << "'; ";
-      if ( lChild.mState.mEngagedFSM != NULL )
+      if ( lChild.mState.mFSM == NULL )
         oss << "NOT in any state machine.";
       else
-        oss << "currently in state machine '" << lChild.mState.mEngagedFSM->getPath() << "'";
-      throw ResourceInWrongState(oss.str());
+        oss << "currently in state machine '" << lChild.mState.mFSM->getPath() << "'";
+      throw ResourceInWrongStateMachine(oss.str());
     }
     else
     {

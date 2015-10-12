@@ -44,13 +44,13 @@ struct ActionableObjectTestSetup {
 ActionableObjectTestSetup::ActionableObjectTestSetup() :
   handler( new DummyActionableObject() ),
   deleter( new ActionableObject::Deleter() ),
-  testOp( handler->registerOperation("myTestOp" , opInitialState, "StateE") )
+  testOp( handler->registerStateMachine("myTestOp" , opInitialState, "StateE") )
 { 
   handler->registerFunctionoid<DummyCommand>("dummy_1");//, new DummyCommand(&handler));
   handler->registerFunctionoid<DummyCommand>("dummy_2");//, new DummyCommand(&handler));
   handler->registerFunctionoid<DummyCommand>("dummy_3");//, new DummyCommand(&handler));
   handler->registerFunctionoid<DummySleepCommand>("sleep");
-  handler->registerOperation("test_2", "0", "err");
+  handler->registerStateMachine("test_2", "0", "err");
   
   testOp.addState(opStateA);
   testOp.addState(opStateB);
@@ -95,17 +95,17 @@ BOOST_FIXTURE_TEST_CASE(TestGetCommand,  ActionableObjectTestSetup) {
 }
 
 
-BOOST_FIXTURE_TEST_CASE(TestRegisterOperation,  ActionableObjectTestSetup) {
-  LOG(kInfo) << "Running ActionableObjectTestSuite/TestRegisterOperation";
+BOOST_FIXTURE_TEST_CASE(TestRegisterStateMachine,  ActionableObjectTestSetup) {
+  LOG(kInfo) << "Running ActionableObjectTestSuite/TestRegisterStateMachine";
   size_t n_ctrl = handler->getStateMachines().size();
-  handler->registerOperation("dummyOp_5000", "NULL", "ERR");
+  handler->registerStateMachine("dummyOp_5000", "NULL", "ERR");
   size_t n_ctrl_after = handler->getStateMachines().size();
   BOOST_CHECK_EQUAL(n_ctrl_after, n_ctrl + 1);
 }
 
 
-BOOST_FIXTURE_TEST_CASE(TestGetOperation,  ActionableObjectTestSetup) {
-  LOG(kInfo) << "Running ActionableObjectTestSuite/TestGetOperation";
+BOOST_FIXTURE_TEST_CASE(TestGetStateMachine,  ActionableObjectTestSetup) {
+  LOG(kInfo) << "Running ActionableObjectTestSuite/TestGetStateMachine";
   BOOST_CHECK_EQUAL( &testOp, & handler->getStateMachine("myTestOp"));
 }
 
@@ -114,79 +114,9 @@ BOOST_FIXTURE_TEST_CASE(TestActionableIntialState,  ActionableObjectTestSetup) {
   LOG(kInfo) << "Running ActionableObjectTestSuite/TestActionableIntialState";
   
   BOOST_CHECK( handler->getState().getActions().empty() );
+  BOOST_CHECK( handler->getState().isEnabled() );
   BOOST_CHECK_EQUAL( handler->getState().getEngagedFSM(), (const StateMachine *) NULL );
   BOOST_CHECK_EQUAL( handler->getState().getState(), "");
-
-//  NewOperation& test_1 = handler->getOperation("test_1").getTransitions("");
-}
-
-
-BOOST_FIXTURE_TEST_CASE(TestActionableEngageOperation, ActionableObjectTestSetup) {
-  LOG(kInfo) << "Running ActionableObjectTestSuite/TestActionableEngageOperation";
-
-  ActionableObject::State s = handler->getState();
-  BOOST_CHECK_EQUAL( s.getEngagedFSM(), (const StateMachine*) NULL );
-  BOOST_CHECK_EQUAL( s.getState(), "" );
-  
-  // Engaging FSM should put object into FSM's initial state
-  BOOST_CHECK_NO_THROW( handler->engageStateMachine(testOp.getId()) );
-  BOOST_CHECK_EQUAL( handler->getState().getEngagedFSM(), & testOp );
-  BOOST_CHECK_EQUAL( handler->getState().getState(), opInitialState );
-
-  // Trying to engage FSM again shouldn't work
-  BOOST_CHECK_THROW( handler->engageStateMachine(testOp.getId()), ResourceInWrongStateMachine );
-  BOOST_CHECK_EQUAL( handler->getState().getEngagedFSM(), & testOp );
-  BOOST_CHECK_EQUAL( handler->getState().getState(), opInitialState );
-
-  // Disengaging the FSM should reset object's state
-  BOOST_CHECK_NO_THROW( testOp.disengage() );
-  BOOST_CHECK_EQUAL( handler->getState().getEngagedFSM(), (const StateMachine*) NULL );
-  BOOST_CHECK_EQUAL( handler->getState().getState(), "" );
-}
-
-
-BOOST_FIXTURE_TEST_CASE(TestActionableStateTransitions, ActionableObjectTestSetup) {
-  LOG(kInfo) << "Running ActionableObjectTestSuite/TestActionableStateTransitions";
-
-  DummyGateKeeper gk;
-  
-  // Check that transitions not executed before FSM is engaged
-  BOOST_CHECK_THROW( transitionItoA->exec(gk, false), ResourceInWrongState);
-
-  // Engage state machine and check initial state
-  BOOST_CHECK_NO_THROW( handler->engageStateMachine(testOp.getId()) );
-  BOOST_CHECK_EQUAL( handler->getState().getEngagedFSM(), & testOp );
-  BOOST_CHECK_EQUAL( handler->getState().getState(), opInitialState );
-  
-  // Check that invalid transitions not executed
-  BOOST_CHECK_THROW( transitionAtoB->exec(gk, false), ResourceInWrongState);
-  BOOST_CHECK_EQUAL( handler->getState().getState(), opInitialState );
-  BOOST_CHECK_THROW( transitionBtoI->exec(gk, false), ResourceInWrongState);
-  BOOST_CHECK_EQUAL( handler->getState().getState(), opInitialState );
-
-  // Execute state transition: 'initial' -> A
-  BOOST_CHECK_NO_THROW( transitionItoA->exec(gk, false) );
-  BOOST_CHECK_EQUAL( handler->getState().getState(), opStateA );
-
-  // Check that invalid transitions not executed
-  BOOST_CHECK_THROW( transitionItoA->exec(gk, false), ResourceInWrongState);
-  BOOST_CHECK_EQUAL( handler->getState().getState(), opStateA );
-  BOOST_CHECK_THROW( transitionBtoI->exec(gk, false), ResourceInWrongState);
-  BOOST_CHECK_EQUAL( handler->getState().getState(), opStateA );
-
-  // Execute state transition: A -> B
-  BOOST_CHECK_NO_THROW( transitionAtoB->exec(gk, false) );
-  BOOST_CHECK_EQUAL( handler->getState().getState(), opStateB );
-
-  // Engage state machine again; should throw and have no effect on state
-  BOOST_CHECK_THROW( handler->engageStateMachine(testOp.getId()), ResourceInWrongStateMachine );
-  BOOST_CHECK_EQUAL( handler->getState().getEngagedFSM(), &testOp );
-  BOOST_CHECK_EQUAL( handler->getState().getState(), opStateB );
-  
-  // Reset state machine
-  BOOST_CHECK_NO_THROW( testOp.reset() );
-  BOOST_CHECK_EQUAL( handler->getState().getEngagedFSM(), &testOp );
-  BOOST_CHECK_EQUAL( handler->getState().getState(), opInitialState );
 }
 
 

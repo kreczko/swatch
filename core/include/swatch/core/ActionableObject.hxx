@@ -13,7 +13,7 @@ namespace core {
     
     
 template<class T>
-const T* ActionableObject::State::getAction() const
+const T* AbstractState::getAction() const
 {
   BOOST_STATIC_ASSERT( (boost::is_base_of<swatch::core::Functionoid,T>::value) );
 

@@ -115,15 +115,18 @@ std::vector<Command*> CommandVec::getCommands()
 
 void CommandVec::exec(const GateKeeper& aGateKeeper, const bool& aUseThreadPool )
 {
-  boost::shared_ptr<ActionableObject::BusyGuard> lActionGuard(new ActionableObject::BusyGuard(mResource,*this));
-
-  //TODO: Move extraction of parameters from gatekeeper here.
-  exec(lActionGuard, aGateKeeper, aUseThreadPool);
+  exec(NULL, aGateKeeper, aUseThreadPool);
 }
 
-void CommandVec::exec(const boost::shared_ptr<ActionableObject::BusyGuard>& aBusyGuard, const GateKeeper& aGateKeeper, const bool& aUseThreadPool )
+void CommandVec::exec(const ActionableObject::BusyGuard* aOuterBusyGuard, const GateKeeper& aGateKeeper, const bool& aUseThreadPool )
 {
-  aBusyGuard->check(mResource, *this);
+  // 1) Extract parameters before creating busy guard (so that resource doesn't change states if parameter is missing)
+  std::vector<ReadOnlyXParameterSet> lParamSets;
+  std::vector<MissingParam> lMissingParams;
+  extractParameters(aGateKeeper, lParamSets, lMissingParams, true);
+
+  // 2) Create busy guard
+  boost::shared_ptr<ActionableObject::BusyGuard> lBusyGuard(new ActionableObject::BusyGuard(getResource(), *this, aOuterBusyGuard));
 
 // FIXME: Re-implement parameter cache at some future date; disabled by Tom on 28th August, since ...
 //        ... current logic doesn't work correctly with different gatekeepers - need to change to ...
@@ -139,13 +142,10 @@ void CommandVec::exec(const boost::shared_ptr<ActionableObject::BusyGuard>& aBus
   // 1) Reset the status of this sequence's state variables
   {
     boost::unique_lock<boost::mutex> lock( mMutex );
-
-    // Extract parameters first, so that don't change state if a parameter is missing
-    std::vector<std::pair<std::string,std::string> > missingParams;
-    extractParameters(aGateKeeper, mCachedParameters, missingParams, true);
-
+    
     mState = ActionStatus::kInitial;
     mCommandIt = mCommands.end();
+    mCachedParameters = lParamSets;
     mStatusOfCompletedCommands.clear();
     mStatusOfCompletedCommands.reserve(mCommands.size());
   }  
@@ -156,11 +156,11 @@ void CommandVec::exec(const boost::shared_ptr<ActionableObject::BusyGuard>& aBus
     mState = ActionStatus::kScheduled;
     
     ThreadPool& pool = ThreadPool::getInstance();
-    pool.addTask<CommandVec, ActionableObject::BusyGuard>( this , &CommandVec::runCommands, aBusyGuard);
+    pool.addTask<CommandVec, ActionableObject::BusyGuard>( this , &CommandVec::runCommands, lBusyGuard);
   }
   else{
     // otherwise execute in same thread
-    this->runCommands(aBusyGuard);
+    this->runCommands(lBusyGuard);
   }
 }
 
@@ -195,7 +195,7 @@ CommandVecStatus CommandVec::getStatus() const
       break;
   }
   
-  const Command* currentCommand =  ( (mCommandIt == mCommands.end()) ? NULL : &mCommandIt->get());
+  const Command* currentCommand =  ( ((mCommandIt == mCommands.end()) || (mState == kError)) ? NULL : &mCommandIt->get());
   
   return CommandVecStatus(getPath(), mState, runningTime, currentCommand, mStatusOfCompletedCommands, mCommands.size());
 }
@@ -230,8 +230,7 @@ void CommandVec::runCommands(boost::shared_ptr<ActionableObject::BusyGuard> aGua
     {
       {
       LOG(swatch::logger::kNotice) << "'" << getResource().getPath() << "', '" << getId() << "' : Starting running command '" << mCommandIt->mCmd->getId() << "'";
-        boost::shared_ptr<ActionableObject::BusyGuard> lCmdGuard( new ActionableObject::BusyGuard(mResource, *mCommandIt->mCmd, aGuard.get()) );
-        mCommandIt->mCmd->exec(lCmdGuard, *lIt , false ); // False = run the commands in this thread!
+        mCommandIt->mCmd->exec(aGuard.get(), *lIt , false ); // False = run the commands in this thread!
         //FIXME: Make exec method return CommandStatus to remove any possibility of race condition ?
       }
       LOG(swatch::logger::kNotice) << "'" << getResource().getPath() << "', '" << getId() << "' : Finished running command '" << mCommandIt->mCmd->getId() << "'";
@@ -280,13 +279,21 @@ void CommandVec::runCommands(boost::shared_ptr<ActionableObject::BusyGuard> aGua
 }
 
 
-void CommandVec::checkForMissingParameters(const GateKeeper& aGateKeeper, std::vector<ReadOnlyXParameterSet>& aParamSets, std::vector<std::pair<std::string,std::string> >& aMissingParams) const
+CommandVec::MissingParam::MissingParam(const std::string& aNamespace, const std::string& aCommand, const std::string& aParam) :
+  nspace(aNamespace),
+  command(aCommand),
+  parameter(aParam)
+{
+}
+
+
+void CommandVec::checkForMissingParameters(const GateKeeper& aGateKeeper, std::vector<ReadOnlyXParameterSet>& aParamSets, std::vector<MissingParam>& aMissingParams) const
 {
   extractParameters(aGateKeeper, aParamSets, aMissingParams, false);
 }
 
 
-void CommandVec::extractParameters(const GateKeeper& aGateKeeper, std::vector<ReadOnlyXParameterSet>& aParamSets, std::vector<std::pair<std::string,std::string> >& aMissingParams, bool throwOnMissing) const
+void CommandVec::extractParameters(const GateKeeper& aGateKeeper, std::vector<ReadOnlyXParameterSet>& aParamSets, std::vector<MissingParam>& aMissingParams, bool throwOnMissing) const
 {
   aParamSets.clear();
   aParamSets.reserve( mCommands.size() );
@@ -314,7 +321,7 @@ void CommandVec::extractParameters(const GateKeeper& aGateKeeper, std::vector<Re
         throw ParameterNotFound(oss.str());
       }
       else {
-        aMissingParams.push_back(std::make_pair(lCommand.getId(), *lIt2));
+        aMissingParams.push_back(MissingParam(lIt->getNamespace(), lCommand.getId(), *lIt2));
       }
     }
     aParamSets.push_back( lParams );
@@ -322,6 +329,16 @@ void CommandVec::extractParameters(const GateKeeper& aGateKeeper, std::vector<Re
 }
 
 
+std::ostream& operator << (std::ostream& aOstream, const CommandVec::MissingParam& aMissingParam )
+{
+  return (aOstream << aMissingParam.nspace << "." << aMissingParam.command << "." << aMissingParam.parameter);
+}
+
+
+bool operator !=(const CommandVec::MissingParam& l1, const CommandVec::MissingParam& l2)
+{
+  return !( (l1.nspace == l2.nspace) && (l1.command == l2.command) && (l1.parameter == l2.parameter));
+}
 
 
 CommandVecStatus::CommandVecStatus(const std::string& aPath, ActionStatus::State aState, float aRunningTime, const Command* aCurrentCommand, const std::vector<CommandStatus>& aStatusOfCompletedCommands,  size_t aTotalNumberOfCommands) : 
@@ -341,12 +358,14 @@ CommandVecStatus::CommandVecStatus(const std::string& aPath, ActionStatus::State
 
 float CommandVecStatus::getProgress() const
 {
-  if (mCommandStatuses.empty())
+  if ((mTotalNumberOfCommands == 0) && (getState() == kDone))
+    return 1.0;
+  else if (mCommandStatuses.empty())
     return 0.0;
-  else if (mResults.size() == mTotalNumberOfCommands)
+  else if ((getState() == kDone) || (getState() == kWarning))
     return 1.0;
   else
-    return ( float(mResults.size()) + mCommandStatuses.back().getProgress() ) / float(mTotalNumberOfCommands);
+    return ( float(mCommandStatuses.size()-1) + mCommandStatuses.back().getProgress() ) / float(mTotalNumberOfCommands);
 }
 
 

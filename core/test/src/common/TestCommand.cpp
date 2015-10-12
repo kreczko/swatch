@@ -124,7 +124,6 @@ BOOST_FIXTURE_TEST_CASE(TestCommandError,  CommandTestSetup) {
   LOG(kInfo) << "Running CommandTestSuite/TestCommandError";
 
   error_cmd.exec(params);
-  
   do {
   } while ( (error_cmd.getState() == ActionStatus::kScheduled) || (error_cmd.getState() == ActionStatus::kRunning) );
   

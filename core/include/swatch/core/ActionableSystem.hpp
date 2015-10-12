@@ -22,7 +22,24 @@ class SystemTransition;
 class Functionoid;
 
 class ActionableSystem : public MonitorableObject {
+  class BusyGuard;
 public:
+    
+  class State : public AbstractState {
+  public:
+      State();
+      
+      const SystemStateMachine* getEngagedFSM() const;
+      
+  private:
+    const SystemStateMachine* mFSM;
+      
+    // Friendship for classes/methods that will need to change system's state
+    friend class ActionableSystem;
+    friend class BusyGuard;
+    friend class SystemStateMachine;
+  };
+    
   ActionableSystem(const std::string& aId);
 
   virtual ~ActionableSystem();
@@ -36,10 +53,7 @@ public:
   //! Get registered state machine of specified ID
   SystemStateMachine& getStateMachine( const std::string& aId );
 
-  //! Returns the currently running (or scheduled) action (i.e. commands, command sequences, transitions); returns NULL if no action is currently scheduled/running
-  const Functionoid* getActiveFunctionoid() const;
-  
-  std::pair<const SystemStateMachine*, std::string> getState() const;
+  State getState() const;
   
   void engageStateMachine(const std::string& aStateMachine);
 
@@ -73,16 +87,7 @@ private:
   tStateMachineMap mFSMs;
   
   mutable boost::mutex mMutex;
-  //! state machine that's currently active; equals NULL if no state machines are currently engaged
-  const SystemStateMachine* mEngagedFSM;
-  //! Current state in engaged state machine
-  std::string mOpState;
-  //! Indicates which functionoid is currently being executed; equals NULL if no functionoids are currently running
-  const Functionoid* mActiveFunctionoid;
-  //FIXME: Must fix any logic that checks if system is running transition
-  
-  //! Indicates whether of not actions are allowed on this resource anymore (actions become disabled once the deleter has been called)
-  bool mEnabled;
+  State mState;
   
   class BusyGuard {
   public:
