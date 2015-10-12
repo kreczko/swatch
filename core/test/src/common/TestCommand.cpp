@@ -7,7 +7,8 @@
 
 #include <boost/test/unit_test.hpp>
 #include <boost/foreach.hpp>
-// swatch headers
+
+// SWATCH headers
 #include "swatch/core/Command.hpp"
 #include "swatch/logger/Log.hpp"
 #include "swatch/core/test/DummyCommand.hpp"
@@ -140,10 +141,12 @@ BOOST_FIXTURE_TEST_CASE(TestCommandError,  CommandTestSetup) {
 BOOST_FIXTURE_TEST_CASE(TestThrowingCommand,  CommandTestSetup) {
   LOG(kInfo) << "Running CommandTestSuite/TestThrowingCommand";
 
+  LogLevel lLogThr = Log::logThreshold();
+  Log::setLogThreshold( swatch::logger::kFatal );
   throw_cmd.exec(params);
-  
   do {
   } while ( (throw_cmd.getState() == ActionStatus::kScheduled) || (throw_cmd.getState() == ActionStatus::kRunning) );
+  Log::setLogThreshold( lLogThr );
   
   CommandStatus s = throw_cmd.getStatus();
   BOOST_CHECK_EQUAL(s.getState(), ActionStatus::kError);
