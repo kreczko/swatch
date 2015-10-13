@@ -32,26 +32,26 @@ namespace swatch {
 namespace system {
 
 
-const std::string SysRunControlFSM::kId = "runControl";
-const std::string SysRunControlFSM::kStateInitial = "HALTED";
-const std::string SysRunControlFSM::kStateError = "ERROR";
-const std::string SysRunControlFSM::kStateSync = "synchronised";
-const std::string SysRunControlFSM::kStatePreCfg = "preconfigured";
-const std::string SysRunControlFSM::kStateCfg = "configured";
-const std::string SysRunControlFSM::kStateRunning = "running";
-const std::string SysRunControlFSM::kStatePaused = "paused";
+const std::string RunControlFSM::kId = "runControl";
+const std::string RunControlFSM::kStateInitial = "HALTED";
+const std::string RunControlFSM::kStateError = "ERROR";
+const std::string RunControlFSM::kStateSync = "synchronised";
+const std::string RunControlFSM::kStatePreCfg = "preconfigured";
+const std::string RunControlFSM::kStateCfg = "configured";
+const std::string RunControlFSM::kStateRunning = "running";
+const std::string RunControlFSM::kStatePaused = "paused";
 
-const std::string SysRunControlFSM::kTrColdReset = "coldReset";
-const std::string SysRunControlFSM::kTrSetup = "setup";
-const std::string SysRunControlFSM::kTrPreCfg = "preconfigure";
-const std::string SysRunControlFSM::kTrConnect = "connect";
-const std::string SysRunControlFSM::kTrStart = "start";
-const std::string SysRunControlFSM::kTrPause = "pause";
-const std::string SysRunControlFSM::kTrResume = "resume";
-const std::string SysRunControlFSM::kTrStop = "stop";
+const std::string RunControlFSM::kTrColdReset = "coldReset";
+const std::string RunControlFSM::kTrSetup = "setup";
+const std::string RunControlFSM::kTrPreCfg = "preconfigure";
+const std::string RunControlFSM::kTrConnect = "connect";
+const std::string RunControlFSM::kTrStart = "start";
+const std::string RunControlFSM::kTrPause = "pause";
+const std::string RunControlFSM::kTrResume = "resume";
+const std::string RunControlFSM::kTrStop = "stop";
 
 
-SysRunControlFSM::SysRunControlFSM(core::SystemStateMachine& aFSM) :
+RunControlFSM::RunControlFSM(core::SystemStateMachine& aFSM) :
   fsm( addStates(aFSM) ),
   coldReset( fsm.addTransition(kTrColdReset, kStateInitial, kStateInitial)),
   setup( fsm.addTransition(kTrSetup, kStateInitial, kStateSync)),
@@ -66,7 +66,7 @@ SysRunControlFSM::SysRunControlFSM(core::SystemStateMachine& aFSM) :
 }
 
 
-core::SystemStateMachine& SysRunControlFSM::addStates(core::SystemStateMachine& aFSM)
+core::SystemStateMachine& RunControlFSM::addStates(core::SystemStateMachine& aFSM)
 {
   aFSM.addState(kStateSync);
   aFSM.addState(kStatePreCfg);
@@ -80,8 +80,8 @@ core::SystemStateMachine& SysRunControlFSM::addStates(core::SystemStateMachine& 
 //---
 System::System( const swatch::core::AbstractStub& aStub ) : 
   ActionableSystem(aStub.id),
-  mRunControl( registerStateMachine(SysRunControlFSM::kId, SysRunControlFSM::kStateInitial, SysRunControlFSM::kStateError) ),
-  stub_(dynamic_cast<const swatch::system::SystemStub&>(aStub))
+  stub_(dynamic_cast<const swatch::system::SystemStub&>(aStub)),
+  mRunControlFSM( registerStateMachine(RunControlFSM::kId, RunControlFSM::kStateInitial, RunControlFSM::kStateError) )
 {
   addCrates();
   addProcessors();
@@ -294,6 +294,13 @@ void System::addLinks()
     }
   }
 }
+
+
+RunControlFSM& System::getRunControlFSM() 
+{
+  return mRunControlFSM;
+}
+
 
 } // end ns system
 } // end ns swatch

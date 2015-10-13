@@ -34,12 +34,12 @@ const uint32_t Processor::NoSlot =  0x7fffffffL;
 Processor::Processor( const swatch::core::AbstractStub& aStub) :
     ActionableObject(aStub.id),
     metricFirmwareVersion_( registerMetric<uint64_t>("firmwareVersion") ),
-    mRunControl( RunControlFSM(*this) ),
     stub_(dynamic_cast<const processor::ProcessorStub&>(aStub)),
-    ttc_(NULL),
-    readout_(NULL),
-    algo_(NULL),
-    ports_(NULL)
+    mTTC(NULL),
+    mReadout(NULL),
+    mAlgo(NULL),
+    mPorts(NULL),
+    mRunControlFSM( registerStateMachine(RunControlFSM::kId, RunControlFSM::kStateInitial, RunControlFSM::kStateError) )
 {
 }
 
@@ -70,40 +70,40 @@ Processor::getCrateId() const {
 //---
 TTCInterface&
 Processor::getTTC() {
-  if (ttc_ == NULL)
+  if (mTTC == NULL)
     throw std::runtime_error("Processor \"" + getPath() + "\" has not registered any TTC interface object");
   else
-    return *ttc_;
+    return *mTTC;
 }
 
 
 //---
 ReadoutInterface&
 Processor::getReadout() {
-  if (readout_ == NULL)
+  if (mReadout == NULL)
     throw std::runtime_error("Processor \"" + getPath() + "\" has not registered any readout interface object");
   else
-    return *readout_;
+    return *mReadout;
 }
 
 
 //---
 AlgoInterface&
 Processor::getAlgo() {
-  if (algo_ == NULL)
+  if (mAlgo == NULL)
     throw std::runtime_error("Processor \"" + getPath() + "\" has not registered any algo interface object");
   else
-    return *algo_;
+    return *mAlgo;
 }
 
 
 //---
 PortCollection&
 Processor::getPorts() {
-  if (ports_ == NULL)
+  if (mPorts == NULL)
     throw std::runtime_error("Processor \"" + getPath() + "\" has not registered any link interface object");
   else
-    return *ports_;
+    return *mPorts;
 }
 
 
@@ -135,21 +135,21 @@ const std::vector<std::string>& Processor::getGateKeeperTables() const
 
 
 //---
-const std::string Processor::RunControlFSM::kId = "runControl";
-const std::string Processor::RunControlFSM::kStateInitial = "initial";
-const std::string Processor::RunControlFSM::kStateError = "error";
-const std::string Processor::RunControlFSM::kStateSync = "synchronised";
-const std::string Processor::RunControlFSM::kStatePreCfg = "preconfigured";
-const std::string Processor::RunControlFSM::kStateCfg = "configured";
+const std::string RunControlFSM::kId = "runControl";
+const std::string RunControlFSM::kStateInitial = "initial";
+const std::string RunControlFSM::kStateError = "error";
+const std::string RunControlFSM::kStateSync = "synchronised";
+const std::string RunControlFSM::kStatePreCfg = "preconfigured";
+const std::string RunControlFSM::kStateCfg = "configured";
 
-const std::string Processor::RunControlFSM::kTrColdReset = "coldReset";
-const std::string Processor::RunControlFSM::kTrSetup = "setup";
-const std::string Processor::RunControlFSM::kTrPreCfg = "preconfigure";
-const std::string Processor::RunControlFSM::kTrConnect = "connect";
+const std::string RunControlFSM::kTrColdReset = "coldReset";
+const std::string RunControlFSM::kTrSetup = "setup";
+const std::string RunControlFSM::kTrPreCfg = "preconfigure";
+const std::string RunControlFSM::kTrConnect = "connect";
 
 //---
-Processor::RunControlFSM::RunControlFSM(Processor& aProc) : 
-  fsm ( createFSM(aProc) ),
+RunControlFSM::RunControlFSM(core::StateMachine& aFSM) : 
+  fsm ( addStates(aFSM) ),
   coldReset ( fsm.addTransition(kTrColdReset, kStateInitial, kStateInitial) ),
   setup( fsm.addTransition(kTrSetup, kStateInitial, kStateSync ) ),
   preconfigure( fsm.addTransition(kTrPreCfg, kStateSync, kStatePreCfg) ),
@@ -158,62 +158,66 @@ Processor::RunControlFSM::RunControlFSM(Processor& aProc) :
 }
 
 //---
-core::StateMachine& Processor::RunControlFSM::createFSM(Processor& aProc)
+core::StateMachine& RunControlFSM::addStates(core::StateMachine& aFSM)
 {
-  core::StateMachine& lOp = aProc.registerStateMachine(kId, kStateInitial, kStateError);
-  lOp.addState(kStateSync);
-  lOp.addState(kStatePreCfg);
-  lOp.addState(kStateCfg);
-  return lOp;
+  aFSM.addState(kStateSync);
+  aFSM.addState(kStatePreCfg);
+  aFSM.addState(kStateCfg);
+  return aFSM;
 }
-
 
 //---
 TTCInterface& Processor::registerInterface( TTCInterface* aTTCInterface )
 {
-  if( ttc_ ){
+  if( mTTC ){
     delete aTTCInterface;
     throw ProcessorInterfaceAlreadyDefined( "TTCInterface already defined for processor '" + getPath() + "'" );
   }
   this->addObj(aTTCInterface);
-  ttc_ = aTTCInterface;
-  return *ttc_;
+  mTTC = aTTCInterface;
+  return *mTTC;
 }
 
 
 ReadoutInterface& Processor::registerInterface( ReadoutInterface* aReadoutInterface )
 {
-  if( readout_ ){
+  if( mReadout ){
     delete aReadoutInterface;
     throw ProcessorInterfaceAlreadyDefined( "ReadoutInterface already defined for processor '" + getPath() + "'" );
   }
   this->addObj(aReadoutInterface);
-  readout_ = aReadoutInterface;
-  return *readout_;
+  mReadout = aReadoutInterface;
+  return *mReadout;
 }
 
 
 AlgoInterface& Processor::registerInterface( AlgoInterface* aAlgoInterface )
 {
-  if( algo_ ){
+  if( mAlgo ){
     delete aAlgoInterface;
     throw ProcessorInterfaceAlreadyDefined( "AlgoInterface already defined for processor '" + getPath() + "'" );
   }
   this->addObj(aAlgoInterface);
-  algo_ = aAlgoInterface;
-  return *algo_;
+  mAlgo = aAlgoInterface;
+  return *mAlgo;
 }
 
 
 PortCollection& Processor::registerInterface( PortCollection* aPortCollection )
 {
-  if( ports_ ){
+  if( mPorts ){
     delete aPortCollection;
     throw ProcessorInterfaceAlreadyDefined( "PortCollection already defined for processor '" + getPath() + "'" );
   }
   this->addObj(aPortCollection);
-  ports_ = aPortCollection;
-  return *ports_;
+  mPorts = aPortCollection;
+  return *mPorts;
+}
+
+
+RunControlFSM& Processor::getRunControlFSM()
+{
+  return mRunControlFSM;
 }
 
 

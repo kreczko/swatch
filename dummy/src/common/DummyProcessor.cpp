@@ -65,12 +65,13 @@ DummyProcessor::DummyProcessor(const swatch::core::AbstractStub& aStub) :
   core::CommandSequence& cfgRxSeq = registerCommandSequence("configRxSeq", cfgRx);
   core::CommandSequence& cfgAlgoSeq = registerCommandSequence("configAlgoSeq", cfgAlgo);
 
-  // 4) Operations
-  mRunControl.coldReset.add(reboot);
-  mRunControl.setup.add(cfgSeq);
-  mRunControl.preconfigure.add(cfgAlgoSeq);
-  mRunControl.connect.add(cfgRxSeq);
-  mRunControl.fsm.addTransition("dummyNoOp", RunControlFSM::kStateCfg, RunControlFSM::kStateInitial);
+  // 4) State machines
+  processor::RunControlFSM& lFSM = getRunControlFSM();
+  lFSM.coldReset.add(reboot);
+  lFSM.setup.add(cfgSeq);
+  lFSM.preconfigure.add(cfgAlgoSeq);
+  lFSM.connect.add(cfgRxSeq);
+  lFSM.fsm.addTransition("dummyNoOp", processor::RunControlFSM::kStateCfg, processor::RunControlFSM::kStateInitial);
 }
 
 

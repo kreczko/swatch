@@ -55,6 +55,9 @@ struct RunControlFSM {
   
 private:
   static core::StateMachine& addStates(core::StateMachine& aFSM);
+  
+  RunControlFSM( const RunControlFSM& other ); // non copyable
+  RunControlFSM& operator=( const RunControlFSM& ); // non copyable
 };
 
 
@@ -103,12 +106,13 @@ protected:
     //! Metric for FED ID
     core::Metric<uint16_t>& daqMetricFedId_;
 
-    RunControlFSM mRunControl;
+    RunControlFSM& getRunControlFSM();
     
 private:
+    RunControlFSM mRunControlFSM;
+    
     DaqTTCManager( const DaqTTCManager& other ); // non copyable
     DaqTTCManager& operator=( const DaqTTCManager& ); // non copyable
-
 };
 
 

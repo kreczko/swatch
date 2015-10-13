@@ -37,7 +37,7 @@ namespace system {
 class Crate;
 class Service;
 
-struct SysRunControlFSM {
+struct RunControlFSM {
   static const std::string kId;
   static const std::string kStateInitial;
   static const std::string kStateError;
@@ -67,11 +67,15 @@ struct SysRunControlFSM {
   core::SystemTransition& stopFromPaused;
   core::SystemTransition& stopFromRunning;
   
-  SysRunControlFSM(core::SystemStateMachine& aFSM);
+  RunControlFSM(core::SystemStateMachine& aFSM);
   
 private:
   static core::SystemStateMachine& addStates(core::SystemStateMachine& aFSM);
+
+  RunControlFSM( const RunControlFSM& other ); // non copyable
+  RunControlFSM& operator=( const RunControlFSM& ); // non copyable
 };
+
 
 //! Generic class representing a system of one ore mores processors
 class System : public core::ActionableSystem {
@@ -95,8 +99,7 @@ public:
 protected:
   virtual void retrieveMetricValues() {}
 
-  
-  SysRunControlFSM mRunControl;
+  RunControlFSM& getRunControlFSM();
   //! List of external ports
   // std::deque<SysPorts*> mPorts;    
 
@@ -129,6 +132,8 @@ private:
 
     //! Map of crates
     CratesMap cratesMap_;
+    
+    RunControlFSM mRunControlFSM;
 };
 
 DEFINE_SWATCH_EXCEPTION(SystemConstructionFailed);

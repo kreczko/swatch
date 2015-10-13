@@ -31,6 +31,7 @@ const std::string RunControlFSM::kTrPause = "pause";
 const std::string RunControlFSM::kTrResume = "resume";
 const std::string RunControlFSM::kTrStop = "stop";
 
+
 RunControlFSM::RunControlFSM(core::StateMachine& aFSM) : 
   fsm( addStates(aFSM) ),
   coldReset( fsm.addTransition(kTrColdReset, kStateInitial, kStateInitial) ),
@@ -64,7 +65,7 @@ DaqTTCManager::DaqTTCManager(const swatch::core::AbstractStub& aStub ) :
   ttcMetricSingleBitErrors_( registerMetric<uint32_t>("ttcSingleBitErrors", core::GreaterThanCondition<uint32_t>(0)) ),
   ttcMetricDoubleBitErrors_( registerMetric<uint32_t>("ttcDoubleBitErrors", core::GreaterThanCondition<uint32_t>(0)) ),
   daqMetricFedId_( registerMetric<uint16_t>("fedId", core::NotEqualCondition<uint16_t>(stub_.fedId)) ),
-  mRunControl( registerStateMachine(RunControlFSM::kId, RunControlFSM::kStateInitial, RunControlFSM::kStateError) )
+  mRunControlFSM( registerStateMachine(RunControlFSM::kId, RunControlFSM::kStateInitial, RunControlFSM::kStateError) )
 {
 }
 
@@ -110,9 +111,14 @@ const std::vector<std::string>& DaqTTCManager::getGateKeeperTables() const
     gateKeeperTables_.push_back(basePath + "daqttcs");
   }
   return gateKeeperTables_;
-
 }
 
-} // namespace system
+
+RunControlFSM& DaqTTCManager::getRunControlFSM()
+{
+  return mRunControlFSM;
+}
+
+} // namespace dtm
 } // namespace swatch
 

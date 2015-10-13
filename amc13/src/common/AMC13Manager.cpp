@@ -83,16 +83,13 @@ AMC13Manager::AMC13Manager(const swatch::core::AbstractStub& aStub) :
   registerCommandSequence("configSeq", resetCmd).then(cfgTTCCmd).then(cfgDAQCmd);
 
   // State machine
-  mRunControl.coldReset.add(coldResetCmd);
-  mRunControl.clockSetup.add(resetCmd).add(cfgTTCCmd);
-  mRunControl.cfgDaq.add(cfgDAQCmd);
-  mRunControl.start.add(startCmd);
-  mRunControl.stopFromPaused.add(stopCmd);
-  mRunControl.stopFromRunning.add(stopCmd);
-
-
-
-
+  dtm::RunControlFSM& lFSM = getRunControlFSM();
+  lFSM.coldReset.add(coldResetCmd);
+  lFSM.clockSetup.add(resetCmd).add(cfgTTCCmd);
+  lFSM.cfgDaq.add(cfgDAQCmd);
+  lFSM.start.add(startCmd);
+  lFSM.stopFromPaused.add(stopCmd);
+  lFSM.stopFromRunning.add(stopCmd);
 
 
   uint32_t vT1 = mDriver->read(AMC13::T1, "STATUS.FIRMWARE_VERS");

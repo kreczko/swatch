@@ -17,10 +17,10 @@ namespace dummy {
 DummySystem::DummySystem(const swatch::core::AbstractStub& aStub) : 
   swatch::system::System(aStub)
 {
-  typedef processor::Processor::RunControlFSM tProcFSM;
+  typedef processor::RunControlFSM tProcFSM;
   typedef dtm::RunControlFSM tDaqTTCFSM;
   
-  system::SysRunControlFSM& fsm = mRunControl;
+  system::RunControlFSM& fsm = getRunControlFSM();
   fsm.coldReset.add(getDaqTTC().begin(), getDaqTTC().end(), tDaqTTCFSM::kStateInitial, tDaqTTCFSM::kTrColdReset)
                .add(getProcessors().begin(), getProcessors().end(), tProcFSM::kStateInitial, tProcFSM::kTrColdReset);
 

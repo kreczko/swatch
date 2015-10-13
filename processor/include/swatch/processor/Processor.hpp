@@ -31,6 +31,37 @@ class TTCInterface;
 class ReadoutInterface;
 class AlgoInterface;
 class PortCollection;
+class Processor;
+
+
+struct RunControlFSM {
+  static const std::string kId;
+  static const std::string kStateInitial;
+  static const std::string kStateError;
+  static const std::string kStateSync;
+  static const std::string kStatePreCfg;
+  static const std::string kStateCfg;
+
+  static const std::string kTrColdReset;
+  static const std::string kTrSetup;
+  static const std::string kTrPreCfg;
+  static const std::string kTrConnect;
+
+  core::StateMachine& fsm;
+  core::StateMachine::Transition& coldReset;
+  core::StateMachine::Transition& setup;
+  core::StateMachine::Transition& preconfigure;
+  core::StateMachine::Transition& connect;
+
+  RunControlFSM(core::StateMachine& aFSM);
+
+private:
+  static core::StateMachine& addStates(core::StateMachine& aFSM);
+
+  RunControlFSM( const RunControlFSM& other ); // non copyable
+  RunControlFSM& operator=( const RunControlFSM& ); // non copyable
+};
+
 
 
 class Processor : public core::ActionableObject {
@@ -83,33 +114,7 @@ public:
 
     virtual const std::vector<std::string>& getGateKeeperTables() const;
 
-    struct RunControlFSM {
-      static const std::string kId;
-      static const std::string kStateInitial;
-      static const std::string kStateError;
-      static const std::string kStateSync;
-      static const std::string kStatePreCfg;
-      static const std::string kStateCfg;
-    
-      static const std::string kTrColdReset;
-      static const std::string kTrSetup;
-      static const std::string kTrPreCfg;
-      static const std::string kTrConnect;
-      
-      core::StateMachine& fsm;
-      core::StateMachine::Transition& coldReset;
-      core::StateMachine::Transition& setup;
-      core::StateMachine::Transition& preconfigure;
-      core::StateMachine::Transition& connect;
 
-      RunControlFSM(Processor& aProc);
-      
-    private:
-      static core::StateMachine& createFSM(Processor& aProc);
-      //non-copyable
-      //non-assignable
-    };
-    
 protected:
 
     //! Register the supplied (heap-allocated) TTC interface in this processor; the processor base class takes ownership of the TTC interface instance.
@@ -127,25 +132,27 @@ protected:
     //! Firmware version metric
     core::Metric<uint64_t>& metricFirmwareVersion_;
 
-    RunControlFSM mRunControl;
-
+    RunControlFSM& getRunControlFSM();
+    
 private:
     const ProcessorStub stub_;
 
     //! TTC control interface
-    TTCInterface* ttc_;
+    TTCInterface* mTTC;
 
     //! Readout control interface
-    ReadoutInterface* readout_;
+    ReadoutInterface* mReadout;
 
     //! Algorithm control interface
-    AlgoInterface* algo_;
+    AlgoInterface* mAlgo;
 
     //! Optical link interface
-    PortCollection* ports_;
+    PortCollection* mPorts;
 
     mutable std::vector<std::string> gateKeeperTables_;
     
+    RunControlFSM mRunControlFSM;
+
 private:
     Processor( const Processor& other ); // non copyable
     Processor& operator=( const Processor& ); // non copyable

@@ -36,15 +36,15 @@ DummyAMC13Manager::DummyAMC13Manager( const swatch::core::AbstractStub& aStub ) 
   //registerFunctionoid<DaqTTCMgrCommandSequence>("resetAndConfigure").run(reset).then(configureDaq);
   
   
-  
-  mRunControl.coldReset.add(reboot);
-  mRunControl.clockSetup.add(reset);
-  mRunControl.cfgDaq.add(cfgDaq);
-  mRunControl.start.add(startDaq);
-  //mRunControl.pause;
-  //mRunControl.resume;
-  mRunControl.stopFromPaused.add(stopDaq);
-  mRunControl.stopFromRunning.add(stopDaq);
+  dtm::RunControlFSM& lFSM = getRunControlFSM();
+  lFSM.coldReset.add(reboot);
+  lFSM.clockSetup.add(reset);
+  lFSM.cfgDaq.add(cfgDaq);
+  lFSM.start.add(startDaq);
+  //lFSM.pause;
+  //lFSM.resume;
+  lFSM.stopFromPaused.add(stopDaq);
+  lFSM.stopFromRunning.add(stopDaq);
 }
 
 
