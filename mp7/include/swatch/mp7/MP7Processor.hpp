@@ -30,14 +30,39 @@ public:
     
     virtual std::string firmwareInfo() const;
 
-    ::mp7::MP7Controller& driver() { return *driver_; } 
-    
+    ::mp7::MP7Controller& driver() { return *mDriver; } 
+
+private:
+    ::mp7::MP7Controller* mDriver;
+
 protected:
     virtual void retrieveMetricValues();
     
-private:
+    core::Command& mUploadFw;
+    core::Command& mDeleteFw;
+    core::Command& mReboot;
+    core::Command& mHardReset;
+    core::Command& mScanSD;
+    core::Command& mReset;
+    core::Command& mCfgRxMGTs;
+    core::Command& mCfgTxMGTs;
+    core::Command& mAlignMGTs;
+    core::Command& mAutoAlignMGTs;
+    core::Command& mCfgRxBuffers;
+    core::Command& mCfgTxBuffers;
+    core::Command& mCaptureBuffers;
+    core::Command& mSaveRxBuffers;
+    core::Command& mSaveTxBuffers;
+    core::Command& mCfgLatencyRxBuffers;
+    core::Command& mCfgLatencyTxBuffers;
+    core::Command& mCfgEasyRxLatency;
+    core::Command& mCfgEasyTxLatency;
+    core::Command& mCfgFormatterTdr;
+    core::Command& mSetupReadout;
+    core::Command& mLoadReadoutMenu;
     
-    ::mp7::MP7Controller* driver_;
+private:
+  static core::Command* createLoadReadoutMenuCommand(const std::string& aId, const ::mp7::MP7Controller& aController);    
 };
 
 } // namespace mp7 
