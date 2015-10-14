@@ -23,14 +23,14 @@ namespace logger {
 // Log, version 0.1: a simple logging class
 
 enum LogLevel {
-    kFatal,
+    kFatal = 0,
     kError,
     kWarning,
     kNotice,
     kInfo,
     kDebug,
-    kDebug2,
     kDebug1,
+    kDebug2,
     kDebug3,
     kDebug4
 };
