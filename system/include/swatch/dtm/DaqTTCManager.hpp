@@ -18,6 +18,7 @@
 #include "swatch/core/ActionableObject.hpp"
 #include "swatch/core/StateMachine.hpp"
 #include "swatch/dtm/DaqTTCStub.hpp"
+#include "EVBInterface.hpp"
 
 
 namespace swatch {
@@ -25,6 +26,10 @@ namespace dtm {
 
     
 class DaqTTCManager;
+class TTCInterface;
+class AMCPortCollection;
+class SLinkExpress;
+class EVBInterface;
 
 
 struct RunControlFSM : public boost::noncopyable {
@@ -63,63 +68,80 @@ private:
 
 class DaqTTCManager : public core::ActionableObject {
 protected:
-    explicit DaqTTCManager( const swatch::core::AbstractStub& aStub );
+  explicit DaqTTCManager( const swatch::core::AbstractStub& aStub );
 
 public:
-    virtual ~DaqTTCManager();
+  virtual ~DaqTTCManager();
     
-    const DaqTTCStub& getStub() const;
+  const DaqTTCStub& getStub() const;
     
-    uint32_t getSlot() const;
+  uint32_t getSlot() const;
 
-    const std::string& getCrateId() const;
+  const std::string& getCrateId() const;
 
-    uint16_t getFedId() const;
+  uint16_t getFedId() const;
 
-    // virtual void reset() = 0;
+  static const std::vector<std::string> defaultMetrics;
     
-    // /// Enables ttc commands on the given slots
-    // virtual void enableTTC( const std::vector<uint32_t> & aSlots ) = 0;
+  static const std::vector<std::string> defaultMonitorableObjects;
 
-    // virtual void configureClock(const std::string& mode) = 0;
+  virtual const std::vector<std::string>& getGateKeeperTables() const;
 
-    static const std::vector<std::string> defaultMetrics;
+  //! Returns this amc13's TTC interface
+  TTCInterface& getTTC();
+    
+  //! Returns this amc13's link interface
+  dtm::AMCPortCollection& getAMCPorts();
 
-    virtual const std::vector<std::string>& getGateKeeperTables() const;
+protected:
+      //! Register the supplied (heap-allocated) TTC interface; the child base class takes ownership of the TTC interface instance.
+  TTCInterface& registerInterface( TTCInterface* aTTCInterface );
+
+  //! Register the supplied (heap-allocated) SLink interface; the child base class takes ownership of the SLink interface instance.
+  SLinkExpress& registerInterface( SLinkExpress* aSLink );
+
+  //! Register the supplied (heap-allocated) amc ports interface; the child base class takes ownership of the link interface instance.
+  AMCPortCollection& registerInterface( dtm::AMCPortCollection* aPortCollection );
+  
+  //! Register the supplied (heap-allocated) EvB interface; the child base class takes ownership of the EvB interface instance.
+  EVBInterface& registerInterface(EVBInterface* aEventBuilder);
+
+  RunControlFSM& getRunControlFSM();
 
 private:
-    DaqTTCStub stub_;
+  DaqTTCStub stub_;
 
-    mutable std::vector<std::string> gateKeeperTables_;
+  mutable std::vector<std::string> gateKeeperTables_;
+  
+  //!
+  TTCInterface* mTTC;
+
+  //!!
+  SLinkExpress* mSLink;
+
+  //! AMC Backplane links collection
+  AMCPortCollection* mAMCPorts;
+  
+  //! Event Builder interface
+  EVBInterface* mEvb;
+  
+  //! Run control State Machine
+  RunControlFSM mRunControlFSM;
     
 protected:
-    //! Metric for measured TTC clock frequency [Hz]
-    core::Metric<double>& ttcMetricClockFreq_;
-    //! Metric for TTC BC0 counter
-    core::Metric<uint32_t>& ttcMetricBC0Counter_;
-    //! Metric for TTC BC error counter
-    core::Metric<uint32_t>& ttcMetricBC0Errors_;
-    //! Metric for TTC single-bit error counter
-    core::Metric<uint32_t>& ttcMetricSingleBitErrors_;
-    //! Metric for TTC double-bit error counter
-    core::Metric<uint32_t>& ttcMetricDoubleBitErrors_;
     //! Metric for FED ID
-    core::Metric<uint16_t>& daqMetricFedId_;
-
-    RunControlFSM& getRunControlFSM();
-    
+  core::Metric<uint16_t>& daqMetricFedId_;
+  
 private:
-    RunControlFSM mRunControlFSM;
-    
-    DaqTTCManager( const DaqTTCManager& other ); // non copyable
-    DaqTTCManager& operator=( const DaqTTCManager& ); // non copyable
+  DaqTTCManager( const DaqTTCManager& other ); // non copyable
+  DaqTTCManager& operator=( const DaqTTCManager& ); // non copyable
+
 };
 
+DEFINE_SWATCH_EXCEPTION(DaqTTCManagerInterfaceAlreadyDefined);
 
-} // namespace system
+} // namespace dtm
 } // namespace swatch
 
-
-
-#endif	/* __SWATCH_DTM_DAQTTCMANAGER_HPP__ */
+#endif  /* __SWATCH_DTM_DAQTTCMANAGER_HPP__ */
 

@@ -56,13 +56,7 @@ DummyAMC13Manager::~DummyAMC13Manager() {
 
 void DummyAMC13Manager::retrieveMetricValues() {
   DummyAMC13Driver::TTCStatus s = driver_->readTTCStatus();
-  
-  setMetricValue<double>(ttcMetricClockFreq_, s.clockFreq);
-  setMetricValue<uint32_t>(ttcMetricBC0Counter_, s.bc0Counter);
-  setMetricValue<uint32_t>(ttcMetricBC0Errors_, s.errCountBC0);
-  setMetricValue<uint32_t>(ttcMetricSingleBitErrors_, s.errCountSingleBit);
-  setMetricValue<uint32_t>(ttcMetricDoubleBitErrors_, s.errCountDoubleBit);
-  
+
   setMetricValue<uint16_t>(daqMetricFedId_, driver_->readFedId());
 }
 

@@ -38,37 +38,18 @@ public:
     return *mDriver;
   }
   
-      //! Returns this amc13's TTC interface
-    TTCInterface& getTTC();
-    
-    //! Returns this amc13's link interface
-    dtm::AMCPortCollection& getAMCPorts();
-
 protected:
 
   virtual void retrieveMetricValues();
 
-  //! Register the supplied (heap-allocated) TTC interface in this processor; the processor base class takes ownership of the TTC interface instance.
-  TTCInterface& registerInterface( TTCInterface* aTTCInterface );
-
-  //! Register the supplied (heap-allocated) SLink interface in this processor; the processor base class takes ownership of the TTC interface instance.
-  SLinkExpress& registerInterface( SLinkExpress* aSLink );
-
-  //! Register the supplied (heap-allocated) link interface in this processor; the processor base class takes ownership of the link interface instance.
-  dtm::AMCPortCollection& registerInterface( dtm::AMCPortCollection* aPortCollection );
 
 private:
   ::amc13::AMC13* mDriver;
 
-  TTCInterface* mTTC;
-  SLinkExpress* mSLink;
-  dtm::AMCPortCollection* mAMCPorts;
-
   swatch::core::Metric<uint32_t>& mFwVersionT1;
-  swatch::core::Metric<uint32_t>& mFwVersionT2_;
+  swatch::core::Metric<uint32_t>& mFwVersionT2;
 };
 
-DEFINE_SWATCH_EXCEPTION(DaqTTCManagerInterfaceAlreadyDefined);
 
 } // namespace amc13
 } // namespace swatch

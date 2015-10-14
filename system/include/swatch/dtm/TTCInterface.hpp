@@ -19,20 +19,6 @@ protected:
 public:
     virtual ~TTCInterface( );
     
-protected:
-
-    //! Metric for measured TTC clock frequency [Hz]
-    core::Metric<double>& mClockFreq;
-    //! Metric for TTC BC0 counter
-    core::Metric<uint32_t>& mBC0Counter;
-    //! Metric for TTC BC error counter
-    core::Metric<uint32_t>& mBC0Errors;
-    //! Metric for TTC single-bit error counter
-    core::Metric<uint32_t>& mSingleBitErrors;
-    //! Metric for TTC double-bit error counter
-    core::Metric<uint32_t>& mDoubleBitErrors;
-    
-
 };
 
     

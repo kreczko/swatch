@@ -28,17 +28,19 @@ protected:
 private:
     ::amc13::AMC13& mDriver;
 
-//    //! Metric for measured TTC clock frequency [Hz]
-//    core::Metric<double>& mClockFreq;
-//    //! Metric for TTC BC0 counter
-//    core::Metric<uint32_t>& mBC0Counter;
-//    //! Metric for TTC BC error counter
-//    core::Metric<uint32_t>& BC0Errors;
-//    //! Metric for TTC single-bit error counter
-//    core::Metric<uint32_t>& mSingleBitErrors;
-//    //! Metric for TTC double-bit error counter
-//    core::Metric<uint32_t>& mDoubleBitErrors;
+    //! T2: measured TTC clock frequency [Hz]
+    core::Metric<double>& mClockFreq;
+    //! T2: TTC BC0 counter
+    core::Metric<uint32_t>& mBC0Counter;
+    //! T2: for TTC BC error counter
+    core::Metric<uint32_t>& mBC0Errors;
+    //! T2: TTC single-bit error counter
+    core::Metric<uint32_t>& mSingleBitErrors;
+    //! T2: TTC double-bit error counter
+    core::Metric<uint32_t>& mDoubleBitErrors;
     
+    //! T1 Resync count
+    core::Metric<uint32_t>& mResyncCount;
 
 };
 

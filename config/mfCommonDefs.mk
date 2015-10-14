@@ -75,6 +75,6 @@ ExecutableLinkFlags = -g -Wall -O3
 else
 CxxFlags = -g -ggdb -Wall -Werror=return-type -MMD -MP -fPIC -std=c++0x
 LinkFlags = -g -ggdb -shared -fPIC -Wall
-ExecutableLinkFlags = -g -ggdb -Wall
+ExecutableLinkFlags = -g -ggdb -Wall -std=c++0x
 endif
 

@@ -6,6 +6,9 @@
 
 #include "swatch/dtm/DaqTTCManager.hpp"
 
+#include "swatch/dtm/TTCInterface.hpp"
+#include "swatch/dtm/AMCPortCollection.hpp"
+#include "swatch/dtm/SLinkExpress.hpp"
 
 // SWATCH headers
 #include "swatch/core/MetricConditions.hpp"
@@ -55,17 +58,18 @@ core::StateMachine& RunControlFSM::addStates(core::StateMachine& aFSM)
   return aFSM;
 }
 
+const std::vector<std::string> DaqTTCManager::defaultMetrics = {"fedId"};
+const std::vector<std::string> DaqTTCManager::defaultMonitorableObjects = {"ttc","evb","amcports"};
 
 DaqTTCManager::DaqTTCManager(const swatch::core::AbstractStub& aStub ) : 
   swatch::core::ActionableObject(aStub.id),
   stub_(dynamic_cast<const DaqTTCStub&>(aStub)),
-  ttcMetricClockFreq_( registerMetric<double>("clkFreq", core::InvRangeCondition<double>(39.9e6, 40.1e6)) ),
-  ttcMetricBC0Counter_( registerMetric<uint32_t>("bc0Counter") ),
-  ttcMetricBC0Errors_( registerMetric<uint32_t>("bc0Errors", core::GreaterThanCondition<uint32_t>(0)) ),
-  ttcMetricSingleBitErrors_( registerMetric<uint32_t>("ttcSingleBitErrors", core::GreaterThanCondition<uint32_t>(0)) ),
-  ttcMetricDoubleBitErrors_( registerMetric<uint32_t>("ttcDoubleBitErrors", core::GreaterThanCondition<uint32_t>(0)) ),
-  daqMetricFedId_( registerMetric<uint16_t>("fedId", core::NotEqualCondition<uint16_t>(stub_.fedId)) ),
-  mRunControlFSM( registerStateMachine(RunControlFSM::kId, RunControlFSM::kStateInitial, RunControlFSM::kStateError) )
+  mTTC(0x0),
+  mSLink(0x0),
+  mAMCPorts(0x0),
+  mEvb(0x0),
+  mRunControlFSM( registerStateMachine(RunControlFSM::kId, RunControlFSM::kStateInitial, RunControlFSM::kStateError) ),
+  daqMetricFedId_( registerMetric<uint16_t>("fedId", core::NotEqualCondition<uint16_t>(stub_.fedId)) )
 {
 }
 
@@ -79,25 +83,25 @@ const DaqTTCStub& DaqTTCManager::getStub() const {
 }
 
 
-uint32_t DaqTTCManager::getSlot() const {
+uint32_t
+DaqTTCManager::getSlot() const {
   return stub_.slot; 
 }
 
 
-const std::string& DaqTTCManager::getCrateId() const {
+const
+std::string& DaqTTCManager::getCrateId() const {
   return stub_.crate;
 }
 
 
-uint16_t DaqTTCManager::getFedId() const {
+uint16_t
+DaqTTCManager::getFedId() const {
   return stub_.fedId;
 }
 
-
-const std::vector<std::string> DaqTTCManager::defaultMetrics = {"clkFreq", "bc0Counter", "bc0Errors", "ttcSingleBitErrors", "ttcDoubleBitErrors", "fedId"};
-
-
-const std::vector<std::string>& DaqTTCManager::getGateKeeperTables() const
+const std::vector<std::string>&
+DaqTTCManager::getGateKeeperTables() const
 {
   // Can't set the table names in constructor, since don't know parent at that time ...
   // ... instead, have to set tables names first time this method is called
@@ -117,6 +121,71 @@ const std::vector<std::string>& DaqTTCManager::getGateKeeperTables() const
 RunControlFSM& DaqTTCManager::getRunControlFSM()
 {
   return mRunControlFSM;
+}
+
+
+
+// --------------------------------------------------------
+TTCInterface& 
+DaqTTCManager::getTTC() {
+  return *mTTC;
+}
+
+
+// --------------------------------------------------------
+dtm::AMCPortCollection& 
+DaqTTCManager::getAMCPorts() {
+  return *mAMCPorts;
+}
+
+// --------------------------------------------------------
+TTCInterface&
+DaqTTCManager::registerInterface(TTCInterface* aTTCInterface) {
+  if (mTTC) {
+    delete aTTCInterface;
+    throw DaqTTCManagerInterfaceAlreadyDefined("TTCInterface already defined for amc13 '" + getPath() + "'");
+  }
+  this->addObj(aTTCInterface);
+  mTTC = aTTCInterface;
+  return *mTTC;
+}
+
+
+// --------------------------------------------------------
+SLinkExpress&
+DaqTTCManager::registerInterface(SLinkExpress* aSLink) {
+  if (mSLink) {
+    delete aSLink;
+    throw DaqTTCManagerInterfaceAlreadyDefined("SLink already defined for amc13 '" + getPath() + "'");
+  }
+  this->addObj(aSLink);
+  mSLink = aSLink;
+  return *mSLink;
+}
+
+// --------------------------------------------------------
+dtm::AMCPortCollection&
+DaqTTCManager::registerInterface( dtm::AMCPortCollection* aAMCPortCollection )
+{
+  if( mAMCPorts ){
+    delete aAMCPortCollection;
+    throw DaqTTCManagerInterfaceAlreadyDefined( "PortCollection already defined for amc13 '" + getPath() + "'" );
+  }
+  this->addObj(aAMCPortCollection);
+  mAMCPorts = aAMCPortCollection;
+  return *mAMCPorts;
+}
+
+// --------------------------------------------------------
+EVBInterface&
+DaqTTCManager::registerInterface(EVBInterface* aEventBuilder) {
+  if (mEvb) {
+    delete aEventBuilder;
+    throw DaqTTCManagerInterfaceAlreadyDefined("TTCInterface already defined for amc13 '" + getPath() + "'");
+  }
+  this->addObj(aEventBuilder);
+  mEvb = aEventBuilder;
+  return *mEvb;
 }
 
 } // namespace dtm

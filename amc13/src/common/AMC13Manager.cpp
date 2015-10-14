@@ -20,12 +20,14 @@
 #include "swatch/amc13/TTCInterface.hpp"
 #include "swatch/amc13/SLinkExpress.hpp"
 #include "swatch/amc13/AMCPort.hpp"
+#include "swatch/amc13/EVBInterface.hpp"
 
 // XDAQ headers
 #include "xdata/String.h"
 
 // AMC13 Headers
 #include "amc13/AMC13.hh"
+#include "swatch/amc13/EVBInterface.hpp"
 
 // Boost Headers
 #include <boost/assign.hpp>
@@ -46,11 +48,8 @@ namespace amc13 {
 AMC13Manager::AMC13Manager(const swatch::core::AbstractStub& aStub) :
   swatch::dtm::DaqTTCManager(aStub),
   mDriver(0x0),
-  mTTC(0x0),
-  mSLink(0x0),
-  mAMCPorts(0x0),
   mFwVersionT1(registerMetric<uint32_t>("fwVersionT1")),
-  mFwVersionT2_(registerMetric<uint32_t>("fwVersionT2")) {
+  mFwVersionT2(registerMetric<uint32_t>("fwVersionT2")) {
 
   // Create driver first
   using ::amc13::AMC13;
@@ -71,6 +70,9 @@ AMC13Manager::AMC13Manager(const swatch::core::AbstractStub& aStub) :
   BOOST_FOREACH( uint32_t s, getStub().amcSlots) {
     getAMCPorts().addPort(new AMCPort(s, *mDriver));
   }
+  
+  registerInterface(new EVBInterface(*mDriver));
+  
   // Commands
   core::Command& coldResetCmd = registerFunctionoid<RebootCommand>("rebootCmd");
   core::Command& resetCmd = registerFunctionoid<ResetCommand>("resetCmd");
@@ -104,69 +106,13 @@ AMC13Manager::~AMC13Manager() {
   delete mDriver;
 }
 
-
-// --------------------------------------------------------
-TTCInterface& AMC13Manager::getTTC() {
-  return *mTTC;
-}
-
-
-// --------------------------------------------------------
-dtm::AMCPortCollection& AMC13Manager::getAMCPorts() {
-  return *mAMCPorts;
-}
-
-// --------------------------------------------------------
-TTCInterface&
-AMC13Manager::registerInterface(TTCInterface* aTTCInterface) {
-  if (mTTC) {
-    delete aTTCInterface;
-    throw DaqTTCManagerInterfaceAlreadyDefined("TTCInterface already defined for amc13 '" + getPath() + "'");
-  }
-  this->addObj(aTTCInterface);
-  mTTC = aTTCInterface;
-  return *mTTC;
-}
-
-
-// --------------------------------------------------------
-SLinkExpress&
-AMC13Manager::registerInterface(SLinkExpress* aSLink) {
-  if (mSLink) {
-    delete aSLink;
-    throw DaqTTCManagerInterfaceAlreadyDefined("SLink already defined for amc13 '" + getPath() + "'");
-  }
-  this->addObj(aSLink);
-  mSLink = aSLink;
-  return *mSLink;
-}
-
-// --------------------------------------------------------
-dtm::AMCPortCollection&
-AMC13Manager::registerInterface( dtm::AMCPortCollection* aAMCPortCollection )
-{
-  if( mAMCPorts ){
-    delete aAMCPortCollection;
-    throw DaqTTCManagerInterfaceAlreadyDefined( "PortCollection already defined for amc13 '" + getPath() + "'" );
-  }
-  this->addObj(aAMCPortCollection);
-  mAMCPorts = aAMCPortCollection;
-  return *mAMCPorts;
-}
-
-
 // --------------------------------------------------------
 void AMC13Manager::retrieveMetricValues() {
   using ::amc13::AMC13;
 
   setMetricValue<>(mFwVersionT1, mDriver->read(::amc13::AMC13::T1, "STATUS.FIRMWARE_VERS"));
-  setMetricValue<>(mFwVersionT2_, mDriver->read(::amc13::AMC13::T2, "STATUS.FIRMWARE_VERS"));
+  setMetricValue<>(mFwVersionT2, mDriver->read(::amc13::AMC13::T2, "STATUS.FIRMWARE_VERS"));
 
-  setMetricValue<>(ttcMetricClockFreq_, (double) mDriver->read(AMC13::T2, "STATUS.TTC.CLK_FREQ")*50);
-  setMetricValue<>(ttcMetricBC0Counter_, mDriver->read(AMC13::T2, "STATUS.TTC.BC0_COUNTER"));
-  setMetricValue<>(ttcMetricBC0Errors_, mDriver->read(AMC13::T2, "STATUS.TTC.BCNT_ERROR"));
-  setMetricValue<>(ttcMetricSingleBitErrors_, mDriver->read(AMC13::T2, "STATUS.TTC.SBIT_ERROR"));
-  setMetricValue<>(ttcMetricDoubleBitErrors_, mDriver->read(AMC13::T2, "STATUS.TTC.MBIT_ERROR"));
   setMetricValue<>(daqMetricFedId_, (uint16_t) mDriver->read(AMC13::T1, "CONF.ID.SOURCE_ID"));
 }
 

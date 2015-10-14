@@ -21,18 +21,6 @@ public:
 protected:
 
   uint32_t sfpID;
-  
-  core::Metric<uint32_t>& mRevision;
-  core::Metric<bool>& mCoreInitialised;
-  core::Metric<bool>& mLinkUp;
-  core::Metric<bool>& mBackPressure;
-  core::Metric<uint32_t>& mBackPressureTime;
-  core::Metric<uint32_t>& mEvents;
-  core::Metric<uint32_t>& mEventsSent;
-  core::Metric<uint32_t>& mWords;
-  core::Metric<uint32_t>& mWordsSent;
-  core::Metric<uint32_t>& mPacketsSent;
-  core::Metric<uint32_t>& mPacketsReceived;
 
 };
 

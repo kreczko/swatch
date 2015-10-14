@@ -28,6 +28,7 @@ using namespace std;
 namespace swatch {
 namespace processor {
 
+// Static initialization
   
 //---
 const std::string RunControlFSM::kId = "runControl";
@@ -64,6 +65,8 @@ core::StateMachine& RunControlFSM::addStates(core::StateMachine& aFSM)
   
 //---
 const uint32_t Processor::NoSlot =  0x7fffffffL;
+const std::vector<std::string> Processor::defaultMetrics = { "firmwareVersion" };
+const std::vector<std::string> Processor::defaultMonitorableObjects = { "ttc", "ports", "readout", "algo" };
 
 //---
 Processor::Processor( const swatch::core::AbstractStub& aStub) :
@@ -140,14 +143,6 @@ Processor::getPorts() {
   else
     return *mPorts;
 }
-
-
-//---
-const std::vector<std::string> Processor::defaultMetrics = { "firmwareVersion" };
-
-
-//---
-const std::vector<std::string> Processor::defaultMonitorableObjects = { "ttc", "ports", "readout", "algo" };
 
 
 //---
