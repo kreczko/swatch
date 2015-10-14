@@ -124,7 +124,6 @@ RunControlFSM& DaqTTCManager::getRunControlFSM()
 }
 
 
-
 // --------------------------------------------------------
 TTCInterface& 
 DaqTTCManager::getTTC() {

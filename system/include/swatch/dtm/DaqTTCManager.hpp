@@ -145,3 +145,4 @@ DEFINE_SWATCH_EXCEPTION(DaqTTCManagerInterfaceAlreadyDefined);
 
 #endif  /* __SWATCH_DTM_DAQTTCMANAGER_HPP__ */
 
+
