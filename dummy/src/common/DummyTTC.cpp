@@ -9,7 +9,7 @@ namespace dummy {
 
 DummyTTC::DummyTTC(DummyProcDriver& aDriver) :
   TTCInterface(),
-  driver_(aDriver)
+  mDriver(aDriver)
 {
 }
 
@@ -21,7 +21,7 @@ DummyTTC::~DummyTTC()
 
 void DummyTTC::retrieveMetricValues()
 {
-  DummyProcDriver::TTCStatus s = driver_.getTTCStatus();
+  DummyProcDriver::TTCStatus s = mDriver.getTTCStatus();
   
   setMetricValue<>(metricBunchCounter_, s.bunchCounter);
   setMetricValue<>(metricEventCounter_, s.eventCounter);

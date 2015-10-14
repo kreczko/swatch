@@ -37,20 +37,20 @@ namespace dummy {
 
 DummyProcessor::DummyProcessor(const swatch::core::AbstractStub& aStub) :
   Processor(aStub),
-  driver_(new DummyProcDriver())
+  mDriver(new DummyProcDriver())
 {
   // 1) Interfaces
-  registerInterface( new DummyTTC(*driver_) );
-  registerInterface( new DummyReadoutInterface(*driver_) );
-  registerInterface( new DummyAlgo(*driver_) );
+  registerInterface( new DummyTTC(*mDriver) );
+  registerInterface( new DummyReadoutInterface(*mDriver) );
+  registerInterface( new DummyAlgo(*mDriver) );
   registerInterface( new processor::PortCollection() );
   
   const processor::ProcessorStub& stub = getStub();
   
   for(auto it = stub.rxPorts.begin(); it != stub.rxPorts.end(); it++)
-    getPorts().addInput(new DummyRxPort(it->id, it->number, *driver_));
+    getPorts().addInput(new DummyRxPort(it->id, it->number, *mDriver));
   for(auto it = stub.txPorts.begin(); it != stub.txPorts.end(); it++)
-    getPorts().addOutput(new DummyTxPort(it->id, it->number, *driver_));
+    getPorts().addOutput(new DummyTxPort(it->id, it->number, *mDriver));
 
   // 2) Commands
   core::Command& reboot = registerFunctionoid<DummyResetCommand>("reboot");
@@ -86,7 +86,7 @@ std::string DummyProcessor::firmwareInfo() const {
 
 void DummyProcessor::retrieveMetricValues()
 {
-  setMetricValue<uint64_t>(metricFirmwareVersion_, driver_->getFirmwareVersion());
+  setMetricValue<uint64_t>(metricFirmwareVersion_, mDriver->getFirmwareVersion());
 }
 
 

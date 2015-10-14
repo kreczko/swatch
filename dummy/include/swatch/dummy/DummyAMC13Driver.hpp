@@ -36,12 +36,12 @@ public:
 private:
   typedef boost::posix_time::ptime ptime;
   
-  ptime errTimeReset_;
-  ptime errTimeDaq_;
-  ptime wrnTimeReset_;
-  ptime wrnTimeDaq_;
+  ptime mErrTimeReset;
+  ptime mErrTimeDaq;
+  ptime mWrnTimeReset;
+  ptime mWrnTimeDaq;
 
-  uint16_t fedId_;
+  uint16_t mFedId;
   
 public:
   struct TTCStatus {

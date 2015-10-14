@@ -9,8 +9,8 @@ namespace dummy {
 
 DummyTxPort::DummyTxPort(const std::string& aId, uint32_t aNumber, DummyProcDriver& aDriver) :
   OutputPort(aId),
-  channelID_(aNumber),
-  driver_(aDriver)
+  mChannelId(aNumber),
+  mDriver(aDriver)
 {
 }
 
@@ -21,7 +21,7 @@ DummyTxPort::~DummyTxPort()
 
 void DummyTxPort::retrieveMetricValues()
 {
-  setMetricValue<>(metricIsOperating_, driver_.isTxPortOperating(channelID_));
+  setMetricValue<>(metricIsOperating_, mDriver.isTxPortOperating(mChannelId));
 }
 
 

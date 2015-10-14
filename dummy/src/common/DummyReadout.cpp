@@ -7,23 +7,17 @@ namespace dummy {
 
 
 DummyReadoutInterface::DummyReadoutInterface(DummyProcDriver& aDriver) :
-  ReadoutInterface(),
-  driver_(aDriver)
-{
+ReadoutInterface(),
+mDriver(aDriver) {
 }
 
 
-DummyReadoutInterface::~DummyReadoutInterface()
-{
+DummyReadoutInterface::~DummyReadoutInterface() {
 }
 
 
-void DummyReadoutInterface::retrieveMetricValues()
-{
-  //TODO: extract status from driver
-//  setMetricValue<>(metricIsLocked_, true);
-//  setMetricValue<>(metricIsAligned_, true);
-//  setMetricValue<>(metricCRCErrors_, uint32_t(0));
+void DummyReadoutInterface::retrieveMetricValues() {
+  setMetricValue<>(mMetricTTS, uint32_t(0x4));
 }
 
 

@@ -45,11 +45,11 @@ public:
 private:
   typedef boost::posix_time::ptime ptime;
     
-  ptime errTimeClk_;
-  ptime errTimeTx_;
-  ptime errTimeRx_;
-  ptime errTimeDaq_;
-  ptime errTimeAlgo_;
+  ptime mErrTimeClk;
+  ptime mErrTimeTx;
+  ptime mErrTimeRx;
+  ptime mErrTimeDaq;
+  ptime mErrTimeAlgo;
   
 public:
   struct TTCStatus {

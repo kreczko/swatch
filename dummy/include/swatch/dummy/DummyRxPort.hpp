@@ -24,8 +24,8 @@ public:
   virtual void retrieveMetricValues();
 
 private:
-  uint32_t channelID_;
-  DummyProcDriver& driver_;
+  uint32_t mChannelId;
+  DummyProcDriver& mDriver;
 };
 
 

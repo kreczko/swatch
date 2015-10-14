@@ -23,13 +23,13 @@ public:
 
   virtual std::string firmwareInfo() const;
 
-  DummyProcDriver& getDriver() {return *driver_;}
+  DummyProcDriver& getDriver() {return *mDriver;}
 
 protected:
   virtual void retrieveMetricValues();
 
 private:
-  boost::scoped_ptr<DummyProcDriver> driver_;
+  boost::scoped_ptr<DummyProcDriver> mDriver;
 };
 
 

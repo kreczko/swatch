@@ -23,7 +23,7 @@ public:
   virtual void retrieveMetricValues();
   
 private:
-  DummyProcDriver& driver_;
+  DummyProcDriver& mDriver;
 };
 
 } // namespace dummy

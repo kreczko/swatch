@@ -18,17 +18,11 @@ public:
   DummyTxPort (const std::string& aId, uint32_t aNumber, DummyProcDriver& aDriver);
   virtual ~DummyTxPort ();
 
-  /*
-  virtual bool isEnabled() const;
-
-  virtual bool isOperating() const;
-   */
-  
   virtual void retrieveMetricValues();
   
 private:
-  uint32_t channelID_;
-  DummyProcDriver& driver_;
+  uint32_t mChannelId;
+  DummyProcDriver& mDriver;
 };
 
 

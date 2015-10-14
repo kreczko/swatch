@@ -8,7 +8,7 @@ namespace dummy {
 
 DummyAlgo::DummyAlgo(DummyProcDriver& aDriver) :
   AlgoInterface(),
-  driver_(aDriver)
+  mDriver(aDriver)
 {
 }
 

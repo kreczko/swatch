@@ -11,8 +11,8 @@ namespace dummy {
 
 DummyRxPort::DummyRxPort(const std::string& aId, uint32_t aNumber, DummyProcDriver& aDriver) :
   InputPort(aId),
-  channelID_(aNumber),
-  driver_(aDriver)
+  mChannelId(aNumber),
+  mDriver(aDriver)
 {
 }
 
@@ -24,7 +24,7 @@ DummyRxPort::~DummyRxPort()
 
 void DummyRxPort::retrieveMetricValues()
 {
-  DummyProcDriver::RxPortStatus s = driver_.getRxPortStatus(channelID_);
+  DummyProcDriver::RxPortStatus s = mDriver.getRxPortStatus(mChannelId);
   
   setMetricValue<>(metricIsLocked_, s.isLocked);
   setMetricValue<>(metricIsAligned_, s.isAligned);

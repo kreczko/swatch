@@ -24,7 +24,7 @@ uint64_t DummyProcDriver::getFirmwareVersion() const
 
 DummyProcDriver::TTCStatus DummyProcDriver::getTTCStatus() const 
 {
-  bool allOK = (ms_clk::universal_time() < errTimeClk_);
+  bool allOK = (ms_clk::universal_time() < mErrTimeClk);
   
   TTCStatus s;
   s.bunchCounter = allOK ? 0x00001234 : 0;
@@ -42,7 +42,7 @@ DummyProcDriver::TTCStatus DummyProcDriver::getTTCStatus() const
 
 DummyProcDriver::RxPortStatus DummyProcDriver::getRxPortStatus(uint32_t channelId) const 
 {
-  if ( (ms_clk::universal_time() >= errTimeClk_) || (ms_clk::universal_time() >= errTimeRx_) )
+  if ( (ms_clk::universal_time() >= mErrTimeClk) || (ms_clk::universal_time() >= mErrTimeRx) )
     return RxPortStatus(false, false, 42);
   else
     return RxPortStatus(true, true, 0);
@@ -51,7 +51,7 @@ DummyProcDriver::RxPortStatus DummyProcDriver::getRxPortStatus(uint32_t channelI
 
 bool DummyProcDriver::isTxPortOperating(uint32_t channelId) const
 {
-  if ( (ms_clk::universal_time() >= errTimeClk_) || (ms_clk::universal_time() >= errTimeTx_) )
+  if ( (ms_clk::universal_time() >= mErrTimeClk) || (ms_clk::universal_time() >= mErrTimeTx) )
     return false;
   else
     return true;
@@ -60,57 +60,57 @@ bool DummyProcDriver::isTxPortOperating(uint32_t channelId) const
 
 void DummyProcDriver::reboot()
 {
-  errTimeClk_  = ptime( boost::posix_time::min_date_time );
-  errTimeTx_   = ptime( boost::posix_time::min_date_time );
-  errTimeRx_   = ptime( boost::posix_time::min_date_time );
-  errTimeDaq_  = ptime( boost::posix_time::min_date_time );
-  errTimeAlgo_ = ptime( boost::posix_time::min_date_time );
+  mErrTimeClk  = ptime( boost::posix_time::min_date_time );
+  mErrTimeTx   = ptime( boost::posix_time::min_date_time );
+  mErrTimeRx   = ptime( boost::posix_time::min_date_time );
+  mErrTimeDaq  = ptime( boost::posix_time::min_date_time );
+  mErrTimeAlgo = ptime( boost::posix_time::min_date_time );
 }
 
 
 void DummyProcDriver::reset(size_t aErrorAfter)
 {
-  errTimeClk_ = ms_clk::universal_time() + boost::posix_time::seconds(aErrorAfter);
+  mErrTimeClk = ms_clk::universal_time() + boost::posix_time::seconds(aErrorAfter);
 
-  errTimeTx_ = ptime( boost::posix_time::min_date_time );
-  errTimeRx_ = ptime( boost::posix_time::min_date_time );
-  errTimeDaq_ = ptime( boost::posix_time::min_date_time );
+  mErrTimeTx = ptime( boost::posix_time::min_date_time );
+  mErrTimeRx = ptime( boost::posix_time::min_date_time );
+  mErrTimeDaq = ptime( boost::posix_time::min_date_time );
 }
 
 
 void DummyProcDriver::configureTxPorts(size_t aErrorAfter)
 {
-  if ( ms_clk::universal_time() >= errTimeClk_ )
+  if ( ms_clk::universal_time() >= mErrTimeClk )
     throw std::runtime_error("Couldn't configure tx ports - no clock!");
   else
-    errTimeTx_ = ms_clk::universal_time() + boost::posix_time::seconds(aErrorAfter);
+    mErrTimeTx = ms_clk::universal_time() + boost::posix_time::seconds(aErrorAfter);
 }
 
 
 void DummyProcDriver::configureRxPorts(size_t aErrorAfter)
 {
-  if ( ms_clk::universal_time() >= errTimeClk_ )
+  if ( ms_clk::universal_time() >= mErrTimeClk )
     throw std::runtime_error("Couldn't configure rx ports - no clock!");
   else
-    errTimeRx_ = ms_clk::universal_time() + boost::posix_time::seconds(aErrorAfter);
+    mErrTimeRx = ms_clk::universal_time() + boost::posix_time::seconds(aErrorAfter);
 }
 
 
 void DummyProcDriver::configureReadout(size_t aErrorAfter)
 {
-  if ( ms_clk::universal_time() >= errTimeClk_ )
+  if ( ms_clk::universal_time() >= mErrTimeClk )
     throw std::runtime_error("Couldn't configure readout block - no clock!");
   else
-    errTimeDaq_ = ms_clk::universal_time() + boost::posix_time::seconds(aErrorAfter);
+    mErrTimeDaq = ms_clk::universal_time() + boost::posix_time::seconds(aErrorAfter);
 }
 
 
 void DummyProcDriver::configureAlgo(size_t aErrorAfter)
 {
-  if ( ms_clk::universal_time() >= errTimeClk_ )
+  if ( ms_clk::universal_time() >= mErrTimeClk )
     throw std::runtime_error("Couldn't configure algo - no clock!");
   else
-    errTimeAlgo_ = ms_clk::universal_time() + boost::posix_time::seconds(aErrorAfter);
+    mErrTimeAlgo = ms_clk::universal_time() + boost::posix_time::seconds(aErrorAfter);
 }
 
 

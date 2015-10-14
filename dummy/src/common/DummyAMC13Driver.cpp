@@ -22,7 +22,7 @@ DummyAMC13Driver::~DummyAMC13Driver()
 
 DummyAMC13Driver::TTCStatus DummyAMC13Driver::readTTCStatus() const
 {
-  bool allOK = (ms_clk::universal_time() < errTimeReset_);
+  bool allOK = (ms_clk::universal_time() < mErrTimeReset);
   
   TTCStatus s;
   s.clockFreq = allOK ? 40.0e6 : 15.0e6;
@@ -37,52 +37,52 @@ DummyAMC13Driver::TTCStatus DummyAMC13Driver::readTTCStatus() const
 
 uint16_t DummyAMC13Driver::readFedId() const
 {
-  return fedId_;
+  return mFedId;
 }
 
 
 void DummyAMC13Driver::reboot()
 {
-  errTimeReset_ = ptime( boost::posix_time::min_date_time );
-  errTimeDaq_ = ptime( boost::posix_time::min_date_time );
+  mErrTimeReset = ptime( boost::posix_time::min_date_time );
+  mErrTimeDaq = ptime( boost::posix_time::min_date_time );
   
-  fedId_ = 0;
+  mFedId = 0;
 }
 
 
 void DummyAMC13Driver::reset(size_t aWarnAfter, size_t aErrorAfter)
 {
   ptime lNow = ms_clk::universal_time();
-  wrnTimeReset_ = lNow + boost::posix_time::seconds(aWarnAfter);
-  errTimeReset_ = lNow + boost::posix_time::seconds(aErrorAfter);
+  mWrnTimeReset = lNow + boost::posix_time::seconds(aWarnAfter);
+  mErrTimeReset = lNow + boost::posix_time::seconds(aErrorAfter);
 
-  errTimeDaq_ = ptime( boost::posix_time::min_date_time );
-  wrnTimeDaq_ = ptime( boost::posix_time::min_date_time );
-  fedId_ = 0;
+  mErrTimeDaq = ptime( boost::posix_time::min_date_time );
+  mWrnTimeDaq = ptime( boost::posix_time::min_date_time );
+  mFedId = 0;
 }
 
 
 void DummyAMC13Driver::configureDaq(uint16_t fedId)
 {
-  if (errTimeReset_ <= ms_clk::universal_time())
+  if (mErrTimeReset <= ms_clk::universal_time())
     throw std::runtime_error("Couldn't configure daq - no clock!");
   else {
-    errTimeDaq_ = ptime( boost::posix_time::max_date_time );
-    fedId_ = fedId;
+    mErrTimeDaq = ptime( boost::posix_time::max_date_time );
+    mFedId = fedId;
   }
 }
 
 
 void DummyAMC13Driver::startDaq(size_t aWarnAfter, size_t aErrorAfter)
 {
-  if (errTimeReset_ <= ms_clk::universal_time() )
+  if (mErrTimeReset <= ms_clk::universal_time() )
     throw std::runtime_error("Couldn't enable daq - no clock!");
-  else if ( errTimeDaq_ <= ms_clk::universal_time() )
+  else if ( mErrTimeDaq <= ms_clk::universal_time() )
     throw std::runtime_error("Couldn't enable daq - my daq block isn't configured!");
   else {
     ptime lNow = ms_clk::universal_time();
-    wrnTimeDaq_ = lNow + boost::posix_time::seconds(aWarnAfter);
-    errTimeDaq_ = lNow + boost::posix_time::seconds(aErrorAfter);
+    mWrnTimeDaq = lNow + boost::posix_time::seconds(aWarnAfter);
+    mErrTimeDaq = lNow + boost::posix_time::seconds(aErrorAfter);
   }
 }
 
