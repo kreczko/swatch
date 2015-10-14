@@ -16,12 +16,14 @@
 namespace swatch {
 namespace core {
 
+
 class ActionableSystem;
 class ActionStatus;
 class Command;
 class CommandSequence;
 class GateKeeper;
 class ReadOnlyXParameterSet;
+
 
 class StateMachine : public Object {
 public:
@@ -80,6 +82,16 @@ public:
   
 private:
 
+  struct State : public Object {
+    State(const std::string& aId);
+    void addTransition(Transition* aTransition);
+    std::map<std::string, Transition*> transitionMap;
+  };
+  
+  const State& getState(const std::string& aStateId) const;
+  
+  State& getState(const std::string& aStateId);
+    
   ActionableObject& mResource;
     
   typedef std::vector<std::string> tStateVec;
@@ -88,8 +100,7 @@ private:
   const std::string mErrorState;
   std::vector<std::string> mStates;
 
-  typedef std::map<std::string, Transition*> tTransitionMap;
-  std::map<std::string, tTransitionMap> mTransitionMap;
+  std::map<std::string, State*> mStateMap;
   
   friend class ActionableSystem;
 };

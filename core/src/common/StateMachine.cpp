@@ -22,19 +22,13 @@ StateMachine::StateMachine(const std::string& aId, ActionableObject& aResource, 
 {
   addState(mInitialState);
   addState(mErrorState);
-  
+
   aResource.addObj(this);
 }
 
 
 StateMachine::~StateMachine()
 {
-  for(std::map<std::string, tTransitionMap>::iterator lIt1=mTransitionMap.begin(); lIt1!=mTransitionMap.end(); lIt1++)
-  {
-    for(tTransitionMap::iterator lIt2=lIt1->second.begin(); lIt2!=lIt1->second.begin(); lIt2++)
-      delete lIt2->second;
-    lIt1->second.clear();
-  }
 }
 
 
@@ -70,12 +64,7 @@ const std::vector<std::string>& StateMachine::getStates() const
 
 const std::map<std::string, StateMachine::Transition*>& StateMachine::getTransitions(const std::string& aStateId) const
 {
-  if ( mTransitionMap.count(aStateId) == 0 )
-    throw StateNotDefined("State '"+aStateId+"' does not exist");
-  else
-  {
-    return mTransitionMap.find(aStateId)->second;
-  }
+  return getState(aStateId).transitionMap;
 }
 
 
@@ -94,27 +83,30 @@ StateMachine::Transition& StateMachine::getTransition(const std::string& aStateI
 
 void StateMachine::addState(const std::string& aStateId)
 {
-  if ( mTransitionMap.count(aStateId) )
+  if ( mStateMap.count(aStateId) )
     throw StateAlreadyDefined("State '"+aStateId+"' has already been defined");
   else
   {
+    State* lState = new State(aStateId);
+    addObj(lState);
+    mStateMap[aStateId] = lState;
     mStates.push_back(aStateId);
-    mTransitionMap[aStateId] = std::map<std::string, Transition*>();
   }
 }
 
 
 StateMachine::Transition& StateMachine::addTransition(const std::string& aTransitionId, const std::string& aFromState, const std::string& aToState)
 {
-  if ( mTransitionMap.count(aFromState) == 0 )
-    throw StateNotDefined("State '"+aFromState+"' does not exist in state machine '"+getPath()+"'");
-  else if (mTransitionMap.count(aToState) == 0 )
+  State& lFromState = getState(aFromState);
+
+  if (mStateMap.count(aToState) == 0 )
     throw StateNotDefined("State '"+aToState+"' does not exist in state machine '"+getPath()+"'");
-  else if (mTransitionMap[aFromState].count(aTransitionId))
+  else if (lFromState.transitionMap.count(aTransitionId))
     throw TransitionAlreadyDefined("Transition '"+aTransitionId+"' from state '"+aFromState+"' already defined in state machine '"+getPath()+"'");
  
-  std::map<std::string, Transition*>::iterator lIt = mTransitionMap[aFromState].insert( std::make_pair(aTransitionId, new Transition(aTransitionId, *this, aFromState, aToState) ) ).first;
-  return *(lIt->second);
+  Transition* t = new Transition(aTransitionId, *this, aFromState, aToState);
+  lFromState.addTransition(t);
+  return *t;
 }
 
 
@@ -216,6 +208,38 @@ StateMachine::Transition& StateMachine::Transition::add(CommandSequence& aSequen
     addCommand(*(*lIt2), lIt->getNamespace());
   }
   return *this;
+}
+
+
+StateMachine::State::State(const std::string& aId) :
+  Object(aId)
+{
+}
+
+
+void StateMachine::State::addTransition(Transition* aTransition)
+{
+  addObj(aTransition);
+  transitionMap[ aTransition->getId() ] = aTransition;
+}
+
+const StateMachine::State& StateMachine::getState(const std::string& aStateId) const
+{
+  std::map<std::string, State*>::const_iterator lIt = mStateMap.find(aStateId);
+  if(lIt != mStateMap.end())
+    return *lIt->second;
+  else
+    throw StateNotDefined("State '" + aStateId + "' does not exist in state machine '"+getPath()+"''");
+}
+
+
+StateMachine::State& StateMachine::getState(const std::string& aStateId)
+{
+  std::map<std::string, State*>::const_iterator lIt = mStateMap.find(aStateId);
+  if(lIt != mStateMap.end())
+    return *lIt->second;
+  else
+    throw StateNotDefined("State '" + aStateId + "' does not exist in system FSM '"+getPath()+"''");
 }
 
 

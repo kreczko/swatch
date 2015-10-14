@@ -536,7 +536,7 @@ SystemStateMachine::State::State(const std::string& aId) :
 void SystemStateMachine::State::addTransition(SystemTransition* aTransition)
 {
   addObj(aTransition);
-  this->transitionMap.insert( std::make_pair( aTransition->getId(), aTransition) );
+  transitionMap[ aTransition->getId() ] = aTransition;
 }
 
 
