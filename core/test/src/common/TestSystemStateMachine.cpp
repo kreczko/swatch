@@ -159,6 +159,8 @@ BOOST_AUTO_TEST_CASE(TestAddTransition) {
   SystemTransition& tA = fsm.addTransition("transitionA", "state0", "state1");
 
   BOOST_CHECK_EQUAL(tA.getId(), "transitionA");
+  BOOST_CHECK_EQUAL(tA.getPath(), fsm.getPath()+".state0.transitionA");
+  BOOST_CHECK_EQUAL(tA.getStartState(), "state0");
   BOOST_CHECK_EQUAL(tA.getEndState(), "state1");
   BOOST_CHECK_EQUAL(&tA.getStateMachine(), &fsm);
   

@@ -121,6 +121,9 @@ BOOST_FIXTURE_TEST_CASE(TestActionableIntialState,  ActionableObjectTestSetup) {
 
 
 BOOST_AUTO_TEST_CASE(TestSafeDeletionOfBusyActionableObject) {
+  std::cout << " Setting log threshold to info ... " << std::endl;
+  LogLevel lLogThr = swatch::logger::Log::logThreshold();
+  swatch::logger::Log::setLogThreshold( swatch::logger::kFatal );
   {
     ActionableObjectTestSetup setup;
     LOG(kInfo) << "Running ActionableObjectTestSuite/TestSafeDeletionOfBusyActionableObject";
@@ -141,6 +144,7 @@ BOOST_AUTO_TEST_CASE(TestSafeDeletionOfBusyActionableObject) {
   // ... then the object is accessed by the Command::code method in the execution thread after the object's deletion ...
   // ... i.e. to reveal bug explained in ticket #1230
   boost::this_thread::sleep_for(boost::chrono::milliseconds(25));
+  //swatch::logger::Log::setLogThreshold( lLogThr );
 }
 
 

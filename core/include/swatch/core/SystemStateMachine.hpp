@@ -158,18 +158,27 @@ private:
   // Throws if system/children are in other state machine, or running transition; need to lock externally ...
   void checkStateMachineEngagedAndNotInTransition(const std::string& aAction) const;
   
+  struct State : public Object {
+    State(const std::string& aId);
+    void addTransition(SystemTransition* aTransition);
+    std::map<std::string, SystemTransition*> transitionMap;
+  };
+  
+  const State& getState(const std::string& aStateId) const;
+  
+  State& getState(const std::string& aStateId);
+
   ActionableSystem& mResource;
-    
+
   typedef std::vector<std::string> tStateVec;
   typedef tStateVec::const_iterator tStateIt;
   const std::string mInitialState;
   const std::string mErrorState;
   std::vector<std::string> mStates;
+  std::map<std::string, State*> mStateMap;
   std::set<const StateMachine*> mChildFSMs;
   std::set<StateMachine*> mNonConstChildFSMs;
-
-  std::map<std::string, std::map<std::string, SystemTransition*> > mTransitionMap;
-
+  
   friend SystemTransition& SystemTransition::add(const std::vector<StateMachine::Transition*>& aTransitions);
 };
 
