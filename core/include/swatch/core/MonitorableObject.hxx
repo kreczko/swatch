@@ -73,6 +73,13 @@ void MonitorableObject::setMetricWarningCondition(Metric<DataType>& aMetric, con
 }
 
 
+template <typename DataType, class ErrorConditionType, class WarnConditionType>
+void MonitorableObject::setMetricConditions(Metric<DataType>& aMetric, const ErrorConditionType& aErrorCondition, const WarnConditionType& aWarnCondition)
+{
+  aMetric.setErrorCondition(aErrorCondition);
+  aMetric.setWarningCondition(aWarnCondition);
+}
+
 }
 }
 

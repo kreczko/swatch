@@ -92,6 +92,10 @@ protected:
   template <typename DataType, class ConditionType>
   void setMetricWarningCondition(Metric<DataType>& aMetric, const ConditionType& aWarningCondition);
   
+  //! Set error & warning conditions of metric
+  template <typename DataType, class ErrorConditionType, class WarnConditionType>
+  void setMetricConditions(Metric<DataType>& aMetric, const ErrorConditionType& aErrorCondition, const WarnConditionType& aWarnCondition);
+  
   //! User-defined function that retrieves values of all the object's metrics from the hardware
   virtual void retrieveMetricValues() = 0;
   
