@@ -13,7 +13,8 @@
 #include <string>
 
 // boost headers
-#include <boost/unordered_map.hpp>
+#include "boost/noncopyable.hpp"
+#include "boost/unordered_map.hpp"
 
 // SWATCH headers
 #include "swatch/core/ActionableSystem.hpp"
@@ -37,7 +38,7 @@ namespace system {
 class Crate;
 class Service;
 
-struct RunControlFSM {
+struct RunControlFSM : boost::noncopyable {
   static const std::string kId;
   static const std::string kStateInitial;
   static const std::string kStateError;
@@ -71,9 +72,6 @@ struct RunControlFSM {
   
 private:
   static core::SystemStateMachine& addStates(core::SystemStateMachine& aFSM);
-
-  RunControlFSM( const RunControlFSM& other ); // non copyable
-  RunControlFSM& operator=( const RunControlFSM& ); // non copyable
 };
 
 

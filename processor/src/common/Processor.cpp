@@ -28,9 +28,44 @@ using namespace std;
 namespace swatch {
 namespace processor {
 
+  
+//---
+const std::string RunControlFSM::kId = "runControl";
+const std::string RunControlFSM::kStateInitial = "HALTED";
+const std::string RunControlFSM::kStateError = "ERROR";
+const std::string RunControlFSM::kStateSync = "synchronised";
+const std::string RunControlFSM::kStatePreCfg = "preconfigured";
+const std::string RunControlFSM::kStateCfg = "configured";
+
+const std::string RunControlFSM::kTrColdReset = "coldReset";
+const std::string RunControlFSM::kTrSetup = "setup";
+const std::string RunControlFSM::kTrPreCfg = "preconfigure";
+const std::string RunControlFSM::kTrConnect = "connect";
+
+//---
+RunControlFSM::RunControlFSM(core::StateMachine& aFSM) : 
+  fsm ( addStates(aFSM) ),
+  coldReset ( fsm.addTransition(kTrColdReset, kStateInitial, kStateInitial) ),
+  setup( fsm.addTransition(kTrSetup, kStateInitial, kStateSync ) ),
+  preconfigure( fsm.addTransition(kTrPreCfg, kStateSync, kStatePreCfg) ),
+  connect( fsm.addTransition(kTrConnect, kStatePreCfg, kStateCfg) )
+{
+}
+
+//---
+core::StateMachine& RunControlFSM::addStates(core::StateMachine& aFSM)
+{
+  aFSM.addState(kStateSync);
+  aFSM.addState(kStatePreCfg);
+  aFSM.addState(kStateCfg);
+  return aFSM;
+}
+
+  
+//---
 const uint32_t Processor::NoSlot =  0x7fffffffL;
 
-///---
+//---
 Processor::Processor( const swatch::core::AbstractStub& aStub) :
     ActionableObject(aStub.id),
     metricFirmwareVersion_( registerMetric<uint64_t>("firmwareVersion") ),
@@ -133,38 +168,6 @@ const std::vector<std::string>& Processor::getGateKeeperTables() const
   return gateKeeperTables_;
 }
 
-
-//---
-const std::string RunControlFSM::kId = "runControl";
-const std::string RunControlFSM::kStateInitial = "initial";
-const std::string RunControlFSM::kStateError = "error";
-const std::string RunControlFSM::kStateSync = "synchronised";
-const std::string RunControlFSM::kStatePreCfg = "preconfigured";
-const std::string RunControlFSM::kStateCfg = "configured";
-
-const std::string RunControlFSM::kTrColdReset = "coldReset";
-const std::string RunControlFSM::kTrSetup = "setup";
-const std::string RunControlFSM::kTrPreCfg = "preconfigure";
-const std::string RunControlFSM::kTrConnect = "connect";
-
-//---
-RunControlFSM::RunControlFSM(core::StateMachine& aFSM) : 
-  fsm ( addStates(aFSM) ),
-  coldReset ( fsm.addTransition(kTrColdReset, kStateInitial, kStateInitial) ),
-  setup( fsm.addTransition(kTrSetup, kStateInitial, kStateSync ) ),
-  preconfigure( fsm.addTransition(kTrPreCfg, kStateSync, kStatePreCfg) ),
-  connect( fsm.addTransition(kTrConnect, kStatePreCfg, kStateCfg) )
-{  
-}
-
-//---
-core::StateMachine& RunControlFSM::addStates(core::StateMachine& aFSM)
-{
-  aFSM.addState(kStateSync);
-  aFSM.addState(kStatePreCfg);
-  aFSM.addState(kStateCfg);
-  return aFSM;
-}
 
 //---
 TTCInterface& Processor::registerInterface( TTCInterface* aTTCInterface )

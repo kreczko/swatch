@@ -11,6 +11,9 @@
 // C++ headers
 #include <string>
 
+// boost headers
+#include "boost/noncopyable.hpp"
+
 // SWATCH headers
 #include "swatch/core/ActionableObject.hpp"
 #include "swatch/core/StateMachine.hpp"
@@ -24,7 +27,7 @@ namespace dtm {
 class DaqTTCManager;
 
 
-struct RunControlFSM {
+struct RunControlFSM : public boost::noncopyable {
   static const std::string kId;
   static const std::string kStateInitial;
   static const std::string kStateError;
@@ -55,9 +58,6 @@ struct RunControlFSM {
   
 private:
   static core::StateMachine& addStates(core::StateMachine& aFSM);
-  
-  RunControlFSM( const RunControlFSM& other ); // non copyable
-  RunControlFSM& operator=( const RunControlFSM& ); // non copyable
 };
 
 
