@@ -12,8 +12,6 @@
 
 #include "boost/lexical_cast.hpp"
 #include "boost/thread/lock_guard.hpp"
-//#include "Metric.hpp"
-
 
 
 namespace swatch {
@@ -24,7 +22,6 @@ template<typename DataType>
 Metric<DataType>::Metric() :
   value_(NULL),
   updateTimestamp_(),
-  mutex_(),
   errorCondition_(),
   warnCondition_(),
   monitoringStatus_(monitoring::kEnabled)
@@ -37,7 +34,6 @@ Metric<DataType>::Metric(MetricCondition<DataType>* aErrorCondition,
     MetricCondition<DataType>* aWarnCondition) :
         value_(NULL),
         updateTimestamp_(),
-        mutex_(),
         errorCondition_(aErrorCondition),
         warnCondition_(aWarnCondition),
         monitoringStatus_(monitoring::kEnabled) {
@@ -99,6 +95,28 @@ void Metric<DataType>::setValueUnknown() {
     gettimeofday(&updateTimestamp_, NULL);
     value_.reset(NULL);
 }
+
+template<typename DataType>
+template<class ConditionType>
+void Metric<DataType>::setErrorCondition(const ConditionType& aErrorCondition)
+{
+  BOOST_STATIC_ASSERT_MSG( (boost::is_base_of<MetricCondition<DataType>, ConditionType >::value) , "class ConditionType must be a descendant of MetricCondtion<DataType>" );
+
+  boost::lock_guard<boost::mutex> lLock(mutex_);
+  errorCondition_ = new ConditionType(aErrorCondition);
+}
+
+
+template<typename DataType>
+template<class ConditionType>
+void Metric<DataType>::setWarningCondition(const ConditionType& aWarningCondition)
+{
+  BOOST_STATIC_ASSERT_MSG( (boost::is_base_of<MetricCondition<DataType>, ConditionType >::value) , "class ConditionType must be a descendant of MetricCondtion<DataType>" );
+
+  boost::lock_guard<boost::mutex> lLock(mutex_);
+  warnCondition_ = new ConditionType(aWarningCondition);
+}
+
 
 template<typename DataType>
 monitoring::Status Metric<DataType>::getMonitoringStatus() const{

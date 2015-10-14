@@ -63,16 +63,22 @@ protected:
 private:
     //! Set the value of the metric to being unknown
     void setValueUnknown();
-    
+
+    template <class ConditionType>
+    void setErrorCondition(const ConditionType& aErrorCondition);
+
+    template <class ConditionType>
+    void setWarningCondition(const ConditionType& aWarningCondition);
+
+    // TODO: Maybe eventually update to read-write mutex if needed ???
+    //! Mutex used to stop corruption of value_
+    mutable boost::mutex mutex_;
+
     //! Latest retrieved value of metric; set to NULL if metric value is unknown.
     boost::scoped_ptr<DataType> value_;   
 
     timeval updateTimestamp_;
     
-    // TODO: Maybe eventually update to read-write mutex if needed ???
-    //! Mutex used to stop corruption of value_
-    mutable boost::mutex mutex_;
-
     boost::shared_ptr<MetricCondition<DataType> > errorCondition_;
     boost::shared_ptr<MetricCondition<DataType> > warnCondition_;
     
