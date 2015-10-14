@@ -1,6 +1,6 @@
 
-#ifndef SWATCH_PROCESSOR_READOUTINTERFACE_HPP
-#define SWATCH_PROCESSOR_READOUTINTERFACE_HPP
+#ifndef __SWATCH_PROCESSOR_READOUTINTERFACE_HPP__
+#define __SWATCH_PROCESSOR_READOUTINTERFACE_HPP__
 
 
 // SWATCH headers
@@ -21,10 +21,13 @@ public:
   virtual ~ReadoutInterface();
 
   static const std::vector<std::string>  defaultMetrics;
+
+protected:
+  core::Metric<uint32_t>& mMetricTTS;
 };
 
 
 } // namespace processor
 } // namespace swatch
 
-#endif /* SWATCH_PROCESSOR_READOUTINTERFACE_HPP */
+#endif /* __SWATCH_PROCESSOR_READOUTINTERFACE_HPP__ */

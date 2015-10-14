@@ -31,7 +31,7 @@ protected:
     virtual void retrieveMetricValues();
     
 private:
-    ::mp7::MP7Controller& driver_;
+    ::mp7::MP7Controller& mDriver;
 };
  
 } // namespace mp7

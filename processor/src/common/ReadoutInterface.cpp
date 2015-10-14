@@ -12,9 +12,15 @@
 
 namespace swatch {
 namespace processor {
+
+// Static Members Initialization
+const std::vector<std::string> ReadoutInterface::defaultMetrics = {"tts"};
+
   
 ReadoutInterface::ReadoutInterface() : 
-  core::MonitorableObject("readout")
+  core::MonitorableObject("readout"),
+  mMetricTTS( registerMetric<uint32_t>("tts", core::EqualCondition<uint32_t>(0), core::NotEqualCondition<uint32_t>(0x8)) )        
+
 {
 }
 
@@ -24,8 +30,6 @@ ReadoutInterface::~ReadoutInterface()
 }
 
 
-const std::vector<std::string>
-ReadoutInterface::defaultMetrics = {};
 
 
 } // end ns core
