@@ -421,8 +421,10 @@ void SystemStateMachine::addState(const std::string& aStateId)
     throw StateAlreadyDefined("State '"+aStateId+"' has already been defined");
   else
   {
+    State* lState = new State(aStateId);
+    addObj(lState);
+    mStateMap[aStateId] = lState;
     mStates.push_back(aStateId);
-    mStateMap[aStateId] = new State(aStateId);
   }
 }
 
