@@ -32,7 +32,7 @@ private:
     // T1: event data ready in event buffer of event builders [STATUS.EVB.DATA_READY_MASK]
     // T1: event size in event buffer of event builders [STATUS.EVB.EVENT_SIZE_MASK]
     
-    // T1: L1A overflow warning [STATUS.EVB.OVERFLOW_WARNING L1A]
+    // T1: L1A overflow warning [STATUS.EVB.OVERFLOW_WARNING]
     core::Metric<bool>& mOverflowWarning;
     
     // T1: TTC sync lost (L1A buffer overflow) [STATUS.EVB.SYNC_LOST]

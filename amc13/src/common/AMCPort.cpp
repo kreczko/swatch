@@ -57,7 +57,8 @@ AMCPort::AMCPort(uint32_t aSlot, ::amc13::AMC13& aDriver) :
   mLinkReady(registerMetric<bool>("ready",core::EqualCondition<bool>(false)) ),
   mLinkOK(registerMetric<bool>("ok",core::EqualCondition<bool>(false)) ),
   mAMC13LinkRevision(registerMetric<uint32_t>("amc13Revision") ),
-  mTTS(registerMetric<uint32_t>("tts",core::NotEqualCondition<uint32_t>(0x8)) ) ,
+  // Error if 0x0 (does it even make sense), warning otherwise
+  mTTS(registerMetric<uint32_t>("tts",core::EqualCondition<uint32_t>(0x0),core::NotEqualCondition<uint32_t>(0x8)) ) ,
   
   mAMCEvents(registerMetric<uint64_t>("amcEvents") ) ,
   mAMCHeaders(registerMetric<uint64_t>("amcHeaders") ) ,
