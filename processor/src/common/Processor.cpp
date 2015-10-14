@@ -31,11 +31,11 @@ namespace processor {
   
 //---
 const std::string RunControlFSM::kId = "runControl";
-const std::string RunControlFSM::kStateInitial = "HALTED";
-const std::string RunControlFSM::kStateError = "ERROR";
-const std::string RunControlFSM::kStateSync = "synchronised";
-const std::string RunControlFSM::kStatePreCfg = "preconfigured";
-const std::string RunControlFSM::kStateCfg = "configured";
+const std::string RunControlFSM::kStateInitial = "Halted";
+const std::string RunControlFSM::kStateError = "Error";
+const std::string RunControlFSM::kStateSync = "Synchronised";
+const std::string RunControlFSM::kStatePreCfg = "Preconfigured";
+const std::string RunControlFSM::kStateCfg = "Configured";
 
 const std::string RunControlFSM::kTrColdReset = "coldReset";
 const std::string RunControlFSM::kTrSetup = "setup";

@@ -426,6 +426,7 @@ void SystemStateMachine::addState(const std::string& aStateId)
     throw StateAlreadyDefined("State '"+aStateId+"' has already been defined");
   else
   {
+//    this->addObj(new Object(aStateId));
     mStates.push_back(aStateId);
     mTransitionMap[aStateId] = std::map<std::string, SystemTransition*>();
   }
@@ -441,6 +442,8 @@ SystemTransition& SystemStateMachine::addTransition(const std::string& aTransiti
   else if (mTransitionMap[aFromState].count(aTransitionId))
     throw TransitionAlreadyDefined("Transition '"+aTransitionId+"' from state '"+aFromState+"' already defined in state machine '"+getPath()+"'");
  
+//  getObj("aFromState");
+
   std::map<std::string, SystemTransition*>::iterator lIt = mTransitionMap[aFromState].insert( std::make_pair(aTransitionId, new SystemTransition(aTransitionId, *this, aFromState, aToState) ) ).first;
   return *(lIt->second);
 }

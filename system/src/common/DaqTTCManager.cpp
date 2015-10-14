@@ -16,12 +16,12 @@ namespace swatch {
 namespace dtm {
 
 const std::string RunControlFSM::kId = "runControl";
-const std::string RunControlFSM::kStateInitial = "HALTED";
-const std::string RunControlFSM::kStateError = "ERROR";
-const std::string RunControlFSM::kStateClockOK = "clockOK";
-const std::string RunControlFSM::kStateCfg = "configured";
-const std::string RunControlFSM::kStateRunning = "running";
-const std::string RunControlFSM::kStatePaused = "paused";
+const std::string RunControlFSM::kStateInitial = "Halted";
+const std::string RunControlFSM::kStateError = "Error";
+const std::string RunControlFSM::kStateClockOK = "ClockOK";
+const std::string RunControlFSM::kStateCfg = "Configured";
+const std::string RunControlFSM::kStateRunning = "Running";
+const std::string RunControlFSM::kStatePaused = "Paused";
 
 const std::string RunControlFSM::kTrColdReset = "coldReset";
 const std::string RunControlFSM::kTrClockSetup = "clockSetup";
