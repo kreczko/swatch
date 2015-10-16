@@ -28,11 +28,11 @@ DummySystem::DummySystem(const swatch::core::AbstractStub& aStub) :
            .add(getProcessors(), tProcFSM::kStateInitial, tProcFSM::kTrSetup)
            .add(getDaqTTC(), tDaqTTCFSM::kStateClockOK, tDaqTTCFSM::kTrCfgDaq);
 
-  fsm.preconfigure.add(getProcessors(), tProcFSM::kStateSync, tProcFSM::kTrConfigure);
+  fsm.configure.add(getProcessors(), tProcFSM::kStateSync, tProcFSM::kTrConfigure);
 
-  fsm.connect.add(getProcessors(), tProcFSM::kStateConfigured, tProcFSM::kTrAlign);
+  fsm.align.add(getProcessors(), tProcFSM::kStateConfigured, tProcFSM::kTrAlign);
 
-  fsm.start.add(getDaqTTC(), tDaqTTCFSM::kStateCfg, tDaqTTCFSM::kTrStart);
+  fsm.start.add(getDaqTTC(), tDaqTTCFSM::kStateConfigured, tDaqTTCFSM::kTrStart);
 
   fsm.pause.add(getDaqTTC(), tDaqTTCFSM::kStateRunning, tDaqTTCFSM::kTrPause);
 

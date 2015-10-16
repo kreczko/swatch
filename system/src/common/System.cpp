@@ -36,15 +36,15 @@ const std::string RunControlFSM::kId = "runControl";
 const std::string RunControlFSM::kStateInitial = "Halted";
 const std::string RunControlFSM::kStateError = "Error";
 const std::string RunControlFSM::kStateSync = "Synchronised";
-const std::string RunControlFSM::kStatePreCfg = "Preconfigured";
-const std::string RunControlFSM::kStateCfg = "Configured";
+const std::string RunControlFSM::kStateConfigured = "Configured";
+const std::string RunControlFSM::kStateAligned = "Aligned";
 const std::string RunControlFSM::kStateRunning = "Running";
 const std::string RunControlFSM::kStatePaused = "Paused";
 
 const std::string RunControlFSM::kTrColdReset = "coldReset";
 const std::string RunControlFSM::kTrSetup = "setup";
-const std::string RunControlFSM::kTrPreCfg = "preconfigure";
-const std::string RunControlFSM::kTrConnect = "connect";
+const std::string RunControlFSM::kTrConfigure = "configure";
+const std::string RunControlFSM::kTrAlign = "align";
 const std::string RunControlFSM::kTrStart = "start";
 const std::string RunControlFSM::kTrPause = "pause";
 const std::string RunControlFSM::kTrResume = "resume";
@@ -55,13 +55,13 @@ RunControlFSM::RunControlFSM(core::SystemStateMachine& aFSM) :
   fsm( addStates(aFSM) ),
   coldReset( fsm.addTransition(kTrColdReset, kStateInitial, kStateInitial)),
   setup( fsm.addTransition(kTrSetup, kStateInitial, kStateSync)),
-  preconfigure( fsm.addTransition( kTrPreCfg, kStateSync, kStatePreCfg)),
-  connect( fsm.addTransition(kTrConnect, kStatePreCfg, kStateCfg)),
-  start( fsm.addTransition(kTrStart, kStateCfg, kStateRunning)),
+  configure( fsm.addTransition( kTrConfigure, kStateSync, kStateConfigured)),
+  align( fsm.addTransition(kTrAlign, kStateConfigured, kStateAligned)),
+  start( fsm.addTransition(kTrStart, kStateAligned, kStateRunning)),
   pause( fsm.addTransition(kTrPause, kStateRunning, kStatePaused)),
   resume( fsm.addTransition(kTrResume, kStatePaused, kStateRunning)),
-  stopFromPaused( fsm.addTransition(kTrStop, kStatePaused, kStateCfg)),
-  stopFromRunning( fsm.addTransition(kTrStop, kStateRunning, kStateCfg))
+  stopFromPaused( fsm.addTransition(kTrStop, kStatePaused, kStateAligned)),
+  stopFromRunning( fsm.addTransition(kTrStop, kStateRunning, kStateAligned))
 {
 }
 
@@ -69,8 +69,8 @@ RunControlFSM::RunControlFSM(core::SystemStateMachine& aFSM) :
 core::SystemStateMachine& RunControlFSM::addStates(core::SystemStateMachine& aFSM)
 {
   aFSM.addState(kStateSync);
-  aFSM.addState(kStatePreCfg);
-  aFSM.addState(kStateCfg);
+  aFSM.addState(kStateConfigured);
+  aFSM.addState(kStateAligned);
   aFSM.addState(kStateRunning);
   aFSM.addState(kStatePaused);
   return aFSM;

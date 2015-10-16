@@ -43,25 +43,25 @@ struct RunControlFSM : boost::noncopyable {
   static const std::string kStateInitial;
   static const std::string kStateError;
   static const std::string kStateSync;
-  static const std::string kStatePreCfg;
-  static const std::string kStateCfg;
+  static const std::string kStateConfigured;
+  static const std::string kStateAligned;
   static const std::string kStateRunning;
   static const std::string kStatePaused;
 
   static const std::string kTrColdReset;
   static const std::string kTrSetup;
-  static const std::string kTrPreCfg;
-  static const std::string kTrConnect;
+  static const std::string kTrConfigure;
+  static const std::string kTrAlign;
   static const std::string kTrStart;
   static const std::string kTrPause;
   static const std::string kTrResume;
   static const std::string kTrStop;
-  
+
   core::SystemStateMachine& fsm;
   core::SystemTransition& coldReset;
   core::SystemTransition& setup;
-  core::SystemTransition& preconfigure;
-  core::SystemTransition& connect;
+  core::SystemTransition& configure;
+  core::SystemTransition& align;
   core::SystemTransition& start;
   core::SystemTransition& pause;
   core::SystemTransition& resume;

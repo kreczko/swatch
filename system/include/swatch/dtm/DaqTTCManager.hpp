@@ -37,7 +37,7 @@ struct RunControlFSM : public boost::noncopyable {
   static const std::string kStateInitial;
   static const std::string kStateError;
   static const std::string kStateClockOK;
-  static const std::string kStateCfg;
+  static const std::string kStateConfigured;
   static const std::string kStateRunning;
   static const std::string kStatePaused;
 

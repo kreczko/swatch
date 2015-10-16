@@ -22,7 +22,7 @@ const std::string RunControlFSM::kId = "runControl";
 const std::string RunControlFSM::kStateInitial = "Halted";
 const std::string RunControlFSM::kStateError = "Error";
 const std::string RunControlFSM::kStateClockOK = "ClockOK";
-const std::string RunControlFSM::kStateCfg = "Configured";
+const std::string RunControlFSM::kStateConfigured = "Configured";
 const std::string RunControlFSM::kStateRunning = "Running";
 const std::string RunControlFSM::kStatePaused = "Paused";
 
@@ -39,12 +39,12 @@ RunControlFSM::RunControlFSM(core::StateMachine& aFSM) :
   fsm( addStates(aFSM) ),
   coldReset( fsm.addTransition(kTrColdReset, kStateInitial, kStateInitial) ),
   clockSetup( fsm.addTransition(kTrClockSetup, kStateInitial, kStateClockOK) ),
-  cfgDaq( fsm.addTransition(kTrCfgDaq, kStateClockOK, kStateCfg)),
-  start( fsm.addTransition(kTrStart, kStateCfg, kStateRunning) ),
+  cfgDaq( fsm.addTransition(kTrCfgDaq, kStateClockOK, kStateConfigured)),
+  start( fsm.addTransition(kTrStart, kStateConfigured, kStateRunning) ),
   pause( fsm.addTransition(kTrPause, kStateRunning, kStatePaused) ),
   resume( fsm.addTransition(kTrResume, kStatePaused, kStateRunning) ),
-  stopFromPaused( fsm.addTransition(kTrStop, kStatePaused, kStateCfg) ),
-  stopFromRunning( fsm.addTransition(kTrStop, kStateRunning, kStateCfg) )
+  stopFromPaused( fsm.addTransition(kTrStop, kStatePaused, kStateConfigured) ),
+  stopFromRunning( fsm.addTransition(kTrStop, kStateRunning, kStateConfigured) )
 {
 }
 
@@ -52,7 +52,7 @@ RunControlFSM::RunControlFSM(core::StateMachine& aFSM) :
 core::StateMachine& RunControlFSM::addStates(core::StateMachine& aFSM)
 {
   aFSM.addState(kStateClockOK);
-  aFSM.addState(kStateCfg);
+  aFSM.addState(kStateConfigured);
   aFSM.addState(kStateRunning);
   aFSM.addState(kStatePaused);
   return aFSM;
