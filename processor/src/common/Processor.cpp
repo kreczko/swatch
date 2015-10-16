@@ -35,13 +35,13 @@ const std::string RunControlFSM::kId = "runControl";
 const std::string RunControlFSM::kStateInitial = "Halted";
 const std::string RunControlFSM::kStateError = "Error";
 const std::string RunControlFSM::kStateSync = "Synchronised";
-const std::string RunControlFSM::kStateConfigured = "Preconfigured";
-const std::string RunControlFSM::kStateAligned = "Configured";
+const std::string RunControlFSM::kStateConfigured = "Configured";
+const std::string RunControlFSM::kStateAligned = "Aligned";
 
 const std::string RunControlFSM::kTrColdReset = "coldReset";
 const std::string RunControlFSM::kTrSetup = "setup";
-const std::string RunControlFSM::kTrConfigure = "preconfigure";
-const std::string RunControlFSM::kTrAlign = "connect";
+const std::string RunControlFSM::kTrConfigure = "configure";
+const std::string RunControlFSM::kTrAlign = "align";
 
 //---
 RunControlFSM::RunControlFSM(core::StateMachine& aFSM) : 
