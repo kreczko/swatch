@@ -21,26 +21,26 @@ DummySystem::DummySystem(const swatch::core::AbstractStub& aStub) :
   typedef dtm::RunControlFSM tDaqTTCFSM;
   
   system::RunControlFSM& fsm = getRunControlFSM();
-  fsm.coldReset.add(getDaqTTC().begin(), getDaqTTC().end(), tDaqTTCFSM::kStateInitial, tDaqTTCFSM::kTrColdReset)
-               .add(getProcessors().begin(), getProcessors().end(), tProcFSM::kStateInitial, tProcFSM::kTrColdReset);
+  fsm.coldReset.add(getDaqTTC(), tDaqTTCFSM::kStateInitial, tDaqTTCFSM::kTrColdReset)
+               .add(getProcessors(), tProcFSM::kStateInitial, tProcFSM::kTrColdReset);
 
-  fsm.setup.add(getDaqTTC().begin(), getDaqTTC().end(), tDaqTTCFSM::kStateInitial, tDaqTTCFSM::kTrClockSetup)
-           .add(getProcessors().begin(), getProcessors().end(), tProcFSM::kStateInitial, tProcFSM::kTrSetup)
-           .add(getDaqTTC().begin(), getDaqTTC().end(), tDaqTTCFSM::kStateClockOK, tDaqTTCFSM::kTrCfgDaq);
+  fsm.setup.add(getDaqTTC(), tDaqTTCFSM::kStateInitial, tDaqTTCFSM::kTrClockSetup)
+           .add(getProcessors(), tProcFSM::kStateInitial, tProcFSM::kTrSetup)
+           .add(getDaqTTC(), tDaqTTCFSM::kStateClockOK, tDaqTTCFSM::kTrCfgDaq);
 
-  fsm.preconfigure.add(getProcessors().begin(), getProcessors().end(), tProcFSM::kStateSync, tProcFSM::kTrPreCfg);
+  fsm.preconfigure.add(getProcessors(), tProcFSM::kStateSync, tProcFSM::kTrPreCfg);
 
-  fsm.connect.add(getProcessors().begin(), getProcessors().end(), tProcFSM::kStatePreCfg, tProcFSM::kTrConnect);
+  fsm.connect.add(getProcessors(), tProcFSM::kStatePreCfg, tProcFSM::kTrConnect);
 
-  fsm.start.add(getDaqTTC().begin(), getDaqTTC().end(), tDaqTTCFSM::kStateCfg, tDaqTTCFSM::kTrStart);
+  fsm.start.add(getDaqTTC(), tDaqTTCFSM::kStateCfg, tDaqTTCFSM::kTrStart);
 
-  fsm.pause.add(getDaqTTC().begin(), getDaqTTC().end(), tDaqTTCFSM::kStateRunning, tDaqTTCFSM::kTrPause);
+  fsm.pause.add(getDaqTTC(), tDaqTTCFSM::kStateRunning, tDaqTTCFSM::kTrPause);
 
-  fsm.resume.add(getDaqTTC().begin(), getDaqTTC().end(), tDaqTTCFSM::kStatePaused, tDaqTTCFSM::kTrResume);
+  fsm.resume.add(getDaqTTC(), tDaqTTCFSM::kStatePaused, tDaqTTCFSM::kTrResume);
 
-  fsm.stopFromPaused.add(getDaqTTC().begin(), getDaqTTC().end(), tDaqTTCFSM::kStatePaused, tDaqTTCFSM::kTrStop);
+  fsm.stopFromPaused.add(getDaqTTC(), tDaqTTCFSM::kStatePaused, tDaqTTCFSM::kTrStop);
 
-  fsm.stopFromRunning.add(getDaqTTC().begin(), getDaqTTC().end(), tDaqTTCFSM::kStateRunning, tDaqTTCFSM::kTrStop);
+  fsm.stopFromRunning.add(getDaqTTC(), tDaqTTCFSM::kStateRunning, tDaqTTCFSM::kTrStop);
 }
 
 
