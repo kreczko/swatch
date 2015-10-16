@@ -75,20 +75,20 @@ AMCPort::AMCPort(uint32_t aSlot, ::amc13::AMC13& aDriver) :
   mCrcErrors(registerMetric<uint32_t>("crcErrors") ) {
   
   // Assign Error and Warning conditions
-  setMetricErrorCondition(mLinkRevisionWrong,core::EqualCondition<bool>(true) );
-  setMetricErrorCondition(mLinkReady,core::EqualCondition<bool>(false) );
-  setMetricErrorCondition(mLinkOK,core::EqualCondition<bool>(false));
+  setErrorCondition(mLinkRevisionWrong,core::EqualCondition<bool>(true) );
+  setErrorCondition(mLinkReady,core::EqualCondition<bool>(false) );
+  setErrorCondition(mLinkOK,core::EqualCondition<bool>(false));
 
   // Error if OOS, Warning if not Ready
-  setMetricConditions(mTTS,core::EqualCondition<uint32_t>(0x2), core::NotEqualCondition<uint32_t>(0x8));
+  setConditions(mTTS,core::EqualCondition<uint32_t>(0x2), core::NotEqualCondition<uint32_t>(0x8));
   
-  setMetricErrorCondition(mAMCBcnMismatch,core::NotEqualCondition<uint64_t>(0x0));
-  setMetricErrorCondition(mAMCOrnMismatch,core::NotEqualCondition<uint64_t>(0x0));
-  setMetricErrorCondition(mAMC13BcnMismatch,core::NotEqualCondition<uint64_t>(0x0));
-  setMetricErrorCondition(mAMC13OrnMismatch,core::NotEqualCondition<uint64_t>(0x0));
+  setErrorCondition(mAMCBcnMismatch,core::NotEqualCondition<uint64_t>(0x0));
+  setErrorCondition(mAMCOrnMismatch,core::NotEqualCondition<uint64_t>(0x0));
+  setErrorCondition(mAMC13BcnMismatch,core::NotEqualCondition<uint64_t>(0x0));
+  setErrorCondition(mAMC13OrnMismatch,core::NotEqualCondition<uint64_t>(0x0));
   
-  setMetricErrorCondition(mEventErrors,core::NotEqualCondition<uint64_t>(0x0));
-  setMetricErrorCondition(mCrcErrors,core::NotEqualCondition<uint32_t>(0x0));
+  setErrorCondition(mEventErrors,core::NotEqualCondition<uint64_t>(0x0));
+  setErrorCondition(mCrcErrors,core::NotEqualCondition<uint32_t>(0x0));
 }
 
 AMCPort::~AMCPort() {

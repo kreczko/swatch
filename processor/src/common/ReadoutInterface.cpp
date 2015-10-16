@@ -24,12 +24,12 @@ ReadoutInterface::ReadoutInterface() :
 {
 
   // Error if in OOS, warning if not Ready
-  setMetricConditions(mMetricTTS,
+  setConditions(mMetricTTS,
       core::EqualCondition<uint32_t>(0x2),
       core::NotEqualCondition<uint32_t>(0x8));
 
   // Error if AMCCore is not ready
-  setMetricErrorCondition(mMetricAMCCoreReady, core::EqualCondition<bool>(false));
+  setErrorCondition(mMetricAMCCoreReady, core::EqualCondition<bool>(false));
 }
 
 

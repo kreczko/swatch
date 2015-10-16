@@ -86,15 +86,15 @@ protected:
   
   //! Set error condition of metric
   template <typename DataType, class ConditionType>
-  void setMetricErrorCondition(Metric<DataType>& aMetric, const ConditionType& aErrorCondition);
+  void setErrorCondition(Metric<DataType>& aMetric, const ConditionType& aErrorCondition);
   
   //! Set warning condition of metric
   template <typename DataType, class ConditionType>
-  void setMetricWarningCondition(Metric<DataType>& aMetric, const ConditionType& aWarningCondition);
+  void setWarningCondition(Metric<DataType>& aMetric, const ConditionType& aWarningCondition);
   
   //! Set error & warning conditions of metric
   template <typename DataType, class ErrorConditionType, class WarnConditionType>
-  void setMetricConditions(Metric<DataType>& aMetric, const ErrorConditionType& aErrorCondition, const WarnConditionType& aWarnCondition);
+  void setConditions(Metric<DataType>& aMetric, const ErrorConditionType& aErrorCondition, const WarnConditionType& aWarnCondition);
   
   //! User-defined function that retrieves values of all the object's metrics from the hardware
   virtual void retrieveMetricValues() = 0;

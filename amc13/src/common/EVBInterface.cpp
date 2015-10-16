@@ -32,11 +32,11 @@ EVBInterface::EVBInterface( ::amc13::AMC13& aDriver ) :
   mOverflowWarningTime(registerMetric<uint64_t>("warnTime")) {
   
   // Assign Error and Warning conditions
-  setMetricErrorCondition(mOverflowWarning,core::EqualCondition<bool>(true));
-  setMetricErrorCondition(mSyncLost,core::EqualCondition<bool>(true));
+  setErrorCondition(mOverflowWarning,core::EqualCondition<bool>(true));
+  setErrorCondition(mSyncLost,core::EqualCondition<bool>(true));
 
-  setMetricConditions(mAMCsTTSState, core::EqualCondition<uint32_t>(0x2), core::NotEqualCondition<uint32_t>(0x8));
-  setMetricConditions(mTTSState, core::EqualCondition<uint32_t>(0x2), core::NotEqualCondition<uint32_t>(0x8));
+  setConditions(mAMCsTTSState, core::EqualCondition<uint32_t>(0x2), core::NotEqualCondition<uint32_t>(0x8));
+  setConditions(mTTSState, core::EqualCondition<uint32_t>(0x2), core::NotEqualCondition<uint32_t>(0x8));
 }
 
 EVBInterface::~EVBInterface() {

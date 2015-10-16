@@ -64,13 +64,13 @@ SLinkExpress::SLinkExpress( uint32_t aSfpId, ::amc13::AMC13& aDriver ) :
   mPacketsReceived(registerMetric<uint32_t>("packetsReceived") ) {
 
   // Error if the core is not initialized
-  setMetricErrorCondition(mCoreInitialised,core::EqualCondition<bool>(false));
+  setErrorCondition(mCoreInitialised,core::EqualCondition<bool>(false));
 
   // Warning if link up is not declared
-  setMetricWarningCondition(mLinkUp, core::EqualCondition<bool>(false));
+  setWarningCondition(mLinkUp, core::EqualCondition<bool>(false));
 
   // Warning if there is backpressure
-  setMetricWarningCondition(mBackPressure,core::EqualCondition<bool>(true));
+  setWarningCondition(mBackPressure,core::EqualCondition<bool>(true));
 }
 
 

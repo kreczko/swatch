@@ -28,9 +28,9 @@ TTCInterface::TTCInterface( ::amc13::AMC13& aDriver ) :
   mResyncCount(registerMetric<uint32_t>("resyncCount"))
 {
   // Assing Error and Warning conditions
-  setMetricErrorCondition(mClockFreq, core::InvRangeCondition<double>(39.9e6, 40.1e6));
-  setMetricErrorCondition(mSingleBitErrors, core::GreaterThanCondition<uint32_t>(0));
-  setMetricErrorCondition(mDoubleBitErrors, core::GreaterThanCondition<uint32_t>(0));
+  setErrorCondition(mClockFreq, core::InvRangeCondition<double>(39.9e6, 40.1e6));
+  setErrorCondition(mSingleBitErrors, core::GreaterThanCondition<uint32_t>(0));
+  setErrorCondition(mDoubleBitErrors, core::GreaterThanCondition<uint32_t>(0));
 
 }
 
