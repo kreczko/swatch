@@ -29,6 +29,8 @@ class StateMachine : public Object {
 public:
   class Transition;
   
+  StateMachine(const std::string& aId, ActionableObject& aResource, const std::string& aInitialState, const std::string& aErrorState); // when you "engage" an actionable object into a particular transition, its state is set to the "base" state ..
+ 
   virtual ~StateMachine();
 
   const ActionableObject& getResource() const;
@@ -75,7 +77,11 @@ public:
     
     StateMachine& getStateMachine();
 
-    //! Add an individual command to this transition
+    /*!
+     * @brief Add an individual command to this transition
+     * @arg aCmd the command
+     * @arg aNamespace Namespace used when retreving parameters from gatekeeper
+     */
     Transition& add(Command& aCmd, const std::string& aNamespace="");
 
     //! Add all commands from specified sequence to this transition
@@ -87,10 +93,6 @@ public:
     const std::string mEndState;
   };
 
-  
-public:
-  StateMachine(const std::string& aId, ActionableObject& aResource, const std::string& aInitialState, const std::string& aErrorState); // when you "engage" an actionable object into a particular transition, its state is set to the "base" state ..
-  
 private:
 
   struct State : public Object {

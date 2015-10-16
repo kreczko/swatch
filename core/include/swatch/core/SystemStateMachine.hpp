@@ -24,11 +24,12 @@ class SystemTransitionStatus;
 
 class SystemTransition : public Functionoid {
 public:
-  
+
+  //! Represents a single step in a system transition - i.e. multiple transitions on child objects, executed in parallel
   class Step {
   public:
     Step(const std::vector<StateMachine::Transition*>& aTransitions);
-    
+
     const std::vector<StateMachine::Transition*>& get();
 
     //FIXME: Shouldn't give non-const pointers in const method!
@@ -37,14 +38,13 @@ public:
   private:
     std::vector<StateMachine::Transition*> mTransitions;
   };
-    
+
   SystemTransition(const std::string& aId, SystemStateMachine& aFSM, const std::string& aStartState, const std::string& aEndState);
   virtual ~SystemTransition();
 
   // Iteration over all steps in the transition
   typedef std::vector<Step>::const_iterator const_iterator;
   typedef std::vector<Step>::iterator iterator;
-
 
   iterator begin();
   iterator end();
@@ -54,36 +54,78 @@ public:
   //! Number of steps
   size_t size() const; 
 
+  //! Returns status of transition
   SystemTransitionStatus getStatus() const;
 
+  //! State that this transition starts from
   const std::string& getStartState() const;
+
+  //! State that this transition goes to (in case no error occurs)
   const std::string& getEndState() const;
 
+  //! Returns FSM that this transition belongs to
   const SystemStateMachine& getStateMachine() const;
 
+  //! Returns FSM that this transition belongs to
   SystemStateMachine& getStateMachine();
 
+  /* 
+   * @brief Add step consisting of transitions of children in range @aBegin to @aEnd, from same state for each child, with same ID for each child transition; uses this transition's FSM ID string for children as well
+   * @tparam Iterator iterator over child objects that derive from ActionableObject ; must defererence to T*, where T is a class that inherits from ActionableObject
+   * @arg aBegin iterator to beginning of collection of child pointers
+   * @arg aEnd iterator to one-past-end of collection of child pointers
+   * @arg aFromState State that child transitions start from
+   * @arg aTransition ID of child transition
+   */
   template<class Iterator>
   SystemTransition& add(Iterator aBegin, Iterator aEnd, const std::string& aFromState, const std::string& aTransition);
   
+  /* 
+   * @brief Add step consisting of transitions of children in range @aBegin to @aEnd, from same state for each child, with same ID for each child transition
+   * @tparam Iterator iterator over child objects that derive from ActionableObject ; must defererence to T*, where T is a class that inherits from ActionableObject
+   * @arg aBegin iterator to beginning of collection of child pointers
+   * @arg aEnd iterator to one-past-end of collection of child pointers
+   * @arg aStateMachine ID of FSM for child transitions
+   * @arg aFromState State that child transitions start from
+   * @arg aTransition ID of child transition
+   */
   template<class Iterator>
   SystemTransition& add(Iterator aBegin, Iterator aEnd, const std::string& aStateMachine, const std::string& aFromState, const std::string& aTransition);
 
+  /* 
+   * @brief Add step consisting of transitions of children, from same state for each child, with same ID for each child transition; uses this transition's FSM ID string for children as well
+   * @tparam Collection collection of child objects that derive from ActionableObject ; iterators returned by begin() and end() methods must defererence to T*, where T is a class that inherits from ActionableObject
+   * @arg aCollection collection of child objects involved in this step
+   * @arg aFromState State that child transitions start from
+   * @arg aTransition ID of child transition
+   */
   template<class Collection>
   SystemTransition& add(const Collection& aCollection, const std::string& aFromState, const std::string& aTransition);
   
+  /* 
+   * @brief Add step consisting of transitions of children, from same state for each child, with same ID for each child transition; uses this transition's FSM ID string for children as well
+   * @tparam Collection collection of child objects that derive from ActionableObject ; iterators returned by begin() and end() methods must defererence to T*, where T is a class that inherits from ActionableObject
+   * @arg aCollection collection of child objects involved in this step
+   * @arg aStateMachine ID of FSM for child transitions
+   * @arg aFromState State that child transitions start from
+   * @arg aTransition ID of child transition
+   */
   template<class Collection>
   SystemTransition& add(const Collection& aCollection, const std::string& aStateMachine, const std::string& aFromState, const std::string& aTransition);
 
+  /* 
+   * @brief Add step consisting of transitions of children
+   * @param aTransitions pointers to transitions on child objects
+   */
   SystemTransition& add(const std::vector<StateMachine::Transition*>& aTransitions);
 
   void checkForMissingParameters(const GateKeeper& aGateKeeper, std::map< const StateMachine::Transition*, std::vector<CommandVec::MissingParam> >& aMissingParams) const;
 
   /**
-    * Run the transition, extracting the parameters for each child transition from the supplied gatekeeper
+    * @brief Run the transition, extracting the parameters for each child transition from the supplied gatekeeper
     * 
-    * @param aGateKeeper Gatekeeper that will be used to extract the 
-    * @param aUseThreadPool Run the transition asynchronously in the swatch::core::ThreadPool ; if equals false, then the sequence is run synchronously (i.e. in same thread)
+    * @arg aGateKeeper Gatekeeper that will be used to extract the 
+    * @arg aUseThreadPool Run the transition asynchronously in the swatch::core::ThreadPool ; if equals false, then the sequence is run synchronously (i.e. in same thread)
     */
   void exec(const GateKeeper& aGateKeeper, const bool& aUseThreadPool = true ); 
 
@@ -138,26 +180,36 @@ public:
   SystemStateMachine(const std::string& aId, ActionableSystem& aResource, const std::string& aInitialState, const std::string& aErrorState);
   virtual ~SystemStateMachine();
 
+  //! Returns actionable system that this FSM belongs to
   const ActionableSystem& getResource() const;
   
+  //! Returns actionable system that this FSM belongs to
   ActionableSystem& getResource();
-  
+
+  //! Returns ID of this FSM's initial state
   const std::string& getInitialState() const;
-  
+
+  //! Returns ID of this FSM's error state
   const std::string& getErrorState() const;
-  
+
+  //! Returns FSMs of children that are involved in this system FSM's transitions
   const std::set<const StateMachine*>& getParticipants() const;
-  
+
+  //! Returns IDs of all of this FSM's states
   const std::vector<std::string>& getStates() const;
   
   const std::map<std::string, SystemTransition*>& getTransitions(const std::string& aStateId) const;
   
+  //! Add state of specified ID
   void addState(const std::string& aState);
-  
+
+  //! Add transition of specified ID, from state @aFromState , to state @aToState
   SystemTransition& addTransition(const std::string& aTransitionId, const std::string& aFromState, const std::string& aToState);
 
+  //! Disengage this FSM, and FSMs of participating child objects
   void disengage();
   
+  //! Reset this FSM, and FSMs of participating child objects, to initial state
   void reset();
   
 private:
@@ -187,6 +239,7 @@ private:
   
   friend SystemTransition& SystemTransition::add(const std::vector<StateMachine::Transition*>& aTransitions);
 };
+
 
 // --------------------------------------------------------
 template<class Iterator>
@@ -230,6 +283,8 @@ SystemTransition&
 SystemTransition::add(const Collection& aCollection, const std::string& aFSMId, const std::string& aFromState, const std::string& aTransition){
   return add( aCollection.begin(), aCollection.end(), aFSMId, aFromState, aTransition);
 }
+
+
 DEFINE_SWATCH_EXCEPTION(InvalidSystemTransition);
 
 
