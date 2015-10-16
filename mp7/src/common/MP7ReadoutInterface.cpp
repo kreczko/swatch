@@ -20,7 +20,10 @@ MP7ReadoutInterface::~MP7ReadoutInterface() {
 
 void MP7ReadoutInterface::retrieveMetricValues() {
   const ::mp7::ReadoutNode& readOut = mDriver.getReadout();
+
   setMetricValue<>(mMetricTTS, (uint32_t)readOut.readTTSState());
+  setMetricValue<>(mMetricAMCCoreReady, (bool)readOut.isAMC13LinkReady());
+
 
 }
 

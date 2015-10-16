@@ -20,16 +20,23 @@ namespace amc13 {
 EVBInterface::EVBInterface( ::amc13::AMC13& aDriver ) :
   dtm::EVBInterface(),
   mDriver(aDriver),
-  mOverflowWarning(registerMetric<bool>("warningOverflow",core::EqualCondition<bool>(true)) ),
-  mSyncLost(registerMetric<bool>("outOfSync",core::EqualCondition<bool>(true)) ),
-  mAMCsTTSState(registerMetric<uint32_t>("tts",core::EqualCondition<uint32_t>(0x0),core::NotEqualCondition<uint32_t>(0x8)) ),
-  mTTSState(registerMetric<uint32_t>("amcsTts",core::EqualCondition<uint32_t>(0x0),core::NotEqualCondition<uint32_t>(0x8)) ),
+  mOverflowWarning(registerMetric<bool>("warningOverflow") ),
+  mSyncLost(registerMetric<bool>("outOfSync") ),
+  mAMCsTTSState(registerMetric<uint32_t>("tts") ),
+  mTTSState(registerMetric<uint32_t>("amcsTts") ),
   mL1ACount(registerMetric<uint64_t>("l1aCount")),
   mRunTime(registerMetric<uint64_t>("runTime")),
   mReadyTime(registerMetric<uint64_t>("readyTime")),
   mBusyTime(registerMetric<uint64_t>("busyTime")),
   mSyncLostTime(registerMetric<uint64_t>("oosTime")),
   mOverflowWarningTime(registerMetric<uint64_t>("warnTime")) {
+  
+  // Assign Error and Warning conditions
+  setMetricErrorCondition(mOverflowWarning,core::EqualCondition<bool>(true));
+  setMetricErrorCondition(mSyncLost,core::EqualCondition<bool>(true));
+
+  setMetricConditions(mAMCsTTSState, core::EqualCondition<uint32_t>(0x2), core::NotEqualCondition<uint32_t>(0x8));
+  setMetricConditions(mTTSState, core::EqualCondition<uint32_t>(0x2), core::NotEqualCondition<uint32_t>(0x8));
 }
 
 EVBInterface::~EVBInterface() {

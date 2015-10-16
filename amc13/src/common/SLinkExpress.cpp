@@ -52,9 +52,9 @@ SLinkExpress::SLinkExpress( uint32_t aSfpId, ::amc13::AMC13& aDriver ) :
   dtm::SLinkExpress(aSfpId),
   mDriver(aDriver),
   mRevision(registerMetric<uint32_t>("revision") ),
-  mCoreInitialised(registerMetric<bool>("initialized",core::EqualCondition<bool>(false)) ),
-  mLinkUp(registerMetric<bool>("linkUp",core::EqualCondition<bool>(false)) ),
-  mBackPressure(registerMetric<bool>("backPressure",core::EqualCondition<bool>(true)) ),
+  mCoreInitialised(registerMetric<bool>("initialized") ),
+  mLinkUp(registerMetric<bool>("linkUp") ),
+  mBackPressure(registerMetric<bool>("backPressure") ),
   mBackPressureTime(registerMetric<uint32_t>("backPressureTime") ) ,
   mEvents(registerMetric<uint32_t>("events") ),
   mEventsSent(registerMetric<uint32_t>("eventsSent") ),
@@ -62,6 +62,15 @@ SLinkExpress::SLinkExpress( uint32_t aSfpId, ::amc13::AMC13& aDriver ) :
   mWordsSent(registerMetric<uint32_t>("wordsSent") ),
   mPacketsSent(registerMetric<uint32_t>("packetsSent") ),
   mPacketsReceived(registerMetric<uint32_t>("packetsReceived") ) {
+
+  // Error if the core is not initialized
+  setMetricErrorCondition(mCoreInitialised,core::EqualCondition<bool>(false));
+
+  // Warning if link up is not declared
+  setMetricWarningCondition(mLinkUp, core::EqualCondition<bool>(false));
+
+  // Warning if there is backpressure
+  setMetricWarningCondition(mBackPressure,core::EqualCondition<bool>(true));
 }
 
 

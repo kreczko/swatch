@@ -24,6 +24,7 @@ public:
 
 protected:
   core::Metric<uint32_t>& mMetricTTS;
+  core::Metric<bool>& mMetricAMCCoreReady;
 };
 
 

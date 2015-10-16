@@ -20,13 +20,18 @@ namespace amc13 {
 TTCInterface::TTCInterface( ::amc13::AMC13& aDriver ) :
   dtm::TTCInterface(),
   mDriver(aDriver),
-  mClockFreq( registerMetric<double>("clkFreq", core::InvRangeCondition<double>(39.9e6, 40.1e6)) ),
+  mClockFreq( registerMetric<double>("clkFreq") ),
   mBC0Counter( registerMetric<uint32_t>("bc0Counter") ),
   mBC0Errors( registerMetric<uint32_t>("bc0Errors", core::GreaterThanCondition<uint32_t>(0)) ),
-  mSingleBitErrors( registerMetric<uint32_t>("ttcSingleBitErrors", core::GreaterThanCondition<uint32_t>(0)) ),
-  mDoubleBitErrors( registerMetric<uint32_t>("ttcDoubleBitErrors", core::GreaterThanCondition<uint32_t>(0)) ),
+  mSingleBitErrors( registerMetric<uint32_t>("ttcSingleBitErrors") ),
+  mDoubleBitErrors( registerMetric<uint32_t>("ttcDoubleBitErrors") ),
   mResyncCount(registerMetric<uint32_t>("resyncCount"))
 {
+  // Assing Error and Warning conditions
+  setMetricErrorCondition(mClockFreq, core::InvRangeCondition<double>(39.9e6, 40.1e6));
+  setMetricErrorCondition(mSingleBitErrors, core::GreaterThanCondition<uint32_t>(0));
+  setMetricErrorCondition(mDoubleBitErrors, core::GreaterThanCondition<uint32_t>(0));
+
 }
 
 TTCInterface::~TTCInterface() {

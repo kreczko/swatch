@@ -19,9 +19,17 @@ const std::vector<std::string> ReadoutInterface::defaultMetrics = {"tts"};
   
 ReadoutInterface::ReadoutInterface() : 
   core::MonitorableObject("readout"),
-  mMetricTTS( registerMetric<uint32_t>("tts", core::EqualCondition<uint32_t>(0), core::NotEqualCondition<uint32_t>(0x8)) )        
-
+  mMetricTTS( registerMetric<uint32_t>("tts") ),
+  mMetricAMCCoreReady( registerMetric<bool>("amcCoreReady") )       
 {
+
+  // Error if in OOS, warning if not Ready
+  setMetricConditions(mMetricTTS,
+      core::EqualCondition<uint32_t>(0x2),
+      core::NotEqualCondition<uint32_t>(0x8));
+
+  // Error if AMCCore is not ready
+  setMetricErrorCondition(mMetricAMCCoreReady, core::EqualCondition<bool>(false));
 }
 
 
