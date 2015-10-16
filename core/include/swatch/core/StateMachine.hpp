@@ -33,8 +33,10 @@ public:
  
   virtual ~StateMachine();
 
+  //! Returns actionable object that this FSM belongs to
   const ActionableObject& getResource() const;
 
+  //! Returns actionable object that this FSM belongs to
   ActionableObject& getResource();
 
   //! Returns ID of this FSM's initial state
@@ -47,15 +49,25 @@ public:
   const std::vector<std::string>& getStates() const;
 
   //FIXME: const method SHOULD NOT give non-pointer to Transition
+  //! Returns map of all transitions (keyed by transition ID string) that start from the specified state
   const std::map<std::string, Transition*>& getTransitions(const std::string& aStateId) const;
 
-  //! Returns transition of specified ID, from specified state
+  /*!
+   * @brief Returns transition of specified ID, from specified state
+   * @arg aStateId ID string of start state
+   * @arg aTransitionId Transition's ID string
+   */
   Transition& getTransition(const std::string& aStateId, const std::string& aTransitionId);
 
   //! Add state of specified ID
   void addState(const std::string& aState);
 
-  //! Add transition of specified ID, from state @aFromState , to state @aToState
+  /*!
+   * @brief Add transition to this FSM specified ID, from state @aFromState , to state @aToState
+   * @arg aTransitionId Transition's ID
+   * @arg aFromState State that transition starts from
+   * @arg aToState State that transition goes to
+   */
   Transition& addTransition(const std::string& aTransitionId, const std::string& aFromState, const std::string& aToState);
 
   //! Disengage this FSM
@@ -70,11 +82,16 @@ public:
   public:
     Transition(const std::string& aId, StateMachine& aFSM, const std::string& aStartState, const std::string& aEndState);
 
+    //! State that this transition starts from
     const std::string& getStartState() const;
+
+    //! State that this transition goes to (in case no error occurs)
     const std::string& getEndState() const;
 
+    //! Returns FSM that this transition belongs to
     const StateMachine& getStateMachine() const;
-    
+
+    //! Returns FSM that this transition belongs to
     StateMachine& getStateMachine();
 
     /*!

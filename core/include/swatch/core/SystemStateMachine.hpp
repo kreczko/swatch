@@ -21,7 +21,7 @@ class SystemStateMachine;
 class SystemTransitionStatus;
 
 
-
+//! Represents transition  of a class that inherits from ActionableSystem, for an FSM modeled by SystemStateMachine
 class SystemTransition : public Functionoid {
 public:
 
@@ -198,12 +198,19 @@ public:
   //! Returns IDs of all of this FSM's states
   const std::vector<std::string>& getStates() const;
   
+  //FIXME: const method SHOULD NOT give non-pointer to Transition
+  //! Returns map of all transitions (keyed by transition ID string) that start from the specified state 
   const std::map<std::string, SystemTransition*>& getTransitions(const std::string& aStateId) const;
   
   //! Add state of specified ID
   void addState(const std::string& aState);
 
-  //! Add transition of specified ID, from state @aFromState , to state @aToState
+  /*!
+   * @brief Add transition to this FSM specified ID, from state @aFromState , to state @aToState
+   * @arg aTransitionId Transition's ID
+   * @arg aFromState State that transition starts from
+   * @arg aToState State that transition goes to
+   */
   SystemTransition& addTransition(const std::string& aTransitionId, const std::string& aFromState, const std::string& aToState);
 
   //! Disengage this FSM, and FSMs of participating child objects
