@@ -34,24 +34,32 @@ public:
   const ActionableObject& getResource() const;
 
   ActionableObject& getResource();
-  
+
+  //! Returns ID of this FSM's initial state
   const std::string& getInitialState() const;
-  
+
+  //! Returns ID of this FSM's error state
   const std::string& getErrorState() const;
-  
+
+  //! Returns IDs of all of this FSM's states
   const std::vector<std::string>& getStates() const;
 
-  //FIXME: const method SHOULD NOT give non-const pointer to Transition
+  //FIXME: const method SHOULD NOT give non-pointer to Transition
   const std::map<std::string, Transition*>& getTransitions(const std::string& aStateId) const;
-  
-  Transition& getTransition(const std::string& aStateId, const std::string&);
 
+  //! Returns transition of specified ID, from specified state
+  Transition& getTransition(const std::string& aStateId, const std::string& aTransitionId);
+
+  //! Add state of specified ID
   void addState(const std::string& aState);
-  
+
+  //! Add transition of specified ID, from state @aFromState , to state @aToState
   Transition& addTransition(const std::string& aTransitionId, const std::string& aFromState, const std::string& aToState);
-  
+
+  //! Disengage this FSM
   void disengage();
-  
+
+  //! Reset this FSM to initial state
   void reset();
   
   typedef CommandVecStatus TransitionStatus;
@@ -67,7 +75,10 @@ public:
     
     StateMachine& getStateMachine();
 
+    //! Add an individual command to this transition
     Transition& add(Command& aCmd, const std::string& aNamespace="");
+
+    //! Add all commands from specified sequence to this transition
     Transition& add(CommandSequence& aSequence);
 
   private:
