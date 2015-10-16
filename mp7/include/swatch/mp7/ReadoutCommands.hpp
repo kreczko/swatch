@@ -15,6 +15,9 @@
 
 #include "mp7/ReadoutCtrlNode.hpp"
 
+namespace mp7 {
+class MP7Controller;
+}
 
 namespace swatch {
 namespace mp7 {
@@ -33,6 +36,8 @@ public:
   LoadReadoutMenu( const std::string& aId, uint32_t aBanks, uint32_t aModes, uint32_t aCaptures );
   virtual ~LoadReadoutMenu();
   virtual core::Command::State code(const ::swatch::core::XParameterSet& aParams);
+
+  static LoadReadoutMenu* create( const std::string& aId, ::mp7::MP7Controller& aDriver );
 
 private:
   const uint32_t mBanks;

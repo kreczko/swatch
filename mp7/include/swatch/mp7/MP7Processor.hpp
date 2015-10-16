@@ -38,31 +38,38 @@ private:
 protected:
     virtual void retrieveMetricValues();
     
-    core::Command& mUploadFw;
-    core::Command& mDeleteFw;
-    core::Command& mReboot;
-    core::Command& mHardReset;
-    core::Command& mScanSD;
-    core::Command& mReset;
-    core::Command& mCfgRxMGTs;
-    core::Command& mCfgTxMGTs;
-    core::Command& mAlignMGTs;
-    core::Command& mAutoAlignMGTs;
-    core::Command& mCfgRxBuffers;
-    core::Command& mCfgTxBuffers;
-    core::Command& mCaptureBuffers;
-    core::Command& mSaveRxBuffers;
-    core::Command& mSaveTxBuffers;
-    core::Command& mCfgLatencyRxBuffers;
-    core::Command& mCfgLatencyTxBuffers;
-    core::Command& mCfgEasyRxLatency;
-    core::Command& mCfgEasyTxLatency;
-    core::Command& mCfgFormatterTdr;
-    core::Command& mSetupReadout;
-    core::Command& mLoadReadoutMenu;
+    static const std::string lUploadFwCmdId;
+    
+    struct CmdIds {
+      static const std::string kUploadFw;
+      static const std::string kDeleteFw;
+      static const std::string kReboot;
+      static const std::string kHardReset;
+      static const std::string kScanSD;
+      static const std::string kReset;
+      static const std::string kCfgRxMGTs;
+      static const std::string kCfgTxMGTs;
+      static const std::string kAlignMGTs;
+      static const std::string kAutoAlignMGTs;
+      static const std::string kCfgRxBuffers;
+      static const std::string kCfgTxBuffers;
+      static const std::string kCaptureBuffers;
+      static const std::string kSaveRxBuffers;
+      static const std::string kSaveTxBuffers;
+      static const std::string kCfgLatencyRxBuffers;
+      static const std::string kCfgLatencyTxBuffers;
+      static const std::string kCfgEasyRxLatency;
+      static const std::string kCfgEasyTxLatency;
+      static const std::string kCfgFormatterTdr;
+      static const std::string kSetupReadout;
+      static const std::string kLoadReadoutMenu;
+    };
+    
+    
+    
     
 private:
-  static core::Command* createLoadReadoutMenuCommand(const std::string& aId, const ::mp7::MP7Controller& aController);    
+//  static core::Command* createLoadReadoutMenuCommand(const std::string& aId, const ::mp7::MP7Controller& aController);    
 };
 
 } // namespace mp7 
