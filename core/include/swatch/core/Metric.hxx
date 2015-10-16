@@ -103,7 +103,7 @@ void Metric<DataType>::setErrorCondition(const ConditionType& aErrorCondition)
   BOOST_STATIC_ASSERT_MSG( (boost::is_base_of<MetricCondition<DataType>, ConditionType >::value) , "class ConditionType must be a descendant of MetricCondtion<DataType>" );
 
   boost::lock_guard<boost::mutex> lLock(mutex_);
-  errorCondition_ = new ConditionType(aErrorCondition);
+  errorCondition_.reset(new ConditionType(aErrorCondition));
 }
 
 
@@ -114,7 +114,7 @@ void Metric<DataType>::setWarningCondition(const ConditionType& aWarningConditio
   BOOST_STATIC_ASSERT_MSG( (boost::is_base_of<MetricCondition<DataType>, ConditionType >::value) , "class ConditionType must be a descendant of MetricCondtion<DataType>" );
 
   boost::lock_guard<boost::mutex> lLock(mutex_);
-  warnCondition_ = new ConditionType(aWarningCondition);
+  warnCondition_.reset(new ConditionType(aWarningCondition));
 }
 
 
