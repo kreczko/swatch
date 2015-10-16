@@ -69,6 +69,12 @@ public:
   template<class Iterator>
   SystemTransition& add(Iterator aBegin, Iterator aEnd, const std::string& aStateMachine, const std::string& aFromState, const std::string& aTransition);
 
+  template<class Collection>
+  SystemTransition& add(Collection aCollection, const std::string& aFromState, const std::string& aTransition);
+  
+  template<class Collection>
+  SystemTransition& add(Collection aCollection, const std::string& aStateMachine, const std::string& aFromState, const std::string& aTransition);
+
   SystemTransition& add(const std::vector<StateMachine::Transition*>& aTransitions);
 
   void checkForMissingParameters(const GateKeeper& aGateKeeper, std::map< const StateMachine::Transition*, std::vector<CommandVec::MissingParam> >& aMissingParams) const;
@@ -182,9 +188,10 @@ private:
   friend SystemTransition& SystemTransition::add(const std::vector<StateMachine::Transition*>& aTransitions);
 };
 
-
+// --------------------------------------------------------
 template<class Iterator>
-SystemTransition& SystemTransition::add(Iterator aBegin, Iterator aEnd, const std::string& aFromState, const std::string& aTransition)
+SystemTransition& 
+SystemTransition::add(Iterator aBegin, Iterator aEnd, const std::string& aFromState, const std::string& aTransition)
 {
   typedef typename std::iterator_traits< Iterator >::value_type val_type;
   BOOST_STATIC_ASSERT_MSG( (boost::is_convertible<val_type, ActionableObject*>::value) , "Dereferencing type Iterator must result in a pointer to a type that inherits from swatch::core::ActionableObject");
@@ -193,8 +200,10 @@ SystemTransition& SystemTransition::add(Iterator aBegin, Iterator aEnd, const st
 }
 
 
+// --------------------------------------------------------
 template<class Iterator>
-SystemTransition& SystemTransition::add(Iterator aBegin, Iterator aEnd, const std::string& aFSM, const std::string& aFromState, const std::string& aTransition)
+SystemTransition& 
+SystemTransition::add(Iterator aBegin, Iterator aEnd, const std::string& aFSM, const std::string& aFromState, const std::string& aTransition)
 {
   typedef typename std::iterator_traits< Iterator >::value_type val_type;
   BOOST_STATIC_ASSERT_MSG( (boost::is_convertible<val_type, ActionableObject*>::value) , "Dereferencing type Iterator must result in a pointer to a type that inherits from swatch::core::ActionableObject");
@@ -207,6 +216,20 @@ SystemTransition& SystemTransition::add(Iterator aBegin, Iterator aEnd, const st
 }
 
 
+// --------------------------------------------------------
+template<class Collection>
+SystemTransition& 
+SystemTransition::add(Collection aCollection, const std::string& aFromState, const std::string& aTransition) {
+  return add( aCollection.begin(), aCollection.end(), aFromState, aTransition);
+}
+
+
+// --------------------------------------------------------
+template<class Collection>
+SystemTransition&
+SystemTransition::add(Collection aCollection, const std::string& aFSMId, const std::string& aFromState, const std::string& aTransition){
+  return add( aCollection.begin(), aCollection.end(), aFSMId, aFromState, aTransition);
+}
 DEFINE_SWATCH_EXCEPTION(InvalidSystemTransition);
 
 
