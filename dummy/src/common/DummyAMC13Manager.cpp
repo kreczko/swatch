@@ -11,7 +11,9 @@
 #include "swatch/core/StateMachine.hpp"
 #include "swatch/dtm/DaqTTCStub.hpp"
 #include "swatch/dummy/DummyAMC13Driver.hpp"
+#include "swatch/dummy/DummyAMC13Interfaces.hpp"
 #include "swatch/dummy/DummyAMC13ManagerCommands.hpp"
+#include "swatch/dtm/AMCPortCollection.hpp"
 
 
 SWATCH_REGISTER_CLASS(swatch::dummy::DummyAMC13Manager);
@@ -23,8 +25,16 @@ namespace dummy {
 
 DummyAMC13Manager::DummyAMC13Manager( const swatch::core::AbstractStub& aStub ) : 
   dtm::DaqTTCManager(aStub),
-  driver_(new DummyAMC13Driver())
+  mDriver(new DummyAMC13Driver())
 {
+  // 0) Monitoring interfaces
+  registerInterface( new AMC13TTC(*mDriver) );
+  registerInterface( new AMC13SLinkExpress(0, *mDriver) );
+  registerInterface( new dtm::AMCPortCollection() );
+  for(std::vector<uint32_t>::const_iterator lIt=getStub().amcSlots.begin(); lIt!=getStub().amcSlots.end(); lIt++)
+    getAMCPorts().addPort(new AMC13BackplaneDaqPort(*lIt, *mDriver));
+  registerInterface( new AMC13EventBuilder(*mDriver));
+  
   // 1) Commands
   core::Command& reboot = registerFunctionoid<DummyAMC13RebootCommand>("reboot");
   core::Command& reset = registerFunctionoid<DummyAMC13ResetCommand>("reset");
@@ -52,12 +62,10 @@ DummyAMC13Manager::~DummyAMC13Manager() {
 }
 
 
-
-
 void DummyAMC13Manager::retrieveMetricValues() {
-  DummyAMC13Driver::TTCStatus s = driver_->readTTCStatus();
+  DummyAMC13Driver::TTCStatus s = mDriver->readTTCStatus();
 
-  setMetricValue<uint16_t>(daqMetricFedId_, driver_->readFedId());
+  setMetricValue<uint16_t>(daqMetricFedId_, mDriver->readFedId());
 }
 
 

@@ -18,12 +18,12 @@ public:
 
     virtual ~DummyAMC13Manager();
     
-    DummyAMC13Driver& getDriver() { return *driver_;}
+    DummyAMC13Driver& getDriver() { return *mDriver;}
     
 private:
     virtual void retrieveMetricValues();
     
-    boost::scoped_ptr<DummyAMC13Driver> driver_;
+    boost::scoped_ptr<DummyAMC13Driver> mDriver;
 };
 
 
