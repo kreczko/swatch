@@ -70,10 +70,10 @@ public:
   SystemTransition& add(Iterator aBegin, Iterator aEnd, const std::string& aStateMachine, const std::string& aFromState, const std::string& aTransition);
 
   template<class Collection>
-  SystemTransition& add(Collection aCollection, const std::string& aFromState, const std::string& aTransition);
+  SystemTransition& add(const Collection& aCollection, const std::string& aFromState, const std::string& aTransition);
   
   template<class Collection>
-  SystemTransition& add(Collection aCollection, const std::string& aStateMachine, const std::string& aFromState, const std::string& aTransition);
+  SystemTransition& add(const Collection& aCollection, const std::string& aStateMachine, const std::string& aFromState, const std::string& aTransition);
 
   SystemTransition& add(const std::vector<StateMachine::Transition*>& aTransitions);
 
@@ -219,7 +219,7 @@ SystemTransition::add(Iterator aBegin, Iterator aEnd, const std::string& aFSM, c
 // --------------------------------------------------------
 template<class Collection>
 SystemTransition& 
-SystemTransition::add(Collection aCollection, const std::string& aFromState, const std::string& aTransition) {
+SystemTransition::add(const Collection& aCollection, const std::string& aFromState, const std::string& aTransition) {
   return add( aCollection.begin(), aCollection.end(), aFromState, aTransition);
 }
 
@@ -227,7 +227,7 @@ SystemTransition::add(Collection aCollection, const std::string& aFromState, con
 // --------------------------------------------------------
 template<class Collection>
 SystemTransition&
-SystemTransition::add(Collection aCollection, const std::string& aFSMId, const std::string& aFromState, const std::string& aTransition){
+SystemTransition::add(const Collection& aCollection, const std::string& aFSMId, const std::string& aFromState, const std::string& aTransition){
   return add( aCollection.begin(), aCollection.end(), aFSMId, aFromState, aTransition);
 }
 DEFINE_SWATCH_EXCEPTION(InvalidSystemTransition);
