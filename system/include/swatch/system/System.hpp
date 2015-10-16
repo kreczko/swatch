@@ -88,7 +88,7 @@ public:
     
   const std::deque<processor::Processor*>& getProcessors() ;
   const std::deque<Service*>& getServices();
-  const std::deque<dtm::DaqTTCManager*>& getDaqTTC();
+  const std::deque<dtm::DaqTTCManager*>& getDaqTTCs();
   const std::deque<processor::Link*>& getLinks();
   const CratesMap& getCrates();
     

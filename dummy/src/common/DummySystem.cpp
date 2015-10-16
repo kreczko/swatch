@@ -21,26 +21,26 @@ DummySystem::DummySystem(const swatch::core::AbstractStub& aStub) :
   typedef dtm::RunControlFSM tDaqTTCFSM;
   
   system::RunControlFSM& fsm = getRunControlFSM();
-  fsm.coldReset.add(getDaqTTC(), tDaqTTCFSM::kStateInitial, tDaqTTCFSM::kTrColdReset)
+  fsm.coldReset.add(getDaqTTCs(), tDaqTTCFSM::kStateInitial, tDaqTTCFSM::kTrColdReset)
                .add(getProcessors(), tProcFSM::kStateInitial, tProcFSM::kTrColdReset);
 
-  fsm.setup.add(getDaqTTC(), tDaqTTCFSM::kStateInitial, tDaqTTCFSM::kTrClockSetup)
+  fsm.setup.add(getDaqTTCs(), tDaqTTCFSM::kStateInitial, tDaqTTCFSM::kTrClockSetup)
            .add(getProcessors(), tProcFSM::kStateInitial, tProcFSM::kTrSetup)
-           .add(getDaqTTC(), tDaqTTCFSM::kStateClockOK, tDaqTTCFSM::kTrCfgDaq);
+           .add(getDaqTTCs(), tDaqTTCFSM::kStateClockOK, tDaqTTCFSM::kTrCfgDaq);
 
   fsm.configure.add(getProcessors(), tProcFSM::kStateSync, tProcFSM::kTrConfigure);
 
   fsm.align.add(getProcessors(), tProcFSM::kStateConfigured, tProcFSM::kTrAlign);
 
-  fsm.start.add(getDaqTTC(), tDaqTTCFSM::kStateConfigured, tDaqTTCFSM::kTrStart);
+  fsm.start.add(getDaqTTCs(), tDaqTTCFSM::kStateConfigured, tDaqTTCFSM::kTrStart);
 
-  fsm.pause.add(getDaqTTC(), tDaqTTCFSM::kStateRunning, tDaqTTCFSM::kTrPause);
+  fsm.pause.add(getDaqTTCs(), tDaqTTCFSM::kStateRunning, tDaqTTCFSM::kTrPause);
 
-  fsm.resume.add(getDaqTTC(), tDaqTTCFSM::kStatePaused, tDaqTTCFSM::kTrResume);
+  fsm.resume.add(getDaqTTCs(), tDaqTTCFSM::kStatePaused, tDaqTTCFSM::kTrResume);
 
-  fsm.stopFromPaused.add(getDaqTTC(), tDaqTTCFSM::kStatePaused, tDaqTTCFSM::kTrStop);
+  fsm.stopFromPaused.add(getDaqTTCs(), tDaqTTCFSM::kStatePaused, tDaqTTCFSM::kTrStop);
 
-  fsm.stopFromRunning.add(getDaqTTC(), tDaqTTCFSM::kStateRunning, tDaqTTCFSM::kTrStop);
+  fsm.stopFromRunning.add(getDaqTTCs(), tDaqTTCFSM::kStateRunning, tDaqTTCFSM::kTrStop);
 }
 
 

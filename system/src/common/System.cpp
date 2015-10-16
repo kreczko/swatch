@@ -109,7 +109,7 @@ const std::deque<processor::Processor*>& System::getProcessors() {
 
 
 //---
-const std::deque<dtm::DaqTTCManager*>& System::getDaqTTC() {
+const std::deque<dtm::DaqTTCManager*>& System::getDaqTTCs() {
   return daqTtc_;
 }
 

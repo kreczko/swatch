@@ -135,7 +135,7 @@ BOOST_FIXTURE_TEST_CASE(BuildSystemWithDefaultCreator, Params){
     swsys::System system(sysStub);
     BOOST_CHECK_EQUAL(system.getId(), "mysystem");
     BOOST_CHECK_EQUAL(system.getProcessors().size(), size_t(3));
-    BOOST_CHECK_EQUAL(system.getDaqTTC().size(), size_t(1));
+    BOOST_CHECK_EQUAL(system.getDaqTTCs().size(), size_t(1));
     // detailed tests for the content of processors and services
     // should be done in the respective Creator tests.
 }
@@ -221,7 +221,7 @@ BOOST_FIXTURE_TEST_CASE(AddAMC13Service, Params) {
   swsys::System system(emptyStub);
 
   BOOST_CHECK_EQUAL(system.getServices().size(), size_t(0));
-  BOOST_CHECK_EQUAL(system.getDaqTTC().size(), size_t(1));
+  BOOST_CHECK_EQUAL(system.getDaqTTCs().size(), size_t(1));
 
   swdtm::DaqTTCManager * stored_service = system.getObj<swdtm::DaqTTCManager>(dts.id);
   BOOST_REQUIRE( stored_service != NULL );
