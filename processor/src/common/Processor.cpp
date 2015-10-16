@@ -35,21 +35,21 @@ const std::string RunControlFSM::kId = "runControl";
 const std::string RunControlFSM::kStateInitial = "Halted";
 const std::string RunControlFSM::kStateError = "Error";
 const std::string RunControlFSM::kStateSync = "Synchronised";
-const std::string RunControlFSM::kStatePreCfg = "Preconfigured";
-const std::string RunControlFSM::kStateCfg = "Configured";
+const std::string RunControlFSM::kStateConfigured = "Preconfigured";
+const std::string RunControlFSM::kStateAligned = "Configured";
 
 const std::string RunControlFSM::kTrColdReset = "coldReset";
 const std::string RunControlFSM::kTrSetup = "setup";
-const std::string RunControlFSM::kTrPreCfg = "preconfigure";
-const std::string RunControlFSM::kTrConnect = "connect";
+const std::string RunControlFSM::kTrConfigure = "preconfigure";
+const std::string RunControlFSM::kTrAlign = "connect";
 
 //---
 RunControlFSM::RunControlFSM(core::StateMachine& aFSM) : 
   fsm ( addStates(aFSM) ),
   coldReset ( fsm.addTransition(kTrColdReset, kStateInitial, kStateInitial) ),
   setup( fsm.addTransition(kTrSetup, kStateInitial, kStateSync ) ),
-  preconfigure( fsm.addTransition(kTrPreCfg, kStateSync, kStatePreCfg) ),
-  connect( fsm.addTransition(kTrConnect, kStatePreCfg, kStateCfg) )
+  configure( fsm.addTransition(kTrConfigure, kStateSync, kStateConfigured) ),
+  align( fsm.addTransition(kTrAlign, kStateConfigured, kStateAligned) )
 {
 }
 
@@ -57,8 +57,8 @@ RunControlFSM::RunControlFSM(core::StateMachine& aFSM) :
 core::StateMachine& RunControlFSM::addStates(core::StateMachine& aFSM)
 {
   aFSM.addState(kStateSync);
-  aFSM.addState(kStatePreCfg);
-  aFSM.addState(kStateCfg);
+  aFSM.addState(kStateConfigured);
+  aFSM.addState(kStateAligned);
   return aFSM;
 }
 
