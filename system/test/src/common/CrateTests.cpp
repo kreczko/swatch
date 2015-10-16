@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(SlotCanOnlyBeTakenOnce) {
 	DummyProcessor* p2 = new DummyProcessor(ps2);
 
 	crate->add(p1);
-	BOOST_CHECK_EQUAL(crate->isSlotTaken(1), true);
+	BOOST_CHECK_EQUAL(crate->isAMCSlotTaken(1), true);
 	BOOST_CHECK_THROW(crate->add(p2), CrateSlotTaken);
 }
 

@@ -48,7 +48,7 @@ public:
     std::vector<uint32_t> getPopulatedSlots() const;
     
     std::vector<uint32_t> getAMCSlots() const;
-    bool isSlotTaken( uint32_t slot ) const;
+    bool isAMCSlotTaken( uint32_t slot ) const;
     
     const CrateStub& getStub() const;
     
