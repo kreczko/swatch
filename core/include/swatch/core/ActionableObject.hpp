@@ -154,7 +154,7 @@ private:
   mutable boost::mutex mMutex;
   State mState;
 
-  class BusyGuard {
+  class BusyGuard : public boost::noncopyable {
   public:
     BusyGuard(ActionableObject& aResource, const Functionoid&, const BusyGuard* aOuterGuard=NULL);
     BusyGuard(ActionableObject& aResource, const boost::unique_lock<boost::mutex>& aLockGuard, const Functionoid&, const BusyGuard* aOuterGuard=NULL);
@@ -167,9 +167,6 @@ private:
     const BusyGuard* mOuterGuard;
     
     void initialise(const boost::unique_lock<boost::mutex>& aLockGuard);
-    
-    BusyGuard(const BusyGuard&); // non-copyable
-    BusyGuard& operator=(const BusyGuard&); // non-assignable
   };
 
   friend class ActionableSystem;

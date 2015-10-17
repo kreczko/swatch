@@ -95,7 +95,7 @@ private:
   mutable boost::mutex mMutex;
   State mState;
   
-  class BusyGuard {
+  class BusyGuard : public boost::noncopyable {
   public:
     BusyGuard(ActionableSystem& aResource, const Functionoid& aAction);
     
@@ -108,9 +108,6 @@ private:
     const Functionoid& mAction;
     typedef boost::shared_ptr<const ActionableObject::BusyGuard> tChildGuardPtr;
     std::map<const ActionableObject*, tChildGuardPtr> mChildGuardMap;
-
-    BusyGuard(const BusyGuard&); // non-copyable
-    BusyGuard& operator=(const BusyGuard&); // non-assignable
   };
 
   friend class SystemStateMachine;
