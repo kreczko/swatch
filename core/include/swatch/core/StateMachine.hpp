@@ -63,10 +63,10 @@ public:
   void addState(const std::string& aState);
 
   /*!
-   * @brief Add transition to this FSM specified ID, from state @aFromState , to state @aToState
-   * @arg aTransitionId Transition's ID
+   * @brief Add transition to this FSM
+   * @arg aTransitionId The new transition's ID
    * @arg aFromState State that transition starts from
-   * @arg aToState State that transition goes to
+   * @arg aToState State that transition goes to (in case no error occurs)
    */
   Transition& addTransition(const std::string& aTransitionId, const std::string& aFromState, const std::string& aToState);
 

@@ -69,7 +69,12 @@ public:
   };
   
 protected:
-  //! Register the supplied state machine in this object, with specified ID; this object takes ownership of the state machine.
+  /*!
+   * @brief Register a finite state machine in this system, with specified ID
+   * @arg aId State machine's ID
+   * @arg aInitialState The FSM's initial state
+   * @arg aErrorState The FSM's error state
+   */ 
   SystemStateMachine& registerStateMachine(const std::string& aId, const std::string& aInitialState, const std::string& aErrorState );    
 
   virtual void retrieveMetricValues() {}

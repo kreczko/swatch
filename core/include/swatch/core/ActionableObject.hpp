@@ -133,7 +133,13 @@ protected:
   CommandSequence& registerCommandSequence(const std::string& aId, Command& aFirstCommand, const std::string& aFirstCommandAlias="");
   //! Register the supplied command in this object, with specified ID; this object takes ownership of the command sequence.
   Command& registerFunctionoid(const std::string& aId , Command* aCommand );
-  //! Register the supplied state machine in this object, with specified ID; this object takes ownership of the state machine.
+
+  /*!
+   * @brief Register a finite state machine in this object, with specified ID
+   * @arg aId State machine's ID
+   * @arg aInitialState The FSM's initial state
+   * @arg aErrorState The FSM's error state
+   */ 
   StateMachine& registerStateMachine(const std::string& aId, const std::string& aInitialState, const std::string& aErrorState );    
   
 private:
