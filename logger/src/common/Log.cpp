@@ -65,42 +65,44 @@ LogLevel Log::logThreshold_ = kInfo;
 //         (kDebug4, "DEBUG4");
 
 const char* Log::logNames_[] = {
-    "ERROR",
-    "WARNING",
-    "NOTICE",
-    "INFO",
-    "DEBUG",
-    "DEBUG2",
-    "DEBUG1",
-    "DEBUG3",
-    "DEBUG4"
+  "FATAL",
+  "ERROR",
+  "WARNING",
+  "NOTICE",
+  "INFO",
+  "DEBUG",
+  "DEBUG2",
+  "DEBUG1",
+  "DEBUG3",
+  "DEBUG4"
 };
 
 const char* logColors[] = {
-    ansi::kRed,
-    ansi::kYellow,
-    ansi::kGreen,
-    ansi::kBlue,
-    ansi::kCyan,
-    ansi::kCyan,
-    ansi::kCyan,
-    ansi::kCyan,
-    ansi::kCyan
-    };
+  ansi::kRed,
+  ansi::kRed,
+  ansi::kYellow,
+  ansi::kGreen,
+  ansi::kBlue,
+  ansi::kCyan,
+  ansi::kCyan,
+  ansi::kCyan,
+  ansi::kCyan,
+  ansi::kCyan
+};
 
 Log::Log() :
-	messageLevel_(LogLevel::kError) {
+  messageLevel_(LogLevel::kError) {
 }
 
 Log::Log(const Log&) :
-				messageLevel_(LogLevel::kError) {
+  messageLevel_(LogLevel::kError) {
 }
 
 Log::~Log() {
-    if (messageLevel_ <= logThreshold()) {
-        os_ << std::endl;
-        push(messageLevel_, "swatch", os_.str().c_str());
-    }
+  if (messageLevel_ <= logThreshold()) {
+    os_ << std::endl;
+    push(messageLevel_, "swatch", os_.str().c_str());
+  }
 }
 
 //Log&
@@ -109,24 +111,24 @@ Log::~Log() {
 
 std::ostringstream&
 Log::get(LogLevel level) {
-    messageLevel_ = level;
-    return os_;
+  messageLevel_ = level;
+  return os_;
 }
 
 void
 Log::push(LogLevel level, const std::string& source, const std::string& message) {
-    // fprintf(stderr, "%s %-7s |  %s", source.c_str(), toString(level).c_str(), message.c_str());
-    fprintf(stderr, "%s%s %-7s |  %s%s", logColors[level], source.c_str(), logNames_[level], message.c_str(),ansi::kReset);
-    fflush(stderr);
+  // fprintf(stderr, "%s %-7s |  %s", source.c_str(), toString(level).c_str(), message.c_str());
+  fprintf(stderr, "%s%s %-7s |  %s%s", logColors[level], source.c_str(), logNames_[level], message.c_str(),ansi::kReset);
+  fflush(stderr);
 }
 
 LogLevel& Log::logThreshold() {
-    return logThreshold_;
+  return logThreshold_;
 }
 
 void
 Log::setLogThreshold(LogLevel level) {
-    logThreshold_ = level;
+  logThreshold_ = level;
 }
 
 
