@@ -163,8 +163,6 @@ ActionableSystem::BusyGuard::BusyGuard(ActionableSystem& aResource, const Functi
   
   // Put the mutexes into lock guards before continuing
   std::map<const MonitorableObject*, tLockGuardPtr> lLockGuardMap = ActionableSystem::lockMutexes(lOp);
-  
-  LOG(swatch::logger::kNotice) << "'" << mResource.getPath() << "', '" << mAction.getId() << "' : BusyGuard[" << this << "] CTOR";
 
   // 1a) Check that system is engaged in correct state machine, and is in the correct state
   if( aResource.mState.mFSM != & lTransition.getStateMachine())
@@ -205,7 +203,7 @@ ActionableSystem::BusyGuard::BusyGuard(ActionableSystem& aResource, const Functi
     throw ActionableObjectIsBusy(oss.str());
   }
 
-  // 2a) Check that none of the children are busy
+  // 2b) Check that none of the children are busy
   for(tObjTransitionMap::const_iterator lIt=childTransitionMap.begin(); lIt!=childTransitionMap.end(); lIt++)
   {
     const ActionableObject& lChild = *lIt->first;
@@ -226,6 +224,7 @@ ActionableSystem::BusyGuard::BusyGuard(ActionableSystem& aResource, const Functi
   } 
   
   // 3) If got this far, then all is good; create the busy guards for the children
+  LOG(swatch::logger::kInfo) << "'" << mResource.getPath() << "' : Starting action '" << mAction.getId() << "'";
   aResource.mState.mActions.push_back( &aAction );
   for(tObjTransitionMap::const_iterator lIt=childTransitionMap.begin(); lIt!=childTransitionMap.end(); lIt++)
     this->mChildGuardMap[ lIt->first ] = tChildGuardPtr(new ActionableObject::BusyGuard(*lIt->first, *lLockGuardMap[lIt->first].get(), lTransition) );
@@ -244,7 +243,7 @@ const ActionableObject::BusyGuard& ActionableSystem::BusyGuard::getChildGuard(co
 ActionableSystem::BusyGuard::~BusyGuard()
 {
   boost::lock_guard<boost::mutex> lGuard(mResource.mMutex);
-  LOG(swatch::logger::kNotice) << "'" << mResource.getPath() << "', '" << mAction.getId() << "' : BusyGuard[" << this << "] DTOR";
+  LOG(swatch::logger::kInfo) << "'" << mResource.getPath() << "' : Finished action '" << mAction.getId() << "'";
   if ((!mResource.mState.mActions.empty()) && (&mAction == mResource.mState.mActions.back()))
   {
     mResource.mState.mActions.pop_back();

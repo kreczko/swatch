@@ -261,8 +261,6 @@ void ActionableObject::BusyGuard::initialise(const boost::unique_lock<boost::mut
     else if ( &mOuterGuard->mAction != mResource.mState.mActions.back() )
       throw WrongBusyGuard( "Outer BusyGuard (resource: '"+mResource.getPath()+"', action: '"+mOuterGuard->mAction.getId()+"') is not for current action '"+mResource.mState.mActions.back()->getId()+"'" );
   }
-  
-  LOG(swatch::logger::kNotice) << "'" << mResource.getPath() << "', '" << mAction.getId() << "' : BusyGuard[" << this << "] CTOR";
 
   // 0) Check that this this action isn't already running
   if (std::count(mResource.mState.mActions.begin(), mResource.mState.mActions.end(), &mAction) > 0 )
@@ -279,7 +277,10 @@ void ActionableObject::BusyGuard::initialise(const boost::unique_lock<boost::mut
   
   // 2) Claim the resource if free; else throw if can't get sole control of it
   if ( mResource.mState.mEnabled && ( (mOuterGuard != NULL) || mResource.mState.mActions.empty() ) )
+  {
+    LOG(swatch::logger::kInfo) << "'" << mResource.getPath() << "' : Starting action '" << mAction.getId() << "'";
     mResource.mState.mActions.push_back(&mAction);
+  }
   else
   {
     std::ostringstream oss;
@@ -301,7 +302,7 @@ void ActionableObject::BusyGuard::initialise(const boost::unique_lock<boost::mut
 ActionableObject::BusyGuard::~BusyGuard()
 {  
   boost::lock_guard<boost::mutex> lGuard(mResource.mMutex);
-  LOG(swatch::logger::kNotice) << "'" << mResource.getPath() << "', '" << mAction.getId() << "' : BusyGuard[" << this << "] DTOR";
+  LOG(swatch::logger::kInfo) << "'" << mResource.getPath() << "' : Finished action '" << mAction.getId() << "'";
   if ( (!mResource.mState.mActions.empty()) && (&mAction == mResource.mState.mActions.back()))
   {
     mResource.mState.mActions.pop_back();
