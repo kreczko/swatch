@@ -44,7 +44,7 @@ public:
 
   virtual ~ActionableSystem();
 
-  /**
+  /*!
    * Names of stored state machines.
    * @return set of state machine names
    */
