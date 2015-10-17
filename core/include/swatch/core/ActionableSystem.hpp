@@ -55,6 +55,7 @@ public:
 
   State getState() const;
   
+  //! Engage state machine of specified ID
   void engageStateMachine(const std::string& aStateMachine);
 
   typedef boost::unordered_map< std::string , SystemStateMachine* > tStateMachineMap;

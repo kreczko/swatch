@@ -113,7 +113,7 @@ public:
   template<class Collection>
   SystemTransition& add(const Collection& aCollection, const std::string& aStateMachine, const std::string& aFromState, const std::string& aTransition);
 
-  /* 
+  /*!
    * @brief Add step consisting of transitions of children
    * @param aTransitions pointers to transitions on child objects
    */
@@ -121,12 +121,12 @@ public:
 
   void checkForMissingParameters(const GateKeeper& aGateKeeper, std::map< const StateMachine::Transition*, std::vector<CommandVec::MissingParam> >& aMissingParams) const;
 
-  /**
-    * @brief Run the transition, extracting the parameters for each child transition from the supplied gatekeeper
-    * 
-    * @arg aGateKeeper Gatekeeper that will be used to extract the 
-    * @arg aUseThreadPool Run the transition asynchronously in the swatch::core::ThreadPool ; if equals false, then the sequence is run synchronously (i.e. in same thread)
-    */
+  /*!
+   * @brief Run the transition, extracting the parameters for each child transition from the supplied gatekeeper
+   * 
+   * @arg aGateKeeper Gatekeeper that will be used to extract the 
+   * @arg aUseThreadPool Run the transition asynchronously in the swatch::core::ThreadPool ; if equals false, then the sequence is run synchronously (i.e. in same thread)
+   */
   void exec(const GateKeeper& aGateKeeper, const bool& aUseThreadPool = true ); 
 
 private:
@@ -221,7 +221,7 @@ public:
   void reset();
   
 private:
-  // Throws if system/children are in other state machine, or running transition; need to lock externally ...
+  //! Throws if system/children are in other state machine, or running transition; need to lock externally ...
   void checkStateMachineEngagedAndNotInTransition(const std::string& aAction) const;
   
   struct State : public Object {
