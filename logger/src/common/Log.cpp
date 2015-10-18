@@ -1,11 +1,13 @@
 #include "swatch/logger/Log.hpp"
 
 
-// Boost Headers
+// boost headers
 #include <boost/assign.hpp>
+#include "boost/date_time/posix_time/posix_time.hpp"
 #include <boost/lexical_cast.hpp>
+#include "boost/thread/thread.hpp"
 
-// C++ Headers
+// C++ headers
 #include <iostream>
 
 
@@ -118,7 +120,9 @@ Log::get(LogLevel level) {
 void
 Log::push(LogLevel level, const std::string& source, const std::string& message) {
   // fprintf(stderr, "%s %-7s |  %s", source.c_str(), toString(level).c_str(), message.c_str());
-  fprintf(stderr, "%s%s %-7s |  %s%s", logColors[level], source.c_str(), logNames_[level], message.c_str(),ansi::kReset);
+  std::ostringstream lOss;
+  lOss << boost::posix_time::microsec_clock::universal_time() << " " << source << " [" << boost::this_thread::get_id() << ']';
+  fprintf(stderr, "%s%s %-7s |  %s%s", logColors[level], lOss.str().c_str(), logNames_[level], message.c_str(), ansi::kReset);
   fflush(stderr);
 }
 
