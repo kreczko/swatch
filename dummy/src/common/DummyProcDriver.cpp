@@ -40,6 +40,16 @@ DummyProcDriver::TTCStatus DummyProcDriver::getTTCStatus() const
 }
 
 
+DummyProcDriver::ReadoutStatus DummyProcDriver::getReadoutStatus() const
+{
+  ptime lNow = ms_clk::universal_time();
+  if ( (lNow < mErrTimeClk) && (lNow < mErrTimeDaq) )
+    return ReadoutStatus(true, 8);
+  else
+    return ReadoutStatus(false, 2);
+}
+
+
 DummyProcDriver::RxPortStatus DummyProcDriver::getRxPortStatus(uint32_t channelId) const 
 {
   if ( (ms_clk::universal_time() >= mErrTimeClk) || (ms_clk::universal_time() >= mErrTimeRx) )

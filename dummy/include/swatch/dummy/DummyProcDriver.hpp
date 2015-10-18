@@ -16,8 +16,9 @@ public:
   
   // Forward declarations
   struct TTCStatus;
+  struct ReadoutStatus;
   struct RxPortStatus;
-    
+
   DummyProcDriver();
 
   virtual ~DummyProcDriver();
@@ -25,7 +26,9 @@ public:
   uint64_t getFirmwareVersion() const;
 
   TTCStatus getTTCStatus() const;
-  
+
+  ReadoutStatus getReadoutStatus() const;
+
   RxPortStatus getRxPortStatus(uint32_t channelId) const;
 
   bool isTxPortOperating(uint32_t channelId) const;
@@ -62,7 +65,16 @@ public:
     uint32_t errSingleBit;
     uint32_t errDoubleBit;
   };
-  
+
+  struct ReadoutStatus {
+      ReadoutStatus(bool aAMCCoreReady, uint32_t aTTSState) : 
+        amcCoreReady(aAMCCoreReady),
+        ttsState(aTTSState)
+      {}
+      bool amcCoreReady;
+      uint32_t ttsState;
+  };
+
   struct RxPortStatus {
     RxPortStatus(bool aIsLocked, bool aIsAligned, uint32_t aCrcErrCount) : 
       isLocked(aIsLocked),
