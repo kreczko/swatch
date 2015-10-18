@@ -129,9 +129,9 @@ protected:
   T& registerFunctionoid( const std::string& aId );
 
   //! Register the a command sequence in this object, with specified ID
-  CommandSequence& registerCommandSequence(const std::string& aId, const std::string& aFirstCommandId, const std::string& aFirstCommandAlias="");
+  CommandSequence& registerCommandSequence(const std::string& aId, const std::string& aFirstCommandId, const std::string& aFirstCommandNamespace="");
   //! Register the a command sequence in this object, with specified ID
-  CommandSequence& registerCommandSequence(const std::string& aId, Command& aFirstCommand, const std::string& aFirstCommandAlias="");
+  CommandSequence& registerCommandSequence(const std::string& aId, Command& aFirstCommand, const std::string& aFirstCommandNamespace="");
   //! Register the supplied command in this object, with specified ID; this object takes ownership of the command sequence.
   Command& registerFunctionoid(const std::string& aId , Command* aCommand );
 
@@ -169,6 +169,14 @@ private:
     void initialise(const boost::unique_lock<boost::mutex>& aLockGuard);
   };
 
+public:
+  struct ActionFmt {
+  public:
+    ActionFmt(const Functionoid* aAction);
+    ~ActionFmt();
+    const Functionoid* const mAction;
+  };
+
   friend class ActionableSystem;
   friend class Command;
   friend class CommandSequence;
@@ -177,6 +185,10 @@ private:
   friend class SystemTransition;
   friend class SystemStateMachine;
 };
+
+
+std::ostream& operator<<(std::ostream& aStream, const ActionableObject::ActionFmt& aActionFmt);
+
 
 DEFINE_SWATCH_EXCEPTION(CommandSequenceAlreadyExistsInActionableObject);
 DEFINE_SWATCH_EXCEPTION(CommandAlreadyExistsInActionableObject);

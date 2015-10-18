@@ -106,7 +106,7 @@ SystemStateMachine& ActionableSystem::registerStateMachine( const std::string& a
 void ActionableSystem::Deleter::operator ()(Object* aObject) {
   if(ActionableSystem* lActionableSys = dynamic_cast<ActionableSystem*>(aObject))
   {
-    LOG(swatch::logger::kNotice) << "ActionableSystem deleter being called on object '" << aObject->getPath() << "'";
+    LOG(swatch::logger::kNotice) << aObject->getPath() << " : ActionableSystem deleter called";
 
     lActionableSys->disableActions();
 
@@ -114,8 +114,8 @@ void ActionableSystem::Deleter::operator ()(Object* aObject) {
     do {
     } while ( ! lActionableSys->getState().getActions().empty() );
 
-    LOG(swatch::logger::kNotice) << "ActionableSystem deleter now thinks that object '" << aObject->getPath() << "' has finished all commands";
-    
+    LOG(swatch::logger::kNotice) << aObject->getPath() << " : ActionableSystem now being deleted";
+
     delete lActionableSys;
   }
   else{
@@ -224,7 +224,7 @@ ActionableSystem::BusyGuard::BusyGuard(ActionableSystem& aResource, const Functi
   } 
   
   // 3) If got this far, then all is good; create the busy guards for the children
-  LOG(swatch::logger::kInfo) << "'" << mResource.getPath() << "' : Starting action '" << mAction.getId() << "'";
+  LOG(swatch::logger::kInfo) << mResource.getPath() << " : Starting action '" << mAction.getId() << "'";
   aResource.mState.mActions.push_back( &aAction );
   for(tObjTransitionMap::const_iterator lIt=childTransitionMap.begin(); lIt!=childTransitionMap.end(); lIt++)
     this->mChildGuardMap[ lIt->first ] = tChildGuardPtr(new ActionableObject::BusyGuard(*lIt->first, *lLockGuardMap[lIt->first].get(), lTransition) );
@@ -243,7 +243,7 @@ const ActionableObject::BusyGuard& ActionableSystem::BusyGuard::getChildGuard(co
 ActionableSystem::BusyGuard::~BusyGuard()
 {
   boost::lock_guard<boost::mutex> lGuard(mResource.mMutex);
-  LOG(swatch::logger::kInfo) << "'" << mResource.getPath() << "' : Finished action '" << mAction.getId() << "'";
+  LOG(swatch::logger::kInfo) << mResource.getPath() << " : Finished action '" << mAction.getId() << "'";
   if ((!mResource.mState.mActions.empty()) && (&mAction == mResource.mState.mActions.back()))
   {
     mResource.mState.mActions.pop_back();

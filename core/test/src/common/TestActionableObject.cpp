@@ -138,7 +138,8 @@ BOOST_AUTO_TEST_CASE(TestSafeDeletionOfBusyActionableObject) {
 
     boost::this_thread::sleep_for(boost::chrono::milliseconds(25));
   }
-  
+  swatch::logger::Log::setLogThreshold(lLogThr);
+
   // Sleep for 25ms after the actionable object has been destroyed, ...
   // ... in order to ensure that if the object has been deleted before the command has finished, ...
   // ... then the object is accessed by the Command::code method in the execution thread after the object's deletion ...

@@ -130,23 +130,23 @@ std::set<std::string> ActionableObject::getStateMachines() const
 
 //------------------------------------------------------------------------------------
 
-CommandSequence& ActionableObject::registerCommandSequence( const std::string& aId, const std::string& aFirstCommandId, const std::string& aFirstCommandAlias)
+CommandSequence& ActionableObject::registerCommandSequence( const std::string& aId, const std::string& aFirstCommandId, const std::string& aFirstCommandNamespace)
 { 
   if (mCommandSequences.count(aId)) {
     throw CommandSequenceAlreadyExistsInActionableObject( "CommandSequence With ID '"+aId+"' already exists" );
   }
-  CommandSequence* lSequence = new CommandSequence(aId, *this, aFirstCommandId, aFirstCommandAlias);
+  CommandSequence* lSequence = new CommandSequence(aId, *this, aFirstCommandId, aFirstCommandNamespace);
   mCommandSequences.insert( std::make_pair( aId , lSequence ) );
   return *lSequence;
 }
 
 
-CommandSequence& ActionableObject::registerCommandSequence( const std::string& aId, Command& aFirstCommand, const std::string& aFirstCommandAlias)
+CommandSequence& ActionableObject::registerCommandSequence( const std::string& aId, Command& aFirstCommand, const std::string& aFirstCommandNamespace)
 { 
   if (mCommandSequences.count(aId)) {
     throw CommandSequenceAlreadyExistsInActionableObject( "CommandSequence With ID '"+aId+"' already exists" );
   }
-  CommandSequence* lSequence = new CommandSequence(aId, *this, aFirstCommand, aFirstCommandAlias);
+  CommandSequence* lSequence = new CommandSequence(aId, *this, aFirstCommand, aFirstCommandNamespace);
   mCommandSequences.insert( std::make_pair( aId , lSequence ) );
   return *lSequence;
 }
@@ -199,7 +199,7 @@ void ActionableObject::engageStateMachine(const std::string& aFSM) {
 void ActionableObject::Deleter::operator ()(Object* aObject) {
   if(ActionableObject* lActionableObj = dynamic_cast<ActionableObject*>(aObject))
   {
-    LOG(swatch::logger::kNotice) << "ActionableObject deleter being called on object '" << aObject->getPath() << "'";
+    LOG(swatch::logger::kNotice) << aObject->getPath() << " : ActionableObject deleter called";
 
     lActionableObj->disableActions();
 
@@ -207,7 +207,7 @@ void ActionableObject::Deleter::operator ()(Object* aObject) {
     do {
     } while ( ! lActionableObj->getState().getActions().empty() );
 
-    LOG(swatch::logger::kNotice) << "ActionableObject deleter now thinks that object '" << aObject->getPath() << "' has finished all commands";
+    LOG(swatch::logger::kNotice) << aObject->getPath() << " : ActionableObject now being deleted";
     
     delete lActionableObj;
   }
@@ -278,7 +278,10 @@ void ActionableObject::BusyGuard::initialise(const boost::unique_lock<boost::mut
   // 2) Claim the resource if free; else throw if can't get sole control of it
   if ( mResource.mState.mEnabled && ( (mOuterGuard != NULL) || mResource.mState.mActions.empty() ) )
   {
-    LOG(swatch::logger::kInfo) << "'" << mResource.getPath() << "' : Starting action '" << mAction.getId() << "'";
+    if (mResource.mState.mActions.empty())
+      LOG(swatch::logger::kInfo) << mResource.getPath() << " : Starting " << ActionFmt(&mAction);
+    else
+      LOG(swatch::logger::kInfo) << mResource.getPath() << " : Starting " << ActionFmt(&mAction) << " within " << ActionFmt(mResource.mState.mActions.back());
     mResource.mState.mActions.push_back(&mAction);
   }
   else
@@ -302,7 +305,7 @@ void ActionableObject::BusyGuard::initialise(const boost::unique_lock<boost::mut
 ActionableObject::BusyGuard::~BusyGuard()
 {  
   boost::lock_guard<boost::mutex> lGuard(mResource.mMutex);
-  LOG(swatch::logger::kInfo) << "'" << mResource.getPath() << "' : Finished action '" << mAction.getId() << "'";
+  LOG(swatch::logger::kInfo) << mResource.getPath() << " : Finished " << ActionFmt(&mAction);
   if ( (!mResource.mState.mActions.empty()) && (&mAction == mResource.mState.mActions.back()))
   {
     mResource.mState.mActions.pop_back();
@@ -324,6 +327,36 @@ ActionableObject::BusyGuard::~BusyGuard()
   }
 }
 
+
+ActionableObject::ActionFmt::ActionFmt(const Functionoid* aAction) : 
+  mAction(aAction)
+{
+}
+
+
+ActionableObject::ActionFmt::~ActionFmt()
+{
+}
+
+
+std::ostream& operator<<(std::ostream& aStream, const ActionableObject::ActionFmt& aActionFmt)
+{
+  if (dynamic_cast<const Command*>(aActionFmt.mAction) != NULL)
+    aStream << "command";
+  else if (dynamic_cast<const CommandSequence*>(aActionFmt.mAction) != NULL)
+    aStream << "sequence";
+  else if (dynamic_cast<const StateMachine::Transition*>(aActionFmt.mAction) != NULL)
+    aStream << "transition";
+  else
+    aStream << "action";
+
+  if( aActionFmt.mAction == NULL )
+    aStream << " NULL";
+  else
+    aStream << " '" << aActionFmt.mAction->getId() << "'";
+
+  return aStream;
+}
 
 }
 }
