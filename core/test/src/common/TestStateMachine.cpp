@@ -355,7 +355,10 @@ BOOST_FIXTURE_TEST_CASE(TestTransitionMissingParams, StateMachineTestSetup) {
   BOOST_REQUIRE_EQUAL( obj->getState().getState(), fsmState0);
   
   // Running transition without parameter values defined: Should throw, and leave state unchanged
+  swatch::logger::LogLevel lThr = swatch::logger::Log::logThreshold();
+  swatch::logger::Log::setLogThreshold(swatch::logger::kFatal);
   BOOST_CHECK_THROW( transitionItoA->exec(emptyGk, false), ParameterNotFound );
+  swatch::logger::Log::setLogThreshold(lThr);
   BOOST_CHECK_EQUAL( transitionItoA->getState(), Functionoid::kInitial );
   BOOST_CHECK_EQUAL( transitionItoA->getStatus().getState(), Functionoid::kInitial );
   BOOST_CHECK_EQUAL( obj->getState().getEngagedFSM(), & testFSM);
@@ -457,7 +460,7 @@ BOOST_FIXTURE_TEST_CASE(TestRunWarningTransition, StateMachineTestSetup) {
 
 
 BOOST_FIXTURE_TEST_CASE(TestRunGoodTransition, StateMachineTestSetup) {
-  LOG(kInfo) << "Running StateMachineTestSuite/TestRunWarningTransition";
+  LOG(kInfo) << "Running StateMachineTestSuite/TestRunGoodTransition";
   transitionItoA->add(cmdNormal1);
   transitionItoA->add(cmdNormal2);
   
