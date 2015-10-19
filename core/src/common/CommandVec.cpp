@@ -228,12 +228,8 @@ void CommandVec::runCommands(boost::shared_ptr<ActionableObject::BusyGuard> aGua
     
     while( true ) 
     {
-      {
-      LOG(swatch::logger::kNotice) << "'" << getResource().getPath() << "', '" << getId() << "' : Starting running command '" << mCommandIt->mCmd->getId() << "'";
-        mCommandIt->mCmd->exec(aGuard.get(), *lIt , false ); // False = run the commands in this thread!
-        //FIXME: Make exec method return CommandStatus to remove any possibility of race condition ?
-      }
-      LOG(swatch::logger::kNotice) << "'" << getResource().getPath() << "', '" << getId() << "' : Finished running command '" << mCommandIt->mCmd->getId() << "'";
+      mCommandIt->mCmd->exec(aGuard.get(), *lIt , false ); // False = run the commands in this thread!
+      //FIXME: Make exec method return CommandStatus to remove any possibility of race condition ?
 
       CommandStatus status = mCommandIt->get().getStatus();
       boost::unique_lock<boost::mutex> lock(mMutex);
