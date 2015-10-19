@@ -54,8 +54,8 @@ public:
 
   /*!
    * @brief Returns transition of specified ID, from specified state
-   * @arg aStateId ID string of start state
-   * @arg aTransitionId Transition's ID string
+   * @param aStateId ID string of start state
+   * @param aTransitionId Transition's ID string
    */
   Transition& getTransition(const std::string& aStateId, const std::string& aTransitionId);
 
@@ -64,9 +64,9 @@ public:
 
   /*!
    * @brief Add transition to this FSM
-   * @arg aTransitionId The new transition's ID
-   * @arg aFromState State that transition starts from
-   * @arg aToState State that transition goes to (in case no error occurs)
+   * @param gaTransitionId The new transition's ID
+   * @param aFromState State that transition starts from
+   * @param aToState State that transition goes to (in case no error occurs)
    */
   Transition& addTransition(const std::string& aTransitionId, const std::string& aFromState, const std::string& aToState);
 
@@ -96,8 +96,8 @@ public:
 
     /*!
      * @brief Add an individual command to this transition
-     * @arg aCmd the command
-     * @arg aNamespace Namespace used when retreving parameters from gatekeeper
+     * @param aCmd the command
+     * @param aNamespace Namespace used when retreving parameters from gatekeeper
      */
     Transition& add(Command& aCmd, const std::string& aNamespace="");
 

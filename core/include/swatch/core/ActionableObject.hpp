@@ -137,9 +137,9 @@ protected:
 
   /*!
    * @brief Register a finite state machine in this object, with specified ID
-   * @arg aId State machine's ID
-   * @arg aInitialState The FSM's initial state
-   * @arg aErrorState The FSM's error state
+   * @param aId State machine's ID
+   * @param aInitialState The FSM's initial state
+   * @param aErrorState The FSM's error state
    */ 
   StateMachine& registerStateMachine(const std::string& aId, const std::string& aInitialState, const std::string& aErrorState );    
   

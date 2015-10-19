@@ -72,10 +72,10 @@ public:
   /*!
    * @brief Add step consisting of transitions of children in range aBegin to aEnd, from same state for each child, with same ID for each child transition; uses this transition's FSM ID string for children as well
    * @tparam Iterator iterator over child objects that derive from ActionableObject ; must defererence to T*, where T is a class that inherits from ActionableObject
-   * @arg aBegin iterator to beginning of collection of child pointers
-   * @arg aEnd iterator to one-past-end of collection of child pointers
-   * @arg aFromState State that child transitions start from
-   * @arg aTransition ID of child transition
+   * @param aBegin iterator to beginning of collection of child pointers
+   * @param aEnd iterator to one-past-end of collection of child pointers
+   * @param aFromState State that child transitions start from
+   * @param aTransition ID of child transition
    */
   template<class Iterator>
   SystemTransition& add(Iterator aBegin, Iterator aEnd, const std::string& aFromState, const std::string& aTransition);
@@ -83,11 +83,11 @@ public:
   /*!
    * @brief Add step consisting of transitions of children in range aBegin to aEnd, from same state for each child, with same ID for each child transition
    * @tparam Iterator iterator over child objects that derive from ActionableObject ; must defererence to T*, where T is a class that inherits from ActionableObject
-   * @arg aBegin iterator to beginning of collection of child pointers
-   * @arg aEnd iterator to one-past-end of collection of child pointers
-   * @arg aStateMachine ID of FSM for child transitions
-   * @arg aFromState State that child transitions start from
-   * @arg aTransition ID of child transition
+   * @param aBegin iterator to beginning of collection of child pointers
+   * @param aEnd iterator to one-past-end of collection of child pointers
+   * @param aStateMachine ID of FSM for child transitions
+   * @param aFromState State that child transitions start from
+   * @param aTransition ID of child transition
    */
   template<class Iterator>
   SystemTransition& add(Iterator aBegin, Iterator aEnd, const std::string& aStateMachine, const std::string& aFromState, const std::string& aTransition);
@@ -95,20 +95,20 @@ public:
   /*!
    * @brief Add step consisting of transitions of children, from same state for each child, with same ID for each child transition; uses this transition's FSM ID string for children as well
    * @tparam Collection collection of child objects that derive from ActionableObject ; iterators returned by begin() and end() methods must defererence to T*, where T is a class that inherits from ActionableObject
-   * @arg aCollection collection of child objects involved in this step
-   * @arg aFromState State that child transitions start from
-   * @arg aTransition ID of child transition
+   * @param aCollection collection of child objects involved in this step
+   * @param aFromState State that child transitions start from
+   * @param aTransition ID of child transition
    */
   template<class Collection>
   SystemTransition& add(const Collection& aCollection, const std::string& aFromState, const std::string& aTransition);
   
   /*!
-   * @brief Add step consisting of transitions of children, from same state for each child, with same ID for each child transition; uses this transition's FSM ID string for children as well
+   * @brief Add step consisting of transitions of children, from same state for each child, with same ID for each child transition
    * @tparam Collection collection of child objects that derive from ActionableObject ; iterators returned by begin() and end() methods must defererence to T*, where T is a class that inherits from ActionableObject
-   * @arg aCollection collection of child objects involved in this step
-   * @arg aStateMachine ID of FSM for child transitions
-   * @arg aFromState State that child transitions start from
-   * @arg aTransition ID of child transition
+   * @param aCollection collection of child objects involved in this step
+   * @param aStateMachine ID of FSM for child transitions
+   * @param aFromState State that child transitions start from
+   * @param aTransition ID of child transition
    */
   template<class Collection>
   SystemTransition& add(const Collection& aCollection, const std::string& aStateMachine, const std::string& aFromState, const std::string& aTransition);
@@ -124,8 +124,8 @@ public:
   /*!
    * @brief Run the transition, extracting the parameters for each child transition from the supplied gatekeeper
    * 
-   * @arg aGateKeeper Gatekeeper that will be used to extract the 
-   * @arg aUseThreadPool Run the transition asynchronously in the swatch::core::ThreadPool ; if equals false, then the sequence is run synchronously (i.e. in same thread)
+   * @param aGateKeeper Gatekeeper that will be used to extract the 
+   * @param aUseThreadPool Run the transition asynchronously in the swatch::core::ThreadPool ; if equals false, then the sequence is run synchronously (i.e. in same thread)
    */
   void exec(const GateKeeper& aGateKeeper, const bool& aUseThreadPool = true ); 
 
@@ -208,9 +208,9 @@ public:
   
   /*!
    * @brief Add transition to this FSM
-   * @arg aTransitionId The new transition's ID
-   * @arg aFromState State that transition starts from
-   * @arg aToState State that transition goes to (in case no error occurs)
+   * @param aTransitionId The new transition's ID
+   * @param aFromState State that transition starts from
+   * @param aToState State that transition goes to (in case no error occurs)
    */
   SystemTransition& addTransition(const std::string& aTransitionId, const std::string& aFromState, const std::string& aToState);
 
