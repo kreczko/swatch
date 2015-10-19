@@ -75,7 +75,7 @@ AMCPort::AMCPort(uint32_t aSlot, ::amc13::AMC13& aDriver) :
   mCrcErrors(registerMetric<uint32_t>("crcErrors") ) {
   
   // Assign Error and Warning conditions
-  setErrorCondition(mLinkRevisionWrong,core::EqualCondition<bool>(true) );
+  setWarningCondition(mLinkRevisionWrong,core::EqualCondition<bool>(true) );
   setErrorCondition(mLinkReady,core::EqualCondition<bool>(false) );
   setErrorCondition(mLinkOK,core::EqualCondition<bool>(false));
 
