@@ -38,22 +38,37 @@ class Processor;
 
 
 struct RunControlFSM : public boost::noncopyable {
+  //! FSM ID string
   static const std::string kId;
+  //! Initial state (i.e. halted)
   static const std::string kStateInitial;
+  //! Error state
   static const std::string kStateError;
+  //! Synchronised state
   static const std::string kStateSync;
+  //! Configured state
   static const std::string kStateConfigured;
+  //! Aligned state
   static const std::string kStateAligned;
 
+  //! Cold reset transition (initial state to initial state)
   static const std::string kTrColdReset;
+  //! ID string for the 'setup' transition (initial state to synchronised state)
   static const std::string kTrSetup;
+  //! ID string for the 'configure' transition (synchronised state to configured state)
   static const std::string kTrConfigure;
+  //! ID string for teh 'align' transition (configured state to aligned state)
   static const std::string kTrAlign;
 
+  //! The run control FSM object
   core::StateMachine& fsm;
+  //! The 'cold reset' transition (initial state to initial state)
   core::StateMachine::Transition& coldReset;
+  //! The 'setup' transition (initial state to synchronised state)
   core::StateMachine::Transition& setup;
+  //! The 'configure' transition (synchronised state to configured state)
   core::StateMachine::Transition& configure;
+  //! The 'align' transition (configured state to aligned state)
   core::StateMachine::Transition& align;
 
   RunControlFSM(core::StateMachine& aFSM);

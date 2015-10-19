@@ -39,33 +39,59 @@ class Crate;
 class Service;
 
 struct RunControlFSM : boost::noncopyable {
+  //! ID string of the swatch FSM object
   static const std::string kId;
+  //! Initial state (i.e. halted)
   static const std::string kStateInitial;
+  //! Error state
   static const std::string kStateError;
+  //! Synchronised state
   static const std::string kStateSync;
+  //! Configured state
   static const std::string kStateConfigured;
+  //! Aligned state
   static const std::string kStateAligned;
+  //! Running state
   static const std::string kStateRunning;
+  //! Paused state
   static const std::string kStatePaused;
 
+  //! ID string for the 'cold reset' transition (initial state to initial state)
   static const std::string kTrColdReset;
+  //! ID string for the 'setup' transition (initial state to synchronised state)
   static const std::string kTrSetup;
+  //! ID string for the 'configure' transition (synchronised state to configured state)
   static const std::string kTrConfigure;
+  //! ID string for the 'align' transition (configured state to aligned state)
   static const std::string kTrAlign;
+  //! ID string for the 'start' transition (aligned state to running state)
   static const std::string kTrStart;
+  //! ID string for the 'pause' transition (running state to paused state)
   static const std::string kTrPause;
+  //! ID string for the 'resume' transition (paused state to running state)
   static const std::string kTrResume;
+  //! ID string for the 'stop' transitions (running/paused state to configured state)
   static const std::string kTrStop;
 
+  //! The run control swatch FSM object
   core::SystemStateMachine& fsm;
+  //! The 'cold reset' transition (initial state to initial state)
   core::SystemTransition& coldReset;
+  //! The 'setup' transition (initial state to synchronised state)
   core::SystemTransition& setup;
+  //! The 'configure' transition (synchronised state to configured state)
   core::SystemTransition& configure;
+  //! The 'align' transition (configured state to aligned state)
   core::SystemTransition& align;
+  //! The 'start' transition (aligned state to running state)
   core::SystemTransition& start;
+  //! The 'pause' transition (running state to paused state)
   core::SystemTransition& pause;
+  //! The 'resume' transition (paused state to running state)
   core::SystemTransition& resume;
+  //! The 'stop' transition from paused state, to configured state
   core::SystemTransition& stopFromPaused;
+  //! The 'stop' transition from running state, to configured state
   core::SystemTransition& stopFromRunning;
   
   RunControlFSM(core::SystemStateMachine& aFSM);

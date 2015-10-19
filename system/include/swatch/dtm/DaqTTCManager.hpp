@@ -33,31 +33,54 @@ class EVBInterface;
 
 
 struct RunControlFSM : public boost::noncopyable {
+  //! ID string of the FSM
   static const std::string kId;
+  //! Initial state (i.e. halted)
   static const std::string kStateInitial;
+  //! Error state
   static const std::string kStateError;
+  //! 'Clock OK' state
   static const std::string kStateClockOK;
+  //! Configured state
   static const std::string kStateConfigured;
+  //! Running state
   static const std::string kStateRunning;
+  //! Paused state
   static const std::string kStatePaused;
 
+  //! ID string for the 'cold reset' transition (initial state to initial state)
   static const std::string kTrColdReset;
+  //! ID string for the 'clock setup' transition (initial state to 'clock OK' state)
   static const std::string kTrClockSetup;
+  //! ID string for the 'configure DAQ' transition ('clock OK' state to configured state)
   static const std::string kTrCfgDaq;
+  //! ID string for the start transition (configred state to running state)
   static const std::string kTrStart;
+  //! ID string for the pause transition (running state to paused state)
   static const std::string kTrPause;
+  //! ID string for the resume transition (paused state to running state)
   static const std::string kTrResume;
+  //! ID string for the stop transition (running/paused state to configured state)
   static const std::string kTrStop;
 
+  //! The run control FSM object
   core::StateMachine& fsm;
+  //! The 'cold reset' transition (initial state to initial state)
   core::StateMachine::Transition& coldReset;
-  core::StateMachine::Transition& clockSetup;    
-  core::StateMachine::Transition& cfgDaq;    
-  core::StateMachine::Transition& start;    
-  core::StateMachine::Transition& pause;    
-  core::StateMachine::Transition& resume;    
-  core::StateMachine::Transition& stopFromPaused;    
-  core::StateMachine::Transition& stopFromRunning;    
+  //! The 'clock setup' transition (initial state to 'clock OK' state)
+  core::StateMachine::Transition& clockSetup;
+  //! The 'configure DAQ' transition ('clock OK' state to configured state)
+  core::StateMachine::Transition& cfgDaq;
+  //! The 'start' transition (configured state to running state)
+  core::StateMachine::Transition& start;
+  //! The 'pause' transition (running state to paused state)
+  core::StateMachine::Transition& pause;
+  //! The 'resume' transition (paused state to running state)
+  core::StateMachine::Transition& resume;
+  //! The 'stop' transition, from paused state to configured state
+  core::StateMachine::Transition& stopFromPaused;
+  //! The 'stop' transition, from running state to configured state
+  core::StateMachine::Transition& stopFromRunning;
 
   RunControlFSM(core::StateMachine& aFSM);
   
