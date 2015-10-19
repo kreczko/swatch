@@ -11,7 +11,7 @@ PackageName = cactuscore-swatch-mp7
 Packager = Alessandro Thea
 
 PACKAGE_VER_MAJOR = 0
-PACKAGE_VER_MINOR = 2
+PACKAGE_VER_MINOR = 3
 PACKAGE_VER_PATCH = 0
 PACKAGE_RELEASE = 0
 
