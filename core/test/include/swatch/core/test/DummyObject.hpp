@@ -10,7 +10,10 @@
 #ifndef SWATCH_CORE_TEST_DUMMYOBJECT_HPP
 #define	SWATCH_CORE_TEST_DUMMYOBJECT_HPP
 
+
 #include "swatch/core/AbstractStub.hpp"
+#include "swatch/core/Object.hpp"
+
 
 namespace swatch {
 namespace core {

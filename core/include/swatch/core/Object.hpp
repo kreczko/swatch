@@ -18,11 +18,13 @@
 #include "boost/type_traits/is_base_of.hpp"
 #include "boost/unordered_map.hpp"
 
+// SWATCH headers
+#include "swatch/core/exception.hpp"
 
-namespace swatch
-{
-namespace core
-{
+
+namespace swatch {
+namespace core {
+
 // Forward declarations      
 class Object;
 class Functionoid;  
@@ -333,24 +335,8 @@ void Object::addObj (Object* aChild, T aDeleter)
   objectsChart_.insert(std::make_pair(aChild->getId(), aChild));
 }
 
-    
-//     template<typename T>
-//     std::deque<T*> Object::getChildrenOfType()
-//     {
-//       std::deque<T*> lRet;
-// 
-//       for ( std::deque<Object*>::const_iterator lIt = children_.begin(); lIt != children_.end(); ++lIt )
-//       {
-//         T* lChild ( dynamic_cast<T*> ( *lIt ) );
-// 
-//         if ( lChild )
-//         {
-//           lRet.push_back ( lChild );
-//         }
-//       }
-// 
-//       return lRet;
-//     }
+
+DEFINE_SWATCH_EXCEPTION(InvalidObjectId);
 
 
 } // namespace core

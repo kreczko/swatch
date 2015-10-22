@@ -4,6 +4,8 @@
 
 #include <iostream>
 
+#include "boost/lexical_cast.hpp"
+
 #include "swatch/core/Utilities.hpp"
 
 
@@ -14,7 +16,14 @@ namespace swatch {
 namespace core {
 
 
-Object::Object(const std::string& aId) : id_(aId), parent_(0x0) {
+Object::Object(const std::string& aId) : 
+  id_(aId), 
+  parent_(0x0)
+{
+  if (id_.empty())
+    throw InvalidObjectId("Cannot create object with empty ID string");
+  else if(id_.find('.') != std::string::npos)
+    throw InvalidObjectId("Object ID string '" + id_ + "' contains a dot at position "+boost::lexical_cast<std::string>(id_.find('.')));
 }
 
 

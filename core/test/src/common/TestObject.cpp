@@ -57,6 +57,33 @@ TestFamily::~TestFamily()
 BOOST_AUTO_TEST_SUITE( ObjectTestSuite )
 
 
+BOOST_AUTO_TEST_CASE(ObjectIdEmpty)
+{
+  // Should throw if ID string is empty
+  BOOST_CHECK_THROW( Object(""), InvalidObjectId );
+  BOOST_CHECK_THROW( DummyObject(""), InvalidObjectId );
+  
+  BOOST_CHECK_NO_THROW( Object("validId") );
+  BOOST_CHECK_NO_THROW( DummyObject("validId") );
+}
+
+
+BOOST_AUTO_TEST_CASE(ObjectIdContainsDots)
+{
+  
+  // Should throw if ID string contains one or more dots (regardless of location)
+  BOOST_CHECK_THROW( Object("."), InvalidObjectId );
+  BOOST_CHECK_THROW( Object(".anId"), InvalidObjectId );
+  BOOST_CHECK_THROW( Object("an.Id"), InvalidObjectId );
+  BOOST_CHECK_THROW( Object("anId."), InvalidObjectId );
+  
+  BOOST_CHECK_THROW( DummyObject("."), InvalidObjectId );
+  BOOST_CHECK_THROW( DummyObject(".anId"), InvalidObjectId );
+  BOOST_CHECK_THROW( DummyObject("an.Id"), InvalidObjectId );
+  BOOST_CHECK_THROW( DummyObject("anId."), InvalidObjectId );
+}
+
+
 BOOST_AUTO_TEST_CASE(ObjectGetTests) {
     using namespace swatch::core;
     using namespace swatch::core::test;
