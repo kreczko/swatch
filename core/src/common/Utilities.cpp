@@ -28,35 +28,6 @@ namespace swatch
       return name;
     }
 
-
-    std::string anyToString ( const boost::any& aAny )
-    {
-      std::stringstream ss;
-
-      if ( aAny.type() == typeid ( int ) )
-      {
-        ss << boost::any_cast<int> ( aAny );
-      }
-      else if ( aAny.type() == typeid ( float ) )
-      {
-        ss << boost::any_cast<int> ( aAny );
-      }
-      else if ( aAny.type() == typeid ( double ) )
-      {
-        ss << boost::any_cast<double> ( aAny );
-      }
-      else if ( aAny.type() == typeid ( std::string ) )
-      {
-        ss << boost::any_cast<std::string> ( aAny );
-      }
-      else
-      {
-        ss << core::demangleName ( aAny.type().name() );
-      }
-
-      return ss.str();
-    }
-
     std::string strPrintf ( const char* aFmt, ... )
     {
       char* ret;

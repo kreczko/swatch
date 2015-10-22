@@ -12,8 +12,6 @@
 #include <string>
 #include <vector>
 
-// Boost Headers
-#include <boost/any.hpp>
 
 namespace swatch
 {
@@ -25,13 +23,6 @@ namespace swatch
       @return the original class names
      */
     std::string demangleName ( const char* aMangledName );
-
-    /**
-      Convert a boost::any to a string representation
-      @param aAny a boost::any to convert to a string
-      @return a string representation of the boost::any
-     */
-    std::string anyToString ( const boost::any& aAny );
 
     /**
       Formats a std::string in printf fashion
