@@ -198,7 +198,14 @@ class Object
     @param aId a dot-delimited path from the current object to the target
     @return the object indicated by the dot-delimited path, or throw if the target doesn't exist
   */
-  Object& getObj ( const std::string& aId ) const;
+  Object& getObj ( const std::string& aId );
+
+  /**
+    Navigate down the dot-delimited path from the current object and return the target
+    @param aId a dot-delimited path from the current object to the target
+    @return the object indicated by the dot-delimited path, or throw if the target doesn't exist
+  */
+  const Object& getObj ( const std::string& aId ) const;
 
   /**
     Navigate down the dot-delimited path from the current object and return the target, dynamic cast to type T

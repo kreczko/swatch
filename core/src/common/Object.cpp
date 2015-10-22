@@ -177,7 +177,35 @@ std::vector<std::string> Object::getDescendants() const {
 }
 
 
-Object& Object::getObj(const std::string& aId) const {
+Object& Object::getObj(const std::string& aId) {
+  std::size_t pos;
+  string father, child;
+
+  if ((pos = aId.find('.')) != std::string::npos) {
+    father = aId.substr(0, pos);
+    child = aId.substr(pos + 1);
+  } else {
+    father = aId;
+  }
+
+  //    cout << "father = '" << father << "'   child = '" << child << "'" << endl;
+  boost::unordered_map<std::string, Object*>::const_iterator it;
+
+  if ((it = objectsChart_.find(father)) == objectsChart_.end()) {
+    stringstream ss;
+    ss << "Object " << father << " not found in " << id_;
+    throw runtime_error(ss.str());
+  }
+
+  if (child.empty()) {
+    return *(it->second);
+  }
+
+  return it->second->getObj(child);
+}
+
+
+const Object& Object::getObj(const std::string& aId) const {
   std::size_t pos;
   string father, child;
 
