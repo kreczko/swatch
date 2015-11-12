@@ -18,6 +18,7 @@
 #include "swatch/core/exception.hpp"
 #include "swatch/core/Object.hpp"
 #include "swatch/core/Metric.hpp"
+#include "swatch/core/MonitoringSetting.hpp"
 
 
 namespace swatch {

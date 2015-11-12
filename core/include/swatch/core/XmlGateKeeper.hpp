@@ -15,35 +15,45 @@
 // Swatch Headers
 #include "swatch/core/GateKeeper.hpp"
 
+// external headers
+#include "pugixml/pugixml.hpp"
+
 namespace pugi {
-  class xml_node;
+class xml_node;
 }
 
 namespace swatch {
 namespace core {
 
-class XmlGateKeeper : public GateKeeper {
-  public:
+class XmlGateKeeper: public GateKeeper {
+public:
 
-    /// Constructor
-    XmlGateKeeper( const std::string& aFileName , const std::string& aKey );
+  /// Constructor
+  XmlGateKeeper(const std::string& aFileName, const std::string& aKey);
+  XmlGateKeeper(const pugi::xml_document& aXmlDoc, const std::string& aKey);
 
-    /// Destructor
-    virtual ~XmlGateKeeper();
+  /// Destructor
+  virtual ~XmlGateKeeper();
 
-    GateKeeper::tTable getTable( const std::string& aKey , const std::string& aId );
+//    GateKeeper::tTable getTable( const std::string& aKey , const std::string& aId );
 
-  private:
+private:
 
-    std::pair< std::string , GateKeeper::tParameter > CreateParameter( pugi::xml_node& aEntry );
-    std::pair< std::string , GateKeeper::tTable > CreateTable( pugi::xml_node& aTable );
+  std::pair<std::string, GateKeeper::tParameter> CreateParameter(pugi::xml_node& aEntry);
+  std::pair<std::string, GateKeeper::tTable> CreateTable(pugi::xml_node& aTable);
 
-    std::string mFileName;
+  void readXmlDocument(const pugi::xml_document& aXmlDoc, const std::string& aRunKey);
+
+  std::pair<std::string, GateKeeper::tMonitoringSetting> createMonitoringSetting(
+      const pugi::xml_node& aEntry) const;
+  std::pair<std::string, GateKeeper::tSettingsTable> createSettingsTable(
+      const pugi::xml_node& aTable) const;
+
+  std::string mFileName;
 };
 
-DEFINE_SWATCH_EXCEPTION ( UnknownDataType );
-DEFINE_SWATCH_EXCEPTION ( XmlFileError );
-
+DEFINE_SWATCH_EXCEPTION(UnknownDataType);
+DEFINE_SWATCH_EXCEPTION(XmlFileError);
 
 } /* namespace core */
 } /* namespace swatch */

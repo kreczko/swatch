@@ -210,6 +210,70 @@ StateMachine::Transition& StateMachine::Transition::add(CommandSequence& aSequen
   return *this;
 }
 
+void StateMachine::Transition::extractMonitoringSettings(const GateKeeper& aGateKeeper,
+    tMonitoringSettings& aMonSettings) const {
+  aMonSettings.clear();
+
+  // get a list of all MonitorableObjects
+  ActionableObject& lResource = mStateMachine.getResource();
+  std::vector<std::string> lDescendants = lResource.getDescendants();
+  for (std::vector<std::string>::const_iterator lIt = lDescendants.begin(); lIt != lDescendants.end(); lIt++) {
+    MonitorableObject* lDescendant = lResource.getObj<MonitorableObject>(*lIt);
+    if (lDescendant) {
+      // query the GateKeeper for relevant settings for each object
+      std::string lPath = *lIt;
+      const std::vector<std::string>& lTablesToLookIn = lResource.getGateKeeperTables();
+      const GateKeeper::tMonitoringSetting lMonSetting = aGateKeeper.getMonitoringSetting(mEndState, lPath,
+          lTablesToLookIn);
+      if (lMonSetting)
+        aMonSettings.push_back(*lMonSetting);
+
+      // get settings for child metrics
+      const std::vector<std::string> lMetricIds = lDescendant->getMetrics();
+      for (auto lMetricIt = lMetricIds.begin(); lMetricIt != lMetricIds.end(); lMetricIt++) {
+        const std::string lMetricPath = lPath + "." + *lMetricIt;
+        const GateKeeper::tMonitoringSetting lMetricSetting = aGateKeeper.getMonitoringSetting(mEndState, lMetricPath,
+            lTablesToLookIn);
+        if (lMetricSetting)
+          aMonSettings.push_back(*lMetricSetting);
+      }
+    }
+  }
+}
+
+void StateMachine::Transition::prepareCommands(const tReadOnlyXParameterSets& aParameters, const tMonitoringSettings& aMonSettings) {
+}
+
+void StateMachine::Transition::finaliseCommands(const tReadOnlyXParameterSets& aParameters, const tMonitoringSettings& aMonSettings) {
+  applyMonitoringSettings(aMonSettings);
+}
+
+void StateMachine::Transition::applyMonitoringSettings(const tMonitoringSettings& aMonSettings) {
+  // get a list of all MonitorableObjects
+  ActionableObject& lResource = mStateMachine.getResource();
+  std::vector<std::string> lDescendants = lResource.getDescendants();
+  for (std::vector<std::string>::const_iterator lIt = lDescendants.begin(); lIt != lDescendants.end(); lIt++) {
+    MonitorableObject* lDescendant = lResource.getObj<MonitorableObject>(*lIt);
+    if (lDescendant) {
+      // query the GateKeeper for relevant settings for each object
+      std::string lPath = *lIt;
+      for (tMonitoringSettings::const_iterator lMonSetting = aMonSettings.begin(); lMonSetting != aMonSettings.end();
+          ++lMonSetting) {
+        LOG(logger::kInfo) << lPath << " " << lMonSetting->getId();
+        if (lMonSetting->getId() == lPath) {
+          lDescendant->setMonitoringStatus(lMonSetting->getStatus());
+        }
+        // Apply settings to child metrics
+        const std::vector<std::string> lMetricIds = lDescendant->getMetrics();
+        for (auto lMetricIt = lMetricIds.begin(); lMetricIt != lMetricIds.end(); lMetricIt++) {
+          if (lMonSetting->getId() == (lPath + "." + *lMetricIt))
+            lDescendant->getMetric(*lMetricIt).setMonitoringStatus(lMonSetting->getStatus());
+        }
+      }
+    }
+  }
+}
+
 
 StateMachine::State::State(const std::string& aId) :
   Object(aId)

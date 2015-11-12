@@ -104,10 +104,17 @@ public:
     //! Add all commands from specified sequence to this transition
     Transition& add(CommandSequence& aSequence);
 
+  protected:
+    virtual void prepareCommands(const tReadOnlyXParameterSets& aParameters, const tMonitoringSettings& aMonSettings);
+    virtual void finaliseCommands(const tReadOnlyXParameterSets& aParameters, const tMonitoringSettings& aMonSettings);
+    virtual void extractMonitoringSettings(const GateKeeper& aGateKeeper, tMonitoringSettings& aMonSettings) const;
+
   private:
     StateMachine& mStateMachine;
     const std::string mStartState;
     const std::string mEndState;
+
+    void applyMonitoringSettings(const tMonitoringSettings& aMonSettings);
   };
 
 private:

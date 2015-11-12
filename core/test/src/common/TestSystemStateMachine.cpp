@@ -1079,7 +1079,6 @@ BOOST_FIXTURE_TEST_CASE(TestResetFSMChildDisengaged, SystemStateMachineTestSetup
   BOOST_REQUIRE_EQUAL(child3.obj.getState().getState(), childStateA);  
 }
 
-
 BOOST_AUTO_TEST_SUITE_END() // SystemStateMachineTestSuite
 
 

@@ -63,6 +63,17 @@ CommandSequence& CommandSequence::then ( const std::string& aCommand, const std:
   return run( aCommand, (aNamespace.empty() ? getId() : aNamespace) );
 }
 
+void CommandSequence::prepareCommands(const tReadOnlyXParameterSets& aParameters, const tMonitoringSettings& aMonSettings) {
+
+}
+void CommandSequence::finaliseCommands(const tReadOnlyXParameterSets& aParameters, const tMonitoringSettings& aMonSettings) {
+
+}
+
+void CommandSequence::extractMonitoringSettings(const GateKeeper& aGateKeeper, tMonitoringSettings& aMonSettings) const {
+
+}
+
 
 } /* namespace core */
 } /* namespace swatch */

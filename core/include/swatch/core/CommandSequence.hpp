@@ -38,6 +38,11 @@ public:
 
   CommandSequence& run( const std::string& aCommand, const std::string& aNamespace="");
   CommandSequence& then( const std::string& aCommand, const std::string& aNamespace="");
+
+protected:
+  virtual void prepareCommands(const tReadOnlyXParameterSets& aParameters, const tMonitoringSettings& aMonSettings);
+  virtual void finaliseCommands(const tReadOnlyXParameterSets& aParameters, const tMonitoringSettings& aMonSettings);
+  virtual void extractMonitoringSettings(const GateKeeper& aGateKeeper, tMonitoringSettings& aMonSettings) const;
 };
 
 

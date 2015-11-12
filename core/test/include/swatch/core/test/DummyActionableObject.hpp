@@ -58,6 +58,7 @@ private:
     
   std::string something_;
   uint32_t number_;
+  swatch::core::Metric<int>& mDummyMetric;
   
   mutable std::vector<std::string> gateKeeperTables_;
   
@@ -69,7 +70,7 @@ private:
 template< typename ObjType, typename DeleterType>
 ObjType& DummyActionableObject::add( ObjType* aChild , DeleterType aDeleter)
 { 
-  const std::string& childId = getId();
+  const std::string& childId = aChild->getId();
   this->Object::addObj(aChild, aDeleter);
   return *getObj<ObjType>(childId);
 }

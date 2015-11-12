@@ -16,8 +16,8 @@
 // Swatch Headers
 #include "swatch/core/Object.hpp"
 #include "swatch/core/exception.hpp"
-
-// XDAQ Headers
+#include "swatch/core/AbstractMetric.hpp"
+#include "swatch/core/MonitoringSetting.hpp"
 #include <xdata/Serializable.h>
 
 //BOOST Headers
@@ -43,6 +43,12 @@ namespace swatch
         typedef boost::unordered_map< std::string, tParameter > tParameters;
         typedef boost::shared_ptr<tParameters> tTable;
         typedef boost::unordered_map< std::string, tTable > tTableCache;
+
+         // for monitoring settings
+        typedef tMonitoringSettingPtr tMonitoringSetting;
+        typedef boost::unordered_map<std::string, tMonitoringSetting> tMonitoringSettings;
+        typedef boost::shared_ptr<tMonitoringSettings> tSettingsTable;
+        typedef boost::unordered_map< std::string, tSettingsTable > tSettingsTableCache;
 
         /**
           Constructor
@@ -70,12 +76,12 @@ namespace swatch
 
         /**
           Method to retreive configuration data from a specified path
-          @param aParam A key used to identify the configuration data being requested of the gatekeeper
+          @param aParameterId A key used to identify the configuration data being requested of the gatekeeper
           @param aTables A list of table identifiers (which may or may not exist) to look in for the requested parameters
           @return the requested data, or throw if the key is not found in any table
         */
-//         tParameter get ( const std::string& aParam , const std::vector<std::string>& aTables );
         tParameter get ( const std::string& aSequenceId , const std::string& aCommandId , const std::string& aParameterId , const std::vector<std::string>& aTables ) const;
+        tMonitoringSetting getMonitoringSetting(const std::string& aState, const std::string& aMetricId, const std::vector<std::string>& aTablesToLookIn ) const;
 
 
         const boost::posix_time::ptime& lastUpdated();
@@ -89,6 +95,7 @@ namespace swatch
           @param aTable a new xdata table, of which the Gatekeeper will take ownership
         */
         void add ( const std::string& aId , tTable aTable );
+        void add ( const std::string& aId , tSettingsTable aTable );
 
       private:
 
@@ -102,11 +109,15 @@ namespace swatch
 
         tParameter get ( const std::string& aSequencePath , const std::string& aCommandPath , const std::string& aParameterId , const std::string& aTable ) const;
 
+        tMonitoringSetting getMonitoringSetting(const std::string& aStatePath, const std::string& aMetricId, const std::string& aTableToLookIn ) const;
+        tMonitoringSetting getMonitoringSetting(const std::string& aMetricId, const std::string& aTableToLookIn ) const;
+
         /// The global run-identifier
         std::string mKey;
 
         /// The cache of tables
         tTableCache mCache;
+        tSettingsTableCache mSettings;
 
         /// The last time a table was modified
         boost::posix_time::ptime mUpdateTime;
@@ -117,6 +128,7 @@ namespace swatch
 
     DEFINE_SWATCH_EXCEPTION ( TableWithIdAlreadyExists );
     DEFINE_SWATCH_EXCEPTION ( ParameterWithGivenIdAlreadyExistsInTable );
+    DEFINE_SWATCH_EXCEPTION ( MSettingWithGivenIdAlreadyExistsInTable );
 
   } /* namespace core */
 } /* namespace swatch */

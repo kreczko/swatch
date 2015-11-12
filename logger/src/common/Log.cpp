@@ -67,30 +67,30 @@ LogLevel Log::logThreshold_ = kInfo;
 //         (kDebug4, "DEBUG4");
 
 const char* Log::logNames_[] = {
-  "FATAL",
-  "ERROR",
-  "WARNING",
-  "NOTICE",
-  "INFO",
-  "DEBUG",
-  "DEBUG2",
-  "DEBUG1",
-  "DEBUG3",
-  "DEBUG4"
+    "FATAL",
+    "ERROR",
+    "WARNING",
+    "NOTICE",
+    "INFO",
+    "DEBUG",
+    "DEBUG1",
+    "DEBUG2",
+    "DEBUG3",
+    "DEBUG4"
 };
 
 const char* logColors[] = {
-  ansi::kRed,
-  ansi::kRed,
-  ansi::kYellow,
-  ansi::kGreen,
-  ansi::kBlue,
-  ansi::kCyan,
-  ansi::kCyan,
-  ansi::kCyan,
-  ansi::kCyan,
-  ansi::kCyan
-};
+    ansi::kRed,
+    ansi::kRed,
+    ansi::kYellow,
+    ansi::kGreen,
+    ansi::kBlue,
+    ansi::kCyan,
+    ansi::kCyan,
+    ansi::kCyan,
+    ansi::kCyan,
+    ansi::kCyan
+    };
 
 Log::Log() :
   messageLevel_(LogLevel::kError) {

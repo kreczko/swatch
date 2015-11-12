@@ -11,10 +11,12 @@
 #include <string>
 #include <sys/time.h>
 #include <iosfwd>
+#include <map>
 
 #include "boost/shared_ptr.hpp"
 
 #include "swatch/core/StatusFlag.hpp"
+#include "swatch/core/MonitoringSetting.hpp"
 
 
 namespace swatch {
@@ -23,20 +25,6 @@ namespace core {
 class AbstractMetricCondition;
 class MetricSnapshot;
 class MonitorableObject;
-
-/**
- * Flag for deciding if failures of MonitorableObject will affect the parent.
- * If set to kENABLED they will (default behaviour) and if set to kNON_CRITICAL
- * they will not.
- */
-namespace monitoring {
-enum Status {
-  kEnabled,
-  kNonCritical,
-  kDisabled,
-};
-}
-
 
 /*!
  * @brief Represents some set of monitoring data that is retrieved from hardware.
@@ -60,6 +48,7 @@ public:
 
     //! Returns the monitoring status as defined in enum MonitoringStatus
     virtual monitoring::Status getMonitoringStatus() const = 0;
+    virtual void setMonitoringStatus(monitoring::Status status) = 0;
 
     
 protected:
@@ -68,14 +57,6 @@ protected:
     virtual void setValueUnknown() = 0;
 
     friend class MonitorableObject;
-    
-    /* Possibilities for the future: Masking, and updating limits at runtime
-    bool isMasked() const;
-    
-    void mask(bool setMasked) const;
-    
-    //MAYBE: void setLimits(const std::string& ) const; 
-    */
 };
 
 

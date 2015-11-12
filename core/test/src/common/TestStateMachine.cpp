@@ -19,6 +19,9 @@ namespace test {
   struct StateMachineTestSetup {
     StateMachineTestSetup() :
       obj(new DummyActionableObject("dummyObj"), ActionableObject::Deleter()),
+      child1(obj->add(new DummyActionableObject("child1"), ActionableObject::Deleter())),
+      grandChild1(child1.add(new DummyActionableObject("grandChild1"), ActionableObject::Deleter())),
+      grandChild2(child1.add(new DummyActionableObject("grandChild2"), ActionableObject::Deleter())),
       cmdNormal1( obj->registerFunctionoid<DummyCommand>("cmdNormal1") ),
       cmdNormal2( obj->registerFunctionoid<DummyCommand>("cmdNormal2") ),
       cmdWarning( obj->registerFunctionoid<DummyWarningCommand>("cmdWarning") ),
@@ -32,15 +35,34 @@ namespace test {
       transitionAtoB = & testFSM.addTransition("t2", fsmStateA, fsmStateB);
       transitionBtoI = & testFSM.addTransition("t2", fsmStateB, fsmState0);
 
+
       GateKeeper::tTable tbl(new GateKeeper::tParameters());
       tbl->insert( GateKeeper::tParameters::value_type(DummyCommand::paramToDo, GateKeeper::tParameter(new xdata::String(""))));
       tbl->insert( GateKeeper::tParameters::value_type(DummyCommand::paramX, GateKeeper::tParameter(new xdata::Integer(42))));
       gk.addTable("common", tbl);
+
+      // for child1
+    GateKeeper::tSettingsTable settings_child1(new GateKeeper::tMonitoringSettings());
+    GateKeeper::tMonitoringSetting mon_setting1(new MonitoringSetting("child1", monitoring::kNonCritical));
+    GateKeeper::tMonitoringSetting mon_setting2(new MonitoringSetting("child1.grandChild1", monitoring::kDisabled));
+    GateKeeper::tMonitoringSetting mon_setting3(new MonitoringSetting("grandChild2", monitoring::kDisabled));
+    // for child1 metric
+    GateKeeper::tMonitoringSetting mon_setting4(new MonitoringSetting("child1.dummyMetric", monitoring::kDisabled));
+
+    settings_child1->insert(GateKeeper::tMonitoringSettings::value_type(fsmStateB + ".child1", mon_setting1));
+    settings_child1->insert(GateKeeper::tMonitoringSettings::value_type(fsmStateB + ".child1.grandChild1", mon_setting2));
+    // this one should fail, as paths need to be relative to obj!
+    settings_child1->insert(GateKeeper::tMonitoringSettings::value_type(fsmStateB + ".grandChild2", mon_setting3));
+    // metric
+    settings_child1->insert(GateKeeper::tMonitoringSettings::value_type(fsmStateB + ".child1.dummyMetric", mon_setting4));
+    gk.addSettingsTable("common", settings_child1);
     }
     
     ~StateMachineTestSetup() {}
     
     boost::shared_ptr<DummyActionableObject> obj;
+    DummyActionableObject& child1;
+    DummyActionableObject& grandChild1, &grandChild2;
     Command& cmdNormal1;
     Command& cmdNormal2;
     Command& cmdWarning;
@@ -51,6 +73,7 @@ namespace test {
     StateMachine::Transition* transitionAtoB;
     StateMachine::Transition* transitionBtoI;
     DummyGateKeeper gk;
+
 
     static const std::string cmdSeqId;
     static const std::string fsmState0, fsmStateError, fsmStateA, fsmStateB;
@@ -492,7 +515,30 @@ BOOST_FIXTURE_TEST_CASE(TestRunGoodTransition, StateMachineTestSetup) {
   BOOST_CHECK_EQUAL(s.getResults().at(1) , cmdNormal2.getStatus().getResult() );
 }
 
-
+BOOST_FIXTURE_TEST_CASE(TestMaskingOfDescendants, StateMachineTestSetup) {
+  LOG(kInfo) << "Running StateMachineTestSuite/TestMaskingOfDescendants";
+//  // Preparation:
+//  //   * Define transitions: I->A = child1 & child2
+//  //   * Engage system FSM & then engage child1 in another FSM w/ same initial state
+//  //   * Require that state is correct before testing
+//  DummyActionableObject& child1(obj->add(new DummyActionableObject("child1"), ActionableObject::Deleter()));
+  BOOST_REQUIRE_EQUAL(child1.getMonitoringStatus(), monitoring::kEnabled);
+  BOOST_REQUIRE_EQUAL(child1.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kEnabled);
+  obj->engageStateMachine(testFSM.getId());
+  BOOST_REQUIRE_EQUAL( obj->getState().getEngagedFSM(), & testFSM);
+  BOOST_REQUIRE_EQUAL( obj->getState().getState(), fsmState0);
+//  transitionAtoB->add(children.begin(), children.end() - 1, child1.fsm.getId(),
+//      childState0, child1.ItoA->getId());
+  BOOST_REQUIRE_NO_THROW(transitionItoA->exec(gk, false));
+  BOOST_REQUIRE_NO_THROW(transitionAtoB->exec(gk, false));
+  BOOST_REQUIRE_EQUAL(child1.getMonitoringStatus(), monitoring::kNonCritical);
+  BOOST_REQUIRE_EQUAL(grandChild1.getMonitoringStatus(), monitoring::kDisabled);
+  // this one should fail, as paths need to be relative to obj and this setting has been made with ID 'grandChild2'
+  // not 'child1.grandChild2'
+  BOOST_REQUIRE_NE(grandChild2.getMonitoringStatus(), monitoring::kDisabled);
+  // metrics
+  BOOST_REQUIRE_EQUAL(child1.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kDisabled);
+}
 
 /* ---------------------------------------------------------------- */
 /*   PART 4: RESETTING                                              */

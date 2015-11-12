@@ -125,6 +125,5 @@ MonitorableObject::getMonitoringStatus() const {
   return monitoringStatus_;
 }
 
-
 }
 }

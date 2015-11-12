@@ -25,6 +25,11 @@ void DummyGateKeeper::addTable(const std::string& aId, tTable& aTable)
 {
   add(aId, aTable);
 }
+
+void DummyGateKeeper::addSettingsTable(const std::string& aId, tSettingsTable& aTable)
+{
+  add(aId, aTable);
+}
   
   
 

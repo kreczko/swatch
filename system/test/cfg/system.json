@@ -2,7 +2,7 @@
   "SYSTEM":
           {
             "NAME": "calol2",
-            "CREATOR": "swatch::system::SystemLoggingCreator",
+            "CREATOR": "swatch::system::System",
             "CRATES": 
                 [
                   {
@@ -16,6 +16,7 @@
                       {
                         "NAME": "mp01",
                         "TYPE": "CALO2 PROCESSOR",
+                        "ROLE": "DUMMY",
                         "CREATOR": "swatch::system::test::DummyConfigProcessor",
                         "HARDWARE TYPE": "MP7",
                         "URI": "chtcp-2.0://127.0.0.1:20304?target=192.168.2.118:50001",
@@ -43,7 +44,9 @@
                         "ADDRESS TABLE T1": "file://${CACTUS_ROOT}/etc/amc13/AMC13XG_T1.xml",
                         "URI T2": "chtcp-2.0://127.0.0.1:20304?target=192.168.2.152:50001",
                         "ADDRESS TABLE T2": "file://${CACTUS_ROOT}/etc/amc13/AMC13XG_T2.xml",
-                        "FED ID": 1234
+                        "FED ID": 1234,
+                        "ROLE": "DAQTTCS",
+                        "AMC SLOTS": [1,2,3,4]
                       }
                     ],
              "LINKS" : []

@@ -10,6 +10,7 @@
 
 #include "swatch/core/ActionableObject.hpp"
 #include "swatch/core/Functionoid.hpp"
+#include "swatch/core/GateKeeper.hpp"
 #include "swatch/core/ReadOnlyXParameterSet.hpp"
 
 #include "boost/date_time/posix_time/posix_time_types.hpp"
@@ -117,8 +118,10 @@ private:
   typedef std::vector< Element > tCommandVector;
   tCommandVector mCommands;
 
-  typedef std::vector< ReadOnlyXParameterSet > tParameterSets;
+  typedef tReadOnlyXParameterSets tParameterSets;
   tParameterSets mCachedParameters;
+
+  tMonitoringSettings mCachedMonitoringSettings;
 
   /// The last time a table was updated from the Gatekeeper
   boost::posix_time::ptime mParamUpdateTime;
@@ -134,6 +137,13 @@ private:
   
   std::vector<CommandStatus> mStatusOfCompletedCommands;
   
+//  GateKeeper mCachedGateKeeper;
+
+protected:
+  virtual void prepareCommands(const tReadOnlyXParameterSets& aParameters, const tMonitoringSettings& aMonSettings) = 0;
+  virtual void finaliseCommands(const tReadOnlyXParameterSets& aParameters, const tMonitoringSettings& aMonSettings) = 0;
+  virtual void extractMonitoringSettings(const GateKeeper& aGateKeeper, tMonitoringSettings& aMonSettings) const = 0;
+
 };
 
 

@@ -21,6 +21,7 @@ CommandVec::CommandVec( const std::string& aId, ActionableObject& aResource) :
   mResource(aResource),
   mCommands(),
   mCachedParameters(),
+  mCachedMonitoringSettings(),
   mParamUpdateTime() ,
   mState( ActionStatus::kInitial ),
   mCommandIt( mCommands.end() )
@@ -123,7 +124,9 @@ void CommandVec::exec(const ActionableObject::BusyGuard* aOuterBusyGuard, const 
   // 1) Extract parameters before creating busy guard (so that resource doesn't change states if parameter is missing)
   std::vector<ReadOnlyXParameterSet> lParamSets;
   std::vector<MissingParam> lMissingParams;
+  tMonitoringSettings lMonSettings;
   extractParameters(aGateKeeper, lParamSets, lMissingParams, true);
+  extractMonitoringSettings(aGateKeeper, lMonSettings);
 
   // 2) Create busy guard
   boost::shared_ptr<ActionableObject::BusyGuard> lBusyGuard(new ActionableObject::BusyGuard(getResource(), *this, aOuterBusyGuard));
@@ -146,6 +149,7 @@ void CommandVec::exec(const ActionableObject::BusyGuard* aOuterBusyGuard, const 
     mState = ActionStatus::kInitial;
     mCommandIt = mCommands.end();
     mCachedParameters = lParamSets;
+    mCachedMonitoringSettings = lMonSettings;
     mStatusOfCompletedCommands.clear();
     mStatusOfCompletedCommands.reserve(mCommands.size());
   }  
@@ -206,6 +210,7 @@ void CommandVec::runCommands(boost::shared_ptr<ActionableObject::BusyGuard> aGua
   // 1) Declare that I'm running 
   {
     boost::unique_lock<boost::mutex> lock( mMutex );
+    prepareCommands(mCachedParameters, mCachedMonitoringSettings);
     mExecStartTime = boost::posix_time::microsec_clock::universal_time();
     // Finish straight away if there aren't any commands to run
     if( mCommands.empty() )
@@ -213,6 +218,7 @@ void CommandVec::runCommands(boost::shared_ptr<ActionableObject::BusyGuard> aGua
       mState = ActionStatus::kDone;
       mCommandIt = mCommands.end();
       mExecEndTime = mExecStartTime;
+      finaliseCommands(mCachedParameters, mCachedMonitoringSettings);
       return;
     }
     else
@@ -257,6 +263,7 @@ void CommandVec::runCommands(boost::shared_ptr<ActionableObject::BusyGuard> aGua
             mState = ActionStatus::kWarning;
         }
         mExecEndTime = boost::posix_time::microsec_clock::universal_time();
+        finaliseCommands(mCachedParameters, mCachedMonitoringSettings);
         return;
       }
     }
@@ -324,7 +331,6 @@ void CommandVec::extractParameters(const GateKeeper& aGateKeeper, std::vector<Re
   }
 }
 
-
 std::ostream& operator << (std::ostream& aOstream, const CommandVec::MissingParam& aMissingParam )
 {
   return (aOstream << aMissingParam.nspace << "." << aMissingParam.command << "." << aMissingParam.parameter);
@@ -385,6 +391,8 @@ const std::vector<CommandStatus>& CommandVecStatus::getCommandStatus() const
 {
   return mCommandStatuses;
 }
+
+
 
 
 } /* namespace core */

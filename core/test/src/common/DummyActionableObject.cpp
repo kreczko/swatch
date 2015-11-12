@@ -19,7 +19,8 @@ namespace test {
 DummyActionableObject::DummyActionableObject() :
   ActionableObject("Dummy"),
   something_("something"),
-  number_(0) {
+  number_(0),
+  mDummyMetric(registerMetric<int>("dummyMetric")){
 // Commands, sequences and state machines should be registered here
 }
 
@@ -28,7 +29,8 @@ DummyActionableObject::DummyActionableObject() :
 DummyActionableObject::DummyActionableObject(const std::string& aId) :
   ActionableObject(aId),
   something_("something"),
-  number_(0) {
+  number_(0),
+  mDummyMetric(registerMetric<int>("dummyMetric")){
 // Commands, sequences and state machines should be registered here
 }
 

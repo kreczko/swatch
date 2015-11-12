@@ -28,6 +28,7 @@ class DummyGateKeeper : public core::GateKeeper {
 
   // Expose gatekeeper "add" method as public for unit testing 
   void addTable( const std::string& aId, tTable&);
+  void addSettingsTable(const std::string& aId, tSettingsTable& aTable);
 };
 
 } /* namespace test */

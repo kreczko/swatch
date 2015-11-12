@@ -2,7 +2,7 @@
   "SYSTEM":
     {
       "NAME": "DUMMY",
-      "CREATOR": "swatch::system::SystemLoggingCreator",
+      "CREATOR": "swatch::system::System",
           "CRATES":
     [
       {
