@@ -196,16 +196,6 @@ ActionableSystem::BusyGuard::BusyGuard(ActionableSystem& aResource, const Functi
       childTransitionMap[ &(*lIt2)->getStateMachine().getResource() ] = *lIt2;
   }
 
-  // TODO: Delete
-//  for(tObjTransitionMap::const_iterator lIt=childTransitionMap.begin(); lIt!=childTransitionMap.end(); lIt++)
-//  {
-//    if( lIt->first->mStatus.mFSM != & lIt->second->getStateMachine() )
-//      throw ResourceInWrongStateMachine("Resource '"+lIt->first->getPath()+"' is not yet engaged in state machine '"+lIt->second->getStateMachine().getId()+"'");
-//    else if ( lIt->first->mStatus.mState != lIt->second->getStartState() )
-//      throw ResourceInWrongState("Resource '"+lIt->first->getPath()+"' is in state "+lIt->first->mStatus.mState+", transition '"+lIt->second->getId()+"' cannot be run");
-//  }
-  
-//  for(tObjTransitionMap::const_iterator lIt=childTransitionMap.begin(); lIt!=childTransitionMap.end(); lIt++)
   BOOST_FOREACH( const tObjTransitionMap::value_type e, childTransitionMap ) {
     if( e.first->mStatus.getStateMachineId() != e.second->getStateMachine().getId() )
       throw ResourceInWrongStateMachine("Resource '"+e.first->getPath()+"' is not yet engaged in state machine '"+e.second->getStateMachine().getId()+"'");
@@ -214,8 +204,6 @@ ActionableSystem::BusyGuard::BusyGuard(ActionableSystem& aResource, const Functi
   }
   
   // 2a) Check that the system is not busy
-  // TODO: Delete
-  //  if ( (aResource.mState.mAlive == false) || ( ! aResource.mState.mRunningActions.empty() ) )
   if ( !aResource.mStatus.isAlive() || aResource.mStatus.isRunning() )
   {
     std::ostringstream oss;
@@ -231,26 +219,6 @@ ActionableSystem::BusyGuard::BusyGuard(ActionableSystem& aResource, const Functi
   }
 
   // 2b) Check that none of the children are busy
-  // TODO: Delete
-//  for(tObjTransitionMap::const_iterator lIt=childTransitionMap.begin(); lIt!=childTransitionMap.end(); lIt++)
-//  {
-//    const ActionableObject& lChild = *lIt->first;
-//    
-//    if ( (lChild.mStatus.mAlive == false) || (! lChild.mStatus.mRunningActions.empty()) )
-//    {
-//      std::ostringstream oss;
-//      oss << "Could not run system action '" << lTransition.getId() << "' due to child resource '" << aResource.getPath() << "'. ";
-//
-//      if ( ! lChild.mStatus.mRunningActions.empty() )
-//        oss << "Child currently busy running functionoid '" << lChild.mStatus.mRunningActions.back()->getId() << "'.";
-//      else
-//        oss << "Actions currently disabled on this child.";
-//
-//      LOG(swatch::logger::kNotice) << oss.str();
-//      throw ActionableObjectIsBusy(oss.str());
-//    }
-//  } 
-
   BOOST_FOREACH( const tObjTransitionMap::value_type e, childTransitionMap )
   {
     const ActionableObject& lChild = *(e.first);
@@ -273,9 +241,6 @@ ActionableSystem::BusyGuard::BusyGuard(ActionableSystem& aResource, const Functi
   // 3) If got this far, then all is good; create the busy guards for the children
   LOG(swatch::logger::kInfo) << mResource.getPath() << " : Starting action '" << mAction.getId() << "'";
   aResource.mStatus.mRunningActions.push_back( &aAction );
-// TODO: Delete
-  //  for(tObjTransitionMap::const_iterator lIt=childTransitionMap.begin(); lIt!=childTransitionMap.end(); lIt++)
-//    this->mChildGuardMap[ lIt->first ] = tChildGuardPtr(new ActionableObject::BusyGuard(*lIt->first, *lLockGuardMap[lIt->first].get(), lTransition) );
   
   BOOST_FOREACH( const tObjTransitionMap::value_type e, childTransitionMap )
     this->mChildGuardMap[ e.first ] = tChildGuardPtr(new ActionableObject::BusyGuard(*e.first, *lLockGuardMap[e.first].get(), lTransition) );

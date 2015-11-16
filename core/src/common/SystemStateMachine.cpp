@@ -466,15 +466,6 @@ void SystemStateMachine::reset()
 
   getResource().mStatus.mState = getInitialState();
 
-// TODO: Delete  
-//  for(std::set<StateMachine*>::const_iterator lIt=mNonConstChildFSMs.begin(); lIt!=mNonConstChildFSMs.end(); lIt++)
-//  {
-//    ActionableObject& lChild = (*lIt)->getResource();
-//    if( lChild.mStatus.mFSM == *lIt)
-//      lChild.mStatus.mState = (*lIt)->getInitialState();
-//  }  
-
-
 	BOOST_FOREACH( StateMachine* sm, mNonConstChildFSMs ) {
     ActionableObject& lChild = sm->getResource();
     if( lChild.mStatus.getStateMachineId() == sm->getId() )
@@ -497,17 +488,6 @@ void SystemStateMachine::disengage()
 	getResource().mStatus.mStateMachineId = ActionableStatus::kNullStateMachineId;
   getResource().mStatus.mState = ActionableStatus::kNullStateId;
   
-// TODO: Delete  
-//  for(std::set<StateMachine*>::const_iterator lIt=mNonConstChildFSMs.begin(); lIt!=mNonConstChildFSMs.end(); lIt++)
-//  {
-//    ActionableObject& lChild = (*lIt)->getResource();
-//    if( lChild.mStatus.mFSM == *lIt)
-//    {
-//      lChild.mStatus.mFSM = NULL;
-//      lChild.mStatus.mState = ActionableStatus::kNullStateId;
-//    }
-//  }
-	
 	BOOST_FOREACH( StateMachine* sm, mNonConstChildFSMs ) {
     ActionableObject& lChild = sm->getResource();
     if( lChild.mStatus.getStateMachineId() == sm->getId() ) {
@@ -537,27 +517,6 @@ void SystemStateMachine::checkStateMachineEngagedAndNotInTransition(const std::s
   if(const SystemTransition* t = getResource().mStatus.getFirstRunningAction<SystemTransition>())
     throw ActionableSystemIsBusy("Cannot "+aAction+" state machine '"+getId()+"'; resource '"+getResource().getPath()+"' is busy in transition '"+t->getId()+"'");
   
-  // Throw if any children in wrong state machine, or 
-//  for(std::set<const StateMachine*>::const_iterator lIt=getParticipants().begin(); lIt!=getParticipants().end(); lIt++)
-//  {
-//    const ActionableObject& lChild = (*lIt)->getResource();
-//    if(lChild.mStatus.mFSM != *lIt)
-//    {
-//      std::ostringstream oss;
-//      oss << "Cannot " << aAction << " state machine '" << (*lIt)->getId() << "' of '" << (*lIt)->getResource().getPath() << "'; ";
-//      if ( lChild.mStatus.mFSM == NULL )
-//        oss << "NOT in any state machine.";
-//      else
-//        oss << "currently in state machine '" << lChild.mStatus.mFSM->getPath() << "'";
-//      throw ResourceInWrongStateMachine(oss.str());
-//    }
-//    else
-//    {
-//      if (const StateMachine::Transition* t = (*lIt)->getResource().mStatus.getFirstRunningAction<StateMachine::Transition>())
-//        throw ActionableObjectIsBusy("Cannot "+aAction+" state machine '"+getId()+"'; child resource '"+lChild.getPath()+"' is busy in transition '"+t->getId()+"'");
-//    }
-//  }
-
   // Throw if any children in wrong state machine, or 
 	BOOST_FOREACH( const StateMachine* sm, getParticipants()) {
 		const ActionableObject& lChild = sm->getResource();

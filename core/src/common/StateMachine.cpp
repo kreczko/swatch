@@ -115,14 +115,10 @@ void StateMachine::disengage()
   boost::lock_guard<boost::mutex> lGuard(mResource.mMutex);
   
   // Throw if currently in other state machine
-  // TODO: Delete
-  // if(mResource.mStatus.mFSM != this)
   if(mResource.mStatus.getStateMachineId() != this->getId())
   {
     std::ostringstream oss;
     oss << "Cannot reset resource '" << mResource.getPath() << "' state machine '" << getId() << "'; ";
-	// TODO: Delete
-	//    if ( mResource.mStatus.mFSM != NULL)
     if ( mResource.mStatus.getStateMachineId() != ActionableStatus::kNullStateMachineId)
       oss << "currently in state machine '" << mResource.mStatus.getStateMachineId() << "'";
     else
@@ -136,7 +132,6 @@ void StateMachine::disengage()
   
   
   // Move into AncionableState or derivates?
-//  mResource.mStatus.mFSM = NULL;
   mResource.mStatus.mStateMachineId = ActionableStatus::kNullStateMachineId;
   mResource.mStatus.mState = ActionableStatus::kNullStateId;
 }
@@ -147,14 +142,10 @@ void StateMachine::reset()
   boost::lock_guard<boost::mutex> lGuard(mResource.mMutex);
   
   // Throw if currently in other state machine
-  // TODO: Delete
-  //  if(mResource.mStatus.mFSM != this)
   if ( mResource.mStatus.getStateMachineId() != this->getId() )
   {
     std::ostringstream oss;
     oss << "Cannot reset '" << mResource.getPath() << "', state machine '" << getId() << "'; ";
-	// TODO: Delete
-//    if ( mResource.mStatus.mFSM != NULL)
 	if ( mResource.mStatus.getStateMachineId() != ActionableStatus::kNullStateMachineId)
       oss << "currently in state machine '" << mResource.mStatus.getStateMachineId() << "'";
     else
@@ -221,7 +212,7 @@ StateMachine::Transition& StateMachine::Transition::add(CommandSequence& aSequen
 }
 
 void StateMachine::Transition::extractMonitoringSettings(const GateKeeper& aGateKeeper,
-    tMonitoringSettings& aMonSettings) const {
+	tMonitoringSettings& aMonSettings) const {
   aMonSettings.clear();
 
   // get a list of all MonitorableObjects

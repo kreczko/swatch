@@ -140,7 +140,6 @@ std::set<std::string> ActionableObject::getStateMachines() const
 }
 
 //------------------------------------------------------------------------------------
-
 CommandSequence& ActionableObject::registerSequence( const std::string& aId, const std::string& aFirstCommandId, const std::string& aFirstCommandNamespace)
 { 
   if (mCommandSequences.count(aId)) {
@@ -152,6 +151,7 @@ CommandSequence& ActionableObject::registerSequence( const std::string& aId, con
 }
 
 
+//------------------------------------------------------------------------------------
 CommandSequence& ActionableObject::registerSequence( const std::string& aId, Command& aFirstCommand, const std::string& aFirstCommandNamespace)
 { 
   if (mCommandSequences.count(aId)) {
@@ -163,6 +163,7 @@ CommandSequence& ActionableObject::registerSequence( const std::string& aId, Com
 }
 
 
+//------------------------------------------------------------------------------------
 Command& ActionableObject::registerCommand( const std::string& aId , Command* aCommand )
 {
   if (mCommands.count(aId)){
@@ -175,6 +176,7 @@ Command& ActionableObject::registerCommand( const std::string& aId , Command* aC
 }
 
 
+//------------------------------------------------------------------------------------
 StateMachine& ActionableObject::registerStateMachine( const std::string& aId, const std::string& aInitialState, const std::string& aErrorState ) {
   if (mFSMs.count(aId))
     throw StateMachineAlreadyExistsInActionableObject( "State machine With ID '"+aId+"' already exists" );
@@ -185,6 +187,7 @@ StateMachine& ActionableObject::registerStateMachine( const std::string& aId, co
 }
 
 
+//------------------------------------------------------------------------------------
 ActionableObject::Status ActionableObject::getStatus() const {
   boost::lock_guard<boost::mutex> lGuard(mMutex);
   return mStatus;
@@ -196,9 +199,6 @@ void ActionableObject::engageStateMachine(const std::string& aFSM) {
   boost::lock_guard<boost::mutex> lGuard(mMutex);
   
   // Throw if currently in other state machine
-  // TODO: Delete
-  //  if(mStatus.getEngagedFSM() != NULL)
-//    throw ResourceInWrongStateMachine("Cannot engage other state machine; resource '"+getPath()+"' currently in state machine '"+mStatus.getEngagedFSM()->getId()+"'");
   if(mStatus.getStateMachineId() != ActionableStatus::kNullStateMachineId )
     throw ResourceInWrongStateMachine("Cannot engage other state machine; resource '"+getPath()+"' currently in state machine '"+mStatus.getStateMachineId()+"'");
 
@@ -232,6 +232,7 @@ void ActionableObject::Deleter::operator ()(Object* aObject) {
 }
 
 
+//------------------------------------------------------------------------------------
 void ActionableObject::disableActions(){
   boost::lock_guard<boost::mutex> lGuard(mMutex);
   mStatus.mAlive = false;
@@ -239,6 +240,7 @@ void ActionableObject::disableActions(){
 
 
 
+//------------------------------------------------------------------------------------
 ActionableObject::BusyGuard::BusyGuard(ActionableObject& aResource, const Functionoid& aFunctionoid, const BusyGuard* aOuterGuard) : 
   mResource(aResource),
   mAction(aFunctionoid),
@@ -249,6 +251,7 @@ ActionableObject::BusyGuard::BusyGuard(ActionableObject& aResource, const Functi
 }
 
 
+//------------------------------------------------------------------------------------
 ActionableObject::BusyGuard::BusyGuard(ActionableObject& aResource, const boost::unique_lock<boost::mutex>& aLockGuard, const Functionoid& aFunctionoid, const BusyGuard* aOuterGuard) : 
   mResource(aResource),
   mAction(aFunctionoid),
@@ -258,6 +261,7 @@ ActionableObject::BusyGuard::BusyGuard(ActionableObject& aResource, const boost:
 }
 
 
+//------------------------------------------------------------------------------------
 void ActionableObject::BusyGuard::initialise(const boost::unique_lock<boost::mutex>& aLockGuard)
 {
   if ( aLockGuard.mutex() != &mResource.mMutex)
@@ -272,9 +276,6 @@ void ActionableObject::BusyGuard::initialise(const boost::unique_lock<boost::mut
       throw WrongBusyGuard( "Incompatible outer BusyGuard, resource='"+mOuterGuard->mResource.getPath()+"'. Inner guard resource is '"+mResource.getPath() );
     else if ( mResource.mStatus.mRunningActions.empty() )
       throw WrongBusyGuard( "Outer BusyGuard used (resource: '"+mResource.getPath()+"', action: '"+mOuterGuard->mAction.getId()+"'), but resource not busy");
-//	TODO: Delete
-//    else if ( &mOuterGuard->mAction != mResource.mStatus.mRunningActions.back() )
-//      throw WrongBusyGuard( "Outer BusyGuard (resource: '"+mResource.getPath()+"', action: '"+mOuterGuard->mAction.getId()+"') is not for current action '"+mResource.mStatus.mRunningActions.back()->getId()+"'" );
     else if ( &mOuterGuard->mAction != mResource.mStatus.getLastRunningAction() )
       throw WrongBusyGuard( "Outer BusyGuard (resource: '"+mResource.getPath()+"', action: '"+mOuterGuard->mAction.getId()+"') is not for current action '"+mResource.mStatus.getLastRunningAction()->getId()+"'" );
   }
@@ -286,8 +287,6 @@ void ActionableObject::BusyGuard::initialise(const boost::unique_lock<boost::mut
   // 1) For transitions, check that state machine is engaged, and we're in the right state
   if (const StateMachine::Transition* t = dynamic_cast<const StateMachine::Transition*>(&mAction))
   {
-    //TODO: Delete
-//	if( mResource.mStatus.mFSM != & t->getStateMachine())
 	if( mResource.mStatus.getStateMachineId() != t->getStateMachine().getId())
       throw ResourceInWrongState("Resource '"+mResource.getPath()+"' is not yet engaged in state machine '"+t->getStateMachine().getId()+"'");
     else if ( mResource.mStatus.mState != t->getStartState() )
@@ -295,15 +294,11 @@ void ActionableObject::BusyGuard::initialise(const boost::unique_lock<boost::mut
   }
   
   // 2) Claim the resource if free; else throw if can't get sole control of it
-  //TODO: Delete
-  //  if ( mResource.mStatus.mAlive && ( (mOuterGuard != NULL) || mResource.mStatus.mRunningActions.empty() ) )
   if ( mResource.mStatus.isAlive() && ( (mOuterGuard != NULL) || !mResource.mStatus.isRunning() ) )
   {
     if ( !mResource.mStatus.isRunning() )
       LOG(swatch::logger::kInfo) << mResource.getPath() << " : Starting " << ActionFmt(&mAction);
     else
-	  // TODO: Delete
-//      LOG(swatch::logger::kInfo) << mResource.getPath() << " : Starting " << ActionFmt(&mAction) << " within " << ActionFmt(mResource.mStatus.mRunningActions.back());
       LOG(swatch::logger::kInfo) << mResource.getPath() << " : Starting " << ActionFmt(&mAction) << " within " << ActionFmt(mResource.mStatus.getLastRunningAction());
     mResource.mStatus.mRunningActions.push_back(&mAction);
   }
@@ -312,9 +307,6 @@ void ActionableObject::BusyGuard::initialise(const boost::unique_lock<boost::mut
     std::ostringstream oss;
     oss << "Could not run action '" << mAction.getId() << "' on resource '" << mResource.getPath() << "'. ";
 
-	  // TODO: Delete
-//    if ( ! mResource.mStatus.mRunningActions.empty() )
-	  //	  oss << "Resource currently busy running functionoid '" << mResource.mStatus.mRunningActions.back()->getId() << "'.";
     if ( mResource.mStatus.isRunning() )
 	  oss << "Resource currently busy running functionoid '" << mResource.mStatus.getLastRunningAction()->getId() << "'.";
     else
@@ -332,8 +324,6 @@ ActionableObject::BusyGuard::~BusyGuard()
 {  
   boost::lock_guard<boost::mutex> lGuard(mResource.mMutex);
   LOG(swatch::logger::kInfo) << mResource.getPath() << " : Finished " << ActionFmt(&mAction);
-  // TODO: Delete
-  //  if ( (!mResource.mStatus.mRunningActions.empty()) && (&mAction == mResource.mStatus.mRunningActions.back()))
   if ( mResource.mStatus.isRunning() && (&mAction == mResource.mStatus.getLastRunningAction()) )
   {
     mResource.mStatus.mRunningActions.pop_back();
