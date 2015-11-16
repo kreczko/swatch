@@ -16,9 +16,9 @@ using namespace std;
 namespace swatch {
 namespace core {
 
-bool ActionableStatus::isEnabled() const
+bool ActionableStatus::isAlive() const
 {
-  return mEnabled;
+  return mAlive;
 }
 
 
@@ -35,7 +35,7 @@ const std::vector<const Functionoid*>& ActionableStatus::getRunningActions() con
 
 
 ActionableStatus::ActionableStatus() :
-  mEnabled(true)
+  mAlive(true)
 {
 }
 
@@ -220,7 +220,7 @@ void ActionableObject::Deleter::operator ()(Object* aObject) {
 
 void ActionableObject::disableActions(){
   boost::lock_guard<boost::mutex> lGuard(mMutex);
-  mStatus.mEnabled = false;
+  mStatus.mAlive = false;
 }
 
 
@@ -276,7 +276,7 @@ void ActionableObject::BusyGuard::initialise(const boost::unique_lock<boost::mut
   }
   
   // 2) Claim the resource if free; else throw if can't get sole control of it
-  if ( mResource.mStatus.mEnabled && ( (mOuterGuard != NULL) || mResource.mStatus.mRunningActions.empty() ) )
+  if ( mResource.mStatus.mAlive && ( (mOuterGuard != NULL) || mResource.mStatus.mRunningActions.empty() ) )
   {
     if (mResource.mStatus.mRunningActions.empty())
       LOG(swatch::logger::kInfo) << mResource.getPath() << " : Starting " << ActionFmt(&mAction);

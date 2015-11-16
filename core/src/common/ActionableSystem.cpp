@@ -130,7 +130,7 @@ void ActionableSystem::Deleter::operator ()(Object* aObject) {
 
 void ActionableSystem::disableActions(){
   boost::lock_guard<boost::mutex> lGuard(mMutex);
-  mState.mEnabled = false;
+  mState.mAlive = false;
 }
 
 ActionableSystem::tLockGuardMap ActionableSystem::lockMutexes(const SystemStateMachine& aOp)
@@ -189,7 +189,7 @@ ActionableSystem::BusyGuard::BusyGuard(ActionableSystem& aResource, const Functi
   
   
   // 2a) Check that the system is not busy
-  if ( (aResource.mState.mEnabled == false) || ( ! aResource.mState.mRunningActions.empty() ) )
+  if ( (aResource.mState.mAlive == false) || ( ! aResource.mState.mRunningActions.empty() ) )
   {
     std::ostringstream oss;
     oss << "Could not run action '" << lTransition.getId() << "' on resource '" << aResource.getPath() << "'. ";
@@ -208,7 +208,7 @@ ActionableSystem::BusyGuard::BusyGuard(ActionableSystem& aResource, const Functi
   {
     const ActionableObject& lChild = *lIt->first;
     
-    if ( (lChild.mStatus.mEnabled == false) || (! lChild.mStatus.mRunningActions.empty()) )
+    if ( (lChild.mStatus.mAlive == false) || (! lChild.mStatus.mRunningActions.empty()) )
     {
       std::ostringstream oss;
       oss << "Could not run system action '" << lTransition.getId() << "' due to child resource '" << aResource.getPath() << "'. ";
