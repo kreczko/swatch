@@ -42,7 +42,7 @@ UploadFirmwareCommand::code(const ::swatch::core::XParameterSet& params) {
 
   if (localfile.empty() || sdfile.empty() || !firmware.good()) {
     setStatusMsg("No filepath or filename given, or file does not exist");
-    return kError;
+    return State::kError;
   }
 
   setProgress(0., "Uploading firmware image to uSD card ...");
@@ -51,7 +51,7 @@ UploadFirmwareCommand::code(const ::swatch::core::XParameterSet& params) {
   mmcController.copyFileToSD(localfile, sdfile);
 
   setStatusMsg("Upload completed");
-  return kDone;
+  return State::kDone;
 }
 
 // --------------------------------------------------------
@@ -73,12 +73,12 @@ DeleteFirmwareCommand::code(const ::swatch::core::XParameterSet& params) {
 
   if (sdfile.empty()) {
     setStatusMsg("Please provide a filename to delete");
-    return kError;
+    return State::kError;
   }
 
   if (!sdfile.compare("GoldenImage.bin")) {
     setStatusMsg("One must *not* delete the Golden Image!");
-    return kError;
+    return State::kError;
   }
 
   setProgress(0., "Deleting firmware image from uSD card ...");
@@ -90,7 +90,7 @@ DeleteFirmwareCommand::code(const ::swatch::core::XParameterSet& params) {
 
   setStatusMsg("Delete Firmware Completed");
 
-  return kDone;
+  return State::kDone;
 }
 
 
@@ -114,7 +114,7 @@ RebootFPGACommand::code(const ::swatch::core::XParameterSet& params) {
 
   if (sdfile.empty()) {
     setStatusMsg("Please provide a firmware filename to reboot FPGA");
-    return kError;
+    return State::kError;
   }
 
   setProgress(0., "Rebooting FPGA ...");
@@ -127,12 +127,12 @@ RebootFPGACommand::code(const ::swatch::core::XParameterSet& params) {
 
   if (rebootfile.compare(sdfile)) {
     setStatusMsg("FPGA did not reboot with the firmware image provided. Please check filename!");
-    return kError;
+    return State::kError;
   }
 
   setStatusMsg("Reboot FPGA Completed");
 
-  return kDone;
+  return State::kDone;
 }
 
 // --------------------------------------------------------
@@ -158,7 +158,7 @@ HardResetCommand::code(const ::swatch::core::XParameterSet& params) {
 
   setStatusMsg("Hard Reset Completed");
 
-  return kDone;
+  return State::kDone;
 }
 
 // --------------------------------------------------------
@@ -186,7 +186,7 @@ ScanSDCommand::code(const ::swatch::core::XParameterSet& params) {
   setStatusMsg("Scan SD complete!");
   setResult(xdata::String(fileNameString));
 
-  return kDone;
+  return State::kDone;
 }
 
 

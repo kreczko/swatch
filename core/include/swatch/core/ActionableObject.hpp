@@ -63,7 +63,7 @@ public:
   
   //!
   template<class T>
-  const T* getFirstRunningAction() const;
+  const T* getFirstRunningActionOfType() const;
   
   //!
   const std::string& getStateMachineId() const;
@@ -181,7 +181,7 @@ protected:
   
 private:
   //! Disables all future actions from running on this resource
-  void disableActions();
+  void kill();
 
   tCommandSequenceMap mCommandSequences;
   tCommandMap mCommands;

@@ -53,11 +53,11 @@ ConfigureRxMGTsCommand::code(const swatch::core::XParameterSet& params) {
     std::ostringstream err;
     err << "Exception caught while trying to configure Rx MGTs: " << e.what();
     setStatusMsg(err.str());
-    return kError;
+    return State::kError;
   }
 
   setStatusMsg("Configure Rx MGTs complete");
-  return kDone;
+  return State::kDone;
 }
 
 // --------------------------------------------------------
@@ -100,11 +100,11 @@ ConfigureTxMGTsCommand::code(const swatch::core::XParameterSet& params) {
     std::ostringstream err;
     err << "Exception caught while trying to configure Tx MGTs: " << e.what();
     setStatusMsg(err.str());
-    return kError;
+    return State::kError;
   }
 
   setStatusMsg("Configure Tx MGTs completed");
-  return kDone;
+  return State::kDone;
 }
 
 
@@ -138,7 +138,7 @@ AlignRxsToCommand::code(const swatch::core::XParameterSet& params) {
     msg << "Invalid orbit point parameters (" << bx.value_ << ", " << cycle.value_ << ")";
 
     setStatusMsg(msg.str());
-    return kError;
+    return State::kError;
   }
   //--
     
@@ -156,7 +156,7 @@ AlignRxsToCommand::code(const swatch::core::XParameterSet& params) {
     std::ostringstream err;
     err << "Exception caught while trying to align: " << e.what();
     setStatusMsg(err.str());
-    return kError;
+    return State::kError;
   }
 
   setProgress(0.6, "Checking Links...");
@@ -166,11 +166,11 @@ AlignRxsToCommand::code(const swatch::core::XParameterSet& params) {
     std::ostringstream err;
     err << "Exception caught while trying to check links: " << e.what();
     setStatusMsg(err.str());
-    return kError;
+    return State::kError;
   }
 
   setStatusMsg("Align MP MGTs completed");
-  return kDone;
+  return State::kDone;
 }
 
 
@@ -197,7 +197,7 @@ core::Command::State AutoAlignCommand::code(const core::XParameterSet& aParams)
   
   lChanMgr.minimizeAndAlignLinks(lMargin.value_);
   
-  return kDone;
+  return State::kDone;
 }
 
 

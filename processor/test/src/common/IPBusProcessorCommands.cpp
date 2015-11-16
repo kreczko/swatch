@@ -52,7 +52,7 @@ core::Command::State IPBusResetCommand::code(const swatch::core::XParameterSet& 
     
     if ( !getDefaultParams().has("mode") ) {
       setStatusMsg("Configuration not found!");
-      return kError;
+      return State::kError;
     }
     
     std::string config = getDefaultParams().get<xdata::String>("mode").value_;
@@ -71,7 +71,7 @@ core::Command::State IPBusResetCommand::code(const swatch::core::XParameterSet& 
         p->hw().getNode("ttc.ctrl.genBC0").write(0x1); 
     } else {
       setStatusMsg("Unknown configuration mode '"+config+"'");
-      return kError;
+      return State::kError;
     }
 
     p->hw().getNode("ttc.stat.bc0Locked").write(true);
@@ -82,7 +82,7 @@ core::Command::State IPBusResetCommand::code(const swatch::core::XParameterSet& 
     p->getTTC().clearCounters();
     
     setStatusMsg("Done!");
-    return kDone;
+    return State::kDone;
 }
 
 
@@ -103,7 +103,7 @@ core::Command::State IPBusConfigureCommand::code(const swatch::core::XParameterS
     using namespace swatch::core;
     if ( !getDefaultParams().has("mode") ) {
       setStatusMsg("Configuration not found!");
-      return kError;
+      return State::kError;
     }
     
     std::string config = getDefaultParams().get<xdata::String>("mode").value_;
@@ -132,7 +132,7 @@ core::Command::State IPBusConfigureCommand::code(const swatch::core::XParameterS
       }
     } else {
       setStatusMsg("Unknown configuration mode '"+config+"'");
-      return kError;
+      return State::kError;
     }
 
 
@@ -147,7 +147,7 @@ core::Command::State IPBusConfigureCommand::code(const swatch::core::XParameterS
 
     // Check links alignment (?)
 
-    return kDone;
+    return State::kDone;
 }
 
 IPBusCapture::IPBusCapture(const std::string& aId) :
@@ -186,7 +186,7 @@ core::Command::State IPBusCapture::code(const swatch::core::XParameterSet& param
         LOG(swlog::kInfo) << msg.str();
     }
     
-    return kDone;
+    return State::kDone;
 }
 
 

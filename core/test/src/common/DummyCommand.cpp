@@ -49,7 +49,7 @@ Command::State DummyCommand::code(const XParameterSet& params)
     setProgress(0.1);
     
     setProgress(0.99, finalMsgUseResource);
-    return kDone;
+    return State::kDone;
   } 
   if (todo == "sleep")
   {
@@ -62,11 +62,11 @@ Command::State DummyCommand::code(const XParameterSet& params)
     }
 
     setStatusMsg(finalMsgSleep);
-    return kDone;
+    return State::kDone;
   }
   else
   {
-    return kDone;
+    return State::kDone;
   }
 }
 
@@ -91,7 +91,7 @@ DummyWarningCommand::~DummyWarningCommand()
 Command::State DummyWarningCommand::code(const XParameterSet& params)
 {
   setProgress(0.5049, finalMsg);
-  return kWarning;
+  return State::kWarning;
 }
 
 
@@ -115,7 +115,7 @@ DummyErrorCommand::~DummyErrorCommand()
 Command::State DummyErrorCommand::code(const XParameterSet& params)
 {
   setProgress(finalProgress, finalMsg);
-  return kError;
+  return State::kError;
 }
 
 

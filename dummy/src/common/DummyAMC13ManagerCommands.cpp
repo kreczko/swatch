@@ -66,7 +66,7 @@ core::Command::State DummyAMC13RebootCommand::code(const swatch::core::XParamete
   
   driver.reboot();
   
-  return kDone;
+  return State::kDone;
 }
 
 
@@ -95,7 +95,7 @@ core::Command::State DummyAMC13ResetCommand::code(const swatch::core::XParameter
 
   driver.reset(lWrnTimeout, lErrTimeout);
   
-  return kDone;
+  return State::kDone;
 }
 
 
@@ -119,7 +119,7 @@ core::Command::State DummyAMC13ConfigureDaqCommand::code(const swatch::core::XPa
 
   mgr->getDriver().configureDaq(mgr->getStub().fedId);
   
-  return kDone;
+  return State::kDone;
 }
 
 
@@ -149,7 +149,7 @@ core::Command::State DummyAMC13StartDaqCommand::code(const swatch::core::XParame
 
   driver.startDaq(lWrnTimeout, lErrTimeout);
   
-  return kDone;
+  return State::kDone;
 }
 
 
@@ -169,7 +169,7 @@ core::Command::State DummyAMC13StopDaqCommand::code(const swatch::core::XParamet
 {
   sleep(aParams);
 
-  return kDone;
+  return State::kDone;
 }
 
 

@@ -61,7 +61,7 @@ core::Command::State DummyRebootCommand::code(const swatch::core::XParameterSet&
   
   driver.reboot();
   
-  return kDone;
+  return State::kDone;
 }
 
 
@@ -88,7 +88,7 @@ core::Command::State DummyResetCommand::code(const swatch::core::XParameterSet& 
 
   driver.reset(timeout);
   
-  return kDone;
+  return State::kDone;
 }
 
 
@@ -115,7 +115,7 @@ core::Command::State DummyConfigureTxCommand::code(const swatch::core::XParamete
 
   driver.configureTxPorts(timeout);
   
-  return kDone;
+  return State::kDone;
 }
 
 
@@ -142,7 +142,7 @@ core::Command::State DummyConfigureRxCommand::code(const swatch::core::XParamete
 
   driver.configureRxPorts(timeout);
   
-  return kDone;
+  return State::kDone;
 }
 
 
@@ -169,7 +169,7 @@ core::Command::State DummyConfigureDaqCommand::code(const swatch::core::XParamet
 
   driver.configureReadout(timeout);
   
-  return kDone;
+  return State::kDone;
 }
 
 
@@ -196,7 +196,7 @@ core::Command::State DummyConfigureAlgoCommand::code(const swatch::core::XParame
 
   driver.configureAlgo(timeout);
   
-  return kDone;
+  return State::kDone;
 }
 
 

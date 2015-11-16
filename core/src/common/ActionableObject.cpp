@@ -214,7 +214,7 @@ void ActionableObject::Deleter::operator ()(Object* aObject) {
   {
     LOG(swatch::logger::kNotice) << aObject->getPath() << " : ActionableObject deleter called";
 
-    lActionableObj->disableActions();
+    lActionableObj->kill();
 
     //TODO (low-ish priority): Eventually replace this "spinning" do-loop with a more efficient implementation based on ActionableObject/Functionoid methods that use conditional variables behind-the-scenes 
     do {
@@ -232,7 +232,7 @@ void ActionableObject::Deleter::operator ()(Object* aObject) {
 
 
 //------------------------------------------------------------------------------------
-void ActionableObject::disableActions(){
+void ActionableObject::kill(){
   boost::lock_guard<boost::mutex> lGuard(mMutex);
   mStatus.mAlive = false;
 }

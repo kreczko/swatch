@@ -291,8 +291,8 @@ BOOST_FIXTURE_TEST_CASE(TestRunTransitionDisengagedFSM, StateMachineTestSetup) {
 
   // Running transition before FSM is engaged: should throw, and leave state/TransitionStatus unchanged
   BOOST_CHECK_THROW( transitionItoA->exec(gk, false), ResourceInWrongState);
-  BOOST_CHECK_EQUAL( transitionItoA->getState(), Functionoid::kInitial);
-  BOOST_CHECK_EQUAL( transitionItoA->getStatus().getState(), Functionoid::kInitial);
+  BOOST_CHECK_EQUAL( transitionItoA->getState(), Functionoid::State::kInitial);
+  BOOST_CHECK_EQUAL( transitionItoA->getStatus().getState(), Functionoid::State::kInitial);
   BOOST_CHECK_EQUAL( obj->getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
   BOOST_CHECK_EQUAL( obj->getStatus().getState(), ActionableStatus::kNullStateId);
 
@@ -301,8 +301,8 @@ BOOST_FIXTURE_TEST_CASE(TestRunTransitionDisengagedFSM, StateMachineTestSetup) {
   obj->engageStateMachine("anotherFSM");
   BOOST_REQUIRE_EQUAL( obj->getStatus().getStateMachineId(), otherFSM.getId() );
   BOOST_CHECK_THROW( transitionItoA->exec(gk, false), ResourceInWrongState );
-  BOOST_CHECK_EQUAL( transitionItoA->getState(), Functionoid::kInitial);
-  BOOST_CHECK_EQUAL( transitionItoA->getStatus().getState(), Functionoid::kInitial);
+  BOOST_CHECK_EQUAL( transitionItoA->getState(), Functionoid::State::kInitial);
+  BOOST_CHECK_EQUAL( transitionItoA->getStatus().getState(), Functionoid::State::kInitial);
   BOOST_CHECK_EQUAL( obj->getStatus().getStateMachineId(), otherFSM.getId());
   BOOST_CHECK_EQUAL( obj->getStatus().getState(), fsmState0);
 }
@@ -319,19 +319,19 @@ BOOST_FIXTURE_TEST_CASE(TestRunEmptyTransitions, StateMachineTestSetup) {
   
   // Check that invalid transitions not executed
   BOOST_CHECK_THROW( transitionAtoB->exec(gk, false), ResourceInWrongState);
-  BOOST_CHECK_EQUAL( transitionAtoB->getState(), Functionoid::kInitial);
-  BOOST_CHECK_EQUAL( transitionAtoB->getStatus().getState(), Functionoid::kInitial);
+  BOOST_CHECK_EQUAL( transitionAtoB->getState(), Functionoid::State::kInitial);
+  BOOST_CHECK_EQUAL( transitionAtoB->getStatus().getState(), Functionoid::State::kInitial);
   BOOST_CHECK_EQUAL( obj->getStatus().getState(), fsmState0 );
 
   BOOST_CHECK_THROW( transitionBtoI->exec(gk, false), ResourceInWrongState);
-  BOOST_CHECK_EQUAL( transitionBtoI->getState(), Functionoid::kInitial);
-  BOOST_CHECK_EQUAL( transitionBtoI->getStatus().getState(), Functionoid::kInitial);
+  BOOST_CHECK_EQUAL( transitionBtoI->getState(), Functionoid::State::kInitial);
+  BOOST_CHECK_EQUAL( transitionBtoI->getStatus().getState(), Functionoid::State::kInitial);
   BOOST_CHECK_EQUAL( obj->getStatus().getState(), fsmState0 );
 
   // Execute state transition: 'initial' -> A
   BOOST_CHECK_NO_THROW( transitionItoA->exec(gk, false) );
   BOOST_CHECK_EQUAL( obj->getStatus().getState(), fsmStateA );
-  BOOST_CHECK_EQUAL( transitionItoA->getState(), Functionoid::kDone );
+  BOOST_CHECK_EQUAL( transitionItoA->getState(), Functionoid::State::kDone );
   StateMachine::TransitionStatus s = transitionItoA->getStatus();
   BOOST_CHECK_EQUAL( s.getActionPath(), transitionItoA->getPath() );
   BOOST_CHECK( s.getCommandStatus().empty());
@@ -339,7 +339,7 @@ BOOST_FIXTURE_TEST_CASE(TestRunEmptyTransitions, StateMachineTestSetup) {
   BOOST_CHECK_EQUAL( s.getProgress(), 1.0);
   BOOST_CHECK( s.getResults().empty() );
   BOOST_CHECK( s.getRunningTime() >= 0.0 );
-  BOOST_CHECK_EQUAL( s.getState(), Functionoid::kDone);
+  BOOST_CHECK_EQUAL( s.getState(), Functionoid::State::kDone);
   BOOST_CHECK_EQUAL( s.getTotalNumberOfCommands(), size_t(0));
 
   // Check that invalid transitions not executed
@@ -347,8 +347,8 @@ BOOST_FIXTURE_TEST_CASE(TestRunEmptyTransitions, StateMachineTestSetup) {
   BOOST_CHECK_EQUAL( obj->getStatus().getState(), fsmStateA );
 
   BOOST_CHECK_THROW( transitionBtoI->exec(gk, false), ResourceInWrongState);
-  BOOST_CHECK_EQUAL( transitionBtoI->getStatus().getState(), Functionoid::kInitial);
-  BOOST_CHECK_EQUAL( transitionBtoI->getState(), Functionoid::kInitial);
+  BOOST_CHECK_EQUAL( transitionBtoI->getStatus().getState(), Functionoid::State::kInitial);
+  BOOST_CHECK_EQUAL( transitionBtoI->getState(), Functionoid::State::kInitial);
   BOOST_CHECK_EQUAL( obj->getStatus().getState(), fsmStateA );
 
   // Execute state transition: A -> B
@@ -361,7 +361,7 @@ BOOST_FIXTURE_TEST_CASE(TestRunEmptyTransitions, StateMachineTestSetup) {
   BOOST_CHECK_EQUAL( s.getProgress(), 1.0);
   BOOST_CHECK( s.getResults().empty() );
   BOOST_CHECK( s.getRunningTime() >= 0.0 );
-  BOOST_CHECK_EQUAL( s.getState(), Functionoid::kDone);
+  BOOST_CHECK_EQUAL( s.getState(), Functionoid::State::kDone);
   BOOST_CHECK_EQUAL( s.getTotalNumberOfCommands(), size_t(0));
 }
 
@@ -382,8 +382,8 @@ BOOST_FIXTURE_TEST_CASE(TestTransitionMissingParams, StateMachineTestSetup) {
   swatch::logger::Log::setLogThreshold(swatch::logger::kFatal);
   BOOST_CHECK_THROW( transitionItoA->exec(emptyGk, false), ParameterNotFound );
   swatch::logger::Log::setLogThreshold(lThr);
-  BOOST_CHECK_EQUAL( transitionItoA->getState(), Functionoid::kInitial );
-  BOOST_CHECK_EQUAL( transitionItoA->getStatus().getState(), Functionoid::kInitial );
+  BOOST_CHECK_EQUAL( transitionItoA->getState(), Functionoid::State::kInitial );
+  BOOST_CHECK_EQUAL( transitionItoA->getStatus().getState(), Functionoid::State::kInitial );
   BOOST_CHECK_EQUAL( obj->getStatus().getStateMachineId(), testFSM.getId());
   BOOST_CHECK_EQUAL( obj->getStatus().getState(), fsmState0);
 
@@ -419,7 +419,7 @@ BOOST_FIXTURE_TEST_CASE(TestRunErrorTransition, StateMachineTestSetup) {
   BOOST_REQUIRE_NO_THROW(transitionItoA->exec(gk, false));
   BOOST_CHECK_EQUAL(obj->getStatus().getStateMachineId(), testFSM.getId());
   BOOST_CHECK_EQUAL(obj->getStatus().getState(), fsmStateError);
-  BOOST_CHECK_EQUAL(transitionItoA->getState(), Functionoid::kError);
+  BOOST_CHECK_EQUAL(transitionItoA->getState(), Functionoid::State::kError);
 
   StateMachine::TransitionStatus s = transitionItoA->getStatus();
   BOOST_CHECK_EQUAL(s.getActionPath(), transitionItoA->getPath());
@@ -428,19 +428,19 @@ BOOST_FIXTURE_TEST_CASE(TestRunErrorTransition, StateMachineTestSetup) {
   BOOST_CHECK_CLOSE(s.getProgress(), (1.0 + DummyErrorCommand::finalProgress)/3.0, 0.0001);
   BOOST_CHECK_LT(s.getProgress(), 0.66);
   BOOST_CHECK_GT(s.getRunningTime(), 0.0);
-  BOOST_CHECK_EQUAL(s.getState(), Functionoid::kError);
+  BOOST_CHECK_EQUAL(s.getState(), Functionoid::State::kError);
   BOOST_REQUIRE_EQUAL(s.getCommandStatus().size(), size_t(2));
   BOOST_CHECK_EQUAL(s.getCommandStatus().at(0).getActionPath(), cmdNormal1.getPath());
-  BOOST_CHECK_EQUAL(s.getCommandStatus().at(0).getState(), Functionoid::kDone);
+  BOOST_CHECK_EQUAL(s.getCommandStatus().at(0).getState(), Functionoid::State::kDone);
   BOOST_CHECK_EQUAL(s.getCommandStatus().at(1).getActionPath(), cmdError.getPath());
-  BOOST_CHECK_EQUAL(s.getCommandStatus().at(1).getState(), Functionoid::kError);
+  BOOST_CHECK_EQUAL(s.getCommandStatus().at(1).getState(), Functionoid::State::kError);
   
   BOOST_REQUIRE_EQUAL(s.getResults().size(), size_t(2));
   BOOST_CHECK_EQUAL(s.getResults().at(0) , cmdNormal1.getStatus().getResult() );
   BOOST_CHECK_EQUAL(s.getResults().at(1) , cmdError.getStatus().getResult() );
 
-  BOOST_CHECK_EQUAL(cmdNormal2.getState(), Functionoid::kInitial);
-  BOOST_CHECK_EQUAL(cmdNormal2.getStatus().getState(), Functionoid::kInitial);
+  BOOST_CHECK_EQUAL(cmdNormal2.getState(), Functionoid::State::kInitial);
+  BOOST_CHECK_EQUAL(cmdNormal2.getStatus().getState(), Functionoid::State::kInitial);
 }
 
 
@@ -459,21 +459,21 @@ BOOST_FIXTURE_TEST_CASE(TestRunWarningTransition, StateMachineTestSetup) {
   BOOST_REQUIRE_NO_THROW(transitionItoA->exec(gk, false));
   BOOST_CHECK_EQUAL(obj->getStatus().getStateMachineId(), testFSM.getId());
   BOOST_CHECK_EQUAL(obj->getStatus().getState(), fsmStateA);
-  BOOST_CHECK_EQUAL(transitionItoA->getState(), Functionoid::kWarning);
+  BOOST_CHECK_EQUAL(transitionItoA->getState(), Functionoid::State::kWarning);
 
   StateMachine::TransitionStatus s = transitionItoA->getStatus();
   BOOST_CHECK_EQUAL(s.getActionPath(), transitionItoA->getPath());
   BOOST_CHECK_EQUAL(s.getNumberOfCompletedCommands(), size_t(3));
   BOOST_CHECK_EQUAL(s.getTotalNumberOfCommands(), size_t(3));
   BOOST_CHECK_EQUAL(s.getProgress(), 1.0);
-  BOOST_CHECK_EQUAL(s.getState(), Functionoid::kWarning);
+  BOOST_CHECK_EQUAL(s.getState(), Functionoid::State::kWarning);
   BOOST_REQUIRE_EQUAL(s.getCommandStatus().size(), size_t(3));
   BOOST_CHECK_EQUAL(s.getCommandStatus().at(0).getActionPath(), cmdNormal1.getPath());
-  BOOST_CHECK_EQUAL(s.getCommandStatus().at(0).getState(), Functionoid::kDone);
+  BOOST_CHECK_EQUAL(s.getCommandStatus().at(0).getState(), Functionoid::State::kDone);
   BOOST_CHECK_EQUAL(s.getCommandStatus().at(1).getActionPath(), cmdWarning.getPath());
-  BOOST_CHECK_EQUAL(s.getCommandStatus().at(1).getState(), Functionoid::kWarning);
+  BOOST_CHECK_EQUAL(s.getCommandStatus().at(1).getState(), Functionoid::State::kWarning);
   BOOST_CHECK_EQUAL(s.getCommandStatus().at(2).getActionPath(), cmdNormal2.getPath());
-  BOOST_CHECK_EQUAL(s.getCommandStatus().at(2).getState(), Functionoid::kDone);
+  BOOST_CHECK_EQUAL(s.getCommandStatus().at(2).getState(), Functionoid::State::kDone);
 
   BOOST_REQUIRE_EQUAL(s.getResults().size(), size_t(3));
   BOOST_CHECK_EQUAL(s.getResults().at(0) , cmdNormal1.getStatus().getResult() );
@@ -496,19 +496,19 @@ BOOST_FIXTURE_TEST_CASE(TestRunGoodTransition, StateMachineTestSetup) {
   BOOST_REQUIRE_NO_THROW(transitionItoA->exec(gk, false));
   BOOST_CHECK_EQUAL(obj->getStatus().getStateMachineId(), testFSM.getId());
   BOOST_CHECK_EQUAL(obj->getStatus().getState(), fsmStateA);
-  BOOST_CHECK_EQUAL(transitionItoA->getState(), Functionoid::kDone);
+  BOOST_CHECK_EQUAL(transitionItoA->getState(), Functionoid::State::kDone);
 
   StateMachine::TransitionStatus s = transitionItoA->getStatus();
   BOOST_CHECK_EQUAL(s.getActionPath(), transitionItoA->getPath());
   BOOST_CHECK_EQUAL(s.getNumberOfCompletedCommands(), size_t(2));
   BOOST_CHECK_EQUAL(s.getTotalNumberOfCommands(), size_t(2));
   BOOST_CHECK_EQUAL(s.getProgress(), 1.0);
-  BOOST_CHECK_EQUAL(s.getState(), Functionoid::kDone);
+  BOOST_CHECK_EQUAL(s.getState(), Functionoid::State::kDone);
   BOOST_REQUIRE_EQUAL(s.getCommandStatus().size(), size_t(2));
   BOOST_CHECK_EQUAL(s.getCommandStatus().at(0).getActionPath(), cmdNormal1.getPath());
-  BOOST_CHECK_EQUAL(s.getCommandStatus().at(0).getState(), Functionoid::kDone);
+  BOOST_CHECK_EQUAL(s.getCommandStatus().at(0).getState(), Functionoid::State::kDone);
   BOOST_CHECK_EQUAL(s.getCommandStatus().at(1).getActionPath(), cmdNormal2.getPath());
-  BOOST_CHECK_EQUAL(s.getCommandStatus().at(1).getState(), Functionoid::kDone);
+  BOOST_CHECK_EQUAL(s.getCommandStatus().at(1).getState(), Functionoid::State::kDone);
 
   BOOST_REQUIRE_EQUAL(s.getResults().size(), size_t(2));
   BOOST_CHECK_EQUAL(s.getResults().at(0) , cmdNormal1.getStatus().getResult() );

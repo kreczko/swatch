@@ -129,7 +129,7 @@ core::Command::State TDRFormatterCommand::code(const ::swatch::core::XParameterS
 
   setStatusMsg("Configure TDR Formatting complete");
 
-  return kDone;
+  return State::kDone;
 }
 
 

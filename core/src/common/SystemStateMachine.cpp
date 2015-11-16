@@ -101,7 +101,7 @@ SystemTransitionStatus SystemTransition::getStatus() const
       break;
   }
   
-  const Step* currentStep =  ( ((mStepIt == mSteps.end()) || (mState == kError)) ? NULL : &*mStepIt);
+  const Step* currentStep =  ( ((mStepIt == mSteps.end()) || (mState == State::kError)) ? NULL : &*mStepIt);
   
   return SystemTransitionStatus(getPath(), mState, runningTime, currentStep, mStatusOfCompletedSteps, mSteps.size());
 }
@@ -512,7 +512,7 @@ void SystemStateMachine::checkStateMachineEngagedAndNotInTransition(const std::s
   }
   
   // Throw if system or any of the participating children are currently running a transition
-  if(const SystemTransition* t = getResource().mStatus.getFirstRunningAction<SystemTransition>())
+  if(const SystemTransition* t = getResource().mStatus.getFirstRunningActionOfType<SystemTransition>())
     throw ActionableSystemIsBusy("Cannot "+aAction+" state machine '"+getId()+"'; resource '"+getResource().getPath()+"' is busy in transition '"+t->getId()+"'");
   
   // Throw if any children in wrong state machine, or 
@@ -530,7 +530,7 @@ void SystemStateMachine::checkStateMachineEngagedAndNotInTransition(const std::s
     }
     else
     {
-      if (const StateMachine::Transition* t = sm->getResource().mStatus.getFirstRunningAction<StateMachine::Transition>())
+      if (const StateMachine::Transition* t = sm->getResource().mStatus.getFirstRunningActionOfType<StateMachine::Transition>())
         throw ActionableObjectIsBusy("Cannot "+aAction+" state machine '"+getId()+"'; child resource '"+lChild.getPath()+"' is busy in transition '"+t->getId()+"'");
     }
   }

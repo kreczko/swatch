@@ -199,7 +199,7 @@ CommandVecStatus CommandVec::getStatus() const
       break;
   }
   
-  const Command* currentCommand =  ( ((mCommandIt == mCommands.end()) || (mState == kError)) ? NULL : &mCommandIt->get());
+  const Command* currentCommand =  ( ((mCommandIt == mCommands.end()) || (mState == State::kError)) ? NULL : &mCommandIt->get());
   
   return CommandVecStatus(getPath(), mState, runningTime, currentCommand, mStatusOfCompletedCommands, mCommands.size());
 }

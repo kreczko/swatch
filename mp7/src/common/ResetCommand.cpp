@@ -41,7 +41,7 @@ ResetCommand::~ResetCommand(){
 
   if ( mode.compare("internal") && mode.compare("external") ) {
       setStatusMsg("Clock can be set only to 'internal' or 'external'");
-      return kError;
+      return State::kError;
   }
 
   try {
@@ -51,7 +51,7 @@ ResetCommand::~ResetCommand(){
   } catch ( ::mp7::exception &e ) {
     
     setStatusMsg("Reset failed: "+e.description());
-    return kError;
+    return State::kError;
   }
   
   // Reset MGTs
@@ -68,7 +68,7 @@ ResetCommand::~ResetCommand(){
 
   setProgress(1.,"Reset completed");
    
-  return kDone;
+  return State::kDone;
 }
 
 } //end ns mp7

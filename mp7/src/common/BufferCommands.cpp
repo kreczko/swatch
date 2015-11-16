@@ -123,7 +123,7 @@ ConfigureBuffersCommand<tGroup>::code(const ::swatch::core::XParameterSet& param
     msg << "Invalid orbit point parameters (" << startBx.value_ << ", " << startCycle.value_ << ")";
 
     setStatusMsg(msg.str());
-    return kError;
+    return State::kError;
   }
 
 
@@ -161,7 +161,7 @@ ConfigureBuffersCommand<tGroup>::code(const ::swatch::core::XParameterSet& param
     std::ostringstream msg;
     msg << "Unknown buffer mode: '" << modeValue << "'";
     setStatusMsg(msg.str());
-    return kError;
+    return State::kError;
   }
 
   ::mp7::orbit::Point startPoint = ::mp7::orbit::Point(startBxVal, startCycleVal);
@@ -178,7 +178,7 @@ ConfigureBuffersCommand<tGroup>::code(const ::swatch::core::XParameterSet& param
       msg << "Invalid orbit point parameters (" << stopBx.value_ << ", " << stopCycle.value_ << ")";
 
       setStatusMsg(msg.str());
-      return kError;
+      return State::kError;
     }
 
     msg << "Setting range : stop point " << stopBx.value_ << ", " << stopCycle.value_;
@@ -208,7 +208,7 @@ ConfigureBuffersCommand<tGroup>::code(const ::swatch::core::XParameterSet& param
 
   setStatusMsg("Configure Buffers completed");
 
-  return kDone;
+  return State::kDone;
 }
 
 
@@ -249,7 +249,7 @@ CaptureBuffersCommand::code(const ::swatch::core::XParameterSet& params) {
   cm.waitCaptureDone();
 
   setStatusMsg("Capture completed");
-  return kDone;
+  return State::kDone;
 }
 
 
@@ -301,7 +301,7 @@ core::Command::State SaveBuffersToFileCommand<tGroup>::code(const ::swatch::core
         std::ostringstream err;
         err << "Exception caught. Cannot create dir " << p.parent_path() << ". Please provide a valid path for captures.";
         setStatusMsg(err.str());
-        return kError;
+        return State::kError;
       }
     }
   }
@@ -315,7 +315,7 @@ core::Command::State SaveBuffersToFileCommand<tGroup>::code(const ::swatch::core
   ::mp7::BoardDataFactory::saveToFile(data, filename);
 
   setStatusMsg("Capture completed");
-  return kDone;
+  return State::kDone;
 }
 
 // Template Instance
@@ -358,7 +358,7 @@ core::Command::State LatencyBuffersCommand<tGroup>::code(const ::swatch::core::X
 
   setStatusMsg("Finished configuring buffers in latency mode");
 
-  return kDone;
+  return State::kDone;
 }
 
 template class LatencyBuffersCommand<AbstractChannelsCommand::kRx>;
@@ -404,7 +404,7 @@ core::Command::State EasyLatencyCommand<tGroup>::code(const ::swatch::core::XPar
 
   setStatusMsg(boost::lexical_cast<std::string>(bKind)+" buffers configured in latency mode: depth = "+boost::lexical_cast<std::string>(depth));
 
-  return kDone;
+  return State::kDone;
 }
 
 template<>

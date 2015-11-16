@@ -23,14 +23,6 @@ Object* Functionoid::getParent() {
   return getAncestor(1);
 }
 
-const ActionStatus::State Functionoid::kInitial;
-const ActionStatus::State Functionoid::kScheduled;
-const ActionStatus::State Functionoid::kRunning;
-const ActionStatus::State Functionoid::kError;
-const ActionStatus::State Functionoid::kWarning;
-const ActionStatus::State Functionoid::kDone;
-
-
 std::ostream& operator<<(std::ostream& out, swatch::core::ActionStatus::State s) {
   switch (s) {
     case ActionStatus::kInitial   : out << "Initial"; break;

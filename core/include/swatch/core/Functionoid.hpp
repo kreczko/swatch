@@ -81,12 +81,7 @@ protected:
   
 public:
   typedef ActionStatus::State State;
-  static const ActionStatus::State kInitial = ActionStatus::kInitial;
-  static const ActionStatus::State kScheduled = ActionStatus::kScheduled;
-  static const ActionStatus::State kRunning = ActionStatus::kRunning;
-  static const ActionStatus::State kError = ActionStatus::kError;
-  static const ActionStatus::State kWarning = ActionStatus::kWarning;
-  static const ActionStatus::State kDone = ActionStatus::kDone;
+//
 };
 
 

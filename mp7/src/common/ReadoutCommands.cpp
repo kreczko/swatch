@@ -68,7 +68,7 @@ SetupReadout::code(const ::swatch::core::XParameterSet& aParams)
     std::ostringstream msg;
     msg << "RO buffer Watermarks higher than its size : lwm = %d, hwm - %d, rosize = %d";
     setStatusMsg(msg.str());
-    return kError;
+    return State::kError;
   }
 
   // Enable trigger rules if in internal mode
@@ -127,7 +127,7 @@ SetupReadout::code(const ::swatch::core::XParameterSet& aParams)
   LOG(swatch::logger::kInfo) << "AMC13 output : "  << (not lInternal ? "enabled" : "disabled");
   ro.enableAMC13Output(not lInternal);
   
-  return kDone;
+  return State::kDone;
 }
 
 
@@ -284,7 +284,7 @@ LoadReadoutMenu::code(const ::swatch::core::XParameterSet& aParams)
 
   rc.configureMenu(lMenu);
 
-  return kDone;
+  return State::kDone;
 }
 
 

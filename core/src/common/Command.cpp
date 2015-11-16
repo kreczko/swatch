@@ -101,19 +101,19 @@ void Command::runCode(boost::shared_ptr<ActionableObject::BusyGuard> aActionGuar
   
   // 2) Run the code, handling any exceptions
   try {
-    ActionStatus::State s = this->code(params);
+    State s = this->code(params);
     
     boost::unique_lock<boost::mutex> lock(mutex_);
     gettimeofday(&execEndTime_, NULL);
     switch (s) { 
-      case ActionStatus::kDone :
-      case ActionStatus::kWarning :
+      case State::kDone :
+      case State::kWarning :
         progress_ = 1.0;
-      case kError : 
+      case State::kError : 
         state_ = s;
         break;
       default : 
-        state_ = ActionStatus::kError;
+        state_ = State::kError;
         statusMsg_ = "Command::code() method returned invalid Status enum value '" + boost::lexical_cast<std::string>(s) + "'   \n Original status message was: " + statusMsg_;
         // FIXME: replace with proper logging
         LOG(swatch::logger::kError) << getResource().getId() << "." << getId() << " : " << statusMsg_;
@@ -122,7 +122,7 @@ void Command::runCode(boost::shared_ptr<ActionableObject::BusyGuard> aActionGuar
   catch (const std::exception& e) {
     boost::unique_lock<boost::mutex> lock(mutex_);
     gettimeofday(&execEndTime_, NULL);
-    state_ = ActionStatus::kError;
+    state_ = State::kError;
     statusMsg_ = std::string("An exception of type '" + demangleName(typeid(e).name()) + "' was thrown in Command::code(): ") + e.what();
     // FIXME: replace with proper logging
     LOG(swatch::logger::kError) << getResource().getId() << "." << getId() << " : " << statusMsg_;

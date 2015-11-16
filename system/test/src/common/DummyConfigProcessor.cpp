@@ -49,7 +49,7 @@ public:
     std::string lParameter = params.get<xdata::String>("parameter").value_;
     LOG(logger::kInfo) << getId() << ".exec() running case with 'parameter'='" << lParameter<<"'";
     setStatusMsg("Dummy command successfully completed");
-    return kDone;
+    return State::kDone;
   }
 
 

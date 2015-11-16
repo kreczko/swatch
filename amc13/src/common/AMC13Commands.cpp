@@ -66,7 +66,7 @@ core::Command::State RebootCommand::code(const core::XParameterSet& params) {
       oss << "Firmware versions - T1: 0x" << std::hex << vT1 << ", T2: 0x" << vT2;
       setResult(xdata::Boolean(true));
       setStatusMsg("AMC13 is alive! " + oss.str());
-      return kDone;
+      return State::kDone;
     }
     catch (const uhal::exception::exception& e){
     }
@@ -74,7 +74,7 @@ core::Command::State RebootCommand::code(const core::XParameterSet& params) {
   }
   
   setStatusMsg("AMC13 did not wake up after reboot");
-  return kError;
+  return State::kError;
 }
 
 
@@ -127,7 +127,7 @@ core::Command::State ResetCommand::code(const core::XParameterSet& params) {
     // activate TTC output to all AMCs
     board.enableAllTTC();
 
-    return kDone;
+    return State::kDone;
 }
 
 
@@ -175,7 +175,7 @@ ConfigureTTCCommand::code(const core::XParameterSet& params) {
     // activate TTC output to all AMCs
     board.enableAllTTC();
 
-    return kDone;
+    return State::kDone;
 }
 
 
@@ -230,7 +230,7 @@ ConfigureDAQCommand::code(const core::XParameterSet& params) {
   // Reset T1, just in case
   board.reset(::amc13::AMC13Simple::T1);
 
-  return kDone;
+  return State::kDone;
 }
 
 
@@ -250,7 +250,7 @@ core::Command::State
 StartCommand::code(const core::XParameterSet& params) {
   getParent<AMC13Manager>()->driver().startRun();
   
-  return kDone;
+  return State::kDone;
 }
 
 
@@ -271,7 +271,7 @@ core::Command::State
 StopCommand::code(const core::XParameterSet& params) {
   getParent<AMC13Manager>()->driver().endRun();
 
-  return kDone;
+  return State::kDone;
 }
 
 
