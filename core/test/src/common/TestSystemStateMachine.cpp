@@ -279,7 +279,7 @@ BOOST_FIXTURE_TEST_CASE(TestEngageFSM, SystemStateMachineTestSetup) {
   BOOST_REQUIRE(fsm.getParticipants() == (std::set<const StateMachine*>{&child1.fsm, &child2.fsm}));
   
   // Engaging FSM: should put system & children into FSM's initial state
-  BOOST_CHECK_NO_THROW( sys->engageStateMachine(fsm.getId()) );
+  BOOST_CHECK_NO_THROW( fsm.engage() );
   BOOST_CHECK_EQUAL( sys->getStatus().getStateMachineId(), fsm.getId() );
   BOOST_CHECK_EQUAL( sys->getStatus().getState(), sysState0 );
   BOOST_CHECK_EQUAL( child1.obj.getStatus().getStateMachineId(), child1.fsm.getId());
@@ -290,7 +290,7 @@ BOOST_FIXTURE_TEST_CASE(TestEngageFSM, SystemStateMachineTestSetup) {
   BOOST_CHECK_EQUAL( child3.obj.getStatus().getState(), ActionableStatus::kNullStateId);
   
   // Trying to engage FSM again: should throw, and leave 
-  BOOST_CHECK_THROW( sys->engageStateMachine(fsm.getId()), ResourceInWrongStateMachine );
+  BOOST_CHECK_THROW( fsm.engage(), ResourceInWrongStateMachine );
   BOOST_CHECK_EQUAL( sys->getStatus().getStateMachineId(), fsm.getId() );
   BOOST_CHECK_EQUAL( sys->getStatus().getState(), sysState0 );
   BOOST_CHECK_EQUAL( child1.obj.getStatus().getStateMachineId(), child1.fsm.getId());
@@ -301,8 +301,8 @@ BOOST_FIXTURE_TEST_CASE(TestEngageFSM, SystemStateMachineTestSetup) {
   BOOST_CHECK_EQUAL( child3.obj.getStatus().getState(), ActionableStatus::kNullStateId);  
 
   // Trying to engage another FSM also shouldn't work
-  sys->registerStateMachine("anotherFSM", "otherInitialState", "otherErrorState");
-  BOOST_CHECK_THROW( sys->engageStateMachine("anotherFSM"), ResourceInWrongStateMachine );
+  SystemStateMachine& anotherFSM = sys->registerStateMachine("anotherFSM", "otherInitialState", "otherErrorState");
+  BOOST_CHECK_THROW( anotherFSM.engage(), ResourceInWrongStateMachine );
   BOOST_CHECK_EQUAL( sys->getStatus().getStateMachineId(), fsm.getId() );
   BOOST_CHECK_EQUAL( sys->getStatus().getState(), sysState0 );
   BOOST_CHECK_EQUAL( child1.obj.getStatus().getStateMachineId(), child1.fsm.getId());
@@ -325,8 +325,8 @@ BOOST_FIXTURE_TEST_CASE(TestEngageFSMChildComplication, SystemStateMachineTestSe
   BOOST_REQUIRE(fsm.getParticipants() == (std::set<const StateMachine*>{&child1.fsm, &child2.fsm}));
   
   // Engaging FSM when a child is already engaged: should throw, and have no effect
-  child2.obj.engageStateMachine( child2.fsm.getId() );
-  BOOST_CHECK_THROW( sys->engageStateMachine(fsm.getId()), ResourceInWrongStateMachine );
+  child2.fsm.engage();
+  BOOST_CHECK_THROW( fsm.engage(), ResourceInWrongStateMachine );
   BOOST_CHECK_EQUAL( sys->getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId );
   BOOST_CHECK_EQUAL( sys->getStatus().getState(), ActionableStatus::kNullStateId );
   BOOST_CHECK_EQUAL( child1.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
@@ -339,8 +339,8 @@ BOOST_FIXTURE_TEST_CASE(TestEngageFSMChildComplication, SystemStateMachineTestSe
   // Engaging FSM after disengaging child2 & engaging child3 FSM:
   // ... should put system & children into FSM's initial state
   child2.fsm.disengage();
-  child3.obj.engageStateMachine(child3.fsm.getId());
-  BOOST_CHECK_NO_THROW( sys->engageStateMachine(fsm.getId()) );
+  child3.fsm.engage();
+  BOOST_CHECK_NO_THROW( fsm.engage() );
   BOOST_CHECK_EQUAL( sys->getStatus().getStateMachineId(), fsm.getId() );
   BOOST_CHECK_EQUAL( sys->getStatus().getState(), sysState0 );
   BOOST_CHECK_EQUAL( child1.obj.getStatus().getStateMachineId(), child1.fsm.getId());
@@ -375,7 +375,7 @@ BOOST_FIXTURE_TEST_CASE(TestDisengageFSM, SystemStateMachineTestSetup) {
   BOOST_CHECK_EQUAL( child3.obj.getStatus().getState(), ActionableStatus::kNullStateId);
   
   // Engage FSM before continuing unit tests for disengage
-  sys->engageStateMachine(fsm.getId());
+  fsm.engage();
   BOOST_REQUIRE_EQUAL( sys->getStatus().getStateMachineId(), fsm.getId());
   BOOST_REQUIRE_EQUAL( sys->getStatus().getState(), sysState0);
   BOOST_REQUIRE_EQUAL( child1.obj.getStatus().getStateMachineId(), child1.fsm.getId());
@@ -418,7 +418,7 @@ BOOST_FIXTURE_TEST_CASE(TestDisengageFSMChildComplications, SystemStateMachineTe
 
   // EngageFSM & confirm correct state before starting tests
   BOOST_REQUIRE(fsm.getParticipants() == (std::set<const StateMachine*>{&child1.fsm, &child2.fsm}));
-  sys->engageStateMachine(fsm.getId());
+  fsm.engage();
   BOOST_REQUIRE_EQUAL( sys->getStatus().getStateMachineId(), fsm.getId());
   BOOST_REQUIRE_EQUAL( sys->getStatus().getState(), sysState0);
   BOOST_REQUIRE_EQUAL( child1.obj.getStatus().getStateMachineId(), child1.fsm.getId());
@@ -441,7 +441,7 @@ BOOST_FIXTURE_TEST_CASE(TestDisengageFSMChildComplications, SystemStateMachineTe
   BOOST_CHECK_EQUAL( child3.obj.getStatus().getState(), ActionableStatus::kNullStateId);
 
   // Disengaging system FSM after re-engaging child FSM: Should return system & children to constructed state
-  child2.obj.engageStateMachine(child2.fsm.getId());
+  child2.fsm.engage();
   BOOST_CHECK_NO_THROW( fsm.disengage() );
   BOOST_CHECK_EQUAL( sys->getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
   BOOST_CHECK_EQUAL( sys->getStatus().getState(), ActionableStatus::kNullStateId);
@@ -466,7 +466,7 @@ BOOST_FIXTURE_TEST_CASE(TestRunEmptyTransition, SystemStateMachineTestSetup) {
 
   // Preparation
   sysAtoB->add(children.begin(), children.end(), child1.fsm.getId(), childStateA, child1.AtoB->getId());
-  sys->engageStateMachine(fsm.getId());
+  fsm.engage();
   child1.fsm.disengage();
   child2.fsm.disengage();
   child3.fsm.disengage();
@@ -517,8 +517,8 @@ BOOST_FIXTURE_TEST_CASE(TestRunTransitionDisengagedFSM, SystemStateMachineTestSe
   BOOST_CHECK_EQUAL( child3.obj.getStatus().getState(), ActionableStatus::kNullStateId);
 
   // Running transition with other FSM engaged: should throw, and leave state/TransitionStatus unchanged
-  const SystemStateMachine& otherFSM = sys->registerStateMachine("anotherFSM", sysState0, sysStateErr);
-  sys->engageStateMachine("anotherFSM");
+  SystemStateMachine& otherFSM = sys->registerStateMachine("anotherFSM", sysState0, sysStateErr);
+  otherFSM.engage();
   BOOST_REQUIRE_EQUAL( sys->getStatus().getStateMachineId(), otherFSM.getId() );
   BOOST_REQUIRE_EQUAL( sys->getStatus().getState(), sysState0);
   BOOST_CHECK_THROW( sysItoA->exec(gk, false), ResourceInWrongStateMachine );
@@ -537,7 +537,7 @@ BOOST_FIXTURE_TEST_CASE(TestRunTransitionMissingParams, SystemStateMachineTestSe
   child3.ItoA->add(child3.cmdNormal2);
 
   // Engage FSM, and confirm objects are ready for following tests
-  sys->engageStateMachine( fsm.getId() );
+  fsm.engage();
   BOOST_REQUIRE_EQUAL( sys->getStatus().getStateMachineId(), fsm.getId());
   BOOST_REQUIRE_EQUAL( sys->getStatus().getState(), sysState0);
   BOOST_REQUIRE_EQUAL( child1.obj.getStatus().getStateMachineId(), child1.fsm.getId());
@@ -592,7 +592,7 @@ BOOST_FIXTURE_TEST_CASE(TestRunGoodTransition, SystemStateMachineTestSetup) {
   child3.ItoA->add(child3.cmdNormal1);
   sysItoA->add( std::vector<StateMachine::Transition*>{child1.ItoA, child2.ItoA});
   sysItoA->add( std::vector<StateMachine::Transition*>{child3.ItoA});
-  sys->engageStateMachine(fsm.getId());
+  fsm.engage();
   BOOST_REQUIRE_EQUAL(sys->getStatus().getStateMachineId(), fsm.getId());
   BOOST_REQUIRE_EQUAL(sys->getStatus().getState(), sysState0);
   BOOST_REQUIRE_EQUAL(sysItoA->getStatus().getState(), Functionoid::State::kInitial);
@@ -671,7 +671,7 @@ BOOST_FIXTURE_TEST_CASE(TestRunWarningTransition, SystemStateMachineTestSetup) {
   child3.ItoA->add(child3.cmdNormal1);
   sysItoA->add( std::vector<StateMachine::Transition*>{child1.ItoA, child2.ItoA});
   sysItoA->add( std::vector<StateMachine::Transition*>{child3.ItoA});
-  sys->engageStateMachine(fsm.getId());
+  fsm.engage();
   BOOST_REQUIRE_EQUAL(sys->getStatus().getStateMachineId(), fsm.getId());
   BOOST_REQUIRE_EQUAL(sys->getStatus().getState(), sysState0);
   BOOST_REQUIRE_EQUAL(sysItoA->getStatus().getState(), Functionoid::State::kInitial);
@@ -750,7 +750,7 @@ BOOST_FIXTURE_TEST_CASE(TestRunErrorTransition, SystemStateMachineTestSetup) {
   child3.ItoA->add(child3.cmdNormal1);
   sysItoA->add( std::vector<StateMachine::Transition*>{child1.ItoA, child2.ItoA});
   sysItoA->add( std::vector<StateMachine::Transition*>{child3.ItoA});
-  sys->engageStateMachine(fsm.getId());
+  fsm.engage();
   BOOST_REQUIRE_EQUAL(sys->getStatus().getStateMachineId(), fsm.getId());
   BOOST_REQUIRE_EQUAL(sys->getStatus().getState(), sysState0);
   BOOST_REQUIRE_EQUAL(sysItoA->getStatus().getState(), Functionoid::State::kInitial);
@@ -816,7 +816,7 @@ BOOST_FIXTURE_TEST_CASE(TestRunTransitionWrongSystemState, SystemStateMachineTes
   LOG(kInfo) << "Running SystemStateMachineTestSuite/TestRunTransitionWrongSystemState";
 
   // Preparation: Engage FSM, check state before starting unit tests
-  sys->engageStateMachine(fsm.getId());
+  fsm.engage();
   BOOST_REQUIRE_EQUAL(sys->getStatus().getStateMachineId(), fsm.getId());
   BOOST_REQUIRE_EQUAL(sys->getStatus().getState(), sysState0);
   BOOST_REQUIRE_EQUAL(sysItoA->getStatus().getState(), Functionoid::State::kInitial);
@@ -848,7 +848,7 @@ BOOST_FIXTURE_TEST_CASE(TestRunTransitionWrongChildState, SystemStateMachineTest
   // Preparation: Add children to transitions, engage FSM, run child1 I->A already, and check state before starting unit tests
   sysItoA->add(children.begin(), children.end(), child1.fsm.getId(), childState0, child1.ItoA->getId());
   sysItoA->add(std::vector<StateMachine::Transition*>{&child1.fsm.addTransition("tmp_AtoA", childStateA, childStateA)});
-  sys->engageStateMachine(fsm.getId());
+  fsm.engage();
   child1.ItoA->exec(gk, false);
   BOOST_REQUIRE_EQUAL(sys->getStatus().getStateMachineId(), fsm.getId());
   BOOST_REQUIRE_EQUAL(sys->getStatus().getState(), sysState0);
@@ -919,10 +919,10 @@ BOOST_FIXTURE_TEST_CASE(TestRunTransitionDisengagedChildFSM, SystemStateMachineT
   //   * Require that state is correct before testing
   sysItoA->add(children.begin(), children.end()-1, child1.fsm.getId(), childState0, child1.ItoA->getId());
   sysAtoB->add(children.begin(), children.end(), child1.fsm.getId(), childStateA, child1.AtoB->getId());
-  sys->engageStateMachine(fsm.getId());
+  fsm.engage();
   child1.fsm.disengage();
   StateMachine& child1OtherFSM = child1.obj.registerStateMachine("anotherFSM", childState0, childStateErr);
-  child1.obj.engageStateMachine(child1OtherFSM.getId());
+  child1OtherFSM.engage();
   BOOST_REQUIRE( fsm.getParticipants() == (std::set<const StateMachine*>{&child1.fsm, &child2.fsm, &child3.fsm}) );
   BOOST_REQUIRE_EQUAL(sys->getStatus().getStateMachineId(), fsm.getId());
   BOOST_REQUIRE_EQUAL(sys->getStatus().getState(), sysState0);
@@ -948,7 +948,7 @@ BOOST_FIXTURE_TEST_CASE(TestRunTransitionDisengagedChildFSM, SystemStateMachineT
   // Running transition after child1 engaged in correct FSM again: 
   // ... should work, even with child3 in wrong FSM
   child1OtherFSM.disengage();
-  child1.obj.engageStateMachine(child1.fsm.getId());
+  child1.fsm.engage();
   child3.fsm.disengage();
   BOOST_CHECK_NO_THROW( sysItoA->exec(gk, false));
   BOOST_CHECK_EQUAL( sys->getStatus().getStateMachineId(), fsm.getId() );
@@ -982,7 +982,7 @@ BOOST_FIXTURE_TEST_CASE(TestResetFSM, SystemStateMachineTestSetup) {
   // Add children to system FSM, engage, and confirm initial state to prepare for following tests
   sysItoA->add(children.begin(), children.end()-1, child1.fsm.getId(), childState0, child1.ItoA->getId());
   BOOST_REQUIRE( fsm.getParticipants() == (std::set<const StateMachine*>{&child1.fsm, &child2.fsm}));
-  BOOST_REQUIRE_NO_THROW( sys->engageStateMachine(fsm.getId()) );
+  BOOST_REQUIRE_NO_THROW( fsm.engage() );
   BOOST_REQUIRE_EQUAL( sys->getStatus().getStateMachineId(), fsm.getId() );
   BOOST_REQUIRE_EQUAL( sys->getStatus().getState(), sysState0 );
   BOOST_REQUIRE_EQUAL( child1.obj.getStatus().getStateMachineId(), child1.fsm.getId() );
@@ -1051,7 +1051,7 @@ BOOST_FIXTURE_TEST_CASE(TestResetFSMChildDisengaged, SystemStateMachineTestSetup
 
   // Preparation: add children to system FSM, engage, run "I->A" transition & disengage 1 child 
   sysItoA->add(children.begin(), children.end(), child1.fsm.getId(), childState0, child1.ItoA->getId());
-  sys->engageStateMachine(fsm.getId());
+  fsm.engage();
   sysItoA->exec(DummyGateKeeper(), false);
   child1.fsm.disengage();
   BOOST_REQUIRE_EQUAL(sysItoA->getStatus().getState(), Functionoid::State::kDone);

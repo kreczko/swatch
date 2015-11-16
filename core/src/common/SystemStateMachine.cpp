@@ -464,16 +464,46 @@ void SystemStateMachine::reset()
 
   getActionable().mStatus.mState = getInitialState();
 
-	BOOST_FOREACH( StateMachine* sm, mNonConstChildFSMs ) {
-    ActionableObject& lChild = sm->getActionable();
-    if( lChild.mStatus.getStateMachineId() == sm->getId() )
-      lChild.mStatus.mState = sm->getInitialState();
+  for(std::set<StateMachine*>::const_iterator smIt=mNonConstChildFSMs.begin(); smIt != mNonConstChildFSMs.end(); smIt++)
+  {
+    ActionableObject& lChild = (*smIt)->getActionable();
+    if( lChild.mStatus.getStateMachineId() == (*smIt)->getId() )
+      lChild.mStatus.mState = (*smIt)->getInitialState();
   }  
 
 }
 
+
 //------------------------------------------------------------------------------------
-// TODO: Shouldn't disengage call Child's disengage?
+void SystemStateMachine::engage()
+{
+  ActionableSystem::tLockGuardMap lLockGuardMap = ActionableSystem::lockMutexes(*this);
+
+  // Throw if system or any of the participating children are already in a state machine
+  if(getActionable().mStatus.getStateMachineId() != ActionableStatus::kNullStateMachineId )
+    throw ResourceInWrongStateMachine("Cannot engage other state machine; system '"+getPath()+"' currently in state machine"+getActionable().mStatus.getStateMachineId()+"'");
+  
+  for(std::set<const StateMachine*>::const_iterator lIt=this->getParticipants().begin(); lIt!=this->getParticipants().end(); lIt++)
+  {
+    const ActionableObject& lChild = (*lIt)->getActionable();
+    if( lChild.mStatus.isEngaged() )
+      throw ResourceInWrongStateMachine("Cannot engage other state machine; resource '"+lChild.getPath()+"' currently in state machine '"+lChild.mStatus.getStateMachineId()+"'");
+  }
+  
+  // ... otherwise all is good, engage system & all participating children in appropriate state machine
+  getActionable().mStatus.mStateMachineId = getId();
+  getActionable().mStatus.mState = getInitialState();
+  
+  for(auto smIt=mNonConstChildFSMs.begin(); smIt != mNonConstChildFSMs.end(); smIt++)
+  {
+    ActionableObject& lObj = (*smIt)->getActionable();
+    lObj.mStatus.mStateMachineId = (*smIt)->getId();
+    lObj.mStatus.mState = (*smIt)->getInitialState();
+  }
+}
+
+
+//------------------------------------------------------------------------------------
 void SystemStateMachine::disengage()
 {
   ActionableSystem::tLockGuardMap lLockGuardMap = ActionableSystem::lockMutexes(*this);
@@ -481,17 +511,17 @@ void SystemStateMachine::disengage()
   // Throw if system/children are not in this state machine or running transition
   checkStateMachineEngagedAndNotInTransition("disengage");
 
-
-//  getResource().mStatus.mFSM = NULL;
-	getActionable().mStatus.mStateMachineId = ActionableStatus::kNullStateMachineId;
+  getActionable().mStatus.mStateMachineId = ActionableStatus::kNullStateMachineId;
   getActionable().mStatus.mState = ActionableStatus::kNullStateId;
-  
-	BOOST_FOREACH( StateMachine* sm, mNonConstChildFSMs ) {
-    ActionableObject& lChild = sm->getActionable();
-    if( lChild.mStatus.getStateMachineId() == sm->getId() ) {
-			lChild.mStatus.mStateMachineId = ActionableStatus::kNullStateMachineId;
+
+  for(auto smIt = mNonConstChildFSMs.begin(); smIt!=mNonConstChildFSMs.end(); smIt++)
+  {
+    ActionableObject& lChild = (*smIt)->getActionable();
+    if( lChild.mStatus.getStateMachineId() == (*smIt)->getId() )
+    {
+      lChild.mStatus.mStateMachineId = ActionableStatus::kNullStateMachineId;
       lChild.mStatus.mState = ActionableStatus::kNullStateId;
-		}
+    }
   }  
 }
 
@@ -516,9 +546,11 @@ void SystemStateMachine::checkStateMachineEngagedAndNotInTransition(const std::s
     throw ActionableSystemIsBusy("Cannot "+aAction+" state machine '"+getId()+"'; resource '"+getActionable().getPath()+"' is busy in transition '"+t->getId()+"'");
   
   // Throw if any children in wrong state machine, or 
-	BOOST_FOREACH( const StateMachine* sm, getParticipants()) {
-		const ActionableObject& lChild = sm->getActionable();
-		if(lChild.mStatus.getStateMachineId() != sm->getId())
+  for(auto smIt=getParticipants().begin(); smIt!=getParticipants().end(); smIt++)
+  {
+    const StateMachine* sm = *smIt;
+    const ActionableObject& lChild = (*smIt)->getActionable();
+    if(lChild.mStatus.getStateMachineId() != sm->getId())
     {
       std::ostringstream oss;
       oss << "Cannot " << aAction << " state machine '" << sm->getId() << "' of '" << sm->getActionable().getPath() << "'; ";

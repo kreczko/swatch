@@ -55,36 +55,6 @@ ActionableSystem::Status ActionableSystem::getStatus() const
 
 
 //------------------------------------------------------------------------------------
-void ActionableSystem::engageStateMachine(const std::string& aFSM)
-{
-  const SystemStateMachine& lOp = getStateMachine(aFSM);
-
-  tLockGuardMap lLockGuardMap = lockMutexes(lOp);
-
-  // Throw if system or any of the participating children are already in a state machine
-  if(mStatus.getStateMachineId() != ActionableStatus::kNullStateMachineId )
-    throw ResourceInWrongStateMachine("Cannot engage other state machine; system '"+getPath()+"' currently in state machine"+mStatus.getStateMachineId()+"'");
-  
-  for(std::set<const StateMachine*>::const_iterator lIt=lOp.getParticipants().begin(); lIt!=lOp.getParticipants().end(); lIt++)
-  {
-    const ActionableObject& lChild = (*lIt)->getActionable();
-    if( lChild.mStatus.isEngaged() )
-  	  throw ResourceInWrongStateMachine("Cannot engage other state machine; resource '"+lChild.getPath()+"' currently in state machine '"+lChild.mStatus.getStateMachineId()+"'");
-  }
-  
-  // ... otherwise all is good, engage system & all participating children in appropriate state machine
-	mStatus.mStateMachineId = lOp.getId();
-  mStatus.mState = lOp.getInitialState();
-  
-  BOOST_FOREACH( const StateMachine* sm, lOp.getParticipants() ) {
-  	ActionableObject& lObj = sm->mResource;
-  	lObj.mStatus.mStateMachineId = sm->getId();
-    lObj.mStatus.mState = sm->getInitialState();
-  }
-}
-
-
-//------------------------------------------------------------------------------------
 SystemStateMachine& ActionableSystem::registerStateMachine( const std::string& aId, const std::string& aInitialState, const std::string& aErrorState ) {
   if (mFSMs.count(aId))
     throw StateMachineAlreadyExistsInActionableObject( "State machine With ID '"+aId+"' already exists" );

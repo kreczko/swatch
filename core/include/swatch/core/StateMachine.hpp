@@ -70,6 +70,8 @@ public:
    */
   Transition& addTransition(const std::string& aTransitionId, const std::string& aFromState, const std::string& aToState);
 
+  void engage();
+  
   //! Disengage this FSM
   void disengage();
 

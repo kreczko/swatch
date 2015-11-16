@@ -121,6 +121,21 @@ StateMachine::Transition& StateMachine::addTransition(const std::string& aTransi
 
 
 //------------------------------------------------------------------------------------
+void StateMachine::engage()
+{
+  boost::lock_guard<boost::mutex> lGuard(getActionable().mMutex);
+  
+  // Throw if currently in other state machine
+  if(getActionable().mStatus.getStateMachineId() != ActionableStatus::kNullStateMachineId )
+    throw ResourceInWrongStateMachine("Cannot engage other state machine; resource '"+getPath()+"' currently in state machine '"+getActionable().mStatus.getStateMachineId()+"'");
+
+  //  mStatus.mFSM = & lOp;
+  getActionable().mStatus.mStateMachineId = getId();
+  getActionable().mStatus.mState = getInitialState();
+}
+
+
+//------------------------------------------------------------------------------------
 void StateMachine::disengage()
 {
   boost::lock_guard<boost::mutex> lGuard(mResource.mMutex);

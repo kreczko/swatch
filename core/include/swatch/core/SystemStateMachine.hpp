@@ -214,6 +214,9 @@ public:
    */
   SystemTransition& addTransition(const std::string& aTransitionId, const std::string& aFromState, const std::string& aToState);
 
+  //! Engage this FSM, and FSMs of participating child objects
+  void engage();
+
   //! Disengage this FSM, and FSMs of participating child objects
   void disengage();
   

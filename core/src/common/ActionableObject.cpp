@@ -165,21 +165,6 @@ ActionableObject::Status ActionableObject::getStatus() const {
 
 
 //------------------------------------------------------------------------------------
-void ActionableObject::engageStateMachine(const std::string& aFSM) {
-  boost::lock_guard<boost::mutex> lGuard(mMutex);
-  
-  // Throw if currently in other state machine
-  if(mStatus.getStateMachineId() != ActionableStatus::kNullStateMachineId )
-    throw ResourceInWrongStateMachine("Cannot engage other state machine; resource '"+getPath()+"' currently in state machine '"+mStatus.getStateMachineId()+"'");
-
-  const StateMachine& lOp = getStateMachine(aFSM);
-//  mStatus.mFSM = & lOp;
-  mStatus.mStateMachineId = lOp.getId();
-  mStatus.mState = lOp.getInitialState();
-}
-
-
-//------------------------------------------------------------------------------------
 void ActionableObject::Deleter::operator ()(Object* aObject) {
   if(ActionableObject* lActionableObj = dynamic_cast<ActionableObject*>(aObject))
   {
