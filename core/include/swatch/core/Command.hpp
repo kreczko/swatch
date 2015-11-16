@@ -36,7 +36,7 @@ class ActionableObject;
 class CommandStatus;
 
 //! Represents a one-shot action on a resource (a class that inherits from swatch::core::ActionableObject)
-class Command : public ActionableFunctionoid {
+class Command : public ObjectFunctionoid {
 public:
 
     virtual ~Command();

@@ -29,7 +29,7 @@ class CommandVecStatus;
 class GateKeeper;
 
 //! Represents a sequence of commands, executed in succession.
-class CommandVec : public ActionableFunctionoid {
+class CommandVec : public ObjectFunctionoid {
 protected:
   CommandVec( const std::string& aId, ActionableObject& aResource);
   

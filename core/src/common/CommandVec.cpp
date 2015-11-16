@@ -17,7 +17,7 @@ namespace core {
 
 
 CommandVec::CommandVec( const std::string& aId, ActionableObject& aActionable) :
-  ActionableFunctionoid( aId, aActionable ),
+  ObjectFunctionoid( aId, aActionable ),
 //  mResource(aResource),
   mCommands(),
   mCachedParameters(),

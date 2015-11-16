@@ -102,9 +102,9 @@ protected:
 /**
  * @class ActionableFunctoid
  */
-class ActionableFunctionoid : public Functionoid {
+class ObjectFunctionoid : public Functionoid {
 public:
-  virtual ~ActionableFunctionoid() {
+  virtual ~ObjectFunctionoid() {
 
   }
   
@@ -118,7 +118,7 @@ public:
   
 protected:
 
-  ActionableFunctionoid(const std::string& aId, ActionableObject& aActionable );
+  ObjectFunctionoid(const std::string& aId, ActionableObject& aActionable );
   
 };
 

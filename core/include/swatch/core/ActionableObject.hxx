@@ -11,7 +11,7 @@ namespace swatch {
 namespace core {
 
 template<typename T>
-const T& ActionableFunctionoid::getActionable() const {
+const T& ObjectFunctionoid::getActionable() const {
   BOOST_STATIC_ASSERT( (boost::is_base_of<swatch::core::ActionableObject,T>::value) );
 
   return dynamic_cast<const T&>( getResource<const T>() );
@@ -19,7 +19,7 @@ const T& ActionableFunctionoid::getActionable() const {
 
 
 template<typename T>
-T& ActionableFunctionoid::getActionable() {
+T& ObjectFunctionoid::getActionable() {
   BOOST_STATIC_ASSERT( (boost::is_base_of<swatch::core::ActionableObject,T>::value) );
 
   return dynamic_cast<T&>( getResource<T>() );

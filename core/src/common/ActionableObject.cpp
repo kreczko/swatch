@@ -67,13 +67,13 @@ const std::string& ActionableStatus::getStateMachineId() const {
 
 
 //------------------------------------------------------------------------------------
-ActionableFunctionoid::ActionableFunctionoid(const std::string& aId, ActionableObject& aActionable) :
+ObjectFunctionoid::ObjectFunctionoid(const std::string& aId, ActionableObject& aActionable) :
 Functionoid(aId, aActionable) {
 }
 
 
 //------------------------------------------------------------------------------------
-const ActionableObject& ActionableFunctionoid::getActionable() const {
+const ActionableObject& ObjectFunctionoid::getActionable() const {
 	
 	try {
 		return getResource<const ActionableObject>();
@@ -85,7 +85,7 @@ const ActionableObject& ActionableFunctionoid::getActionable() const {
 
 
 //------------------------------------------------------------------------------------
-ActionableObject& ActionableFunctionoid::getActionable() {
+ActionableObject& ObjectFunctionoid::getActionable() {
 	
 	try {
 		return getResource<ActionableObject>();
