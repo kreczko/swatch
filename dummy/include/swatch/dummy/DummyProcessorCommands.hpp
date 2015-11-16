@@ -19,7 +19,7 @@ namespace dummy {
     
 class DummyProcCommand : public swatch::core::Command {
 public:
-  DummyProcCommand(const std::string& aId);
+  DummyProcCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
   ~DummyProcCommand();
   
   void sleep(const core::XParameterSet& aParams);
@@ -28,7 +28,7 @@ public:
     
 class DummyRebootCommand : public DummyProcCommand {
 public:
-  DummyRebootCommand(const std::string& aId);
+  DummyRebootCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
   ~DummyRebootCommand();
         
   virtual State code(const swatch::core::XParameterSet& );
@@ -36,7 +36,7 @@ public:
     
 class DummyResetCommand : public DummyProcCommand {
 public:
-  DummyResetCommand(const std::string& aId);
+  DummyResetCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
   ~DummyResetCommand();
         
   virtual State code(const swatch::core::XParameterSet& );
@@ -44,7 +44,7 @@ public:
 
 class DummyConfigureTxCommand : public DummyProcCommand {
 public:
-  DummyConfigureTxCommand(const std::string& aId);
+  DummyConfigureTxCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
   ~DummyConfigureTxCommand();
   
   virtual State code(const swatch::core::XParameterSet& params);
@@ -52,7 +52,7 @@ public:
 
 class DummyConfigureRxCommand : public DummyProcCommand {
 public:
-  DummyConfigureRxCommand(const std::string& aId);
+  DummyConfigureRxCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
   ~DummyConfigureRxCommand();
   
   virtual State code(const swatch::core::XParameterSet& params);
@@ -61,7 +61,7 @@ public:
 
 class DummyConfigureDaqCommand : public DummyProcCommand {
 public:
-  DummyConfigureDaqCommand(const std::string& aId);
+  DummyConfigureDaqCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
   ~DummyConfigureDaqCommand();
 
   virtual State code(const swatch::core::XParameterSet& params);
@@ -70,7 +70,7 @@ public:
 
 class DummyConfigureAlgoCommand : public DummyProcCommand {
 public:
-  DummyConfigureAlgoCommand(const std::string& aId);
+  DummyConfigureAlgoCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
   ~DummyConfigureAlgoCommand();
 
   State code(const swatch::core::XParameterSet& params);       

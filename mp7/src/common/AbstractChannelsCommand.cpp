@@ -55,16 +55,16 @@ AbstractChannelsCommand::~AbstractChannelsCommand() {
 std::vector<uint32_t>
 AbstractChannelsCommand::getPortIds() const {
   // Get the resource
-  const swatch::mp7::MP7Processor* p = getActionable<swatch::mp7::MP7Processor>();
+  const swatch::mp7::MP7Processor& p = getActionable<swatch::mp7::MP7Processor>();
 
   // Pick the right set of ports
   const std::vector<swatch::processor::ProcessorPortStub>* stubs;
   switch ( mGroup ) {
     case kRx:
-      stubs = &(p->getStub().rxPorts);
+      stubs = &(p.getStub().rxPorts);
       break;
     case kTx:
-      stubs = &(p->getStub().txPorts);
+      stubs = &(p.getStub().txPorts);
       break;
     default:
       throw std::runtime_error("Aaaaargh");

@@ -23,9 +23,9 @@ namespace test {
 struct ThreadPoolSetup {
 public:
   ThreadPoolSetup() :
-      cmd1( handler1.registerFunctionoid<DummyCommand>("cmd") ),
-      cmd2( handler2.registerFunctionoid<DummyCommand>("cmd") ),
-      cmd3( handler3.registerFunctionoid<DummyCommand>("cmd") ),
+      cmd1( handler1.registerCommand<DummyCommand>("cmd") ),
+      cmd2( handler2.registerCommand<DummyCommand>("cmd") ),
+      cmd3( handler3.registerCommand<DummyCommand>("cmd") ),
       params(),
       wait_time_in_ms(10)
   {

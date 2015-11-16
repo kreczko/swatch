@@ -22,11 +22,11 @@ namespace test {
       child1(obj->add(new DummyActionableObject("child1"), ActionableObject::Deleter())),
       grandChild1(child1.add(new DummyActionableObject("grandChild1"), ActionableObject::Deleter())),
       grandChild2(child1.add(new DummyActionableObject("grandChild2"), ActionableObject::Deleter())),
-      cmdNormal1( obj->registerFunctionoid<DummyCommand>("cmdNormal1") ),
-      cmdNormal2( obj->registerFunctionoid<DummyCommand>("cmdNormal2") ),
-      cmdWarning( obj->registerFunctionoid<DummyWarningCommand>("cmdWarning") ),
-      cmdError( obj->registerFunctionoid<DummyErrorCommand>("cmdError") ),
-      cmdSeq( obj->registerCommandSequence(cmdSeqId, cmdNormal1).then(cmdNormal2) ),
+      cmdNormal1( obj->registerCommand<DummyCommand>("cmdNormal1") ),
+      cmdNormal2( obj->registerCommand<DummyCommand>("cmdNormal2") ),
+      cmdWarning( obj->registerCommand<DummyWarningCommand>("cmdWarning") ),
+      cmdError( obj->registerCommand<DummyErrorCommand>("cmdError") ),
+      cmdSeq( obj->registerSequence(cmdSeqId, cmdNormal1).then(cmdNormal2) ),
       testFSM( obj->registerStateMachine("myTestFSM" , fsmState0, fsmStateError) )
     {
       testFSM.addState(fsmStateA);
@@ -169,8 +169,8 @@ BOOST_AUTO_TEST_CASE(TestAddTransitionSteps) {
   LOG(kInfo) << "Running StateMachineTestSuite/TestAddTransitionSteps";
 
   DummyActionableObject obj("dummy");
-  Command& cmd = obj.registerFunctionoid<DummyCommand>("aCmd");
-  CommandSequence& cmdSeq = obj.registerCommandSequence("aCmdSeq", cmd);
+  Command& cmd = obj.registerCommand<DummyCommand>("aCmd");
+  CommandSequence& cmdSeq = obj.registerSequence("aCmdSeq", cmd);
   swatch::core::StateMachine& fsm = obj.registerStateMachine("anOp", "state0", "errState");
   fsm.addState("state1");
   
@@ -207,7 +207,7 @@ BOOST_AUTO_TEST_CASE(TestAddTransitionSteps) {
   
   // 4) Adding command from other object: Should throw, and leave transition unchanged
   DummyActionableObject obj2("dummy2");
-  Command& cmd2 = obj2.registerFunctionoid<DummyCommand>("aCmd");
+  Command& cmd2 = obj2.registerCommand<DummyCommand>("aCmd");
   BOOST_CHECK_THROW(tA.add(cmd2), InvalidResource);
   BOOST_CHECK_EQUAL(tA.size(), size_t(2 + cmdSeq.size()));
 }

@@ -43,7 +43,7 @@ public:
 protected:
 
   template<typename ResultType>
-  AbstractChannelsCommand( const std::string& aId, ChannelGroup aGroup, const ResultType& aDefault );
+  AbstractChannelsCommand( const std::string& aId, swatch::core::ActionableObject& aActionable, ChannelGroup aGroup, const ResultType& aDefault );
 
   ::mp7::ChannelsManager getChannelsMgr(const swatch::core::XParameterSet& aParams);
 
@@ -58,8 +58,8 @@ private:
 
 
 template<typename ResultType>
-AbstractChannelsCommand::AbstractChannelsCommand( const std::string& aId , ChannelGroup aGroup, const ResultType& aDefault ) :
-  swatch::core::Command(aId, aDefault),
+AbstractChannelsCommand::AbstractChannelsCommand( const std::string& aId , swatch::core::ActionableObject& aActionable, ChannelGroup aGroup, const ResultType& aDefault ) :
+  swatch::core::Command(aId, aActionable, aDefault),
   mGroup(aGroup) {
   registerParameter(kPortSelection,xdata::String());
 }

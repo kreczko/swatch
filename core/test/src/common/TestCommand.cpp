@@ -29,10 +29,10 @@ namespace test {
 struct CommandTestSetup {
   CommandTestSetup():
     obj( new DummyActionableObject(), ActionableObject::Deleter() ),
-    cmd( obj->registerFunctionoid<DummyCommand>("dummy_cmd") ),
-    warning_cmd( obj->registerFunctionoid<DummyWarningCommand>("dummy_warning_cmd") ),
-    error_cmd( obj->registerFunctionoid<DummyErrorCommand>("dummy_error_cmd") ),
-    throw_cmd( obj->registerFunctionoid<DummyThrowCommand>("dummy_throw_cmd") )
+    cmd( obj->registerCommand<DummyCommand>("dummy_cmd") ),
+    warning_cmd( obj->registerCommand<DummyWarningCommand>("dummy_warning_cmd") ),
+    error_cmd( obj->registerCommand<DummyErrorCommand>("dummy_error_cmd") ),
+    throw_cmd( obj->registerCommand<DummyThrowCommand>("dummy_throw_cmd") )
   {
   }
   

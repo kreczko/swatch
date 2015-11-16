@@ -46,10 +46,10 @@ ActionableObjectTestSetup::ActionableObjectTestSetup() :
   deleter( new ActionableObject::Deleter() ),
   testOp( handler->registerStateMachine("myTestOp" , opInitialState, "StateE") )
 { 
-  handler->registerFunctionoid<DummyCommand>("dummy_1");//, new DummyCommand(&handler));
-  handler->registerFunctionoid<DummyCommand>("dummy_2");//, new DummyCommand(&handler));
-  handler->registerFunctionoid<DummyCommand>("dummy_3");//, new DummyCommand(&handler));
-  handler->registerFunctionoid<DummySleepCommand>("sleep");
+  handler->registerCommand<DummyCommand>("dummy_1");//, new DummyCommand(&handler));
+  handler->registerCommand<DummyCommand>("dummy_2");//, new DummyCommand(&handler));
+  handler->registerCommand<DummyCommand>("dummy_3");//, new DummyCommand(&handler));
+  handler->registerCommand<DummySleepCommand>("sleep");
   handler->registerStateMachine("test_2", "0", "err");
   
   testOp.addState(opStateA);
@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_SUITE( ActionableObjectTestSuite)
 BOOST_FIXTURE_TEST_CASE(TestRegisterCommand,  ActionableObjectTestSetup) {
   LOG(kInfo) << "Running ActionableObjectTestSuite/TestRegisterCommand";
   size_t n_commands = handler->getCommands().size();
-  Command& registeredCmd = handler->registerFunctionoid<DummyCommand>("dummy_5000");
+  Command& registeredCmd = handler->registerCommand<DummyCommand>("dummy_5000");
   
   size_t n_commands_after = handler->getCommands().size();
   BOOST_CHECK_EQUAL(n_commands_after, n_commands + 1);

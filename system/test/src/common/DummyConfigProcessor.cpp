@@ -1,5 +1,5 @@
 /**
- * @file    DummyConfigProcessor.hpp
+ * @file    DummyConfigProcessor.cpp
  * @author  Alessandro Thea
  * @brief   Brief description
  * @date    
@@ -36,8 +36,8 @@ class DummyConfigProcessor;
 
 class DummyConfigCommand: public swatch::core::Command {
 public:
-  DummyConfigCommand( const std::string& aId ) :
-    core::Command( aId , xdata::Integer(-33)) {
+  DummyConfigCommand( const std::string& aId, swatch::core::ActionableObject& aProcessor ) :
+    core::Command( aId , aProcessor, xdata::Integer(-33)) {
     registerParameter("parameter", xdata::String("Default Value"));
   }
 

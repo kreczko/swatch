@@ -18,8 +18,8 @@ namespace dummy {
 ////////////////////////
 /*  DummyProcCommand  */
 
-DummyProcCommand::DummyProcCommand(const std::string& aId) : 
-  Command(aId, xdata::Boolean(true))
+DummyProcCommand::DummyProcCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) : 
+  Command(aId, aActionable, xdata::Boolean(true))
 {
   registerParameter("cmdDuration", xdata::UnsignedInteger(10));
 }
@@ -44,8 +44,8 @@ void DummyProcCommand::sleep(const core::XParameterSet& aParams)
 //////////////////////////
 /*  DummyRebootCommand  */
 
-DummyRebootCommand::DummyRebootCommand(const std::string& aId) : 
-  DummyProcCommand(aId)
+DummyRebootCommand::DummyRebootCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) : 
+  DummyProcCommand(aId, aActionable)
 {
 }
 
@@ -57,7 +57,7 @@ core::Command::State DummyRebootCommand::code(const swatch::core::XParameterSet&
 {
   sleep( aParams );
   
-  DummyProcDriver& driver = getActionable<DummyProcessor>()->getDriver();
+  DummyProcDriver& driver = getActionable<DummyProcessor>().getDriver();
   
   driver.reboot();
   
@@ -68,8 +68,8 @@ core::Command::State DummyRebootCommand::code(const swatch::core::XParameterSet&
 /////////////////////////
 /*  DummyResetCommand  */
 
-DummyResetCommand::DummyResetCommand(const std::string& aId) : 
-  DummyProcCommand(aId)
+DummyResetCommand::DummyResetCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) : 
+  DummyProcCommand(aId, aActionable)
 {
   registerParameter("clkErrorTimeout", xdata::UnsignedInteger(60));
 }
@@ -82,7 +82,7 @@ core::Command::State DummyResetCommand::code(const swatch::core::XParameterSet& 
 {
   sleep( aParams );
   
-  DummyProcDriver& driver = getActionable<DummyProcessor>()->getDriver();
+  DummyProcDriver& driver = getActionable<DummyProcessor>().getDriver();
   
   size_t timeout = aParams.get<xdata::UnsignedInteger>("clkErrorTimeout").value_;
 
@@ -95,8 +95,8 @@ core::Command::State DummyResetCommand::code(const swatch::core::XParameterSet& 
 ///////////////////////////////
 /*  DummyConfigureTxCommand  */
 
-DummyConfigureTxCommand::DummyConfigureTxCommand(const std::string& aId) : 
-  DummyProcCommand(aId)
+DummyConfigureTxCommand::DummyConfigureTxCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) : 
+  DummyProcCommand(aId, aActionable)
 {
   registerParameter("txErrorTimeout", xdata::UnsignedInteger(60));
 }
@@ -109,7 +109,7 @@ core::Command::State DummyConfigureTxCommand::code(const swatch::core::XParamete
 {
   sleep( aParams );
 
-  DummyProcDriver& driver = getActionable<DummyProcessor>()->getDriver();
+  DummyProcDriver& driver = getActionable<DummyProcessor>().getDriver();
   
   size_t timeout = aParams.get<xdata::UnsignedInteger>("txErrorTimeout").value_;
 
@@ -122,8 +122,8 @@ core::Command::State DummyConfigureTxCommand::code(const swatch::core::XParamete
 ///////////////////////////////
 /*  DummyConfigureRxCommand  */
 
-DummyConfigureRxCommand::DummyConfigureRxCommand(const std::string& aId) : 
-  DummyProcCommand(aId)
+DummyConfigureRxCommand::DummyConfigureRxCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) : 
+  DummyProcCommand(aId, aActionable)
 {
   registerParameter("rxErrorTimeout", xdata::UnsignedInteger(60));
 }
@@ -136,7 +136,7 @@ core::Command::State DummyConfigureRxCommand::code(const swatch::core::XParamete
 {
   sleep( aParams );
   
-  DummyProcDriver& driver = getActionable<DummyProcessor>()->getDriver();
+  DummyProcDriver& driver = getActionable<DummyProcessor>().getDriver();
   
   size_t timeout = aParams.get<xdata::UnsignedInteger>("rxErrorTimeout").value_;
 
@@ -149,8 +149,8 @@ core::Command::State DummyConfigureRxCommand::code(const swatch::core::XParamete
 ////////////////////////////////
 /*  DummyConfigureDaqCommand  */
 
-DummyConfigureDaqCommand::DummyConfigureDaqCommand(const std::string& aId) : 
-  DummyProcCommand(aId)
+DummyConfigureDaqCommand::DummyConfigureDaqCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) : 
+  DummyProcCommand(aId, aActionable)
 {
   registerParameter("daqErrorTimeout", xdata::UnsignedInteger(60));
 }
@@ -163,7 +163,7 @@ core::Command::State DummyConfigureDaqCommand::code(const swatch::core::XParamet
 {
   sleep( aParams );
   
-  DummyProcDriver& driver = getActionable<DummyProcessor>()->getDriver();
+  DummyProcDriver& driver = getActionable<DummyProcessor>().getDriver();
   
   size_t timeout = aParams.get<xdata::UnsignedInteger>("daqErrorTimeout").value_;
 
@@ -176,8 +176,8 @@ core::Command::State DummyConfigureDaqCommand::code(const swatch::core::XParamet
 /////////////////////////////////
 /*  DummyConfigureAlgoCommand  */
 
-DummyConfigureAlgoCommand::DummyConfigureAlgoCommand(const std::string& aId) : 
-  DummyProcCommand(aId)
+DummyConfigureAlgoCommand::DummyConfigureAlgoCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) : 
+  DummyProcCommand(aId, aActionable)
 {
   registerParameter("algoErrorTimeout", xdata::UnsignedInteger(60));
 }
@@ -190,7 +190,7 @@ core::Command::State DummyConfigureAlgoCommand::code(const swatch::core::XParame
 {
   sleep( aParams );
   
-  DummyProcDriver& driver = getActionable<DummyProcessor>()->getDriver();
+  DummyProcDriver& driver = getActionable<DummyProcessor>().getDriver();
   
   size_t timeout = aParams.get<xdata::UnsignedInteger>("algoErrorTimeout").value_;
 

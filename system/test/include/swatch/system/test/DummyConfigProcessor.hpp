@@ -1,5 +1,5 @@
 /**
- * @file    IPBusProcessor.hpp
+ * @file    DummyConfigProcessor.hpp
  * @author  Alessandro Thea
  * @brief   Brief description
  * @date    
@@ -20,7 +20,6 @@ namespace system {
 namespace test {
 
 //----------------------------------------------------------------------------//
-
 class DummyConfigProcessor : public swatch::processor::Processor {
 public:
   DummyConfigProcessor(const swatch::core::AbstractStub& aStub );

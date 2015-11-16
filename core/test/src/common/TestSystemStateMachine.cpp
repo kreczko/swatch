@@ -72,10 +72,10 @@ struct SystemStateMachineTestSetup {
 
 SystemStateMachineTestSetup::Child::Child(DummyActionableObject& aObj) :
   obj(aObj),
-  cmdNormal1( obj.registerFunctionoid<DummyCommand>("cmdNormal1") ),
-  cmdNormal2( obj.registerFunctionoid<DummyCommand>("cmdNormal2") ),
-  cmdWarning( obj.registerFunctionoid<DummyWarningCommand>("cmdWarning") ),
-  cmdError( obj.registerFunctionoid<DummyErrorCommand>("cmdError") ),
+  cmdNormal1( obj.registerCommand<DummyCommand>("cmdNormal1") ),
+  cmdNormal2( obj.registerCommand<DummyCommand>("cmdNormal2") ),
+  cmdWarning( obj.registerCommand<DummyWarningCommand>("cmdWarning") ),
+  cmdError( obj.registerCommand<DummyErrorCommand>("cmdError") ),
   fsm( obj.registerStateMachine("anFSM", childState0, childStateErr) ),
   ItoA(NULL), 
   ItoB(NULL),

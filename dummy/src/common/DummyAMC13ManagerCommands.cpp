@@ -22,8 +22,8 @@ namespace dummy {
 /////////////////////////
 /*  DummyAMC13Command  */
 
-DummyAMC13Command::DummyAMC13Command(const std::string& aId) : 
-  Command(aId, xdata::Boolean(true))
+DummyAMC13Command::DummyAMC13Command(const std::string& aId, swatch::core::ActionableObject& aActionable) : 
+  Command(aId, aActionable, xdata::Boolean(true))
 {
   registerParameter("cmdDuration", xdata::UnsignedInteger(10));
 }
@@ -49,8 +49,8 @@ void DummyAMC13Command::sleep(const core::XParameterSet& aParams)
 ///////////////////////////////
 /*  DummyAMC13RebootCommand  */
 
-DummyAMC13RebootCommand::DummyAMC13RebootCommand(const std::string& aId) : 
-  DummyAMC13Command(aId)
+DummyAMC13RebootCommand::DummyAMC13RebootCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) : 
+  DummyAMC13Command(aId,aActionable)
 {
 }
 
@@ -62,7 +62,7 @@ core::Command::State DummyAMC13RebootCommand::code(const swatch::core::XParamete
 { 
   sleep(aParams);
 
-  DummyAMC13Driver& driver = getActionable<DummyAMC13Manager>()->getDriver();
+  DummyAMC13Driver& driver = getActionable<DummyAMC13Manager>().getDriver();
   
   driver.reboot();
   
@@ -73,8 +73,8 @@ core::Command::State DummyAMC13RebootCommand::code(const swatch::core::XParamete
 //////////////////////////////
 /*  DummyAMC13ResetCommand  */
 
-DummyAMC13ResetCommand::DummyAMC13ResetCommand(const std::string& aId) : 
-  DummyAMC13Command(aId)
+DummyAMC13ResetCommand::DummyAMC13ResetCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) : 
+  DummyAMC13Command(aId,aActionable)
 {
   registerParameter("clkErrTimeout", xdata::UnsignedInteger(60));
   registerParameter("clkWrnTimeout", xdata::UnsignedInteger(45));
@@ -88,7 +88,7 @@ core::Command::State DummyAMC13ResetCommand::code(const swatch::core::XParameter
 {
   sleep(aParams);
 
-  DummyAMC13Driver& driver = getActionable<DummyAMC13Manager>()->getDriver();
+  DummyAMC13Driver& driver = getActionable<DummyAMC13Manager>().getDriver();
   
   size_t lWrnTimeout = aParams.get<xdata::UnsignedInteger>("clkWrnTimeout").value_;
   size_t lErrTimeout = aParams.get<xdata::UnsignedInteger>("clkErrTimeout").value_;
@@ -102,8 +102,8 @@ core::Command::State DummyAMC13ResetCommand::code(const swatch::core::XParameter
 ////////////////////////////////
 /*  DummyConfigureDaqCommand  */
 
-DummyAMC13ConfigureDaqCommand::DummyAMC13ConfigureDaqCommand(const std::string& aId) : 
-  DummyAMC13Command(aId)
+DummyAMC13ConfigureDaqCommand::DummyAMC13ConfigureDaqCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) : 
+  DummyAMC13Command(aId,aActionable)
 {
 }
 
@@ -115,9 +115,9 @@ core::Command::State DummyAMC13ConfigureDaqCommand::code(const swatch::core::XPa
 {
   sleep(aParams);
   
-  DummyAMC13Manager* mgr = getActionable<DummyAMC13Manager>();
+  DummyAMC13Manager& mgr = getActionable<DummyAMC13Manager>();
 
-  mgr->getDriver().configureDaq(mgr->getStub().fedId);
+  mgr.getDriver().configureDaq(mgr.getStub().fedId);
   
   return State::kDone;
 }
@@ -126,8 +126,8 @@ core::Command::State DummyAMC13ConfigureDaqCommand::code(const swatch::core::XPa
 ////////////////////////////
 /*  DummyStartDaqCommand  */
 
-DummyAMC13StartDaqCommand::DummyAMC13StartDaqCommand(const std::string& aId) : 
-  DummyAMC13Command(aId)
+DummyAMC13StartDaqCommand::DummyAMC13StartDaqCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) : 
+  DummyAMC13Command(aId,aActionable)
 {
   registerParameter("daqErrTimeout", xdata::UnsignedInteger(60));
   registerParameter("daqWrnTimeout", xdata::UnsignedInteger(45));
@@ -142,7 +142,7 @@ core::Command::State DummyAMC13StartDaqCommand::code(const swatch::core::XParame
 {
   sleep(aParams);
 
-  DummyAMC13Driver& driver = getActionable<DummyAMC13Manager>()->getDriver();
+  DummyAMC13Driver& driver = getActionable<DummyAMC13Manager>().getDriver();
   
   size_t lWrnTimeout = aParams.get<xdata::UnsignedInteger>("daqWrnTimeout").value_;
   size_t lErrTimeout = aParams.get<xdata::UnsignedInteger>("daqErrTimeout").value_;
@@ -156,8 +156,8 @@ core::Command::State DummyAMC13StartDaqCommand::code(const swatch::core::XParame
 ////////////////////////////
 /*  DummyStartDaqCommand  */
 
-DummyAMC13StopDaqCommand::DummyAMC13StopDaqCommand(const std::string& aId) : 
-  DummyAMC13Command(aId)
+DummyAMC13StopDaqCommand::DummyAMC13StopDaqCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) : 
+  DummyAMC13Command(aId,aActionable)
 {
 }
 

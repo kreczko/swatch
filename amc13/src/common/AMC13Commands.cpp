@@ -31,8 +31,8 @@ namespace swatch {
 namespace amc13 {
 
 //---
-RebootCommand::RebootCommand(const std::string& aId) : 
-  Command(aId, xdata::Boolean(false)) {
+RebootCommand::RebootCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) : 
+  Command(aId, aActionable, xdata::Boolean(false)) {
 }
 
 //---
@@ -42,11 +42,11 @@ RebootCommand::~RebootCommand() {
 
 //---
 core::Command::State RebootCommand::code(const core::XParameterSet& params) {
-  AMC13Manager* amc13 = getActionable<AMC13Manager>();
+  AMC13Manager& amc13 = getActionable<AMC13Manager>();
   
   setStatusMsg("Loading FW from flash");
   
-  ::amc13::AMC13& driver = amc13->driver();
+  ::amc13::AMC13& driver = amc13.driver();
   
   driver.getFlash()->loadFlash();
   
@@ -79,8 +79,8 @@ core::Command::State RebootCommand::code(const core::XParameterSet& params) {
 
 
 //---
-ResetCommand::ResetCommand(const std::string& aId) :
-  Command(aId, xdata::Integer()) {
+ResetCommand::ResetCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
+  Command(aId, aActionable, xdata::Integer()) {
 }
 
 
@@ -93,9 +93,9 @@ ResetCommand::~ResetCommand() {
 //---
 core::Command::State ResetCommand::code(const core::XParameterSet& params) {
 
-    AMC13Manager* amc13mgr = getActionable<AMC13Manager>();
+    AMC13Manager& amc13mgr = getActionable<AMC13Manager>();
    
-    ::amc13::AMC13& board = amc13mgr->driver();
+    ::amc13::AMC13& board = amc13mgr.driver();
     
     // Reset T1 chip
     board.reset(::amc13::AMC13Simple::T1);
@@ -132,8 +132,8 @@ core::Command::State ResetCommand::code(const core::XParameterSet& params) {
 
 
 //---
-ConfigureTTCCommand::ConfigureTTCCommand(const std::string& aId) :
-  Command(aId, xdata::Integer()) {
+ConfigureTTCCommand::ConfigureTTCCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
+  Command(aId, aActionable, xdata::Integer()) {
  
   // TTC orbit counter encoding
   registerParameter("resyncCmd", xdata::UnsignedInteger(0x4));
@@ -153,13 +153,13 @@ ConfigureTTCCommand::~ConfigureTTCCommand() {
 core::Command::State
 ConfigureTTCCommand::code(const core::XParameterSet& params) {
 
-    AMC13Manager* amc13mgr = getActionable<AMC13Manager>();
+    AMC13Manager& amc13mgr = getActionable<AMC13Manager>();
    
     uint32_t resyncCmd = params.get<xdata::UnsignedInteger>("resyncCmd").value_;
     uint32_t ocrCmd    = params.get<xdata::UnsignedInteger>("ocrCmd").value_;
     uint32_t localTTC = params.get<xdata::Boolean>("localTTC").value_;
 
-    ::amc13::AMC13& board = amc13mgr->driver();
+    ::amc13::AMC13& board = amc13mgr.driver();
     
     // configure TTC commands
     board.setOcrCommand(ocrCmd);
@@ -180,8 +180,8 @@ ConfigureTTCCommand::code(const core::XParameterSet& params) {
 
 
 // --------------------------------------------------------
-ConfigureDAQCommand::ConfigureDAQCommand(const std::string& aId) :
-core::Command(aId, xdata::Integer()) {
+ConfigureDAQCommand::ConfigureDAQCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
+core::Command(aId, aActionable, xdata::Integer()) {
   // slots, fedId, slink, localTtc=False
   // Slinks
   registerParameter("slinkMask", xdata::UnsignedInteger(0x0));
@@ -201,19 +201,19 @@ ConfigureDAQCommand::code(const core::XParameterSet& params) {
   uint32_t slinkMask = params.get<xdata::UnsignedInteger>("slinkMask").value_;
   uint32_t bcnOffset = params.get<xdata::UnsignedInteger>("bcnOffset").value_;
   
-  AMC13Manager* amc13mgr = getActionable<AMC13Manager>();
+  AMC13Manager& amc13mgr = getActionable<AMC13Manager>();
 
-  ::amc13::AMC13& board = amc13mgr->driver();
+  ::amc13::AMC13& board = amc13mgr.driver();
 
   // TODO: replace with a proper parameters
   uint32_t bitmask = 0x0;
-  BOOST_FOREACH( uint32_t s, amc13mgr->getStub().amcSlots) {
+  BOOST_FOREACH( uint32_t s, amc13mgr.getStub().amcSlots) {
     bitmask |= ( 1<< (s-1) );
   }
   board.AMCInputEnable(bitmask);
   
   // Set FED ID
-  board.setFEDid(amc13mgr->getStub().fedId);
+  board.setFEDid(amc13mgr.getStub().fedId);
   
   // Enable SFPs
   board.sfpOutputEnable(slinkMask);
@@ -235,8 +235,8 @@ ConfigureDAQCommand::code(const core::XParameterSet& params) {
 
 
 // --------------------------------------------------------
-StartCommand::StartCommand(const std::string& aId) :
-core::Command(aId, xdata::Integer()) {
+StartCommand::StartCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
+core::Command(aId, aActionable, xdata::Integer()) {
 }
 
 
@@ -248,15 +248,15 @@ StartCommand::~StartCommand() {
 // --------------------------------------------------------
 core::Command::State
 StartCommand::code(const core::XParameterSet& params) {
-  getActionable<AMC13Manager>()->driver().startRun();
+  getActionable<AMC13Manager>().driver().startRun();
   
   return State::kDone;
 }
 
 
 // --------------------------------------------------------
-StopCommand::StopCommand(const std::string& aId) :
-core::Command(aId, xdata::Integer()) {
+StopCommand::StopCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
+core::Command(aId, aActionable, xdata::Integer()) {
 
 }
 
@@ -269,7 +269,7 @@ StopCommand::~StopCommand() {
 // --------------------------------------------------------
 core::Command::State
 StopCommand::code(const core::XParameterSet& params) {
-  getActionable<AMC13Manager>()->driver().endRun();
+  getActionable<AMC13Manager>().driver().endRun();
 
   return State::kDone;
 }

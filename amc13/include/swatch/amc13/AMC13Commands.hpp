@@ -18,7 +18,7 @@ namespace amc13 {
     
 class RebootCommand : public swatch::core::Command {
 public:
-    RebootCommand(const std::string& aId);
+    RebootCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
     
     virtual ~RebootCommand();
     
@@ -27,7 +27,7 @@ public:
 
 class ResetCommand : public swatch::core::Command {
 public:
-    ResetCommand(const std::string& aId);
+    ResetCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
 
     virtual ~ResetCommand();
 
@@ -37,7 +37,7 @@ public:
 
 class ConfigureTTCCommand : public swatch::core::Command {
 public:
-    ConfigureTTCCommand(const std::string& aId) ;
+    ConfigureTTCCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
     virtual ~ConfigureTTCCommand();
     
     virtual State code(const core::XParameterSet& params);
@@ -46,7 +46,7 @@ public:
 
 class ConfigureDAQCommand : public swatch::core::Command {
 public:
-    ConfigureDAQCommand(const std::string& aId) ;
+    ConfigureDAQCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
     virtual ~ConfigureDAQCommand();
     
     virtual State code(const core::XParameterSet& params);
@@ -55,7 +55,7 @@ public:
 
 class StartCommand : public swatch::core::Command {
 public:
-    StartCommand(const std::string& aId);
+    StartCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
     virtual ~StartCommand();
 
     virtual State code(const core::XParameterSet& params);
@@ -64,7 +64,7 @@ public:
 
 class StopCommand : public swatch::core::Command {
 public:
-    StopCommand(const std::string& aId);
+    StopCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
     virtual ~StopCommand();
     
     virtual State code(const core::XParameterSet& params);
