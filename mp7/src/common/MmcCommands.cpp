@@ -21,8 +21,8 @@ namespace mp7 {
 
 
 // --------------------------------------------------------
-UploadFirmwareCommand::UploadFirmwareCommand(const std::string& aId) :
-Command(aId, xdata::Integer()) {
+UploadFirmwareCommand::UploadFirmwareCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
+Command(aId, aActionable, xdata::Integer()) {
   registerParameter("localfile", xdata::String(""));
   registerParameter("sdfile", xdata::String(""));
 }
@@ -34,7 +34,7 @@ UploadFirmwareCommand::~UploadFirmwareCommand() {
 // --------------------------------------------------------
 ::swatch::core::Command::State
 UploadFirmwareCommand::code(const ::swatch::core::XParameterSet& params) {
-  ::swatch::mp7::MP7Processor* mp7 = getActionable< ::swatch::mp7::MP7Processor>();
+  ::swatch::mp7::MP7Processor& p = getActionable< ::swatch::mp7::MP7Processor>();
 
   std::string localfile = params.get<xdata::String>("localfile").value_;
   std::string sdfile = params.get<xdata::String>("sdfile").value_;
@@ -47,7 +47,7 @@ UploadFirmwareCommand::code(const ::swatch::core::XParameterSet& params) {
 
   setProgress(0., "Uploading firmware image to uSD card ...");
 
-  ::mp7::MmcController mmcController(mp7->driver().hw());
+  ::mp7::MmcController mmcController(p.driver().hw());
   mmcController.copyFileToSD(localfile, sdfile);
 
   setStatusMsg("Upload completed");
@@ -55,8 +55,8 @@ UploadFirmwareCommand::code(const ::swatch::core::XParameterSet& params) {
 }
 
 // --------------------------------------------------------
-DeleteFirmwareCommand::DeleteFirmwareCommand(const std::string& aId) :
-Command(aId, xdata::Integer()) {
+DeleteFirmwareCommand::DeleteFirmwareCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
+Command(aId, aActionable, xdata::Integer()) {
   registerParameter("sdfile", xdata::String(""));
 }
 
@@ -67,7 +67,7 @@ DeleteFirmwareCommand::~DeleteFirmwareCommand() {
 // --------------------------------------------------------
 ::swatch::core::Command::State
 DeleteFirmwareCommand::code(const ::swatch::core::XParameterSet& params) {
-  ::swatch::mp7::MP7Processor* mp7 = getActionable< ::swatch::mp7::MP7Processor>();
+  ::swatch::mp7::MP7Processor& p = getActionable< ::swatch::mp7::MP7Processor>();
 
   std::string sdfile = params.get<xdata::String>("sdfile").value_;
 
@@ -83,7 +83,7 @@ DeleteFirmwareCommand::code(const ::swatch::core::XParameterSet& params) {
 
   setProgress(0., "Deleting firmware image from uSD card ...");
 
-  ::mp7::MmcController mmcController(mp7->driver().hw());
+  ::mp7::MmcController mmcController(p.driver().hw());
   mmcController.deleteFileFromSD(sdfile);
 
   //need to check if file has actually been deleted
@@ -95,8 +95,8 @@ DeleteFirmwareCommand::code(const ::swatch::core::XParameterSet& params) {
 
 
 // --------------------------------------------------------
-RebootFPGACommand::RebootFPGACommand(const std::string& aId) :
-Command(aId, xdata::Integer()) {
+RebootFPGACommand::RebootFPGACommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
+Command(aId, aActionable, xdata::Integer()) {
   registerParameter("sdfile", xdata::String(""));
 }
 
@@ -109,7 +109,7 @@ RebootFPGACommand::~RebootFPGACommand() {
 // --------------------------------------------------------
 ::swatch::core::Command::State
 RebootFPGACommand::code(const ::swatch::core::XParameterSet& params) {
-  ::swatch::mp7::MP7Processor* mp7 = getActionable< ::swatch::mp7::MP7Processor>();
+  ::swatch::mp7::MP7Processor& p = getActionable< ::swatch::mp7::MP7Processor>();
   std::string sdfile = params.get<xdata::String>("sdfile").value_;
 
   if (sdfile.empty()) {
@@ -119,10 +119,10 @@ RebootFPGACommand::code(const ::swatch::core::XParameterSet& params) {
 
   setProgress(0., "Rebooting FPGA ...");
 
-  ::mp7::MmcController mmcController(mp7->driver().hw());
+  ::mp7::MmcController mmcController(p.driver().hw());
   mmcController.rebootFPGA(sdfile);
 
-  ::mp7::MmcPipeInterface mmcNode(mp7->driver().hw().getNode< ::mp7::MmcPipeInterface>("uc"));
+  ::mp7::MmcPipeInterface mmcNode(p.driver().hw().getNode< ::mp7::MmcPipeInterface>("uc"));
   std::string rebootfile = mmcNode.GetTextSpace();
 
   if (rebootfile.compare(sdfile)) {
@@ -136,8 +136,8 @@ RebootFPGACommand::code(const ::swatch::core::XParameterSet& params) {
 }
 
 // --------------------------------------------------------
-HardResetCommand::HardResetCommand(const std::string& aId) :
-Command(aId, xdata::Integer()) {
+HardResetCommand::HardResetCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
+Command(aId, aActionable, xdata::Integer()) {
 }
 
 
@@ -149,8 +149,8 @@ HardResetCommand::~HardResetCommand() {
 // --------------------------------------------------------
 ::swatch::core::Command::State
 HardResetCommand::code(const ::swatch::core::XParameterSet& params) {
-  ::swatch::mp7::MP7Processor* mp7 = getActionable< ::swatch::mp7::MP7Processor>();
-  ::mp7::MmcController mmcController(mp7->driver().hw());
+  ::swatch::mp7::MP7Processor& p = getActionable< ::swatch::mp7::MP7Processor>();
+  ::mp7::MmcController mmcController(p.driver().hw());
 
   setProgress(0., "Performing Hard Reset of the board ...");
 
@@ -162,8 +162,8 @@ HardResetCommand::code(const ::swatch::core::XParameterSet& params) {
 }
 
 // --------------------------------------------------------
-ScanSDCommand::ScanSDCommand(const std::string& aId) :
-Command(aId, xdata::String()) {
+ScanSDCommand::ScanSDCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
+Command(aId, aActionable, xdata::String()) {
 }
 
 // --------------------------------------------------------
@@ -173,11 +173,11 @@ ScanSDCommand::~ScanSDCommand() {
 // --------------------------------------------------------
 ::swatch::core::Command::State
 ScanSDCommand::code(const ::swatch::core::XParameterSet& params) {
-  ::swatch::mp7::MP7Processor* mp7 = getActionable< ::swatch::mp7::MP7Processor>();
+  ::swatch::mp7::MP7Processor& p = getActionable< ::swatch::mp7::MP7Processor>();
 
   setProgress(0., "Scanning SD card...");
 
-  ::mp7::MmcPipeInterface mmcNode(mp7->driver().hw().getNode< ::mp7::MmcPipeInterface>("uc"));
+  ::mp7::MmcPipeInterface mmcNode(p.driver().hw().getNode< ::mp7::MmcPipeInterface>("uc"));
   std::vector<std::string> fileNames = mmcNode.ListFilesOnSD();
 
   std::string fileNameString = boost::algorithm::join(fileNames, ",  ");

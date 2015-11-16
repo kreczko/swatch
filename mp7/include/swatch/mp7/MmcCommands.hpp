@@ -10,7 +10,7 @@ namespace mp7 {
 
 class UploadFirmwareCommand : public ::swatch::core::Command {
 public:
-  UploadFirmwareCommand(const std::string& aId);
+  UploadFirmwareCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
   virtual ~UploadFirmwareCommand();
   virtual State code(const ::swatch::core::XParameterSet& params);
 
@@ -18,7 +18,7 @@ public:
 
 class DeleteFirmwareCommand : public ::swatch::core::Command {
 public:
-  DeleteFirmwareCommand(const std::string& aId);
+  DeleteFirmwareCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
   virtual ~DeleteFirmwareCommand();
   virtual State code(const ::swatch::core::XParameterSet& params);
 
@@ -26,7 +26,7 @@ public:
 
 class RebootFPGACommand : public ::swatch::core::Command {
 public:
-  RebootFPGACommand(const std::string& aId);
+  RebootFPGACommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
   virtual ~RebootFPGACommand();
   virtual State code(const ::swatch::core::XParameterSet& params);
 
@@ -34,7 +34,7 @@ public:
 
 class HardResetCommand : public ::swatch::core::Command {
 public:
-  HardResetCommand(const std::string& aId);
+  HardResetCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
   virtual ~HardResetCommand();
   virtual State code(const ::swatch::core::XParameterSet& params);
 
@@ -42,7 +42,7 @@ public:
 
 class ScanSDCommand : public ::swatch::core::Command {
 public:
-  ScanSDCommand(const std::string& aId);
+  ScanSDCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
   virtual ~ScanSDCommand();
   virtual State code(const ::swatch::core::XParameterSet& params);
 

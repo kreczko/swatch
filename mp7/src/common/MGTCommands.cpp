@@ -24,8 +24,8 @@ namespace mp7 {
 
 
 // --------------------------------------------------------
-ConfigureRxMGTsCommand::ConfigureRxMGTsCommand(const std::string& aId) :
-AbstractChannelsCommand(aId, AbstractChannelsCommand::kRx, xdata::String()) {
+ConfigureRxMGTsCommand::ConfigureRxMGTsCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
+AbstractChannelsCommand(aId, aActionable, AbstractChannelsCommand::kRx, xdata::String()) {
   registerParameter("orbitTag", xdata::Boolean(true));
   registerParameter("polarity", xdata::Boolean(false));
 
@@ -61,8 +61,8 @@ ConfigureRxMGTsCommand::code(const swatch::core::XParameterSet& params) {
 }
 
 // --------------------------------------------------------
-ConfigureTxMGTsCommand::ConfigureTxMGTsCommand(const std::string& aId) :
-AbstractChannelsCommand(aId, AbstractChannelsCommand::kTx, xdata::String()) {
+ConfigureTxMGTsCommand::ConfigureTxMGTsCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
+AbstractChannelsCommand(aId, aActionable, AbstractChannelsCommand::kTx, xdata::String()) {
   registerParameter("orbitTag", xdata::Boolean(true));
   registerParameter("loopback", xdata::Boolean(false));
   registerParameter("polarity", xdata::Boolean(false));
@@ -109,8 +109,8 @@ ConfigureTxMGTsCommand::code(const swatch::core::XParameterSet& params) {
 
 
 // --------------------------------------------------------
-AlignRxsToCommand::AlignRxsToCommand(const std::string& aId) :
-AbstractChannelsCommand(aId, AbstractChannelsCommand::kRx, xdata::String())
+AlignRxsToCommand::AlignRxsToCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
+AbstractChannelsCommand(aId, aActionable, AbstractChannelsCommand::kRx, xdata::String())
 {
   registerParameter("bx", xdata::UnsignedInteger(0x0));
   registerParameter("cycle", xdata::UnsignedInteger(0x0));
@@ -130,7 +130,7 @@ AlignRxsToCommand::code(const swatch::core::XParameterSet& params) {
   xdata::UnsignedInteger cycle = params.get<xdata::UnsignedInteger>("cycle");
   
   // FIXME: Embed this check somewhere
-  ::mp7::MP7Controller& driver = getActionable< swatch::mp7::MP7Processor>()->driver();
+  ::mp7::MP7Controller& driver = getActionable< swatch::mp7::MP7Processor>().driver();
   ::mp7::orbit::Metric metric = driver.getMetric();
 
  if ( !orbit::isValid( bx, cycle, metric ) ) {
@@ -175,8 +175,8 @@ AlignRxsToCommand::code(const swatch::core::XParameterSet& params) {
 
 
 // --------------------------------------------------------
-AutoAlignCommand::AutoAlignCommand(const std::string& aId) :
-  AbstractChannelsCommand(aId, AbstractChannelsCommand::kRx, xdata::String())
+AutoAlignCommand::AutoAlignCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
+  AbstractChannelsCommand(aId, aActionable, AbstractChannelsCommand::kRx, xdata::String())
 {
   registerParameter("margin", xdata::UnsignedInteger(3));
 }

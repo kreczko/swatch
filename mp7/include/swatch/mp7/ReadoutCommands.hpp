@@ -25,7 +25,7 @@ namespace mp7 {
 
 class SetupReadout : public core::Command {
 public:
-  SetupReadout( const std::string& aId );
+  SetupReadout( const std::string& aId, swatch::core::ActionableObject& aActionable );
   virtual ~SetupReadout();
   virtual core::Command::State code(const ::swatch::core::XParameterSet& aParams);
 };
@@ -33,16 +33,16 @@ public:
 
 class LoadReadoutMenu : public core::Command {
 public:
-  LoadReadoutMenu( const std::string& aId, uint32_t aBanks, uint32_t aModes, uint32_t aCaptures );
+  LoadReadoutMenu( const std::string& aId, swatch::core::ActionableObject& aActionable );
   virtual ~LoadReadoutMenu();
   virtual core::Command::State code(const ::swatch::core::XParameterSet& aParams);
 
-  static LoadReadoutMenu* create( const std::string& aId, ::mp7::MP7Controller& aDriver );
+//  static LoadReadoutMenu* create( const std::string& aId, ::mp7::MP7Controller& aDriver );
 
 private:
-  const uint32_t mBanks;
-  const uint32_t mModes;
-  const uint32_t mCaptures;
+  uint32_t mBanks;
+  uint32_t mModes;
+  uint32_t mCaptures;
 };
 
 

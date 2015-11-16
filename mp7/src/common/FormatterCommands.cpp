@@ -65,7 +65,7 @@ AbstractFormatterCommand::~AbstractFormatterCommand()
     mask = swatch::core::toolbox::UIntListParser::parse(channelMask);
 
   // Grab list of ports registered in the processor
-  swatch::mp7::MP7Processor* p = getActionable<swatch::mp7::MP7Processor>();
+  swatch::mp7::MP7Processor& p = getActionable<swatch::mp7::MP7Processor>();
  
  // const std::vector<swatch::processor::ProcessorPortStub>& portStubs = (mKind == mp7::kRxBuffer) ? p->getStub().rxPorts : p->getStub().txPorts;
   // std::vector<uint32_t> stubIds;
@@ -80,7 +80,7 @@ AbstractFormatterCommand::~AbstractFormatterCommand()
 
   //return p->driver().channelMgr(intersection);
 
-  return p->driver().channelMgr(mask);
+  return p.driver().channelMgr(mask);
 
 }
 
@@ -90,8 +90,8 @@ const std::string AbstractFormatterCommand::kPortSelection = "portSelection";
 
 
 
-TDRFormatterCommand::TDRFormatterCommand(const std::string& aId):
-  AbstractFormatterCommand(aId, xdata::Integer()){
+TDRFormatterCommand::TDRFormatterCommand(const std::string& aId, swatch::core::ActionableObject& aActionable):
+  AbstractFormatterCommand(aId, aActionable, xdata::Integer()){
   registerParameter("strip", xdata::Boolean(true));
   registerParameter("insert", xdata::Boolean(true));
 }
@@ -102,7 +102,7 @@ TDRFormatterCommand::~TDRFormatterCommand(){
 core::Command::State TDRFormatterCommand::code(const ::swatch::core::XParameterSet& params)
 {
 
-  ::swatch::mp7::MP7Processor* mp7 = getActionable< ::swatch::mp7::MP7Processor>();
+  ::swatch::mp7::MP7Processor& mp7proc = getActionable< ::swatch::mp7::MP7Processor>();
 
   bool strip  = params.get<xdata::Boolean>("strip").value_;
   bool insert = params.get<xdata::Boolean>("insert").value_;
@@ -116,9 +116,9 @@ core::Command::State TDRFormatterCommand::code(const ::swatch::core::XParameterS
   
   ::mp7::ChannelIDSet tdrIds = cm.ids(::mp7::kTDRFmtIDs);
   
-  ::mp7::FormatterNode fmt = mp7->driver().getFormatter();
-  ::mp7::CtrlNode ctrl = mp7->driver().getCtrl();
-  ::mp7::DatapathNode datapath = mp7->driver().getDatapath();
+  ::mp7::FormatterNode fmt = mp7proc.driver().getFormatter();
+  ::mp7::CtrlNode ctrl = mp7proc.driver().getCtrl();
+  ::mp7::DatapathNode datapath = mp7proc.driver().getDatapath();
 
   setProgress(0.2, "Configuring TDR header formatting...");
   

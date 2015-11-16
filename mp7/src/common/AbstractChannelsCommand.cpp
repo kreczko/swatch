@@ -86,7 +86,7 @@ AbstractChannelsCommand::getChannelsMgr(const swatch::core::XParameterSet& aPara
   std::string channelMask = aParams.get<xdata::String>(kPortSelection).value_;
 
   // Grab list of ports registered in the processor
-  ::mp7::MP7Controller& driver = getActionable<swatch::mp7::MP7Processor>()->driver();
+  ::mp7::MP7Controller& driver = getActionable<swatch::mp7::MP7Processor>().driver();
 
   // If the mask is empty, return the full set of known ports
   if ( channelMask.empty() )

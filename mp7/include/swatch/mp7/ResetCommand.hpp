@@ -12,7 +12,7 @@ namespace mp7 {
   
 class ResetCommand : public ::swatch::core::Command {
 public:
-  ResetCommand(const std::string& aId);
+  ResetCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
   virtual ~ResetCommand();
   virtual State code(const ::swatch::core::XParameterSet& params);
 

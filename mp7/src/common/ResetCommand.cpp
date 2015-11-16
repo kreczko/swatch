@@ -16,8 +16,8 @@ namespace swatch {
 namespace mp7 {
 
 
-ResetCommand::ResetCommand(const std::string& aId):
-  Command(aId, xdata::Integer()) {
+ResetCommand::ResetCommand(const std::string& aId, swatch::core::ActionableObject& aActionable):
+  Command(aId, aActionable, xdata::Integer()) {
   registerParameter("clockSource", xdata::String("external"));
   registerParameter("clockConfig", xdata::String(""));
   registerParameter("ttcConfig", xdata::String(""));
@@ -31,8 +31,8 @@ ResetCommand::~ResetCommand(){
      
   // setProgress(0., "Resetting MP7");
   
-  swatch::mp7::MP7Processor* p = getActionable<swatch::mp7::MP7Processor>();
-  ::mp7::MP7Controller& driver = p->driver();
+  swatch::mp7::MP7Processor& p = getActionable<swatch::mp7::MP7Processor>();
+  ::mp7::MP7Controller& driver = p.driver();
   setProgress(0.,"Resetting clocks");
 
   std::string mode = params.get<xdata::String>("clockSource").value_;

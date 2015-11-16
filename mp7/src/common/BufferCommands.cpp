@@ -32,7 +32,19 @@ namespace mp7 {
 
 // Static initialization
 template<AbstractChannelsCommand::ChannelGroup tGroup>
-const std::map< std::string, ::mp7::TestPathConfigurator::Mode > ConfigureBuffersCommand<tGroup>::mBufferModeMap = initBufferModeMap();
+// const std::map< std::string, ::mp7::TestPathConfigurator::Mode > ConfigureBuffersCommand<tGroup>::mBufferModeMap = initBufferModeMap();
+const std::map< std::string, ::mp7::TestPathConfigurator::Mode > ConfigureBuffersCommand<tGroup>::mBufferModeMap = {
+  {"Latency", ::mp7::TestPathConfigurator::kLatency}, 
+  {"Capture", ::mp7::TestPathConfigurator::kCapture}, 
+  {"PlayOnce", ::mp7::TestPathConfigurator::kPlayOnce}, 
+  {"PlayLoop", ::mp7::TestPathConfigurator::kPlayLoop}, 
+  {"Pattern", ::mp7::TestPathConfigurator::kPattern}, 
+  {"Zeroes", ::mp7::TestPathConfigurator::kZeroes}, 
+  {"CaptureStrobe", ::mp7::TestPathConfigurator::kCaptureStrobe}, 
+  {"Pattern3G", ::mp7::TestPathConfigurator::kPattern3G}, 
+  {"PlayOnceStrobe", ::mp7::TestPathConfigurator::kPlayOnceStrobe}, 
+  {"PlayOnce3G", ::mp7::TestPathConfigurator::kPlayOnce3G}
+};
 
 // Template specialisation
 template<>
@@ -65,8 +77,8 @@ ConfigureBuffersCommand<tGroup>::initBufferModeMap() {
 
 // --------------------------------------------------------
 template<AbstractChannelsCommand::ChannelGroup tGroup>
-ConfigureBuffersCommand<tGroup>::ConfigureBuffersCommand(const std::string& aId) :
-AbstractChannelsCommand(aId, tGroup, xdata::String() ) {
+ConfigureBuffersCommand<tGroup>::ConfigureBuffersCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
+AbstractChannelsCommand(aId, aActionable, tGroup, xdata::String() ) {
 
   // Parameter registration  
   registerParameter("startBx", xdata::UnsignedInteger(0x0));
@@ -114,7 +126,7 @@ ConfigureBuffersCommand<tGroup>::code(const ::swatch::core::XParameterSet& param
   // Instantiate the message streamer once
   std::ostringstream msg;
   // Extract the MP7 driver
-  ::mp7::MP7Controller& driver = getActionable< ::swatch::mp7::MP7Processor>()->driver();
+  ::mp7::MP7Controller& driver = getActionable< ::swatch::mp7::MP7Processor>().driver();
   ::mp7::orbit::Metric metric = driver.getMetric();
 
   // TOFIX: make check standard
@@ -218,8 +230,8 @@ template class ConfigureBuffersCommand<AbstractChannelsCommand::kTx>;
 
 
 // --------------------------------------------------------
-CaptureBuffersCommand::CaptureBuffersCommand(const std::string& aId) :
-  swatch::core::Command(aId, xdata::String() ) {
+CaptureBuffersCommand::CaptureBuffersCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
+  swatch::core::Command(aId, aActionable, xdata::String() ) {
 }
 
 
@@ -232,7 +244,7 @@ CaptureBuffersCommand::~CaptureBuffersCommand() {
 core::Command::State
 CaptureBuffersCommand::code(const ::swatch::core::XParameterSet& params) {
 
-  ::mp7::MP7Controller& driver = getActionable< ::swatch::mp7::MP7Processor>()->driver();
+  ::mp7::MP7Controller& driver = getActionable< ::swatch::mp7::MP7Processor>().driver();
 
   ::mp7::TTCNode ttc = driver.getTTC();
   ::mp7::ChannelsManager cm = driver.channelMgr();
@@ -256,8 +268,8 @@ CaptureBuffersCommand::code(const ::swatch::core::XParameterSet& params) {
 
 // --------------------------------------------------------
 template<AbstractChannelsCommand::ChannelGroup tGroup>
-SaveBuffersToFileCommand<tGroup>::SaveBuffersToFileCommand(const std::string& aId) :
-  AbstractChannelsCommand(aId, tGroup, xdata::String() ) {
+SaveBuffersToFileCommand<tGroup>::SaveBuffersToFileCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
+  AbstractChannelsCommand(aId, aActionable, tGroup, xdata::String() ) {
   registerParameter("filename", xdata::String(""));
 }
 
@@ -278,7 +290,7 @@ core::Command::State SaveBuffersToFileCommand<tGroup>::code(const ::swatch::core
   std::string filename = params.get<xdata::String>("filename").value_;
 
 //  swatch::mp7::MP7Processor* proc = getParent< ::swatch::mp7::MP7Processor>();
-  ::mp7::MP7Controller& driver = getActionable< ::swatch::mp7::MP7Processor>()->driver();
+  ::mp7::MP7Controller& driver = getActionable< ::swatch::mp7::MP7Processor>().driver();
 
   ::mp7::CtrlNode ctrl = driver.getCtrl();
   ::mp7::ChannelsManager cm = getChannelsMgr(params);
@@ -326,8 +338,8 @@ template class SaveBuffersToFileCommand<AbstractChannelsCommand::kTx>;
 
 // --------------------------------------------------------
 template<AbstractChannelsCommand::ChannelGroup tGroup>
-LatencyBuffersCommand<tGroup>::LatencyBuffersCommand(const std::string& aId) :
-  AbstractChannelsCommand(aId, tGroup, xdata::String() ) {
+LatencyBuffersCommand<tGroup>::LatencyBuffersCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
+  AbstractChannelsCommand(aId, aActionable, tGroup, xdata::String() ) {
   registerParameter("bankId", xdata::UnsignedInteger(0x0));
   registerParameter("depth", xdata::UnsignedInteger(0x0));
 }
@@ -367,8 +379,8 @@ template class LatencyBuffersCommand<AbstractChannelsCommand::kTx>;
 
 // --------------------------------------------------------
 template<AbstractChannelsCommand::ChannelGroup tGroup>
-EasyLatencyCommand<tGroup>::EasyLatencyCommand(const std::string& aId) :
-  AbstractChannelsCommand(aId, tGroup, xdata::String() ) {
+EasyLatencyCommand<tGroup>::EasyLatencyCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
+  AbstractChannelsCommand(aId, aActionable, tGroup, xdata::String() ) {
   registerParameter("bankId", xdata::UnsignedInteger(0x0));
   registerParameter("masterLatency", xdata::UnsignedInteger(0x0));
   registerParameter("algoLatency", xdata::UnsignedInteger(0x0));

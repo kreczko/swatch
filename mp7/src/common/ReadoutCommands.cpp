@@ -29,8 +29,8 @@ namespace swatch {
 namespace mp7 {
 
 
-SetupReadout::SetupReadout( const std::string& aId ) :
-  core::Command(aId, xdata::UnsignedInteger())
+SetupReadout::SetupReadout( const std::string& aId, swatch::core::ActionableObject& aActionable ) :
+  core::Command(aId, aActionable, xdata::UnsignedInteger())
 {
   registerParameter("internal", xdata::Boolean(false));
   registerParameter("bxOffset", xdata::UnsignedInteger(1));
@@ -56,8 +56,8 @@ SetupReadout::code(const ::swatch::core::XParameterSet& aParams)
   xdata::UnsignedInteger lDrain = aParams.get<xdata::UnsignedInteger>("drain");
   xdata::UnsignedInteger lFake = aParams.get<xdata::UnsignedInteger>("fake");
 
-  swatch::mp7::MP7Processor* p = getActionable<swatch::mp7::MP7Processor>();
-  ::mp7::MP7Controller& driver = p->driver();
+  swatch::mp7::MP7Processor& p = getActionable<swatch::mp7::MP7Processor>();
+  ::mp7::MP7Controller& driver = p.driver();
 
   const ::mp7::TTCNode& ttc = driver.getTTC();
   const ::mp7::ReadoutNode& ro = driver.getReadout();
@@ -132,22 +132,16 @@ SetupReadout::code(const ::swatch::core::XParameterSet& aParams)
 
 
 // --------------------------------------------------------
-LoadReadoutMenu::LoadReadoutMenu( const std::string& aId, uint32_t aBanks, uint32_t aModes, uint32_t aCaptures ) :
-  swatch::core::Command(aId, xdata::UnsignedInteger()),
-  mBanks(aBanks),
-  mModes(aModes),
-  mCaptures(aCaptures)
+LoadReadoutMenu::LoadReadoutMenu( const std::string& aId, swatch::core::ActionableObject& aActionable ) :
+  swatch::core::Command(aId, aActionable, xdata::UnsignedInteger())
 {
- // /uint32_t lBanks = 4;
-//  uint32_t lMode = 2;
-//  uint32_t lCaptures = 4;
   
-  // mp7::MP7Controller& lDriver = getParent<swatch::mp7::MP7Processor>()->driver();
-  // const mp7::ReadoutCtrlNode& rc = lDriver.getReadout().getNode<mp7::ReadoutCtrlNode >("readout_control");
-  
-  // uint32_t lBanks = rc.readNumBanks();
-  // uint32_t lModes = rc.readNumModes();
-  // uint32_t lCaptures = rc.readNumCaptures();
+	::mp7::MP7Controller& lDriver = getActionable<swatch::mp7::MP7Processor>().driver();
+	const ::mp7::ReadoutCtrlNode& rc = lDriver.getReadout().getNode< ::mp7::ReadoutCtrlNode>("readout_control");
+
+	mBanks = rc.readNumBanks();
+	mModes = rc.readNumModes();
+	mCaptures = rc.readNumCaptures();
   
   std::string bankStr, modeStr, capStr;
   for( uint32_t iB(0); iB < mBanks; ++iB ) {
@@ -197,15 +191,15 @@ LoadReadoutMenu::~LoadReadoutMenu() {
 }
 
 // --------------------------------------------------------
-LoadReadoutMenu*
-LoadReadoutMenu::create( const std::string& aId, ::mp7::MP7Controller& aDriver) {
-  const ::mp7::ReadoutCtrlNode& rc = aDriver.getReadout().getNode< ::mp7::ReadoutCtrlNode >("readout_control");
-  uint32_t lBanks = rc.readNumBanks();
-  uint32_t lModes = rc.readNumModes();
-  uint32_t lCaptures = rc.readNumCaptures();
-
-  return new LoadReadoutMenu(aId, lBanks, lModes, lCaptures);
-}
+//LoadReadoutMenu*
+//LoadReadoutMenu::create( const std::string& aId, ::mp7::MP7Controller& aDriver) {
+//  const ::mp7::ReadoutCtrlNode& rc = aDriver.getReadout().getNode< ::mp7::ReadoutCtrlNode >("readout_control");
+//  uint32_t lBanks = rc.readNumBanks();
+//  uint32_t lModes = rc.readNumModes();
+//  uint32_t lCaptures = rc.readNumCaptures();
+//
+//  return new LoadReadoutMenu(aId, aDaDriver, lBanks, lModes, lCaptures);
+//}
 
 // --------------------------------------------------------
 core::Command::State
@@ -267,7 +261,7 @@ LoadReadoutMenu::code(const ::swatch::core::XParameterSet& aParams)
     }
   }
   
-  ::mp7::MP7Controller& driver = getActionable<swatch::mp7::MP7Processor>()->driver();
+  ::mp7::MP7Controller& driver = getActionable<swatch::mp7::MP7Processor>().driver();
   const ::mp7::ReadoutCtrlNode& rc = driver.getReadout().getNode< ::mp7::ReadoutCtrlNode >("readout_control"); 
   
   

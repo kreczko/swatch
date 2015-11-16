@@ -133,7 +133,7 @@ MP7Processor::MP7Processor(const swatch::core::AbstractStub& aStub) :
   registerCommand<EasyTxLatencyCommand>(CmdIds::kCfgEasyTxLatency);
   registerCommand<TDRFormatterCommand>(CmdIds::kCfgFormatterTdr);
   registerCommand<SetupReadout>(CmdIds::kSetupReadout);
-  registerCommand(CmdIds::kLoadReadoutMenu, LoadReadoutMenu::create("roLoadMenu", *mDriver));
+  registerCommand<LoadReadoutMenu>(CmdIds::kLoadReadoutMenu);
 
   LOG(swlog::kNotice) << "MP7 Processor '" << this->getId() << "' built: firmware 0x" << std::hex << retrieveFirmwareVersion() << std::endl;
 }

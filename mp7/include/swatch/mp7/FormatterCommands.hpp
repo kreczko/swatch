@@ -31,7 +31,7 @@ public:
 
 protected:
   template<typename ResultType>
-  AbstractFormatterCommand( const std::string& aId, const ResultType& aDefault );
+  AbstractFormatterCommand( const std::string& aId, swatch::core::ActionableObject& aActionable, const ResultType& aDefault );
 
   ::mp7::ChannelsManager getChannelsMgr(const swatch::core::XParameterSet& aParams);
 
@@ -41,8 +41,8 @@ protected:
 
 
 template<typename ResultType>
-AbstractFormatterCommand::AbstractFormatterCommand( const std::string& aId , const ResultType& aDefault ) :
-  core::Command(aId, aDefault)
+AbstractFormatterCommand::AbstractFormatterCommand( const std::string& aId , swatch::core::ActionableObject& aActionable, const ResultType& aDefault ) :
+  core::Command(aId, aActionable, aDefault)
 {
   registerParameter(kPortSelection,xdata::String());
 }
@@ -50,7 +50,7 @@ AbstractFormatterCommand::AbstractFormatterCommand( const std::string& aId , con
 
 class TDRFormatterCommand : public AbstractFormatterCommand {
 public:
-  TDRFormatterCommand(const std::string& aId);
+  TDRFormatterCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
   virtual ~TDRFormatterCommand();
   virtual State code(const ::swatch::core::XParameterSet& params);
 };

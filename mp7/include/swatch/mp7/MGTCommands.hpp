@@ -10,7 +10,7 @@ namespace mp7 {
 
 class ConfigureRxMGTsCommand : public AbstractChannelsCommand {
 public:
-    ConfigureRxMGTsCommand(const std::string& aId);
+    ConfigureRxMGTsCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
     virtual ~ConfigureRxMGTsCommand();
     virtual core::Command::State code(const core::XParameterSet& params);
 
@@ -19,7 +19,7 @@ public:
 
 class ConfigureTxMGTsCommand : public AbstractChannelsCommand {
 public:
-    ConfigureTxMGTsCommand(const std::string& aId);
+    ConfigureTxMGTsCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
     virtual ~ConfigureTxMGTsCommand();
     virtual core::Command::State code(const core::XParameterSet& params);
 
@@ -28,7 +28,7 @@ public:
 
 class AlignRxsToCommand : public AbstractChannelsCommand {
 public:
-    AlignRxsToCommand(const std::string& aId);
+    AlignRxsToCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
     virtual ~AlignRxsToCommand();
     virtual core::Command::State code(const core::XParameterSet& params);
 
@@ -37,7 +37,7 @@ public:
 
 class AutoAlignCommand : public AbstractChannelsCommand {
 public:
-    AutoAlignCommand(const std::string& aId);
+    AutoAlignCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
     virtual ~AutoAlignCommand();
     virtual core::Command::State code (const core::XParameterSet& aParams);
 };

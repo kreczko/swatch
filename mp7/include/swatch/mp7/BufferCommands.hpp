@@ -26,7 +26,7 @@ template<AbstractChannelsCommand::ChannelGroup tGroup>
 class ConfigureBuffersCommand : public AbstractChannelsCommand {
 public:
 
-  ConfigureBuffersCommand(const std::string& aId);
+  ConfigureBuffersCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
   
   virtual ~ConfigureBuffersCommand();
 
@@ -48,7 +48,7 @@ typedef ConfigureBuffersCommand<AbstractChannelsCommand::kTx> ConfigureTxBuffers
  */
 class CaptureBuffersCommand : public ::swatch::core::Command {
 public:
-  CaptureBuffersCommand(const std::string& aId);
+  CaptureBuffersCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
   virtual ~CaptureBuffersCommand();
   virtual swatch::core::Command::State code(const ::swatch::core::XParameterSet& params);
 };
@@ -60,7 +60,7 @@ public:
 template<AbstractChannelsCommand::ChannelGroup tGroup>
 class SaveBuffersToFileCommand : public AbstractChannelsCommand {
 public:
-  SaveBuffersToFileCommand(const std::string& aId);
+  SaveBuffersToFileCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
   virtual ~SaveBuffersToFileCommand();
   virtual swatch::core::Command::State code(const ::swatch::core::XParameterSet& params);
 };
@@ -75,7 +75,7 @@ typedef SaveBuffersToFileCommand<AbstractChannelsCommand::kTx> SaveTxBuffersToFi
 template<AbstractChannelsCommand::ChannelGroup tGroup>
 class LatencyBuffersCommand : public AbstractChannelsCommand {
 public:
-  LatencyBuffersCommand(const std::string& aId);
+  LatencyBuffersCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
   virtual ~LatencyBuffersCommand();
   virtual State code(const ::swatch::core::XParameterSet& params);
 private:
@@ -92,7 +92,7 @@ typedef LatencyBuffersCommand<AbstractChannelsCommand::kTx> LatencyTxBuffersComm
 template<AbstractChannelsCommand::ChannelGroup tGroup>
 class EasyLatencyCommand : public AbstractChannelsCommand {
 public:
-  EasyLatencyCommand(const std::string& aId);
+  EasyLatencyCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
   virtual ~EasyLatencyCommand();
   virtual State code(const ::swatch::core::XParameterSet& params);
 private:
