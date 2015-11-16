@@ -34,10 +34,10 @@ public:
   virtual ~StateMachine();
 
   //! Returns actionable object that this FSM belongs to
-  const ActionableObject& getResource() const;
+  const ActionableObject& getActionable() const;
 
   //! Returns actionable object that this FSM belongs to
-  ActionableObject& getResource();
+  ActionableObject& getActionable();
 
   //! Returns ID of this FSM's initial state
   const std::string& getInitialState() const;

@@ -103,7 +103,7 @@ BOOST_AUTO_TEST_CASE(TestConstruction) {
   DummyActionableObject obj("dummy");
   swatch::core::StateMachine& fsm = obj.registerStateMachine("anOp", "someState", "myErrState");
   
-  BOOST_CHECK_EQUAL(&fsm.getResource(), &obj);
+  BOOST_CHECK_EQUAL(&fsm.getActionable(), &obj);
   BOOST_CHECK_EQUAL(fsm.getInitialState(), "someState");
   BOOST_CHECK_EQUAL(fsm.getErrorState(), "myErrState");
   BOOST_CHECK_EQUAL( &obj.getObj(fsm.getId()), (Object*) &fsm);

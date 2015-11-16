@@ -35,14 +35,14 @@ StateMachine::~StateMachine()
 
 
 //------------------------------------------------------------------------------------
-const ActionableObject& StateMachine::getResource() const
+const ActionableObject& StateMachine::getActionable() const
 {
   return mResource;
 }
 
 
 //------------------------------------------------------------------------------------
-ActionableObject& StateMachine::getResource()
+ActionableObject& StateMachine::getActionable()
 {
   return mResource;
 }
@@ -174,7 +174,7 @@ void StateMachine::reset()
 
 
 StateMachine::Transition::Transition(const std::string& aId, StateMachine& aOp, const std::string& aStartState, const std::string& aEndState) :
-  CommandVec(aId, aOp.getResource()),
+  CommandVec(aId, aOp.getActionable()),
   mStateMachine(aOp),
   mStartState(aStartState),
   mEndState(aEndState)
@@ -232,7 +232,7 @@ void StateMachine::Transition::extractMonitoringSettings(const GateKeeper& aGate
   aMonSettings.clear();
 
   // get a list of all MonitorableObjects
-  ActionableObject& lResource = mStateMachine.getResource();
+  ActionableObject& lResource = mStateMachine.getActionable();
   std::vector<std::string> lDescendants = lResource.getDescendants();
   for (std::vector<std::string>::const_iterator lIt = lDescendants.begin(); lIt != lDescendants.end(); lIt++) {
     MonitorableObject* lDescendant = lResource.getObj<MonitorableObject>(*lIt);
@@ -275,7 +275,7 @@ void StateMachine::Transition::finaliseCommands(const tReadOnlyXParameterSets& a
 void StateMachine::Transition::applyMonitoringSettings(const tMonitoringSettings& aMonSettings) {
   
   // get a list of all MonitorableObjects
-  ActionableObject& lResource = mStateMachine.getResource();
+  ActionableObject& lResource = mStateMachine.getActionable();
   std::vector<std::string> lDescendants = lResource.getDescendants();
   
   for (std::vector<std::string>::const_iterator lIt = lDescendants.begin(); lIt != lDescendants.end(); lIt++) {

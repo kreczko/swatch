@@ -67,7 +67,7 @@ void ActionableSystem::engageStateMachine(const std::string& aFSM)
   
   for(std::set<const StateMachine*>::const_iterator lIt=lOp.getParticipants().begin(); lIt!=lOp.getParticipants().end(); lIt++)
   {
-    const ActionableObject& lChild = (*lIt)->getResource();
+    const ActionableObject& lChild = (*lIt)->getActionable();
     if( lChild.mStatus.isEngaged() )
   	  throw ResourceInWrongStateMachine("Cannot engage other state machine; resource '"+lChild.getPath()+"' currently in state machine '"+lChild.mStatus.getStateMachineId()+"'");
   }
@@ -141,7 +141,7 @@ ActionableSystem::tLockGuardMap ActionableSystem::lockMutexes(const SystemStateM
   std::map<const MonitorableObject*, tLockGuardPtr> lLockGuardMap;
   lLockGuardMap[&aOp.getActionable()] = tLockGuardPtr(new boost::unique_lock<boost::mutex>(aOp.getActionable().mMutex, boost::adopt_lock_t()));
   for(std::set<const StateMachine*>::const_iterator lIt=aOp.getParticipants().begin(); lIt!=aOp.getParticipants().end(); lIt++)
-    lLockGuardMap[&(*lIt)->getResource()] = tLockGuardPtr( new boost::unique_lock<boost::mutex>((*lIt)->getResource().mMutex, boost::adopt_lock_t()) );
+    lLockGuardMap[&(*lIt)->getActionable()] = tLockGuardPtr( new boost::unique_lock<boost::mutex>((*lIt)->getActionable().mMutex, boost::adopt_lock_t()) );
   
   return lLockGuardMap;
 }
@@ -171,7 +171,7 @@ ActionableSystem::BusyGuard::BusyGuard(ActionableSystem& aResource, const Functi
   for(SystemTransition::const_iterator lIt=(lTransition.end()-1); lIt != (lTransition.begin()-1); lIt--)
   {
     for(std::vector<StateMachine::Transition*>::const_iterator lIt2=lIt->cget().begin(); lIt2!=lIt->cget().end(); lIt2++)
-      childTransitionMap[ &(*lIt2)->getStateMachine().getResource() ] = *lIt2;
+      childTransitionMap[ &(*lIt2)->getStateMachine().getActionable() ] = *lIt2;
   }
 
   BOOST_FOREACH( const tObjTransitionMap::value_type e, childTransitionMap ) {
