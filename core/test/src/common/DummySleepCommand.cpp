@@ -44,7 +44,7 @@ Command::State DummySleepCommand::code(const XParameterSet& params)
   }
   
   setStatusMsg("Dummy sleep command for object '" + res.getPath() + "' completed");
-    return kDone;
+    return State::kDone;
 }
 
 } /* namespace test */

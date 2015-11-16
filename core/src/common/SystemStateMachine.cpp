@@ -512,8 +512,8 @@ void SystemStateMachine::checkStateMachineEngagedAndNotInTransition(const std::s
   }
   
   // Throw if system or any of the participating children are currently running a transition
-  if(const SystemTransition* t = getResource().mStatus.getFirstRunningActionOfType<SystemTransition>())
-    throw ActionableSystemIsBusy("Cannot "+aAction+" state machine '"+getId()+"'; resource '"+getResource().getPath()+"' is busy in transition '"+t->getId()+"'");
+  if(const SystemTransition* t = getActionable().mStatus.getFirstRunningActionOfType<SystemTransition>())
+    throw ActionableSystemIsBusy("Cannot "+aAction+" state machine '"+getId()+"'; resource '"+getActionable().getPath()+"' is busy in transition '"+t->getId()+"'");
   
   // Throw if any children in wrong state machine, or 
 	BOOST_FOREACH( const StateMachine* sm, getParticipants()) {
