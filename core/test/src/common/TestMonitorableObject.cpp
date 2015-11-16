@@ -67,12 +67,12 @@ BOOST_AUTO_TEST_CASE(GoodMonitorableObject) {
   LOG(kInfo) << "Running MonitorableObjectTestSuite/GoodMonitorableObject";
   DummyMonitorableObject m;
   m.updateMetrics();
-  MetricSnapshot ms = m.getMetric("DummyCriticalInteger").getValue();
-  MetricSnapshot ms2 = m.getMetric("DummyNonCriticalInteger").getValue();
+  MetricSnapshot ms = m.getMetric("DummyCriticalInteger").getSnapshot();
+  MetricSnapshot ms2 = m.getMetric("DummyNonCriticalInteger").getSnapshot();
   BOOST_CHECK_EQUAL(ms.getValue(), "1");
   BOOST_CHECK_EQUAL(ms2.getValue(), "2");
-  BOOST_CHECK_EQUAL(ms.getStatus(), swatch::core::StatusFlag::kGood);
-  BOOST_CHECK_EQUAL(ms2.getStatus(), swatch::core::StatusFlag::kGood);
+  BOOST_CHECK_EQUAL(ms.getStatusFlag(), swatch::core::StatusFlag::kGood);
+  BOOST_CHECK_EQUAL(ms2.getStatusFlag(), swatch::core::StatusFlag::kGood);
   BOOST_CHECK_EQUAL(m.getStatus(), swatch::core::StatusFlag::kGood);
 }
 
@@ -82,12 +82,12 @@ BOOST_AUTO_TEST_CASE(CriticalFailure) {
   m.updateMetrics();
   // set a value outside the range
   m.setCriticalMetric(-232);
-  MetricSnapshot ms = m.getMetric("DummyCriticalInteger").getValue();
-  MetricSnapshot ms2 = m.getMetric("DummyNonCriticalInteger").getValue();
+  MetricSnapshot ms = m.getMetric("DummyCriticalInteger").getSnapshot();
+  MetricSnapshot ms2 = m.getMetric("DummyNonCriticalInteger").getSnapshot();
   BOOST_CHECK_EQUAL(ms.getValue(), "-232");
   BOOST_CHECK_EQUAL(ms2.getValue(), "2");
-  BOOST_CHECK_EQUAL(ms.getStatus(), swatch::core::StatusFlag::kError);
-  BOOST_CHECK_EQUAL(ms2.getStatus(), swatch::core::StatusFlag::kGood);
+  BOOST_CHECK_EQUAL(ms.getStatusFlag(), swatch::core::StatusFlag::kError);
+  BOOST_CHECK_EQUAL(ms2.getStatusFlag(), swatch::core::StatusFlag::kGood);
   BOOST_CHECK_EQUAL(m.getStatus(), swatch::core::StatusFlag::kError);
 }
 
@@ -97,14 +97,14 @@ BOOST_AUTO_TEST_CASE(NonCriticalFailure) {
   m.updateMetrics();
   // set a value outside the range
   m.setNonCriticalMetric(-232);
-  MetricSnapshot ms = m.getMetric("DummyCriticalInteger").getValue();
-  MetricSnapshot ms2 = m.getMetric("DummyNonCriticalInteger").getValue();
+  MetricSnapshot ms = m.getMetric("DummyCriticalInteger").getSnapshot();
+  MetricSnapshot ms2 = m.getMetric("DummyNonCriticalInteger").getSnapshot();
   BOOST_CHECK_EQUAL(ms2.getMonitoringStatus(), monitoring::Status::kNonCritical);
   BOOST_CHECK_EQUAL(ms.getValue(), "1");
   BOOST_CHECK_EQUAL(ms2.getValue(), "-232");
-  BOOST_CHECK_EQUAL(ms.getStatus(), swatch::core::StatusFlag::kGood);
+  BOOST_CHECK_EQUAL(ms.getStatusFlag(), swatch::core::StatusFlag::kGood);
   // non-critical metric fails
-  BOOST_CHECK_EQUAL(ms2.getStatus(), swatch::core::StatusFlag::kError);
+  BOOST_CHECK_EQUAL(ms2.getStatusFlag(), swatch::core::StatusFlag::kError);
   // but the MonitoringObject status should be still good
   BOOST_CHECK_EQUAL(m.getStatus(), swatch::core::StatusFlag::kGood);
 }
@@ -115,11 +115,11 @@ BOOST_AUTO_TEST_CASE(DisabledFailure) {
   m.updateMetrics();
   // set a value outside the range
   m.setDisabledMetric(-232);
-  MetricSnapshot ms = m.getMetric("DummyDisabledInteger").getValue();
+  MetricSnapshot ms = m.getMetric("DummyDisabledInteger").getSnapshot();
   BOOST_CHECK_EQUAL(ms.getMonitoringStatus(), monitoring::Status::kDisabled);
   BOOST_CHECK_EQUAL(ms.getValue(), "-232");
   // nothing changes for disabled Metric
-  BOOST_CHECK_EQUAL(ms.getStatus(), swatch::core::StatusFlag::kNoLimit);
+  BOOST_CHECK_EQUAL(ms.getStatusFlag(), swatch::core::StatusFlag::kNoLimit);
   // and no effect on MonitoringObject either
   BOOST_CHECK_EQUAL(m.getStatus(), swatch::core::StatusFlag::kGood);
 }
@@ -131,9 +131,9 @@ BOOST_AUTO_TEST_CASE(DisabledFailureNoUnknown) {
   // at this point the time of last update should be 0
   // normally MonitoringObject will attempt to set the value
   // to unknown, but that should not be the case for disabled metrics
-  MetricSnapshot ms = m.getMetric("DummyDisabledInteger").getValue();
+  MetricSnapshot ms = m.getMetric("DummyDisabledInteger").getSnapshot();
   BOOST_CHECK_EQUAL(ms.getMonitoringStatus(), monitoring::Status::kDisabled);
-  BOOST_CHECK_EQUAL(ms.getStatus(), swatch::core::StatusFlag::kNoLimit);
+  BOOST_CHECK_EQUAL(ms.getStatusFlag(), swatch::core::StatusFlag::kNoLimit);
   BOOST_CHECK_EQUAL(m.getStatus(), swatch::core::StatusFlag::kGood);
 }
 

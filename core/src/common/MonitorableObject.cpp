@@ -78,8 +78,8 @@ StatusFlag MonitorableObject::getStatus() const
   
   BOOST_FOREACH( tMetricMap::value_type p, metrics_) {
     // only enabled metrics contribute to the status
-    if (p.second->getValue().getMonitoringStatus() == monitoring::kEnabled)
-      result = result & p.second->getValue().getStatus();
+    if (p.second->getSnapshot().getMonitoringStatus() == monitoring::kEnabled)
+      result = result & p.second->getSnapshot().getStatusFlag();
   }
   
   return result;

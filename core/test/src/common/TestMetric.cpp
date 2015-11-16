@@ -21,27 +21,27 @@ BOOST_AUTO_TEST_SUITE( MetricTestSuite )
 BOOST_AUTO_TEST_CASE(SimpleMetric) {
   LOG(kInfo) << "Running MetricTestSuite/SimpleMetric";
   DummyMetric<int> m(1);
-  MetricSnapshot ms = m.getValue();
+  MetricSnapshot ms = m.getSnapshot();
   BOOST_CHECK_EQUAL(ms.getValue(), "1");
-  BOOST_CHECK_EQUAL(ms.getStatus(), swatch::core::StatusFlag::kNoLimit);
+  BOOST_CHECK_EQUAL(ms.getStatusFlag(), swatch::core::StatusFlag::kNoLimit);
 }
 
 BOOST_AUTO_TEST_CASE(MetricWithConditions) {
   LOG(kInfo) << "Running MetricTestSuite/MetricWithConditions";
   DummyMetric<int> m(1, new LessThanCondition<int>(0));
-  MetricSnapshot ms = m.getValue();
+  MetricSnapshot ms = m.getSnapshot();
   BOOST_CHECK_EQUAL(ms.getValue(), "1");
-  BOOST_CHECK_EQUAL(ms.getStatus(), StatusFlag::kGood);
+  BOOST_CHECK_EQUAL(ms.getStatusFlag(), StatusFlag::kGood);
   m.setValue(-1);
-  MetricSnapshot ms2 = m.getValue();
-  BOOST_CHECK_EQUAL(ms2.getStatus(), StatusFlag::kError);
+  MetricSnapshot ms2 = m.getSnapshot();
+  BOOST_CHECK_EQUAL(ms2.getStatusFlag(), StatusFlag::kError);
 }
 
 BOOST_AUTO_TEST_CASE(NonCriticalMetric) {
   LOG(kInfo) << "Running MetricTestSuite/NonCriticalMetric";
   DummyMetric<int> m(1);
   m.setMonitoringStatus(monitoring::kNonCritical);
-  MetricSnapshot ms = m.getValue();
+  MetricSnapshot ms = m.getSnapshot();
   BOOST_CHECK_EQUAL(ms.getValue(), "1");
   BOOST_CHECK_EQUAL(ms.getMonitoringStatus(), monitoring::kNonCritical);
 }
@@ -50,22 +50,22 @@ BOOST_AUTO_TEST_CASE(DisabledMetric) {
   LOG(kInfo) << "Running MetricTestSuite/DisabledMetric";
   Metric<int>* m = new Metric<int>;
   m->setMonitoringStatus(monitoring::kDisabled);
-  MetricSnapshot ms = m->getValue();
+  MetricSnapshot ms = m->getSnapshot();
   BOOST_CHECK_EQUAL(ms.getMonitoringStatus(), monitoring::kDisabled);
-  BOOST_CHECK_EQUAL(ms.getStatus(), StatusFlag::kNoLimit);
+  BOOST_CHECK_EQUAL(ms.getStatusFlag(), StatusFlag::kNoLimit);
 }
 
 BOOST_AUTO_TEST_CASE(DisabledMetricWithConditions) {
   LOG(kInfo) << "Running MetricTestSuite/DisabledMetricWithConditions";
   DummyMetric<int> m(1, new LessThanCondition<int>(0));
   m.setMonitoringStatus(monitoring::kDisabled);
-  MetricSnapshot ms = m.getValue();
+  MetricSnapshot ms = m.getSnapshot();
   BOOST_CHECK_EQUAL(ms.getValue(), "1");
   BOOST_CHECK_EQUAL(ms.getMonitoringStatus(), monitoring::kDisabled);
-  BOOST_CHECK_EQUAL(ms.getStatus(), StatusFlag::kNoLimit);
+  BOOST_CHECK_EQUAL(ms.getStatusFlag(), StatusFlag::kNoLimit);
   m.setValue(-1);
-  MetricSnapshot ms2 = m.getValue();
-  BOOST_CHECK_EQUAL(ms2.getStatus(), StatusFlag::kNoLimit);
+  MetricSnapshot ms2 = m.getSnapshot();
+  BOOST_CHECK_EQUAL(ms2.getStatusFlag(), StatusFlag::kNoLimit);
 }
 
 BOOST_AUTO_TEST_SUITE_END() // MetricTestSuite

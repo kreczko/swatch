@@ -46,7 +46,7 @@ Metric<DataType>::~Metric(){
 
 
 template<typename DataType>
-MetricSnapshot Metric<DataType>::getValue() const {
+MetricSnapshot Metric<DataType>::getSnapshot() const {
     boost::lock_guard<boost::mutex> lock(mutex_);
 
     swatch::core::StatusFlag flag = kUnknown;

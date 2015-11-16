@@ -133,6 +133,7 @@ protected:
   
   //! Register the a command sequence in this object, with specified ID
   CommandSequence& registerSequence(const std::string& aId, const std::string& aFirstCommandId, const std::string& aFirstCommandNamespace="");
+  
   //! Register the a command sequence in this object, with specified ID
   CommandSequence& registerSequence(const std::string& aId, Command& aFirstCommand, const std::string& aFirstCommandNamespace="");
 

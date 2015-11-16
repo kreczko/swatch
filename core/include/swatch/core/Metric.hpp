@@ -47,7 +47,7 @@ public:
 
     ~Metric();
 
-    MetricSnapshot getValue() const;
+    MetricSnapshot getSnapshot() const;
     
     //! Returns time at which metric's value was last updated
     timeval getUpdateTimestamp() const;

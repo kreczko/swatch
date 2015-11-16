@@ -41,7 +41,7 @@ public:
     virtual ~AbstractMetric();
 
     //! Returns metric value, status flag, and error/warning conditions, within a swatch::core::MetricSnapshot object. (THREAD SAFE)
-    virtual MetricSnapshot getValue() const = 0;
+    virtual MetricSnapshot getSnapshot() const = 0;
     
     //! Returns time at which metric's value was last updated. (THREAD SAFE)
     virtual timeval getUpdateTimestamp() const = 0;
@@ -84,7 +84,7 @@ public:
       swatch::core::monitoring::Status m_status = monitoring::kEnabled);
 
     //! Returns status flag deduced from comparing the stored value with limits
-    swatch::core::StatusFlag getStatus() const;
+    swatch::core::StatusFlag getStatusFlag() const;
     
     //! Returns string representation of the metric's value
     const std::string& getValue() const;
@@ -101,12 +101,12 @@ public:
     swatch::core::monitoring::Status getMonitoringStatus() const;
 
 private:
-    const swatch::core::StatusFlag flag_;
-    const std::string value_; //TODO ??? Update to boost shared_ptr to actual data value (without templating class, just templating CTOR) ???
-    const timeval updateTimestamp_;
-    const boost::shared_ptr<AbstractMetricCondition> errorCondition_;
-    const boost::shared_ptr<AbstractMetricCondition> warnCondition_;
-    const swatch::core::monitoring::Status monitoringStatus_;
+    const swatch::core::StatusFlag mFlag;
+    const std::string mValue; //TODO ??? Update to boost shared_ptr to actual data value (without templating class, just templating CTOR) ???
+    const timeval mUpdateTimestamp;
+    const boost::shared_ptr<AbstractMetricCondition> mErrorCondition;
+    const boost::shared_ptr<AbstractMetricCondition> mWarnCondition;
+    const swatch::core::monitoring::Status mMonitoringStatus;
 };
 
 
