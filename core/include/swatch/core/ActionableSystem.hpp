@@ -25,7 +25,7 @@ class ActionableSystem : public MonitorableObject {
   class BusyGuard;
 public:
     
-  class State : public AbstractState {
+  class State : public ActionableStatus {
   public:
       State();
       

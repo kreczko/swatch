@@ -31,22 +31,22 @@ class StateMachine;
 class SystemStateMachine;
 
 
-class AbstractState {
+class ActionableStatus {
 public:
   bool isEnabled() const;
   const std::string& getState() const;
-  const std::vector<const Functionoid*>& getActions() const;
+  const std::vector<const Functionoid*>& getRunningActions() const;
   template<class T>
-  const T* getAction() const;
+  const T* getRunningAction() const;
   
 protected:
-  AbstractState();
+  ActionableStatus();
 
   //! Indicates whether or not actions are allowed on this resource anymore (actions become disabled once the deleter is)
   bool mEnabled;
   std::string mState;
   //! Indicates which functionoids (Command/CommandSequence/(System)Transition) are currently active; NULL value indicates that no functionoids are currently active.
-  std::vector<const Functionoid*> mActions;
+  std::vector<const Functionoid*> mRunningActions;
 };
 
 //! An object representing a resource on which commands, command sequences, and transitions run
@@ -54,9 +54,9 @@ class ActionableObject : public MonitorableObject {
   class BusyGuard;
 public:
     
-  class State : public AbstractState {
+  class Status : public ActionableStatus {
   public:
-    State();
+    Status();
 
     const StateMachine* getEngagedFSM() const;
 
@@ -105,7 +105,7 @@ public:
 
   virtual const std::vector<std::string>& getGateKeeperTables() const = 0;
   
-  State getState() const;
+  Status getStatus() const;
   
   //! Engage state machine of specified ID
   void engageStateMachine(const std::string& aStateMachine);
@@ -155,7 +155,7 @@ private:
   tStateMachineMap mFSMs;
 
   mutable boost::mutex mMutex;
-  State mState;
+  Status mStatus;
 
   class BusyGuard : public boost::noncopyable {
   public:

@@ -115,24 +115,24 @@ void StateMachine::disengage()
   boost::lock_guard<boost::mutex> lGuard(mResource.mMutex);
   
   // Throw if currently in other state machine
-  if(mResource.mState.mFSM != this)
+  if(mResource.mStatus.mFSM != this)
   {
     std::ostringstream oss;
     oss << "Cannot reset resource '" << mResource.getPath() << "' state machine '" << getId() << "'; ";
-    if ( mResource.mState.mFSM != NULL)
-      oss << "currently in state machine '" << mResource.mState.mFSM->getPath() << "'";
+    if ( mResource.mStatus.mFSM != NULL)
+      oss << "currently in state machine '" << mResource.mStatus.mFSM->getPath() << "'";
     else
       oss << "NOT in any state machine";
     throw ResourceInWrongStateMachine(oss.str());
   }
 
   // Throw if running action
-  if ( ! mResource.mState.mActions.empty() )
-    throw ActionableObjectIsBusy("Cannot reset '"+mResource.getPath()+"', state machine '"+getId()+"'; busy running action '"+mResource.mState.mActions.back()->getPath()+"'");  
+  if ( ! mResource.mStatus.mRunningActions.empty() )
+    throw ActionableObjectIsBusy("Cannot reset '"+mResource.getPath()+"', state machine '"+getId()+"'; busy running action '"+mResource.mStatus.mRunningActions.back()->getPath()+"'");  
   
   
-  mResource.mState.mFSM = NULL;
-  mResource.mState.mState = "";
+  mResource.mStatus.mFSM = NULL;
+  mResource.mStatus.mState = "";
 }
 
 
@@ -141,22 +141,22 @@ void StateMachine::reset()
   boost::lock_guard<boost::mutex> lGuard(mResource.mMutex);
   
   // Throw if currently in other state machine
-  if(mResource.mState.mFSM != this)
+  if(mResource.mStatus.mFSM != this)
   {
     std::ostringstream oss;
     oss << "Cannot reset '" << mResource.getPath() << "', state machine '" << getId() << "'; ";
-    if ( mResource.mState.mFSM != NULL)
-      oss << "currently in state machine '" << mResource.mState.mFSM->getPath() << "'";
+    if ( mResource.mStatus.mFSM != NULL)
+      oss << "currently in state machine '" << mResource.mStatus.mFSM->getPath() << "'";
     else
       oss << "NOT in any state machine";
     throw ResourceInWrongStateMachine(oss.str());
   }
   
   // Throw if running action
-  if ( ! mResource.mState.mActions.empty() )
-    throw ActionableObjectIsBusy("Cannot reset '"+mResource.getPath()+"', state machine '"+getId()+"'; busy running action '"+mResource.mState.mActions.back()->getPath()+"'");  
+  if ( ! mResource.mStatus.mRunningActions.empty() )
+    throw ActionableObjectIsBusy("Cannot reset '"+mResource.getPath()+"', state machine '"+getId()+"'; busy running action '"+mResource.mStatus.mRunningActions.back()->getPath()+"'");  
   
-  mResource.mState.mState = getInitialState();
+  mResource.mStatus.mState = getInitialState();
 }
 
 

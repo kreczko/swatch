@@ -14,7 +14,7 @@ namespace core {
 
 
 ActionableSystem::State::State() :
-  AbstractState(),
+  ActionableStatus(),
   mFSM(NULL)
 {
 }
@@ -75,8 +75,8 @@ void ActionableSystem::engageStateMachine(const std::string& aFSM)
   for(std::set<const StateMachine*>::const_iterator lIt=lOp.getParticipants().begin(); lIt!=lOp.getParticipants().end(); lIt++)
   {
     const ActionableObject& lChild = (*lIt)->getResource();
-    if( lChild.mState.mFSM != NULL )
-      throw ResourceInWrongStateMachine("Cannot engage other state machine; resource '"+lChild.getPath()+"' currently in state machine '"+lChild.mState.mFSM->getId()+"'");
+    if( lChild.mStatus.mFSM != NULL )
+      throw ResourceInWrongStateMachine("Cannot engage other state machine; resource '"+lChild.getPath()+"' currently in state machine '"+lChild.mStatus.mFSM->getId()+"'");
   }
   
   // ... otherwise all is good, engage system & all participating children in appropriate state machine
@@ -85,8 +85,8 @@ void ActionableSystem::engageStateMachine(const std::string& aFSM)
   for(std::set<const StateMachine*>::const_iterator lIt=lOp.getParticipants().begin(); lIt!=lOp.getParticipants().end(); lIt++)
   {
     ActionableObject& lObj = (*lIt)->mResource;
-    lObj.mState.mFSM = *lIt;
-    lObj.mState.mState = (*lIt)->getInitialState();
+    lObj.mStatus.mFSM = *lIt;
+    lObj.mStatus.mState = (*lIt)->getInitialState();
   }
 }
 
@@ -112,7 +112,7 @@ void ActionableSystem::Deleter::operator ()(Object* aObject) {
 
     //TODO (low-ish priority): Eventually replace this "spinning" do-loop with a more efficient implementation based on ActionableSystem/Functionoid methods that use conditional variables behind-the-scenes 
     do {
-    } while ( ! lActionableSys->getState().getActions().empty() );
+    } while ( ! lActionableSys->getState().getRunningActions().empty() );
 
     LOG(swatch::logger::kNotice) << aObject->getPath() << " : ActionableSystem now being deleted";
 
@@ -181,21 +181,21 @@ ActionableSystem::BusyGuard::BusyGuard(ActionableSystem& aResource, const Functi
 
   for(tObjTransitionMap::const_iterator lIt=childTransitionMap.begin(); lIt!=childTransitionMap.end(); lIt++)
   {
-    if( lIt->first->mState.mFSM != & lIt->second->getStateMachine() )
+    if( lIt->first->mStatus.mFSM != & lIt->second->getStateMachine() )
       throw ResourceInWrongStateMachine("Resource '"+lIt->first->getPath()+"' is not yet engaged in state machine '"+lIt->second->getStateMachine().getId()+"'");
-    else if ( lIt->first->mState.mState != lIt->second->getStartState() )
-      throw ResourceInWrongState("Resource '"+lIt->first->getPath()+"' is in state "+lIt->first->mState.mState+", transition '"+lIt->second->getId()+"' cannot be run");
+    else if ( lIt->first->mStatus.mState != lIt->second->getStartState() )
+      throw ResourceInWrongState("Resource '"+lIt->first->getPath()+"' is in state "+lIt->first->mStatus.mState+", transition '"+lIt->second->getId()+"' cannot be run");
   }
   
   
   // 2a) Check that the system is not busy
-  if ( (aResource.mState.mEnabled == false) || ( ! aResource.mState.mActions.empty() ) )
+  if ( (aResource.mState.mEnabled == false) || ( ! aResource.mState.mRunningActions.empty() ) )
   {
     std::ostringstream oss;
     oss << "Could not run action '" << lTransition.getId() << "' on resource '" << aResource.getPath() << "'. ";
 
-    if ( ! aResource.mState.mActions.empty() )
-      oss << "Resource currently busy running functionoid '" << aResource.mState.mActions.back()->getId() << "'.";
+    if ( ! aResource.mState.mRunningActions.empty() )
+      oss << "Resource currently busy running functionoid '" << aResource.mState.mRunningActions.back()->getId() << "'.";
     else
       oss << "Actions currently disabled on this resource.";
 
@@ -208,13 +208,13 @@ ActionableSystem::BusyGuard::BusyGuard(ActionableSystem& aResource, const Functi
   {
     const ActionableObject& lChild = *lIt->first;
     
-    if ( (lChild.mState.mEnabled == false) || (! lChild.mState.mActions.empty()) )
+    if ( (lChild.mStatus.mEnabled == false) || (! lChild.mStatus.mRunningActions.empty()) )
     {
       std::ostringstream oss;
       oss << "Could not run system action '" << lTransition.getId() << "' due to child resource '" << aResource.getPath() << "'. ";
 
-      if ( ! lChild.mState.mActions.empty() )
-        oss << "Child currently busy running functionoid '" << lChild.mState.mActions.back()->getId() << "'.";
+      if ( ! lChild.mStatus.mRunningActions.empty() )
+        oss << "Child currently busy running functionoid '" << lChild.mStatus.mRunningActions.back()->getId() << "'.";
       else
         oss << "Actions currently disabled on this child.";
 
@@ -225,7 +225,7 @@ ActionableSystem::BusyGuard::BusyGuard(ActionableSystem& aResource, const Functi
   
   // 3) If got this far, then all is good; create the busy guards for the children
   LOG(swatch::logger::kInfo) << mResource.getPath() << " : Starting action '" << mAction.getId() << "'";
-  aResource.mState.mActions.push_back( &aAction );
+  aResource.mState.mRunningActions.push_back( &aAction );
   for(tObjTransitionMap::const_iterator lIt=childTransitionMap.begin(); lIt!=childTransitionMap.end(); lIt++)
     this->mChildGuardMap[ lIt->first ] = tChildGuardPtr(new ActionableObject::BusyGuard(*lIt->first, *lLockGuardMap[lIt->first].get(), lTransition) );
 }
@@ -244,9 +244,9 @@ ActionableSystem::BusyGuard::~BusyGuard()
 {
   boost::lock_guard<boost::mutex> lGuard(mResource.mMutex);
   LOG(swatch::logger::kInfo) << mResource.getPath() << " : Finished action '" << mAction.getId() << "'";
-  if ((!mResource.mState.mActions.empty()) && (&mAction == mResource.mState.mActions.back()))
+  if ((!mResource.mState.mRunningActions.empty()) && (&mAction == mResource.mState.mRunningActions.back()))
   {
-    mResource.mState.mActions.pop_back();
+    mResource.mState.mRunningActions.pop_back();
     
     // In case this was a transition, also update object's current state
     if (const SystemTransition* t = dynamic_cast<const SystemTransition*>(&mAction))
@@ -259,8 +259,8 @@ ActionableSystem::BusyGuard::~BusyGuard()
   }
   else
   {
-    size_t lNrActions = mResource.mState.mActions.size();
-    const std::string activeFuncId(lNrActions > 0 ? "NULL" : "'" + mResource.mState.mActions.back()->getId() + "' (innermost of "+boost::lexical_cast<std::string>(lNrActions)+")");
+    size_t lNrActions = mResource.mState.mRunningActions.size();
+    const std::string activeFuncId(lNrActions > 0 ? "NULL" : "'" + mResource.mState.mRunningActions.back()->getId() + "' (innermost of "+boost::lexical_cast<std::string>(lNrActions)+")");
     LOG(swatch::logger::kError) << "unexpected active functionoid " << activeFuncId << "  in BusyGuard destructor for system '" << mResource.getPath() << "', functionoid '" << mAction.getId() << "'";
   }
 }

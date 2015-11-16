@@ -300,7 +300,7 @@ void SystemTransition::runSteps(boost::shared_ptr<ActionableSystem::BusyGuard> a
       bool lErrorOccurred = false;
       for(auto lIt=mStepIt->get().begin(); lIt!=mStepIt->get().end(); lIt++)
       {
-        while( (*lIt)->getStateMachine().getResource().getState().getActions().back() != this )
+        while( (*lIt)->getStateMachine().getResource().getStatus().getRunningActions().back() != this )
         {
           boost::this_thread::sleep_for(boost::chrono::microseconds(100));
         }
@@ -457,8 +457,8 @@ void SystemStateMachine::reset()
   for(std::set<StateMachine*>::const_iterator lIt=mNonConstChildFSMs.begin(); lIt!=mNonConstChildFSMs.end(); lIt++)
   {
     ActionableObject& lChild = (*lIt)->getResource();
-    if( lChild.mState.mFSM == *lIt)
-      lChild.mState.mState = (*lIt)->getInitialState();
+    if( lChild.mStatus.mFSM == *lIt)
+      lChild.mStatus.mState = (*lIt)->getInitialState();
   }  
 }
 
@@ -477,10 +477,10 @@ void SystemStateMachine::disengage()
   for(std::set<StateMachine*>::const_iterator lIt=mNonConstChildFSMs.begin(); lIt!=mNonConstChildFSMs.end(); lIt++)
   {
     ActionableObject& lChild = (*lIt)->getResource();
-    if( lChild.mState.mFSM == *lIt)
+    if( lChild.mStatus.mFSM == *lIt)
     {
-      lChild.mState.mFSM = NULL;
-      lChild.mState.mState = "";
+      lChild.mStatus.mFSM = NULL;
+      lChild.mStatus.mState = "";
     }
   }  
 }
@@ -501,26 +501,26 @@ void SystemStateMachine::checkStateMachineEngagedAndNotInTransition(const std::s
   }
   
   // Throw if system or any of the participating children are currently running a transition
-  if(const SystemTransition* t = getResource().mState.getAction<SystemTransition>())
+  if(const SystemTransition* t = getResource().mState.getRunningAction<SystemTransition>())
     throw ActionableSystemIsBusy("Cannot "+aAction+" state machine '"+getId()+"'; resource '"+getResource().getPath()+"' is busy in transition '"+t->getId()+"'");
   
   // Throw if any children in wrong state machine, or 
   for(std::set<const StateMachine*>::const_iterator lIt=getParticipants().begin(); lIt!=getParticipants().end(); lIt++)
   {
     const ActionableObject& lChild = (*lIt)->getResource();
-    if(lChild.mState.mFSM != *lIt)
+    if(lChild.mStatus.mFSM != *lIt)
     {
       std::ostringstream oss;
       oss << "Cannot " << aAction << " state machine '" << (*lIt)->getId() << "' of '" << (*lIt)->getResource().getPath() << "'; ";
-      if ( lChild.mState.mFSM == NULL )
+      if ( lChild.mStatus.mFSM == NULL )
         oss << "NOT in any state machine.";
       else
-        oss << "currently in state machine '" << lChild.mState.mFSM->getPath() << "'";
+        oss << "currently in state machine '" << lChild.mStatus.mFSM->getPath() << "'";
       throw ResourceInWrongStateMachine(oss.str());
     }
     else
     {
-      if (const StateMachine::Transition* t = (*lIt)->getResource().mState.getAction<StateMachine::Transition>())
+      if (const StateMachine::Transition* t = (*lIt)->getResource().mStatus.getRunningAction<StateMachine::Transition>())
         throw ActionableObjectIsBusy("Cannot "+aAction+" state machine '"+getId()+"'; child resource '"+lChild.getPath()+"' is busy in transition '"+t->getId()+"'");
     }
   }

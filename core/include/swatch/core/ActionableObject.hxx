@@ -13,12 +13,12 @@ namespace core {
     
     
 template<class T>
-const T* AbstractState::getAction() const
+const T* ActionableStatus::getRunningAction() const
 {
   BOOST_STATIC_ASSERT( (boost::is_base_of<swatch::core::Functionoid,T>::value) );
 
   
-  for(std::vector<const Functionoid*>::const_iterator lIt=mActions.begin(); lIt!=mActions.end(); lIt++)
+  for(std::vector<const Functionoid*>::const_iterator lIt=mRunningActions.begin(); lIt!=mRunningActions.end(); lIt++)
   {
     if (const T* lAction = dynamic_cast<const T*>(*lIt) )
       return lAction;
