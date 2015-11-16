@@ -19,6 +19,7 @@
 
 // BOOST Headers
 #include "boost/unordered_map.hpp"
+#include "Functionoid.hpp"
 
 namespace swatch {
 namespace core {
@@ -63,8 +64,9 @@ public:
   //!
   static const std::string kNullStateId;
 
-protected:
   ActionableStatus();
+
+protected:
 
   //! Indicates whether or not actions are allowed on this resource anymore (actions become disabled once the deleter is)
   bool mAlive;
@@ -77,30 +79,21 @@ protected:
   
   //! Indicates which functionoids (Command/CommandSequence/(System)Transition) are currently active; NULL value indicates that no functionoids are currently active.
   std::vector<const Functionoid*> mRunningActions;
+
+  friend class ActionableObject;
+  friend class ActionableSystem;
+  friend class StateMachine;
+  friend class SystemStateMachine;
+  friend class BusyGuard;
+
 };
 
 //! An object representing a resource on which commands, command sequences, and transitions run
 class ActionableObject : public MonitorableObject {
   class BusyGuard;
 public:
-    
-  class Status : public ActionableStatus {
-  public:
-    Status();
-
-//    const StateMachine* getEngagedFSM() const;
-
-  private:
-
-//    const StateMachine* mFSM;
-
-    // Friendship for classes/methods that will need to change object's state
-    friend class ActionableSystem;
-    friend class ActionableObject;
-    friend class StateMachine;
-    friend class SystemStateMachine;
-    friend class BusyGuard;
-  };
+  
+  typedef ActionableStatus Status;
 
   explicit ActionableObject( const std::string& aId );
 

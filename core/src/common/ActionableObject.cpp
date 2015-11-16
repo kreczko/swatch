@@ -61,16 +61,6 @@ ActionableStatus::ActionableStatus() :
   mState(kNullStateId) {
 }
 
-
-ActionableObject::Status::Status() : 
-  ActionableStatus() {//,
-//  mFSM(NULL) {
-}
-
-//const StateMachine* ActionableObject::Status::getEngagedFSM() const {
-//  return mFSM;
-//}
-
 const std::string& ActionableStatus::getStateMachineId() const {
   return mStateMachineId;
 }
