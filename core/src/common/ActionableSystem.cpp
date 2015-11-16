@@ -149,7 +149,7 @@ ActionableSystem::tLockGuardMap ActionableSystem::lockMutexes(const SystemStateM
 
 //------------------------------------------------------------------------------------
 ActionableSystem::BusyGuard::BusyGuard(ActionableSystem& aResource, const Functionoid& aAction) : 
-  mResource(aResource),
+  mSystem(aResource),
   mAction(aAction)
 {
   const SystemTransition& lTransition = dynamic_cast<const SystemTransition&>(aAction);
@@ -217,7 +217,7 @@ ActionableSystem::BusyGuard::BusyGuard(ActionableSystem& aResource, const Functi
   } 
   
   // 3) If got this far, then all is good; create the busy guards for the children
-  LOG(swatch::logger::kInfo) << mResource.getPath() << " : Starting action '" << mAction.getId() << "'";
+  LOG(swatch::logger::kInfo) << mSystem.getPath() << " : Starting action '" << mAction.getId() << "'";
   aResource.mStatus.mRunningActions.push_back( &aAction );
   
   BOOST_FOREACH( const tObjTransitionMap::value_type e, childTransitionMap )
@@ -230,7 +230,7 @@ const ActionableObject::BusyGuard& ActionableSystem::BusyGuard::getChildGuard(co
 {
   std::map<const ActionableObject*, tChildGuardPtr>::const_iterator lIt = mChildGuardMap.find(&aChild);
   if (lIt == mChildGuardMap.end())
-    throw std::runtime_error("Non-child object '"+aChild.getPath()+"' passed to BusyGuard for system '"+mResource.getPath()+"', action '"+mAction.getId()+"'");
+    throw std::runtime_error("Non-child object '"+aChild.getPath()+"' passed to BusyGuard for system '"+mSystem.getPath()+"', action '"+mAction.getId()+"'");
   return *(lIt->second);
 }
 
@@ -238,28 +238,28 @@ const ActionableObject::BusyGuard& ActionableSystem::BusyGuard::getChildGuard(co
 //------------------------------------------------------------------------------------
 ActionableSystem::BusyGuard::~BusyGuard()
 {
-  boost::lock_guard<boost::mutex> lGuard(mResource.mMutex);
+  boost::lock_guard<boost::mutex> lGuard(mSystem.mMutex);
   // TO CHECK: Logging statment in destructor could be dangerous?
-  LOG(swatch::logger::kInfo) << mResource.getPath() << " : Finished action '" << mAction.getId() << "'";
+  LOG(swatch::logger::kInfo) << mSystem.getPath() << " : Finished action '" << mAction.getId() << "'";
 
-  if ( mResource.mStatus.isRunning() && (&mAction == mResource.mStatus.getLastRunningAction()) )
+  if ( mSystem.mStatus.isRunning() && (&mAction == mSystem.mStatus.getLastRunningAction()) )
   {
-    mResource.mStatus.mRunningActions.pop_back();
+    mSystem.mStatus.mRunningActions.pop_back();
     
     // In case this was a transition, also update object's current state
     if (const SystemTransition* t = dynamic_cast<const SystemTransition*>(&mAction))
     {
       if(t->getStatus().getState() == ActionStatus::kError)
-        mResource.mStatus.mState = t->getStateMachine().getErrorState();
+        mSystem.mStatus.mState = t->getStateMachine().getErrorState();
       else
-        mResource.mStatus.mState = t->getEndState();
+        mSystem.mStatus.mState = t->getEndState();
     }
   }
   else
   {
-    size_t lNrActions = mResource.mStatus.mRunningActions.size();
-    const std::string activeFuncId(lNrActions > 0 ? "NULL" : "'" + mResource.mStatus.getLastRunningAction()->getId() + "' (innermost of "+boost::lexical_cast<std::string>(lNrActions)+")");
-    LOG(swatch::logger::kError) << "unexpected active functionoid " << activeFuncId << "  in BusyGuard destructor for system '" << mResource.getPath() << "', functionoid '" << mAction.getId() << "'";
+    size_t lNrActions = mSystem.mStatus.mRunningActions.size();
+    const std::string activeFuncId(lNrActions > 0 ? "NULL" : "'" + mSystem.mStatus.getLastRunningAction()->getId() + "' (innermost of "+boost::lexical_cast<std::string>(lNrActions)+")");
+    LOG(swatch::logger::kError) << "unexpected active functionoid " << activeFuncId << "  in BusyGuard destructor for system '" << mSystem.getPath() << "', functionoid '" << mAction.getId() << "'";
   }
 }
 

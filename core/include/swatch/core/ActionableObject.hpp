@@ -159,7 +159,7 @@ private:
     ~BusyGuard();
     
   private:
-    ActionableObject& mResource;
+    ActionableObject& mActionableObj;
     const Functionoid& mAction;
     const BusyGuard* mOuterGuard;
     

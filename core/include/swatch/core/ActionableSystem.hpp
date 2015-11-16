@@ -91,7 +91,7 @@ private:
     const ActionableObject::BusyGuard& getChildGuard(const ActionableObject& aChild) const;
     
   private:
-    ActionableSystem& mResource;
+    ActionableSystem& mSystem;
     const Functionoid& mAction;
     typedef boost::shared_ptr<const ActionableObject::BusyGuard> tChildGuardPtr;
     std::map<const ActionableObject*, tChildGuardPtr> mChildGuardMap;
