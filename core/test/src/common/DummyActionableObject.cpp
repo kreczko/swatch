@@ -82,11 +82,11 @@ void DummyActionableObject::fail() {
 
 
 CommandSequence& DummyActionableObject::registerCommandSequence(const std::string& aId, const std::string& aFirstCmdId) {
-  return ActionableObject::registerCommandSequence(aId, aFirstCmdId);
+  return ActionableObject::registerSequence(aId, aFirstCmdId);
 }
 
 CommandSequence& DummyActionableObject::registerCommandSequence(const std::string& aId, Command& aFirstCmd) {
-  return ActionableObject::registerCommandSequence(aId, aFirstCmd);
+  return ActionableObject::registerSequence(aId, aFirstCmd);
 }
 
 

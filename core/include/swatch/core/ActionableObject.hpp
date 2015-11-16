@@ -126,14 +126,16 @@ public:
 protected:
   //! Register the supplied command class in this object, with specified ID; the class is constructed on the heap, using the ID as the only constructor argument.
   template< typename T>
-  T& registerFunctionoid( const std::string& aId );
-
-  //! Register the a command sequence in this object, with specified ID
-  CommandSequence& registerCommandSequence(const std::string& aId, const std::string& aFirstCommandId, const std::string& aFirstCommandNamespace="");
-  //! Register the a command sequence in this object, with specified ID
-  CommandSequence& registerCommandSequence(const std::string& aId, Command& aFirstCommand, const std::string& aFirstCommandNamespace="");
+  T& registerCommand( const std::string& aId );
+  
   //! Register the supplied command in this object, with specified ID; this object takes ownership of the command sequence.
-  Command& registerFunctionoid(const std::string& aId , Command* aCommand );
+  Command& registerCommand(const std::string& aId , Command* aCommand );
+  
+  //! Register the a command sequence in this object, with specified ID
+  CommandSequence& registerSequence(const std::string& aId, const std::string& aFirstCommandId, const std::string& aFirstCommandNamespace="");
+  //! Register the a command sequence in this object, with specified ID
+  CommandSequence& registerSequence(const std::string& aId, Command& aFirstCommand, const std::string& aFirstCommandNamespace="");
+
 
   /*!
    * @brief Register a finite state machine in this object, with specified ID

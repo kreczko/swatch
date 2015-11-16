@@ -130,7 +130,7 @@ std::set<std::string> ActionableObject::getStateMachines() const
 
 //------------------------------------------------------------------------------------
 
-CommandSequence& ActionableObject::registerCommandSequence( const std::string& aId, const std::string& aFirstCommandId, const std::string& aFirstCommandNamespace)
+CommandSequence& ActionableObject::registerSequence( const std::string& aId, const std::string& aFirstCommandId, const std::string& aFirstCommandNamespace)
 { 
   if (mCommandSequences.count(aId)) {
     throw CommandSequenceAlreadyExistsInActionableObject( "CommandSequence With ID '"+aId+"' already exists" );
@@ -141,7 +141,7 @@ CommandSequence& ActionableObject::registerCommandSequence( const std::string& a
 }
 
 
-CommandSequence& ActionableObject::registerCommandSequence( const std::string& aId, Command& aFirstCommand, const std::string& aFirstCommandNamespace)
+CommandSequence& ActionableObject::registerSequence( const std::string& aId, Command& aFirstCommand, const std::string& aFirstCommandNamespace)
 { 
   if (mCommandSequences.count(aId)) {
     throw CommandSequenceAlreadyExistsInActionableObject( "CommandSequence With ID '"+aId+"' already exists" );
@@ -152,7 +152,7 @@ CommandSequence& ActionableObject::registerCommandSequence( const std::string& a
 }
 
 
-Command& ActionableObject::registerFunctionoid( const std::string& aId , Command* aCommand )
+Command& ActionableObject::registerCommand( const std::string& aId , Command* aCommand )
 {
   if (mCommands.count(aId)){
     delete aCommand;

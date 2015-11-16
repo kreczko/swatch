@@ -74,15 +74,15 @@ AMC13Manager::AMC13Manager(const swatch::core::AbstractStub& aStub) :
   registerInterface(new EVBInterface(*mDriver));
   
   // Commands
-  core::Command& coldResetCmd = registerFunctionoid<RebootCommand>("rebootCmd");
-  core::Command& resetCmd = registerFunctionoid<ResetCommand>("resetCmd");
-  core::Command& cfgTTCCmd = registerFunctionoid<ConfigureTTCCommand>("configTCCCmd");
-  core::Command& cfgDAQCmd = registerFunctionoid<ConfigureDAQCommand>("configDAQCmd");
-  core::Command& startCmd = registerFunctionoid<StartCommand>("startCmd");
-  core::Command& stopCmd = registerFunctionoid<StopCommand>("stopCmd");
+  core::Command& coldResetCmd = registerCommand<RebootCommand>("rebootCmd");
+  core::Command& resetCmd = registerCommand<ResetCommand>("resetCmd");
+  core::Command& cfgTTCCmd = registerCommand<ConfigureTTCCommand>("configTCCCmd");
+  core::Command& cfgDAQCmd = registerCommand<ConfigureDAQCommand>("configDAQCmd");
+  core::Command& startCmd = registerCommand<StartCommand>("startCmd");
+  core::Command& stopCmd = registerCommand<StopCommand>("stopCmd");
 
   // Sequences
-  registerCommandSequence("configSeq", resetCmd).then(cfgTTCCmd).then(cfgDAQCmd);
+  registerSequence("configSeq", resetCmd).then(cfgTTCCmd).then(cfgDAQCmd);
 
   // State machine
   dtm::RunControlFSM& lFSM = getRunControlFSM();

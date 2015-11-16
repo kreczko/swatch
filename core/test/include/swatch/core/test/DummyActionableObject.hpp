@@ -38,7 +38,7 @@ public:
   
   // Expose registerFunctionoid template method as public for tests
   template< typename T>
-  T& registerFunctionoid( const std::string& aId ) { return ActionableObject::registerFunctionoid<T>(aId); }
+  T& registerFunctionoid( const std::string& aId ) { return ActionableObject::registerCommand<T>(aId); }
 
   // Expose registerCommandSequence method as public for tests
   CommandSequence& registerCommandSequence(const std::string& aId, const std::string& aFirstCmdId);

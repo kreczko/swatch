@@ -101,9 +101,9 @@ IPBusProcessor::IPBusProcessor(const swatch::core::AbstractStub& aStub ) :
     using namespace boost::assign;
     
     // Add commands
-    registerFunctionoid<IPBusResetCommand>("reset");
-    registerFunctionoid<IPBusConfigureCommand>("configure");
-    registerFunctionoid<IPBusCapture>("capture");
+    registerCommand<IPBusResetCommand>("reset");
+    registerCommand<IPBusConfigureCommand>("configure");
+    registerCommand<IPBusCapture>("capture");
     
     // Extract stub
     const swpro::ProcessorStub& stub = getStub();

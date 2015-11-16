@@ -28,11 +28,11 @@ const T* AbstractState::getAction() const
 }
 
 template < typename T >
-T& ActionableObject::registerFunctionoid( const std::string& aId )
+T& ActionableObject::registerCommand( const std::string& aId )
 {
   BOOST_STATIC_ASSERT( (boost::is_base_of<swatch::core::Functionoid,T>::value) );
   T* lObj( new T( aId ) );
-  registerFunctionoid( aId , lObj );
+  registerCommand( aId , lObj );
   return *lObj;
 }
 

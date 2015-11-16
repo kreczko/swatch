@@ -64,19 +64,19 @@ public:
 DummyConfigProcessor::DummyConfigProcessor(const swatch::core::AbstractStub& aStub) :
 Processor(aStub)
 {
-  core::Command& lDummy1 = registerFunctionoid<DummyConfigCommand>("dummy_1");
-  core::Command& lDummy2 = registerFunctionoid<DummyConfigCommand>("dummy_2");
-  core::Command& lDummy3 = registerFunctionoid<DummyConfigCommand>("dummy_3");
-  registerFunctionoid<DummyConfigCommand>("dummy_4");
-  registerFunctionoid<DummyConfigCommand>("dummy_5");
-  registerFunctionoid<DummyConfigCommand>("dummy_6");
+  core::Command& lDummy1 = registerCommand<DummyConfigCommand>("dummy_1");
+  core::Command& lDummy2 = registerCommand<DummyConfigCommand>("dummy_2");
+  core::Command& lDummy3 = registerCommand<DummyConfigCommand>("dummy_3");
+  registerCommand<DummyConfigCommand>("dummy_4");
+  registerCommand<DummyConfigCommand>("dummy_5");
+  registerCommand<DummyConfigCommand>("dummy_6");
 
   //Define the sequence through pointers to commands - run, then and operator() are all aliases
-  core::CommandSequence& lSequence1 = registerCommandSequence( "sequence_1", lDummy1 );
+  core::CommandSequence& lSequence1 = registerSequence( "sequence_1", lDummy1 );
   lSequence1.run( lDummy2 ).then( lDummy3 );
 
   //Define the sequence through command ids - run, then and operator() are all aliases
-  core::CommandSequence& lSequence2 = registerCommandSequence( "sequence_2", "dummy_4" );
+  core::CommandSequence& lSequence2 = registerSequence( "sequence_2", "dummy_4" );
   lSequence2.then( "dummy_5" ).then( "dummy_6" );
 }
 

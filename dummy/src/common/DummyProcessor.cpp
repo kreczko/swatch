@@ -53,17 +53,17 @@ DummyProcessor::DummyProcessor(const swatch::core::AbstractStub& aStub) :
     getPorts().addOutput(new DummyTxPort(it->id, it->number, *mDriver));
 
   // 2) Commands
-  core::Command& reboot = registerFunctionoid<DummyResetCommand>("reboot");
-  core::Command& reset = registerFunctionoid<DummyResetCommand>("reset");
-  core::Command& cfgTx = registerFunctionoid<DummyConfigureTxCommand>("configureTx");
-  core::Command& cfgRx = registerFunctionoid<DummyConfigureRxCommand>("configureRx");
-  core::Command& cfgDaq = registerFunctionoid<DummyConfigureDaqCommand>("configureDaq");
-  core::Command& cfgAlgo = registerFunctionoid<DummyConfigureAlgoCommand>("configureAlgo");
+  core::Command& reboot = registerCommand<DummyResetCommand>("reboot");
+  core::Command& reset = registerCommand<DummyResetCommand>("reset");
+  core::Command& cfgTx = registerCommand<DummyConfigureTxCommand>("configureTx");
+  core::Command& cfgRx = registerCommand<DummyConfigureRxCommand>("configureRx");
+  core::Command& cfgDaq = registerCommand<DummyConfigureDaqCommand>("configureDaq");
+  core::Command& cfgAlgo = registerCommand<DummyConfigureAlgoCommand>("configureAlgo");
 
   // 3) Command sequences
-  core::CommandSequence& cfgSeq = registerCommandSequence("configSeq1",reboot).then(reset).then(cfgDaq).then(cfgTx);
-  core::CommandSequence& cfgRxSeq = registerCommandSequence("configRxSeq", cfgRx);
-  core::CommandSequence& cfgAlgoSeq = registerCommandSequence("configAlgoSeq", cfgAlgo);
+  core::CommandSequence& cfgSeq = registerSequence("configSeq1",reboot).then(reset).then(cfgDaq).then(cfgTx);
+  core::CommandSequence& cfgRxSeq = registerSequence("configRxSeq", cfgRx);
+  core::CommandSequence& cfgAlgoSeq = registerSequence("configAlgoSeq", cfgAlgo);
 
   // 4) State machines
   processor::RunControlFSM& lFSM = getRunControlFSM();

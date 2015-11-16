@@ -36,11 +36,11 @@ DummyAMC13Manager::DummyAMC13Manager( const swatch::core::AbstractStub& aStub ) 
   registerInterface( new AMC13EventBuilder(*mDriver));
   
   // 1) Commands
-  core::Command& reboot = registerFunctionoid<DummyAMC13RebootCommand>("reboot");
-  core::Command& reset = registerFunctionoid<DummyAMC13ResetCommand>("reset");
-  core::Command& cfgDaq = registerFunctionoid<DummyAMC13ConfigureDaqCommand>("configureDaq");
-  core::Command& startDaq = registerFunctionoid<DummyAMC13StartDaqCommand>("startDaq");
-  core::Command& stopDaq = registerFunctionoid<DummyAMC13StopDaqCommand>("stopDaq");
+  core::Command& reboot = registerCommand<DummyAMC13RebootCommand>("reboot");
+  core::Command& reset = registerCommand<DummyAMC13ResetCommand>("reset");
+  core::Command& cfgDaq = registerCommand<DummyAMC13ConfigureDaqCommand>("configureDaq");
+  core::Command& startDaq = registerCommand<DummyAMC13StartDaqCommand>("startDaq");
+  core::Command& stopDaq = registerCommand<DummyAMC13StopDaqCommand>("stopDaq");
   
   // 2) Command sequences
   //registerFunctionoid<DaqTTCMgrCommandSequence>("resetAndConfigure").run(reset).then(configureDaq);

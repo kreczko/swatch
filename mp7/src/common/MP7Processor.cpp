@@ -112,28 +112,28 @@ MP7Processor::MP7Processor(const swatch::core::AbstractStub& aStub) :
     getPorts().addOutput(new MP7TxPort(it->id, it->number, *this));
 
   // Register default MP7 commands
-  registerFunctionoid<UploadFirmwareCommand>(CmdIds::kUploadFw);
-  registerFunctionoid<DeleteFirmwareCommand>(CmdIds::kDeleteFw);
-  registerFunctionoid<RebootFPGACommand>(CmdIds::kReboot);
-  registerFunctionoid<HardResetCommand>(CmdIds::kHardReset);
-  registerFunctionoid<ScanSDCommand>(CmdIds::kScanSD);
-  registerFunctionoid<ResetCommand>(CmdIds::kReset);
-  registerFunctionoid<ConfigureRxMGTsCommand>(CmdIds::kCfgRxMGTs);
-  registerFunctionoid<ConfigureTxMGTsCommand>(CmdIds::kCfgTxMGTs);
-  registerFunctionoid<AlignRxsToCommand>(CmdIds::kAlignMGTs);
-  registerFunctionoid<AutoAlignCommand>(CmdIds::kAutoAlignMGTs);
-  registerFunctionoid<ConfigureRxBuffersCommand>(CmdIds::kCfgRxBuffers);
-  registerFunctionoid<ConfigureTxBuffersCommand>(CmdIds::kCfgTxBuffers);
-  registerFunctionoid<CaptureBuffersCommand>(CmdIds::kCaptureBuffers);
-  registerFunctionoid<SaveRxBuffersToFileCommand>(CmdIds::kSaveRxBuffers);
-  registerFunctionoid<SaveTxBuffersToFileCommand>(CmdIds::kSaveTxBuffers);
-  registerFunctionoid<LatencyRxBuffersCommand>(CmdIds::kCfgLatencyRxBuffers);
-  registerFunctionoid<LatencyTxBuffersCommand>(CmdIds::kCfgLatencyTxBuffers);
-  registerFunctionoid<EasyRxLatencyCommand>(CmdIds::kCfgEasyRxLatency);
-  registerFunctionoid<EasyTxLatencyCommand>(CmdIds::kCfgEasyTxLatency);
-  registerFunctionoid<TDRFormatterCommand>(CmdIds::kCfgFormatterTdr);
-  registerFunctionoid<SetupReadout>(CmdIds::kSetupReadout);
-  registerFunctionoid(CmdIds::kLoadReadoutMenu, LoadReadoutMenu::create("roLoadMenu", *mDriver));
+  registerCommand<UploadFirmwareCommand>(CmdIds::kUploadFw);
+  registerCommand<DeleteFirmwareCommand>(CmdIds::kDeleteFw);
+  registerCommand<RebootFPGACommand>(CmdIds::kReboot);
+  registerCommand<HardResetCommand>(CmdIds::kHardReset);
+  registerCommand<ScanSDCommand>(CmdIds::kScanSD);
+  registerCommand<ResetCommand>(CmdIds::kReset);
+  registerCommand<ConfigureRxMGTsCommand>(CmdIds::kCfgRxMGTs);
+  registerCommand<ConfigureTxMGTsCommand>(CmdIds::kCfgTxMGTs);
+  registerCommand<AlignRxsToCommand>(CmdIds::kAlignMGTs);
+  registerCommand<AutoAlignCommand>(CmdIds::kAutoAlignMGTs);
+  registerCommand<ConfigureRxBuffersCommand>(CmdIds::kCfgRxBuffers);
+  registerCommand<ConfigureTxBuffersCommand>(CmdIds::kCfgTxBuffers);
+  registerCommand<CaptureBuffersCommand>(CmdIds::kCaptureBuffers);
+  registerCommand<SaveRxBuffersToFileCommand>(CmdIds::kSaveRxBuffers);
+  registerCommand<SaveTxBuffersToFileCommand>(CmdIds::kSaveTxBuffers);
+  registerCommand<LatencyRxBuffersCommand>(CmdIds::kCfgLatencyRxBuffers);
+  registerCommand<LatencyTxBuffersCommand>(CmdIds::kCfgLatencyTxBuffers);
+  registerCommand<EasyRxLatencyCommand>(CmdIds::kCfgEasyRxLatency);
+  registerCommand<EasyTxLatencyCommand>(CmdIds::kCfgEasyTxLatency);
+  registerCommand<TDRFormatterCommand>(CmdIds::kCfgFormatterTdr);
+  registerCommand<SetupReadout>(CmdIds::kSetupReadout);
+  registerCommand(CmdIds::kLoadReadoutMenu, LoadReadoutMenu::create("roLoadMenu", *mDriver));
 
   LOG(swlog::kNotice) << "MP7 Processor '" << this->getId() << "' built: firmware 0x" << std::hex << retrieveFirmwareVersion() << std::endl;
 }
