@@ -16,55 +16,76 @@ using namespace std;
 namespace swatch {
 namespace core {
 
-bool ActionableStatus::isAlive() const
-{
+
+// STATIC MEMBERS INITIALIZATION
+const std::string ActionableStatus::kNullStateMachineId = "NullStateMachine";
+const std::string ActionableStatus::kNullStateId = "NoState";
+
+//------------------------------------------------------------------------------------
+bool ActionableStatus::isAlive() const {
   return mAlive;
 }
 
-
-const std::string& ActionableStatus::getState() const
-{
-  return mState;
+//------------------------------------------------------------------------------------
+bool ActionableStatus::isEngaged() const {
+  return mStateMachineId != kNullStateMachineId;
 }
 
 
-const std::vector<const Functionoid*>& ActionableStatus::getRunningActions() const
-{
+//------------------------------------------------------------------------------------
+bool ActionableStatus::isRunning() const {
+  return !mRunningActions.empty();
+}
+
+//------------------------------------------------------------------------------------
+const std::string& ActionableStatus::getState() const {
+  return mState;
+}
+
+//------------------------------------------------------------------------------------
+const Functionoid* ActionableStatus::getLastRunningAction() const {
+  return mRunningActions.back();
+}
+
+
+//------------------------------------------------------------------------------------
+const std::vector<const Functionoid*>& ActionableStatus::getRunningActions() const {
   return mRunningActions;
 }
 
 
+//------------------------------------------------------------------------------------
 ActionableStatus::ActionableStatus() :
-  mAlive(true)
-{
+  mAlive(true), 
+  mStateMachineId(kNullStateMachineId),
+  mState(kNullStateId) {
 }
 
 
 ActionableObject::Status::Status() : 
   ActionableStatus(),
-  mFSM(NULL)
-{
+  mFSM(NULL) {
 }
 
-const StateMachine* ActionableObject::Status::getEngagedFSM() const
-{
+const StateMachine* ActionableObject::Status::getEngagedFSM() const {
   return mFSM;
 }
 
+const std::string& ActionableStatus::getStateMachineId() const {
+  return mStateMachineId;
+}
+
 
 //------------------------------------------------------------------------------------
-
 ActionableObject::ActionableObject( const std::string& aId ) :
   MonitorableObject( aId  ),
-  mStatus()
-{
+  mStatus() {
 }
 
 
 //------------------------------------------------------------------------------------
 
-ActionableObject::~ActionableObject()
-{
+ActionableObject::~ActionableObject() {
 }
 
 //------------------------------------------------------------------------------------
@@ -189,6 +210,7 @@ void ActionableObject::engageStateMachine(const std::string& aFSM) {
 
   const StateMachine& lOp = getStateMachine(aFSM);
   mStatus.mFSM = & lOp;
+  mStatus.mStateMachineId = lOp.getId();
   mStatus.mState = lOp.getInitialState();
 }
 
@@ -258,8 +280,11 @@ void ActionableObject::BusyGuard::initialise(const boost::unique_lock<boost::mut
       throw WrongBusyGuard( "Incompatible outer BusyGuard, resource='"+mOuterGuard->mResource.getPath()+"'. Inner guard resource is '"+mResource.getPath() );
     else if ( mResource.mStatus.mRunningActions.empty() )
       throw WrongBusyGuard( "Outer BusyGuard used (resource: '"+mResource.getPath()+"', action: '"+mOuterGuard->mAction.getId()+"'), but resource not busy");
-    else if ( &mOuterGuard->mAction != mResource.mStatus.mRunningActions.back() )
-      throw WrongBusyGuard( "Outer BusyGuard (resource: '"+mResource.getPath()+"', action: '"+mOuterGuard->mAction.getId()+"') is not for current action '"+mResource.mStatus.mRunningActions.back()->getId()+"'" );
+//	TODO: Delete
+//    else if ( &mOuterGuard->mAction != mResource.mStatus.mRunningActions.back() )
+//      throw WrongBusyGuard( "Outer BusyGuard (resource: '"+mResource.getPath()+"', action: '"+mOuterGuard->mAction.getId()+"') is not for current action '"+mResource.mStatus.mRunningActions.back()->getId()+"'" );
+    else if ( &mOuterGuard->mAction != mResource.mStatus.getLastRunningAction() )
+      throw WrongBusyGuard( "Outer BusyGuard (resource: '"+mResource.getPath()+"', action: '"+mOuterGuard->mAction.getId()+"') is not for current action '"+mResource.mStatus.getLastRunningAction()->getId()+"'" );
   }
 
   // 0) Check that this this action isn't already running
@@ -269,19 +294,25 @@ void ActionableObject::BusyGuard::initialise(const boost::unique_lock<boost::mut
   // 1) For transitions, check that state machine is engaged, and we're in the right state
   if (const StateMachine::Transition* t = dynamic_cast<const StateMachine::Transition*>(&mAction))
   {
-    if( mResource.mStatus.mFSM != & t->getStateMachine())
+    //TODO: Delete
+//	if( mResource.mStatus.mFSM != & t->getStateMachine())
+	if( mResource.mStatus.getStateMachineId() != t->getStateMachine().getId())
       throw ResourceInWrongState("Resource '"+mResource.getPath()+"' is not yet engaged in state machine '"+t->getStateMachine().getId()+"'");
     else if ( mResource.mStatus.mState != t->getStartState() )
       throw ResourceInWrongState("Resource '"+mResource.getPath()+"' is in state '"+mResource.mStatus.mState+"'; transition '"+t->getId()+"' cannot be run");
   }
   
   // 2) Claim the resource if free; else throw if can't get sole control of it
-  if ( mResource.mStatus.mAlive && ( (mOuterGuard != NULL) || mResource.mStatus.mRunningActions.empty() ) )
+  //TODO: Delete
+  //  if ( mResource.mStatus.mAlive && ( (mOuterGuard != NULL) || mResource.mStatus.mRunningActions.empty() ) )
+  if ( mResource.mStatus.isAlive() && ( (mOuterGuard != NULL) || !mResource.mStatus.isRunning() ) )
   {
-    if (mResource.mStatus.mRunningActions.empty())
+    if ( !mResource.mStatus.isRunning() )
       LOG(swatch::logger::kInfo) << mResource.getPath() << " : Starting " << ActionFmt(&mAction);
     else
-      LOG(swatch::logger::kInfo) << mResource.getPath() << " : Starting " << ActionFmt(&mAction) << " within " << ActionFmt(mResource.mStatus.mRunningActions.back());
+	  // TODO: Delete
+//      LOG(swatch::logger::kInfo) << mResource.getPath() << " : Starting " << ActionFmt(&mAction) << " within " << ActionFmt(mResource.mStatus.mRunningActions.back());
+      LOG(swatch::logger::kInfo) << mResource.getPath() << " : Starting " << ActionFmt(&mAction) << " within " << ActionFmt(mResource.mStatus.getLastRunningAction());
     mResource.mStatus.mRunningActions.push_back(&mAction);
   }
   else
@@ -289,8 +320,11 @@ void ActionableObject::BusyGuard::initialise(const boost::unique_lock<boost::mut
     std::ostringstream oss;
     oss << "Could not run action '" << mAction.getId() << "' on resource '" << mResource.getPath() << "'. ";
 
-    if ( ! mResource.mStatus.mRunningActions.empty() )
-      oss << "Resource currently busy running functionoid '" << mResource.mStatus.mRunningActions.back()->getId() << "'.";
+	  // TODO: Delete
+//    if ( ! mResource.mStatus.mRunningActions.empty() )
+	  //	  oss << "Resource currently busy running functionoid '" << mResource.mStatus.mRunningActions.back()->getId() << "'.";
+    if ( mResource.mStatus.isRunning() )
+	  oss << "Resource currently busy running functionoid '" << mResource.mStatus.getLastRunningAction()->getId() << "'.";
     else
       oss << "Actions currently disabled on this resource.";
 
@@ -306,7 +340,9 @@ ActionableObject::BusyGuard::~BusyGuard()
 {  
   boost::lock_guard<boost::mutex> lGuard(mResource.mMutex);
   LOG(swatch::logger::kInfo) << mResource.getPath() << " : Finished " << ActionFmt(&mAction);
-  if ( (!mResource.mStatus.mRunningActions.empty()) && (&mAction == mResource.mStatus.mRunningActions.back()))
+  // TODO: Delete
+  //  if ( (!mResource.mStatus.mRunningActions.empty()) && (&mAction == mResource.mStatus.mRunningActions.back()))
+  if ( mResource.mStatus.isRunning() && (&mAction == mResource.mStatus.getLastRunningAction()) )
   {
     mResource.mStatus.mRunningActions.pop_back();
     
@@ -322,7 +358,7 @@ ActionableObject::BusyGuard::~BusyGuard()
   else
   {
     size_t lNrActions = mResource.mStatus.mRunningActions.size();
-    const std::string activeFuncId(lNrActions > 0 ? "NULL" : "'" + mResource.mStatus.mRunningActions.back()->getId() + "' (innermost of "+boost::lexical_cast<std::string>(lNrActions)+")");
+    const std::string activeFuncId(lNrActions > 0 ? "NULL" : "'" + mResource.mStatus.getLastRunningAction()->getId() + "' (innermost of "+boost::lexical_cast<std::string>(lNrActions)+")");
     LOG(swatch::logger::kError) << "unexpected active functionoid " << activeFuncId << "  in BusyGuard destructor for resource '" << mResource.getPath() << "', functionoid '" << mAction.getId() << "'";
   }
 }

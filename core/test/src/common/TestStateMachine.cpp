@@ -227,8 +227,9 @@ BOOST_AUTO_TEST_CASE(TestEngageFSM) {
 
   // Confirm correct construction before staring tests
   BOOST_REQUIRE_EQUAL( obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL );
-  BOOST_REQUIRE_EQUAL( obj.getStatus().getState(), "" );
-  
+  BOOST_REQUIRE_EQUAL( obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId );
+  BOOST_REQUIRE_EQUAL( obj.getStatus().getState(), ActionableStatus::kNullStateId );
+
   // Engaging FSM should put object into FSM's initial state
   BOOST_CHECK_NO_THROW( obj.engageStateMachine(testFSM.getId()) );
   BOOST_CHECK_EQUAL( obj.getStatus().getEngagedFSM(), & testFSM );
@@ -255,12 +256,14 @@ BOOST_AUTO_TEST_CASE(TestDisengageFSM) {
 
   // Confirm correct construction before testing disengage method
   BOOST_REQUIRE_EQUAL( obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL );
-  BOOST_REQUIRE_EQUAL( obj.getStatus().getState(), "" );
+  BOOST_REQUIRE_EQUAL( obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId );
+  BOOST_REQUIRE_EQUAL( obj.getStatus().getState(), ActionableStatus::kNullStateId );
   
   // Can't disengage if FSM isn't yet engaged
   BOOST_CHECK_THROW( testFSM.disengage(), ResourceInWrongStateMachine);
   BOOST_CHECK_EQUAL( obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL);
-  BOOST_CHECK_EQUAL( obj.getStatus().getState(), "");
+  BOOST_CHECK_EQUAL( obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
+  BOOST_CHECK_EQUAL( obj.getStatus().getState(), ActionableStatus::kNullStateId);
   
   // Engage FSM before continuing unit tests for disengage
   obj.engageStateMachine(testFSM.getId());
@@ -276,7 +279,8 @@ BOOST_AUTO_TEST_CASE(TestDisengageFSM) {
   // Disengaging the engaged FSM
   BOOST_CHECK_NO_THROW( testFSM.disengage() );
   BOOST_CHECK_EQUAL( obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL );
-  BOOST_CHECK_EQUAL( obj.getStatus().getState(), "" );
+  BOOST_CHECK_EQUAL( obj.getStatus().getState(), ActionableStatus::kNullStateId );
+  BOOST_CHECK_EQUAL( obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId );
 }
 
 
@@ -294,7 +298,8 @@ BOOST_FIXTURE_TEST_CASE(TestRunTransitionDisengagedFSM, StateMachineTestSetup) {
   BOOST_CHECK_EQUAL( transitionItoA->getState(), Functionoid::kInitial);
   BOOST_CHECK_EQUAL( transitionItoA->getStatus().getState(), Functionoid::kInitial);
   BOOST_CHECK_EQUAL( obj->getStatus().getEngagedFSM(), (const StateMachine*) NULL);
-  BOOST_CHECK_EQUAL( obj->getStatus().getState(), "");
+  BOOST_CHECK_EQUAL( obj->getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
+  BOOST_CHECK_EQUAL( obj->getStatus().getState(), ActionableStatus::kNullStateId);
 
   // Running transition with other FSM engaged: should throw, and leave state/TransitionStatus unchanged
   const StateMachine& otherFSM = obj->registerStateMachine("anotherFSM", fsmState0, fsmStateError);
@@ -582,7 +587,8 @@ BOOST_FIXTURE_TEST_CASE(TestResetDisengagedFSM, StateMachineTestSetup) {
   // Resetting FSM before engaged: Should throw, and leave state unchanged
   BOOST_CHECK_THROW( testFSM.reset(), ResourceInWrongStateMachine);
   BOOST_CHECK_EQUAL( obj->getStatus().getEngagedFSM(), (const StateMachine*) NULL );
-  BOOST_CHECK_EQUAL( obj->getStatus().getState(), "" );
+  BOOST_CHECK_EQUAL( obj->getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId );
+  BOOST_CHECK_EQUAL( obj->getStatus().getState(), ActionableStatus::kNullStateId );
 }
 
 BOOST_AUTO_TEST_SUITE_END() // StateMachineTestSuite

@@ -131,8 +131,10 @@ void StateMachine::disengage()
     throw ActionableObjectIsBusy("Cannot reset '"+mResource.getPath()+"', state machine '"+getId()+"'; busy running action '"+mResource.mStatus.mRunningActions.back()->getPath()+"'");  
   
   
+  // Move into AncionableState or derivates?
   mResource.mStatus.mFSM = NULL;
-  mResource.mStatus.mState = "";
+  mResource.mStatus.mStateMachineId = ActionableStatus::kNullStateMachineId;
+  mResource.mStatus.mState = ActionableStatus::kNullStateId;
 }
 
 

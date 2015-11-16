@@ -33,18 +33,48 @@ class SystemStateMachine;
 
 class ActionableStatus {
 public:
+  //!
   bool isAlive() const;
-  const std::string& getState() const;
-  const std::vector<const Functionoid*>& getRunningActions() const;
-  template<class T>
-  const T* getRunningAction() const;
   
+  //!
+  bool isEngaged() const;
+  
+  bool isRunning() const;
+  
+  //!
+  const std::string& getState() const;
+  
+  //!
+  const std::vector<const Functionoid*>& getRunningActions() const;
+  
+   
+  const Functionoid* getLastRunningAction() const;
+  
+  //!
+  template<class T>
+  const T* getFirstRunningAction() const;
+  
+  //!
+  const std::string& getStateMachineId() const;
+  
+  //!
+  static const std::string kNullStateMachineId;
+  
+  //!
+  static const std::string kNullStateId;
+
 protected:
   ActionableStatus();
 
   //! Indicates whether or not actions are allowed on this resource anymore (actions become disabled once the deleter is)
   bool mAlive;
+  
+  //!
+  std::string mStateMachineId;
+  
+  //!
   std::string mState;
+  
   //! Indicates which functionoids (Command/CommandSequence/(System)Transition) are currently active; NULL value indicates that no functionoids are currently active.
   std::vector<const Functionoid*> mRunningActions;
 };

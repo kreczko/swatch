@@ -452,7 +452,7 @@ void SystemStateMachine::reset()
   // Throw if system/children are not in this state machine or running transition
   checkStateMachineEngagedAndNotInTransition("reset");
 
-  getResource().mState.mState = getInitialState();
+  getResource().mStatus.mState = getInitialState();
   
   for(std::set<StateMachine*>::const_iterator lIt=mNonConstChildFSMs.begin(); lIt!=mNonConstChildFSMs.end(); lIt++)
   {
@@ -471,8 +471,8 @@ void SystemStateMachine::disengage()
   checkStateMachineEngagedAndNotInTransition("disengage");
 
 
-  getResource().mState.mFSM = NULL;
-  getResource().mState.mState = "";
+  getResource().mStatus.mFSM = NULL;
+  getResource().mStatus.mState = ActionableStatus::kNullStateId;
   
   for(std::set<StateMachine*>::const_iterator lIt=mNonConstChildFSMs.begin(); lIt!=mNonConstChildFSMs.end(); lIt++)
   {
@@ -480,7 +480,7 @@ void SystemStateMachine::disengage()
     if( lChild.mStatus.mFSM == *lIt)
     {
       lChild.mStatus.mFSM = NULL;
-      lChild.mStatus.mState = "";
+      lChild.mStatus.mState = ActionableStatus::kNullStateId;
     }
   }  
 }
@@ -489,19 +489,19 @@ void SystemStateMachine::disengage()
 void SystemStateMachine::checkStateMachineEngagedAndNotInTransition(const std::string& aAction) const
 {
     // Throw if system is not in this state machine
-  if ( getResource().mState.mFSM != this )
+  if ( getResource().mStatus.mFSM != this )
   {
     std::ostringstream oss;
     oss << "Cannot " << aAction << " state machine '" << getId() << "' of '" << getResource().getPath() << "'; ";
-    if ( getResource().mState.mFSM == NULL )
+    if ( getResource().mStatus.mFSM == NULL )
       oss << "NOT in any state machine.";
     else
-      oss << "currently in state machine '" << getResource().mState.mFSM->getPath() << "'";
+      oss << "currently in state machine '" << getResource().mStatus.mFSM->getPath() << "'";
     throw ResourceInWrongStateMachine(oss.str());
   }
   
   // Throw if system or any of the participating children are currently running a transition
-  if(const SystemTransition* t = getResource().mState.getRunningAction<SystemTransition>())
+  if(const SystemTransition* t = getResource().mStatus.getFirstRunningAction<SystemTransition>())
     throw ActionableSystemIsBusy("Cannot "+aAction+" state machine '"+getId()+"'; resource '"+getResource().getPath()+"' is busy in transition '"+t->getId()+"'");
   
   // Throw if any children in wrong state machine, or 
@@ -520,7 +520,7 @@ void SystemStateMachine::checkStateMachineEngagedAndNotInTransition(const std::s
     }
     else
     {
-      if (const StateMachine::Transition* t = (*lIt)->getResource().mStatus.getRunningAction<StateMachine::Transition>())
+      if (const StateMachine::Transition* t = (*lIt)->getResource().mStatus.getFirstRunningAction<StateMachine::Transition>())
         throw ActionableObjectIsBusy("Cannot "+aAction+" state machine '"+getId()+"'; child resource '"+lChild.getPath()+"' is busy in transition '"+t->getId()+"'");
     }
   }

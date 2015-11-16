@@ -93,7 +93,7 @@ private:
   tStateMachineMap mFSMs;
   
   mutable boost::mutex mMutex;
-  State mState;
+  State mStatus;
   
   class BusyGuard : public boost::noncopyable {
   public:
