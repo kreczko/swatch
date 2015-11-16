@@ -60,7 +60,7 @@ AbstractMetric& MonitorableObject::getMetric( const std::string& aId )
 }
 
 
-StatusFlag MonitorableObject::getStatus() const
+StatusFlag MonitorableObject::getStatusFlag() const
 {
   StatusFlag result = kNoLimit;
   
@@ -72,7 +72,7 @@ StatusFlag MonitorableObject::getStatus() const
     {
       // only enabled children contribute to the status
       if (monObj->getMonitoringStatus() == monitoring::kEnabled)
-        result = result & monObj->getStatus();
+        result = result & monObj->getStatusFlag();
     }
   }
   

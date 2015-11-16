@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE(GoodMonitorableObject) {
   BOOST_CHECK_EQUAL(ms2.getValue(), "2");
   BOOST_CHECK_EQUAL(ms.getStatusFlag(), swatch::core::StatusFlag::kGood);
   BOOST_CHECK_EQUAL(ms2.getStatusFlag(), swatch::core::StatusFlag::kGood);
-  BOOST_CHECK_EQUAL(m.getStatus(), swatch::core::StatusFlag::kGood);
+  BOOST_CHECK_EQUAL(m.getStatusFlag(), swatch::core::StatusFlag::kGood);
 }
 
 BOOST_AUTO_TEST_CASE(CriticalFailure) {
@@ -88,7 +88,7 @@ BOOST_AUTO_TEST_CASE(CriticalFailure) {
   BOOST_CHECK_EQUAL(ms2.getValue(), "2");
   BOOST_CHECK_EQUAL(ms.getStatusFlag(), swatch::core::StatusFlag::kError);
   BOOST_CHECK_EQUAL(ms2.getStatusFlag(), swatch::core::StatusFlag::kGood);
-  BOOST_CHECK_EQUAL(m.getStatus(), swatch::core::StatusFlag::kError);
+  BOOST_CHECK_EQUAL(m.getStatusFlag(), swatch::core::StatusFlag::kError);
 }
 
 BOOST_AUTO_TEST_CASE(NonCriticalFailure) {
@@ -106,7 +106,7 @@ BOOST_AUTO_TEST_CASE(NonCriticalFailure) {
   // non-critical metric fails
   BOOST_CHECK_EQUAL(ms2.getStatusFlag(), swatch::core::StatusFlag::kError);
   // but the MonitoringObject status should be still good
-  BOOST_CHECK_EQUAL(m.getStatus(), swatch::core::StatusFlag::kGood);
+  BOOST_CHECK_EQUAL(m.getStatusFlag(), swatch::core::StatusFlag::kGood);
 }
 
 BOOST_AUTO_TEST_CASE(DisabledFailure) {
@@ -121,7 +121,7 @@ BOOST_AUTO_TEST_CASE(DisabledFailure) {
   // nothing changes for disabled Metric
   BOOST_CHECK_EQUAL(ms.getStatusFlag(), swatch::core::StatusFlag::kNoLimit);
   // and no effect on MonitoringObject either
-  BOOST_CHECK_EQUAL(m.getStatus(), swatch::core::StatusFlag::kGood);
+  BOOST_CHECK_EQUAL(m.getStatusFlag(), swatch::core::StatusFlag::kGood);
 }
 
 BOOST_AUTO_TEST_CASE(DisabledFailureNoUnknown) {
@@ -134,7 +134,7 @@ BOOST_AUTO_TEST_CASE(DisabledFailureNoUnknown) {
   MetricSnapshot ms = m.getMetric("DummyDisabledInteger").getSnapshot();
   BOOST_CHECK_EQUAL(ms.getMonitoringStatus(), monitoring::Status::kDisabled);
   BOOST_CHECK_EQUAL(ms.getStatusFlag(), swatch::core::StatusFlag::kNoLimit);
-  BOOST_CHECK_EQUAL(m.getStatus(), swatch::core::StatusFlag::kGood);
+  BOOST_CHECK_EQUAL(m.getStatusFlag(), swatch::core::StatusFlag::kGood);
 }
 
 BOOST_AUTO_TEST_SUITE_END() // MonitorableObjectTestSuite

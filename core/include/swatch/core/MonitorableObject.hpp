@@ -44,7 +44,7 @@ public:
   AbstractMetric& getMetric( const std::string& aId );
 
   //! Get overall object status based on status flags of child Metrics and child MonitorableObjects; returns kNoLimit in case there are no metrics.
-  StatusFlag getStatus() const;
+  StatusFlag getStatusFlag() const;
   
   //! Update values of this object's metrics
   void updateMetrics();
