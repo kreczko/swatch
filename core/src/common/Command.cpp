@@ -37,7 +37,7 @@ Command::exec( const XParameterSet& aParams, bool aUseThreadPool )
 void 
 Command::exec(const ActionableObject::BusyGuard* aOuterBusyGuard, const XParameterSet& params, bool aUseThreadPool ) 
 {
-  boost::shared_ptr<ActionableObject::BusyGuard> lBusyGuard( new ActionableObject::BusyGuard(getActionable(), *this, aOuterBusyGuard) );
+  boost::shared_ptr<ActionableObject::BusyGuard> lBusyGuard( new ActionableObject::BusyGuard(*this, aOuterBusyGuard) );
 
   // Reset the status before doing anything else, merging user-supplied parameter values with default values
   resetForRunning(params);

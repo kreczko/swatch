@@ -58,7 +58,7 @@ private:
   float mRunningTime;
 };
 
-    
+
 std::ostream& operator<<(std::ostream& out, swatch::core::ActionStatus::State s);
 
 

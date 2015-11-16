@@ -129,7 +129,7 @@ void CommandVec::exec(const ActionableObject::BusyGuard* aOuterBusyGuard, const 
   extractMonitoringSettings(aGateKeeper, lMonSettings);
 
   // 2) Create busy guard
-  boost::shared_ptr<ActionableObject::BusyGuard> lBusyGuard(new ActionableObject::BusyGuard(getActionable(), *this, aOuterBusyGuard));
+  boost::shared_ptr<ActionableObject::BusyGuard> lBusyGuard(new ActionableObject::BusyGuard(*this, aOuterBusyGuard));
 
 // FIXME: Re-implement parameter cache at some future date; disabled by Tom on 28th August, since ...
 //        ... current logic doesn't work correctly with different gatekeepers - need to change to ...

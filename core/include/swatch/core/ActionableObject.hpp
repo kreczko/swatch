@@ -153,8 +153,8 @@ private:
 
   class BusyGuard : public boost::noncopyable {
   public:
-    BusyGuard(ActionableObject& aResource, const Functionoid&, const BusyGuard* aOuterGuard=NULL);
-    BusyGuard(ActionableObject& aResource, const boost::unique_lock<boost::mutex>& aLockGuard, const Functionoid&, const BusyGuard* aOuterGuard=NULL);
+    BusyGuard(ObjectFunctionoid& aAction, const BusyGuard* aOuterGuard=NULL);
+    BusyGuard(ActionableObject& aResource, const boost::unique_lock<boost::mutex>& aLockGuard, const Functionoid& aAction, const BusyGuard* aOuterGuard=NULL);
 
     ~BusyGuard();
     

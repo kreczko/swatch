@@ -211,20 +211,20 @@ void ActionableObject::kill(){
 
 
 //------------------------------------------------------------------------------------
-ActionableObject::BusyGuard::BusyGuard(ActionableObject& aResource, const Functionoid& aFunctionoid, const BusyGuard* aOuterGuard) : 
-  mResource(aResource),
-  mAction(aFunctionoid),
+ActionableObject::BusyGuard::BusyGuard(ObjectFunctionoid& aAction, const BusyGuard* aOuterGuard) : 
+  mResource(aAction.getActionable()),
+  mAction(aAction),
   mOuterGuard(aOuterGuard)
 {
-  const boost::unique_lock<boost::mutex> lGuard(aResource.mMutex);
+  const boost::unique_lock<boost::mutex> lGuard(mResource.mMutex);
   initialise(lGuard);
 }
 
 
 //------------------------------------------------------------------------------------
-ActionableObject::BusyGuard::BusyGuard(ActionableObject& aResource, const boost::unique_lock<boost::mutex>& aLockGuard, const Functionoid& aFunctionoid, const BusyGuard* aOuterGuard) : 
+ActionableObject::BusyGuard::BusyGuard(ActionableObject& aResource, const boost::unique_lock<boost::mutex>& aLockGuard, const Functionoid& aAction, const BusyGuard* aOuterGuard) : 
   mResource(aResource),
-  mAction(aFunctionoid),
+  mAction(aAction),
   mOuterGuard(aOuterGuard)
 {
   initialise(aLockGuard);
