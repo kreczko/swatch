@@ -25,7 +25,7 @@ class Functionoid;
 class ActionableSystem : public MonitorableObject {
   class BusyGuard;
 public:
-  typedef ActionableStatus State;
+  typedef ActionableStatus Status;
     
   ActionableSystem(const std::string& aId);
 
@@ -40,7 +40,7 @@ public:
   //! Get registered state machine of specified ID
   SystemStateMachine& getStateMachine( const std::string& aId );
 
-  State getState() const;
+  Status getStatus() const;
   
   //! Engage state machine of specified ID
   void engageStateMachine(const std::string& aStateMachine);
@@ -80,7 +80,7 @@ private:
   tStateMachineMap mFSMs;
   
   mutable boost::mutex mMutex;
-  State mStatus;
+  Status mStatus;
   
   class BusyGuard : public boost::noncopyable {
   public:

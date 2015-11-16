@@ -47,7 +47,7 @@ SystemStateMachine& ActionableSystem::getStateMachine( const std::string& aId )
 
 
 //------------------------------------------------------------------------------------
-ActionableSystem::State ActionableSystem::getState() const
+ActionableSystem::Status ActionableSystem::getStatus() const
 {
   boost::lock_guard<boost::mutex> lGuard(mMutex);
   return mStatus;
@@ -105,7 +105,7 @@ void ActionableSystem::Deleter::operator ()(Object* aObject) {
 
     //TODO (low-ish priority): Eventually replace this "spinning" do-loop with a more efficient implementation based on ActionableSystem/Functionoid methods that use conditional variables behind-the-scenes 
     do {
-    } while ( ! lActionableSys->getState().getRunningActions().empty() );
+    } while ( ! lActionableSys->getStatus().getRunningActions().empty() );
 
     LOG(swatch::logger::kNotice) << aObject->getPath() << " : ActionableSystem now being deleted";
 
