@@ -115,24 +115,28 @@ void StateMachine::disengage()
   boost::lock_guard<boost::mutex> lGuard(mResource.mMutex);
   
   // Throw if currently in other state machine
-  if(mResource.mStatus.mFSM != this)
+  // TODO: Delete
+  // if(mResource.mStatus.mFSM != this)
+  if(mResource.mStatus.getStateMachineId() != this->getId())
   {
     std::ostringstream oss;
     oss << "Cannot reset resource '" << mResource.getPath() << "' state machine '" << getId() << "'; ";
-    if ( mResource.mStatus.mFSM != NULL)
-      oss << "currently in state machine '" << mResource.mStatus.mFSM->getPath() << "'";
+	// TODO: Delete
+	//    if ( mResource.mStatus.mFSM != NULL)
+    if ( mResource.mStatus.getStateMachineId() != ActionableStatus::kNullStateMachineId)
+      oss << "currently in state machine '" << mResource.mStatus.getStateMachineId() << "'";
     else
       oss << "NOT in any state machine";
     throw ResourceInWrongStateMachine(oss.str());
   }
 
   // Throw if running action
-  if ( ! mResource.mStatus.mRunningActions.empty() )
-    throw ActionableObjectIsBusy("Cannot reset '"+mResource.getPath()+"', state machine '"+getId()+"'; busy running action '"+mResource.mStatus.mRunningActions.back()->getPath()+"'");  
+  if ( mResource.mStatus.isRunning() )
+    throw ActionableObjectIsBusy("Cannot reset '"+mResource.getPath()+"', state machine '"+getId()+"'; busy running action '"+mResource.mStatus.getLastRunningAction()->getPath()+"'");  
   
   
   // Move into AncionableState or derivates?
-  mResource.mStatus.mFSM = NULL;
+//  mResource.mStatus.mFSM = NULL;
   mResource.mStatus.mStateMachineId = ActionableStatus::kNullStateMachineId;
   mResource.mStatus.mState = ActionableStatus::kNullStateId;
 }
@@ -143,20 +147,24 @@ void StateMachine::reset()
   boost::lock_guard<boost::mutex> lGuard(mResource.mMutex);
   
   // Throw if currently in other state machine
-  if(mResource.mStatus.mFSM != this)
+  // TODO: Delete
+  //  if(mResource.mStatus.mFSM != this)
+  if ( mResource.mStatus.getStateMachineId() != ActionableStatus::kNullStateMachineId)
   {
     std::ostringstream oss;
     oss << "Cannot reset '" << mResource.getPath() << "', state machine '" << getId() << "'; ";
-    if ( mResource.mStatus.mFSM != NULL)
-      oss << "currently in state machine '" << mResource.mStatus.mFSM->getPath() << "'";
+	// TODO: Delete
+//    if ( mResource.mStatus.mFSM != NULL)
+	if ( mResource.mStatus.getStateMachineId() != ActionableStatus::kNullStateMachineId)
+      oss << "currently in state machine '" << mResource.mStatus.getStateMachineId() << "'";
     else
       oss << "NOT in any state machine";
     throw ResourceInWrongStateMachine(oss.str());
   }
   
   // Throw if running action
-  if ( ! mResource.mStatus.mRunningActions.empty() )
-    throw ActionableObjectIsBusy("Cannot reset '"+mResource.getPath()+"', state machine '"+getId()+"'; busy running action '"+mResource.mStatus.mRunningActions.back()->getPath()+"'");  
+  if ( mResource.mStatus.isRunning() )
+    throw ActionableObjectIsBusy("Cannot reset '"+mResource.getPath()+"', state machine '"+getId()+"'; busy running action '"+mResource.mStatus.getLastRunningAction()->getPath()+"'");  
   
   mResource.mStatus.mState = getInitialState();
 }

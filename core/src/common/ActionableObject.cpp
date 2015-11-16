@@ -63,13 +63,13 @@ ActionableStatus::ActionableStatus() :
 
 
 ActionableObject::Status::Status() : 
-  ActionableStatus(),
-  mFSM(NULL) {
+  ActionableStatus() {//,
+//  mFSM(NULL) {
 }
 
-const StateMachine* ActionableObject::Status::getEngagedFSM() const {
-  return mFSM;
-}
+//const StateMachine* ActionableObject::Status::getEngagedFSM() const {
+//  return mFSM;
+//}
 
 const std::string& ActionableStatus::getStateMachineId() const {
   return mStateMachineId;
@@ -201,23 +201,25 @@ ActionableObject::Status ActionableObject::getStatus() const {
 }
 
 
+//------------------------------------------------------------------------------------
 void ActionableObject::engageStateMachine(const std::string& aFSM) {
   boost::lock_guard<boost::mutex> lGuard(mMutex);
   
   // Throw if currently in other state machine
-  if(mStatus.getEngagedFSM() != NULL)
-    throw ResourceInWrongStateMachine("Cannot engage other state machine; resource '"+getPath()+"' currently in state machine '"+mStatus.getEngagedFSM()->getId()+"'");
+  // TODO: Delete
+  //  if(mStatus.getEngagedFSM() != NULL)
+//    throw ResourceInWrongStateMachine("Cannot engage other state machine; resource '"+getPath()+"' currently in state machine '"+mStatus.getEngagedFSM()->getId()+"'");
+  if(mStatus.getStateMachineId() != ActionableStatus::kNullStateMachineId )
+    throw ResourceInWrongStateMachine("Cannot engage other state machine; resource '"+getPath()+"' currently in state machine '"+mStatus.getStateMachineId()+"'");
 
   const StateMachine& lOp = getStateMachine(aFSM);
-  mStatus.mFSM = & lOp;
+//  mStatus.mFSM = & lOp;
   mStatus.mStateMachineId = lOp.getId();
   mStatus.mState = lOp.getInitialState();
 }
 
 
 //------------------------------------------------------------------------------------
-
-
 void ActionableObject::Deleter::operator ()(Object* aObject) {
   if(ActionableObject* lActionableObj = dynamic_cast<ActionableObject*>(aObject))
   {
@@ -227,7 +229,7 @@ void ActionableObject::Deleter::operator ()(Object* aObject) {
 
     //TODO (low-ish priority): Eventually replace this "spinning" do-loop with a more efficient implementation based on ActionableObject/Functionoid methods that use conditional variables behind-the-scenes 
     do {
-    } while ( ! lActionableObj->getStatus().getRunningActions().empty() );
+    } while ( lActionableObj->getStatus().isRunning() );
 
     LOG(swatch::logger::kNotice) << aObject->getPath() << " : ActionableObject now being deleted";
     

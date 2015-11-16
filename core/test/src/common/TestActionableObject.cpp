@@ -116,7 +116,6 @@ BOOST_FIXTURE_TEST_CASE(TestActionableIntialState,  ActionableObjectTestSetup) {
   BOOST_CHECK( !handler->getStatus().isRunning() );
   BOOST_CHECK( handler->getStatus().isAlive() );
   BOOST_CHECK( !handler->getStatus().isEngaged() );
-  BOOST_CHECK_EQUAL( handler->getStatus().getEngagedFSM(), (const StateMachine *) NULL );
   BOOST_CHECK_EQUAL( handler->getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
   BOOST_CHECK_EQUAL( handler->getStatus().getState(), ActionableStatus::kNullStateId);
 }

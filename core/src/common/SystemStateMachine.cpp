@@ -2,10 +2,13 @@
 #include "swatch/core/SystemStateMachine.hpp"
 
 
+// Swatch Headers
 #include "swatch/core/ActionableSystem.hpp"
 #include "swatch/core/ThreadPool.hpp"
-#include "boost/thread/pthread/thread_data.hpp"
 
+// Boost Headers
+#include "boost/thread/pthread/thread_data.hpp"
+#include <boost/foreach.hpp>
 
 namespace swatch {
 namespace core {
@@ -353,8 +356,6 @@ void SystemTransition::runSteps(boost::shared_ptr<ActionableSystem::BusyGuard> a
 
 
 //------------------------------------------------------------------------------------
-
-
 SystemStateMachine::SystemStateMachine(const std::string& aId, ActionableSystem& aResource, const std::string& aInitialState, const std::string& aErrorState) :
   Object(aId),
   mResource(aResource),
@@ -368,53 +369,62 @@ SystemStateMachine::SystemStateMachine(const std::string& aId, ActionableSystem&
 }
 
 
+//------------------------------------------------------------------------------------
 SystemStateMachine::~SystemStateMachine()
 {
 }
 
 
+//------------------------------------------------------------------------------------
 const ActionableSystem& SystemStateMachine::getResource() const
 {
   return mResource;
 }
 
 
+//------------------------------------------------------------------------------------
 ActionableSystem& SystemStateMachine::getResource()
 {
   return mResource;
 }
 
 
+//------------------------------------------------------------------------------------
 const std::string& SystemStateMachine::getInitialState() const
 {
   return mInitialState;
 }
 
 
+//------------------------------------------------------------------------------------
 const std::string& SystemStateMachine::getErrorState() const
 {
   return mErrorState;
 }
 
 
+//------------------------------------------------------------------------------------
 const std::set<const StateMachine*>& SystemStateMachine::getParticipants() const
 {
   return mChildFSMs;
 }
 
 
+//------------------------------------------------------------------------------------
 const std::vector<std::string>& SystemStateMachine::getStates() const
 {
   return mStates;
 }
 
 
+//------------------------------------------------------------------------------------
 const std::map<std::string, SystemTransition*>& SystemStateMachine::getTransitions(const std::string& aStateId) const
 {
   return getState(aStateId).transitionMap;
 }
 
 
+//------------------------------------------------------------------------------------
 void SystemStateMachine::addState(const std::string& aStateId)
 {
   if ( mStateMap.count(aStateId) )
@@ -429,6 +439,7 @@ void SystemStateMachine::addState(const std::string& aStateId)
 }
 
 
+//------------------------------------------------------------------------------------
 SystemTransition& SystemStateMachine::addTransition(const std::string& aTransitionId, const std::string& aFromState, const std::string& aToState)
 {
   State& lFromState = getState(aFromState);
@@ -445,6 +456,7 @@ SystemTransition& SystemStateMachine::addTransition(const std::string& aTransiti
 }
 
 
+//------------------------------------------------------------------------------------
 void SystemStateMachine::reset()
 {
   ActionableSystem::tLockGuardMap lLockGuardMap = ActionableSystem::lockMutexes(*this);
@@ -453,16 +465,26 @@ void SystemStateMachine::reset()
   checkStateMachineEngagedAndNotInTransition("reset");
 
   getResource().mStatus.mState = getInitialState();
-  
-  for(std::set<StateMachine*>::const_iterator lIt=mNonConstChildFSMs.begin(); lIt!=mNonConstChildFSMs.end(); lIt++)
-  {
-    ActionableObject& lChild = (*lIt)->getResource();
-    if( lChild.mStatus.mFSM == *lIt)
-      lChild.mStatus.mState = (*lIt)->getInitialState();
+
+// TODO: Delete  
+//  for(std::set<StateMachine*>::const_iterator lIt=mNonConstChildFSMs.begin(); lIt!=mNonConstChildFSMs.end(); lIt++)
+//  {
+//    ActionableObject& lChild = (*lIt)->getResource();
+//    if( lChild.mStatus.mFSM == *lIt)
+//      lChild.mStatus.mState = (*lIt)->getInitialState();
+//  }  
+
+
+	BOOST_FOREACH( StateMachine* sm, mNonConstChildFSMs ) {
+    ActionableObject& lChild = sm->getResource();
+    if( lChild.mStatus.getStateMachineId() == sm->getId() )
+      lChild.mStatus.mState = sm->getInitialState();
   }  
+
 }
 
-
+//------------------------------------------------------------------------------------
+// TODO: Shouldn't disengage call Child's disengage?
 void SystemStateMachine::disengage()
 {
   ActionableSystem::tLockGuardMap lLockGuardMap = ActionableSystem::lockMutexes(*this);
@@ -474,18 +496,28 @@ void SystemStateMachine::disengage()
   getResource().mStatus.mFSM = NULL;
   getResource().mStatus.mState = ActionableStatus::kNullStateId;
   
-  for(std::set<StateMachine*>::const_iterator lIt=mNonConstChildFSMs.begin(); lIt!=mNonConstChildFSMs.end(); lIt++)
-  {
-    ActionableObject& lChild = (*lIt)->getResource();
-    if( lChild.mStatus.mFSM == *lIt)
-    {
-      lChild.mStatus.mFSM = NULL;
+// TODO: Delete  
+//  for(std::set<StateMachine*>::const_iterator lIt=mNonConstChildFSMs.begin(); lIt!=mNonConstChildFSMs.end(); lIt++)
+//  {
+//    ActionableObject& lChild = (*lIt)->getResource();
+//    if( lChild.mStatus.mFSM == *lIt)
+//    {
+//      lChild.mStatus.mFSM = NULL;
+//      lChild.mStatus.mState = ActionableStatus::kNullStateId;
+//    }
+//  }
+	
+	BOOST_FOREACH( StateMachine* sm, mNonConstChildFSMs ) {
+    ActionableObject& lChild = sm->getResource();
+    if( lChild.mStatus.getStateMachineId() == sm->getId() ) {
+			lChild.mStatus.mStateMachineId = ActionableStatus::kNullStateMachineId;
       lChild.mStatus.mState = ActionableStatus::kNullStateId;
-    }
+		}
   }  
 }
 
 
+//------------------------------------------------------------------------------------
 void SystemStateMachine::checkStateMachineEngagedAndNotInTransition(const std::string& aAction) const
 {
     // Throw if system is not in this state machine
@@ -505,25 +537,46 @@ void SystemStateMachine::checkStateMachineEngagedAndNotInTransition(const std::s
     throw ActionableSystemIsBusy("Cannot "+aAction+" state machine '"+getId()+"'; resource '"+getResource().getPath()+"' is busy in transition '"+t->getId()+"'");
   
   // Throw if any children in wrong state machine, or 
-  for(std::set<const StateMachine*>::const_iterator lIt=getParticipants().begin(); lIt!=getParticipants().end(); lIt++)
-  {
-    const ActionableObject& lChild = (*lIt)->getResource();
-    if(lChild.mStatus.mFSM != *lIt)
+//  for(std::set<const StateMachine*>::const_iterator lIt=getParticipants().begin(); lIt!=getParticipants().end(); lIt++)
+//  {
+//    const ActionableObject& lChild = (*lIt)->getResource();
+//    if(lChild.mStatus.mFSM != *lIt)
+//    {
+//      std::ostringstream oss;
+//      oss << "Cannot " << aAction << " state machine '" << (*lIt)->getId() << "' of '" << (*lIt)->getResource().getPath() << "'; ";
+//      if ( lChild.mStatus.mFSM == NULL )
+//        oss << "NOT in any state machine.";
+//      else
+//        oss << "currently in state machine '" << lChild.mStatus.mFSM->getPath() << "'";
+//      throw ResourceInWrongStateMachine(oss.str());
+//    }
+//    else
+//    {
+//      if (const StateMachine::Transition* t = (*lIt)->getResource().mStatus.getFirstRunningAction<StateMachine::Transition>())
+//        throw ActionableObjectIsBusy("Cannot "+aAction+" state machine '"+getId()+"'; child resource '"+lChild.getPath()+"' is busy in transition '"+t->getId()+"'");
+//    }
+//  }
+
+  // Throw if any children in wrong state machine, or 
+	BOOST_FOREACH( const StateMachine* sm, getParticipants()) {
+		const ActionableObject& lChild = sm->getResource();
+		if(lChild.mStatus.getStateMachineId() != sm->getId())
     {
       std::ostringstream oss;
-      oss << "Cannot " << aAction << " state machine '" << (*lIt)->getId() << "' of '" << (*lIt)->getResource().getPath() << "'; ";
-      if ( lChild.mStatus.mFSM == NULL )
+      oss << "Cannot " << aAction << " state machine '" << sm->getId() << "' of '" << sm->getResource().getPath() << "'; ";
+      if ( lChild.mStatus.getStateMachineId() == ActionableStatus::kNullStateMachineId )
         oss << "NOT in any state machine.";
       else
-        oss << "currently in state machine '" << lChild.mStatus.mFSM->getPath() << "'";
+        oss << "currently in state machine '" << lChild.mStatus.getStateMachineId() << "'";
       throw ResourceInWrongStateMachine(oss.str());
     }
     else
     {
-      if (const StateMachine::Transition* t = (*lIt)->getResource().mStatus.getFirstRunningAction<StateMachine::Transition>())
+      if (const StateMachine::Transition* t = sm->getResource().mStatus.getFirstRunningAction<StateMachine::Transition>())
         throw ActionableObjectIsBusy("Cannot "+aAction+" state machine '"+getId()+"'; child resource '"+lChild.getPath()+"' is busy in transition '"+t->getId()+"'");
     }
   }
+
 }
 
 

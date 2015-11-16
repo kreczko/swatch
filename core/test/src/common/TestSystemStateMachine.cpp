@@ -282,11 +282,10 @@ BOOST_FIXTURE_TEST_CASE(TestEngageFSM, SystemStateMachineTestSetup) {
   BOOST_CHECK_NO_THROW( sys->engageStateMachine(fsm.getId()) );
   BOOST_CHECK_EQUAL( sys->getState().getEngagedFSM(), & fsm );
   BOOST_CHECK_EQUAL( sys->getState().getState(), sysState0 );
-  BOOST_CHECK_EQUAL( child1.obj.getStatus().getEngagedFSM(), &child1.fsm);
+  BOOST_CHECK_EQUAL( child1.obj.getStatus().getStateMachineId(), child1.fsm.getId());
   BOOST_CHECK_EQUAL( child1.obj.getStatus().getState(), childState0);
-  BOOST_CHECK_EQUAL( child2.obj.getStatus().getEngagedFSM(), &child2.fsm);
+  BOOST_CHECK_EQUAL( child2.obj.getStatus().getStateMachineId(), child2.fsm.getId());
   BOOST_CHECK_EQUAL( child2.obj.getStatus().getState(), childState0);
-  BOOST_CHECK_EQUAL( child3.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL);
   BOOST_CHECK_EQUAL( child3.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
   BOOST_CHECK_EQUAL( child3.obj.getStatus().getState(), ActionableStatus::kNullStateId);
   
@@ -294,11 +293,10 @@ BOOST_FIXTURE_TEST_CASE(TestEngageFSM, SystemStateMachineTestSetup) {
   BOOST_CHECK_THROW( sys->engageStateMachine(fsm.getId()), ResourceInWrongStateMachine );
   BOOST_CHECK_EQUAL( sys->getState().getEngagedFSM(), & fsm );
   BOOST_CHECK_EQUAL( sys->getState().getState(), sysState0 );
-  BOOST_CHECK_EQUAL( child1.obj.getStatus().getEngagedFSM(), &child1.fsm);
+  BOOST_CHECK_EQUAL( child1.obj.getStatus().getStateMachineId(), child1.fsm.getId());
   BOOST_CHECK_EQUAL( child1.obj.getStatus().getState(), childState0);
-  BOOST_CHECK_EQUAL( child2.obj.getStatus().getEngagedFSM(), &child2.fsm);
+  BOOST_CHECK_EQUAL( child2.obj.getStatus().getStateMachineId(), child2.fsm.getId());
   BOOST_CHECK_EQUAL( child2.obj.getStatus().getState(), childState0);
-  BOOST_CHECK_EQUAL( child3.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL);
   BOOST_CHECK_EQUAL( child3.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
   BOOST_CHECK_EQUAL( child3.obj.getStatus().getState(), ActionableStatus::kNullStateId);  
 
@@ -307,11 +305,10 @@ BOOST_FIXTURE_TEST_CASE(TestEngageFSM, SystemStateMachineTestSetup) {
   BOOST_CHECK_THROW( sys->engageStateMachine("anotherFSM"), ResourceInWrongStateMachine );
   BOOST_CHECK_EQUAL( sys->getState().getEngagedFSM(), & fsm );
   BOOST_CHECK_EQUAL( sys->getState().getState(), sysState0 );
-  BOOST_CHECK_EQUAL( child1.obj.getStatus().getEngagedFSM(), &child1.fsm);
+  BOOST_CHECK_EQUAL( child1.obj.getStatus().getStateMachineId(), child1.fsm.getId());
   BOOST_CHECK_EQUAL( child1.obj.getStatus().getState(), childState0);
-  BOOST_CHECK_EQUAL( child2.obj.getStatus().getEngagedFSM(), &child2.fsm);
+  BOOST_CHECK_EQUAL( child2.obj.getStatus().getStateMachineId(), child2.fsm.getId());
   BOOST_CHECK_EQUAL( child2.obj.getStatus().getState(), childState0);
-  BOOST_CHECK_EQUAL( child3.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL);
   BOOST_CHECK_EQUAL( child3.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
   BOOST_CHECK_EQUAL( child3.obj.getStatus().getState(), ActionableStatus::kNullStateId);}
 
@@ -332,11 +329,11 @@ BOOST_FIXTURE_TEST_CASE(TestEngageFSMChildComplication, SystemStateMachineTestSe
   BOOST_CHECK_THROW( sys->engageStateMachine(fsm.getId()), ResourceInWrongStateMachine );
   BOOST_CHECK_EQUAL( sys->getState().getEngagedFSM(), (const SystemStateMachine*) NULL );
   BOOST_CHECK_EQUAL( sys->getState().getState(), ActionableStatus::kNullStateId );
-  BOOST_CHECK_EQUAL( child1.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL);
+  BOOST_CHECK_EQUAL( child1.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
   BOOST_CHECK_EQUAL( child1.obj.getStatus().getState(), ActionableStatus::kNullStateId);
-  BOOST_CHECK_EQUAL( child2.obj.getStatus().getEngagedFSM(), &child2.fsm);
+  BOOST_CHECK_EQUAL( child2.obj.getStatus().getStateMachineId(), child2.fsm.getId());
   BOOST_CHECK_EQUAL( child2.obj.getStatus().getState(), childState0);
-  BOOST_CHECK_EQUAL( child3.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL);
+  BOOST_CHECK_EQUAL( child3.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
   BOOST_CHECK_EQUAL( child3.obj.getStatus().getState(), ActionableStatus::kNullStateId);
 
   // Engaging FSM after disengaging child2 & engaging child3 FSM:
@@ -346,11 +343,11 @@ BOOST_FIXTURE_TEST_CASE(TestEngageFSMChildComplication, SystemStateMachineTestSe
   BOOST_CHECK_NO_THROW( sys->engageStateMachine(fsm.getId()) );
   BOOST_CHECK_EQUAL( sys->getState().getEngagedFSM(), & fsm );
   BOOST_CHECK_EQUAL( sys->getState().getState(), sysState0 );
-  BOOST_CHECK_EQUAL( child1.obj.getStatus().getEngagedFSM(), &child1.fsm);
+  BOOST_CHECK_EQUAL( child1.obj.getStatus().getStateMachineId(), child1.fsm.getId());
   BOOST_CHECK_EQUAL( child1.obj.getStatus().getState(), childState0);
-  BOOST_CHECK_EQUAL( child2.obj.getStatus().getEngagedFSM(), &child2.fsm);
+  BOOST_CHECK_EQUAL( child2.obj.getStatus().getStateMachineId(), child2.fsm.getId());
   BOOST_CHECK_EQUAL( child2.obj.getStatus().getState(), childState0);
-  BOOST_CHECK_EQUAL( child3.obj.getStatus().getEngagedFSM(), &child3.fsm);
+  BOOST_CHECK_EQUAL( child3.obj.getStatus().getStateMachineId(), child3.fsm.getId());
   BOOST_CHECK_EQUAL( child3.obj.getStatus().getState(), childState0);
 }
 
@@ -370,22 +367,22 @@ BOOST_FIXTURE_TEST_CASE(TestDisengageFSM, SystemStateMachineTestSetup) {
   BOOST_CHECK_THROW( fsm.disengage(), ResourceInWrongStateMachine);
   BOOST_CHECK_EQUAL( sys->getState().getEngagedFSM(), (const SystemStateMachine*) NULL);
   BOOST_CHECK_EQUAL( sys->getState().getState(), ActionableStatus::kNullStateId);
-  BOOST_CHECK_EQUAL( child1.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL);
+  BOOST_CHECK_EQUAL( child1.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
   BOOST_CHECK_EQUAL( child1.obj.getStatus().getState(), ActionableStatus::kNullStateId);
-  BOOST_CHECK_EQUAL( child2.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL);
+  BOOST_CHECK_EQUAL( child2.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
   BOOST_CHECK_EQUAL( child2.obj.getStatus().getState(), ActionableStatus::kNullStateId);
-  BOOST_CHECK_EQUAL( child3.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL);
+  BOOST_CHECK_EQUAL( child3.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
   BOOST_CHECK_EQUAL( child3.obj.getStatus().getState(), ActionableStatus::kNullStateId);
   
   // Engage FSM before continuing unit tests for disengage
   sys->engageStateMachine(fsm.getId());
   BOOST_REQUIRE_EQUAL( sys->getState().getEngagedFSM(), &fsm);
   BOOST_REQUIRE_EQUAL( sys->getState().getState(), sysState0);
-  BOOST_REQUIRE_EQUAL( child1.obj.getStatus().getEngagedFSM(), &child1.fsm);
+  BOOST_REQUIRE_EQUAL( child1.obj.getStatus().getStateMachineId(), child1.fsm.getId());
   BOOST_REQUIRE_EQUAL( child1.obj.getStatus().getState(), childState0);
-  BOOST_REQUIRE_EQUAL( child2.obj.getStatus().getEngagedFSM(), &child2.fsm);
+  BOOST_REQUIRE_EQUAL( child2.obj.getStatus().getStateMachineId(), child2.fsm.getId());
   BOOST_REQUIRE_EQUAL( child2.obj.getStatus().getState(), childState0);
-  BOOST_REQUIRE_EQUAL( child3.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL);
+  BOOST_REQUIRE_EQUAL( child3.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
   BOOST_REQUIRE_EQUAL( child3.obj.getStatus().getState(), ActionableStatus::kNullStateId);
 
   // Disengaging another FSM: Should throw, and leave state unchanged
@@ -393,22 +390,22 @@ BOOST_FIXTURE_TEST_CASE(TestDisengageFSM, SystemStateMachineTestSetup) {
   BOOST_CHECK_THROW( otherFSM.disengage(), ResourceInWrongStateMachine );
   BOOST_CHECK_EQUAL( sys->getState().getEngagedFSM(), &fsm);
   BOOST_CHECK_EQUAL( sys->getState().getState(), sysState0);
-  BOOST_CHECK_EQUAL( child1.obj.getStatus().getEngagedFSM(), &child1.fsm);
+  BOOST_CHECK_EQUAL( child1.obj.getStatus().getStateMachineId(), child1.fsm.getId());
   BOOST_CHECK_EQUAL( child1.obj.getStatus().getState(), childState0);
-  BOOST_CHECK_EQUAL( child2.obj.getStatus().getEngagedFSM(), &child2.fsm);
+  BOOST_CHECK_EQUAL( child2.obj.getStatus().getStateMachineId(), child2.fsm.getId());
   BOOST_CHECK_EQUAL( child2.obj.getStatus().getState(), childState0);
-  BOOST_CHECK_EQUAL( child3.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL);
+  BOOST_CHECK_EQUAL( child3.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
   BOOST_CHECK_EQUAL( child3.obj.getStatus().getState(), ActionableStatus::kNullStateId);
 
   // Disengaging the engaged FSM: Should return system & children to constructed state
   BOOST_CHECK_NO_THROW( fsm.disengage() );
   BOOST_CHECK_EQUAL( sys->getState().getEngagedFSM(), (const SystemStateMachine*) NULL);
   BOOST_CHECK_EQUAL( sys->getState().getState(), ActionableStatus::kNullStateId);
-  BOOST_CHECK_EQUAL( child1.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL);
+  BOOST_CHECK_EQUAL( child1.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
   BOOST_CHECK_EQUAL( child1.obj.getStatus().getState(), ActionableStatus::kNullStateId);
-  BOOST_CHECK_EQUAL( child2.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL);
+  BOOST_CHECK_EQUAL( child2.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
   BOOST_CHECK_EQUAL( child2.obj.getStatus().getState(), ActionableStatus::kNullStateId);
-  BOOST_CHECK_EQUAL( child3.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL);
+  BOOST_CHECK_EQUAL( child3.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
   BOOST_CHECK_EQUAL( child3.obj.getStatus().getState(), ActionableStatus::kNullStateId);
 }
 
@@ -424,11 +421,11 @@ BOOST_FIXTURE_TEST_CASE(TestDisengageFSMChildComplications, SystemStateMachineTe
   sys->engageStateMachine(fsm.getId());
   BOOST_REQUIRE_EQUAL( sys->getState().getEngagedFSM(), &fsm);
   BOOST_REQUIRE_EQUAL( sys->getState().getState(), sysState0);
-  BOOST_REQUIRE_EQUAL( child1.obj.getStatus().getEngagedFSM(), &child1.fsm);
+  BOOST_REQUIRE_EQUAL( child1.obj.getStatus().getStateMachineId(), child1.fsm.getId());
   BOOST_REQUIRE_EQUAL( child1.obj.getStatus().getState(), childState0);
-  BOOST_REQUIRE_EQUAL( child2.obj.getStatus().getEngagedFSM(), &child2.fsm);
+  BOOST_REQUIRE_EQUAL( child2.obj.getStatus().getStateMachineId(), child2.fsm.getId());
   BOOST_REQUIRE_EQUAL( child2.obj.getStatus().getState(), childState0);
-  BOOST_REQUIRE_EQUAL( child3.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL);
+  BOOST_REQUIRE_EQUAL( child3.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
   BOOST_REQUIRE_EQUAL( child3.obj.getStatus().getState(), ActionableStatus::kNullStateId);
 
   // Disengaging system FSM after already disengaging a child: Should throw, and leave state unchanged
@@ -436,11 +433,11 @@ BOOST_FIXTURE_TEST_CASE(TestDisengageFSMChildComplications, SystemStateMachineTe
   BOOST_CHECK_THROW( fsm.disengage(), ResourceInWrongStateMachine);
   BOOST_CHECK_EQUAL( sys->getState().getEngagedFSM(), &fsm);
   BOOST_CHECK_EQUAL( sys->getState().getState(), sysState0);
-  BOOST_CHECK_EQUAL( child1.obj.getStatus().getEngagedFSM(), &child1.fsm);
+  BOOST_CHECK_EQUAL( child1.obj.getStatus().getStateMachineId(), child1.fsm.getId());
   BOOST_CHECK_EQUAL( child1.obj.getStatus().getState(), childState0);
-  BOOST_CHECK_EQUAL( child2.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL);
+  BOOST_CHECK_EQUAL( child2.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
   BOOST_CHECK_EQUAL( child2.obj.getStatus().getState(), ActionableStatus::kNullStateId);
-  BOOST_CHECK_EQUAL( child3.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL);
+  BOOST_CHECK_EQUAL( child3.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
   BOOST_CHECK_EQUAL( child3.obj.getStatus().getState(), ActionableStatus::kNullStateId);
 
   // Disengaging system FSM after re-engaging child FSM: Should return system & children to constructed state
@@ -448,11 +445,11 @@ BOOST_FIXTURE_TEST_CASE(TestDisengageFSMChildComplications, SystemStateMachineTe
   BOOST_CHECK_NO_THROW( fsm.disengage() );
   BOOST_CHECK_EQUAL( sys->getState().getEngagedFSM(), (const SystemStateMachine*) NULL);
   BOOST_CHECK_EQUAL( sys->getState().getState(), ActionableStatus::kNullStateId);
-  BOOST_CHECK_EQUAL( child1.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL);
+  BOOST_CHECK_EQUAL( child1.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
   BOOST_CHECK_EQUAL( child1.obj.getStatus().getState(), ActionableStatus::kNullStateId);
-  BOOST_CHECK_EQUAL( child2.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL);
+  BOOST_CHECK_EQUAL( child2.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
   BOOST_CHECK_EQUAL( child2.obj.getStatus().getState(), ActionableStatus::kNullStateId);
-  BOOST_CHECK_EQUAL( child3.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL);
+  BOOST_CHECK_EQUAL( child3.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
   BOOST_CHECK_EQUAL( child3.obj.getStatus().getState(), ActionableStatus::kNullStateId);
 }
 
@@ -475,9 +472,9 @@ BOOST_FIXTURE_TEST_CASE(TestRunEmptyTransition, SystemStateMachineTestSetup) {
   child3.fsm.disengage();
   BOOST_REQUIRE_EQUAL(sys->getState().getEngagedFSM(), &fsm);
   BOOST_REQUIRE_EQUAL(sys->getState().getState(), sysState0);
-  BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL);
-  BOOST_REQUIRE_EQUAL(child2.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL);
-  BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL);
+  BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
+  BOOST_REQUIRE_EQUAL(child2.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
+  BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
   BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getState(), ActionableStatus::kNullStateId);
   BOOST_REQUIRE_EQUAL(child2.obj.getStatus().getState(), ActionableStatus::kNullStateId);
   BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getState(), ActionableStatus::kNullStateId);
@@ -486,9 +483,9 @@ BOOST_FIXTURE_TEST_CASE(TestRunEmptyTransition, SystemStateMachineTestSetup) {
   BOOST_CHECK_NO_THROW( sysItoA->exec(gk, false) );
   BOOST_CHECK_EQUAL(sys->getState().getEngagedFSM(), &fsm);
   BOOST_CHECK_EQUAL(sys->getState().getState(), sysStateA);
-  BOOST_CHECK_EQUAL(child1.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL);
-  BOOST_CHECK_EQUAL(child2.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL);
-  BOOST_CHECK_EQUAL(child3.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL);
+  BOOST_CHECK_EQUAL(child1.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
+  BOOST_CHECK_EQUAL(child2.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
+  BOOST_CHECK_EQUAL(child3.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
   BOOST_CHECK_EQUAL(child1.obj.getStatus().getState(), ActionableStatus::kNullStateId);
   BOOST_CHECK_EQUAL(child2.obj.getStatus().getState(), ActionableStatus::kNullStateId);
   BOOST_CHECK_EQUAL(child3.obj.getStatus().getState(), ActionableStatus::kNullStateId);
@@ -512,11 +509,11 @@ BOOST_FIXTURE_TEST_CASE(TestRunTransitionDisengagedFSM, SystemStateMachineTestSe
   BOOST_CHECK_EQUAL( sysItoA->getStatus().getState(), Functionoid::kInitial);
   BOOST_CHECK_EQUAL( sys->getState().getEngagedFSM(), (const SystemStateMachine*) NULL);
   BOOST_CHECK_EQUAL( sys->getState().getState(), ActionableStatus::kNullStateId);
-  BOOST_CHECK_EQUAL( child1.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL);
+  BOOST_CHECK_EQUAL( child1.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
   BOOST_CHECK_EQUAL( child1.obj.getStatus().getState(), ActionableStatus::kNullStateId);
-  BOOST_CHECK_EQUAL( child2.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL);
+  BOOST_CHECK_EQUAL( child2.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
   BOOST_CHECK_EQUAL( child2.obj.getStatus().getState(), ActionableStatus::kNullStateId);
-  BOOST_CHECK_EQUAL( child3.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL);
+  BOOST_CHECK_EQUAL( child3.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
   BOOST_CHECK_EQUAL( child3.obj.getStatus().getState(), ActionableStatus::kNullStateId);
 
   // Running transition with other FSM engaged: should throw, and leave state/TransitionStatus unchanged
@@ -543,9 +540,9 @@ BOOST_FIXTURE_TEST_CASE(TestRunTransitionMissingParams, SystemStateMachineTestSe
   sys->engageStateMachine( fsm.getId() );
   BOOST_REQUIRE_EQUAL( sys->getState().getEngagedFSM(), & fsm);
   BOOST_REQUIRE_EQUAL( sys->getState().getState(), sysState0);
-  BOOST_REQUIRE_EQUAL( child1.obj.getStatus().getEngagedFSM(), & child1.fsm);
-  BOOST_REQUIRE_EQUAL( child2.obj.getStatus().getEngagedFSM(), & child2.fsm);
-  BOOST_REQUIRE_EQUAL( child3.obj.getStatus().getEngagedFSM(), & child3.fsm);
+  BOOST_REQUIRE_EQUAL( child1.obj.getStatus().getStateMachineId(), child1.fsm.getId());
+  BOOST_REQUIRE_EQUAL( child2.obj.getStatus().getStateMachineId(), child2.fsm.getId());
+  BOOST_REQUIRE_EQUAL( child3.obj.getStatus().getStateMachineId(), child3.fsm.getId());
   BOOST_REQUIRE_EQUAL( child1.obj.getStatus().getState(), childState0);
   BOOST_REQUIRE_EQUAL( child2.obj.getStatus().getState(), childState0);
   BOOST_REQUIRE_EQUAL( child3.obj.getStatus().getState(), childState0);
@@ -556,9 +553,9 @@ BOOST_FIXTURE_TEST_CASE(TestRunTransitionMissingParams, SystemStateMachineTestSe
   BOOST_CHECK_EQUAL( child1.ItoA->getState(), Functionoid::kInitial );
   BOOST_CHECK_EQUAL( child2.ItoA->getState(), Functionoid::kInitial );
   BOOST_CHECK_EQUAL( child3.ItoA->getState(), Functionoid::kInitial );
-  BOOST_CHECK_EQUAL( child1.obj.getStatus().getEngagedFSM(), & child1.fsm);
-  BOOST_CHECK_EQUAL( child2.obj.getStatus().getEngagedFSM(), & child2.fsm);
-  BOOST_CHECK_EQUAL( child3.obj.getStatus().getEngagedFSM(), & child3.fsm);
+  BOOST_CHECK_EQUAL( child1.obj.getStatus().getStateMachineId(), child1.fsm.getId());
+  BOOST_CHECK_EQUAL( child2.obj.getStatus().getStateMachineId(), child2.fsm.getId());
+  BOOST_CHECK_EQUAL( child3.obj.getStatus().getStateMachineId(), child3.fsm.getId());
   BOOST_CHECK_EQUAL( child1.obj.getStatus().getState(), childState0);
   BOOST_CHECK_EQUAL( child2.obj.getStatus().getState(), childState0);
   BOOST_CHECK_EQUAL( child3.obj.getStatus().getState(), childState0);
@@ -599,9 +596,9 @@ BOOST_FIXTURE_TEST_CASE(TestRunGoodTransition, SystemStateMachineTestSetup) {
   BOOST_REQUIRE_EQUAL(sys->getState().getEngagedFSM(), &fsm);
   BOOST_REQUIRE_EQUAL(sys->getState().getState(), sysState0);
   BOOST_REQUIRE_EQUAL(sysItoA->getStatus().getState(), Functionoid::kInitial);
-  BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getEngagedFSM(), &child1.fsm);
-  BOOST_REQUIRE_EQUAL(child2.obj.getStatus().getEngagedFSM(), &child2.fsm);
-  BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getEngagedFSM(), &child3.fsm);
+  BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getStateMachineId(), child1.fsm.getId() );
+  BOOST_REQUIRE_EQUAL(child2.obj.getStatus().getStateMachineId(), child2.fsm.getId() );
+  BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getStateMachineId(), child3.fsm.getId() );
   BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getState(), childState0);
   BOOST_REQUIRE_EQUAL(child2.obj.getStatus().getState(), childState0);
   BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getState(), childState0);
@@ -610,9 +607,9 @@ BOOST_FIXTURE_TEST_CASE(TestRunGoodTransition, SystemStateMachineTestSetup) {
   BOOST_CHECK_NO_THROW( sysItoA->exec(gk, false) );
   BOOST_CHECK_EQUAL( sys->getState().getEngagedFSM(), &fsm);
   BOOST_CHECK_EQUAL( sys->getState().getState(), sysStateA );
-  BOOST_CHECK_EQUAL( child1.obj.getStatus().getEngagedFSM(), &child1.fsm );
-  BOOST_CHECK_EQUAL( child2.obj.getStatus().getEngagedFSM(), &child2.fsm );
-  BOOST_CHECK_EQUAL( child3.obj.getStatus().getEngagedFSM(), &child3.fsm );
+  BOOST_CHECK_EQUAL( child1.obj.getStatus().getStateMachineId(), child1.fsm.getId()  );
+  BOOST_CHECK_EQUAL( child2.obj.getStatus().getStateMachineId(), child2.fsm.getId()  );
+  BOOST_CHECK_EQUAL( child3.obj.getStatus().getStateMachineId(), child3.fsm.getId()  );
   BOOST_CHECK_EQUAL( child1.obj.getStatus().getState(), childStateA );
   BOOST_CHECK_EQUAL( child2.obj.getStatus().getState(), childStateA );
   BOOST_CHECK_EQUAL( child3.obj.getStatus().getState(), childStateA );
@@ -678,9 +675,9 @@ BOOST_FIXTURE_TEST_CASE(TestRunWarningTransition, SystemStateMachineTestSetup) {
   BOOST_REQUIRE_EQUAL(sys->getState().getEngagedFSM(), &fsm);
   BOOST_REQUIRE_EQUAL(sys->getState().getState(), sysState0);
   BOOST_REQUIRE_EQUAL(sysItoA->getStatus().getState(), Functionoid::kInitial);
-  BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getEngagedFSM(), &child1.fsm);
-  BOOST_REQUIRE_EQUAL(child2.obj.getStatus().getEngagedFSM(), &child2.fsm);
-  BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getEngagedFSM(), &child3.fsm);
+  BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getStateMachineId(), child1.fsm.getId() );
+  BOOST_REQUIRE_EQUAL(child2.obj.getStatus().getStateMachineId(), child2.fsm.getId() );
+  BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getStateMachineId(), child3.fsm.getId() );
   BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getState(), childState0);
   BOOST_REQUIRE_EQUAL(child2.obj.getStatus().getState(), childState0);
   BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getState(), childState0);
@@ -689,9 +686,9 @@ BOOST_FIXTURE_TEST_CASE(TestRunWarningTransition, SystemStateMachineTestSetup) {
   BOOST_CHECK_NO_THROW( sysItoA->exec(gk, false) );
   BOOST_CHECK_EQUAL( sys->getState().getEngagedFSM(), &fsm);
   BOOST_CHECK_EQUAL( sys->getState().getState(), sysStateA );
-  BOOST_CHECK_EQUAL( child1.obj.getStatus().getEngagedFSM(), &child1.fsm );
-  BOOST_CHECK_EQUAL( child2.obj.getStatus().getEngagedFSM(), &child2.fsm );
-  BOOST_CHECK_EQUAL( child3.obj.getStatus().getEngagedFSM(), &child3.fsm );
+  BOOST_CHECK_EQUAL( child1.obj.getStatus().getStateMachineId(), child1.fsm.getId()  );
+  BOOST_CHECK_EQUAL( child2.obj.getStatus().getStateMachineId(), child2.fsm.getId()  );
+  BOOST_CHECK_EQUAL( child3.obj.getStatus().getStateMachineId(), child3.fsm.getId()  );
   BOOST_CHECK_EQUAL( child1.obj.getStatus().getState(), childStateA );
   BOOST_CHECK_EQUAL( child2.obj.getStatus().getState(), childStateA );
   BOOST_CHECK_EQUAL( child3.obj.getStatus().getState(), childStateA );
@@ -757,9 +754,9 @@ BOOST_FIXTURE_TEST_CASE(TestRunErrorTransition, SystemStateMachineTestSetup) {
   BOOST_REQUIRE_EQUAL(sys->getState().getEngagedFSM(), &fsm);
   BOOST_REQUIRE_EQUAL(sys->getState().getState(), sysState0);
   BOOST_REQUIRE_EQUAL(sysItoA->getStatus().getState(), Functionoid::kInitial);
-  BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getEngagedFSM(), &child1.fsm);
-  BOOST_REQUIRE_EQUAL(child2.obj.getStatus().getEngagedFSM(), &child2.fsm);
-  BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getEngagedFSM(), &child3.fsm);
+  BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getStateMachineId(), child1.fsm.getId() );
+  BOOST_REQUIRE_EQUAL(child2.obj.getStatus().getStateMachineId(), child2.fsm.getId() );
+  BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getStateMachineId(), child3.fsm.getId() );
   BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getState(), childState0);
   BOOST_REQUIRE_EQUAL(child2.obj.getStatus().getState(), childState0);
   BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getState(), childState0);
@@ -768,9 +765,9 @@ BOOST_FIXTURE_TEST_CASE(TestRunErrorTransition, SystemStateMachineTestSetup) {
   BOOST_CHECK_NO_THROW( sysItoA->exec(gk, false) );
   BOOST_CHECK_EQUAL( sys->getState().getEngagedFSM(), &fsm);
   BOOST_CHECK_EQUAL( sys->getState().getState(), sysStateErr );
-  BOOST_CHECK_EQUAL( child1.obj.getStatus().getEngagedFSM(), &child1.fsm );
-  BOOST_CHECK_EQUAL( child2.obj.getStatus().getEngagedFSM(), &child2.fsm );
-  BOOST_CHECK_EQUAL( child3.obj.getStatus().getEngagedFSM(), &child3.fsm );
+  BOOST_CHECK_EQUAL( child1.obj.getStatus().getStateMachineId(), child1.fsm.getId()  );
+  BOOST_CHECK_EQUAL( child2.obj.getStatus().getStateMachineId(), child2.fsm.getId()  );
+  BOOST_CHECK_EQUAL( child3.obj.getStatus().getStateMachineId(), child3.fsm.getId()  );
   BOOST_CHECK_EQUAL( child1.obj.getStatus().getState(), childStateA );
   BOOST_CHECK_EQUAL( child2.obj.getStatus().getState(), childStateErr );
   BOOST_CHECK_EQUAL( child3.obj.getStatus().getState(), childState0 );
@@ -857,9 +854,9 @@ BOOST_FIXTURE_TEST_CASE(TestRunTransitionWrongChildState, SystemStateMachineTest
   BOOST_REQUIRE_EQUAL(sys->getState().getState(), sysState0);
   BOOST_REQUIRE_EQUAL(sysItoA->getStatus().getState(), Functionoid::kInitial);
   BOOST_REQUIRE_EQUAL(sysAtoB->getStatus().getState(), Functionoid::kInitial);
-  BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getEngagedFSM(), &child1.fsm);
-  BOOST_REQUIRE_EQUAL(child2.obj.getStatus().getEngagedFSM(), &child2.fsm);
-  BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getEngagedFSM(), &child3.fsm);
+  BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getStateMachineId(), child1.fsm.getId() );
+  BOOST_REQUIRE_EQUAL(child2.obj.getStatus().getStateMachineId(), child2.fsm.getId() );
+  BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getStateMachineId(), child3.fsm.getId() );
   BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getState(), childStateA);
   BOOST_REQUIRE_EQUAL(child2.obj.getStatus().getState(), childState0);
   BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getState(), childState0);
@@ -871,9 +868,9 @@ BOOST_FIXTURE_TEST_CASE(TestRunTransitionWrongChildState, SystemStateMachineTest
   BOOST_CHECK_EQUAL(sys->getState().getState(), sysState0);
   BOOST_CHECK_EQUAL(sysItoA->getStatus().getState(), Functionoid::kInitial);
   BOOST_CHECK_EQUAL(sysAtoB->getStatus().getState(), Functionoid::kInitial);
-  BOOST_CHECK_EQUAL(child1.obj.getStatus().getEngagedFSM(), &child1.fsm);
-  BOOST_CHECK_EQUAL(child2.obj.getStatus().getEngagedFSM(), &child2.fsm);
-  BOOST_CHECK_EQUAL(child3.obj.getStatus().getEngagedFSM(), &child3.fsm);
+  BOOST_CHECK_EQUAL(child1.obj.getStatus().getStateMachineId(), child1.fsm.getId() );
+  BOOST_CHECK_EQUAL(child2.obj.getStatus().getStateMachineId(), child2.fsm.getId() );
+  BOOST_CHECK_EQUAL(child3.obj.getStatus().getStateMachineId(), child3.fsm.getId());
   BOOST_CHECK_EQUAL(child1.obj.getStatus().getState(), childStateA);
   BOOST_CHECK_EQUAL(child2.obj.getStatus().getState(), childState0);
   BOOST_CHECK_EQUAL(child3.obj.getStatus().getState(), childState0);
@@ -888,9 +885,9 @@ BOOST_FIXTURE_TEST_CASE(TestRunTransitionWrongChildState, SystemStateMachineTest
   BOOST_REQUIRE_EQUAL(sys->getState().getState(), sysStateA);
   BOOST_REQUIRE_EQUAL(sysItoA->getStatus().getState(), Functionoid::kDone);
   BOOST_REQUIRE_EQUAL(sysAtoB->getStatus().getState(), Functionoid::kInitial);
-  BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getEngagedFSM(), &child1.fsm);
-  BOOST_REQUIRE_EQUAL(child2.obj.getStatus().getEngagedFSM(), &child2.fsm);
-  BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getEngagedFSM(), &child3.fsm);
+  BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getStateMachineId(), child1.fsm.getId());
+  BOOST_REQUIRE_EQUAL(child2.obj.getStatus().getStateMachineId(), child2.fsm.getId());
+  BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getStateMachineId(), child3.fsm.getId());
   BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getState(), childStateA);
   BOOST_REQUIRE_EQUAL(child2.obj.getStatus().getState(), childStateA);
   BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getState(), childState0);
@@ -902,9 +899,9 @@ BOOST_FIXTURE_TEST_CASE(TestRunTransitionWrongChildState, SystemStateMachineTest
   BOOST_CHECK_EQUAL(sys->getState().getState(), sysStateA);
   BOOST_CHECK_EQUAL(sysItoA->getStatus().getState(), Functionoid::kDone);
   BOOST_CHECK_EQUAL(sysAtoB->getStatus().getState(), Functionoid::kInitial);
-  BOOST_CHECK_EQUAL(child1.obj.getStatus().getEngagedFSM(), &child1.fsm);
-  BOOST_CHECK_EQUAL(child2.obj.getStatus().getEngagedFSM(), &child2.fsm);
-  BOOST_CHECK_EQUAL(child3.obj.getStatus().getEngagedFSM(), &child3.fsm);
+  BOOST_CHECK_EQUAL(child1.obj.getStatus().getStateMachineId(), child1.fsm.getId());
+  BOOST_CHECK_EQUAL(child2.obj.getStatus().getStateMachineId(), child2.fsm.getId());
+  BOOST_CHECK_EQUAL(child3.obj.getStatus().getStateMachineId(), child3.fsm.getId());
   BOOST_CHECK_EQUAL(child1.obj.getStatus().getState(), childStateA);
   BOOST_CHECK_EQUAL(child2.obj.getStatus().getState(), childStateA);
   BOOST_CHECK_EQUAL(child3.obj.getStatus().getState(), childState0);
@@ -929,9 +926,9 @@ BOOST_FIXTURE_TEST_CASE(TestRunTransitionDisengagedChildFSM, SystemStateMachineT
   BOOST_REQUIRE( fsm.getParticipants() == (std::set<const StateMachine*>{&child1.fsm, &child2.fsm, &child3.fsm}) );
   BOOST_REQUIRE_EQUAL(sys->getState().getEngagedFSM(), &fsm);
   BOOST_REQUIRE_EQUAL(sys->getState().getState(), sysState0);
-  BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getEngagedFSM(), &child1OtherFSM);
-  BOOST_REQUIRE_EQUAL(child2.obj.getStatus().getEngagedFSM(), &child2.fsm);
-  BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getEngagedFSM(), &child3.fsm);
+  BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getStateMachineId(), child1OtherFSM.getId());
+  BOOST_REQUIRE_EQUAL(child2.obj.getStatus().getStateMachineId(), child2.fsm.getId());
+  BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getStateMachineId(), child3.fsm.getId());
   BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getState(), childState0);
   BOOST_REQUIRE_EQUAL(child2.obj.getStatus().getState(), childState0);
   BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getState(), childState0);
@@ -941,11 +938,11 @@ BOOST_FIXTURE_TEST_CASE(TestRunTransitionDisengagedChildFSM, SystemStateMachineT
   BOOST_CHECK_EQUAL( sysItoA->getStatus().getState(), Functionoid::kInitial);
   BOOST_CHECK_EQUAL( sys->getState().getEngagedFSM(), &fsm);
   BOOST_CHECK_EQUAL( sys->getState().getState(), sysState0);
-  BOOST_CHECK_EQUAL( child1.obj.getStatus().getEngagedFSM(), &child1OtherFSM);
+  BOOST_CHECK_EQUAL( child1.obj.getStatus().getStateMachineId(), child1OtherFSM.getId());
   BOOST_CHECK_EQUAL( child1.obj.getStatus().getState(), childState0);
-  BOOST_CHECK_EQUAL( child2.obj.getStatus().getEngagedFSM(), &child2.fsm);
+  BOOST_CHECK_EQUAL( child2.obj.getStatus().getStateMachineId(), child2.fsm.getId());
   BOOST_CHECK_EQUAL( child2.obj.getStatus().getState(), childState0);
-  BOOST_CHECK_EQUAL( child3.obj.getStatus().getEngagedFSM(), &child3.fsm);
+  BOOST_CHECK_EQUAL( child3.obj.getStatus().getStateMachineId(), child3.fsm.getId());
   BOOST_CHECK_EQUAL( child3.obj.getStatus().getState(), childState0);
 
   // Running transition after child1 engaged in correct FSM again: 
@@ -956,11 +953,11 @@ BOOST_FIXTURE_TEST_CASE(TestRunTransitionDisengagedChildFSM, SystemStateMachineT
   BOOST_CHECK_NO_THROW( sysItoA->exec(gk, false));
   BOOST_CHECK_EQUAL( sys->getState().getEngagedFSM(), & fsm );
   BOOST_CHECK_EQUAL( sys->getState().getState(), sysStateA);
-  BOOST_CHECK_EQUAL( child1.obj.getStatus().getEngagedFSM(), &child1.fsm);
+  BOOST_CHECK_EQUAL( child1.obj.getStatus().getStateMachineId(), child1.fsm.getId());
   BOOST_CHECK_EQUAL( child1.obj.getStatus().getState(), childStateA);
-  BOOST_CHECK_EQUAL( child2.obj.getStatus().getEngagedFSM(), &child2.fsm);
+  BOOST_CHECK_EQUAL( child2.obj.getStatus().getStateMachineId(), child2.fsm.getId());
   BOOST_CHECK_EQUAL( child2.obj.getStatus().getState(), childStateA);
-  BOOST_CHECK_EQUAL( child3.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL);
+  BOOST_CHECK_EQUAL( child3.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
   BOOST_CHECK_EQUAL( child3.obj.getStatus().getState(), ActionableStatus::kNullStateId);
   SystemTransitionStatus s = sysItoA->getStatus();
   BOOST_CHECK_EQUAL( s.getActionPath(), sysItoA->getPath());
@@ -988,9 +985,9 @@ BOOST_FIXTURE_TEST_CASE(TestResetFSM, SystemStateMachineTestSetup) {
   BOOST_REQUIRE_NO_THROW( sys->engageStateMachine(fsm.getId()) );
   BOOST_REQUIRE_EQUAL( sys->getState().getEngagedFSM(), & fsm );
   BOOST_REQUIRE_EQUAL( sys->getState().getState(), sysState0 );
-  BOOST_REQUIRE_EQUAL( child1.obj.getStatus().getEngagedFSM(), &child1.fsm );
-  BOOST_REQUIRE_EQUAL( child2.obj.getStatus().getEngagedFSM(), &child2.fsm );
-  BOOST_REQUIRE_EQUAL( child3.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL );
+  BOOST_REQUIRE_EQUAL( child1.obj.getStatus().getStateMachineId(), child1.fsm.getId() );
+  BOOST_REQUIRE_EQUAL( child2.obj.getStatus().getStateMachineId(), child2.fsm.getId() );
+  BOOST_REQUIRE_EQUAL( child3.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId );
   BOOST_REQUIRE_EQUAL( child1.obj.getStatus().getState(), childState0 );
   BOOST_REQUIRE_EQUAL( child2.obj.getStatus().getState(), childState0 );
   BOOST_REQUIRE_EQUAL( child3.obj.getStatus().getState(), ActionableStatus::kNullStateId );
@@ -999,9 +996,9 @@ BOOST_FIXTURE_TEST_CASE(TestResetFSM, SystemStateMachineTestSetup) {
   BOOST_CHECK_NO_THROW( fsm.reset() );
   BOOST_CHECK_EQUAL( sys->getState().getEngagedFSM(), & fsm );
   BOOST_CHECK_EQUAL( sys->getState().getState(), sysState0 );
-  BOOST_CHECK_EQUAL( child1.obj.getStatus().getEngagedFSM(), &child1.fsm );
-  BOOST_CHECK_EQUAL( child2.obj.getStatus().getEngagedFSM(), &child2.fsm );
-  BOOST_CHECK_EQUAL( child3.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL );
+  BOOST_CHECK_EQUAL( child1.obj.getStatus().getStateMachineId(), child1.fsm.getId() );
+  BOOST_CHECK_EQUAL( child2.obj.getStatus().getStateMachineId(), child2.fsm.getId() );
+  BOOST_CHECK_EQUAL( child3.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId );
   BOOST_CHECK_EQUAL( child1.obj.getStatus().getState(), childState0 );
   BOOST_CHECK_EQUAL( child2.obj.getStatus().getState(), childState0 );
   BOOST_CHECK_EQUAL( child3.obj.getStatus().getState(), ActionableStatus::kNullStateId );
@@ -1013,9 +1010,9 @@ BOOST_FIXTURE_TEST_CASE(TestResetFSM, SystemStateMachineTestSetup) {
   BOOST_REQUIRE_EQUAL( sys->getState().getState(), sysStateA );
   BOOST_REQUIRE_EQUAL( child1.ItoA->getStatus().getState(), Functionoid::kDone );
   BOOST_REQUIRE_EQUAL( child2.ItoA->getStatus().getState(), Functionoid::kDone );
-  BOOST_REQUIRE_EQUAL( child1.obj.getStatus().getEngagedFSM(), &child1.fsm );
-  BOOST_REQUIRE_EQUAL( child2.obj.getStatus().getEngagedFSM(), &child2.fsm );
-  BOOST_REQUIRE_EQUAL( child3.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL );
+  BOOST_REQUIRE_EQUAL( child1.obj.getStatus().getStateMachineId(), child1.fsm.getId() );
+  BOOST_REQUIRE_EQUAL( child2.obj.getStatus().getStateMachineId(), child2.fsm.getId() );
+  BOOST_REQUIRE_EQUAL( child3.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId );
   BOOST_REQUIRE_EQUAL( child1.obj.getStatus().getState(), childStateA );
   BOOST_REQUIRE_EQUAL( child2.obj.getStatus().getState(), childStateA );
   BOOST_REQUIRE_EQUAL( child3.obj.getStatus().getState(), ActionableStatus::kNullStateId );
@@ -1024,9 +1021,9 @@ BOOST_FIXTURE_TEST_CASE(TestResetFSM, SystemStateMachineTestSetup) {
   BOOST_CHECK_NO_THROW( fsm.reset() );
   BOOST_CHECK_EQUAL( sys->getState().getEngagedFSM(), & fsm );
   BOOST_CHECK_EQUAL( sys->getState().getState(), sysState0 );
-  BOOST_CHECK_EQUAL( child1.obj.getStatus().getEngagedFSM(), &child1.fsm );
-  BOOST_CHECK_EQUAL( child2.obj.getStatus().getEngagedFSM(), &child2.fsm );
-  BOOST_CHECK_EQUAL( child3.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL );
+  BOOST_CHECK_EQUAL( child1.obj.getStatus().getStateMachineId(), child1.fsm.getId() );
+  BOOST_CHECK_EQUAL( child2.obj.getStatus().getStateMachineId(), child2.fsm.getId() );
+  BOOST_CHECK_EQUAL( child3.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId );
   BOOST_CHECK_EQUAL( child1.obj.getStatus().getState(), childState0 );
   BOOST_CHECK_EQUAL( child2.obj.getStatus().getState(), childState0 );
   BOOST_CHECK_EQUAL( child3.obj.getStatus().getState(), ActionableStatus::kNullStateId );
@@ -1040,9 +1037,9 @@ BOOST_FIXTURE_TEST_CASE(TestResetDisengagedFSM, SystemStateMachineTestSetup) {
   BOOST_CHECK_THROW( fsm.reset(), ResourceInWrongStateMachine);
   BOOST_CHECK_EQUAL( sys->getState().getEngagedFSM(), (const SystemStateMachine*) NULL  );
   BOOST_CHECK_EQUAL( sys->getState().getState(), ActionableStatus::kNullStateId );
-  BOOST_CHECK_EQUAL( child1.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL );
-  BOOST_CHECK_EQUAL( child2.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL);
-  BOOST_CHECK_EQUAL( child3.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL );
+  BOOST_CHECK_EQUAL( child1.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId );
+  BOOST_CHECK_EQUAL( child2.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
+  BOOST_CHECK_EQUAL( child3.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId );
   BOOST_CHECK_EQUAL( child1.obj.getStatus().getState(), ActionableStatus::kNullStateId );
   BOOST_CHECK_EQUAL( child2.obj.getStatus().getState(), ActionableStatus::kNullStateId );
   BOOST_CHECK_EQUAL( child3.obj.getStatus().getState(), ActionableStatus::kNullStateId );
@@ -1063,9 +1060,9 @@ BOOST_FIXTURE_TEST_CASE(TestResetFSMChildDisengaged, SystemStateMachineTestSetup
   BOOST_REQUIRE_EQUAL(child1.ItoA->getStatus().getState(), Functionoid::kDone);
   BOOST_REQUIRE_EQUAL(child2.ItoA->getStatus().getState(), Functionoid::kDone);
   BOOST_REQUIRE_EQUAL(child3.ItoA->getStatus().getState(), Functionoid::kDone);
-  BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL);
-  BOOST_REQUIRE_EQUAL(child2.obj.getStatus().getEngagedFSM(), &child2.fsm);
-  BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getEngagedFSM(), &child3.fsm);
+  BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
+  BOOST_REQUIRE_EQUAL(child2.obj.getStatus().getStateMachineId(), child2.fsm.getId());
+  BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getStateMachineId(), child3.fsm.getId());
   BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getState(), ActionableStatus::kNullStateId);
   BOOST_REQUIRE_EQUAL(child2.obj.getStatus().getState(), childStateA);
   BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getState(), childStateA);
@@ -1074,9 +1071,9 @@ BOOST_FIXTURE_TEST_CASE(TestResetFSMChildDisengaged, SystemStateMachineTestSetup
   BOOST_CHECK_THROW( fsm.reset(), ResourceInWrongStateMachine);
   BOOST_REQUIRE_EQUAL(sys->getState().getEngagedFSM(), &fsm);
   BOOST_REQUIRE_EQUAL(sys->getState().getState(), sysStateA);
-  BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getEngagedFSM(), (const StateMachine*) NULL);
-  BOOST_REQUIRE_EQUAL(child2.obj.getStatus().getEngagedFSM(), &child2.fsm);
-  BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getEngagedFSM(), &child3.fsm);
+  BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
+  BOOST_REQUIRE_EQUAL(child2.obj.getStatus().getStateMachineId(), child2.fsm.getId());
+  BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getStateMachineId(), child3.fsm.getId());
   BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getState(), ActionableStatus::kNullStateId);
   BOOST_REQUIRE_EQUAL(child2.obj.getStatus().getState(), childStateA);
   BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getState(), childStateA);  

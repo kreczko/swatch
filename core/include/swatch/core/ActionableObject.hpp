@@ -88,11 +88,11 @@ public:
   public:
     Status();
 
-    const StateMachine* getEngagedFSM() const;
+//    const StateMachine* getEngagedFSM() const;
 
   private:
 
-    const StateMachine* mFSM;
+//    const StateMachine* mFSM;
 
     // Friendship for classes/methods that will need to change object's state
     friend class ActionableSystem;

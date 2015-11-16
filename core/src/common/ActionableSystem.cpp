@@ -98,7 +98,7 @@ void ActionableSystem::engageStateMachine(const std::string& aFSM)
   
   BOOST_FOREACH( const StateMachine* sm, lOp.getParticipants() ) {
 	ActionableObject& lObj = sm->mResource;
-    lObj.mStatus.mFSM = sm;
+//    lObj.mStatus.mFSM = sm;
 	lObj.mStatus.mStateMachineId = sm->getId();
     lObj.mStatus.mState = sm->getInitialState();
   }
