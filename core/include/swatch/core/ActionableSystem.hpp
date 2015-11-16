@@ -24,21 +24,21 @@ class Functionoid;
 class ActionableSystem : public MonitorableObject {
   class BusyGuard;
 public:
-    
-  class State : public ActionableStatus {
-  public:
-      State();
-      
-      const SystemStateMachine* getEngagedFSM() const;
-      
-  private:
-    const SystemStateMachine* mFSM;
-      
-    // Friendship for classes/methods that will need to change system's state
-    friend class ActionableSystem;
-    friend class BusyGuard;
-    friend class SystemStateMachine;
-  };
+  typedef ActionableStatus State;
+//  class State : public ActionableStatus {
+//  public:
+//      State();
+//      
+////      const SystemStateMachine* getEngagedFSM() const;
+//      
+//  private:
+////    const SystemStateMachine* mFSM;
+//      
+//    // Friendship for classes/methods that will need to change system's state
+//    friend class ActionableSystem;
+//    friend class BusyGuard;
+//    friend class SystemStateMachine;
+//  };
     
   ActionableSystem(const std::string& aId);
 

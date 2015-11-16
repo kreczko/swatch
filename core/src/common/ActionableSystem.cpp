@@ -15,17 +15,17 @@ namespace swatch {
 namespace core {
 
 
-ActionableSystem::State::State() :
-  ActionableStatus(),
-  mFSM(NULL)
-{
-}
+//ActionableSystem::State::State() :
+//  ActionableStatus()//,
+////  mFSM(NULL)
+//{
+//}
 
 
-const SystemStateMachine* ActionableSystem::State::getEngagedFSM() const
-{
-  return mFSM;
-}
+//const SystemStateMachine* ActionableSystem::State::getEngagedFSM() const
+//{
+//  return mFSM;
+//}
 
 
   
@@ -72,8 +72,8 @@ void ActionableSystem::engageStateMachine(const std::string& aFSM)
   tLockGuardMap lLockGuardMap = lockMutexes(lOp);
 
   // Throw if system or any of the participating children are already in a state machine
-  if(mStatus.mFSM != NULL)
-    throw ResourceInWrongStateMachine("Cannot engage other state machine; system '"+getPath()+"' currently in state machine"+mStatus.mFSM->getId()+"'");
+  if(mStatus.getStateMachineId() != ActionableStatus::kNullStateMachineId )
+    throw ResourceInWrongStateMachine("Cannot engage other state machine; system '"+getPath()+"' currently in state machine"+mStatus.getStateMachineId()+"'");
   for(std::set<const StateMachine*>::const_iterator lIt=lOp.getParticipants().begin(); lIt!=lOp.getParticipants().end(); lIt++)
   {
     const ActionableObject& lChild = (*lIt)->getResource();
@@ -87,7 +87,8 @@ void ActionableSystem::engageStateMachine(const std::string& aFSM)
 }
   
   // ... otherwise all is good, engage system & all participating children in appropriate state machine
-  mStatus.mFSM = & lOp;
+//  mStatus.mFSM = & lOp;
+	mStatus.mStateMachineId = lOp.getId();
   mStatus.mState = lOp.getInitialState();
   // TDOD: Delete
 //  for(std::set<const StateMachine*>::const_iterator lIt=lOp.getParticipants().begin(); lIt!=lOp.getParticipants().end(); lIt++) {
@@ -180,8 +181,9 @@ ActionableSystem::BusyGuard::BusyGuard(ActionableSystem& aResource, const Functi
   std::map<const MonitorableObject*, tLockGuardPtr> lLockGuardMap = ActionableSystem::lockMutexes(lOp);
 
   // 1a) Check that system is engaged in correct state machine, and is in the correct state
-  if( aResource.mStatus.mFSM != & lTransition.getStateMachine())
+  if( aResource.mStatus.getStateMachineId() !=  lTransition.getStateMachine().getId())
     throw ResourceInWrongStateMachine("Resource '"+aResource.getPath()+"' is not yet engaged in state machine '"+lTransition.getStateMachine().getId()+"'");
+	
   else if ( aResource.mStatus.mState != lTransition.getStartState() )
     throw ResourceInWrongState("Resource '"+aResource.getPath()+"' is in state '"+aResource.mStatus.mState+"'; transition '"+lTransition.getId()+"' cannot be run");
   

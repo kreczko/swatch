@@ -493,7 +493,8 @@ void SystemStateMachine::disengage()
   checkStateMachineEngagedAndNotInTransition("disengage");
 
 
-  getResource().mStatus.mFSM = NULL;
+//  getResource().mStatus.mFSM = NULL;
+	getResource().mStatus.mStateMachineId = ActionableStatus::kNullStateMachineId;
   getResource().mStatus.mState = ActionableStatus::kNullStateId;
   
 // TODO: Delete  
@@ -521,14 +522,14 @@ void SystemStateMachine::disengage()
 void SystemStateMachine::checkStateMachineEngagedAndNotInTransition(const std::string& aAction) const
 {
     // Throw if system is not in this state machine
-  if ( getResource().mStatus.mFSM != this )
+  if ( getResource().mStatus.getStateMachineId() != this->getId() )
   {
     std::ostringstream oss;
     oss << "Cannot " << aAction << " state machine '" << getId() << "' of '" << getResource().getPath() << "'; ";
-    if ( getResource().mStatus.mFSM == NULL )
+    if ( getResource().mStatus.getStateMachineId() == ActionableStatus::kNullStateMachineId )
       oss << "NOT in any state machine.";
     else
-      oss << "currently in state machine '" << getResource().mStatus.mFSM->getPath() << "'";
+      oss << "currently in state machine '" << getResource().mStatus.getStateMachineId() << "'";
     throw ResourceInWrongStateMachine(oss.str());
   }
   
