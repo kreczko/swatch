@@ -14,31 +14,18 @@
 namespace swatch {
 namespace core {
 
-
-//ActionableSystem::State::State() :
-//  ActionableStatus()//,
-////  mFSM(NULL)
-//{
-//}
-
-
-//const SystemStateMachine* ActionableSystem::State::getEngagedFSM() const
-//{
-//  return mFSM;
-//}
-
-
   
+//------------------------------------------------------------------------------------
 ActionableSystem::ActionableSystem(const std::string& aId) : 
-  MonitorableObject(aId)
-{
+  MonitorableObject(aId) {
 }
 
 
-ActionableSystem::~ActionableSystem()
-{
+//------------------------------------------------------------------------------------
+ActionableSystem::~ActionableSystem() {
 }
 
+//------------------------------------------------------------------------------------
 std::set<std::string> ActionableSystem::getStateMachines() const
 {
   std::set<std::string> lNames;
@@ -48,6 +35,7 @@ std::set<std::string> ActionableSystem::getStateMachines() const
 }
 
 
+//------------------------------------------------------------------------------------
 SystemStateMachine& ActionableSystem::getStateMachine( const std::string& aId )
 {
   try {
@@ -58,6 +46,7 @@ SystemStateMachine& ActionableSystem::getStateMachine( const std::string& aId )
 }
 
 
+//------------------------------------------------------------------------------------
 ActionableSystem::State ActionableSystem::getState() const
 {
   boost::lock_guard<boost::mutex> lGuard(mMutex);
@@ -65,6 +54,7 @@ ActionableSystem::State ActionableSystem::getState() const
 }
 
 
+//------------------------------------------------------------------------------------
 void ActionableSystem::engageStateMachine(const std::string& aFSM)
 {
   const SystemStateMachine& lOp = getStateMachine(aFSM);
@@ -74,33 +64,21 @@ void ActionableSystem::engageStateMachine(const std::string& aFSM)
   // Throw if system or any of the participating children are already in a state machine
   if(mStatus.getStateMachineId() != ActionableStatus::kNullStateMachineId )
     throw ResourceInWrongStateMachine("Cannot engage other state machine; system '"+getPath()+"' currently in state machine"+mStatus.getStateMachineId()+"'");
+  
   for(std::set<const StateMachine*>::const_iterator lIt=lOp.getParticipants().begin(); lIt!=lOp.getParticipants().end(); lIt++)
   {
     const ActionableObject& lChild = (*lIt)->getResource();
-	// TODO: Delete
-//    if( lChild.mStatus.mFSM != NULL )
-//    if( lChild.mStatus.getStateMachineId() != ActionableStatus::kNullStateMachineId )
     if( lChild.mStatus.isEngaged() )
-	// TODO: Delete
-//      throw ResourceInWrongStateMachine("Cannot engage other state machine; resource '"+lChild.getPath()+"' currently in state machine '"+lChild.mStatus.mFSM->getId()+"'");
-	  throw ResourceInWrongStateMachine("Cannot engage other state machine; resource '"+lChild.getPath()+"' currently in state machine '"+lChild.mStatus.getStateMachineId()+"'");
-}
+  	  throw ResourceInWrongStateMachine("Cannot engage other state machine; resource '"+lChild.getPath()+"' currently in state machine '"+lChild.mStatus.getStateMachineId()+"'");
+  }
   
   // ... otherwise all is good, engage system & all participating children in appropriate state machine
-//  mStatus.mFSM = & lOp;
 	mStatus.mStateMachineId = lOp.getId();
   mStatus.mState = lOp.getInitialState();
-  // TDOD: Delete
-//  for(std::set<const StateMachine*>::const_iterator lIt=lOp.getParticipants().begin(); lIt!=lOp.getParticipants().end(); lIt++) {
-//    ActionableObject& lObj = (*lIt)->mResource;
-//    lObj.mStatus.mFSM = *lIt;
-//    lObj.mStatus.mState = (*lIt)->getInitialState();
-//  }
   
   BOOST_FOREACH( const StateMachine* sm, lOp.getParticipants() ) {
-	ActionableObject& lObj = sm->mResource;
-//    lObj.mStatus.mFSM = sm;
-	lObj.mStatus.mStateMachineId = sm->getId();
+  	ActionableObject& lObj = sm->mResource;
+  	lObj.mStatus.mStateMachineId = sm->getId();
     lObj.mStatus.mState = sm->getInitialState();
   }
 }
@@ -247,6 +225,7 @@ ActionableSystem::BusyGuard::BusyGuard(ActionableSystem& aResource, const Functi
 }
 
 
+//------------------------------------------------------------------------------------
 const ActionableObject::BusyGuard& ActionableSystem::BusyGuard::getChildGuard(const ActionableObject& aChild) const
 {
   std::map<const ActionableObject*, tChildGuardPtr>::const_iterator lIt = mChildGuardMap.find(&aChild);
@@ -256,6 +235,7 @@ const ActionableObject::BusyGuard& ActionableSystem::BusyGuard::getChildGuard(co
 }
 
 
+//------------------------------------------------------------------------------------
 ActionableSystem::BusyGuard::~BusyGuard()
 {
   boost::lock_guard<boost::mutex> lGuard(mResource.mMutex);

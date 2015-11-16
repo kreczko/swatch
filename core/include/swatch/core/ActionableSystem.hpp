@@ -25,20 +25,6 @@ class ActionableSystem : public MonitorableObject {
   class BusyGuard;
 public:
   typedef ActionableStatus State;
-//  class State : public ActionableStatus {
-//  public:
-//      State();
-//      
-////      const SystemStateMachine* getEngagedFSM() const;
-//      
-//  private:
-////    const SystemStateMachine* mFSM;
-//      
-//    // Friendship for classes/methods that will need to change system's state
-//    friend class ActionableSystem;
-//    friend class BusyGuard;
-//    friend class SystemStateMachine;
-//  };
     
   ActionableSystem(const std::string& aId);
 
@@ -87,7 +73,7 @@ private:
 
   //! Locks mutex of system & all children involved in system state machine
   typedef boost::shared_ptr<boost::unique_lock<boost::mutex> > tLockGuardPtr;
-  typedef  std::map<const swatch::core::MonitorableObject*, tLockGuardPtr> tLockGuardMap;
+  typedef std::map<const swatch::core::MonitorableObject*, tLockGuardPtr> tLockGuardMap;
   static tLockGuardMap lockMutexes(const SystemStateMachine&);
   
   tStateMachineMap mFSMs;

@@ -14,6 +14,7 @@
 namespace swatch {
 namespace core {
     
+//------------------------------------------------------------------------------------
 StateMachine::StateMachine(const std::string& aId, ActionableObject& aResource, const std::string& aInitialState, const std::string& aErrorState) :
   Object(aId),
   mResource(aResource),
@@ -27,47 +28,55 @@ StateMachine::StateMachine(const std::string& aId, ActionableObject& aResource, 
 }
 
 
+//------------------------------------------------------------------------------------
 StateMachine::~StateMachine()
 {
 }
 
 
+//------------------------------------------------------------------------------------
 const ActionableObject& StateMachine::getResource() const
 {
   return mResource;
 }
 
 
+//------------------------------------------------------------------------------------
 ActionableObject& StateMachine::getResource()
 {
   return mResource;
 }
 
 
+//------------------------------------------------------------------------------------
 const std::string& StateMachine::getInitialState() const
 {
   return mInitialState;
 }
 
 
+//------------------------------------------------------------------------------------
 const std::string& StateMachine::getErrorState() const
 {
   return mErrorState;
 }
 
 
+//------------------------------------------------------------------------------------
 const std::vector<std::string>& StateMachine::getStates() const
 {
   return mStates;
 }
 
 
+//------------------------------------------------------------------------------------
 const std::map<std::string, StateMachine::Transition*>& StateMachine::getTransitions(const std::string& aStateId) const
 {
   return getState(aStateId).transitionMap;
 }
 
 
+//------------------------------------------------------------------------------------
 StateMachine::Transition& StateMachine::getTransition(const std::string& aStateId, const std::string& aTransition)
 {
   const std::map<std::string, StateMachine::Transition*>& lTransitions = getTransitions(aStateId);
@@ -81,6 +90,7 @@ StateMachine::Transition& StateMachine::getTransition(const std::string& aStateI
 }
 
 
+//------------------------------------------------------------------------------------
 void StateMachine::addState(const std::string& aStateId)
 {
   if ( mStateMap.count(aStateId) )
@@ -110,6 +120,7 @@ StateMachine::Transition& StateMachine::addTransition(const std::string& aTransi
 }
 
 
+//------------------------------------------------------------------------------------
 void StateMachine::disengage()
 {
   boost::lock_guard<boost::mutex> lGuard(mResource.mMutex);
@@ -137,6 +148,7 @@ void StateMachine::disengage()
 }
 
 
+//------------------------------------------------------------------------------------
 void StateMachine::reset()
 {
   boost::lock_guard<boost::mutex> lGuard(mResource.mMutex);
@@ -194,6 +206,7 @@ StateMachine& StateMachine::Transition::getStateMachine()
 }
 
 
+//------------------------------------------------------------------------------------
 StateMachine::Transition& StateMachine::Transition::add(Command& aCmd, const std::string& aNamespace)
 {
   addCommand(aCmd, aNamespace);
@@ -201,6 +214,7 @@ StateMachine::Transition& StateMachine::Transition::add(Command& aCmd, const std
 }
 
 
+//------------------------------------------------------------------------------------
 StateMachine::Transition& StateMachine::Transition::add(CommandSequence& aSequence)
 {
   CommandVec::const_iterator lIt = aSequence.begin();
@@ -211,6 +225,8 @@ StateMachine::Transition& StateMachine::Transition::add(CommandSequence& aSequen
   return *this;
 }
 
+
+//------------------------------------------------------------------------------------
 void StateMachine::Transition::extractMonitoringSettings(const GateKeeper& aGateKeeper,
 	tMonitoringSettings& aMonSettings) const {
   aMonSettings.clear();
@@ -220,6 +236,7 @@ void StateMachine::Transition::extractMonitoringSettings(const GateKeeper& aGate
   std::vector<std::string> lDescendants = lResource.getDescendants();
   for (std::vector<std::string>::const_iterator lIt = lDescendants.begin(); lIt != lDescendants.end(); lIt++) {
     MonitorableObject* lDescendant = lResource.getObj<MonitorableObject>(*lIt);
+
     if (lDescendant) {
       // query the GateKeeper for relevant settings for each object
       std::string lPath = *lIt;
@@ -242,31 +259,45 @@ void StateMachine::Transition::extractMonitoringSettings(const GateKeeper& aGate
   }
 }
 
+
+//------------------------------------------------------------------------------------
 void StateMachine::Transition::prepareCommands(const tReadOnlyXParameterSets& aParameters, const tMonitoringSettings& aMonSettings) {
 }
 
+
+//------------------------------------------------------------------------------------
 void StateMachine::Transition::finaliseCommands(const tReadOnlyXParameterSets& aParameters, const tMonitoringSettings& aMonSettings) {
   applyMonitoringSettings(aMonSettings);
 }
 
+
+//------------------------------------------------------------------------------------
 void StateMachine::Transition::applyMonitoringSettings(const tMonitoringSettings& aMonSettings) {
+  
   // get a list of all MonitorableObjects
   ActionableObject& lResource = mStateMachine.getResource();
   std::vector<std::string> lDescendants = lResource.getDescendants();
+  
   for (std::vector<std::string>::const_iterator lIt = lDescendants.begin(); lIt != lDescendants.end(); lIt++) {
     MonitorableObject* lDescendant = lResource.getObj<MonitorableObject>(*lIt);
+    
     if (lDescendant) {
       // query the GateKeeper for relevant settings for each object
       std::string lPath = *lIt;
+      
       for (tMonitoringSettings::const_iterator lMonSetting = aMonSettings.begin(); lMonSetting != aMonSettings.end();
           ++lMonSetting) {
         LOG(logger::kInfo) << lPath << " " << lMonSetting->getId();
+        
         if (lMonSetting->getId() == lPath) {
           lDescendant->setMonitoringStatus(lMonSetting->getStatus());
         }
+        
         // Apply settings to child metrics
         const std::vector<std::string> lMetricIds = lDescendant->getMetrics();
+        
         for (auto lMetricIt = lMetricIds.begin(); lMetricIt != lMetricIds.end(); lMetricIt++) {
+        
           if (lMonSetting->getId() == (lPath + "." + *lMetricIt))
             lDescendant->getMetric(*lMetricIt).setMonitoringStatus(lMonSetting->getStatus());
         }
@@ -276,18 +307,22 @@ void StateMachine::Transition::applyMonitoringSettings(const tMonitoringSettings
 }
 
 
+//------------------------------------------------------------------------------------
 StateMachine::State::State(const std::string& aId) :
   Object(aId)
 {
 }
 
 
+//------------------------------------------------------------------------------------
 void StateMachine::State::addTransition(Transition* aTransition)
 {
   addObj(aTransition);
   transitionMap[ aTransition->getId() ] = aTransition;
 }
 
+
+//------------------------------------------------------------------------------------
 const StateMachine::State& StateMachine::getState(const std::string& aStateId) const
 {
   std::map<std::string, State*>::const_iterator lIt = mStateMap.find(aStateId);
@@ -298,6 +333,7 @@ const StateMachine::State& StateMachine::getState(const std::string& aStateId) c
 }
 
 
+//------------------------------------------------------------------------------------
 StateMachine::State& StateMachine::getState(const std::string& aStateId)
 {
   std::map<std::string, State*>::const_iterator lIt = mStateMap.find(aStateId);

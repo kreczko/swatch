@@ -19,13 +19,13 @@ namespace swatch {
 namespace core {
 
 
-//---
+//------------------------------------------------------------------------------------
 Command::~Command() {
   if ( defaultResult_ ) delete defaultResult_;
 }
 
 
-//---
+//------------------------------------------------------------------------------------
 const ActionableObject& Command::getResource() const {
   const ActionableObject* lParent = getParent<ActionableObject>();
   
@@ -36,7 +36,7 @@ const ActionableObject& Command::getResource() const {
 }
 
 
-//---
+//------------------------------------------------------------------------------------
 ActionableObject& Command::getResource() {
   ActionableObject* lParent = getParent<ActionableObject>();
   
@@ -47,17 +47,17 @@ ActionableObject& Command::getResource() {
 }
 
 
-//---
+//------------------------------------------------------------------------------------
 void 
-Command::exec( const XParameterSet& aParams  , const bool& aUseThreadPool ) 
+Command::exec( const XParameterSet& aParams, bool aUseThreadPool ) 
 {
   exec(NULL, aParams, aUseThreadPool);
 }
 
 
-//---
+//------------------------------------------------------------------------------------
 void 
-Command::exec(const ActionableObject::BusyGuard* aOuterBusyGuard, const XParameterSet& params  , const bool& aUseThreadPool ) 
+Command::exec(const ActionableObject::BusyGuard* aOuterBusyGuard, const XParameterSet& params, bool aUseThreadPool ) 
 {
   boost::shared_ptr<ActionableObject::BusyGuard> lBusyGuard( new ActionableObject::BusyGuard(getResource(), *this, aOuterBusyGuard) );
 
@@ -90,6 +90,7 @@ Command::exec(const ActionableObject::BusyGuard* aOuterBusyGuard, const XParamet
 }
 
 
+//------------------------------------------------------------------------------------
 void Command::runCode(boost::shared_ptr<ActionableObject::BusyGuard> aActionGuard, const XParameterSet& params) {
   // 1) Declare that I'm running
   {
@@ -130,7 +131,8 @@ void Command::runCode(boost::shared_ptr<ActionableObject::BusyGuard> aActionGuar
   // 3) Release control of the resource - by destruction of the ActionGuard.
 }
 
-//---
+
+//------------------------------------------------------------------------------------
 void Command::resetForRunning(const XParameterSet& params) {
   boost::unique_lock<boost::mutex> lock(mutex_);
   state_ = ActionStatus::kScheduled;
@@ -143,7 +145,7 @@ void Command::resetForRunning(const XParameterSet& params) {
 }
 
 
-//---
+//------------------------------------------------------------------------------------
 ActionStatus::State
 Command::getState() const {
   boost::unique_lock<boost::mutex> lock(mutex_);
@@ -151,7 +153,7 @@ Command::getState() const {
 }
 
 
-//---
+//------------------------------------------------------------------------------------
 CommandStatus Command::getStatus() const {
   boost::unique_lock<boost::mutex> lock(mutex_);
   
@@ -181,7 +183,7 @@ CommandStatus Command::getStatus() const {
 }
 
 
-//---
+//------------------------------------------------------------------------------------
 void
 Command::setProgress(float aProgress) {
   if ( aProgress < 0. or aProgress > 1.) {
@@ -196,7 +198,7 @@ Command::setProgress(float aProgress) {
 }
 
 
-//---
+//------------------------------------------------------------------------------------
 void
 Command::setProgress(float aProgress, const std::string& aMsg ) {
   if ( aProgress < 0. or aProgress > 1.) {
@@ -221,7 +223,8 @@ void Command::setResult( const xdata::Serializable& aResult ){
   result_->setValue(aResult);
 }
 
-//---
+
+//------------------------------------------------------------------------------------
 void Command::setStatusMsg(const std::string& aMsg) {
   boost::unique_lock<boost::mutex> lock(mutex_);
   statusMsg_ = aMsg;
@@ -230,17 +233,20 @@ void Command::setStatusMsg(const std::string& aMsg) {
   LOG(swatch::logger::kInfo) << getResource().getId() << "." << getId() << " : " << aMsg;
 }
 
-// ---
+
+//------------------------------------------------------------------------------------
 const ReadWriteXParameterSet& Command::getDefaultParams() const {
   return defaultParams_;
 }
 
 
+//------------------------------------------------------------------------------------
 const xdata::Serializable& Command::getDefaultResult() const {
   return *defaultResult_;
 }
 
 
+//------------------------------------------------------------------------------------
 ReadOnlyXParameterSet Command::mergeParametersWithDefaults( const XParameterSet& params ) const {
   ReadOnlyXParameterSet merged = ReadOnlyXParameterSet(params);
   
@@ -254,39 +260,42 @@ ReadOnlyXParameterSet Command::mergeParametersWithDefaults( const XParameterSet&
   return merged;
 }
 
-// ---
+
+//------------------------------------------------------------------------------------
 float
 CommandStatus::getProgress() const {
   return progress_;
 }
 
-// ---
+
+//------------------------------------------------------------------------------------
 const
 std::string& CommandStatus::getStatusMsg() const {
   return statusMsg_;
 }
 
 
-//---
+//------------------------------------------------------------------------------------
 const XParameterSet& CommandStatus::getParameters() const {
   return params_;
 }
 
     
-//---
+//------------------------------------------------------------------------------------
 const xdata::Serializable*
 const CommandStatus::getResult() const {
   return result_.get();
 }
 
 
-//---
+//------------------------------------------------------------------------------------
 std::string
 CommandStatus::getResultAsString() const {
   return result_->toString();
 }
+
     
-//---
+//------------------------------------------------------------------------------------
 CommandStatus::CommandStatus(const std::string& aPath, ActionStatus::State aState, float aRunningTime, float aProgress, const std::string& aStatusMsg, const ReadOnlyXParameterSet& aParams, const boost::shared_ptr<xdata::Serializable>& aResult) :
   ActionStatus(aPath, aState, aRunningTime),
   progress_(aProgress),

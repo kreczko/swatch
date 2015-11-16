@@ -51,7 +51,7 @@ public:
      * @param aParams Map of parameter values; any default parameters for this command that aren't included in this argument will be merged into the set supplied to the code method
      * @param aUseThreadPool Run the command asynchronously in the swatch::core::ThreadPool ; if equals false, then the command is run synchronously
      */
-    void exec( const XParameterSet& aParams , const bool& aUseThreadPool = true );
+    void exec( const XParameterSet& aParams , bool aUseThreadPool = true );
 
     /** 
      * Run this command, using the supplied set of parameters, from another functionoid that already has control of resource 
@@ -59,7 +59,7 @@ public:
      * @param aParams Map of parameter values; any default parameters for this command that aren't included in this argument will be merged into the set supplied to the code method
      * @param aUseThreadPool Run the command asynchronously in the swatch::core::ThreadPool ; if equals false, then the command is run synchronously
      */
-    void exec(const ActionableObject::BusyGuard* aOuterBusyGuard, const XParameterSet& aParams , const bool& aUseThreadPool = true );
+    void exec(const ActionableObject::BusyGuard* aOuterBusyGuard, const XParameterSet& aParams , bool aUseThreadPool = true );
 
     //! Returns current state of this command
     ActionStatus::State getState() const;

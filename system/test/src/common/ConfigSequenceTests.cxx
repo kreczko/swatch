@@ -66,13 +66,13 @@ int main(int argc, char** argv) {
 
     for( std::deque<swatch::processor::Processor*>::const_iterator lIt( lProcessors.begin()) ; lIt!=lProcessors.end() ; ++lIt )
     {
-      std::set<std::string> lCommandSequences( (**lIt).getCommandSequences() );
+      std::set<std::string> lCommandSequences( (**lIt).getSequences() );
 
       for( std::set<std::string>::iterator lIt2( lCommandSequences.begin()) ; lIt2!=lCommandSequences.end() ; ++lIt2 )
       {
         std::cout << std::string( 100 , '-' ) << std::endl;
         std::cout << *lIt2 << std::endl;
-        swatch::core::CommandSequence& lCommandSequence( (**lIt).getCommandSequence( *lIt2 ) );
+        swatch::core::CommandSequence& lCommandSequence( (**lIt).getSequence( *lIt2 ) );
       
 //         std::set<std::string> lParams = lCommandSequence->getParams();
 // 

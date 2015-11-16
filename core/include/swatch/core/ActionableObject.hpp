@@ -34,12 +34,22 @@ class SystemStateMachine;
 
 class ActionableStatus {
 public:
-  //!
+  /**
+   * The object is alive i.e. it is not bound for destruction
+   * @return True if alive
+   */
   bool isAlive() const;
   
-  //!
+  /**
+   * The object is engaged with a State Machine
+   * @return True of engaged
+   */
   bool isEngaged() const;
   
+  /**
+   * One or more actions are currently running
+   * @return True if one or more actions/funtionoid are running
+   */
   bool isRunning() const;
   
   //!
@@ -71,7 +81,7 @@ protected:
   //! Indicates whether or not actions are allowed on this resource anymore (actions become disabled once the deleter is)
   bool mAlive;
   
-  //!
+  //! 
   std::string mStateMachineId;
   
   //!
@@ -103,7 +113,7 @@ public:
     * Names of stored command sequences.
     * @return set of command sequence names
     */    
-  std::set< std::string > getCommandSequences() const;
+  std::set< std::string > getSequences() const;
 
   /**
     * Names of stored commands.
@@ -118,7 +128,7 @@ public:
   std::set<std::string> getStateMachines() const;
 
   //! Get registered command sequence of specified ID
-  CommandSequence& getCommandSequence( const std::string& aId );
+  CommandSequence& getSequence( const std::string& aId );
 
   //! Get registered command of specified ID
   Command& getCommand( const std::string& aId );

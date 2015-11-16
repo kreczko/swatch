@@ -74,13 +74,11 @@ ActionableObject::ActionableObject( const std::string& aId ) :
 
 
 //------------------------------------------------------------------------------------
-
 ActionableObject::~ActionableObject() {
 }
 
 //------------------------------------------------------------------------------------
-
-CommandSequence& ActionableObject::getCommandSequence( const std::string& aId )
+CommandSequence& ActionableObject::getSequence( const std::string& aId )
 {
   try {
     return *(mCommandSequences.at( aId ));
@@ -90,6 +88,7 @@ CommandSequence& ActionableObject::getCommandSequence( const std::string& aId )
 }
 
 
+//------------------------------------------------------------------------------------
 Command& ActionableObject::getCommand( const std::string& aId )
 {
   try {
@@ -100,6 +99,7 @@ Command& ActionableObject::getCommand( const std::string& aId )
 }
 
 
+//------------------------------------------------------------------------------------
 StateMachine& ActionableObject::getStateMachine( const std::string& aId )
 {
   try {
@@ -111,8 +111,7 @@ StateMachine& ActionableObject::getStateMachine( const std::string& aId )
 
 
 //------------------------------------------------------------------------------------
-
-std::set<std::string> ActionableObject::getCommandSequences() const
+std::set<std::string> ActionableObject::getSequences() const
 {
   std::set<std::string> lNames;
   BOOST_FOREACH( tCommandSequenceMap::value_type p, mCommandSequences) {

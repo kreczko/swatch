@@ -14,25 +14,24 @@ namespace swatch {
 namespace core {
     
 
+//------------------------------------------------------------------------------------
 SystemTransition::Step::Step(const std::vector<StateMachine::Transition*>& aTransitions) :
-  mTransitions(aTransitions)
-{
+  mTransitions(aTransitions) {
 }
     
-const std::vector<StateMachine::Transition*>& SystemTransition::Step::get()
-{
+//------------------------------------------------------------------------------------
+const std::vector<StateMachine::Transition*>& SystemTransition::Step::get() {
   return mTransitions;
 }
 
-
-const std::vector<StateMachine::Transition*>& SystemTransition::Step::cget() const
-{
-  return mTransitions;
-}
 
 //------------------------------------------------------------------------------------
+const std::vector<StateMachine::Transition*>& SystemTransition::Step::cget() const {
+  return mTransitions;
+}
 
 
+//------------------------------------------------------------------------------------
 SystemTransition::SystemTransition(const std::string& aId, SystemStateMachine& aOp, const std::string& aStartState, const std::string& aEndState) :
   Functionoid(aId),
   mFSM(aOp),
@@ -40,24 +39,23 @@ SystemTransition::SystemTransition(const std::string& aId, SystemStateMachine& a
   mEndState(aEndState),
   mGateKeeper(NULL),
   mState(ActionStatus::kInitial),
-  mStepIt(mSteps.end())
-{
+  mStepIt(mSteps.end()) {
 }
 
 
-SystemTransition::~SystemTransition()
-{
+//------------------------------------------------------------------------------------
+SystemTransition::~SystemTransition() {
 }
 
 
-SystemTransition::iterator SystemTransition::begin()
-{
+//------------------------------------------------------------------------------------
+SystemTransition::iterator SystemTransition::begin() {
   return mSteps.begin();
 }
 
 
-SystemTransition::iterator SystemTransition::end()
-{
+//------------------------------------------------------------------------------------
+SystemTransition::iterator SystemTransition::end() {
   return mSteps.end();
 }
 
