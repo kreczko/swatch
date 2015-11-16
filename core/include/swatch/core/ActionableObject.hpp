@@ -9,17 +9,19 @@
 #ifndef __SWATCH_CORE_ACTIONABLEOBJECT_HPP__
 #define __SWATCH_CORE_ACTIONABLEOBJECT_HPP__
 
-// SWATCH Headers
+// SWATCH headers
+#include "swatch/core/ActionableStatus.hpp"
 #include "swatch/core/exception.hpp"
 #include "swatch/core/MonitorableObject.hpp"
 
-// STL Headers
+// STL headers
 #include <set>
 #include <string>
 
-// BOOST Headers
+// BOOST headers
 #include "boost/unordered_map.hpp"
 #include "Functionoid.hpp"
+
 
 namespace swatch {
 namespace core {
@@ -33,75 +35,6 @@ class StateMachine;
 class SystemStateMachine;
 
 
-class ActionableStatus {
-public:
-  /**
-   * The object is alive i.e. it is not bound for destruction
-   * @return True if alive
-   */
-  bool isAlive() const;
-  
-  /**
-   * The object is engaged with a State Machine
-   * @return True of engaged
-   */
-  bool isEngaged() const;
-  
-  /**
-   * One or more actions are currently running
-   * @return True if one or more actions/funtionoid are running
-   */
-  bool isRunning() const;
-  
-  //!
-  const std::string& getState() const;
-  
-  //!
-  const std::vector<const Functionoid*>& getRunningActions() const;
-  
-   
-  const Functionoid* getLastRunningAction() const;
-  
-  //!
-  template<class T>
-  const T* getFirstRunningActionOfType() const;
-  
-  //!
-  const std::string& getStateMachineId() const;
-  
-  //!
-  static const std::string kNullStateMachineId;
-  
-  //!
-  static const std::string kNullStateId;
-
-  ActionableStatus();
-
-protected:
-
-  //! Indicates whether or not actions are allowed on this resource anymore (actions become disabled once the deleter is)
-  bool mAlive;
-  
-  //! 
-  std::string mStateMachineId;
-  
-  //!
-  std::string mState;
-  
-  //! Indicates which functionoids (Command/CommandSequence/(System)Transition) are currently active; NULL value indicates that no functionoids are currently active.
-  std::vector<const Functionoid*> mRunningActions;
-
-  friend class ActionableObject;
-  friend class ActionableSystem;
-  friend class StateMachine;
-  friend class SystemStateMachine;
-  friend class BusyGuard;
-
-};
-
-/**
- * @class ActionableFunctoid
- */
 class ObjectFunctionoid : public Functionoid {
 public:
   virtual ~ObjectFunctionoid() {
@@ -121,6 +54,7 @@ protected:
   ObjectFunctionoid(const std::string& aId, ActionableObject& aActionable );
   
 };
+
 
 /**
  * @class ActionableObject

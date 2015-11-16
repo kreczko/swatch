@@ -21,6 +21,7 @@ class SystemStateMachine;
 class SystemTransition;
 class Functionoid;
 
+
 class ActionableSystem : public MonitorableObject {
   class BusyGuard;
 public:
