@@ -149,7 +149,7 @@ void StateMachine::reset()
   // Throw if currently in other state machine
   // TODO: Delete
   //  if(mResource.mStatus.mFSM != this)
-  if ( mResource.mStatus.getStateMachineId() != ActionableStatus::kNullStateMachineId)
+  if ( mResource.mStatus.getStateMachineId() != this->getId() )
   {
     std::ostringstream oss;
     oss << "Cannot reset '" << mResource.getPath() << "', state machine '" << getId() << "'; ";
