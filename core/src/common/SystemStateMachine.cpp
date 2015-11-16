@@ -33,7 +33,7 @@ const std::vector<StateMachine::Transition*>& SystemTransition::Step::cget() con
 
 //------------------------------------------------------------------------------------
 SystemTransition::SystemTransition(const std::string& aId, SystemStateMachine& aOp, const std::string& aStartState, const std::string& aEndState) :
-  Functionoid(aId, aOp.getActionable() ),
+  Functionoid(aId),
   mFSM(aOp),
   mStartState(aStartState),
   mEndState(aEndState),

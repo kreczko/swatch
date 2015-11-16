@@ -19,31 +19,21 @@ namespace core {
 
 //------------------------------------------------------------------------------------
 ObjectFunctionoid::ObjectFunctionoid(const std::string& aId, ActionableObject& aActionable) :
-Functionoid(aId, aActionable) {
+  Functionoid(aId),
+  mActionable(aActionable)
+{
 }
 
 
 //------------------------------------------------------------------------------------
 const ActionableObject& ObjectFunctionoid::getActionable() const {
-	
-	try {
-		return getResource<const ActionableObject>();
-	} catch ( std::bad_cast& lBadCast) {
-		throw InvalidResource("Command '"+getPath()+"' failed to retrieve Actionable object");
-	}
-	
+  return mActionable;
 }
 
 
 //------------------------------------------------------------------------------------
 ActionableObject& ObjectFunctionoid::getActionable() {
-	
-	try {
-		return getResource<ActionableObject>();
-	} catch ( std::bad_cast& lBadCast) {
-		throw InvalidResource("Command '"+getPath()+"' failed to retrieve Actionable object");
-	}
-
+  return mActionable;
 }
 
 

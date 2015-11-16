@@ -37,9 +37,7 @@ class SystemStateMachine;
 
 class ObjectFunctionoid : public Functionoid {
 public:
-  virtual ~ObjectFunctionoid() {
-
-  }
+  virtual ~ObjectFunctionoid() { }
   
   const ActionableObject& getActionable() const;
 
@@ -50,9 +48,10 @@ public:
   template<typename T> T& getActionable();
   
 protected:
-
   ObjectFunctionoid(const std::string& aId, ActionableObject& aActionable );
   
+private:
+  ActionableObject& mActionable;
 };
 
 

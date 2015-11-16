@@ -65,25 +65,11 @@ std::ostream& operator<<(std::ostream& out, swatch::core::ActionStatus::State s)
 class Functionoid : public Object {
 public:
   /// Constructor
-  Functionoid( const std::string& aId, Object& aResource );
+  explicit Functionoid( const std::string& aId );
 
   /// Destructor
   virtual ~Functionoid();
   
-protected:
-  const Object& getResource() const ;
-
-  Object& getResource();
-
-  template<typename T> const T& getResource() const ;
-
-  template<typename T> T& getResource();
-  
-private:
-  
-  Object& mResource;
-  
-public:
   typedef ActionStatus::State State;
 //
 };
@@ -94,6 +80,5 @@ DEFINE_SWATCH_EXCEPTION(InvalidResource);
 } /* namespace core */
 } /* namespace swatch */
 
-#include "swatch/core/Functionoid.hxx"
 
-#endif /* __SWATCH_CORE_Functionoid_HPP__ */
+#endif /* __SWATCH_CORE_FUNCTIONOID_HPP__ */

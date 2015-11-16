@@ -25,41 +25,6 @@ Command::~Command() {
 }
 
 
-////------------------------------------------------------------------------------------
-//const ActionableObject& Command::getActionable() const {
-//	
-//	try {
-//		return getResource<const ActionableObject&>();
-//	} catch ( std::bad_cast& lBadCast) {
-//		throw InvalidResource("Command '"+getPath()+"' failed to retrieve Actionable object");
-//	}
-////  const ActionableObject* lParent = getActionable<ActionableObject>();
-////  
-////  if (lParent != NULL)
-////    return *lParent;
-////  else
-////    throw InvalidResource("Command '"+getPath()+"' does not have a registered resource (actionable object parent)");
-//}
-//
-//
-////------------------------------------------------------------------------------------
-//ActionableObject& Command::getActionable() {
-//	
-//	try {
-//		return getResource<const ActionableObject&>();
-//	} catch ( std::bad_cast& lBadCast) {
-//		throw InvalidResource("Command '"+getPath()+"' failed to retrieve Actionable object");
-//	}
-//		
-////  ActionableObject* lParent = getActionable<ActionableObject>();
-////  
-////  if (lParent != NULL)
-////    return *lParent;
-////  else
-////    throw InvalidResource("Command '"+getPath()+"' does not have a registered resource (actionable object parent)");
-//}
-
-
 //------------------------------------------------------------------------------------
 void 
 Command::exec( const XParameterSet& aParams, bool aUseThreadPool ) 
