@@ -56,7 +56,7 @@ SetupReadout::code(const ::swatch::core::XParameterSet& aParams)
   xdata::UnsignedInteger lDrain = aParams.get<xdata::UnsignedInteger>("drain");
   xdata::UnsignedInteger lFake = aParams.get<xdata::UnsignedInteger>("fake");
 
-  swatch::mp7::MP7Processor* p = getParent<swatch::mp7::MP7Processor>();
+  swatch::mp7::MP7Processor* p = getActionable<swatch::mp7::MP7Processor>();
   ::mp7::MP7Controller& driver = p->driver();
 
   const ::mp7::TTCNode& ttc = driver.getTTC();
@@ -267,7 +267,7 @@ LoadReadoutMenu::code(const ::swatch::core::XParameterSet& aParams)
     }
   }
   
-  ::mp7::MP7Controller& driver = getParent<swatch::mp7::MP7Processor>()->driver();
+  ::mp7::MP7Controller& driver = getActionable<swatch::mp7::MP7Processor>()->driver();
   const ::mp7::ReadoutCtrlNode& rc = driver.getReadout().getNode< ::mp7::ReadoutCtrlNode >("readout_control"); 
   
   

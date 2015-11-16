@@ -62,7 +62,7 @@ core::Command::State DummyAMC13RebootCommand::code(const swatch::core::XParamete
 { 
   sleep(aParams);
 
-  DummyAMC13Driver& driver = getParent<DummyAMC13Manager>()->getDriver();
+  DummyAMC13Driver& driver = getActionable<DummyAMC13Manager>()->getDriver();
   
   driver.reboot();
   
@@ -88,7 +88,7 @@ core::Command::State DummyAMC13ResetCommand::code(const swatch::core::XParameter
 {
   sleep(aParams);
 
-  DummyAMC13Driver& driver = getParent<DummyAMC13Manager>()->getDriver();
+  DummyAMC13Driver& driver = getActionable<DummyAMC13Manager>()->getDriver();
   
   size_t lWrnTimeout = aParams.get<xdata::UnsignedInteger>("clkWrnTimeout").value_;
   size_t lErrTimeout = aParams.get<xdata::UnsignedInteger>("clkErrTimeout").value_;
@@ -115,7 +115,7 @@ core::Command::State DummyAMC13ConfigureDaqCommand::code(const swatch::core::XPa
 {
   sleep(aParams);
   
-  DummyAMC13Manager* mgr = getParent<DummyAMC13Manager>();
+  DummyAMC13Manager* mgr = getActionable<DummyAMC13Manager>();
 
   mgr->getDriver().configureDaq(mgr->getStub().fedId);
   
@@ -142,7 +142,7 @@ core::Command::State DummyAMC13StartDaqCommand::code(const swatch::core::XParame
 {
   sleep(aParams);
 
-  DummyAMC13Driver& driver = getParent<DummyAMC13Manager>()->getDriver();
+  DummyAMC13Driver& driver = getActionable<DummyAMC13Manager>()->getDriver();
   
   size_t lWrnTimeout = aParams.get<xdata::UnsignedInteger>("daqWrnTimeout").value_;
   size_t lErrTimeout = aParams.get<xdata::UnsignedInteger>("daqErrTimeout").value_;

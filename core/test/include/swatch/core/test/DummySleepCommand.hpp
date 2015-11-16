@@ -19,7 +19,7 @@ namespace test {
 
 class DummySleepCommand: public swatch::core::Command {
 public:
-  DummySleepCommand( const std::string& aId );
+  DummySleepCommand( const std::string& aId, ActionableObject& aActionable );
 
   virtual ~DummySleepCommand();
 

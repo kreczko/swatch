@@ -57,7 +57,7 @@ core::Command::State DummyRebootCommand::code(const swatch::core::XParameterSet&
 {
   sleep( aParams );
   
-  DummyProcDriver& driver = getParent<DummyProcessor>()->getDriver();
+  DummyProcDriver& driver = getActionable<DummyProcessor>()->getDriver();
   
   driver.reboot();
   
@@ -82,7 +82,7 @@ core::Command::State DummyResetCommand::code(const swatch::core::XParameterSet& 
 {
   sleep( aParams );
   
-  DummyProcDriver& driver = getParent<DummyProcessor>()->getDriver();
+  DummyProcDriver& driver = getActionable<DummyProcessor>()->getDriver();
   
   size_t timeout = aParams.get<xdata::UnsignedInteger>("clkErrorTimeout").value_;
 
@@ -109,7 +109,7 @@ core::Command::State DummyConfigureTxCommand::code(const swatch::core::XParamete
 {
   sleep( aParams );
 
-  DummyProcDriver& driver = getParent<DummyProcessor>()->getDriver();
+  DummyProcDriver& driver = getActionable<DummyProcessor>()->getDriver();
   
   size_t timeout = aParams.get<xdata::UnsignedInteger>("txErrorTimeout").value_;
 
@@ -136,7 +136,7 @@ core::Command::State DummyConfigureRxCommand::code(const swatch::core::XParamete
 {
   sleep( aParams );
   
-  DummyProcDriver& driver = getParent<DummyProcessor>()->getDriver();
+  DummyProcDriver& driver = getActionable<DummyProcessor>()->getDriver();
   
   size_t timeout = aParams.get<xdata::UnsignedInteger>("rxErrorTimeout").value_;
 
@@ -163,7 +163,7 @@ core::Command::State DummyConfigureDaqCommand::code(const swatch::core::XParamet
 {
   sleep( aParams );
   
-  DummyProcDriver& driver = getParent<DummyProcessor>()->getDriver();
+  DummyProcDriver& driver = getActionable<DummyProcessor>()->getDriver();
   
   size_t timeout = aParams.get<xdata::UnsignedInteger>("daqErrorTimeout").value_;
 
@@ -190,7 +190,7 @@ core::Command::State DummyConfigureAlgoCommand::code(const swatch::core::XParame
 {
   sleep( aParams );
   
-  DummyProcDriver& driver = getParent<DummyProcessor>()->getDriver();
+  DummyProcDriver& driver = getActionable<DummyProcessor>()->getDriver();
   
   size_t timeout = aParams.get<xdata::UnsignedInteger>("algoErrorTimeout").value_;
 

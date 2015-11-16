@@ -29,7 +29,7 @@ class CommandVecStatus;
 class GateKeeper;
 
 //! Represents a sequence of commands, executed in succession.
-class CommandVec : public Functionoid {
+class CommandVec : public ActionableFunctionoid {
 protected:
   CommandVec( const std::string& aId, ActionableObject& aResource);
   
@@ -55,9 +55,9 @@ public:
     friend class CommandVec;
   };
 
-  const ActionableObject& getResource() const;
+//  const ActionableObject& getActionable() const;
   
-  ActionableObject& getResource();
+//  ActionableObject& getActionable();
   
   //! Number of commands
   size_t size() const;
@@ -113,7 +113,7 @@ private:
   //! thread safe exception-catching wrapper for code()
   void runCommands(boost::shared_ptr<ActionableObject::BusyGuard> aGuard);
 
-  ActionableObject& mResource;
+//  ActionableObject& mResource;
 
   typedef std::vector< Element > tCommandVector;
   tCommandVector mCommands;

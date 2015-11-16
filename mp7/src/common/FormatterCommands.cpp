@@ -65,7 +65,7 @@ AbstractFormatterCommand::~AbstractFormatterCommand()
     mask = swatch::core::toolbox::UIntListParser::parse(channelMask);
 
   // Grab list of ports registered in the processor
-  swatch::mp7::MP7Processor* p = getParent<swatch::mp7::MP7Processor>();
+  swatch::mp7::MP7Processor* p = getActionable<swatch::mp7::MP7Processor>();
  
  // const std::vector<swatch::processor::ProcessorPortStub>& portStubs = (mKind == mp7::kRxBuffer) ? p->getStub().rxPorts : p->getStub().txPorts;
   // std::vector<uint32_t> stubIds;
@@ -102,7 +102,7 @@ TDRFormatterCommand::~TDRFormatterCommand(){
 core::Command::State TDRFormatterCommand::code(const ::swatch::core::XParameterSet& params)
 {
 
-  ::swatch::mp7::MP7Processor* mp7 = getParent< ::swatch::mp7::MP7Processor>();
+  ::swatch::mp7::MP7Processor* mp7 = getActionable< ::swatch::mp7::MP7Processor>();
 
   bool strip  = params.get<xdata::Boolean>("strip").value_;
   bool insert = params.get<xdata::Boolean>("insert").value_;

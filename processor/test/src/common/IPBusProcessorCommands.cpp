@@ -48,7 +48,7 @@ IPBusResetCommand::~IPBusResetCommand() {
 //---
 core::Command::State IPBusResetCommand::code(const swatch::core::XParameterSet& params) {
 
-    IPBusProcessor* p = getParent<IPBusProcessor>();
+    IPBusProcessor* p = getActionable<IPBusProcessor>();
     
     if ( !getDefaultParams().has("mode") ) {
       setStatusMsg("Configuration not found!");
@@ -108,7 +108,7 @@ core::Command::State IPBusConfigureCommand::code(const swatch::core::XParameterS
     
     std::string config = getDefaultParams().get<xdata::String>("mode").value_;
 
-    IPBusProcessor* p = getParent<IPBusProcessor>();
+    IPBusProcessor* p = getActionable<IPBusProcessor>();
 
     // // Check presence of TTC clock and signals
 /*     if ( not p->ttc()->isClock40Locked() ) {
@@ -159,7 +159,7 @@ IPBusCapture::~IPBusCapture() {
 
 core::Command::State IPBusCapture::code(const swatch::core::XParameterSet& params) {
 
-    IPBusProcessor* p = getParent<IPBusProcessor>();
+    IPBusProcessor* p = getActionable<IPBusProcessor>();
 
 //    LOG(swlog::kNotice) << ">> Sending test BGo";
 //    p->ttc()->sendBGo(0xc);

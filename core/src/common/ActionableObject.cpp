@@ -67,6 +67,36 @@ const std::string& ActionableStatus::getStateMachineId() const {
 
 
 //------------------------------------------------------------------------------------
+ActionableFunctionoid::ActionableFunctionoid(const std::string& aId, ActionableObject& aActionable) :
+Functionoid(aId, aActionable) {
+}
+
+
+//------------------------------------------------------------------------------------
+const ActionableObject& ActionableFunctionoid::getActionable() const {
+	
+	try {
+		return getResource<const ActionableObject>();
+	} catch ( std::bad_cast& lBadCast) {
+		throw InvalidResource("Command '"+getPath()+"' failed to retrieve Actionable object");
+	}
+	
+}
+
+
+//------------------------------------------------------------------------------------
+ActionableObject& ActionableFunctionoid::getActionable() {
+	
+	try {
+		return getResource<ActionableObject>();
+	} catch ( std::bad_cast& lBadCast) {
+		throw InvalidResource("Command '"+getPath()+"' failed to retrieve Actionable object");
+	}
+
+}
+
+
+//------------------------------------------------------------------------------------
 ActionableObject::ActionableObject( const std::string& aId ) :
   MonitorableObject( aId  ),
   mStatus() {

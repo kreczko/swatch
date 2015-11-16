@@ -16,8 +16,8 @@ namespace core {
 
 
 template<typename T>
-Command::Command( const std::string& aId , const T& aDefault ) :
-        Functionoid( aId ),
+Command::Command( const std::string& aId , ActionableObject& aResource, const T& aDefault ) :
+        ActionableFunctionoid( aId, aResource ),
         defaultResult_(new T(aDefault)),
         state_(ActionStatus::kInitial),
         progress_(0.),

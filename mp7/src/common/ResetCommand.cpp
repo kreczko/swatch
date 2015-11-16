@@ -31,7 +31,7 @@ ResetCommand::~ResetCommand(){
      
   // setProgress(0., "Resetting MP7");
   
-  swatch::mp7::MP7Processor* p = getParent<swatch::mp7::MP7Processor>();
+  swatch::mp7::MP7Processor* p = getActionable<swatch::mp7::MP7Processor>();
   ::mp7::MP7Controller& driver = p->driver();
   setProgress(0.,"Resetting clocks");
 

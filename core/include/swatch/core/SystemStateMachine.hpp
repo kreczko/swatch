@@ -177,14 +177,14 @@ private:
   
 class SystemStateMachine : public Object {
 public:
-  SystemStateMachine(const std::string& aId, ActionableSystem& aResource, const std::string& aInitialState, const std::string& aErrorState);
+  SystemStateMachine(const std::string& aId, ActionableSystem& aSystem, const std::string& aInitialState, const std::string& aErrorState);
   virtual ~SystemStateMachine();
 
   //! Returns actionable system that this FSM belongs to
-  const ActionableSystem& getResource() const;
+  const ActionableSystem& getActionable() const;
   
   //! Returns actionable system that this FSM belongs to
-  ActionableSystem& getResource();
+  ActionableSystem& getActionable();
 
   //! Returns ID of this FSM's initial state
   const std::string& getInitialState() const;

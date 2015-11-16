@@ -34,7 +34,7 @@ UploadFirmwareCommand::~UploadFirmwareCommand() {
 // --------------------------------------------------------
 ::swatch::core::Command::State
 UploadFirmwareCommand::code(const ::swatch::core::XParameterSet& params) {
-  ::swatch::mp7::MP7Processor* mp7 = getParent< ::swatch::mp7::MP7Processor>();
+  ::swatch::mp7::MP7Processor* mp7 = getActionable< ::swatch::mp7::MP7Processor>();
 
   std::string localfile = params.get<xdata::String>("localfile").value_;
   std::string sdfile = params.get<xdata::String>("sdfile").value_;
@@ -67,7 +67,7 @@ DeleteFirmwareCommand::~DeleteFirmwareCommand() {
 // --------------------------------------------------------
 ::swatch::core::Command::State
 DeleteFirmwareCommand::code(const ::swatch::core::XParameterSet& params) {
-  ::swatch::mp7::MP7Processor* mp7 = getParent< ::swatch::mp7::MP7Processor>();
+  ::swatch::mp7::MP7Processor* mp7 = getActionable< ::swatch::mp7::MP7Processor>();
 
   std::string sdfile = params.get<xdata::String>("sdfile").value_;
 
@@ -109,7 +109,7 @@ RebootFPGACommand::~RebootFPGACommand() {
 // --------------------------------------------------------
 ::swatch::core::Command::State
 RebootFPGACommand::code(const ::swatch::core::XParameterSet& params) {
-  ::swatch::mp7::MP7Processor* mp7 = getParent< ::swatch::mp7::MP7Processor>();
+  ::swatch::mp7::MP7Processor* mp7 = getActionable< ::swatch::mp7::MP7Processor>();
   std::string sdfile = params.get<xdata::String>("sdfile").value_;
 
   if (sdfile.empty()) {
@@ -149,7 +149,7 @@ HardResetCommand::~HardResetCommand() {
 // --------------------------------------------------------
 ::swatch::core::Command::State
 HardResetCommand::code(const ::swatch::core::XParameterSet& params) {
-  ::swatch::mp7::MP7Processor* mp7 = getParent< ::swatch::mp7::MP7Processor>();
+  ::swatch::mp7::MP7Processor* mp7 = getActionable< ::swatch::mp7::MP7Processor>();
   ::mp7::MmcController mmcController(mp7->driver().hw());
 
   setProgress(0., "Performing Hard Reset of the board ...");
@@ -173,7 +173,7 @@ ScanSDCommand::~ScanSDCommand() {
 // --------------------------------------------------------
 ::swatch::core::Command::State
 ScanSDCommand::code(const ::swatch::core::XParameterSet& params) {
-  ::swatch::mp7::MP7Processor* mp7 = getParent< ::swatch::mp7::MP7Processor>();
+  ::swatch::mp7::MP7Processor* mp7 = getActionable< ::swatch::mp7::MP7Processor>();
 
   setProgress(0., "Scanning SD card...");
 

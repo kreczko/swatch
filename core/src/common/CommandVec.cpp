@@ -16,9 +16,9 @@ namespace swatch {
 namespace core {
 
 
-CommandVec::CommandVec( const std::string& aId, ActionableObject& aResource) :
-  Functionoid( aId ),
-  mResource(aResource),
+CommandVec::CommandVec( const std::string& aId, ActionableObject& aActionable) :
+  ActionableFunctionoid( aId, aActionable ),
+//  mResource(aResource),
   mCommands(),
   mCachedParameters(),
   mCachedMonitoringSettings(),
@@ -31,9 +31,9 @@ CommandVec::CommandVec( const std::string& aId, ActionableObject& aResource) :
 
 void CommandVec::addCommand(Command& aCommand, const std::string& aNamespace)
 {
-  if( &aCommand.getResource() != &mResource )
+  if( &aCommand.getActionable() != &getActionable() )
   {
-    throw InvalidResource("Cannot add command '" + aCommand.getId() + "' (resource: "+aCommand.getResource().getPath()+") ' to sequence of resource '" + mResource.getPath() + "'");
+    throw InvalidResource("Cannot add command '" + aCommand.getId() + "' (resource: "+aCommand.getActionable().getPath()+") ' to sequence of resource '" + getActionable().getPath() + "'");
   }
   mCommands.push_back( Element(aCommand, aNamespace) );
   mCommandIt = mCommands.end();
@@ -42,7 +42,7 @@ void CommandVec::addCommand(Command& aCommand, const std::string& aNamespace)
 
 void CommandVec::addCommand(const std::string& aCommand, const std::string& aNamespace)
 {
-  Command& lCommand = mResource.getCommand( aCommand );
+  Command& lCommand = getActionable().getCommand( aCommand );
   mCommands.push_back( Element(lCommand, aNamespace) );
   mCommandIt = mCommands.end();
 }
@@ -74,16 +74,16 @@ const Command& CommandVec::Element::get() const
 }
 
 
-const ActionableObject& CommandVec::getResource() const
-{
-  return mResource;
-}
-
-
-ActionableObject& CommandVec::getResource()
-{
-  return mResource;
-}
+//const ActionableObject& CommandVec::getActionable() const
+//{
+//  return mResource;
+//}
+//
+//
+//ActionableObject& CommandVec::getActionable()
+//{
+//  return mResource;
+//}
 
 
 size_t CommandVec::size() const
@@ -129,7 +129,7 @@ void CommandVec::exec(const ActionableObject::BusyGuard* aOuterBusyGuard, const 
   extractMonitoringSettings(aGateKeeper, lMonSettings);
 
   // 2) Create busy guard
-  boost::shared_ptr<ActionableObject::BusyGuard> lBusyGuard(new ActionableObject::BusyGuard(getResource(), *this, aOuterBusyGuard));
+  boost::shared_ptr<ActionableObject::BusyGuard> lBusyGuard(new ActionableObject::BusyGuard(getActionable(), *this, aOuterBusyGuard));
 
 // FIXME: Re-implement parameter cache at some future date; disabled by Tom on 28th August, since ...
 //        ... current logic doesn't work correctly with different gatekeepers - need to change to ...
@@ -312,14 +312,14 @@ void CommandVec::extractParameters(const GateKeeper& aGateKeeper, std::vector<Re
     std::set< std::string > lKeys( lCommand.getDefaultParams().keys() );
     for( std::set< std::string >::iterator lIt2( lKeys.begin() ); lIt2!=lKeys.end(); ++lIt2 )
     {
-      GateKeeper::tParameter lData( aGateKeeper.get( lIt->getNamespace() , lCommand.getId() , *lIt2 , mResource.getGateKeeperTables() ) );
+      GateKeeper::tParameter lData( aGateKeeper.get( lIt->getNamespace() , lCommand.getId() , *lIt2 , getActionable().getGateKeeperTables() ) );
       if ( lData.get() != NULL )
       {
         lParams.adopt( *lIt2 , lData );
       }
       else if (throwOnMissing) {
         std::ostringstream oss;
-        oss << "Could not find value of parameter '" << *lIt2 << "' for command '" << lCommand.getId() << "' in namespace '" << lIt->getNamespace() << "' of resource '" << getResource().getId() << "'";
+        oss << "Could not find value of parameter '" << *lIt2 << "' for command '" << lCommand.getId() << "' in namespace '" << lIt->getNamespace() << "' of resource '" << getActionable().getId() << "'";
         LOG(swatch::logger::kError) << oss.str();
         throw ParameterNotFound(oss.str());
       }

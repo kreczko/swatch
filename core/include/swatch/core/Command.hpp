@@ -36,14 +36,14 @@ class ActionableObject;
 class CommandStatus;
 
 //! Represents a one-shot action on a resource (a class that inherits from swatch::core::ActionableObject)
-class Command : public Functionoid {
+class Command : public ActionableFunctionoid {
 public:
 
     virtual ~Command();
 
-    const ActionableObject& getResource() const;
-
-    ActionableObject& getResource();
+//    const ActionableObject& getActionable() const;
+//
+//    ActionableObject& getActionable();
 
     /** 
      * Run this command, using the supplied set of parameters
@@ -79,7 +79,7 @@ protected:
     virtual ActionStatus::State code( const XParameterSet& params ) = 0;
 
     template<typename T>
-    Command( const std::string& aId , const T& aDefault );
+    Command( const std::string& aId , ActionableObject& aResource, const T& aDefault );
 
     //! Set command's current fractional progress; valid range [0,1]
     void setProgress( float aProgress );
@@ -105,7 +105,7 @@ private:
     ReadOnlyXParameterSet mergeParametersWithDefaults(const XParameterSet& params) const;
     
     // thread safe exception catching wrapper for code()
-    void runCode(boost::shared_ptr<ActionableObject::BusyGuard> aGuard, const XParameterSet& params );
+    void runCode(boost::shared_ptr<ActionableObject::BusyGuard> aGuard, const XParameterSet& aParams );
 
     ReadWriteXParameterSet defaultParams_;
 

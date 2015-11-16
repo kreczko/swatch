@@ -130,7 +130,7 @@ ActionableSystem::tLockGuardMap ActionableSystem::lockMutexes(const SystemStateM
 {
   // Lock the mutexes ...
   std::vector<boost::mutex*> lMutexes;
-  lMutexes.push_back( &aOp.getResource().mMutex );
+  lMutexes.push_back( &aOp.getActionable().mMutex );
   for(std::set<const StateMachine*>::const_iterator lIt=aOp.getParticipants().begin(); lIt!=aOp.getParticipants().end(); lIt++)
     lMutexes.push_back( &(*lIt)->mResource.mMutex );
 
@@ -139,7 +139,7 @@ ActionableSystem::tLockGuardMap ActionableSystem::lockMutexes(const SystemStateM
 
   // ... then put them into lock guards
   std::map<const MonitorableObject*, tLockGuardPtr> lLockGuardMap;
-  lLockGuardMap[&aOp.getResource()] = tLockGuardPtr(new boost::unique_lock<boost::mutex>(aOp.getResource().mMutex, boost::adopt_lock_t()));
+  lLockGuardMap[&aOp.getActionable()] = tLockGuardPtr(new boost::unique_lock<boost::mutex>(aOp.getActionable().mMutex, boost::adopt_lock_t()));
   for(std::set<const StateMachine*>::const_iterator lIt=aOp.getParticipants().begin(); lIt!=aOp.getParticipants().end(); lIt++)
     lLockGuardMap[&(*lIt)->getResource()] = tLockGuardPtr( new boost::unique_lock<boost::mutex>((*lIt)->getResource().mMutex, boost::adopt_lock_t()) );
   

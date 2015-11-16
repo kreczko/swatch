@@ -65,19 +65,23 @@ std::ostream& operator<<(std::ostream& out, swatch::core::ActionStatus::State s)
 class Functionoid : public Object {
 public:
   /// Constructor
-  Functionoid( const std::string& aId );
+  Functionoid( const std::string& aId, Object& aResource );
 
   /// Destructor
   virtual ~Functionoid();
   
 protected:
-  const Object* getParent() const ;
+  const Object& getResource() const ;
 
-  Object* getParent();
+  Object& getResource();
 
-  template<typename T> const T* getParent() const ;
+  template<typename T> const T& getResource() const ;
 
-  template<typename T> T* getParent();
+  template<typename T> T& getResource();
+  
+private:
+  
+  Object& mResource;
   
 public:
   typedef ActionStatus::State State;

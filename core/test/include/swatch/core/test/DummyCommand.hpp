@@ -20,7 +20,7 @@ namespace test {
 //! Dummy command whose code method is used to test the implementation of the command base class 
 class DummyCommand: public swatch::core::Command {
 public:
-  DummyCommand( const std::string& aId );
+  DummyCommand( const std::string& aId, ActionableObject& aActionable );
   virtual ~DummyCommand();
 
   virtual Command::State code( const XParameterSet& params); 
@@ -36,7 +36,7 @@ public:
 //! Dummy command written for unit tests; code method is a no-op that returns warning after setting status.
 class DummyWarningCommand : public swatch::core::Command {
 public:
-  explicit DummyWarningCommand(const std::string& aId);
+  explicit DummyWarningCommand(const std::string& aId, ActionableObject& aActionable);
   virtual ~DummyWarningCommand();
   
   virtual Command::State code(const XParameterSet& params);
@@ -49,7 +49,7 @@ public:
 //! Dummy command written for unit tests; code method is a no-op that returns error after setting status.
 class DummyErrorCommand : public swatch::core::Command {
 public:
-  explicit DummyErrorCommand(const std::string& aId);
+  explicit DummyErrorCommand(const std::string& aId, ActionableObject& aActionable);
   virtual ~DummyErrorCommand();
   
   virtual Command::State code(const XParameterSet& params);
@@ -63,7 +63,7 @@ public:
 //! Dummy command written for unit tests; code method is a no-op that throws after setting progress.
 class DummyThrowCommand : public swatch::core::Command {
 public:
-    explicit DummyThrowCommand(const std::string& aId);
+    explicit DummyThrowCommand(const std::string& aId, ActionableObject& aActionable);
     virtual ~DummyThrowCommand();
     
     virtual Command::State code(const XParameterSet& params);

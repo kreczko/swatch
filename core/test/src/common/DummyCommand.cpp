@@ -25,8 +25,8 @@ const std::string DummyCommand::finalMsgUseResource("Dummy command successfully 
 const std::string DummyCommand::finalMsgSleep("Dummy command finished sleeping");
  
   
-DummyCommand::DummyCommand(const std::string& aId) :
-  Command(aId, defaultResult) {
+DummyCommand::DummyCommand(const std::string& aId, ActionableObject& aActionable) :
+  Command(aId, aActionable, defaultResult) {
   registerParameter(paramX, xdata::Integer(15));
   registerParameter(paramToDo, xdata::String(""));
 }
@@ -38,14 +38,14 @@ DummyCommand::~DummyCommand() {
 
 Command::State DummyCommand::code(const XParameterSet& params)
 {
-  DummyActionableObject* res = getParent<DummyActionableObject>();
+  DummyActionableObject& res = getActionable<DummyActionableObject>();
 
   std::string todo = params.parameterAsString("todo");
   setResult(params.get("x"));
 
   if (todo == "useResource") {
 
-    res->setNumber(54);
+    res.setNumber(54);
     setProgress(0.1);
     
     setProgress(0.99, finalMsgUseResource);
@@ -77,8 +77,8 @@ Command::State DummyCommand::code(const XParameterSet& params)
 const xdata::Integer DummyWarningCommand::defaultResult(-1);
 const std::string DummyWarningCommand::finalMsg("Dummy command did something, but ended up in warning");
 
-DummyWarningCommand::DummyWarningCommand(const std::string& aId) :
-  Command(aId, defaultResult)
+DummyWarningCommand::DummyWarningCommand(const std::string& aId, ActionableObject& aActionable) :
+  Command(aId, aActionable, defaultResult)
 {
 }
 
@@ -103,8 +103,8 @@ const xdata::Integer DummyErrorCommand::defaultResult(-1);
 const std::string DummyErrorCommand::finalMsg("Dummy command did something, but ended up in error");
 const float DummyErrorCommand::finalProgress(0.5049);
 
-DummyErrorCommand::DummyErrorCommand(const std::string& aId) :
-  Command(aId, defaultResult)
+DummyErrorCommand::DummyErrorCommand(const std::string& aId, ActionableObject& aActionable) :
+  Command(aId, aActionable, defaultResult)
 {
 }
 
@@ -126,8 +126,8 @@ const xdata::Integer DummyThrowCommand::defaultResult(-1);
 const std::string DummyThrowCommand::exceptionMsg("My test exception message");
 const float DummyThrowCommand::finalProgress(0.4032);  
 
-DummyThrowCommand::DummyThrowCommand(const std::string& aId) :
-  Command(aId, defaultResult)
+DummyThrowCommand::DummyThrowCommand(const std::string& aId, ActionableObject& aActionable) :
+  Command(aId, aActionable, defaultResult)
 {
 }
 

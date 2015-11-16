@@ -1,17 +1,22 @@
-
+// Boost Headers
+#include <boost/type_traits/is_base_of.hpp>
 
 namespace swatch {
 namespace core {
 
 template<typename T>
-const T* Functionoid::getParent() const {
-  return dynamic_cast<const T*>( getAncestor(1) );
+const T& Functionoid::getResource() const {
+  BOOST_STATIC_ASSERT( (boost::is_base_of<swatch::core::Object,T>::value) );
+
+  return dynamic_cast<const T&>( mResource );
 }
 
 
 template<typename T>
-T* Functionoid::getParent() {
-  return dynamic_cast<T*>( getAncestor(1) );
+T& Functionoid::getResource() {
+  BOOST_STATIC_ASSERT( (boost::is_base_of<swatch::core::Object,T>::value) );
+
+  return dynamic_cast<T&>( mResource );
 }
 
 

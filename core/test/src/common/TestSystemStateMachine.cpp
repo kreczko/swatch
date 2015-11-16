@@ -114,7 +114,7 @@ BOOST_AUTO_TEST_CASE(TestConstruction) {
   DummyActionableSystem sys("dummySys");
   swatch::core::SystemStateMachine& fsm = sys.registerStateMachine("aFSM", "someState", "myErrState");
   
-  BOOST_CHECK_EQUAL(&fsm.getResource(), &sys);
+  BOOST_CHECK_EQUAL(&fsm.getActionable(), &sys);
   BOOST_CHECK_EQUAL(fsm.getInitialState(), "someState");
   BOOST_CHECK_EQUAL(fsm.getErrorState(), "myErrState");
   BOOST_CHECK_EQUAL( &sys.getObj(fsm.getId()), (Object*) &fsm);

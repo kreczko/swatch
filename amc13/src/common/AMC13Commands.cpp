@@ -42,7 +42,7 @@ RebootCommand::~RebootCommand() {
 
 //---
 core::Command::State RebootCommand::code(const core::XParameterSet& params) {
-  AMC13Manager* amc13 = getParent<AMC13Manager>();
+  AMC13Manager* amc13 = getActionable<AMC13Manager>();
   
   setStatusMsg("Loading FW from flash");
   
@@ -93,7 +93,7 @@ ResetCommand::~ResetCommand() {
 //---
 core::Command::State ResetCommand::code(const core::XParameterSet& params) {
 
-    AMC13Manager* amc13mgr = getParent<AMC13Manager>();
+    AMC13Manager* amc13mgr = getActionable<AMC13Manager>();
    
     ::amc13::AMC13& board = amc13mgr->driver();
     
@@ -153,7 +153,7 @@ ConfigureTTCCommand::~ConfigureTTCCommand() {
 core::Command::State
 ConfigureTTCCommand::code(const core::XParameterSet& params) {
 
-    AMC13Manager* amc13mgr = getParent<AMC13Manager>();
+    AMC13Manager* amc13mgr = getActionable<AMC13Manager>();
    
     uint32_t resyncCmd = params.get<xdata::UnsignedInteger>("resyncCmd").value_;
     uint32_t ocrCmd    = params.get<xdata::UnsignedInteger>("ocrCmd").value_;
@@ -201,7 +201,7 @@ ConfigureDAQCommand::code(const core::XParameterSet& params) {
   uint32_t slinkMask = params.get<xdata::UnsignedInteger>("slinkMask").value_;
   uint32_t bcnOffset = params.get<xdata::UnsignedInteger>("bcnOffset").value_;
   
-  AMC13Manager* amc13mgr = getParent<AMC13Manager>();
+  AMC13Manager* amc13mgr = getActionable<AMC13Manager>();
 
   ::amc13::AMC13& board = amc13mgr->driver();
 
@@ -248,7 +248,7 @@ StartCommand::~StartCommand() {
 // --------------------------------------------------------
 core::Command::State
 StartCommand::code(const core::XParameterSet& params) {
-  getParent<AMC13Manager>()->driver().startRun();
+  getActionable<AMC13Manager>()->driver().startRun();
   
   return State::kDone;
 }
@@ -269,7 +269,7 @@ StopCommand::~StopCommand() {
 // --------------------------------------------------------
 core::Command::State
 StopCommand::code(const core::XParameterSet& params) {
-  getParent<AMC13Manager>()->driver().endRun();
+  getActionable<AMC13Manager>()->driver().endRun();
 
   return State::kDone;
 }

@@ -5,8 +5,9 @@
 namespace swatch {
 namespace core {
 
-Functionoid::Functionoid( const std::string& aId ) :
-  Object( aId )
+Functionoid::Functionoid( const std::string& aId, Object& aResource ) :
+  Object( aId ),
+	mResource( aResource)
 {
 }
 
@@ -15,12 +16,12 @@ Functionoid::~Functionoid() {
 }
 
 
-const Object* Functionoid::getParent() const {
-  return getAncestor(1);
+const Object& Functionoid::getResource() const {
+  return mResource;
 }
 
-Object* Functionoid::getParent() {
-  return getAncestor(1);
+Object& Functionoid::getResource() {
+  return mResource;
 }
 
 std::ostream& operator<<(std::ostream& out, swatch::core::ActionStatus::State s) {

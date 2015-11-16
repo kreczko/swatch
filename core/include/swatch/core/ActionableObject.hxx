@@ -10,6 +10,21 @@
 namespace swatch {
 namespace core {
 
+template<typename T>
+const T& ActionableFunctionoid::getActionable() const {
+  BOOST_STATIC_ASSERT( (boost::is_base_of<swatch::core::ActionableObject,T>::value) );
+
+  return dynamic_cast<const T&>( getResource<const T>() );
+}
+
+
+template<typename T>
+T& ActionableFunctionoid::getActionable() {
+  BOOST_STATIC_ASSERT( (boost::is_base_of<swatch::core::ActionableObject,T>::value) );
+
+  return dynamic_cast<T&>( getResource<T>() );
+}
+
     
     
 template<class T>
@@ -31,7 +46,7 @@ template < typename T >
 T& ActionableObject::registerCommand( const std::string& aId )
 {
   BOOST_STATIC_ASSERT( (boost::is_base_of<swatch::core::Functionoid,T>::value) );
-  T* lObj( new T( aId ) );
+  T* lObj( new T( aId, *this ) );
   registerCommand( aId , lObj );
   return *lObj;
 }

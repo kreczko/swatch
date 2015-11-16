@@ -25,26 +25,39 @@ Command::~Command() {
 }
 
 
-//------------------------------------------------------------------------------------
-const ActionableObject& Command::getResource() const {
-  const ActionableObject* lParent = getParent<ActionableObject>();
-  
-  if (lParent != NULL)
-    return *lParent;
-  else
-    throw InvalidResource("Command '"+getPath()+"' does not have a registered resource (actionable object parent)");
-}
-
-
-//------------------------------------------------------------------------------------
-ActionableObject& Command::getResource() {
-  ActionableObject* lParent = getParent<ActionableObject>();
-  
-  if (lParent != NULL)
-    return *lParent;
-  else
-    throw InvalidResource("Command '"+getPath()+"' does not have a registered resource (actionable object parent)");
-}
+////------------------------------------------------------------------------------------
+//const ActionableObject& Command::getActionable() const {
+//	
+//	try {
+//		return getResource<const ActionableObject&>();
+//	} catch ( std::bad_cast& lBadCast) {
+//		throw InvalidResource("Command '"+getPath()+"' failed to retrieve Actionable object");
+//	}
+////  const ActionableObject* lParent = getActionable<ActionableObject>();
+////  
+////  if (lParent != NULL)
+////    return *lParent;
+////  else
+////    throw InvalidResource("Command '"+getPath()+"' does not have a registered resource (actionable object parent)");
+//}
+//
+//
+////------------------------------------------------------------------------------------
+//ActionableObject& Command::getActionable() {
+//	
+//	try {
+//		return getResource<const ActionableObject&>();
+//	} catch ( std::bad_cast& lBadCast) {
+//		throw InvalidResource("Command '"+getPath()+"' failed to retrieve Actionable object");
+//	}
+//		
+////  ActionableObject* lParent = getActionable<ActionableObject>();
+////  
+////  if (lParent != NULL)
+////    return *lParent;
+////  else
+////    throw InvalidResource("Command '"+getPath()+"' does not have a registered resource (actionable object parent)");
+//}
 
 
 //------------------------------------------------------------------------------------
@@ -59,7 +72,7 @@ Command::exec( const XParameterSet& aParams, bool aUseThreadPool )
 void 
 Command::exec(const ActionableObject::BusyGuard* aOuterBusyGuard, const XParameterSet& params, bool aUseThreadPool ) 
 {
-  boost::shared_ptr<ActionableObject::BusyGuard> lBusyGuard( new ActionableObject::BusyGuard(getResource(), *this, aOuterBusyGuard) );
+  boost::shared_ptr<ActionableObject::BusyGuard> lBusyGuard( new ActionableObject::BusyGuard(getActionable(), *this, aOuterBusyGuard) );
 
   // Reset the status before doing anything else, merging user-supplied parameter values with default values
   resetForRunning(params);
@@ -82,7 +95,7 @@ Command::exec(const ActionableObject::BusyGuard* aOuterBusyGuard, const XParamet
     // TODO: log the error to error msg (or not?)
 
     // FIXME: replace with proper logging
-    LOG(swatch::logger::kError) << getResource().getId() << "." << getId() << " : " << ( e.what() != 0x0 ? e.what() : "" ) ;
+    LOG(swatch::logger::kError) << getActionable().getId() << "." << getId() << " : " << ( e.what() != 0x0 ? e.what() : "" ) ;
 
     // Then rethrow the exception on to the higher layers of code.
     throw;
@@ -116,7 +129,7 @@ void Command::runCode(boost::shared_ptr<ActionableObject::BusyGuard> aActionGuar
         state_ = State::kError;
         statusMsg_ = "Command::code() method returned invalid Status enum value '" + boost::lexical_cast<std::string>(s) + "'   \n Original status message was: " + statusMsg_;
         // FIXME: replace with proper logging
-        LOG(swatch::logger::kError) << getResource().getId() << "." << getId() << " : " << statusMsg_;
+        LOG(swatch::logger::kError) << getActionable().getId() << "." << getId() << " : " << statusMsg_;
     }
   }
   catch (const std::exception& e) {
@@ -125,7 +138,7 @@ void Command::runCode(boost::shared_ptr<ActionableObject::BusyGuard> aActionGuar
     state_ = State::kError;
     statusMsg_ = std::string("An exception of type '" + demangleName(typeid(e).name()) + "' was thrown in Command::code(): ") + e.what();
     // FIXME: replace with proper logging
-    LOG(swatch::logger::kError) << getResource().getId() << "." << getId() << " : " << statusMsg_;
+    LOG(swatch::logger::kError) << getActionable().getId() << "." << getId() << " : " << statusMsg_;
   }
   
   // 3) Release control of the resource - by destruction of the ActionGuard.
@@ -213,7 +226,7 @@ Command::setProgress(float aProgress, const std::string& aMsg ) {
   statusMsg_ = aMsg;
 
   // FIXME: replace with proper logging
-  LOG(swatch::logger::kInfo) << getResource().getId() << "." << getId() << " : " << aMsg;
+  LOG(swatch::logger::kInfo) << getActionable().getId() << "." << getId() << " : " << aMsg;
 
 }
 
@@ -230,7 +243,7 @@ void Command::setStatusMsg(const std::string& aMsg) {
   statusMsg_ = aMsg;
 
   // FIXME: replace with proper logging
-  LOG(swatch::logger::kInfo) << getResource().getId() << "." << getId() << " : " << aMsg;
+  LOG(swatch::logger::kInfo) << getActionable().getId() << "." << getId() << " : " << aMsg;
 }
 
 

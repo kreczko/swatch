@@ -24,7 +24,8 @@
 namespace swatch {
 namespace core {
 
- 
+
+class ActionableObject;
 class ActionableSystem;
 class Command;
 class CommandSequence;
@@ -98,7 +99,34 @@ protected:
 
 };
 
-//! An object representing a resource on which commands, command sequences, and transitions run
+/**
+ * @class ActionableFunctoid
+ */
+class ActionableFunctionoid : public Functionoid {
+public:
+  virtual ~ActionableFunctionoid() {
+
+  }
+  
+  const ActionableObject& getActionable() const;
+
+  ActionableObject& getActionable();
+
+  template<typename T> const T& getActionable() const ;
+
+  template<typename T> T& getActionable();
+  
+protected:
+
+  ActionableFunctionoid(const std::string& aId, ActionableObject& aActionable );
+  
+};
+
+/**
+ * @class ActionableObject
+ * @brief  An object representing a resource on which commands, command sequences, and transitions run
+ */
+
 class ActionableObject : public MonitorableObject {
   class BusyGuard;
 public:

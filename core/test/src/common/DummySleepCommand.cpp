@@ -15,8 +15,8 @@ namespace swatch {
 namespace core {
 namespace test {
 
-DummySleepCommand::DummySleepCommand(const std::string& aId) :
-  core::Command(aId, xdata::Integer(-33)) {
+DummySleepCommand::DummySleepCommand(const std::string& aId, ActionableObject& aActionable) :
+  core::Command(aId, aActionable, xdata::Integer(-33)) {
   registerParameter("n", xdata::UnsignedInteger(50));
   registerParameter("millisecPerSleep", xdata::UnsignedInteger(100));
 }
@@ -28,7 +28,7 @@ DummySleepCommand::~DummySleepCommand() {
 
 Command::State DummySleepCommand::code(const XParameterSet& params)
 {
-  DummyActionableObject* res = getParent<DummyActionableObject>();
+  DummyActionableObject& res = getActionable<DummyActionableObject>();
 
   setStatusMsg("Dummy sleep command just started");
 
@@ -39,12 +39,12 @@ Command::State DummySleepCommand::code(const XParameterSet& params)
     boost::this_thread::sleep_for(boost::chrono::milliseconds(millisecPerSleep));
     
     std::ostringstream oss;
-    oss << "Dummy sleep command for object '" << res->getPath() << "' progressed. " << i << " of " << n << " sleeps done; " << (n - i) * millisecPerSleep << " milli sec remain";
+    oss << "Dummy sleep command for object '" << res.getPath() << "' progressed. " << i << " of " << n << " sleeps done; " << (n - i) * millisecPerSleep << " milli sec remain";
     setProgress( float(i) / n, oss.str());
   }
   
-  setStatusMsg("Dummy sleep command for object '" + res->getPath() + "' completed");
-    return State::kDone;
+  setStatusMsg("Dummy sleep command for object '" + res.getPath() + "' completed");
+    return kDone;
 }
 
 } /* namespace test */
