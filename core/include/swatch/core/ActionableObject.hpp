@@ -13,6 +13,7 @@
 #include "swatch/core/ActionableStatus.hpp"
 #include "swatch/core/exception.hpp"
 #include "swatch/core/MonitorableObject.hpp"
+#include "swatch/core/Functionoid.hpp"
 
 // STL headers
 #include <set>
@@ -20,7 +21,6 @@
 
 // BOOST headers
 #include "boost/unordered_map.hpp"
-#include "Functionoid.hpp"
 
 
 namespace swatch {

@@ -30,7 +30,7 @@ T& ObjectFunctionoid::getActionable() {
 template < typename T >
 T& ActionableObject::registerCommand( const std::string& aId )
 {
-  BOOST_STATIC_ASSERT( (boost::is_base_of<swatch::core::Functionoid,T>::value) );
+  BOOST_STATIC_ASSERT( (boost::is_base_of<swatch::core::Command,T>::value) );
   T* lObj( new T( aId, *this ) );
   registerCommand( aId , lObj );
   return *lObj;
