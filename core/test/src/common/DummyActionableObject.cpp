@@ -17,7 +17,7 @@ namespace test {
 
 
 DummyActionableObject::DummyActionableObject() :
-  ActionableObject("Dummy"),
+  ActionableObject("Dummy", "swatch.core.test.Dummy"),
   something_("something"),
   number_(0),
   mDummyMetric(registerMetric<int>("dummyMetric")){
@@ -27,7 +27,7 @@ DummyActionableObject::DummyActionableObject() :
 
 
 DummyActionableObject::DummyActionableObject(const std::string& aId) :
-  ActionableObject(aId),
+  ActionableObject(aId, "swatch.core.test." + aId),
   something_("something"),
   number_(0),
   mDummyMetric(registerMetric<int>("dummyMetric")){

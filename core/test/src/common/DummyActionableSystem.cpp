@@ -15,7 +15,7 @@ namespace test{
 
 
 DummyActionableSystem::DummyActionableSystem(const std::string& aId) : 
-  ActionableSystem(aId)
+  ActionableSystem(aId, "swatch.core.test." + aId)
 {
 }
 

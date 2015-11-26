@@ -10,6 +10,7 @@
 
 // SWATCH headers
 #include "swatch/processor/Utilities.hpp"
+#include "swatch/processor/ProcessorStub.hpp"
 #include "swatch/dtm/DaqTTCStub.hpp"
 #include "swatch/system/CrateStub.hpp"
 
@@ -74,6 +75,7 @@ treeToSystemPars( const boost::property_tree::ptree& t ) {
 
     const ptree &pt_system = t.get_child("SYSTEM");
     SystemStub aStub(pt_system.get<std::string>("NAME"));
+    aStub.loggerName = aStub.id;
 //    sysPars.add("name", xdata::String(pt_system.get<std::string>("NAME")));
     aStub.creator = pt_system.get<std::string>("CREATOR");
 
@@ -89,10 +91,9 @@ treeToSystemPars( const boost::property_tree::ptree& t ) {
     
 //    xdata::Vector<XParameterSet> processorSets;
     BOOST_FOREACH( const ptree::value_type &v, pt_system.get_child("PROCESSORS")) {
-//        core::XParameterSet procSet = swatch::processor::treeToProcessorPars(v.second);
-      aStub.processors.emplace_back(
-        swatch::processor::treeToProcessorStub(v.second)
-      );
+      swatch::processor::ProcessorStub lProcStub(swatch::processor::treeToProcessorStub(v.second));
+      lProcStub.loggerName = aStub.id + "." + lProcStub.id;
+      aStub.processors.emplace_back(lProcStub);
     }
 //    sysPars.add("processors",processorSets);
 
@@ -100,10 +101,9 @@ treeToSystemPars( const boost::property_tree::ptree& t ) {
     BOOST_FOREACH( const ptree::value_type &v, pt_system.get_child("DAQTTCS")) {
 //        core::XParameterSet amc13Set = swatch::system::treeToDaqTTCPars(v.second);
 //        daqTTCSets.push_back(amc13Set);
-        
-        aStub.daqttcs.emplace_back(
-          swatch::dtm::treeToDaqTTCStub(v.second)
-        );
+        swatch::dtm::DaqTTCStub lDaqTTCStub(swatch::dtm::treeToDaqTTCStub(v.second));
+        lDaqTTCStub.loggerName = aStub.id + "." + lDaqTTCStub.id;
+        aStub.daqttcs.emplace_back(lDaqTTCStub);
     }
 //    sysPars.add("daqttcs",daqTTCSets);
 

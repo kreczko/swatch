@@ -79,7 +79,7 @@ core::SystemStateMachine& RunControlFSM::addStates(core::SystemStateMachine& aFS
 
 //---
 System::System( const swatch::core::AbstractStub& aStub ) : 
-  ActionableSystem(aStub.id),
+  ActionableSystem(aStub.id, aStub.loggerName),
   stub_(dynamic_cast<const swatch::system::SystemStub&>(aStub)),
   mRunControlFSM( registerStateMachine(RunControlFSM::kId, RunControlFSM::kStateInitial, RunControlFSM::kStateError) )
 {

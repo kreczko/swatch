@@ -2,6 +2,7 @@ Set?=devel
 ifeq ($(Set), devel)
 PACKAGES = \
 	logger\
+	logger/test \
 	core \
 	core/test \
 	processor \
@@ -22,6 +23,7 @@ PACKAGES = \
 else ifeq ($(Set), amc13)
 PACKAGES = \
         logger\
+        logger/test \
         core \
         core/test \
         processor \
@@ -34,6 +36,7 @@ PACKAGES = \
 else ifeq ($(Set), hwdevel)
 PACKAGES = \
 	logger\
+	logger/test \
 	core \
 	core/test \
 	processor \

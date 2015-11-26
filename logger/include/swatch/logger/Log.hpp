@@ -3,6 +3,7 @@
  * @author  Alessandro Thea
  * @brief   MP7 board processor implementation
  * @date    June 2014
+ * @deprecated
  */
 
 #ifndef __SWATCH_LOGGER_LOG_HPP__
@@ -59,7 +60,6 @@ private:
 
     static LogLevel logThreshold_;
 
-    // static const std::map<LogLevel, std::string> logNames_;
     static const char* logNames_[];
 };
 

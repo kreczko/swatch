@@ -8,16 +8,20 @@
 
 // Swatch Headers
 #include "swatch/core/SystemStateMachine.hpp"
-#include "swatch/logger/Log.hpp"
+#include "swatch/logger/Logger.hpp"
+
+//log4cplus headers
+#include <log4cplus/loggingmacros.h>
 
 
 namespace swatch {
 namespace core {
 
-  
 //------------------------------------------------------------------------------------
-ActionableSystem::ActionableSystem(const std::string& aId) : 
-  MonitorableObject(aId) {
+ActionableSystem::ActionableSystem(const std::string& aId, const std::string& aLoggerName) :
+  MonitorableObject(aId),
+  mStatus(),
+  mLogger(swatch::logger::Logger::getInstance(aLoggerName)){
 }
 
 
@@ -67,9 +71,10 @@ SystemStateMachine& ActionableSystem::registerStateMachine( const std::string& a
 
 //------------------------------------------------------------------------------------
 void ActionableSystem::Deleter::operator ()(Object* aObject) {
+  log4cplus::Logger lLogger = swatch::logger::Logger::getInstance("swatch.core.ActionableSystem");
   if(ActionableSystem* lActionableSys = dynamic_cast<ActionableSystem*>(aObject))
   {
-    LOG(swatch::logger::kNotice) << aObject->getPath() << " : ActionableSystem deleter called";
+    LOG4CPLUS_INFO(lLogger, aObject->getPath() << " : ActionableSystem deleter called");
 
     lActionableSys->disableActions();
 
@@ -77,12 +82,14 @@ void ActionableSystem::Deleter::operator ()(Object* aObject) {
     do {
     } while ( ! lActionableSys->getStatus().getRunningActions().empty() );
 
-    LOG(swatch::logger::kNotice) << aObject->getPath() << " : ActionableSystem now being deleted";
+    LOG4CPLUS_INFO(lLogger, aObject->getPath() << " : ActionableSystem now being deleted");
 
     delete lActionableSys;
   }
   else{
-    LOG(swatch::logger::kWarning) << "ActionableSystem::Deleter being used on object '" << aObject->getPath() << "' of type '" << aObject->getTypeName() << "' that doesn't inherit from ActionableSystem";
+    LOG4CPLUS_WARN(lLogger,
+        "ActionableSystem::Deleter being used on object '" << aObject->getPath() << "' of type '"
+        << aObject->getTypeName() << "' that doesn't inherit from ActionableSystem");
     delete aObject;
   }
 }
@@ -162,7 +169,7 @@ ActionableSystem::BusyGuard::BusyGuard(ActionableSystem& aResource, const Functi
     else
       oss << "Actions currently disabled on this resource.";
 
-    LOG(swatch::logger::kNotice) << oss.str();
+    LOG4CPLUS_INFO(aResource.getLogger(), oss.str());
     throw ActionableObjectIsBusy(oss.str());
   }
 
@@ -181,13 +188,13 @@ ActionableSystem::BusyGuard::BusyGuard(ActionableSystem& aResource, const Functi
       else
         oss << "Actions currently disabled on this child.";
 
-      LOG(swatch::logger::kNotice) << oss.str();
+      LOG4CPLUS_INFO(aResource.getLogger(), oss.str());
       throw ActionableObjectIsBusy(oss.str());
     }
   } 
   
   // 3) If got this far, then all is good; create the busy guards for the children
-  LOG(swatch::logger::kInfo) << mSystem.getPath() << " : Starting action '" << mAction.getId() << "'";
+  LOG4CPLUS_INFO(aResource.getLogger(), mSystem.getPath() << " : Starting action '" << mAction.getId() << "'");
   aResource.mStatus.mRunningActions.push_back( &aAction );
   
   BOOST_FOREACH( const tObjTransitionMap::value_type e, childTransitionMap )
@@ -209,8 +216,8 @@ const ActionableObject::BusyGuard& ActionableSystem::BusyGuard::getChildGuard(co
 ActionableSystem::BusyGuard::~BusyGuard()
 {
   boost::lock_guard<boost::mutex> lGuard(mSystem.mMutex);
-  // TO CHECK: Logging statment in destructor could be dangerous?
-  LOG(swatch::logger::kInfo) << mSystem.getPath() << " : Finished action '" << mAction.getId() << "'";
+  log4cplus::Logger lLogger = swatch::logger::Logger::getInstance("swatch.core.ActionableSystem");
+  LOG4CPLUS_INFO(lLogger, mSystem.getPath() << " : Finished action '" << mAction.getId() << "'");
 
   if ( mSystem.mStatus.isRunning() && (&mAction == mSystem.mStatus.getLastRunningAction()) )
   {
@@ -229,8 +236,14 @@ ActionableSystem::BusyGuard::~BusyGuard()
   {
     size_t lNrActions = mSystem.mStatus.mRunningActions.size();
     const std::string activeFuncId(lNrActions > 0 ? "NULL" : "'" + mSystem.mStatus.getLastRunningAction()->getId() + "' (innermost of "+boost::lexical_cast<std::string>(lNrActions)+")");
-    LOG(swatch::logger::kError) << "unexpected active functionoid " << activeFuncId << "  in BusyGuard destructor for system '" << mSystem.getPath() << "', functionoid '" << mAction.getId() << "'";
+    LOG4CPLUS_ERROR(lLogger,
+        "unexpected active functionoid " << activeFuncId << "  in BusyGuard destructor for system '"
+        << mSystem.getPath() << "', functionoid '" << mAction.getId() << "'");
   }
+}
+
+log4cplus::Logger& ActionableSystem::getLogger() {
+  return mLogger;
 }
 
 }

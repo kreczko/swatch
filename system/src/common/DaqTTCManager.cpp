@@ -62,7 +62,7 @@ const std::vector<std::string> DaqTTCManager::defaultMetrics = {"fedId"};
 const std::vector<std::string> DaqTTCManager::defaultMonitorableObjects = {"ttc","evb","amcports"};
 
 DaqTTCManager::DaqTTCManager(const swatch::core::AbstractStub& aStub ) : 
-  swatch::core::ActionableObject(aStub.id),
+  swatch::core::ActionableObject(aStub.id, aStub.loggerName),
   stub_(dynamic_cast<const DaqTTCStub&>(aStub)),
   mTTC(0x0),
   mSLink(0x0),

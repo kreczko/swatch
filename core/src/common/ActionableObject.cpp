@@ -7,15 +7,16 @@
 #include "swatch/core/Command.hpp"
 #include "swatch/core/CommandSequence.hpp"
 #include "swatch/core/Utilities.hpp"
-#include "swatch/logger/Log.hpp"
+#include "swatch/logger/Logger.hpp"
 #include "swatch/core/StateMachine.hpp"
 
+//log4cplus headers
+#include <log4cplus/loggingmacros.h>
 
 using namespace std;
 
 namespace swatch {
 namespace core {
-
 
 //------------------------------------------------------------------------------------
 ObjectFunctionoid::ObjectFunctionoid(const std::string& aId, ActionableObject& aActionable) :
@@ -38,9 +39,10 @@ ActionableObject& ObjectFunctionoid::getActionable() {
 
 
 //------------------------------------------------------------------------------------
-ActionableObject::ActionableObject( const std::string& aId ) :
+ActionableObject::ActionableObject( const std::string& aId, const std::string& aLoggerName ) :
   MonitorableObject( aId  ),
-  mStatus() {
+  mStatus(),
+  mLogger(swatch::logger::Logger::getInstance(aLoggerName)) {
 }
 
 
@@ -166,9 +168,10 @@ ActionableObject::Status ActionableObject::getStatus() const {
 
 //------------------------------------------------------------------------------------
 void ActionableObject::Deleter::operator ()(Object* aObject) {
+  log4cplus::Logger lLogger = swatch::logger::Logger::getInstance("swatch.core.ActionableObject");
   if(ActionableObject* lActionableObj = dynamic_cast<ActionableObject*>(aObject))
   {
-    LOG(swatch::logger::kNotice) << aObject->getPath() << " : ActionableObject deleter called";
+    LOG4CPLUS_INFO(lLogger, aObject->getPath() << " : ActionableObject deleter called");
 
     lActionableObj->kill();
 
@@ -176,12 +179,12 @@ void ActionableObject::Deleter::operator ()(Object* aObject) {
     do {
     } while ( lActionableObj->getStatus().isRunning() );
 
-    LOG(swatch::logger::kNotice) << aObject->getPath() << " : ActionableObject now being deleted";
+    LOG4CPLUS_INFO(lLogger, aObject->getPath() << " : ActionableObject now being deleted");
     
     delete lActionableObj;
   }
   else{
-    LOG(swatch::logger::kWarning) << "ActionableObject::Deleter being used on object '" << aObject->getPath() << "' of type '" << aObject->getTypeName() << "' that doesn't inherit from ActionableObject";
+    LOG4CPLUS_WARN(lLogger, "ActionableObject::Deleter being used on object '" << aObject->getPath() << "' of type '" << aObject->getTypeName() << "' that doesn't inherit from ActionableObject");
     delete aObject;
   }
 }
@@ -252,9 +255,9 @@ void ActionableObject::BusyGuard::initialise(const boost::unique_lock<boost::mut
   if ( mActionableObj.mStatus.isAlive() && ( (mOuterGuard != NULL) || !mActionableObj.mStatus.isRunning() ) )
   {
     if ( !mActionableObj.mStatus.isRunning() )
-      LOG(swatch::logger::kInfo) << mActionableObj.getPath() << " : Starting " << ActionFmt(&mAction);
+      LOG4CPLUS_INFO(mActionableObj.getLogger(), mActionableObj.getPath() << " : Starting " << ActionFmt(&mAction));
     else
-      LOG(swatch::logger::kInfo) << mActionableObj.getPath() << " : Starting " << ActionFmt(&mAction) << " within " << ActionFmt(mActionableObj.mStatus.getLastRunningAction());
+      LOG4CPLUS_INFO(mActionableObj.getLogger(), mActionableObj.getPath() << " : Starting " << ActionFmt(&mAction) << " within " << ActionFmt(mActionableObj.mStatus.getLastRunningAction()));
     mActionableObj.mStatus.mRunningActions.push_back(&mAction);
   }
   else
@@ -267,7 +270,7 @@ void ActionableObject::BusyGuard::initialise(const boost::unique_lock<boost::mut
     else
       oss << "Actions currently disabled on this resource.";
 
-   LOG(swatch::logger::kNotice) << oss.str();
+   LOG4CPLUS_INFO(mActionableObj.getLogger(), oss.str());
    throw ActionableObjectIsBusy(oss.str());
   } 
 }
@@ -278,7 +281,7 @@ void ActionableObject::BusyGuard::initialise(const boost::unique_lock<boost::mut
 ActionableObject::BusyGuard::~BusyGuard()
 {  
   boost::lock_guard<boost::mutex> lGuard(mActionableObj.mMutex);
-  LOG(swatch::logger::kInfo) << mActionableObj.getPath() << " : Finished " << ActionFmt(&mAction);
+  LOG4CPLUS_INFO(mActionableObj.getLogger(), mActionableObj.getPath() << " : Finished " << ActionFmt(&mAction));
   if ( mActionableObj.mStatus.isRunning() && (&mAction == mActionableObj.mStatus.getLastRunningAction()) )
   {
     mActionableObj.mStatus.mRunningActions.pop_back();
@@ -296,7 +299,7 @@ ActionableObject::BusyGuard::~BusyGuard()
   {
     size_t lNrActions = mActionableObj.mStatus.mRunningActions.size();
     const std::string activeFuncId(lNrActions > 0 ? "NULL" : "'" + mActionableObj.mStatus.getLastRunningAction()->getId() + "' (innermost of "+boost::lexical_cast<std::string>(lNrActions)+")");
-    LOG(swatch::logger::kError) << "unexpected active functionoid " << activeFuncId << "  in BusyGuard destructor for resource '" << mActionableObj.getPath() << "', functionoid '" << mAction.getId() << "'";
+    LOG4CPLUS_ERROR(mActionableObj.getLogger(), "unexpected active functionoid " << activeFuncId << "  in BusyGuard destructor for resource '" << mActionableObj.getPath() << "', functionoid '" << mAction.getId() << "'");
   }
 }
 
@@ -329,6 +332,10 @@ std::ostream& operator<<(std::ostream& aStream, const ActionableObject::ActionFm
     aStream << " '" << aActionFmt.mAction->getId() << "'";
 
   return aStream;
+}
+
+log4cplus::Logger& ActionableObject::getLogger() {
+  return mLogger;
 }
 
 }

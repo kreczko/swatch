@@ -17,10 +17,13 @@ namespace core {
 
 class AbstractStub {
 public:
-  explicit AbstractStub( const std::string& aId ) : id(aId) {}
+  explicit AbstractStub( const std::string& aId ) : id(aId), loggerName("swatch") {}
   virtual ~AbstractStub() {}
 
   std::string id;
+
+  //! Hierarchical name of the logger (e.g. systemA.processorB)
+  std::string loggerName;
 };
 
 }

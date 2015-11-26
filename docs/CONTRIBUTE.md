@@ -169,6 +169,10 @@ Once you have the go to merge your branch with the trunk, you can do so by:
 
 ```
 git checkout master
+# you might need to update the SVN history:
+svn revert -R .
+svn update
+# now let us try to reintegrate the changes
 svn merge --reintegrate ^/branches/${branchname}/swatch --dry-run
 # if everything looks OK, execute
 svn merge --reintegrate ^/branches/${branchname}/swatch

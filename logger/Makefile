@@ -19,9 +19,14 @@ Library = cactus_swatch_logger
 
 Includes = \
 	include \
-	${CACTUS_ROOT}/include
+	${CACTUS_ROOT}/include \
+	${XDAQ_ROOT}/include
 	
-LibraryPaths = lib
+LibraryPaths = \
+	lib \
+	${XDAQ_ROOT}/lib
+
+Libraries = log4cplus
 
 include ${SWATCH_ROOT}/config/mfRules.mk
 include ${SWATCH_ROOT}/config/mfRPMRules.mk

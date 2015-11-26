@@ -13,6 +13,9 @@
 #include "swatch/core/Functionoid.hpp"
 #include "swatch/core/MonitorableObject.hpp"
 
+//log4cplus headers
+#include <log4cplus/logger.h>
+
 
 namespace swatch {
 namespace core {
@@ -27,7 +30,7 @@ class ActionableSystem : public MonitorableObject {
 public:
   typedef ActionableStatus Status;
     
-  ActionableSystem(const std::string& aId);
+  ActionableSystem(const std::string& aId, const std::string& aLoggerName);
 
   virtual ~ActionableSystem();
 
@@ -41,6 +44,8 @@ public:
   SystemStateMachine& getStateMachine( const std::string& aId );
 
   Status getStatus() const;
+
+  log4cplus::Logger& getLogger();
 
   typedef boost::unordered_map< std::string , SystemStateMachine* > tStateMachineMap;
 
@@ -78,6 +83,7 @@ private:
   
   mutable boost::mutex mMutex;
   Status mStatus;
+  log4cplus::Logger mLogger;
   
   class BusyGuard : public boost::noncopyable {
   public:

@@ -22,6 +22,8 @@
 // BOOST headers
 #include "boost/unordered_map.hpp"
 
+//log4cplus headers
+#include <log4cplus/logger.h>
 
 namespace swatch {
 namespace core {
@@ -52,6 +54,7 @@ protected:
   
 private:
   ActionableObject& mActionable;
+
 };
 
 
@@ -66,7 +69,7 @@ public:
   
   typedef ActionableStatus Status;
 
-  explicit ActionableObject( const std::string& aId );
+  explicit ActionableObject( const std::string& aId, const std::string& aLoggerName );
 
   virtual ~ActionableObject();
 
@@ -104,6 +107,8 @@ public:
   //! Engage state machine of specified ID
   void engageStateMachine(const std::string& aStateMachine);
   
+  log4cplus::Logger& getLogger();
+
   typedef boost::unordered_map< std::string , CommandSequence* > tCommandSequenceMap;
   typedef boost::unordered_map< std::string , Command* > tCommandMap;
   typedef boost::unordered_map< std::string , StateMachine* > tStateMachineMap;
@@ -150,6 +155,7 @@ private:
 
   mutable boost::mutex mMutex;
   Status mStatus;
+  log4cplus::Logger mLogger;
 
   class BusyGuard : public boost::noncopyable {
   public:

@@ -70,7 +70,7 @@ const std::vector<std::string> Processor::defaultMonitorableObjects = { "ttc", "
 
 //---
 Processor::Processor( const swatch::core::AbstractStub& aStub) :
-    ActionableObject(aStub.id),
+    ActionableObject(aStub.id, aStub.loggerName),
     metricFirmwareVersion_( registerMetric<uint64_t>("firmwareVersion") ),
     stub_(dynamic_cast<const processor::ProcessorStub&>(aStub)),
     mTTC(NULL),
