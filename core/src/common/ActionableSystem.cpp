@@ -73,7 +73,7 @@ SystemStateMachine& ActionableSystem::registerStateMachine( const std::string& a
 void ActionableSystem::Deleter::operator ()(Object* aObject) {
   if(ActionableSystem* lActionableSys = dynamic_cast<ActionableSystem*>(aObject))
   {
-    LOG4CPLUS_INFO(getLogger(), aObject->getPath() << " : ActionableSystem deleter called");
+    LOG4CPLUS_INFO(lActionableSys->getLogger(), aObject->getPath() << " : ActionableSystem deleter called");
 
     lActionableSys->disableActions();
 
@@ -81,7 +81,7 @@ void ActionableSystem::Deleter::operator ()(Object* aObject) {
     do {
     } while ( ! lActionableSys->getStatus().getRunningActions().empty() );
 
-    LOG4CPLUS_INFO(getLogger(), aObject->getPath() << " : ActionableSystem now being deleted");
+    LOG4CPLUS_INFO(lActionableSys->getLogger(), aObject->getPath() << " : ActionableSystem now being deleted");
 
     delete lActionableSys;
   }

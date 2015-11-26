@@ -170,7 +170,7 @@ ActionableObject::Status ActionableObject::getStatus() const {
 void ActionableObject::Deleter::operator ()(Object* aObject) {
   if(ActionableObject* lActionableObj = dynamic_cast<ActionableObject*>(aObject))
   {
-    LOG4CPLUS_INFO(getLogger(), aObject->getPath() << " : ActionableObject deleter called");
+    LOG4CPLUS_INFO(lActionableObj->getLogger(), aObject->getPath() << " : ActionableObject deleter called");
 
     lActionableObj->kill();
 
@@ -178,7 +178,7 @@ void ActionableObject::Deleter::operator ()(Object* aObject) {
     do {
     } while ( lActionableObj->getStatus().isRunning() );
 
-    LOG4CPLUS_INFO(getLogger(), aObject->getPath() << " : ActionableObject now being deleted");
+    LOG4CPLUS_INFO(lActionableObj->getLogger(), aObject->getPath() << " : ActionableObject now being deleted");
     
     delete lActionableObj;
   }
