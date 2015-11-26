@@ -168,10 +168,9 @@ ActionableObject::Status ActionableObject::getStatus() const {
 
 //------------------------------------------------------------------------------------
 void ActionableObject::Deleter::operator ()(Object* aObject) {
-  log4cplus::Logger lLogger = swatch::logger::Logger::getInstance("swatch.core.ActionableObject");
   if(ActionableObject* lActionableObj = dynamic_cast<ActionableObject*>(aObject))
   {
-    LOG4CPLUS_INFO(lLogger, aObject->getPath() << " : ActionableObject deleter called");
+    LOG4CPLUS_INFO(getLogger(), aObject->getPath() << " : ActionableObject deleter called");
 
     lActionableObj->kill();
 
@@ -179,11 +178,12 @@ void ActionableObject::Deleter::operator ()(Object* aObject) {
     do {
     } while ( lActionableObj->getStatus().isRunning() );
 
-    LOG4CPLUS_INFO(lLogger, aObject->getPath() << " : ActionableObject now being deleted");
+    LOG4CPLUS_INFO(getLogger(), aObject->getPath() << " : ActionableObject now being deleted");
     
     delete lActionableObj;
   }
   else{
+    log4cplus::Logger lLogger = swatch::logger::Logger::getInstance("swatch.core.ActionableObject");
     LOG4CPLUS_WARN(lLogger, "ActionableObject::Deleter being used on object '" << aObject->getPath() << "' of type '" << aObject->getTypeName() << "' that doesn't inherit from ActionableObject");
     delete aObject;
   }

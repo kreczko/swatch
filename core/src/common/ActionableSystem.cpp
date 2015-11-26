@@ -71,10 +71,9 @@ SystemStateMachine& ActionableSystem::registerStateMachine( const std::string& a
 
 //------------------------------------------------------------------------------------
 void ActionableSystem::Deleter::operator ()(Object* aObject) {
-  log4cplus::Logger lLogger = swatch::logger::Logger::getInstance("swatch.core.ActionableSystem");
   if(ActionableSystem* lActionableSys = dynamic_cast<ActionableSystem*>(aObject))
   {
-    LOG4CPLUS_INFO(lLogger, aObject->getPath() << " : ActionableSystem deleter called");
+    LOG4CPLUS_INFO(getLogger(), aObject->getPath() << " : ActionableSystem deleter called");
 
     lActionableSys->disableActions();
 
@@ -82,11 +81,12 @@ void ActionableSystem::Deleter::operator ()(Object* aObject) {
     do {
     } while ( ! lActionableSys->getStatus().getRunningActions().empty() );
 
-    LOG4CPLUS_INFO(lLogger, aObject->getPath() << " : ActionableSystem now being deleted");
+    LOG4CPLUS_INFO(getLogger(), aObject->getPath() << " : ActionableSystem now being deleted");
 
     delete lActionableSys;
   }
   else{
+    log4cplus::Logger lLogger = swatch::logger::Logger::getInstance("swatch.core.ActionableSystem");
     LOG4CPLUS_WARN(lLogger,
         "ActionableSystem::Deleter being used on object '" << aObject->getPath() << "' of type '"
         << aObject->getTypeName() << "' that doesn't inherit from ActionableSystem");
@@ -216,8 +216,7 @@ const ActionableObject::BusyGuard& ActionableSystem::BusyGuard::getChildGuard(co
 ActionableSystem::BusyGuard::~BusyGuard()
 {
   boost::lock_guard<boost::mutex> lGuard(mSystem.mMutex);
-  log4cplus::Logger lLogger = swatch::logger::Logger::getInstance("swatch.core.ActionableSystem");
-  LOG4CPLUS_INFO(lLogger, mSystem.getPath() << " : Finished action '" << mAction.getId() << "'");
+  LOG4CPLUS_INFO(mSystem.getLogger(), mSystem.getPath() << " : Finished action '" << mAction.getId() << "'");
 
   if ( mSystem.mStatus.isRunning() && (&mAction == mSystem.mStatus.getLastRunningAction()) )
   {
@@ -236,7 +235,7 @@ ActionableSystem::BusyGuard::~BusyGuard()
   {
     size_t lNrActions = mSystem.mStatus.mRunningActions.size();
     const std::string activeFuncId(lNrActions > 0 ? "NULL" : "'" + mSystem.mStatus.getLastRunningAction()->getId() + "' (innermost of "+boost::lexical_cast<std::string>(lNrActions)+")");
-    LOG4CPLUS_ERROR(lLogger,
+    LOG4CPLUS_ERROR(mSystem.getLogger(),
         "unexpected active functionoid " << activeFuncId << "  in BusyGuard destructor for system '"
         << mSystem.getPath() << "', functionoid '" << mAction.getId() << "'");
   }
