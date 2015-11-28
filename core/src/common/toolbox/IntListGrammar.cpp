@@ -12,9 +12,8 @@ namespace toolbox {
 
 // --------------------------------------------------------
 IntListGrammar::IntListGrammar() :
-  IntListGrammar::base_type(query) {
-
-
+IntListGrammar::base_type(query)
+{
   namespace qi = boost::spirit::qi;
   query = element % ',';
 
@@ -23,15 +22,15 @@ IntListGrammar::IntListGrammar() :
   range = (qi::int_ >> '-' >> qi::int_)[boost::phoenix::bind(&push_back_range, qi::_val, qi::_1, qi::_2) ];
 
   //  BOOST_SPIRIT_DEBUG_NODES((query));
-
 }
 
 
 // --------------------------------------------------------
-void IntListGrammar::push_back_range(std::vector<int>& v, int aFirst, int aLast) {
-
+void IntListGrammar::push_back_range(std::vector<int>& v, int aFirst, int aLast)
+{
   boost::counting_iterator<int> lBegin(aFirst);
-  boost::counting_iterator<int> lEnd(aLast);
+  // +1 to include last element
+  boost::counting_iterator<int> lEnd(aLast + 1);
 
   return v.insert(v.end(), lBegin, lEnd);
 
