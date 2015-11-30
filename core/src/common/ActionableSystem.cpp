@@ -201,7 +201,7 @@ ActionableSystem::BusyGuard::BusyGuard(ActionableSystem& aResource, const Functi
   mStatus.addAction(mAction, lStatusGuard);
   
   BOOST_FOREACH( const tObjTransitionMap::value_type e, childTransitionMap )
-    this->mChildGuardMap[ e.first ] = tChildGuardPtr(new ActionableObject::BusyGuard(*e.first, *lStatusGuardMap[e.first].get(), lTransition) );
+    this->mChildGuardMap[ e.first ] = tChildGuardPtr(new ActionableObject::BusyGuard(*e.first, (e.first)->mStatus, *lStatusGuardMap[e.first].get(), lTransition) );
 }
 
 

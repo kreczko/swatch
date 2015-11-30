@@ -131,7 +131,7 @@ private:
 DEFINE_SWATCH_EXCEPTION(IncorrectActionableGuard);
 
 
-class MutableActionableStatus {
+class MutableActionableStatus : public boost::noncopyable{
 public:
   MutableActionableStatus();
   ~MutableActionableStatus();

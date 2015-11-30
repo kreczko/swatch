@@ -199,9 +199,9 @@ void ActionableObject::Deleter::operator ()(Object* aObject)
 
 
 //------------------------------------------------------------------------------------
-ActionableObject::BusyGuard::BusyGuard(ObjectFunctionoid& aAction, const BusyGuard* aOuterGuard) : 
+ActionableObject::BusyGuard::BusyGuard(ObjectFunctionoid& aAction, MutableActionableStatus& aStatus, const BusyGuard* aOuterGuard) : 
   mActionableObj(aAction.getActionable()),
-  mStatus(aAction.getActionable().mStatus),
+  mStatus(aStatus),
   mAction(aAction),
   mOuterGuard(aOuterGuard)
 {
@@ -211,9 +211,9 @@ ActionableObject::BusyGuard::BusyGuard(ObjectFunctionoid& aAction, const BusyGua
 
 
 //------------------------------------------------------------------------------------
-ActionableObject::BusyGuard::BusyGuard(ActionableObject& aResource, const ActionableStatusGuard& aStatusGuard, const Functionoid& aAction, const BusyGuard* aOuterGuard) : 
+ActionableObject::BusyGuard::BusyGuard(ActionableObject& aResource, MutableActionableStatus& aStatus, const ActionableStatusGuard& aStatusGuard, const Functionoid& aAction, const BusyGuard* aOuterGuard) : 
   mActionableObj(aResource),
-  mStatus(aResource.mStatus),
+  mStatus(aStatus),
   mAction(aAction),
   mOuterGuard(aOuterGuard)
 {

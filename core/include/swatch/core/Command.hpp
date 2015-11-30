@@ -107,6 +107,8 @@ private:
     // thread safe exception catching wrapper for code()
     void runCode(boost::shared_ptr<ActionableObject::BusyGuard> aGuard, const XParameterSet& aParams );
 
+    MutableActionableStatus& mActionableStatus;
+    
     ReadWriteXParameterSet defaultParams_;
 
     ReadOnlyXParameterSet runningParams_;

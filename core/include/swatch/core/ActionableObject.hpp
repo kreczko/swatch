@@ -64,9 +64,7 @@ private:
  */
 
 class ActionableObject : public MonitorableObject {
-  class BusyGuard;
 public:
-  
   typedef ActionableStatus Status;
   typedef MutableActionableStatus MutableStatus;
 
@@ -154,10 +152,11 @@ private:
   MutableStatus mStatus;
   log4cplus::Logger mLogger;
 
+public:
   class BusyGuard : public boost::noncopyable {
   public:
-    BusyGuard(ObjectFunctionoid& aAction, const BusyGuard* aOuterGuard=NULL);
-    BusyGuard(ActionableObject& aResource, const ActionableStatusGuard& aStatusGuard, const Functionoid& aAction, const BusyGuard* aOuterGuard=NULL);
+    BusyGuard(ObjectFunctionoid& aAction, MutableActionableStatus& aStatus, const BusyGuard* aOuterGuard=NULL);
+    BusyGuard(ActionableObject& aResource, MutableActionableStatus& aStatus, const ActionableStatusGuard& aStatusGuard, const Functionoid& aAction, const BusyGuard* aOuterGuard=NULL);
 
     ~BusyGuard();
     

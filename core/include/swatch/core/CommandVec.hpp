@@ -115,6 +115,7 @@ private:
 
 //  ActionableObject& mResource;
 
+  MutableActionableStatus& mActionableStatus;
   typedef std::vector< Element > tCommandVector;
   tCommandVector mCommands;
 
