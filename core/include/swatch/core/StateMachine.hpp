@@ -23,13 +23,14 @@ class Command;
 class CommandSequence;
 class GateKeeper;
 class ReadOnlyXParameterSet;
+class SystemStateMachine;
 
 
 class StateMachine : public Object {
 public:
   class Transition;
   
-  StateMachine(const std::string& aId, ActionableObject& aResource, const std::string& aInitialState, const std::string& aErrorState); // when you "engage" an actionable object into a particular transition, its state is set to the "base" state ..
+  StateMachine(const std::string& aId, ActionableObject& aResource, MutableActionableStatus& aStatus, const std::string& aInitialState, const std::string& aErrorState); 
  
   virtual ~StateMachine();
 
@@ -132,6 +133,7 @@ private:
   State& getState(const std::string& aStateId);
     
   ActionableObject& mResource;
+  MutableActionableStatus& mStatus;
     
   typedef std::vector<std::string> tStateVec;
   typedef tStateVec::const_iterator tStateIt;
@@ -142,6 +144,7 @@ private:
   std::map<std::string, State*> mStateMap;
   
   friend class ActionableSystem;
+  friend class SystemStateMachine;
 };
 
 DEFINE_SWATCH_EXCEPTION(StateNotDefined);

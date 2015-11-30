@@ -28,7 +28,8 @@ class Functionoid;
 class ActionableSystem : public MonitorableObject {
   class BusyGuard;
 public:
-  typedef ActionableStatus Status;
+  typedef ActionableStatus Status_t;
+  typedef MutableActionableStatus MutableStatus_t;
     
   ActionableSystem(const std::string& aId, const std::string& aLoggerName);
 
@@ -43,7 +44,7 @@ public:
   //! Get registered state machine of specified ID
   SystemStateMachine& getStateMachine( const std::string& aId );
 
-  Status getStatus() const;
+  Status_t getStatus() const;
 
   log4cplus::Logger& getLogger();
 
@@ -71,18 +72,15 @@ protected:
   
 private:
 
-  //! Disables all future actions from running on this resource
-  void disableActions();
-
   //! Locks mutex of system & all children involved in system state machine
-  typedef boost::shared_ptr<boost::unique_lock<boost::mutex> > tLockGuardPtr;
-  typedef std::map<const swatch::core::MonitorableObject*, tLockGuardPtr> tLockGuardMap;
-  static tLockGuardMap lockMutexes(const SystemStateMachine&);
+  typedef boost::shared_ptr<ActionableStatusGuard> StatusGuardPtr_t;
+  typedef std::map<const swatch::core::MonitorableObject*, StatusGuardPtr_t> StatusGuardMap_t;
+  //! move into being private state method of ActionableStatusGuard (or just method in same file), with collection of status pointers as argument
+  static StatusGuardMap_t lockMutexes(const SystemStateMachine&);
   
   tStateMachineMap mFSMs;
   
-  mutable boost::mutex mMutex;
-  Status mStatus;
+  MutableStatus_t mStatus;  
   log4cplus::Logger mLogger;
   
   class BusyGuard : public boost::noncopyable {
@@ -95,6 +93,7 @@ private:
     
   private:
     ActionableSystem& mSystem;
+    MutableActionableStatus& mStatus;
     const Functionoid& mAction;
     typedef boost::shared_ptr<const ActionableObject::BusyGuard> tChildGuardPtr;
     std::map<const ActionableObject*, tChildGuardPtr> mChildGuardMap;

@@ -15,9 +15,10 @@ namespace swatch {
 namespace core {
     
 //------------------------------------------------------------------------------------
-StateMachine::StateMachine(const std::string& aId, ActionableObject& aResource, const std::string& aInitialState, const std::string& aErrorState) :
+StateMachine::StateMachine(const std::string& aId, ActionableObject& aResource, MutableActionableStatus& aStatus, const std::string& aInitialState, const std::string& aErrorState) :
   Object(aId),
   mResource(aResource),
+  mStatus(aStatus),
   mInitialState(aInitialState),
   mErrorState(aErrorState)      
 {
@@ -123,68 +124,64 @@ StateMachine::Transition& StateMachine::addTransition(const std::string& aTransi
 //------------------------------------------------------------------------------------
 void StateMachine::engage()
 {
-  boost::lock_guard<boost::mutex> lGuard(getActionable().mMutex);
+  ActionableStatusGuard lGuard(mStatus);
   
   // Throw if currently in other state machine
-  if(getActionable().mStatus.getStateMachineId() != ActionableStatus::kNullStateMachineId )
-    throw ResourceInWrongStateMachine("Cannot engage other state machine; resource '"+getPath()+"' currently in state machine '"+getActionable().mStatus.getStateMachineId()+"'");
+  if (mStatus.getStateMachineId(lGuard) != ActionableStatus::kNullStateMachineId )
+    throw ResourceInWrongStateMachine("Cannot engage other state machine; resource '"+getPath()+"' currently in state machine '"+mStatus.getStateMachineId(lGuard)+"'");
 
-  //  mStatus.mFSM = & lOp;
-  getActionable().mStatus.mStateMachineId = getId();
-  getActionable().mStatus.mState = getInitialState();
+  mStatus.setStateMachine(getId(), getInitialState(), lGuard);
 }
 
 
 //------------------------------------------------------------------------------------
 void StateMachine::disengage()
 {
-  boost::lock_guard<boost::mutex> lGuard(mResource.mMutex);
-  
+  ActionableStatusGuard lGuard(mStatus);
+
   // Throw if currently in other state machine
-  if(mResource.mStatus.getStateMachineId() != this->getId())
+  if(mStatus.getStateMachineId(lGuard) != this->getId())
   {
     std::ostringstream oss;
     oss << "Cannot reset resource '" << mResource.getPath() << "' state machine '" << getId() << "'; ";
-    if ( mResource.mStatus.getStateMachineId() != ActionableStatus::kNullStateMachineId)
-      oss << "currently in state machine '" << mResource.mStatus.getStateMachineId() << "'";
+    if ( mStatus.isEngaged(lGuard) )
+      oss << "currently in state machine '" << mStatus.getStateMachineId(lGuard) << "'";
     else
       oss << "NOT in any state machine";
     throw ResourceInWrongStateMachine(oss.str());
   }
 
   // Throw if running action
-  if ( mResource.mStatus.isRunning() )
-    throw ActionableObjectIsBusy("Cannot reset '"+mResource.getPath()+"', state machine '"+getId()+"'; busy running action '"+mResource.mStatus.getLastRunningAction()->getPath()+"'");  
+  if ( mStatus.isBusy(lGuard) )
+    throw ActionableObjectIsBusy("Cannot reset '"+mResource.getPath()+"', state machine '"+getId()+"'; busy running action '"+mStatus.getLastRunningAction(lGuard)->getPath()+"'");  
   
   
-  // Move into AncionableState or derivates?
-  mResource.mStatus.mStateMachineId = ActionableStatus::kNullStateMachineId;
-  mResource.mStatus.mState = ActionableStatus::kNullStateId;
+  mStatus.setNoStateMachine(lGuard);
 }
 
 
 //------------------------------------------------------------------------------------
 void StateMachine::reset()
 {
-  boost::lock_guard<boost::mutex> lGuard(mResource.mMutex);
+  ActionableStatusGuard lGuard(mStatus);
   
   // Throw if currently in other state machine
-  if ( mResource.mStatus.getStateMachineId() != this->getId() )
+  if ( mStatus.getStateMachineId(lGuard) != this->getId() )
   {
     std::ostringstream oss;
     oss << "Cannot reset '" << mResource.getPath() << "', state machine '" << getId() << "'; ";
-	if ( mResource.mStatus.getStateMachineId() != ActionableStatus::kNullStateMachineId)
-      oss << "currently in state machine '" << mResource.mStatus.getStateMachineId() << "'";
+    if ( mStatus.isEngaged(lGuard) )
+      oss << "currently in state machine '" << mStatus.getStateMachineId(lGuard) << "'";
     else
       oss << "NOT in any state machine";
     throw ResourceInWrongStateMachine(oss.str());
   }
   
   // Throw if running action
-  if ( mResource.mStatus.isRunning() )
-    throw ActionableObjectIsBusy("Cannot reset '"+mResource.getPath()+"', state machine '"+getId()+"'; busy running action '"+mResource.mStatus.getLastRunningAction()->getPath()+"'");  
+  if ( mStatus.isBusy(lGuard) )
+    throw ActionableObjectIsBusy("Cannot reset '"+mResource.getPath()+"', state machine '"+getId()+"'; busy running action '"+mStatus.getLastRunningAction(lGuard)->getPath()+"'");  
   
-  mResource.mStatus.mState = getInitialState();
+  mStatus.setState(getInitialState(), lGuard);
 }
 
 

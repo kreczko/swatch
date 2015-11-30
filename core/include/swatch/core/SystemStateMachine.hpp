@@ -177,7 +177,7 @@ private:
   
 class SystemStateMachine : public Object {
 public:
-  SystemStateMachine(const std::string& aId, ActionableSystem& aSystem, const std::string& aInitialState, const std::string& aErrorState);
+  SystemStateMachine(const std::string& aId, ActionableSystem& aSystem, MutableActionableStatus& aStatus, const std::string& aInitialState, const std::string& aErrorState);
   virtual ~SystemStateMachine();
 
   //! Returns actionable system that this FSM belongs to
@@ -225,7 +225,7 @@ public:
   
 private:
   //! Throws if system/children are in other state machine, or running transition; need to lock externally ...
-  void checkStateMachineEngagedAndNotInTransition(const std::string& aAction) const;
+  void checkStateMachineEngagedAndNotInTransition(const std::string& aAction, const ActionableSystem::StatusGuardMap_t& aGuardMap) const;
   
   struct State : public Object {
     State(const std::string& aId);
@@ -238,6 +238,7 @@ private:
   State& getState(const std::string& aStateId);
 
   ActionableSystem& mResource;
+  MutableActionableStatus& mStatus;
 
   typedef std::vector<std::string> tStateVec;
   typedef tStateVec::const_iterator tStateIt;

@@ -68,6 +68,7 @@ class ActionableObject : public MonitorableObject {
 public:
   
   typedef ActionableStatus Status;
+  typedef MutableActionableStatus MutableStatus;
 
   explicit ActionableObject( const std::string& aId, const std::string& aLoggerName );
 
@@ -146,30 +147,27 @@ protected:
   StateMachine& registerStateMachine(const std::string& aId, const std::string& aInitialState, const std::string& aErrorState );    
   
 private:
-  //! Disables all future actions from running on this resource
-  void kill();
-
   tCommandSequenceMap mCommandSequences;
   tCommandMap mCommands;
   tStateMachineMap mFSMs;
 
-  mutable boost::mutex mMutex;
-  Status mStatus;
+  MutableStatus mStatus;
   log4cplus::Logger mLogger;
 
   class BusyGuard : public boost::noncopyable {
   public:
     BusyGuard(ObjectFunctionoid& aAction, const BusyGuard* aOuterGuard=NULL);
-    BusyGuard(ActionableObject& aResource, const boost::unique_lock<boost::mutex>& aLockGuard, const Functionoid& aAction, const BusyGuard* aOuterGuard=NULL);
+    BusyGuard(ActionableObject& aResource, const ActionableStatusGuard& aStatusGuard, const Functionoid& aAction, const BusyGuard* aOuterGuard=NULL);
 
     ~BusyGuard();
     
   private:
     ActionableObject& mActionableObj;
+    MutableActionableStatus& mStatus;
     const Functionoid& mAction;
     const BusyGuard* mOuterGuard;
     
-    void initialise(const boost::unique_lock<boost::mutex>& aLockGuard);
+    void initialise(const ActionableStatusGuard& aStatusGuard);
   };
 
 public:
@@ -180,6 +178,7 @@ public:
     const Functionoid* const mAction;
   };
 
+  friend class BusyGuard; // Eventually, should be Functionoid/objectFunctionoid ?
   friend class ActionableSystem;
   friend class Command;
   friend class CommandSequence;
