@@ -116,7 +116,7 @@ public:
   ActionableStatusGuard(const MutableActionableStatus& aStatus, boost::adopt_lock_t);
   ~ActionableStatusGuard();
   
-  const MutableActionableStatus& getStatus() const;
+  bool isCorrectGuard(const MutableActionableStatus& aStatus) const;
   
 private:
   ActionableStatusGuard(); // no default CTOR
@@ -167,9 +167,8 @@ public:
 
   //! Disables all future actions from running on this resource
   void kill(const ActionableStatusGuard& aGuard);
-  
-private:
 
+private:
   //! Throws if guard is not for this status instance
   void throwIfWrongGuard(const ActionableStatusGuard& aGuard) const;
 

@@ -78,10 +78,11 @@ ActionableStatusGuard::~ActionableStatusGuard()
 }
   
 //------------------------------------------------------------------------------------
-const MutableActionableStatus& ActionableStatusGuard::getStatus() const
+bool ActionableStatusGuard::isCorrectGuard(const MutableActionableStatus& aStatus) const
 {
-  return mStatus;
+  return (&mStatus == &aStatus);
 }
+
 
 
 //------------------------------------------------------------------------------------
@@ -172,7 +173,6 @@ void MutableActionableStatus::setState(const std::string& aState, const Actionab
 {
   throwIfWrongGuard(aGuard);
   mStatus.mState = aState;
-  
 }
 
 //------------------------------------------------------------------------------------
@@ -199,10 +199,10 @@ void MutableActionableStatus::kill(const ActionableStatusGuard& aGuard)
 //------------------------------------------------------------------------------------
 void MutableActionableStatus::throwIfWrongGuard(const ActionableStatusGuard& aGuard) const
 {
-  if (this != &aGuard.getStatus())
+  if ( ! aGuard.isCorrectGuard(*this) )
     throw IncorrectActionableGuard("");
 }
 
-  
+
 } // end ns core
 } // end ns swatch

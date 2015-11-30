@@ -59,6 +59,12 @@ public:
     void operator()(Object* aObject);
   };
   
+  //! Locks mutex of system & all children involved in system state machine
+  typedef boost::shared_ptr<const ActionableStatusGuard> StatusGuardPtr_t;
+  typedef std::map<const swatch::core::MonitorableObject*, StatusGuardPtr_t> StatusGuardMap_t;
+  // TODO: move into being private state method of ActionableStatusGuard (or just method in same file), with collection of status pointers as argument
+  static StatusGuardMap_t lockMutexes(const SystemStateMachine&);
+
 protected:
   /*!
    * @brief Register a finite state machine in this system, with specified ID
@@ -71,12 +77,6 @@ protected:
   virtual void retrieveMetricValues() {}
   
 private:
-
-  //! Locks mutex of system & all children involved in system state machine
-  typedef boost::shared_ptr<ActionableStatusGuard> StatusGuardPtr_t;
-  typedef std::map<const swatch::core::MonitorableObject*, StatusGuardPtr_t> StatusGuardMap_t;
-  //! move into being private state method of ActionableStatusGuard (or just method in same file), with collection of status pointers as argument
-  static StatusGuardMap_t lockMutexes(const SystemStateMachine&);
   
   tStateMachineMap mFSMs;
   
@@ -99,7 +99,6 @@ private:
     std::map<const ActionableObject*, tChildGuardPtr> mChildGuardMap;
   };
 
-  friend class SystemStateMachine;
   friend class SystemTransition;
 };
 
