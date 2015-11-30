@@ -153,7 +153,8 @@ bool operator !=(const CommandVec::MissingParam& l1, const CommandVec::MissingPa
 //! Provides a snapshot of the progress/status of a swatch::core::CommandVec
 class CommandVecStatus : public ActionStatus {
 public:
-  
+    CommandVecStatus(const std::string& aPath, ActionStatus::State aState, float aRunningTime, const Command* aCurrentCommand, const std::vector<CommandStatus>& aFinishedCommandStatuses, size_t aTotalNumberOfCommands);
+
     //! Returns fraction progress of sequence - range [0,1] inclusive
     float getProgress() const;
 
@@ -170,14 +171,10 @@ public:
     const std::vector<CommandStatus>& getCommandStatus() const;
     
 private:
-    CommandVecStatus(const std::string& aPath, ActionStatus::State aState, float aRunningTime, const Command* aCurrentCommand, const std::vector<CommandStatus>& aFinishedCommandStatuses, size_t aTotalNumberOfCommands);
-
     // const Command* mCurrentCommand;
     size_t mTotalNumberOfCommands;
     std::vector<const xdata::Serializable*> mResults;
     std::vector<CommandStatus> mCommandStatuses;
-
-    friend class CommandVec;
 };
 
 } /* namespace core */

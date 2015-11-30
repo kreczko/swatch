@@ -149,6 +149,13 @@ private:
 
 class SystemTransitionStatus : public ActionStatus {
 public:
+  typedef boost::shared_ptr<const StateMachine::TransitionStatus> ChildStatusRef_t;
+  typedef std::vector<ChildStatusRef_t> StepStatus_t;
+  typedef std::vector<StepStatus_t> StepStatusVec_t;
+  typedef StepStatusVec_t::const_iterator const_iterator;
+
+  SystemTransitionStatus(const std::string& aPath, ActionStatus::State aState, float aRunningTime, const SystemTransition::Step* aCurrentStep, const StepStatusVec_t& aFinishedStepStatuses, size_t aTotalNumSteps);
+
   //! Returns fraction progress of transition - range [0,1] inclusive
   float getProgress() const;
 
@@ -158,20 +165,12 @@ public:
   //! Number of steps in the transition
   size_t getTotalNumberOfSteps() const;
 
-  typedef boost::shared_ptr<const StateMachine::TransitionStatus> tChildStatusRef;
-  typedef std::vector<tChildStatusRef> tStepStatus;
-  typedef std::vector<tStepStatus> tStepStatusVec;
-  typedef tStepStatusVec::const_iterator const_iterator;
   //! Returns status of steps that have started/completed execution 
-  const tStepStatusVec& getStepStatus() const;
-
-private:
-  SystemTransitionStatus(const std::string& aPath, ActionStatus::State aState, float aRunningTime, const SystemTransition::Step* aCurrentStep, const tStepStatusVec& aFinishedStepStatuses, size_t aTotalNumSteps);
+  const StepStatusVec_t& getStepStatus() const;
 
   size_t mTotalNumSteps;
   size_t mNumCompletedSteps;
-  tStepStatusVec mStepStatuses;
-  friend class SystemTransition;
+  StepStatusVec_t mStepStatuses;
 };
   
   

@@ -143,6 +143,7 @@ private:
 //! Provides a snapshot of the progress/status of a swatch::core::Command
 class CommandStatus : public ActionStatus {
 public:
+    CommandStatus(const std::string& aPath, ActionStatus::State aState, float aRunningTime, float aProgress, const std::string& aStatusMsg, const ReadOnlyXParameterSet& aParamSet, const boost::shared_ptr<xdata::Serializable>& aResult);
 
     //! Returns fractional progress of command; range [0,1]
     float getProgress() const;
@@ -159,14 +160,10 @@ public:
     std::string getResultAsString() const;
     
 private:
-    CommandStatus(const std::string& aPath, ActionStatus::State aState, float aRunningTime, float aProgress, const std::string& aStatusMsg, const ReadOnlyXParameterSet& aParamSet, const boost::shared_ptr<xdata::Serializable>& aResult);
-
     float progress_;
     std::string statusMsg_;
     ReadOnlyXParameterSet params_;
     boost::shared_ptr<xdata::Serializable> result_;
-
-    friend class Command;
 };
 
 } // namespace core

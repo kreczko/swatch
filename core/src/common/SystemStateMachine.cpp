@@ -608,6 +608,24 @@ SystemStateMachine::State& SystemStateMachine::getState(const std::string& aStat
 //------------------------------------------------------------------------------------
 
 
+SystemTransitionStatus::SystemTransitionStatus(const std::string& aPath, ActionStatus::State aState, float aRunningTime, const SystemTransition::Step* aCurrentStep, const StepStatusVec_t& aFinishedStepStatuses, size_t aTotalNumSteps) :
+  ActionStatus(aPath, aState, aRunningTime),
+  mTotalNumSteps( aTotalNumSteps ),
+  mNumCompletedSteps( aFinishedStepStatuses.size() ),
+  mStepStatuses( aFinishedStepStatuses )
+{
+  if (aCurrentStep != NULL)
+  {
+    mStepStatuses.push_back( std::vector< boost::shared_ptr<const StateMachine::TransitionStatus> > ());
+    for(std::vector<StateMachine::Transition*>::const_iterator lIt=aCurrentStep->cget().begin(); lIt!=aCurrentStep->cget().end(); lIt++)
+    {
+      boost::shared_ptr<const StateMachine::TransitionStatus> childStatus(new StateMachine::TransitionStatus((*lIt)->getStatus())); 
+      mStepStatuses.back().push_back( childStatus );
+    }
+  } 
+}
+
+
 float SystemTransitionStatus::getProgress() const
 {
   if(mTotalNumSteps == 0)
@@ -649,23 +667,6 @@ const std::vector< std::vector<boost::shared_ptr<const StateMachine::TransitionS
   return mStepStatuses;
 }
 
-
-SystemTransitionStatus::SystemTransitionStatus(const std::string& aPath, ActionStatus::State aState, float aRunningTime, const SystemTransition::Step* aCurrentStep, const tStepStatusVec& aFinishedStepStatuses, size_t aTotalNumSteps) :
-  ActionStatus(aPath, aState, aRunningTime),
-  mTotalNumSteps( aTotalNumSteps ),
-  mNumCompletedSteps( aFinishedStepStatuses.size() ),
-  mStepStatuses( aFinishedStepStatuses )
-{
-  if (aCurrentStep != NULL)
-  {
-    mStepStatuses.push_back( std::vector< boost::shared_ptr<const StateMachine::TransitionStatus> > ());
-    for(std::vector<StateMachine::Transition*>::const_iterator lIt=aCurrentStep->cget().begin(); lIt!=aCurrentStep->cget().end(); lIt++)
-    {
-      boost::shared_ptr<const StateMachine::TransitionStatus> childStatus(new StateMachine::TransitionStatus((*lIt)->getStatus())); 
-      mStepStatuses.back().push_back( childStatus );
-    }
-  } 
-}
 
 
 }
