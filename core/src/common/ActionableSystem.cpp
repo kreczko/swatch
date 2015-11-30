@@ -107,7 +107,7 @@ ActionableSystem::StatusGuardMap_t ActionableSystem::lockMutexes(const SystemSta
   std::vector<boost::mutex*> lMutexes;
   lMutexes.push_back( &aOp.getActionable().mStatus.mMutex );
   for(std::set<const StateMachine*>::const_iterator lIt=aOp.getParticipants().begin(); lIt!=aOp.getParticipants().end(); lIt++)
-    lMutexes.push_back( &(*lIt)->mResource.mStatus.mMutex );
+    lMutexes.push_back( &(*lIt)->getActionable().mStatus.mMutex );
 
   boost::indirect_iterator<std::vector<boost::mutex*>::iterator> begin(lMutexes.begin()), end(lMutexes.end());
   boost::lock(begin, end);

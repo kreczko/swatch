@@ -143,7 +143,6 @@ private:
 
   std::map<std::string, State*> mStateMap;
   
-  friend class ActionableSystem;
   friend class SystemStateMachine;
 };
 
