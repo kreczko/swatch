@@ -288,8 +288,6 @@ private:
 
   //! Pointer to this object's parent
   Object* parent_;
-
-  friend class iterator;
 };
 
 
