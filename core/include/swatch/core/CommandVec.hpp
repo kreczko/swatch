@@ -48,11 +48,12 @@ public:
     const std::string& getNamespace() const;
     
     const Command& get() const;
+
+    Command& get();
     
   private:
     Command* mCmd;
     std::string mNamespace;
-    friend class CommandVec;
   };
 
 //  const ActionableObject& getActionable() const;
@@ -68,7 +69,7 @@ public:
   const_iterator end() const;
 
   std::vector<Command*> getCommands();
-  
+
   /**
    * Run the sequence, extracting the parameters for each command from the supplied gatekeeper
    * 

@@ -73,17 +73,10 @@ const Command& CommandVec::Element::get() const
   return *mCmd;
 }
 
-
-//const ActionableObject& CommandVec::getActionable() const
-//{
-//  return mResource;
-//}
-//
-//
-//ActionableObject& CommandVec::getActionable()
-//{
-//  return mResource;
-//}
+Command& CommandVec::Element::get()
+{
+  return *mCmd;
+}
 
 
 size_t CommandVec::size() const
@@ -109,7 +102,7 @@ std::vector<Command*> CommandVec::getCommands()
   std::vector<Command*> lCmds;
   lCmds.reserve(size());
   for(auto lIt=mCommands.begin(); lIt!=mCommands.end(); lIt++)
-    lCmds.push_back(lIt->mCmd);
+    lCmds.push_back(&lIt->get());
   return lCmds;
 }
 
@@ -234,7 +227,7 @@ void CommandVec::runCommands(boost::shared_ptr<BusyGuard> aGuard)
     
     while( true ) 
     {
-      mCommandIt->mCmd->exec(aGuard.get(), *lIt , false ); // False = run the commands in this thread!
+      mCommandIt->get().exec(aGuard.get(), *lIt , false ); // False = run the commands in this thread!
       //FIXME: Make exec method return CommandStatus to remove any possibility of race condition ?
 
       CommandStatus status = mCommandIt->get().getStatus();
