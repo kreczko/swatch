@@ -56,10 +56,6 @@ public:
     std::string mNamespace;
   };
 
-//  const ActionableObject& getActionable() const;
-  
-//  ActionableObject& getActionable();
-  
   //! Number of commands
   size_t size() const;
 
