@@ -27,7 +27,6 @@ namespace core {
 
 // Forward declarations      
 class Object;
-class Functionoid;  
 
 // Forward declaration of the object-streaming operator
 std::ostream& operator<< ( std::ostream& aStr , const swatch::core::Object& aObject );
@@ -53,7 +52,6 @@ class Object
   //! Class to iterate over the children of an object
   class iterator : public std::iterator< std::forward_iterator_tag , Object >
   {
-    friend class Object;
     typedef std::deque< std::deque< std::pair<Object*,Deleter*> >::const_iterator > Stack;
   public:
     /**
