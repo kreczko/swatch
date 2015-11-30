@@ -292,7 +292,6 @@ private:
   Object* parent_;
 
   friend class iterator;
-  friend class ObjectView;
 };
 
 
