@@ -125,7 +125,6 @@ BOOST_FIXTURE_TEST_CASE ( VerifyBaseConfig, TestXmlGateKeeperSetup ) {
 }
 
 BOOST_FIXTURE_TEST_CASE ( TestMetricSettings, TestXmlGateKeeperSetup ) {
-	logger::Log::setLogThreshold(logger::kDebug4);
 	LOG(kInfo) << "Running TestXmlGateKeeper/TestMetricSettings";
 
 	XmlGateKeeper gk(config_with_metrics, "RunKey1");
