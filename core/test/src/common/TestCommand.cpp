@@ -50,6 +50,21 @@ struct CommandTestSetup {
 BOOST_AUTO_TEST_SUITE( CommandTestSuite )
 
 
+BOOST_AUTO_TEST_CASE(TestConstruction) {
+  LOG(kInfo) << "Running CommandTestSuite/TestConstruction";
+
+  DummyActionableObject obj("dummy");
+  swatch::core::Command& cmd = obj.registerCommand<DummyCommand>("myTestCommand");
+  
+  BOOST_CHECK_EQUAL(cmd.getId(), "myTestCommand");
+  BOOST_CHECK_EQUAL(cmd.getPath(), obj.getId()+"."+cmd.getId());
+  BOOST_CHECK_EQUAL(&obj.getCommand(cmd.getId()), &cmd);
+  BOOST_CHECK_EQUAL(&obj.getObj(cmd.getId()), (Object*) &cmd);
+
+  BOOST_CHECK_EQUAL(&cmd.getActionable(), &obj);
+}
+
+
 BOOST_FIXTURE_TEST_CASE(TestDefaultParams, CommandTestSetup) {
   LOG(kInfo) << "Running CommandTestSuite/TestDefaultParams";
 

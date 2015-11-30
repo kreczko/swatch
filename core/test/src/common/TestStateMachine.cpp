@@ -101,12 +101,16 @@ BOOST_AUTO_TEST_CASE(TestConstruction) {
   LOG(kInfo) << "Running StateMachineTestSuite/TestConstruction";
 
   DummyActionableObject obj("dummy");
-  swatch::core::StateMachine& fsm = obj.registerStateMachine("anOp", "someState", "myErrState");
-  
+  StateMachine& fsm = obj.registerStateMachine("anOp", "someState", "myErrState");
+
+  BOOST_CHECK_EQUAL(fsm.getId(), "anOp");
+  BOOST_CHECK_EQUAL(fsm.getPath(), obj.getId()+"."+fsm.getId());
+  BOOST_CHECK_EQUAL(&obj.getStateMachine(fsm.getId()), &fsm);
+  BOOST_CHECK_EQUAL(&obj.getObj(fsm.getId()), (Object*) &fsm);
+
   BOOST_CHECK_EQUAL(&fsm.getActionable(), &obj);
   BOOST_CHECK_EQUAL(fsm.getInitialState(), "someState");
   BOOST_CHECK_EQUAL(fsm.getErrorState(), "myErrState");
-  BOOST_CHECK_EQUAL( &obj.getObj(fsm.getId()), (Object*) &fsm);
   
   std::vector<std::string> expectedStates = {"someState", "myErrState"};
   BOOST_CHECK_EQUAL_COLLECTIONS( fsm.getStates().begin(), fsm.getStates().end(), expectedStates.begin(), expectedStates.end() );

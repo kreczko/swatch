@@ -20,8 +20,6 @@ CommandSequence::CommandSequence( const std::string& aId, ActionableObject& aRes
   CommandVec(aId, aResource)
 {
   run(aFirstCommandId, aFirstCommandAlias);
-
-  aResource.addObj(this);
 }
 
 
@@ -29,8 +27,6 @@ CommandSequence::CommandSequence( const std::string& aId, ActionableObject& aRes
   CommandVec(aId, aResource)
 {
   run(aFirstCommand, aFirstCommandAlias);
-
-  aResource.addObj(this);
 }
 
 

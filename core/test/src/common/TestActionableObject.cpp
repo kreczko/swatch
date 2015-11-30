@@ -82,6 +82,9 @@ BOOST_FIXTURE_TEST_CASE(TestRegisterCommand,  ActionableObjectTestSetup) {
   size_t n_commands = handler->getCommands().size();
   Command& registeredCmd = handler->registerCommand<DummyCommand>("dummy_5000");
   
+  BOOST_CHECK_EQUAL(registeredCmd.getId(), "dummy_5000");
+  BOOST_CHECK_EQUAL(registeredCmd.getPath(), handler->getId()+"."+registeredCmd.getId());
+
   size_t n_commands_after = handler->getCommands().size();
   BOOST_CHECK_EQUAL(n_commands_after, n_commands + 1);
   BOOST_CHECK_EQUAL( & handler->getCommand("dummy_5000"), & registeredCmd);
@@ -97,10 +100,14 @@ BOOST_FIXTURE_TEST_CASE(TestGetCommand,  ActionableObjectTestSetup) {
 
 BOOST_FIXTURE_TEST_CASE(TestRegisterStateMachine,  ActionableObjectTestSetup) {
   LOG(kInfo) << "Running ActionableObjectTestSuite/TestRegisterStateMachine";
-  size_t n_ctrl = handler->getStateMachines().size();
-  handler->registerStateMachine("dummyOp_5000", "NULL", "ERR");
-  size_t n_ctrl_after = handler->getStateMachines().size();
-  BOOST_CHECK_EQUAL(n_ctrl_after, n_ctrl + 1);
+  size_t n_fsm = handler->getStateMachines().size();
+  StateMachine& registeredSM = handler->registerStateMachine("dummyOp_5000", "NULL", "ERR");
+  
+  BOOST_CHECK_EQUAL(registeredSM.getId(), "dummyOp_5000");
+  BOOST_CHECK_EQUAL(registeredSM.getPath(), handler->getId()+"."+registeredSM.getId());
+
+  size_t n_fsm_after = handler->getStateMachines().size();
+  BOOST_CHECK_EQUAL(n_fsm_after, n_fsm + 1);
 }
 
 

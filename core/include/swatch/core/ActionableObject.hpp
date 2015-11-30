@@ -183,9 +183,7 @@ public:
   friend class Command;
   friend class CommandSequence;
   friend class CommandVec;
-  friend class StateMachine;
   friend class SystemTransition;
-  friend class SystemStateMachine;
 };
 
 

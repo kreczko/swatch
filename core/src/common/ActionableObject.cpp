@@ -118,6 +118,7 @@ CommandSequence& ActionableObject::registerSequence( const std::string& aId, con
     throw CommandSequenceAlreadyExistsInActionableObject( "CommandSequence With ID '"+aId+"' already exists" );
   }
   CommandSequence* lSequence = new CommandSequence(aId, *this, aFirstCommandId, aFirstCommandNamespace);
+  addObj(lSequence);
   mCommandSequences.insert( std::make_pair( aId , lSequence ) );
   return *lSequence;
 }
@@ -130,6 +131,7 @@ CommandSequence& ActionableObject::registerSequence( const std::string& aId, Com
     throw CommandSequenceAlreadyExistsInActionableObject( "CommandSequence With ID '"+aId+"' already exists" );
   }
   CommandSequence* lSequence = new CommandSequence(aId, *this, aFirstCommand, aFirstCommandNamespace);
+  addObj(lSequence);
   mCommandSequences.insert( std::make_pair( aId , lSequence ) );
   return *lSequence;
 }
@@ -154,6 +156,7 @@ StateMachine& ActionableObject::registerStateMachine( const std::string& aId, co
     throw StateMachineAlreadyExistsInActionableObject( "State machine With ID '"+aId+"' already exists" );
 
   StateMachine* lFSM = new StateMachine(aId, *this, mStatus, aInitialState, aErrorState);
+  addObj(lFSM);
   mFSMs.insert( std::make_pair( aId , lFSM ) );
   return *lFSM;
 }

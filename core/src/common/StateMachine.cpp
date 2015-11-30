@@ -24,8 +24,6 @@ StateMachine::StateMachine(const std::string& aId, ActionableObject& aResource, 
 {
   addState(mInitialState);
   addState(mErrorState);
-
-  aResource.addObj(this);
 }
 
 

@@ -65,6 +65,7 @@ SystemStateMachine& ActionableSystem::registerStateMachine( const std::string& a
     throw StateMachineAlreadyExistsInActionableObject( "State machine With ID '"+aId+"' already exists" );
 
   SystemStateMachine* lFSM = new SystemStateMachine(aId, *this, mStatus, aInitialState, aErrorState);
+  addObj(lFSM);
   mFSMs.insert( std::make_pair( aId , lFSM ) );
   return *lFSM;
 }

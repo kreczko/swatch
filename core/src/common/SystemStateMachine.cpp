@@ -364,8 +364,6 @@ SystemStateMachine::SystemStateMachine(const std::string& aId, ActionableSystem&
 {
   addState(mInitialState);
   addState(mErrorState);
-  
-  aResource.addObj(this);
 }
 
 
