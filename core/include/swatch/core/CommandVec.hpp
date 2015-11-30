@@ -83,7 +83,7 @@ public:
    * @param aGateKeeper Gatekeeper that's used to extract the parameters
    * @param aUseThreadPool Run the command asynchronously in the swatch::core::ThreadPool ; if equals false, then the command is run synchronously
    */
-  void exec(const ActionableObject::BusyGuard* aGuard, const GateKeeper& aGateKeeper, const bool& aUseThreadPool = true );
+  void exec(const BusyGuard* aGuard, const GateKeeper& aGateKeeper, const bool& aUseThreadPool = true );
 
   //! Returns current state of this command sequence
   ActionStatus::State getState() const;
@@ -111,7 +111,7 @@ private:
   void extractParameters(const GateKeeper& aGateKeeper, std::vector<ReadOnlyXParameterSet>& aParamSets, std::vector<MissingParam>& aMissingParams, bool throwOnMissing) const;
 
   //! thread safe exception-catching wrapper for code()
-  void runCommands(boost::shared_ptr<ActionableObject::BusyGuard> aGuard);
+  void runCommands(boost::shared_ptr<BusyGuard> aGuard);
 
 //  ActionableObject& mResource;
 

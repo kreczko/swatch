@@ -119,7 +119,7 @@ void CommandVec::exec(const GateKeeper& aGateKeeper, const bool& aUseThreadPool 
   exec(NULL, aGateKeeper, aUseThreadPool);
 }
 
-void CommandVec::exec(const ActionableObject::BusyGuard* aOuterBusyGuard, const GateKeeper& aGateKeeper, const bool& aUseThreadPool )
+void CommandVec::exec(const BusyGuard* aOuterBusyGuard, const GateKeeper& aGateKeeper, const bool& aUseThreadPool )
 {
   // 1) Extract parameters before creating busy guard (so that resource doesn't change states if parameter is missing)
   std::vector<ReadOnlyXParameterSet> lParamSets;
@@ -129,7 +129,7 @@ void CommandVec::exec(const ActionableObject::BusyGuard* aOuterBusyGuard, const 
   extractMonitoringSettings(aGateKeeper, lMonSettings);
 
   // 2) Create busy guard
-  boost::shared_ptr<ActionableObject::BusyGuard> lBusyGuard(new ActionableObject::BusyGuard(*this, mActionableStatus, aOuterBusyGuard));
+  boost::shared_ptr<BusyGuard> lBusyGuard(new BusyGuard(*this, mActionableStatus, aOuterBusyGuard));
 
 // FIXME: Re-implement parameter cache at some future date; disabled by Tom on 28th August, since ...
 //        ... current logic doesn't work correctly with different gatekeepers - need to change to ...
@@ -160,7 +160,7 @@ void CommandVec::exec(const ActionableObject::BusyGuard* aOuterBusyGuard, const 
     mState = ActionStatus::kScheduled;
     
     ThreadPool& pool = ThreadPool::getInstance();
-    pool.addTask<CommandVec, ActionableObject::BusyGuard>( this , &CommandVec::runCommands, lBusyGuard);
+    pool.addTask<CommandVec, BusyGuard>( this , &CommandVec::runCommands, lBusyGuard);
   }
   else{
     // otherwise execute in same thread
@@ -205,7 +205,7 @@ CommandVecStatus CommandVec::getStatus() const
 }
 
 
-void CommandVec::runCommands(boost::shared_ptr<ActionableObject::BusyGuard> aGuard)
+void CommandVec::runCommands(boost::shared_ptr<BusyGuard> aGuard)
 {
   // 1) Declare that I'm running 
   {

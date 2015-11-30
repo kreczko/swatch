@@ -89,13 +89,13 @@ private:
     
     ~BusyGuard();
     
-    const ActionableObject::BusyGuard& getChildGuard(const ActionableObject& aChild) const;
+    const swatch::core::BusyGuard& getChildGuard(const ActionableObject& aChild) const;
     
   private:
     ActionableSystem& mSystem;
     MutableActionableStatus& mStatus;
     const Functionoid& mAction;
-    typedef boost::shared_ptr<const ActionableObject::BusyGuard> tChildGuardPtr;
+    typedef boost::shared_ptr<const swatch::core::BusyGuard> tChildGuardPtr;
     std::map<const ActionableObject*, tChildGuardPtr> mChildGuardMap;
   };
 

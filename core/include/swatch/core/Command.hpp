@@ -59,7 +59,7 @@ public:
      * @param aParams Map of parameter values; any default parameters for this command that aren't included in this argument will be merged into the set supplied to the code method
      * @param aUseThreadPool Run the command asynchronously in the swatch::core::ThreadPool ; if equals false, then the command is run synchronously
      */
-    void exec(const ActionableObject::BusyGuard* aOuterBusyGuard, const XParameterSet& aParams , bool aUseThreadPool = true );
+    void exec(const BusyGuard* aOuterBusyGuard, const XParameterSet& aParams , bool aUseThreadPool = true );
 
     //! Returns current state of this command
     ActionStatus::State getState() const;
@@ -105,7 +105,7 @@ private:
     ReadOnlyXParameterSet mergeParametersWithDefaults(const XParameterSet& params) const;
     
     // thread safe exception catching wrapper for code()
-    void runCode(boost::shared_ptr<ActionableObject::BusyGuard> aGuard, const XParameterSet& aParams );
+    void runCode(boost::shared_ptr<BusyGuard> aGuard, const XParameterSet& aParams );
 
     MutableActionableStatus& mActionableStatus;
     

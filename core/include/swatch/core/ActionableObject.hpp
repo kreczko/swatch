@@ -153,23 +153,6 @@ private:
   log4cplus::Logger mLogger;
 
 public:
-  class BusyGuard : public boost::noncopyable {
-  public:
-    BusyGuard(ObjectFunctionoid& aAction, MutableActionableStatus& aStatus, const BusyGuard* aOuterGuard=NULL);
-    BusyGuard(ActionableObject& aResource, MutableActionableStatus& aStatus, const ActionableStatusGuard& aStatusGuard, const Functionoid& aAction, const BusyGuard* aOuterGuard=NULL);
-
-    ~BusyGuard();
-    
-  private:
-    ActionableObject& mActionableObj;
-    MutableActionableStatus& mStatus;
-    const Functionoid& mAction;
-    const BusyGuard* mOuterGuard;
-    
-    void initialise(const ActionableStatusGuard& aStatusGuard);
-  };
-
-public:
   struct ActionFmt {
   public:
     ActionFmt(const Functionoid* aAction);
@@ -181,6 +164,25 @@ public:
   friend class Command;
   friend class CommandVec;
   friend class SystemTransition;
+};
+
+
+class BusyGuard : public boost::noncopyable {
+public:
+  BusyGuard(ObjectFunctionoid& aAction, MutableActionableStatus& aStatus, const BusyGuard* aOuterGuard=NULL);
+  BusyGuard(ActionableObject& aResource, MutableActionableStatus& aStatus, const ActionableStatusGuard& aStatusGuard, const Functionoid& aAction, const BusyGuard* aOuterGuard=NULL);
+
+  ~BusyGuard();
+
+private:
+  ActionableObject& mActionableObj;
+  MutableActionableStatus& mStatus;
+  const Functionoid& mAction;
+  const BusyGuard* mOuterGuard;
+  
+  typedef ActionableObject::ActionFmt ActionFmt_t;
+
+  void initialise(const ActionableStatusGuard& aStatusGuard);
 };
 
 

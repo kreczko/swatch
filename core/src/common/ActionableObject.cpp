@@ -198,112 +198,6 @@ void ActionableObject::Deleter::operator ()(Object* aObject)
 }
 
 
-//------------------------------------------------------------------------------------
-ActionableObject::BusyGuard::BusyGuard(ObjectFunctionoid& aAction, MutableActionableStatus& aStatus, const BusyGuard* aOuterGuard) : 
-  mActionableObj(aAction.getActionable()),
-  mStatus(aStatus),
-  mAction(aAction),
-  mOuterGuard(aOuterGuard)
-{
-  ActionableStatusGuard lGuard(mStatus);
-  initialise(lGuard);
-}
-
-
-//------------------------------------------------------------------------------------
-ActionableObject::BusyGuard::BusyGuard(ActionableObject& aResource, MutableActionableStatus& aStatus, const ActionableStatusGuard& aStatusGuard, const Functionoid& aAction, const BusyGuard* aOuterGuard) : 
-  mActionableObj(aResource),
-  mStatus(aStatus),
-  mAction(aAction),
-  mOuterGuard(aOuterGuard)
-{
-  initialise(aStatusGuard);
-}
-
-
-//------------------------------------------------------------------------------------
-void ActionableObject::BusyGuard::initialise(const ActionableStatusGuard& aStatusGuard)
-{
-  Status lStatusSnapshot = mStatus.getSnapshot(aStatusGuard);
-  // Consistency checks on outer busy guard
-  if(mOuterGuard != NULL)
-  {
-    if (&mOuterGuard->mActionableObj != &mActionableObj)
-      throw WrongBusyGuard( "Incompatible outer BusyGuard, resource='"+mOuterGuard->mActionableObj.getPath()+"'. Inner guard resource is '"+mActionableObj.getPath() );
-    else if ( lStatusSnapshot.getRunningActions().empty() )
-      throw WrongBusyGuard( "Outer BusyGuard used (resource: '"+mActionableObj.getPath()+"', action: '"+mOuterGuard->mAction.getId()+"'), but resource not busy");
-    else if ( &mOuterGuard->mAction != lStatusSnapshot.getLastRunningAction() )
-      throw WrongBusyGuard( "Outer BusyGuard (resource: '"+mActionableObj.getPath()+"', action: '"+mOuterGuard->mAction.getId()+"') is not for current action '"+lStatusSnapshot.getLastRunningAction()->getId()+"'" );
-  }
-
-  // 0) Check that this this action isn't already running
-  if (std::count(lStatusSnapshot.getRunningActions().begin(), lStatusSnapshot.getRunningActions().end(), &mAction) > 0 )
-    throw ActionableObjectIsBusy( "Action '"+mAction.getId()+"' is already running on resource '"+mActionableObj.getPath()+"'" );
-
-  // 1) For transitions, check that state machine is engaged, and we're in the right state
-  if (const StateMachine::Transition* t = dynamic_cast<const StateMachine::Transition*>(&mAction))
-  {
-	if( lStatusSnapshot.getStateMachineId() != t->getStateMachine().getId())
-      throw ResourceInWrongState("Resource '"+mActionableObj.getPath()+"' is not yet engaged in state machine '"+t->getStateMachine().getId()+"'");
-        else if ( lStatusSnapshot.getState() != t->getStartState() )
-      throw ResourceInWrongState("Resource '"+mActionableObj.getPath()+"' is in state '"+lStatusSnapshot.getState()+"'; transition '"+t->getId()+"' cannot be run");
-  }
-  
-  // 2) Claim the resource if free; else throw if can't get sole control of it
-  if ( lStatusSnapshot.isAlive() && ( (mOuterGuard != NULL) || !lStatusSnapshot.isRunning() ) )
-  {
-    if ( !lStatusSnapshot.isRunning() )
-      LOG4CPLUS_INFO(mActionableObj.getLogger(), mActionableObj.getPath() << " : Starting " << ActionFmt(&mAction));
-    else
-      LOG4CPLUS_INFO(mActionableObj.getLogger(), mActionableObj.getPath() << " : Starting " << ActionFmt(&mAction) << " within " << ActionFmt(lStatusSnapshot.getLastRunningAction()));
-    mStatus.addAction(mAction, aStatusGuard);
-  }
-  else
-  {
-    std::ostringstream oss;
-    oss << "Could not run action '" << mAction.getId() << "' on resource '" << mActionableObj.getPath() << "'. ";
-
-    if ( lStatusSnapshot.isRunning() )
-	  oss << "Resource currently busy running functionoid '" << lStatusSnapshot.getLastRunningAction()->getId() << "'.";
-    else
-      oss << "Actions currently disabled on this resource.";
-
-   LOG4CPLUS_INFO(mActionableObj.getLogger(), oss.str());
-   throw ActionableObjectIsBusy(oss.str());
-  } 
-}
-
-
-
-
-ActionableObject::BusyGuard::~BusyGuard()
-{  
-  ActionableStatusGuard lGuard(mStatus);
-  Status lStatusSnapshot = mStatus.getSnapshot(lGuard);
-  LOG4CPLUS_INFO(mActionableObj.getLogger(), mActionableObj.getPath() << " : Finished " << ActionFmt(&mAction));
-
-  if ( lStatusSnapshot.isRunning() && (&mAction == lStatusSnapshot.getLastRunningAction()) )
-  {
-    mStatus.popAction(lGuard);
-    
-    // In case this was a transition, also update object's current state
-    if (const StateMachine::Transition* t = dynamic_cast<const StateMachine::Transition*>(&mAction))
-    {
-      if(t->getStatus().getState() == ActionStatus::kError)
-        mStatus.setState(t->getStateMachine().getErrorState(), lGuard);
-      else
-        mStatus.setState(t->getEndState(), lGuard);
-    }
-  }
-  else
-  {
-    size_t lNrActions = lStatusSnapshot.getRunningActions().size();
-    const std::string activeFuncId(lNrActions > 0 ? "NULL" : "'" + lStatusSnapshot.getLastRunningAction()->getId() + "' (innermost of "+boost::lexical_cast<std::string>(lNrActions)+")");
-    LOG4CPLUS_ERROR(mActionableObj.getLogger(), "unexpected active functionoid " << activeFuncId << "  in BusyGuard destructor for resource '" << mActionableObj.getPath() << "', functionoid '" << mAction.getId() << "'");
-  }
-}
-
-
 ActionableObject::ActionFmt::ActionFmt(const Functionoid* aAction) : 
   mAction(aAction)
 {
@@ -333,6 +227,112 @@ std::ostream& operator<<(std::ostream& aStream, const ActionableObject::ActionFm
 
   return aStream;
 }
+
+
+//------------------------------------------------------------------------------------
+BusyGuard::BusyGuard(ObjectFunctionoid& aAction, MutableActionableStatus& aStatus, const BusyGuard* aOuterGuard) : 
+  mActionableObj(aAction.getActionable()),
+  mStatus(aStatus),
+  mAction(aAction),
+  mOuterGuard(aOuterGuard)
+{
+  ActionableStatusGuard lGuard(mStatus);
+  initialise(lGuard);
+}
+
+
+//------------------------------------------------------------------------------------
+BusyGuard::BusyGuard(ActionableObject& aResource, MutableActionableStatus& aStatus, const ActionableStatusGuard& aStatusGuard, const Functionoid& aAction, const BusyGuard* aOuterGuard) : 
+  mActionableObj(aResource),
+  mStatus(aStatus),
+  mAction(aAction),
+  mOuterGuard(aOuterGuard)
+{
+  initialise(aStatusGuard);
+}
+
+
+//------------------------------------------------------------------------------------
+void BusyGuard::initialise(const ActionableStatusGuard& aStatusGuard)
+{
+  ActionableStatus lStatusSnapshot = mStatus.getSnapshot(aStatusGuard);
+  // Consistency checks on outer busy guard
+  if(mOuterGuard != NULL)
+  {
+    if (&mOuterGuard->mActionableObj != &mActionableObj)
+      throw WrongBusyGuard( "Incompatible outer BusyGuard, resource='"+mOuterGuard->mActionableObj.getPath()+"'. Inner guard resource is '"+mActionableObj.getPath() );
+    else if ( lStatusSnapshot.getRunningActions().empty() )
+      throw WrongBusyGuard( "Outer BusyGuard used (resource: '"+mActionableObj.getPath()+"', action: '"+mOuterGuard->mAction.getId()+"'), but resource not busy");
+    else if ( &mOuterGuard->mAction != lStatusSnapshot.getLastRunningAction() )
+      throw WrongBusyGuard( "Outer BusyGuard (resource: '"+mActionableObj.getPath()+"', action: '"+mOuterGuard->mAction.getId()+"') is not for current action '"+lStatusSnapshot.getLastRunningAction()->getId()+"'" );
+  }
+
+  // 0) Check that this this action isn't already running
+  if (std::count(lStatusSnapshot.getRunningActions().begin(), lStatusSnapshot.getRunningActions().end(), &mAction) > 0 )
+    throw ActionableObjectIsBusy( "Action '"+mAction.getId()+"' is already running on resource '"+mActionableObj.getPath()+"'" );
+
+  // 1) For transitions, check that state machine is engaged, and we're in the right state
+  if (const StateMachine::Transition* t = dynamic_cast<const StateMachine::Transition*>(&mAction))
+  {
+	if( lStatusSnapshot.getStateMachineId() != t->getStateMachine().getId())
+      throw ResourceInWrongState("Resource '"+mActionableObj.getPath()+"' is not yet engaged in state machine '"+t->getStateMachine().getId()+"'");
+        else if ( lStatusSnapshot.getState() != t->getStartState() )
+      throw ResourceInWrongState("Resource '"+mActionableObj.getPath()+"' is in state '"+lStatusSnapshot.getState()+"'; transition '"+t->getId()+"' cannot be run");
+  }
+  
+  // 2) Claim the resource if free; else throw if can't get sole control of it
+  if ( lStatusSnapshot.isAlive() && ( (mOuterGuard != NULL) || !lStatusSnapshot.isRunning() ) )
+  {
+    if ( !lStatusSnapshot.isRunning() )
+      LOG4CPLUS_INFO(mActionableObj.getLogger(), mActionableObj.getPath() << " : Starting " << ActionFmt_t(&mAction));
+    else
+      LOG4CPLUS_INFO(mActionableObj.getLogger(), mActionableObj.getPath() << " : Starting " << ActionFmt_t(&mAction) << " within " << ActionFmt_t(lStatusSnapshot.getLastRunningAction()));
+    mStatus.addAction(mAction, aStatusGuard);
+  }
+  else
+  {
+    std::ostringstream oss;
+    oss << "Could not run action '" << mAction.getId() << "' on resource '" << mActionableObj.getPath() << "'. ";
+
+    if ( lStatusSnapshot.isRunning() )
+	  oss << "Resource currently busy running functionoid '" << lStatusSnapshot.getLastRunningAction()->getId() << "'.";
+    else
+      oss << "Actions currently disabled on this resource.";
+
+   LOG4CPLUS_INFO(mActionableObj.getLogger(), oss.str());
+   throw ActionableObjectIsBusy(oss.str());
+  } 
+}
+
+//------------------------------------------------------------------------------------
+BusyGuard::~BusyGuard()
+{  
+  ActionableStatusGuard lGuard(mStatus);
+  ActionableStatus lStatusSnapshot = mStatus.getSnapshot(lGuard);
+  LOG4CPLUS_INFO(mActionableObj.getLogger(), mActionableObj.getPath() << " : Finished " << ActionFmt_t(&mAction));
+
+  if ( lStatusSnapshot.isRunning() && (&mAction == lStatusSnapshot.getLastRunningAction()) )
+  {
+    mStatus.popAction(lGuard);
+    
+    // In case this was a transition, also update object's current state
+    if (const StateMachine::Transition* t = dynamic_cast<const StateMachine::Transition*>(&mAction))
+    {
+      if(t->getStatus().getState() == ActionStatus::kError)
+        mStatus.setState(t->getStateMachine().getErrorState(), lGuard);
+      else
+        mStatus.setState(t->getEndState(), lGuard);
+    }
+  }
+  else
+  {
+    size_t lNrActions = lStatusSnapshot.getRunningActions().size();
+    const std::string activeFuncId(lNrActions > 0 ? "NULL" : "'" + lStatusSnapshot.getLastRunningAction()->getId() + "' (innermost of "+boost::lexical_cast<std::string>(lNrActions)+")");
+    LOG4CPLUS_ERROR(mActionableObj.getLogger(), "unexpected active functionoid " << activeFuncId << "  in BusyGuard destructor for resource '" << mActionableObj.getPath() << "', functionoid '" << mAction.getId() << "'");
+  }
+}
+
+
 
 log4cplus::Logger& ActionableObject::getLogger() {
   return mLogger;

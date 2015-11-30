@@ -35,9 +35,9 @@ Command::exec( const XParameterSet& aParams, bool aUseThreadPool )
 
 //------------------------------------------------------------------------------------
 void 
-Command::exec(const ActionableObject::BusyGuard* aOuterBusyGuard, const XParameterSet& params, bool aUseThreadPool ) 
+Command::exec(const BusyGuard* aOuterBusyGuard, const XParameterSet& params, bool aUseThreadPool ) 
 {
-  boost::shared_ptr<ActionableObject::BusyGuard> lBusyGuard(new ActionableObject::BusyGuard(*this, mActionableStatus, aOuterBusyGuard));
+  boost::shared_ptr<BusyGuard> lBusyGuard(new BusyGuard(*this, mActionableStatus, aOuterBusyGuard));
 
   // Reset the status before doing anything else, merging user-supplied parameter values with default values
   resetForRunning(params);
@@ -50,7 +50,7 @@ Command::exec(const ActionableObject::BusyGuard* aOuterBusyGuard, const XParamet
       state_ = ActionStatus::kScheduled;
       
       ThreadPool& pool = ThreadPool::getInstance();
-      pool.addTask<Command,ActionableObject::BusyGuard>(this, &Command::runCode, lBusyGuard, runningParams_);
+      pool.addTask<Command,BusyGuard>(this, &Command::runCode, lBusyGuard, runningParams_);
     }
     else{
       // otherwise execute in same thread
@@ -69,7 +69,7 @@ Command::exec(const ActionableObject::BusyGuard* aOuterBusyGuard, const XParamet
 
 
 //------------------------------------------------------------------------------------
-void Command::runCode(boost::shared_ptr<ActionableObject::BusyGuard> aActionGuard, const XParameterSet& params) {
+void Command::runCode(boost::shared_ptr<BusyGuard> aActionGuard, const XParameterSet& params) {
   // 1) Declare that I'm running
   {
     boost::unique_lock<boost::mutex> lock(mutex_);

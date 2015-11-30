@@ -138,7 +138,7 @@ ActionableSystem::BusyGuard::BusyGuard(ActionableSystem& aResource, const Functi
   // 1a) Check that system is engaged in correct state machine, and is in the correct state
   if( mStatus.getStateMachineId(lStatusGuard) !=  lTransition.getStateMachine().getId())
     throw ResourceInWrongStateMachine("Resource '"+aResource.getPath()+"' is not yet engaged in state machine '"+lTransition.getStateMachine().getId()+"'");
-	
+
   else if ( mStatus.getState(lStatusGuard) != lTransition.getStartState() )
     throw ResourceInWrongState("Resource '"+aResource.getPath()+"' is in state '"+mStatus.getState(lStatusGuard)+"'; transition '"+lTransition.getId()+"' cannot be run");
   
@@ -201,12 +201,12 @@ ActionableSystem::BusyGuard::BusyGuard(ActionableSystem& aResource, const Functi
   mStatus.addAction(mAction, lStatusGuard);
   
   BOOST_FOREACH( const tObjTransitionMap::value_type e, childTransitionMap )
-    this->mChildGuardMap[ e.first ] = tChildGuardPtr(new ActionableObject::BusyGuard(*e.first, (e.first)->mStatus, *lStatusGuardMap[e.first].get(), lTransition) );
+    this->mChildGuardMap[ e.first ] = tChildGuardPtr(new swatch::core::BusyGuard(*e.first, (e.first)->mStatus, *lStatusGuardMap[e.first].get(), lTransition) );
 }
 
 
 //------------------------------------------------------------------------------------
-const ActionableObject::BusyGuard& ActionableSystem::BusyGuard::getChildGuard(const ActionableObject& aChild) const
+const swatch::core::BusyGuard& ActionableSystem::BusyGuard::getChildGuard(const ActionableObject& aChild) const
 {
   std::map<const ActionableObject*, tChildGuardPtr>::const_iterator lIt = mChildGuardMap.find(&aChild);
   if (lIt == mChildGuardMap.end())
