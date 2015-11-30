@@ -27,6 +27,7 @@ namespace core {
 
 // Forward declarations      
 class Object;
+class ObjectView;
 
 // Forward declaration of the object-streaming operator
 std::ostream& operator<< ( std::ostream& aStr , const swatch::core::Object& aObject );
