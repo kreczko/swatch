@@ -163,7 +163,6 @@ public:
   friend class ActionableSystem;
   friend class Command;
   friend class CommandVec;
-  friend class SystemTransition;
 };
 
 
