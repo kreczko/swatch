@@ -293,7 +293,6 @@ private:
 
   friend class iterator;
   friend class ObjectView;
-  friend class Functionoid;
 };
 
 
