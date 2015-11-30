@@ -178,10 +178,8 @@ public:
     const Functionoid* const mAction;
   };
 
-  friend class BusyGuard; // Eventually, should be Functionoid/objectFunctionoid ?
   friend class ActionableSystem;
   friend class Command;
-  friend class CommandSequence;
   friend class CommandVec;
   friend class SystemTransition;
 };
