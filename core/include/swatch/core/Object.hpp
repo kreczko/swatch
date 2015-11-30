@@ -236,12 +236,6 @@ protected:
   template <class T>
   void addObj ( Object* aChild, T aDeleter);
 
-  //! Container for child objects, and their deleter functors. Children in this list are deleted by the destructor
-  std::deque< std::pair< Object*, Deleter* > > children_;
-
-  //! Map of children
-  boost::unordered_map< std::string, Object* > objectsChart_;
-
 private:
   /**
     Return the ancestor (parent, grandparent, ...) of the object at specified depth
@@ -288,6 +282,14 @@ private:
 
   //! Pointer to this object's parent
   Object* parent_;
+
+  //! Container for child objects, and their deleter functors. Children in this list are deleted by the destructor
+  std::deque< std::pair< Object*, Deleter* > > children_;
+
+  //! Map of children
+  boost::unordered_map< std::string, Object* > objectsChart_;
+  
+  friend class ObjectView;
 };
 
 
