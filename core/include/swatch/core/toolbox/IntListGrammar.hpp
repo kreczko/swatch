@@ -5,8 +5,8 @@
  * Created on September 15, 2015, 9:23 AM
  */
 
-#ifndef SWATCH_MP7_TOOLBOX_INTLISTGRAMMAR_HPP
-#define	SWATCH_MP7_TOOLBOX_INTLISTGRAMMAR_HPP
+#ifndef __SWATCH_CORE_TOOLBOX_INTLISTGRAMMAR_HPP__
+#define	__SWATCH_CORE_TOOLBOX_INTLISTGRAMMAR_HPP__
 
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/qi_grammar.hpp>
@@ -19,12 +19,12 @@ struct IntListGrammar : boost::spirit::qi::grammar<std::string::const_iterator, 
 {
   IntListGrammar();
   
-  boost::spirit::qi::rule<std::string::const_iterator, std::vector<int>(), boost::spirit::ascii::space_type > query;
-  boost::spirit::qi::rule<std::string::const_iterator, std::vector<int>(), boost::spirit::ascii::space_type > element;
-  boost::spirit::qi::rule<std::string::const_iterator, int(), boost::spirit::ascii::space_type> literal;
-  boost::spirit::qi::rule<std::string::const_iterator, std::vector<int>(), boost::spirit::ascii::space_type > range;
+  boost::spirit::qi::rule<std::string::const_iterator, std::vector<int>(), boost::spirit::ascii::space_type > mQuery;
+  boost::spirit::qi::rule<std::string::const_iterator, std::vector<int>(), boost::spirit::ascii::space_type > mElement;
+  boost::spirit::qi::rule<std::string::const_iterator, int(), boost::spirit::ascii::space_type> mLiteral;
+  boost::spirit::qi::rule<std::string::const_iterator, std::vector<int>(), boost::spirit::ascii::space_type > mRange;
   
-  static void push_back_range(std::vector<int>& v, int aFirst, int aLast);
+  static void push_back_range(std::vector<int>& aVector, int aFirst, int aLast);
 
 };
 
@@ -33,5 +33,5 @@ struct IntListGrammar : boost::spirit::qi::grammar<std::string::const_iterator, 
 } // namespace swatch
 
 
-#endif	/* SWATCH_MP7_TOOLBOX_INTLISTGRAMMAR_HPP */
+#endif	/* __SWATCH_CORE_TOOLBOX_INTLISTGRAMMAR_HPP__ */
 

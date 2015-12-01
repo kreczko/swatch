@@ -5,8 +5,8 @@
  * Created on September 15, 2015, 7:21 AM
  */
 
-#ifndef SWATCH_MP7_TOOLBOX_INTLISTPARSER_HPP
-#define	SWATCH_MP7_TOOLBOX_INTLISTPARSER_HPP
+#ifndef __SWATCH_CORE_TOOLBOX_INTLISTPARSER_HPP__
+#define	__SWATCH_CORE_TOOLBOX_INTLISTPARSER_HPP__
 
 #include <vector>
 #include <string>
@@ -28,5 +28,5 @@ struct UIntListParser {
 } // namespace swatch
 
 
-#endif	/* SWATCH_MP7_TOOLBOX_INTLISTPARSER_HPP */
+#endif	/* __SWATCH_CORE_TOOLBOX_INTLISTPARSER_HPP__ */
 

@@ -15,11 +15,13 @@ IntListGrammar::IntListGrammar() :
 IntListGrammar::base_type(query)
 {
   namespace qi = boost::spirit::qi;
-  query = element % ',';
+  namespace phx = boost::phoenix;
 
-  element = (range | literal);
-  literal = qi::int_;
-  range = (qi::int_ >> '-' >> qi::int_)[boost::phoenix::bind(&push_back_range, qi::_val, qi::_1, qi::_2) ];
+  mQuery = mElement % ',';
+
+  mElement = (mRange | mLiteral);
+  mLiteral = qi::int_;
+  mRange = (qi::int_ >> '-' >> qi::int_)[phx::bind(&push_back_range, qi::_val, qi::_1, qi::_2) ];
 
   //  BOOST_SPIRIT_DEBUG_NODES((query));
 }
@@ -32,7 +34,7 @@ void IntListGrammar::push_back_range(std::vector<int>& v, int aFirst, int aLast)
   // +1 to include last element
   boost::counting_iterator<int> lEnd(aLast + 1);
 
-  return v.insert(v.end(), lBegin, lEnd);
+  return aVector.insert(aVector.end(), lBegin, lEnd);
 
 }
 
