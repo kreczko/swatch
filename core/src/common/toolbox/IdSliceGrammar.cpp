@@ -40,6 +40,8 @@ IdSliceGrammar::IdSliceGrammar() :
   mElement = (mRange | mLiteral);
   mLiteral = *(qi::char_ - ',' - '[' - ':' - ']');
   mNumber = *(qi::char_("0-9"));
+  // mStep = *(qi::char_("0-9"));
+  mStep = qi::int_;
 //  mRange =
 //      (mLiteral >> '[' >> mNumber >> ':' >> mNumber >> ']' >> -mLiteral)[
 //        phx::try_ [
@@ -55,33 +57,48 @@ IdSliceGrammar::IdSliceGrammar() :
   
   
   mRange =
-      (mLiteral >> '[' >> mNumber >> ':' >> mNumber >> ':' >> mNumber >> ']' >> mLiteral)[
-        phx::bind(&push_back_range, qi::_val, qi::_1, qi::_5, qi::_2, qi::_3, qi::_4)
+      (mLiteral >> '[' >> mNumber >> ':' >> mNumber >> -(':' >> mStep) >> ']' >> mLiteral )[
+        phx::bind(&push_back_range, qi::_val, qi::_1, qi::_2, qi::_3, qi::_4, qi::_5)
       ];
 }
 
 
 // --------------------------------------------------------
-void IdSliceGrammar::push_back_range(std::vector<std::string>& aResult, const std::string& aPrefix, const std::string& aPostfix, const std::string& aFirst, const std::string& aLast, const std::string& aStep) {
+void IdSliceGrammar::push_back_range(std::vector<std::string>& aResult, const std::string& aPrefix, const std::string& aFirst, const std::string& aLast, const boost::optional<int32_t>& aStep, const boost::optional<std::string>& aPostfix)
+{
     
-    const size_t firstIdx = boost::lexical_cast<size_t>(aFirst);
-    const size_t lastIdx = boost::lexical_cast<size_t>(aLast);
-    const size_t idStep = boost::lexical_cast<size_t>(aStep);
+    const int32_t lFirstId = boost::lexical_cast<int32_t>(aFirst);
+    const int32_t lLastId = boost::lexical_cast<int32_t>(aLast);
+    const int32_t lStep = (aStep ? *aStep : 1);
 
-    const size_t idxWidth = std::max(aFirst.size(), aLast.size());
+    const size_t lWidth = std::max(aFirst.size(), aLast.size());
     
-    if ( firstIdx > lastIdx ) 
+    // Step 0? Not good 
+    if ( !lStep )  {
+      throw InvalidSliceStep("Step=0 not allowed");
+    }
+
+    // Check that the loop is not infinite 
+    if ( (lFirstId < lLastId) ^ (lStep > 0 ) ) 
         throw InvalidSliceRange(
             "First index ("+boost::lexical_cast<std::string>(aFirst)+
             ") bigger than last ("+boost::lexical_cast<std::string>(aLast)+")"
             );
+
             
     std::ostringstream oss;
     
-    for( size_t idx(firstIdx); idx<lastIdx; idx += idStep) {
+
+    for( int32_t i(lFirstId); (lLastId-i)/(float)lStep > 0 ; i += lStep) {
+        // Reset stream
         oss.str("");
-        oss << aPrefix << std::setw(idxWidth) << std::setfill('0') << idx << aPostfix;
+        oss << aPrefix << std::setw(lWidth) << std::setfill('0') << i;
+        if (aPostfix)
+          oss << *aPostfix;
+
         aResult.push_back( oss.str());
+
+        // std::cout << "(" << lLastId << "-" << i <<")/" << lStep << "=" << (lLastId-i)/(float)lStep << std::endl;
     }
     
 }

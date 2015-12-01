@@ -1,4 +1,4 @@
-  /* 
+/* 
  * File:   listParser.cpp
  * Author: ale
  *
@@ -32,73 +32,76 @@ using namespace std;
 
 #include <boost/foreach.hpp>
 
+
 /*
  * 
  */
-int main(int argc, char** argv) {
-  
+int main(int argc, char** argv)
+{
+
   namespace qi = boost::spirit::qi;
   namespace ascii = boost::spirit::ascii;
-  
-	// Test1
-	{ 
-		std::string aaa = "1,2, 3,5-10";
 
-		std::cout << "Kazabam! " << aaa << std::endl;
+  // Test1
+  {
+    std::string aaa = "1,2, 3,5-10";
 
-		std::string::const_iterator lBegin(aaa.begin()), lEnd(aaa.end());
-		swatch::core::toolbox::IntListGrammar lMyGrammar;
+    std::cout << "Kazabam! " << aaa << std::endl;
 
-		std::vector<unsigned int> lIds;
-//		bool notDisaster = qi::parse ( lBegin , lEnd , lMyGrammar , lIds );
-		bool notDisaster = qi::phrase_parse ( lBegin , lEnd , lMyGrammar , ascii::space , lIds );
-		if ( notDisaster ) {
-			std::cout << "Parsing didn't fail: " << lIds.size() << std::endl;
+    std::string::const_iterator lBegin(aaa.begin()), lEnd(aaa.end());
+    swatch::core::toolbox::IntListGrammar lMyGrammar;
 
-			BOOST_FOREACH( unsigned int i, lIds) {
-				std::cout << i << " ";
-			}
-			std::cout << std::endl;
+    std::vector<unsigned int> lIds;
+    //		bool notDisaster = qi::parse ( lBegin , lEnd , lMyGrammar , lIds );
+    bool notDisaster = qi::phrase_parse(lBegin, lEnd, lMyGrammar, ascii::space, lIds);
+    if (notDisaster) {
+      std::cout << "Parsing didn't fail: " << lIds.size() << std::endl;
 
-		} else {
-			std::cout << "pizello" << std::endl;
-		}
-	}
-	
-	// Test2
-	{
-	std::string bbb = "Rx10,Tx11, Tx[01:15], zz[9:14]xx";
-	
-	std::cout << "Kazabum! " << bbb << std::endl;
-	
-	std::string::const_iterator lBegin(bbb.begin()), lEnd(bbb.end());
-	swatch::core::toolbox::IdSliceGrammar lMyGrammar;
 
-	std::vector<std::string> lIds;
-	bool notDisaster = qi::phrase_parse ( lBegin , lEnd , lMyGrammar , ascii::space , lIds );
-	if ( notDisaster ) {
-		std::cout << "Parsing didn't fail: " << lIds.size() << std::endl;
+      BOOST_FOREACH(unsigned int i, lIds)
+      {
+        std::cout << i << " ";
+      }
+      std::cout << std::endl;
 
-		BOOST_FOREACH( std::string i, lIds) {
-			std::cout << i << " ";
-		}
-		std::cout << std::endl;
-		
+    } else {
+      std::cout << "pizello" << std::endl;
+    }
+  }
 
-		if ( lBegin != lEnd ) {
-			std::cout << "Warning: part of the phrase was not parsed" << std::endl; 
-			std::ostream_iterator<char> out_it (std::cout,"");
-			std::copy ( lBegin, lEnd, out_it );
-			std::cout << std::endl;
-			
-			
-		}
-		} else {
-			std::cout << "pizello" << std::endl;
-		}
-		
-	
-	}
-	
+  // Test2
+  {
+    std::string bbb = "Rx10,Tx11, Tx[01:15], zz[9:14]xx, kk[1:10:5], oo[10:1:-2]";
+
+    std::cout << "Kazabum! " << bbb << std::endl;
+
+    std::string::const_iterator lBegin(bbb.begin()), lEnd(bbb.end());
+    swatch::core::toolbox::IdSliceGrammar lMyGrammar;
+
+    std::vector<std::string> lIds;
+    bool notDisaster = qi::phrase_parse(lBegin, lEnd, lMyGrammar, ascii::space, lIds);
+    if (notDisaster) {
+      std::cout << "Parsing didn't fail: " << lIds.size() << " obj generated" << std::endl;
+      std::cout << *lBegin << " -> "  << *lEnd << std::endl;
+
+      BOOST_FOREACH(std::string i, lIds)
+      {
+        std::cout << i << " ";
+      }
+      std::cout << std::endl;
+
+      if (lBegin != lEnd) {
+        std::cout << "Warning: part of the phrase was not parsed" << std::endl;
+        std::ostream_iterator<char> out_it(std::cout, "");
+        std::copy(lBegin, lEnd, out_it);
+        std::cout << std::endl;
+      }
+    } else {
+      std::cout << "pizello" << std::endl;
+    }
+
+
+  }
+
 }
 

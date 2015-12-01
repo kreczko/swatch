@@ -26,12 +26,14 @@ struct IdSliceGrammar : boost::spirit::qi::grammar<std::string::const_iterator, 
     boost::spirit::qi::rule<std::string::const_iterator, std::vector<std::string>(), boost::spirit::ascii::space_type > mElement;
     boost::spirit::qi::rule<std::string::const_iterator, std::string(), boost::spirit::ascii::space_type> mLiteral;
     boost::spirit::qi::rule<std::string::const_iterator, std::string(), boost::spirit::ascii::space_type> mNumber;
+    boost::spirit::qi::rule<std::string::const_iterator, int32_t(), boost::spirit::ascii::space_type> mStep;
     boost::spirit::qi::rule<std::string::const_iterator, std::vector<std::string>(), boost::spirit::ascii::space_type > mRange;
 
-  static void push_back_range(std::vector<std::string>& aResult, const std::string& aPrefix, const std::string& aPostfix, const std::string& aFirst, const std::string& aLast, const std::string& aStep);
+  static void push_back_range(std::vector<std::string>& aResult, const std::string& aPrefix, const std::string& aFirst, const std::string& aLast, const boost::optional<int32_t>& aStep, const boost::optional<std::string>& aPostfix);
 
 };
 
+DEFINE_SWATCH_EXCEPTION(InvalidSliceStep);
 DEFINE_SWATCH_EXCEPTION(InvalidSliceRange);
  
 } // namespace tools
