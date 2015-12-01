@@ -42,6 +42,43 @@ EVBInterface::EVBInterface( ::amc13::AMC13& aDriver ) :
 EVBInterface::~EVBInterface() {
 }
 
+
+uint32_t EVBInterface::ttsInternalStatusDecoder(uint32_t aTTSInternalState) {
+  /*
+   * From: http://bucms.bu.edu/twiki/bin/view/BUCMSPublic/AMC13UserManual
+   * 
+   * Bit 4 Disconnected
+   * Bit 3 Error
+   * Bit 2 Sync Lost
+   * Bit 1 Busy
+   * Bit 0 Overflow Warning
+   * 
+   * TCDS TTS States: https://twiki.cern.ch/twiki/bin/view/CMS/TcdsTtsStates
+*/
+  
+  const uint32_t kDisconnected = (1<<4);
+  const uint32_t kError = (1<<3);
+  const uint32_t kSyncLost = (1<<2);
+  const uint32_t kBusy = (1<<1);
+  const uint32_t kOverflowWarning = 1;
+  const uint32_t kReady = 0;
+  switch (aTTSInternalState) {
+    case kReady:
+      return 0x8;
+    case kBusy:
+      return 0x4;
+    case kOverflowWarning:
+      return 0x1;
+    case kSyncLost:
+      return 0x2;
+    case kError:
+      return 0x12;
+    case kDisconnected:
+    default:
+      return 0x0;
+  }
+}
+
 void 
 EVBInterface::retrieveMetricValues() {
   using ::amc13::AMC13;
@@ -51,7 +88,7 @@ EVBInterface::retrieveMetricValues() {
   const std::string prefixGeneral = "STATUS.GENERAL.";
   setMetricValue<>(mOverflowWarning, (bool)mDriver.read(AMC13::T1,prefixEvb+"OVERFLOW_WARNING"));
   setMetricValue<>(mSyncLost, (bool)mDriver.read(AMC13::T1,prefixEvb+"SYNC_LOST"));
-  setMetricValue<>(mAMCsTTSState, mDriver.read(AMC13::T1,prefixStat+"AMC_TTS_STATE"));
+  setMetricValue<>(mAMCsTTSState, ttsInternalStatusDecoder(mDriver.read(AMC13::T1,prefixStat+"AMC_TTS_STATE")));
   setMetricValue<>(mTTSState, mDriver.read(AMC13::T1,prefixStat+"T1_TTS_STATE"));
   setMetricValue<>(mL1ACount, read64bCounter(mDriver, AMC13::T1,prefixGeneral+"L1A_COUNT"));
   setMetricValue<>(mRunTime, read64bCounter(mDriver, AMC13::T1,prefixGeneral+"RUN_TIME"));
