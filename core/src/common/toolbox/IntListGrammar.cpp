@@ -12,7 +12,7 @@ namespace toolbox {
 
 // --------------------------------------------------------
 IntListGrammar::IntListGrammar() :
-IntListGrammar::base_type(query)
+IntListGrammar::base_type(mQuery)
 {
   namespace qi = boost::spirit::qi;
   namespace phx = boost::phoenix;
@@ -28,7 +28,7 @@ IntListGrammar::base_type(query)
 
 
 // --------------------------------------------------------
-void IntListGrammar::push_back_range(std::vector<int>& v, int aFirst, int aLast)
+void IntListGrammar::push_back_range(std::vector<int>& aVector, int aFirst, int aLast)
 {
   boost::counting_iterator<int> lBegin(aFirst);
   // +1 to include last element

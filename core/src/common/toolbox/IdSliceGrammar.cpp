@@ -55,17 +55,19 @@ IdSliceGrammar::IdSliceGrammar() :
   
   
   mRange =
-      (mLiteral >> '[' >> mNumber >> ':' >> mNumber >> ']' >> mLiteral)[
-        phx::bind(&push_back_range, qi::_val, qi::_1, qi::_4, qi::_2, qi::_3)
+      (mLiteral >> '[' >> mNumber >> ':' >> mNumber >> ':' >> mNumber >> ']' >> mLiteral)[
+        phx::bind(&push_back_range, qi::_val, qi::_1, qi::_5, qi::_2, qi::_3, qi::_4)
       ];
 }
 
 
 // --------------------------------------------------------
-void IdSliceGrammar::push_back_range(std::vector<std::string>& aResult, const std::string& aPrefix, const std::string& aPostfix, const std::string& aFirst, const std::string& aLast) {
+void IdSliceGrammar::push_back_range(std::vector<std::string>& aResult, const std::string& aPrefix, const std::string& aPostfix, const std::string& aFirst, const std::string& aLast, const std::string& aStep) {
     
     const size_t firstIdx = boost::lexical_cast<size_t>(aFirst);
     const size_t lastIdx = boost::lexical_cast<size_t>(aLast);
+    const size_t idStep = boost::lexical_cast<size_t>(aStep);
+
     const size_t idxWidth = std::max(aFirst.size(), aLast.size());
     
     if ( firstIdx > lastIdx ) 
@@ -76,7 +78,7 @@ void IdSliceGrammar::push_back_range(std::vector<std::string>& aResult, const st
             
     std::ostringstream oss;
     
-    for( size_t idx(firstIdx); idx<lastIdx; ++idx) {
+    for( size_t idx(firstIdx); idx<lastIdx; idx += idStep) {
         oss.str("");
         oss << aPrefix << std::setw(idxWidth) << std::setfill('0') << idx << aPostfix;
         aResult.push_back( oss.str());

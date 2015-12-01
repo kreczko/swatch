@@ -28,7 +28,7 @@ struct IdSliceGrammar : boost::spirit::qi::grammar<std::string::const_iterator, 
     boost::spirit::qi::rule<std::string::const_iterator, std::string(), boost::spirit::ascii::space_type> mNumber;
     boost::spirit::qi::rule<std::string::const_iterator, std::vector<std::string>(), boost::spirit::ascii::space_type > mRange;
 
-  static void push_back_range(std::vector<std::string>& aResult, const std::string& aPrefix, const std::string& aPostfix, const std::string& aFirst, const std::string& aLast);
+  static void push_back_range(std::vector<std::string>& aResult, const std::string& aPrefix, const std::string& aPostfix, const std::string& aFirst, const std::string& aLast, const std::string& aStep);
 
 };
 
