@@ -2,7 +2,7 @@
 #define SWATCH_MP7_MP7PROCESSOR_HPP
 
 
-#include "swatch/processor/Processor.hpp"
+#include "swatch/mp7/MP7AbstractProcessor.hpp"
 
 
 // Forward declarations
@@ -21,7 +21,7 @@ struct MP7ClockMode {
     std::string ttcCfg;
 };
 
-class MP7Processor: public processor::Processor {
+class MP7Processor: public MP7AbstractProcessor {
 public:
     MP7Processor(const swatch::core::AbstractStub& aStub);
     virtual ~MP7Processor();
@@ -30,7 +30,7 @@ public:
     
     virtual std::string firmwareInfo() const;
 
-    ::mp7::MP7Controller& driver() { return *mDriver; } 
+    virtual ::mp7::MP7Controller& driver() { return *mDriver; } 
 
 private:
     ::mp7::MP7Controller* mDriver;

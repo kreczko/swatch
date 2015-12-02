@@ -21,12 +21,12 @@ class AlignMonNode;
 namespace swatch {
 namespace mp7 {
 
-class MP7Processor;
+class MP7AbstractProcessor;
 
 class MP7RxPort : public processor::InputPort {
 
 public:
-  MP7RxPort( const std::string& aId, uint32_t aChannelID, MP7Processor& aProcessor );
+  MP7RxPort( const std::string& aId, uint32_t aChannelID, ::mp7::MP7Controller& aController );
   virtual ~MP7RxPort();
 
 protected:
@@ -34,19 +34,18 @@ protected:
   
 private:
   //! Pointer to the main resource
-  uint32_t channelID_;
-  MP7Processor& processor_;
-  ::mp7::MP7Controller& driver_;
-  const ::mp7::DatapathNode& datapath_;
-  const ::mp7::MGTRegionNode& mgt_;
-  const ::mp7::AlignMonNode& align_;
+  uint32_t mChannelID;
+  ::mp7::MP7Controller& mDriver;
+  const ::mp7::DatapathNode& mDatapath;
+  const ::mp7::MGTRegionNode& mMgt;
+  const ::mp7::AlignMonNode& mAlign;
 };
 
 
 class MP7TxPort : public processor::OutputPort {
 
 public: 
-    MP7TxPort( const std::string& aId, uint32_t aChannelID, MP7Processor& aProcessor );
+    MP7TxPort( const std::string& aId, uint32_t aChannelID, ::mp7::MP7Controller& aController );
     virtual ~MP7TxPort();
     
 protected:
@@ -54,11 +53,10 @@ protected:
 
 private:
     //! Pointer to the main resource
-    uint32_t channelID_;
-    MP7Processor& processor_;
-    ::mp7::MP7Controller& driver_;
-    const ::mp7::DatapathNode& datapath_;
-    const ::mp7::MGTRegionNode& mgt_;
+    uint32_t mChannelID;
+    ::mp7::MP7Controller& mDriver;
+    const ::mp7::DatapathNode& mDatapath;
+    const ::mp7::MGTRegionNode& mMgt;
 
  };
     

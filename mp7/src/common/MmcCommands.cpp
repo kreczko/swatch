@@ -13,7 +13,7 @@
 #include "mp7/MmcController.hpp"
 #include "mp7/MmcPipeInterface.hpp"
 
-#include "swatch/mp7/MP7Processor.hpp"
+#include "swatch/mp7/MP7AbstractProcessor.hpp"
 
 
 namespace swatch {
@@ -34,7 +34,7 @@ UploadFirmwareCommand::~UploadFirmwareCommand() {
 // --------------------------------------------------------
 ::swatch::core::Command::State
 UploadFirmwareCommand::code(const ::swatch::core::XParameterSet& params) {
-  ::swatch::mp7::MP7Processor& p = getActionable< ::swatch::mp7::MP7Processor>();
+  MP7AbstractProcessor& p = getActionable<MP7AbstractProcessor>();
 
   std::string localfile = params.get<xdata::String>("localfile").value_;
   std::string sdfile = params.get<xdata::String>("sdfile").value_;
@@ -67,7 +67,7 @@ DeleteFirmwareCommand::~DeleteFirmwareCommand() {
 // --------------------------------------------------------
 ::swatch::core::Command::State
 DeleteFirmwareCommand::code(const ::swatch::core::XParameterSet& params) {
-  ::swatch::mp7::MP7Processor& p = getActionable< ::swatch::mp7::MP7Processor>();
+  MP7AbstractProcessor& p = getActionable<MP7AbstractProcessor>();
 
   std::string sdfile = params.get<xdata::String>("sdfile").value_;
 
@@ -109,7 +109,7 @@ RebootFPGACommand::~RebootFPGACommand() {
 // --------------------------------------------------------
 ::swatch::core::Command::State
 RebootFPGACommand::code(const ::swatch::core::XParameterSet& params) {
-  ::swatch::mp7::MP7Processor& p = getActionable< ::swatch::mp7::MP7Processor>();
+  MP7AbstractProcessor& p = getActionable<MP7AbstractProcessor>();
   std::string sdfile = params.get<xdata::String>("sdfile").value_;
 
   if (sdfile.empty()) {
@@ -149,7 +149,7 @@ HardResetCommand::~HardResetCommand() {
 // --------------------------------------------------------
 ::swatch::core::Command::State
 HardResetCommand::code(const ::swatch::core::XParameterSet& params) {
-  ::swatch::mp7::MP7Processor& p = getActionable< ::swatch::mp7::MP7Processor>();
+  MP7AbstractProcessor& p = getActionable<MP7AbstractProcessor>();
   ::mp7::MmcController mmcController(p.driver().hw());
 
   setProgress(0., "Performing Hard Reset of the board ...");
@@ -173,7 +173,7 @@ ScanSDCommand::~ScanSDCommand() {
 // --------------------------------------------------------
 ::swatch::core::Command::State
 ScanSDCommand::code(const ::swatch::core::XParameterSet& params) {
-  ::swatch::mp7::MP7Processor& p = getActionable< ::swatch::mp7::MP7Processor>();
+  MP7AbstractProcessor& p = getActionable<MP7AbstractProcessor>();
 
   setProgress(0., "Scanning SD card...");
 

@@ -10,7 +10,7 @@
 #include "mp7/Orbit.hpp"
 
 // SWATCH headers
-#include "swatch/mp7/MP7Processor.hpp"
+#include "swatch/mp7/MP7AbstractProcessor.hpp"
 #include "swatch/processor/PortCollection.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
 #include "swatch/core/toolbox/IntListParser.hpp"
@@ -55,7 +55,7 @@ AbstractChannelsCommand::~AbstractChannelsCommand() {
 std::vector<uint32_t>
 AbstractChannelsCommand::getPortIds() const {
   // Get the resource
-  const swatch::mp7::MP7Processor& p = getActionable<swatch::mp7::MP7Processor>();
+  const MP7AbstractProcessor& p = getActionable<MP7AbstractProcessor>();
 
   // Pick the right set of ports
   const std::vector<swatch::processor::ProcessorPortStub>* stubs;
@@ -86,7 +86,7 @@ AbstractChannelsCommand::getChannelsMgr(const swatch::core::XParameterSet& aPara
   std::string channelMask = aParams.get<xdata::String>(kPortSelection).value_;
 
   // Grab list of ports registered in the processor
-  ::mp7::MP7Controller& driver = getActionable<swatch::mp7::MP7Processor>().driver();
+  ::mp7::MP7Controller& driver = getActionable<MP7AbstractProcessor>().driver();
 
   // If the mask is empty, return the full set of known ports
   if ( channelMask.empty() )

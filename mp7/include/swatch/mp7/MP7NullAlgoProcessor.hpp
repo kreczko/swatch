@@ -1,6 +1,6 @@
 
-#ifndef SWATCH_MP7_MP7NULLALGOPROCESSOR_HPP
-#define SWATCH_MP7_MP7NULLALGOPROCESSOR_HPP
+#ifndef __SWATCH_MP7_MP7NULLALGOPROCESSOR_HPP__
+#define __SWATCH_MP7_MP7NULLALGOPROCESSOR_HPP__
 
 
 #include "swatch/mp7/MP7Processor.hpp"
@@ -27,5 +27,5 @@ public:
 } // namespace swatch
 
 
-#endif
+#endif /* __SWATCH_MP7_MP7NULLALGOPROCESSOR_HPP__ */
 

@@ -6,7 +6,7 @@
 #include <sstream>
 #include <fstream>
 
-#include "swatch/mp7/MP7Processor.hpp"
+#include "swatch/mp7/MP7AbstractProcessor.hpp"
 
 // SWATCH headers
 #include "swatch/logger/Log.hpp"
@@ -21,9 +21,6 @@
 #include "xdata/Integer.h"
 #include "xdata/UnsignedInteger.h"
 #include "xdata/String.h"
-
-// MP7 Headers
-#include "mp7/MP7Controller.hpp"
 
 // uHAL Headers
 #include "uhal/HwInterface.hpp"
@@ -65,7 +62,7 @@ AbstractFormatterCommand::~AbstractFormatterCommand()
     mask = swatch::core::toolbox::UIntListParser::parse(channelMask);
 
   // Grab list of ports registered in the processor
-  swatch::mp7::MP7Processor& p = getActionable<swatch::mp7::MP7Processor>();
+  MP7AbstractProcessor& p = getActionable<MP7AbstractProcessor>();
  
  // const std::vector<swatch::processor::ProcessorPortStub>& portStubs = (mKind == mp7::kRxBuffer) ? p->getStub().rxPorts : p->getStub().txPorts;
   // std::vector<uint32_t> stubIds;
@@ -102,7 +99,7 @@ TDRFormatterCommand::~TDRFormatterCommand(){
 core::Command::State TDRFormatterCommand::code(const ::swatch::core::XParameterSet& params)
 {
 
-  ::swatch::mp7::MP7Processor& mp7proc = getActionable< ::swatch::mp7::MP7Processor>();
+  MP7AbstractProcessor& mp7proc = getActionable<MP7AbstractProcessor>();
 
   bool strip  = params.get<xdata::Boolean>("strip").value_;
   bool insert = params.get<xdata::Boolean>("insert").value_;

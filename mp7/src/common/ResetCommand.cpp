@@ -9,7 +9,7 @@
 #include "mp7/PathConfigurator.hpp"
 #include "mp7/TTCNode.hpp"
 
-#include "swatch/mp7/MP7Processor.hpp"
+#include "swatch/mp7/MP7AbstractProcessor.hpp"
 
 
 namespace swatch {
@@ -31,7 +31,7 @@ ResetCommand::~ResetCommand(){
      
   // setProgress(0., "Resetting MP7");
   
-  swatch::mp7::MP7Processor& p = getActionable<swatch::mp7::MP7Processor>();
+  MP7AbstractProcessor& p = getActionable<MP7AbstractProcessor>();
   ::mp7::MP7Controller& driver = p.driver();
   setProgress(0.,"Resetting clocks");
 

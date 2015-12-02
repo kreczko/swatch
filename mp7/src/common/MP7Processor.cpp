@@ -71,29 +71,7 @@ const std::string MP7Processor::CmdIds::kSetupReadout = "roSetup";
 const std::string MP7Processor::CmdIds::kLoadReadoutMenu = "roLoadMenu";
 
 MP7Processor::MP7Processor(const swatch::core::AbstractStub& aStub) :
-  Processor(aStub)
-//  mUploadFw( registerFunctionoid<UploadFirmwareCommand>("uploadFw") ),
-//  mDeleteFw( registerFunctionoid<DeleteFirmwareCommand>("deleteFw") ),
-//  mReboot( registerFunctionoid<RebootFPGACommand>("reboot") ),
-//  mHardReset( registerFunctionoid<HardResetCommand>("hardReset") ),
-//  mScanSD( registerFunctionoid<ScanSDCommand>("scanSD") ),
-//  mReset( registerFunctionoid<ResetCommand>("resetBoard") ),
-//  mCfgRxMGTs( registerFunctionoid<ConfigureRxMGTsCommand>("cfgRxMGTs") ),
-//  mCfgTxMGTs( registerFunctionoid<ConfigureTxMGTsCommand>("cfgTxMGTs") ),
-//  mAlignMGTs( registerFunctionoid<AlignRxsToCommand>("alignMGTs") ),
-//  mAutoAlignMGTs( registerFunctionoid<AutoAlignCommand>("autoAlignMGTs") ),
-//  mCfgRxBuffers( registerFunctionoid<ConfigureRxBuffersCommand>("cfgRxBuffers") ),
-//  mCfgTxBuffers( registerFunctionoid<ConfigureTxBuffersCommand>("cfgTxBuffers") ),
-//  mCaptureBuffers( registerFunctionoid<CaptureBuffersCommand>("capture") ),
-//  mSaveRxBuffers( registerFunctionoid<SaveRxBuffersToFileCommand>("saveRxBuffers") ),
-//  mSaveTxBuffers( registerFunctionoid<SaveTxBuffersToFileCommand>("saveTxBuffers") ),
-//  mCfgLatencyRxBuffers( registerFunctionoid<LatencyRxBuffersCommand>("latencyRxBuffers") ),
-//  mCfgLatencyTxBuffers( registerFunctionoid<LatencyTxBuffersCommand>("latencyTxBuffers") ),
-//  mCfgEasyRxLatency( registerFunctionoid<EasyRxLatencyCommand>("easyRxLatency") ),
-//  mCfgEasyTxLatency( registerFunctionoid<EasyTxLatencyCommand>("easyTxLatency") ),
-//  mCfgFormatterTdr( registerFunctionoid<TDRFormatterCommand>("cfgFormatterTdr")),
-//  mSetupReadout( registerFunctionoid<SetupReadout>("roSetup") ),
-//  mLoadReadoutMenu( registerFunctionoid("roLoadMenu", LoadReadoutMenu::create("roLoadMenu", *mDriver)) )
+  MP7AbstractProcessor(aStub)
 {
   // Extract stub, and create driver
   const processor::ProcessorStub& stub = getStub();
@@ -107,9 +85,9 @@ MP7Processor::MP7Processor(const swatch::core::AbstractStub& aStub) :
 
   // Add input and output ports
   for(auto it = stub.rxPorts.begin(); it != stub.rxPorts.end(); it++)
-    getPorts().addInput(new MP7RxPort(it->id, it->number, *this));
+    getPorts().addInput(new MP7RxPort(it->id, it->number, *mDriver));
   for(auto it = stub.txPorts.begin(); it != stub.txPorts.end(); it++)
-    getPorts().addOutput(new MP7TxPort(it->id, it->number, *this));
+    getPorts().addOutput(new MP7TxPort(it->id, it->number, *mDriver));
 
   // Register default MP7 commands
   registerCommand<UploadFirmwareCommand>(CmdIds::kUploadFw);
@@ -161,15 +139,6 @@ void MP7Processor::retrieveMetricValues() {
   setMetricValue<>(metricFirmwareVersion_, retrieveFirmwareVersion());
 
 }
-//
-//core::Command* MP7Processor::createLoadReadoutMenuCommand(const std::string& aId, const ::mp7::MP7Controller& aController) {
-//  const ::mp7::ReadoutCtrlNode& rc = aController.getReadout().getNode< ::mp7::ReadoutCtrlNode >("readout_control");
-//  uint32_t lBanks = rc.readNumBanks();
-//  uint32_t lModes = rc.readNumModes();
-//  uint32_t lCaptures = rc.readNumCaptures();
-//
-//  return new LoadReadoutMenu(aId, lBanks, lModes, lCaptures);
-//}
 
 
 

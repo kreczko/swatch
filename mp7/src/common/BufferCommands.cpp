@@ -23,7 +23,7 @@
 
 // SWATCH headers
 #include "swatch/logger/Log.hpp"
-#include "swatch/mp7/MP7Processor.hpp"
+#include "swatch/mp7/MP7AbstractProcessor.hpp"
 
 
 namespace swatch {
@@ -126,7 +126,7 @@ ConfigureBuffersCommand<tGroup>::code(const ::swatch::core::XParameterSet& param
   // Instantiate the message streamer once
   std::ostringstream msg;
   // Extract the MP7 driver
-  ::mp7::MP7Controller& driver = getActionable< ::swatch::mp7::MP7Processor>().driver();
+  ::mp7::MP7Controller& driver = getActionable<MP7AbstractProcessor>().driver();
   ::mp7::orbit::Metric metric = driver.getMetric();
 
   // TOFIX: make check standard
@@ -244,7 +244,7 @@ CaptureBuffersCommand::~CaptureBuffersCommand() {
 core::Command::State
 CaptureBuffersCommand::code(const ::swatch::core::XParameterSet& params) {
 
-  ::mp7::MP7Controller& driver = getActionable< ::swatch::mp7::MP7Processor>().driver();
+  ::mp7::MP7Controller& driver = getActionable< MP7AbstractProcessor>().driver();
 
   ::mp7::TTCNode ttc = driver.getTTC();
   ::mp7::ChannelsManager cm = driver.channelMgr();
@@ -289,8 +289,8 @@ core::Command::State SaveBuffersToFileCommand<tGroup>::code(const ::swatch::core
 
   std::string filename = params.get<xdata::String>("filename").value_;
 
-//  swatch::mp7::MP7Processor* proc = getParent< ::swatch::mp7::MP7Processor>();
-  ::mp7::MP7Controller& driver = getActionable< ::swatch::mp7::MP7Processor>().driver();
+//MP7AbstractProcessor* proc = getParent< MP7AbstractProcessor>();
+  ::mp7::MP7Controller& driver = getActionable< MP7AbstractProcessor>().driver();
 
   ::mp7::CtrlNode ctrl = driver.getCtrl();
   ::mp7::ChannelsManager cm = getChannelsMgr(params);

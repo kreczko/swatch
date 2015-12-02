@@ -15,7 +15,7 @@
 #include "mp7/PathConfigurator.hpp"
 #include "mp7/Orbit.hpp"
 
-#include "swatch/mp7/MP7Processor.hpp"
+#include "swatch/mp7/MP7AbstractProcessor.hpp"
 #include "swatch/core/toolbox/IntListParser.hpp"
 
 
@@ -130,7 +130,7 @@ AlignRxsToCommand::code(const swatch::core::XParameterSet& params) {
   xdata::UnsignedInteger cycle = params.get<xdata::UnsignedInteger>("cycle");
   
   // FIXME: Embed this check somewhere
-  ::mp7::MP7Controller& driver = getActionable< swatch::mp7::MP7Processor>().driver();
+  ::mp7::MP7Controller& driver = getActionable<MP7AbstractProcessor>().driver();
   ::mp7::orbit::Metric metric = driver.getMetric();
 
  if ( !orbit::isValid( bx, cycle, metric ) ) {

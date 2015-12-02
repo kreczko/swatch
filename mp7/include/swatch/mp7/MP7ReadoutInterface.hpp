@@ -5,8 +5,8 @@
  * Created on November 6, 2014, 4:50 PM
  */
 
-#ifndef SWATCH_MP7_MP7READOUTINTERFACE_HPP
-#define SWATCH_MP7_MP7READOUTINTERFACE_HPP
+#ifndef __SWATCH_MP7_MP7READOUTINTERFACE_HPP__
+#define __SWATCH_MP7_MP7READOUTINTERFACE_HPP__
 
 
 // Swatch Headers
@@ -37,4 +37,4 @@ private:
 } // namespace mp7
 } // namespace swatch 
 
-#endif
+#endif /* __SWATCH_MP7_MP7READOUTINTERFACE_HPP__ */
