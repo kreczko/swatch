@@ -72,7 +72,7 @@ uint32_t EVBInterface::ttsInternalStatusDecoder(uint32_t aTTSInternalState) {
     case kSyncLost:
       return 0x2;
     case kError:
-      return 0x12;
+      return 0xc;
     case kDisconnected:
     default:
       return 0x0;
