@@ -1,14 +1,15 @@
 // Boost Unit Test includes
 #include <boost/test/unit_test.hpp>
-#include "swatch/core/XmlGateKeeper.hpp"
+#include "swatch/xml/XmlGateKeeper.hpp"
 
 // swatch headers
 #include "swatch/logger/Log.hpp"
 
 using namespace swatch::logger;
+using namespace swatch::core;
 
 namespace swatch {
-namespace core {
+namespace xml {
 namespace test {
 
 struct TestXmlGateKeeperSetup {

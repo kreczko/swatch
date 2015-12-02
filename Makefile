@@ -1,50 +1,35 @@
 Set?=devel
-ifeq ($(Set), devel)
-PACKAGES = \
-	logger\
-	logger/test \
+SWATCH_PACKAGES = \
+	logger \
 	core \
-	core/test \
+	xml \
 	processor \
+	system
+SWATCH_TEST_PACKAGES = \
+	logger/test \
+	core/test \
+	xml/test \
 	processor/test \
-	system \
 	system/test \
 	dummy \
-	test 
+	test
+ifeq ($(Set), devel)
+PACKAGES = \
+	$(SWATCH_PACKAGES) \
+	$(SWATCH_TEST_PACKAGES)
 else ifeq ($(Set), pro)
 PACKAGES = \
-	logger\
-	core \
-	processor \
-	system \
-	dummy \
-	test \
+	$(SWATCH_PACKAGES) \
 	pyswatch
 else ifeq ($(Set), amc13)
 PACKAGES = \
-        logger\
-        logger/test \
-        core \
-        core/test \
-        processor \
-        processor/test \
-        system \
-        system/test \
-        dummy \
-	test \
+    $(SWATCH_PACKAGES) \
+    $(SWATCH_TEST_PACKAGES) \
 	amc13
 else ifeq ($(Set), hwdevel)
 PACKAGES = \
-	logger\
-	logger/test \
-	core \
-	core/test \
-	processor \
-	processor/test \
-	system \
-	system/test \
-	dummy \
-	test \
+	$(SWATCH_PACKAGES) \
+    $(SWATCH_TEST_PACKAGES) \
 	amc13 \
 	mp7
 endif

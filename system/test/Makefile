@@ -24,6 +24,7 @@ Includes = 	\
 		${SWATCH_ROOT}/processor/include \
 		${SWATCH_ROOT}/processor/test/include \
 		${SWATCH_ROOT}/system/include \
+		${SWATCH_ROOT}/xml/include \
 		${CACTUS_ROOT}/include \
 		$(XDAQ_ROOT)/include \
 		$(XDAQ_ROOT)/include/linux
@@ -36,6 +37,7 @@ LibraryPaths =	\
 		${SWATCH_ROOT}/processor/lib \
 		${SWATCH_ROOT}/processor/test/lib \
 		${SWATCH_ROOT}/system/lib \
+		${SWATCH_ROOT}/xml/lib \
 		${CACTUS_ROOT}/lib \
 		$(XDAQ_ROOT)/lib
 
@@ -49,6 +51,7 @@ Libraries =	\
 		cactus_swatch_processor \
 		cactus_swatch_processor_test \
 		cactus_swatch_system \
+		cactus_swatch_xml \
 		dl
 
 

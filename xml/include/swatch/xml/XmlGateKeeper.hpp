@@ -6,8 +6,8 @@
  *
  */
 
-#ifndef __SWATCH_CORE_XmlGateKeeper_HPP__
-#define __SWATCH_CORE_XmlGateKeeper_HPP__
+#ifndef __SWATCH_XML_XmlGateKeeper_HPP__
+#define __SWATCH_XML_XmlGateKeeper_HPP__
 
 // C++ Headers
 #include <string>
@@ -23,9 +23,9 @@ class xml_node;
 }
 
 namespace swatch {
-namespace core {
+namespace xml {
 
-class XmlGateKeeper: public GateKeeper {
+class XmlGateKeeper: public core::GateKeeper {
 public:
 
   /// Constructor
@@ -55,7 +55,7 @@ private:
 DEFINE_SWATCH_EXCEPTION(UnknownDataType);
 DEFINE_SWATCH_EXCEPTION(XmlFileError);
 
-} /* namespace core */
+} /* namespace xml */
 } /* namespace swatch */
 
-#endif /* __SWATCH_CORE_XmlGateKeeper_HPP__ */
+#endif /* __SWATCH_XML_XmlGateKeeper_HPP__ */

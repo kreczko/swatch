@@ -1,4 +1,4 @@
-#include "swatch/core/XmlGateKeeper.hpp"
+#include "swatch/xml/XmlGateKeeper.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -15,7 +15,8 @@
 #include "swatch/core/Utilities.hpp"
 
 namespace swatch {
-namespace core {
+namespace xml {
+using namespace swatch::core;
 
 //------------------------------------------------------------------------------------------------------------------
 XmlGateKeeper::XmlGateKeeper(const std::string& aFileName,
