@@ -11,9 +11,9 @@
 namespace swatch {
 namespace xml {
 
-ObjectSerializer::~ObjectSerializer() {
-
-}
+//ObjectSerializer::~ObjectSerializer() {
+//
+//}
 
 } // namespace xml
 } // namespace swatch

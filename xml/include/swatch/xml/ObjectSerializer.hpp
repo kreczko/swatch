@@ -22,8 +22,9 @@ namespace xml {
 class ObjectSerializer : public xdata::ObjectSerializer {
 public:
 
-	ObjectSerializer();
-	virtual ~ObjectSerializer();
+	virtual ~ObjectSerializer(){
+		// TODO: move this into hxx which currently does not work for some bizzare reason (multiple definitions)
+	}
 
 	//TODO: const only possible once we switch to XDAQ 13 (where Serializable::toString() finally becomes const)
 //	const xdata::Serializable* import(const pugi::xml_node& aNode);
