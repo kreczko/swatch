@@ -3,7 +3,6 @@
 
 // Standard headers
 #include "pugixml/pugixml.hpp"
-
 // boost headers
 
 //xdata
@@ -11,10 +10,14 @@
 #include "xdata/Serializable.h"
 
 // SWATCH headers
+#include "swatch/logger/Logger.hpp"
 
 namespace swatch {
 namespace xml {
 
+/**
+ * Serializer class for converting XML elements into xdata::Serializable
+ */
 class XmlSerializer: public xdata::Serializer {
 public:
 	XmlSerializer();
@@ -22,6 +25,14 @@ public:
 	// TODO change to const after XDAQ 13 migration ?
 //	const xdata::Serializable* import(const pugi::xml_node& aNode);
 	xdata::Serializable* import(const pugi::xml_node& aNode);
+
+private:
+	/**
+	 * Normalises discrapancies between xdata type definitions and (shorter) definitions
+	 * in the XML configuration files
+	 */
+	const std::string normaliseType(const std::string& aType) const;
+	log4cplus::Logger mLogger;
 };
 
 } // namespace xml

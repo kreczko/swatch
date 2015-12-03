@@ -14,6 +14,7 @@
 
 // Swatch Headers
 #include "swatch/core/GateKeeper.hpp"
+#include "swatch/xml/XmlSerializer.hpp"
 
 // external headers
 #include "pugixml/pugixml.hpp"
@@ -50,6 +51,7 @@ private:
       const pugi::xml_node& aTable) const;
 
   std::string mFileName;
+  XmlSerializer* mSerializer;
 };
 
 DEFINE_SWATCH_EXCEPTION(UnknownDataType);

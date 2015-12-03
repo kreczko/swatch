@@ -10,6 +10,7 @@
 #include <xdata/String.h>
 #include <xdata/Boolean.h>
 #include <xdata/Float.h>
+#include <xdata/Vector.h>
 
 #include "swatch/logger/Log.hpp"
 #include "swatch/core/Utilities.hpp"
@@ -22,7 +23,8 @@ using namespace swatch::core;
 XmlGateKeeper::XmlGateKeeper(const std::string& aFileName,
     const std::string& aKey) :
         GateKeeper(aKey),
-        mFileName(swatch::core::shellExpandPath(aFileName)) {
+        mFileName(swatch::core::shellExpandPath(aFileName)),
+		mSerializer(new XmlSerializer()) {
 
   pugi::xml_document lXmlDoc;
   pugi::xml_parse_result lLoadResult = lXmlDoc.load_file(mFileName.c_str());
@@ -40,7 +42,8 @@ XmlGateKeeper::XmlGateKeeper(const std::string& aFileName,
 
 XmlGateKeeper::XmlGateKeeper(const pugi::xml_document& aXmlDoc, const std::string& aRunKey) :
 				GateKeeper(aRunKey),
-				mFileName("") {
+				mFileName(""),
+				mSerializer(new XmlSerializer()) {
 	readXmlDocument(aXmlDoc, aRunKey);
 
 }
@@ -64,35 +67,36 @@ XmlGateKeeper::~XmlGateKeeper() {
 //------------------------------------------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------------------------------------------
-std::pair<std::string, GateKeeper::tParameter> XmlGateKeeper::CreateParameter(
-    pugi::xml_node& aEntry) {
-  std::string lEntryId(aEntry.attribute("id").value());
-  std::string lType(aEntry.attribute("type").value());
-  std::string lValue(aEntry.child_value());
+std::pair<std::string, GateKeeper::tParameter> XmlGateKeeper::CreateParameter(pugi::xml_node& aEntry) {
+	std::string lEntryId(aEntry.attribute("id").value());
+	std::string lType(aEntry.attribute("type").value());
+	std::string lValue(aEntry.child_value());
 
-  // GateKeeper::tParameter lParameter;
-  xdata::Serializable* lSerializable(0x0);
+	// GateKeeper::tParameter lParameter;
+	xdata::Serializable* lSerializable(mSerializer->import(aEntry));
+//	lSerializable = mSerializer->import(aEntry);
+//	if (lType == "int") {
+//		lSerializable = new xdata::Integer();
+//	} else if (lType == "uint") {
+//		lSerializable = new xdata::UnsignedInteger();
+//	} else if (lType == "bool") {
+//		lSerializable = new xdata::Boolean();
+//	} else if (lType == "float") {
+//		lSerializable = new xdata::Float();
+//	} else if (lType == "string") {
+//		lSerializable = new xdata::String();
+//	} else if (lType == "vector:uint") {
+//		lSerializable = new xdata::Vector<xdata::UnsignedInteger>();
+//	} else {
+//		throw UnknownDataType("Unknown Data-Type '" + lType + "'");
+//	}
+//
+//	// exploit fromString to import the value inn the right format (use xdaq::compliant representation)
+//	lSerializable->fromString(lValue);
 
-  if (lType == "int") {
-    lSerializable = new xdata::Integer();
-  } else if (lType == "uint") {
-    lSerializable = new xdata::UnsignedInteger();
-  } else if (lType == "bool") {
-    lSerializable = new xdata::Boolean();
-  } else if (lType == "float") {
-    lSerializable = new xdata::Float();
-  } else if (lType == "string") {
-    lSerializable = new xdata::String();
-  } else {
-    throw UnknownDataType("Unknown Data-Type '" + lType + "'");
-  }
-
-  // exploit fromString to import the value inn the right format (use xdaq::compliant representation)
-  lSerializable->fromString(lValue);
-
-  // lParameter = GateKeeper::tParameter(lSerializable);
-  // return std::make_pair( lEntryId , lParameter );
-  return std::make_pair(lEntryId, GateKeeper::tParameter(lSerializable));
+	// lParameter = GateKeeper::tParameter(lSerializable);
+	// return std::make_pair( lEntryId , lParameter );
+	return std::make_pair(lEntryId, GateKeeper::tParameter(lSerializable));
 
 }
 //------------------------------------------------------------------------------------------------------------------
