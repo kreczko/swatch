@@ -54,7 +54,6 @@ Log::Log(const Log&) :
 
 Log::~Log() {
   if (messageLevel_ <= logThreshold()) {
-    os_ << std::endl;
     push(messageLevel_, "swatch", os_.str().c_str());
   }
 }
