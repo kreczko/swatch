@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE( TestUInt ) {
 BOOST_AUTO_TEST_CASE( TestInt ) {
 	LOG(kInfo) << "Running TestSingleObjectSerializer/TestInt";
 	pugi::xml_document doc;
-	doc.load("<entry id='testInt' type='int'>-2</entry>");
+	doc.load("<entry id='test' type='int'>-2</entry>");
 	pugi::xml_node lNode = doc.child("entry");
 	SingleObjectSerializer<xdata::Integer>* serializer = new SingleObjectSerializer<xdata::Integer>;
 	BOOST_CHECK_EQUAL(serializer->type(), "int");
@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE( TestInt ) {
 BOOST_AUTO_TEST_CASE( TestBool ) {
 	LOG(kInfo) << "Running TestSingleObjectSerializer/TestBool";
 	pugi::xml_document doc;
-	doc.load("<entry id='testInt' type='bool'>true</entry>");
+	doc.load("<entry id='test' type='bool'>true</entry>");
 	pugi::xml_node lNode = doc.child("entry");
 	SingleObjectSerializer<xdata::Boolean>* serializer = new SingleObjectSerializer<xdata::Boolean>;
 	BOOST_CHECK_EQUAL(serializer->type(), "bool");
@@ -63,7 +63,7 @@ BOOST_AUTO_TEST_CASE( TestBool ) {
 BOOST_AUTO_TEST_CASE( TestFloat ) {
 	LOG(kInfo) << "Running TestSingleObjectSerializer/TestFloat";
 	pugi::xml_document doc;
-	doc.load("<entry id='testInt' type='float'>2.0</entry>");
+	doc.load("<entry id='test' type='float'>2.0</entry>");
 	pugi::xml_node lNode = doc.child("entry");
 	SingleObjectSerializer<xdata::Float>* serializer = new SingleObjectSerializer<xdata::Float>;
 	BOOST_CHECK_EQUAL(serializer->type(), "float");
@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE( TestFloat ) {
 BOOST_AUTO_TEST_CASE( TestString ) {
 	LOG(kInfo) << "Running TestSingleObjectSerializer/TestString";
 	pugi::xml_document doc;
-	doc.load("<entry id='testInt' type='string'>hello</entry>");
+	doc.load("<entry id='test' type='string'>hello</entry>");
 	pugi::xml_node lNode = doc.child("entry");
 	SingleObjectSerializer<xdata::String>* serializer = new SingleObjectSerializer<xdata::String>;
 	BOOST_CHECK_EQUAL(serializer->type(), "string");
@@ -91,6 +91,17 @@ BOOST_AUTO_TEST_CASE( TestString ) {
 	xdata::Serializable* result = serializer->import(lNode);
 	BOOST_CHECK_EQUAL(result->type(), "string");
 	BOOST_CHECK_EQUAL(result->toString(), "hello");
+}
+
+BOOST_AUTO_TEST_CASE( TestInvalid ) {
+	LOG(kInfo) << "Running TestSingleObjectSerializer/TestInvalid";
+	pugi::xml_document doc;
+	doc.load("<entry id='test' type='string'>hello</entry>");
+	pugi::xml_node lNode = doc.child("entry");
+	SingleObjectSerializer<xdata::Integer>* serializer = new SingleObjectSerializer<xdata::Integer>;
+	BOOST_CHECK_EQUAL(serializer->type(), "int");
+
+	BOOST_CHECK_THROW(serializer->import(lNode), swatch::xml::ValueError);
 }
 
 

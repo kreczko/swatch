@@ -15,6 +15,7 @@
 // Swatch Headers
 #include "swatch/core/GateKeeper.hpp"
 #include "swatch/xml/XmlSerializer.hpp"
+#include "swatch/logger/Logger.hpp"
 
 // external headers
 #include "pugixml/pugixml.hpp"
@@ -40,8 +41,8 @@ public:
 
 private:
 
-  std::pair<std::string, GateKeeper::tParameter> CreateParameter(pugi::xml_node& aEntry);
-  std::pair<std::string, GateKeeper::tTable> CreateTable(pugi::xml_node& aTable);
+  std::pair<std::string, GateKeeper::tParameter> createParameter(pugi::xml_node& aEntry);
+  std::pair<std::string, GateKeeper::tTable> createTable(pugi::xml_node& aTable);
 
   void readXmlDocument(const pugi::xml_document& aXmlDoc, const std::string& aRunKey);
 
@@ -52,9 +53,9 @@ private:
 
   std::string mFileName;
   XmlSerializer* mSerializer;
+  log4cplus::Logger mLogger;
 };
 
-DEFINE_SWATCH_EXCEPTION(UnknownDataType);
 DEFINE_SWATCH_EXCEPTION(XmlFileError);
 
 } /* namespace xml */

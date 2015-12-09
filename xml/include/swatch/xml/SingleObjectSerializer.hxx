@@ -31,7 +31,12 @@ template<class T> xdata::Serializable* SingleObjectSerializer<T>::import(const p
 	xdata::Serializable* lSerializable(new T());
 
 	std::string lValue(aNode.child_value());
-	lSerializable->fromString(lValue);
+	try {
+		lSerializable->fromString(lValue);
+	} catch (const xdata::exception::Exception& e) {
+		const std::string lType(aNode.attribute("type").value());
+		throw ValueError("Could not parse '" + lValue + "' into type '" + lType + "'.");
+	}
 
 	return lSerializable;
 }

@@ -38,7 +38,12 @@ xdata::Serializable* XmlSerializer::import(const pugi::xml_node& aNode) {
 	LOG4CPLUS_DEBUG(mLogger, "Normalising type: " + lType);
 	lType = normaliseType(lType);
 	LOG4CPLUS_DEBUG(mLogger, "Getting serializer for type " + lType);
-	ObjectSerializer* lSerializer(dynamic_cast<ObjectSerializer*>(this->getObjectSerializer(lType)));
+	ObjectSerializer* lSerializer(0x0);
+	try {
+		lSerializer = dynamic_cast<ObjectSerializer*>(this->getObjectSerializer(lType));
+	} catch (const xdata::exception::Exception& e){
+		throw UnknownDataType("No serializer for type '" + lType + "' found.");
+	}
 	LOG4CPLUS_DEBUG(mLogger, "Found serializer with type " + lSerializer->type());
 	xdata::Serializable* lSerializable(lSerializer->import(aNode));
 

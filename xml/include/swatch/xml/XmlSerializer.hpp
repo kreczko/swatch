@@ -11,6 +11,7 @@
 
 // SWATCH headers
 #include "swatch/logger/Logger.hpp"
+#include "swatch/core/exception.hpp"
 
 namespace swatch {
 namespace xml {
@@ -34,6 +35,8 @@ private:
 	const std::string normaliseType(const std::string& aType) const;
 	log4cplus::Logger mLogger;
 };
+
+DEFINE_SWATCH_EXCEPTION(UnknownDataType);
 
 } // namespace xml
 } // namespace swatch

@@ -99,6 +99,17 @@ BOOST_AUTO_TEST_CASE( TestCustomDelimiter ) {
 	BOOST_CHECK_EQUAL(result->toString(), "[hello, world,and, all]");
 }
 
+BOOST_AUTO_TEST_CASE( TestInvalid ) {
+	LOG(kInfo) << "Running TestVectorSerializer/TestInvalid";
+	pugi::xml_document doc;
+	doc.load("<entry id='test' type='string'>hello, test</entry>");
+	pugi::xml_node lNode = doc.child("entry");
+	VectorSerializer<xdata::Integer>* serializer = new VectorSerializer<xdata::Integer>;
+	BOOST_CHECK_EQUAL(serializer->type(), "vector:int");
+
+	BOOST_CHECK_THROW(serializer->import(lNode), swatch::xml::ValueError);
+}
+
 
 BOOST_AUTO_TEST_SUITE_END() // TestVectorSerializer
 

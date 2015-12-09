@@ -9,7 +9,7 @@
 #include "xdata/Serializable.h"
 #include "xdata/ObjectSerializer.h"
 // SWATCH headers
-
+#include "swatch/core/exception.hpp"
 // others
 #include "pugixml/pugixml.hpp"
 
@@ -40,6 +40,8 @@ public:
 
 
 };
+
+DEFINE_SWATCH_EXCEPTION(ValueError)
 
 } // namespace xml
 } // namespace swatch

@@ -86,6 +86,26 @@ BOOST_FIXTURE_TEST_CASE(TestImport, XmlSerializerTestSetup) {
 	}
 }
 
+BOOST_FIXTURE_TEST_CASE(TestInvalid, XmlSerializerTestSetup) {
+	LOG(kInfo) << "Running TestXmlSerializer/TestInvalid";
+	std::string lInput = "<entry id='test' type='vector:uint'>40, error, 1, 2</entry>";
+	pugi::xml_document doc;
+	BOOST_REQUIRE_EQUAL(doc.load(lInput.c_str()), true);
+	pugi::xml_node lNode = doc.child("entry");
+
+	BOOST_CHECK_THROW(mSerializer->import(lNode), swatch::xml::ValueError);
+}
+
+BOOST_FIXTURE_TEST_CASE(TestUnkownType, XmlSerializerTestSetup) {
+	LOG(kInfo) << "Running TestXmlSerializer/TesTestUnkownTypetImport";
+	std::string lInput = "<entry id='test' type='unknown'>I can't do that Bob.</entry>";
+	pugi::xml_document doc;
+	BOOST_REQUIRE_EQUAL(doc.load(lInput.c_str()), true);
+	pugi::xml_node lNode = doc.child("entry");
+
+	BOOST_CHECK_THROW(mSerializer->import(lNode), swatch::xml::UnknownDataType);
+}
+
 BOOST_AUTO_TEST_SUITE_END() // TestXmlSerializer
 
 }//ns: test

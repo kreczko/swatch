@@ -54,7 +54,11 @@ xdata::Vector<T> VectorSerializer<T>::convertString(const std::string& aStr, con
 	for (std::vector<std::string>::iterator it = lStrings.begin(); it != lStrings.end(); ++it) {
 		std::string lTmp = boost::trim_copy(*it);
 		T lSerializable;
-		lSerializable.fromString(lTmp);
+		try {
+			lSerializable.fromString(lTmp);
+		} catch (const xdata::exception::Exception& e) {
+			throw ValueError("Could not parse '" + lTmp + "'.");
+		}
 		lVector.push_back(lSerializable);
 	}
 	return lVector;
