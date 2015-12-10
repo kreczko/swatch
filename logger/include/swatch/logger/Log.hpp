@@ -15,8 +15,8 @@
 
 // Macro Declaration
 #define LOG(level) \
-if (level > swatch::logger::Log::logThreshold()) ; \
-else swatch::logger::Log().get(level)
+if (level > ::swatch::logger::Log::logThreshold()) ; \
+else ::swatch::logger::Log().get(level)
 
 namespace swatch {
 namespace logger {

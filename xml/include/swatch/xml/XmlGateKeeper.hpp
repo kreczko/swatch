@@ -6,14 +6,16 @@
  *
  */
 
-#ifndef __SWATCH_CORE_XmlGateKeeper_HPP__
-#define __SWATCH_CORE_XmlGateKeeper_HPP__
+#ifndef __SWATCH_XML_XmlGateKeeper_HPP__
+#define __SWATCH_XML_XmlGateKeeper_HPP__
 
 // C++ Headers
 #include <string>
 
 // Swatch Headers
 #include "swatch/core/GateKeeper.hpp"
+#include "swatch/xml/XmlSerializer.hpp"
+#include "swatch/logger/Logger.hpp"
 
 // external headers
 #include "pugixml/pugixml.hpp"
@@ -23,9 +25,9 @@ class xml_node;
 }
 
 namespace swatch {
-namespace core {
+namespace xml {
 
-class XmlGateKeeper: public GateKeeper {
+class XmlGateKeeper: public core::GateKeeper {
 public:
 
   /// Constructor
@@ -39,8 +41,8 @@ public:
 
 private:
 
-  std::pair<std::string, GateKeeper::tParameter> CreateParameter(pugi::xml_node& aEntry);
-  std::pair<std::string, GateKeeper::tTable> CreateTable(pugi::xml_node& aTable);
+  std::pair<std::string, GateKeeper::tParameter> createParameter(pugi::xml_node& aEntry);
+  std::pair<std::string, GateKeeper::tTable> createTable(pugi::xml_node& aTable);
 
   void readXmlDocument(const pugi::xml_document& aXmlDoc, const std::string& aRunKey);
 
@@ -50,12 +52,13 @@ private:
       const pugi::xml_node& aTable) const;
 
   std::string mFileName;
+  XmlSerializer* mSerializer;
+  log4cplus::Logger mLogger;
 };
 
-DEFINE_SWATCH_EXCEPTION(UnknownDataType);
 DEFINE_SWATCH_EXCEPTION(XmlFileError);
 
-} /* namespace core */
+} /* namespace xml */
 } /* namespace swatch */
 
-#endif /* __SWATCH_CORE_XmlGateKeeper_HPP__ */
+#endif /* __SWATCH_XML_XmlGateKeeper_HPP__ */

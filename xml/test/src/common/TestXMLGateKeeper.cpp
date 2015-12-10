@@ -1,14 +1,15 @@
 // Boost Unit Test includes
 #include <boost/test/unit_test.hpp>
-#include "swatch/core/XmlGateKeeper.hpp"
+#include "swatch/xml/XmlGateKeeper.hpp"
 
 // swatch headers
 #include "swatch/logger/Log.hpp"
 
 using namespace swatch::logger;
+using namespace swatch::core;
 
 namespace swatch {
-namespace core {
+namespace xml {
 namespace test {
 
 struct TestXmlGateKeeperSetup {
@@ -81,15 +82,25 @@ struct TestXmlGateKeeperSetup {
 				"		</table>"
 				"	</run>"
 				"</db>";
+		config_with_vector_parameters_str = "<db>"
+				"   <run key=\"RunKey1\">"
+				"       <table id=\"dummy_s1.dummy_p2\">"
+				"           <entry id=\"clkErrorTimeout\" type=\"uint\">40</entry>"
+				"           <entry id=\"uintvector\" type=\"vector:uint\">5, 3, 42, 100</entry>"
+				"       </table>"
+				"   </run>"
+				"</db>";
 		// make sure we the strings are valid configs
 		BOOST_REQUIRE_EQUAL(base_config.load(base_config_str.c_str()), true);
 		BOOST_REQUIRE_EQUAL(config_with_metrics.load(config_with_metrics_str.c_str()), true);
 		BOOST_REQUIRE_EQUAL(config_with_disabled_processor.load(config_with_disabled_processor_str.c_str()), true);
+		BOOST_REQUIRE_EQUAL(config_with_vector_parameters.load(config_with_vector_parameters_str.c_str()), true);
 
 	}
 
 	std::string base_config_str, config_with_metrics_str, config_with_disabled_processor_str;
-	pugi::xml_document base_config, config_with_metrics, config_with_disabled_processor;
+	std::string config_with_vector_parameters_str;
+	pugi::xml_document base_config, config_with_metrics, config_with_disabled_processor, config_with_vector_parameters;
 
 };
 
@@ -150,8 +161,16 @@ BOOST_FIXTURE_TEST_CASE ( TestMonitoringSettings, TestXmlGateKeeperSetup ) {
 			monitoring::kDisabled);
 }
 
+BOOST_FIXTURE_TEST_CASE ( TestVectorParameters, TestXmlGateKeeperSetup ) {
+	LOG(kInfo) << "Running TestXmlGateKeeper/TestVectorParameters";
+	XmlGateKeeper gk(config_with_vector_parameters, "RunKey1");
+	std::vector<std::string> tablesToLookIn;
+	tablesToLookIn.push_back("dummy_s1.dummy_p2");
+	BOOST_CHECK_EQUAL(gk.get("", "", "uintvector", tablesToLookIn)->toString(), "[5,3,42,100]");
+}
+
 BOOST_AUTO_TEST_SUITE_END() // TestGateKeeper
 
 }//ns: test
-}//ns: core
+}//ns: xml
 } //ns: swatch
