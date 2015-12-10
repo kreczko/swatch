@@ -6,7 +6,7 @@
 // boost headers
 
 // SWATCH headers
-#include "swatch/xml/ObjectSerializer.hpp"
+#include "swatch/xml/AbstractSerializer.hpp"
 
 namespace swatch {
 namespace xml {

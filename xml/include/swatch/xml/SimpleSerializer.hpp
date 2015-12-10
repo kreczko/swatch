@@ -6,11 +6,8 @@
 // boost headers
 
 //xdata
+#include "swatch/xml/AbstractSerializer.hpp"
 #include "xdata/Serializable.h"
-#include "swatch/xml/ObjectSerializer.hpp"
-// SWATCH headers
-
-// others
 #include "pugixml/pugixml.hpp"
 
 namespace swatch {
@@ -20,11 +17,11 @@ namespace xml {
  * Implementation of the XML object serializer for basic types and string
  */
 template<class T>
-class SingleObjectSerializer : public ObjectSerializer {
+class SimpleSerializer : public AbstractSerializer {
 public:
 
-	SingleObjectSerializer();
-	virtual ~SingleObjectSerializer();
+	SimpleSerializer();
+	virtual ~SimpleSerializer();
 
 	//TODO: const only possible once we switch to XDAQ 13 (where Serializable::toString() finally becomes const)
 //	const xdata::Serializable* import(const pugi::xml_node& aNode);
@@ -45,7 +42,7 @@ public:
 } // namespace xml
 } // namespace swatch
 
-#include "swatch/xml/SingleObjectSerializer.hxx"
+#include "swatch/xml/SimpleSerializer.hxx"
 
 #endif	/* __SWATCH_XML_SINGLEOBJECTSERIALIZER_HPP__ */
 

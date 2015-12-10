@@ -1,5 +1,5 @@
-#ifndef __SWATCH_XML_OBJECTSERIALIZER_HPP__
-#define __SWATCH_XML_OBJECTSERIALIZER_HPP__
+#ifndef __SWATCH_XML_ABSTRACTSERIALIZER_HPP__
+#define __SWATCH_XML_ABSTRACTSERIALIZER_HPP__
 
 // Standard headers
 
@@ -19,10 +19,10 @@ namespace xml {
 /**
  * Abstract base XML serializer for xdata serializables
  */
-class ObjectSerializer : public xdata::ObjectSerializer {
+class AbstractSerializer : public xdata::ObjectSerializer {
 public:
 
-	virtual ~ObjectSerializer(){
+	virtual ~AbstractSerializer(){
 		// TODO: move this into hxx which currently does not work for some bizzare reason (multiple definitions)
 	}
 
@@ -46,7 +46,7 @@ DEFINE_SWATCH_EXCEPTION(ValueError)
 } // namespace xml
 } // namespace swatch
 
-#include "swatch/xml/ObjectSerializer.hxx"
+#include "swatch/xml/AbstractSerializer.hxx"
 
-#endif	/* __SWATCH_XML_OBJECTSERIALIZER_HPP__ */
+#endif	/* __SWATCH_XML_ABSTRACTSERIALIZER_HPP__ */
 

@@ -4,8 +4,8 @@
 
 // SWATCH headers
 #include "swatch/xml/XmlSerializer.hpp"
-#include "swatch/xml/SingleObjectSerializer.hpp"
 #include "swatch/xml/VectorSerializer.hpp"
+#include "swatch/xml/SimpleSerializer.hpp"
 //log4cplus headers
 #include <log4cplus/loggingmacros.h>
 
@@ -15,11 +15,11 @@ namespace xml {
 XmlSerializer::XmlSerializer() :
 	mLogger(swatch::logger::Logger::getInstance("swatch.xml.XmlSerializer")){
 	// register simple serliazers
-	this->addObjectSerializer(new SingleObjectSerializer<xdata::UnsignedInteger>());
-	this->addObjectSerializer(new SingleObjectSerializer<xdata::Integer>());
-	this->addObjectSerializer(new SingleObjectSerializer<xdata::Float>());
-	this->addObjectSerializer(new SingleObjectSerializer<xdata::Boolean>());
-	this->addObjectSerializer(new SingleObjectSerializer<xdata::String>());
+	this->addObjectSerializer(new SimpleSerializer<xdata::UnsignedInteger>());
+	this->addObjectSerializer(new SimpleSerializer<xdata::Integer>());
+	this->addObjectSerializer(new SimpleSerializer<xdata::Float>());
+	this->addObjectSerializer(new SimpleSerializer<xdata::Boolean>());
+	this->addObjectSerializer(new SimpleSerializer<xdata::String>());
 	// register vector serializers
 	this->addObjectSerializer(new VectorSerializer<xdata::UnsignedInteger>());
 	this->addObjectSerializer(new VectorSerializer<xdata::Integer>());
@@ -38,9 +38,9 @@ xdata::Serializable* XmlSerializer::import(const pugi::xml_node& aNode) {
 	LOG4CPLUS_DEBUG(mLogger, "Normalising type: " + lType);
 	lType = normaliseType(lType);
 	LOG4CPLUS_DEBUG(mLogger, "Getting serializer for type " + lType);
-	ObjectSerializer* lSerializer(0x0);
+	AbstractSerializer* lSerializer(0x0);
 	try {
-		lSerializer = dynamic_cast<ObjectSerializer*>(this->getObjectSerializer(lType));
+		lSerializer = dynamic_cast<AbstractSerializer*>(this->getObjectSerializer(lType));
 	} catch (const xdata::exception::Exception& e){
 		throw UnknownDataType("No serializer for type '" + lType + "' found.");
 	}

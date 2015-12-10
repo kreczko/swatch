@@ -2,19 +2,17 @@
 #define __SWATCH_XML_VECTORSERIALIZER_HPP__
 
 //xdata
+#include "swatch/xml/AbstractSerializer.hpp"
 #include "xdata/Serializable.h"
 #include "xdata/Vector.h"
 // SWATCH headers
-#include "swatch/xml/ObjectSerializer.hpp"
-
-// others
 #include "pugixml/pugixml.hpp"
 
 namespace swatch {
 namespace xml {
 
 template<class T>
-class VectorSerializer: public ObjectSerializer {
+class VectorSerializer: public AbstractSerializer {
 public:
 
 	VectorSerializer();
