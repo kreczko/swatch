@@ -36,15 +36,15 @@ pathadd PATH "${SWATCH_ROOT}/test/bin"
 
 pathadd LD_LIBRARY_PATH "${SWATCH_ROOT}/logger/lib"
 pathadd LD_LIBRARY_PATH "${SWATCH_ROOT}/core/lib"
+pathadd LD_LIBRARY_PATH "${SWATCH_ROOT}/xml/lib"
 pathadd LD_LIBRARY_PATH "${SWATCH_ROOT}/processor/lib"
 pathadd LD_LIBRARY_PATH "${SWATCH_ROOT}/system/lib"
-pathadd LD_LIBRARY_PATH "${SWATCH_ROOT}/database/lib"
 pathadd LD_LIBRARY_PATH "${SWATCH_ROOT}/test/lib"
 
 # tests
 pathadd LD_LIBRARY_PATH "${SWATCH_ROOT}/core/test/lib"
+pathadd LD_LIBRARY_PATH "${SWATCH_ROOT}/xml/test/lib"
 pathadd LD_LIBRARY_PATH "${SWATCH_ROOT}/processor/test/lib"
-pathadd LD_LIBRARY_PATH "${SWATCH_ROOT}/database/test/lib"
 pathadd LD_LIBRARY_PATH "${SWATCH_ROOT}/system/test/lib"
 
 export PATH PYTHONPATH LD_LIBRARY_PATH CACTUS_ROOT SWATCH_ROOT SWATCH_TESTS 
