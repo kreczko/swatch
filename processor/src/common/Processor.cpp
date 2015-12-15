@@ -171,7 +171,7 @@ TTCInterface& Processor::registerInterface( TTCInterface* aTTCInterface )
     delete aTTCInterface;
     throw ProcessorInterfaceAlreadyDefined( "TTCInterface already defined for processor '" + getPath() + "'" );
   }
-  this->addObj(aTTCInterface);
+  this->addMonitorable(aTTCInterface);
   mTTC = aTTCInterface;
   return *mTTC;
 }
@@ -183,7 +183,7 @@ ReadoutInterface& Processor::registerInterface( ReadoutInterface* aReadoutInterf
     delete aReadoutInterface;
     throw ProcessorInterfaceAlreadyDefined( "ReadoutInterface already defined for processor '" + getPath() + "'" );
   }
-  this->addObj(aReadoutInterface);
+  this->addMonitorable(aReadoutInterface);
   mReadout = aReadoutInterface;
   return *mReadout;
 }
@@ -195,7 +195,7 @@ AlgoInterface& Processor::registerInterface( AlgoInterface* aAlgoInterface )
     delete aAlgoInterface;
     throw ProcessorInterfaceAlreadyDefined( "AlgoInterface already defined for processor '" + getPath() + "'" );
   }
-  this->addObj(aAlgoInterface);
+  this->addMonitorable(aAlgoInterface);
   mAlgo = aAlgoInterface;
   return *mAlgo;
 }
@@ -207,7 +207,7 @@ PortCollection& Processor::registerInterface( PortCollection* aPortCollection )
     delete aPortCollection;
     throw ProcessorInterfaceAlreadyDefined( "PortCollection already defined for processor '" + getPath() + "'" );
   }
-  this->addObj(aPortCollection);
+  this->addMonitorable(aPortCollection);
   mPorts = aPortCollection;
   return *mPorts;
 }

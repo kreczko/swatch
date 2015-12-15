@@ -23,13 +23,13 @@ PortCollection::~PortCollection() {
 
 
 void PortCollection::addInput(InputPort* aInput) {
-    this->addObj(aInput);
+    this->addMonitorable(aInput);
     inputs_.push_back(aInput);
 }
 
 
 void PortCollection::addOutput(OutputPort* aOutput) {
-    this->addObj(aOutput);
+    this->addMonitorable(aOutput);
     outputs_.push_back(aOutput);
 }
 

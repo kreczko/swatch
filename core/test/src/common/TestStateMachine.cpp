@@ -19,9 +19,9 @@ namespace test {
   struct StateMachineTestSetup {
     StateMachineTestSetup() :
       obj(new DummyActionableObject("dummyObj"), ActionableObject::Deleter()),
-      child1(obj->add(new DummyActionableObject("child1"), ActionableObject::Deleter())),
-      grandChild1(child1.add(new DummyActionableObject("grandChild1"), ActionableObject::Deleter())),
-      grandChild2(child1.add(new DummyActionableObject("grandChild2"), ActionableObject::Deleter())),
+      child1(obj->addMonitorable(new DummyActionableObject::MonChild("child1", *obj))),
+      grandChild1(child1.addMonitorable(new DummyActionableObject::MonChild("grandChild1", *obj))),
+      grandChild2(child1.addMonitorable(new DummyActionableObject::MonChild("grandChild2", *obj))),
       cmdNormal1( obj->registerCommand<DummyCommand>("cmdNormal1") ),
       cmdNormal2( obj->registerCommand<DummyCommand>("cmdNormal2") ),
       cmdWarning( obj->registerCommand<DummyWarningCommand>("cmdWarning") ),
@@ -61,8 +61,8 @@ namespace test {
     ~StateMachineTestSetup() {}
     
     boost::shared_ptr<DummyActionableObject> obj;
-    DummyActionableObject& child1;
-    DummyActionableObject& grandChild1, &grandChild2;
+    DummyActionableObject::MonChild& child1;
+    DummyActionableObject::MonChild& grandChild1, &grandChild2;
     Command& cmdNormal1;
     Command& cmdNormal2;
     Command& cmdWarning;

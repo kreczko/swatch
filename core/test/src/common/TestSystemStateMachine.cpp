@@ -201,7 +201,7 @@ BOOST_FIXTURE_TEST_CASE(TestAddTransitionSteps, SystemStateMachineTestSetup) {
   BOOST_CHECK_EQUAL(fsm.getParticipants().size(), size_t(0));
  
   // 3) Adding step for non-child: should throw & leave transition unchanged
-  DummyActionableObject nonChildObj;
+  DummyActionableObject nonChildObj("nonChildObj");
   StateMachine& nonChildFSM = nonChildObj.registerStateMachine("someFSM", "state0", "ERROR");
   nonChildFSM.addState("state1");
   transitions = { &nonChildFSM.addTransition("t", "state0", "state1") };

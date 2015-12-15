@@ -42,7 +42,7 @@ struct ActionableObjectTestSetup {
 
 
 ActionableObjectTestSetup::ActionableObjectTestSetup() :
-  handler( new DummyActionableObject() ),
+  handler( new DummyActionableObject("dummyObj") ),
   deleter( new ActionableObject::Deleter() ),
   testOp( handler->registerStateMachine("myTestOp" , opInitialState, "StateE") )
 { 

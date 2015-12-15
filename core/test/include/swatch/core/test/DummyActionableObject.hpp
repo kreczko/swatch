@@ -10,6 +10,7 @@
 
 
 #include "swatch/core/ActionableObject.hpp"
+#include "swatch/core/Command.hpp"
 
 
 namespace swatch {
@@ -18,8 +19,29 @@ namespace test {
 
 class DummyActionableObject: public swatch::core::ActionableObject {
 public:
-  DummyActionableObject();
+  class MonChild : public MonitorableObject {
+  public:
+    MonChild(const std::string& aId, const DummyActionableObject& aObj);
+    ~MonChild();
+    template<class T>
+    T& addMonitorable(T* aObj);
+    
+  protected:
+    void retrieveMetricValues();
+    
+    const DummyActionableObject& mObj;
+    swatch::core::Metric<uint32_t>& mDummyMetric;
+  };
+  
+  class WaitCommand : public Command {
+  public:
+    WaitCommand(const std::string& aId, ActionableObject& aActionable);
+    ~WaitCommand();
+  protected:
+    ActionStatus::State code(const XParameterSet& aParams);
+  };
 
+  
   DummyActionableObject(const std::string& aId);
 
   virtual ~DummyActionableObject();
@@ -30,11 +52,7 @@ public:
 
   void setNumber(uint32_t number);
 
-  std::string something() const;
-
-  void setSomething(std::string something);
-
-  void fail();
+  const Metric<uint32_t>& getDummyMetric() const;
   
   // Expose registerFunctionoid template method as public for tests
   template< typename T>
@@ -49,32 +67,60 @@ public:
   // Expose registerStateMachine method as public for tests
   StateMachine& registerStateMachine(const std::string& aId, const std::string& aInitialState, const std::string& aErrorState);
 
-  template< typename ObjType, typename DeleterType>
-  ObjType& add( ObjType* aChild , DeleterType aDeleter);
+  // Expose MonitorableObject::addMonitorable method as public for tests
+  template<class T>
+  T& addMonitorable(T* aObj); // { addMonitorable(aObj); }
+  
+  //! Tells object to wait next time the "wait" method is called; e.g. in WaitCommand or retrieveMetrics
+  void pleaseWaitNextTime();
+
+  //! Returns id of thread that's currently waiting; if no thread is currently executing the "wait" method 
+  boost::thread::id getWaitingThread();
+  
+  //! Tells other thread in "wait" method to 
+  void pleaseContinue();
 
 private:
 
-  void retrieveMetricValues() {}
-    
-  std::string something_;
-  uint32_t number_;
-  swatch::core::Metric<int>& mDummyMetric;
+  void wait() const;
   
-  mutable std::vector<std::string> gateKeeperTables_;
+  void retrieveMetricValues();
+    
+  uint32_t mNumber;
+  swatch::core::Metric<uint32_t>& mDummyMetric;
+
+  bool mWait;
+  mutable bool mContinue;
+  mutable boost::thread::id mWaitingThread;
+  mutable boost::mutex mMutex;
+  mutable boost::condition_variable mConditionVar;
+
+  mutable std::vector<std::string> mGateKeeperTables;
   
   DummyActionableObject( const DummyActionableObject& other ); // non copyable
   DummyActionableObject& operator=( const DummyActionableObject& ); // non copyable
-
 };
 
-template< typename ObjType, typename DeleterType>
-ObjType& DummyActionableObject::add( ObjType* aChild , DeleterType aDeleter)
-{ 
-  const std::string& childId = aChild->getId();
-  this->Object::addObj(aChild, aDeleter);
-  return *getObj<ObjType>(childId);
-}
 
+
+template<class T>
+T& DummyActionableObject::MonChild::addMonitorable(T* aObj)
+{
+  BOOST_STATIC_ASSERT( (boost::is_base_of<swatch::core::MonitorableObject,T>::value) );
+  MonitorableObject::addMonitorable(aObj);
+  return *aObj;
+};
+
+
+template<class T>
+T& DummyActionableObject::addMonitorable(T* aObj)
+{
+  BOOST_STATIC_ASSERT( (boost::is_base_of<swatch::core::MonitorableObject,T>::value) );
+  MonitorableObject::addMonitorable(aObj);
+  return *aObj;
+};
+  
+  
 } /* namespace test */
 } /* namespace core */
 } /* namespace swatch */

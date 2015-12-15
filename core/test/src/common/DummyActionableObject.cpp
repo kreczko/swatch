@@ -4,9 +4,10 @@
  * @date    February 2015
  *
  */
-
 #include "swatch/core/test/DummyActionableObject.hpp"
 
+
+#include "xdata/UnsignedInteger.h"
 
 #include "swatch/core/exception.hpp"
 
@@ -16,83 +17,180 @@ namespace core {
 namespace test {
 
 
-DummyActionableObject::DummyActionableObject() :
-  ActionableObject("Dummy", "swatch.core.test.Dummy"),
-  something_("something"),
-  number_(0),
-  mDummyMetric(registerMetric<int>("dummyMetric")){
-// Commands, sequences and state machines should be registered here
+DummyActionableObject::MonChild::MonChild(const std::string& aId, const DummyActionableObject& aObj) : 
+  MonitorableObject(aId),
+  mObj(aObj),
+  mDummyMetric(registerMetric<uint32_t>("dummyMetric"))   
+{
+}
+
+
+DummyActionableObject::MonChild::~MonChild()
+{
+}
+
+
+void DummyActionableObject::MonChild::retrieveMetricValues()
+{
+  setMetricValue(mDummyMetric, mObj.getNumber());
+}
+
+
+DummyActionableObject::WaitCommand::WaitCommand(const std::string& aId, ActionableObject& aActionable) : 
+  Command::Command(aId, aActionable, xdata::UnsignedInteger(42))
+{
+}
+
+
+DummyActionableObject::WaitCommand::~WaitCommand()
+{
+}
+
+
+ActionStatus::State DummyActionableObject::WaitCommand::code(const XParameterSet& aParams)
+{
+  DummyActionableObject& aObj = getActionable<DummyActionableObject>();
+
+  setProgress(0.2, "I'm about to wait ...");
+
+  aObj.wait();
+  
+  setProgress(0.8, "I've finished waiting!");
+  
+  return ActionStatus::kDone;
 }
 
 
 
 DummyActionableObject::DummyActionableObject(const std::string& aId) :
   ActionableObject(aId, "swatch.core.test." + aId),
-  something_("something"),
-  number_(0),
-  mDummyMetric(registerMetric<int>("dummyMetric")){
-// Commands, sequences and state machines should be registered here
+  mNumber(0),
+  mDummyMetric(registerMetric<uint32_t>("dummyMetric")),
+  mWait(false),
+  mContinue(false),
+  mWaitingThread()
+{
 }
 
 
-DummyActionableObject::~DummyActionableObject(){
-
+DummyActionableObject::~DummyActionableObject()
+{
 }
+
 
 const std::vector<std::string>& DummyActionableObject::getGateKeeperTables() const
 {
   // Can't set the table names in constructor, since don't know parent at that time ...
   // ... instead, have to set tables names first time this method is called
-  if( gateKeeperTables_.empty() )
+  if( mGateKeeperTables.empty() )
   {
-    gateKeeperTables_.push_back(getPath());
+    mGateKeeperTables.push_back(getPath());
 
     std::string basePath = getPath();
     basePath.resize(basePath.size() - getId().size());
-    gateKeeperTables_.push_back(basePath + "common");
+    mGateKeeperTables.push_back(basePath + "common");
   }
-  return gateKeeperTables_;
+  return mGateKeeperTables;
 }
 
 
-
-void DummyActionableObject::setSomething(std::string something){
-  something_ = something;
+uint32_t DummyActionableObject::getNumber() const
+{
+  boost::lock_guard<boost::mutex> lGuard(mMutex);
+  return mNumber;
 }
 
 
-void DummyActionableObject::setNumber(uint32_t number){
-  number_ = number;
+void DummyActionableObject::setNumber(uint32_t aNumber)
+{
+  boost::lock_guard<boost::mutex> lGuard(mMutex);
+  mNumber = aNumber;
 }
 
 
-std::string DummyActionableObject::something() const {
-  return something_;
+const Metric<uint32_t>& DummyActionableObject::getDummyMetric() const
+{
+  return mDummyMetric;
 }
 
 
-uint32_t DummyActionableObject::getNumber() const {
-  return number_;
-}
-
-
-void DummyActionableObject::fail() {
-  throw exception("DummyActionableObject failed");
-}
-
-
-CommandSequence& DummyActionableObject::registerSequence(const std::string& aId, const std::string& aFirstCmdId) {
+CommandSequence& DummyActionableObject::registerSequence(const std::string& aId, const std::string& aFirstCmdId)
+{
   return ActionableObject::registerSequence(aId, aFirstCmdId);
 }
 
-CommandSequence& DummyActionableObject::registerSequence(const std::string& aId, Command& aFirstCmd) {
+CommandSequence& DummyActionableObject::registerSequence(const std::string& aId, Command& aFirstCmd)
+{
   return ActionableObject::registerSequence(aId, aFirstCmd);
 }
 
 
-StateMachine& DummyActionableObject::registerStateMachine(const std::string& aId, const std::string& aInitialState, const std::string& aErrorState) {
+StateMachine& DummyActionableObject::registerStateMachine(const std::string& aId, const std::string& aInitialState, const std::string& aErrorState)
+{
   return ActionableObject::registerStateMachine(aId, aInitialState, aErrorState);
 }
+
+
+void DummyActionableObject::pleaseWaitNextTime()
+{
+  boost::lock_guard<boost::mutex> lGuard(mMutex);
+  mWait = true;
+}
+
+
+boost::thread::id DummyActionableObject::getWaitingThread()
+{
+  boost::lock_guard<boost::mutex> lGuard(mMutex);
+  return mWaitingThread;
+}
+
+  
+void DummyActionableObject::pleaseContinue()
+{
+  boost::lock_guard<boost::mutex> lGuard(mMutex);
+  mContinue = true;
+  mConditionVar.notify_all();
+}
+
+
+void DummyActionableObject::wait() const
+{
+  boost::unique_lock<boost::mutex> lGuard(mMutex);
+  
+  if(mWait) {
+//    std::cout << "DummyActionableObject::wait ... STARTING" << std::endl;
+    // Wait until no other threads are waiting ...
+    while (mWaitingThread != boost::thread::id())
+    {
+      mConditionVar.wait(lGuard);
+    }
+    
+    mWaitingThread = boost::this_thread::get_id();
+
+    // Now wait until we're told to continue ...
+    while(! mContinue)
+    {
+//      std::cout << "DummyActionableObject::wait ... WAITING until told to continue." << std::endl;
+      mConditionVar.wait(lGuard);
+    }
+    
+//    std::cout << "DummyActionableObject::wait ... CONTINUING" << std::endl;
+    // Finally, reset mWaitingThread, and let other threads have their turn to wait ...
+    mWaitingThread = boost::thread::id();
+    mContinue = false;
+    mConditionVar.notify_all();
+  }
+}
+
+
+void DummyActionableObject::retrieveMetricValues()
+{
+  setMetricValue(mDummyMetric, getNumber());
+
+  wait();
+}
+
+
 
 } /* namespace test */
 } /* namespace core */

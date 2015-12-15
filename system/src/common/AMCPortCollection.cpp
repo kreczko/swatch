@@ -20,7 +20,7 @@ AMCPortCollection::~AMCPortCollection() {
 
 void 
 AMCPortCollection::addPort(AMCPort* aAMCPort) {
-    this->addObj(aAMCPort);
+    this->addMonitorable(aAMCPort);
     mAMCPorts.push_back(aAMCPort);
 }
 

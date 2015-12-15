@@ -78,9 +78,9 @@ protected:
 
 class MetricSnapshot {
 public:
-  MetricSnapshot(swatch::core::StatusFlag, const std::string&, timeval,
-      boost::shared_ptr<AbstractMetricCondition>,
-      boost::shared_ptr<AbstractMetricCondition>,
+  MetricSnapshot(swatch::core::StatusFlag , const std::string&, timeval,
+      boost::shared_ptr<AbstractMetricCondition> aErrCond,
+      boost::shared_ptr<AbstractMetricCondition> aWarnCond,
       swatch::core::monitoring::Status m_status = monitoring::kEnabled);
 
     //! Returns status flag deduced from comparing the stored value with limits
@@ -101,12 +101,12 @@ public:
     swatch::core::monitoring::Status getMonitoringStatus() const;
 
 private:
-    const swatch::core::StatusFlag mFlag;
-    const std::string mValue; //TODO ??? Update to boost shared_ptr to actual data value (without templating class, just templating CTOR) ???
-    const timeval mUpdateTimestamp;
-    const boost::shared_ptr<AbstractMetricCondition> mErrorCondition;
-    const boost::shared_ptr<AbstractMetricCondition> mWarnCondition;
-    const swatch::core::monitoring::Status mMonitoringStatus;
+    swatch::core::StatusFlag mFlag;
+    std::string mValue; //TODO ??? Update to boost shared_ptr to actual data value (without templating class, just templating CTOR) ???
+    timeval mUpdateTimestamp;
+    boost::shared_ptr<AbstractMetricCondition> mErrorCondition;
+    boost::shared_ptr<AbstractMetricCondition> mWarnCondition;
+    swatch::core::monitoring::Status mMonitoringStatus;
 };
 
 

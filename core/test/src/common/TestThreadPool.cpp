@@ -23,6 +23,9 @@ namespace test {
 struct ThreadPoolSetup {
 public:
   ThreadPoolSetup() :
+      handler1("obj1"),
+      handler2("obj2"),
+      handler3("obj3"),
       cmd1( handler1.registerCommand<DummyCommand>("cmd") ),
       cmd2( handler2.registerCommand<DummyCommand>("cmd") ),
       cmd3( handler3.registerCommand<DummyCommand>("cmd") ),

@@ -54,7 +54,6 @@ protected:
   
 private:
   ActionableObject& mActionable;
-
 };
 
 
@@ -135,7 +134,6 @@ protected:
   //! Register the a command sequence in this object, with specified ID
   CommandSequence& registerSequence(const std::string& aId, Command& aFirstCommand, const std::string& aFirstCommandNamespace="");
 
-
   /*!
    * @brief Register a finite state machine in this object, with specified ID
    * @param aId State machine's ID
@@ -157,6 +155,9 @@ public:
   public:
     ActionFmt(const Functionoid* aAction);
     ~ActionFmt();
+    
+    std::string str() const;
+    
     const Functionoid* const mAction;
   };
 
@@ -168,8 +169,11 @@ public:
 
 class BusyGuard : public boost::noncopyable {
 public:
+  struct Adopt {};
+  
   BusyGuard(ObjectFunctionoid& aAction, MutableActionableStatus& aStatus, const BusyGuard* aOuterGuard=NULL);
-  BusyGuard(ActionableObject& aResource, MutableActionableStatus& aStatus, const ActionableStatusGuard& aStatusGuard, const Functionoid& aAction, const BusyGuard* aOuterGuard=NULL);
+  BusyGuard(ActionableObject& aResource, MutableActionableStatus& aStatus, ActionableStatusGuard& aStatusGuard, const Functionoid& aAction, const BusyGuard* aOuterGuard=NULL);
+  BusyGuard(ActionableObject& aResource, MutableActionableStatus& aStatus, ActionableStatusGuard& aStatusGuard, const Functionoid& aAction, const Adopt);
 
   ~BusyGuard();
 
@@ -181,7 +185,7 @@ private:
   
   typedef ActionableObject::ActionFmt ActionFmt_t;
 
-  void initialise(const ActionableStatusGuard& aStatusGuard);
+  void initialise(ActionableStatusGuard& aStatusGuard);
 };
 
 

@@ -20,6 +20,7 @@
 #include "boost/thread/mutex.hpp"
 
 // SWATCH headers
+#include "swatch/core/AbstractMonitorableStatus.hpp"
 #include "swatch/core/exception.hpp"
 
 
@@ -55,6 +56,8 @@ public:
    */
   bool isRunning() const;
   
+  bool isUpdatingMetrics() const;
+
   //!
   const std::string& getState() const;
   
@@ -67,6 +70,8 @@ public:
   //!
   template<class T>
   const T* getFirstRunningActionOfType() const;
+  
+  bool isActionWaitingToRun() const;
   
   //!
   const std::string& getStateMachineId() const;
@@ -91,6 +96,10 @@ private:
   //! Indicates which functionoids (Command/CommandSequence/(System)Transition) are currently active; NULL value indicates that no functionoids are currently active.
   std::vector<const Functionoid*> mRunningActions;
   
+  bool mUpdatingMetrics;
+  
+  bool mWaitingToRunAction;
+
   friend class MutableActionableStatus;
 };
 
@@ -110,28 +119,12 @@ const T* ActionableStatus::getFirstRunningActionOfType() const
 }
 
 
-class ActionableStatusGuard {
-public:
-  explicit ActionableStatusGuard(const MutableActionableStatus& aStatus);
-  ActionableStatusGuard(const MutableActionableStatus& aStatus, boost::adopt_lock_t);
-  ~ActionableStatusGuard();
-  
-  bool isCorrectGuard(const MutableActionableStatus& aStatus) const;
-  
-private:
-  ActionableStatusGuard(); // no default CTOR
-  ActionableStatusGuard(const ActionableStatusGuard&); // non-copyable
-  ActionableStatus& operator=(const ActionableStatusGuard& aGuard);// non-assignable
-
-  const MutableActionableStatus& mStatus;
-  boost::lock_guard<boost::mutex> mLockGuard;
-};
-
+typedef MonitorableStatusGuard ActionableStatusGuard;
 
 DEFINE_SWATCH_EXCEPTION(IncorrectActionableGuard);
 
 
-class MutableActionableStatus : public boost::noncopyable{
+class MutableActionableStatus : public AbstractMonitorableStatus {
 public:
   MutableActionableStatus();
   ~MutableActionableStatus();
@@ -147,6 +140,8 @@ public:
   const std::string& getState(const ActionableStatusGuard& aGuard) const;
 
   bool isBusy(const ActionableStatusGuard& aGuard) const;
+  
+  bool isUpdatingMetrics(const MonitorableStatusGuard& aGuard) const;
   
   const std::vector<const Functionoid*>& getRunningActions(const ActionableStatusGuard& aGuard) const;
 
@@ -168,14 +163,30 @@ public:
   //! Disables all future actions from running on this resource
   void kill(const ActionableStatusGuard& aGuard);
 
+  virtual void finishedUpdatingMetrics(const MonitorableStatusGuard& aGuard);
+
+  //! Blocks calling thread until no actions are running AND no threads calling "waitUntilReadyToRunAction"; then sets status to updating metrics before returning (DOESN'T THROW)
+  virtual void waitUntilReadyToUpdateMetrics(MonitorableStatusGuard& aGuard);
+
+  /*!
+   * @brief Blocks calling thread until ready to run action (i.e. isUpdatingMetrics() = false), and then add specified Functionoid to "running actions" stack before returning
+   * @throws if an action is already running, or an action is already queued (another thread waiting in this method)
+   */
+  void waitUntilReadyToRunAction(const Functionoid& aAction, ActionableStatusGuard& aGuard);
+  
+  /*!
+   * @brief Blocks calling thread until each status instance in vector is ready to run action (i.e. isUpdatingMetrics() = false), and then adds specified Functionoid to "running actions" stack of each status instance before returning
+   * @throws if an action is already running, or an action is already queued (another thread waiting in this method)
+   */
+  static void waitUntilReadyToRunAction(const std::vector<std::pair<MutableActionableStatus*, ActionableStatusGuard*> >&, const Functionoid& aAction);
+  
 private:
   //! Throws if guard is not for this status instance
-  void throwIfWrongGuard(const ActionableStatusGuard& aGuard) const;
+  void throwIfWrongGuard(const MonitorableStatusGuard& aGuard) const;
 
   ActionableStatus mStatus;
-  mutable boost::mutex mMutex;
+  boost::condition_variable mConditionVar;
   
-  friend class ActionableStatusGuard;
   friend class ActionableSystem; // Temporary fix during refactoring - for ActionableSystem::lockMutexes
 };
 

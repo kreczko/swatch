@@ -133,7 +133,7 @@ ActionableSystem::BusyGuard::BusyGuard(ActionableSystem& aResource, const Functi
   
   // Put the mutexes into lock guards before continuing
   std::map<const MonitorableObject*, StatusGuardPtr_t> lStatusGuardMap = ActionableSystem::lockMutexes(lOp);
-  const ActionableStatusGuard& lStatusGuard = *lStatusGuardMap.at(&mSystem);
+  ActionableStatusGuard& lStatusGuard = *lStatusGuardMap.at(&mSystem);
 
   // 1a) Check that system is engaged in correct state machine, and is in the correct state
   if( mStatus.getStateMachineId(lStatusGuard) !=  lTransition.getStateMachine().getId())
@@ -196,12 +196,23 @@ ActionableSystem::BusyGuard::BusyGuard(ActionableSystem& aResource, const Functi
     }
   } 
   
-  // 3) If got this far, then all is good; create the busy guards for the children
+  // 3) If got this far, then all is good: 
+  //    a) wait until actions ready to run on system and child objects; then ...
+  //    b) create the busy guards for the children
   LOG4CPLUS_INFO(aResource.getLogger(), mSystem.getPath() << " : Starting action '" << mAction.getId() << "'");
-  mStatus.addAction(mAction, lStatusGuard);
+
+  std::vector<std::pair<MutableActionableStatus*, ActionableStatusGuard*> > lStatusVec;
+  lStatusVec.push_back( std::pair<MutableActionableStatus*, ActionableStatusGuard*>(&mStatus, &lStatusGuard) );
+  BOOST_FOREACH( const tObjTransitionMap::value_type e, childTransitionMap )
+  {
+    lStatusVec.push_back( std::pair<MutableActionableStatus*, ActionableStatusGuard*>(&(e.first)->mStatus, lStatusGuardMap[e.first].get()) );
+  }
+  MutableActionableStatus::waitUntilReadyToRunAction(lStatusVec, mAction);
   
   BOOST_FOREACH( const tObjTransitionMap::value_type e, childTransitionMap )
-    this->mChildGuardMap[ e.first ] = tChildGuardPtr(new swatch::core::BusyGuard(*e.first, (e.first)->mStatus, *lStatusGuardMap[e.first].get(), lTransition) );
+  {
+    this->mChildGuardMap[ e.first ] = tChildGuardPtr(new swatch::core::BusyGuard(*e.first, (e.first)->mStatus, *lStatusGuardMap[e.first].get(), lTransition, core::BusyGuard::Adopt()) );
+  }
 }
 
 

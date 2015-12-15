@@ -2,6 +2,7 @@
 #include "swatch/core/MonitorableObject.hpp"
 
 
+#include "swatch/core/AbstractMonitorableStatus.hpp"
 #include "boost/foreach.hpp"
 
 
@@ -10,12 +11,13 @@ using namespace std;
 namespace swatch {
 namespace core {
 
-  
+
 MonitorableObject::MonitorableObject( const std::string& aId ) :
     Object( aId ),
     metrics_(),
     updateErrorMsg_(""),
-    monitoringStatus_(monitoring::kEnabled)
+    monitoringStatus_(monitoring::kEnabled),
+    mStatus(NULL)
 {
 }
 
@@ -88,6 +90,17 @@ StatusFlag MonitorableObject::getStatusFlag() const
 
 void MonitorableObject::updateMetrics() 
 {
+  MetricWriteGuard lGuard(*this);
+  
+  updateMetrics(lGuard);
+}
+
+
+void MonitorableObject::updateMetrics(const MetricWriteGuard& aGuard)
+{
+  if (!aGuard.isCorrectGuard(*this))
+    throw std::runtime_error("Metric write guard for incorrect object given to monitorable object '" + getId() + "'");
+
   timeval startTime;
   gettimeofday(&startTime, NULL);
 
@@ -116,14 +129,68 @@ void MonitorableObject::updateMetrics()
   
 }
 
-void MonitorableObject::setMonitoringStatus(const swatch::core::monitoring::Status m_status){
+void MonitorableObject::setMonitoringStatus(const swatch::core::monitoring::Status m_status)
+{
   monitoringStatus_ = m_status;
 }
 
 swatch::core::monitoring::Status
-MonitorableObject::getMonitoringStatus() const {
+MonitorableObject::getMonitoringStatus() const
+{
   return monitoringStatus_;
 }
+
+void MonitorableObject::addMonitorable(MonitorableObject* aMonObj)
+{
+  addObj(aMonObj);
+  
+  // Set status of new child, and all its monitorable descendants
+  // (use setStatus method to check that descendants aren't already using custom status instances defined by end user)
+  if(mStatus != NULL)
+  {
+    aMonObj->setMonitorableStatus(*mStatus);
+
+    for(Object::iterator lIt = aMonObj->begin(); lIt != aMonObj->end(); lIt++)
+    {
+      if ( MonitorableObject* lChildMonObj = dynamic_cast<MonitorableObject*>(&*lIt) )
+        lChildMonObj->setMonitorableStatus(*mStatus);
+    }
+  }
+}
+
+void MonitorableObject::setMonitorableStatus(AbstractMonitorableStatus& aStatus)
+{
+  if((mStatus == NULL) || (mStatus == &aStatus))
+    mStatus = &aStatus;  
+  else
+    throw std::runtime_error("Status of monitorable object '" + getId() + "' has already been set");
+}
+
+
+
+MetricWriteGuard::MetricWriteGuard(MonitorableObject& aMonObj) :
+  mObjStatus(*aMonObj.mStatus)
+{
+  if (aMonObj.mStatus == NULL)
+    throw std::runtime_error("Status not defined for monitorable object " + aMonObj.getId());
+
+  MonitorableStatusGuard lLockGuard(mObjStatus);
+  mObjStatus.waitUntilReadyToUpdateMetrics(lLockGuard);
+}
+
+
+MetricWriteGuard::~MetricWriteGuard()
+{
+  MonitorableStatusGuard lLockGuard(mObjStatus);
+  mObjStatus.finishedUpdatingMetrics(lLockGuard);
+}
+
+
+bool MetricWriteGuard::isCorrectGuard(const MonitorableObject& aMonObj) const
+{
+  return (aMonObj.mStatus == &mObjStatus);
+}
+
 
 }
 }

@@ -24,6 +24,10 @@
 namespace swatch {
 namespace core {
 
+class MetricWriteGuard;
+class AbstractMonitorableStatus;
+
+
 //! An object that contains metrics and/or other monitorable objects; i.e. an object representing a resource whose status (Good/Warning/Error) can be monitored by reading various quantities
 class MonitorableObject : public Object {
 public:
@@ -48,6 +52,9 @@ public:
   
   //! Update values of this object's metrics
   void updateMetrics();
+
+  //! Update values of this object's metrics
+  void updateMetrics(const MetricWriteGuard& aGuard);
 
   void setMonitoringStatus(const swatch::core::monitoring::Status m_status);
   swatch::core::monitoring::Status getMonitoringStatus() const;
@@ -100,6 +107,11 @@ protected:
   //! User-defined function that retrieves values of all the object's metrics from the hardware
   virtual void retrieveMetricValues() = 0;
   
+  void addMonitorable(MonitorableObject* aMonObj);
+
+  //! Sets this object's monitorable status pointer (used by MetricWriteGuard, in updateMetrics method)
+  void setMonitorableStatus(AbstractMonitorableStatus& aStatus);
+
 private:
   typedef boost::unordered_map< std::string , AbstractMetric* > tMetricMap;
 
@@ -108,11 +120,27 @@ private:
   //! Stores details in case error occurs when updating the metric values
   std::string updateErrorMsg_;
   swatch::core::monitoring::Status monitoringStatus_;
+  AbstractMonitorableStatus* mStatus;
+          
+  friend class MetricWriteGuard;
 };
 
-DEFINE_SWATCH_EXCEPTION(MetricAlreadyExistsInMonitorableObject);
 
+DEFINE_SWATCH_EXCEPTION(MetricAlreadyExistsInMonitorableObject);
 DEFINE_SWATCH_EXCEPTION(MetricNotFoundInMonitorableObject);
+
+
+class MetricWriteGuard : boost::noncopyable {
+public:
+  MetricWriteGuard(MonitorableObject& aMonObj);
+  ~MetricWriteGuard();
+  
+  bool isCorrectGuard(const MonitorableObject& aMonObj) const;
+
+private:
+  AbstractMonitorableStatus& mObjStatus;
+};
+
 
 } // namespace core
 } // namespace swatch

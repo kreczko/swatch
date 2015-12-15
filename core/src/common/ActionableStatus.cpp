@@ -2,6 +2,14 @@
 #include "swatch/core/ActionableStatus.hpp"
 
 
+// Standard C++ headers
+#include <stdexcept>
+
+// boost headers
+#include "boost/iterator/indirect_iterator.hpp"
+
+
+
 namespace swatch {
 namespace core {
 
@@ -15,7 +23,10 @@ const std::string ActionableStatus::kNullStateId = "";
 ActionableStatus::ActionableStatus() :
   mAlive(true), 
   mStateMachineId(kNullStateMachineId),
-  mState(kNullStateId) {
+  mState(kNullStateId),
+  mUpdatingMetrics(false),
+  mWaitingToRunAction(false)
+{
 }
 
 
@@ -33,6 +44,11 @@ bool ActionableStatus::isEngaged() const {
 //------------------------------------------------------------------------------------
 bool ActionableStatus::isRunning() const {
   return !mRunningActions.empty();
+}
+
+//------------------------------------------------------------------------------------
+bool ActionableStatus::isUpdatingMetrics() const {
+  return mUpdatingMetrics;
 }
 
 //------------------------------------------------------------------------------------
@@ -58,31 +74,10 @@ const std::string& ActionableStatus::getStateMachineId() const {
 }
 
 
-//------------------------------------------------------------------------------------
-ActionableStatusGuard::ActionableStatusGuard(const MutableActionableStatus& aStatus) : 
-  mStatus(aStatus),
-  mLockGuard(aStatus.mMutex)
+bool ActionableStatus::isActionWaitingToRun() const
 {
+  return mWaitingToRunAction;
 }
-  
-//------------------------------------------------------------------------------------
-ActionableStatusGuard::ActionableStatusGuard(const MutableActionableStatus& aStatus, boost::adopt_lock_t) :
-  mStatus(aStatus),
-  mLockGuard(aStatus.mMutex, boost::adopt_lock_t())
-{
-}
-
-//------------------------------------------------------------------------------------
-ActionableStatusGuard::~ActionableStatusGuard()
-{
-}
-  
-//------------------------------------------------------------------------------------
-bool ActionableStatusGuard::isCorrectGuard(const MutableActionableStatus& aStatus) const
-{
-  return (&mStatus == &aStatus);
-}
-
 
 
 //------------------------------------------------------------------------------------
@@ -139,6 +134,13 @@ bool MutableActionableStatus::isBusy(const ActionableStatusGuard& aGuard) const
 }
 
 //------------------------------------------------------------------------------------
+bool MutableActionableStatus::isUpdatingMetrics(const MonitorableStatusGuard& aGuard) const
+{
+  throwIfWrongGuard(aGuard);
+  return mStatus.isUpdatingMetrics();
+}
+
+//------------------------------------------------------------------------------------
 const std::vector<const Functionoid*>& MutableActionableStatus::getRunningActions(const ActionableStatusGuard& aGuard) const
 {
   throwIfWrongGuard(aGuard);
@@ -187,6 +189,8 @@ void MutableActionableStatus::popAction(const ActionableStatusGuard& aGuard)
 {
   throwIfWrongGuard(aGuard);
   mStatus.mRunningActions.pop_back();
+  if( mStatus.mRunningActions.empty() )
+    mConditionVar.notify_all();
 }
 
 //------------------------------------------------------------------------------------
@@ -196,8 +200,112 @@ void MutableActionableStatus::kill(const ActionableStatusGuard& aGuard)
   mStatus.mAlive = false;
 }
 
+
 //------------------------------------------------------------------------------------
-void MutableActionableStatus::throwIfWrongGuard(const ActionableStatusGuard& aGuard) const
+void MutableActionableStatus::finishedUpdatingMetrics(const MonitorableStatusGuard& aGuard)
+{
+  throwIfWrongGuard(aGuard);
+  assert ( mStatus.mUpdatingMetrics );
+
+  mStatus.mUpdatingMetrics = false;
+  mConditionVar.notify_all();
+}
+
+
+//------------------------------------------------------------------------------------
+void MutableActionableStatus::waitUntilReadyToUpdateMetrics(MonitorableStatusGuard& aGuard)
+{
+  throwIfWrongGuard(aGuard);
+
+  while((mStatus.mRunningActions.size() > 0) || mStatus.mWaitingToRunAction || isUpdatingMetrics(aGuard))
+  {
+    mConditionVar.wait(getUniqueLock(aGuard));
+  }
+  
+  mStatus.mUpdatingMetrics = true;
+}
+
+
+//------------------------------------------------------------------------------------
+void MutableActionableStatus::waitUntilReadyToRunAction(const Functionoid& aAction, ActionableStatusGuard& aGuard)
+{
+  throwIfWrongGuard(aGuard);
+  
+  if ( getRunningActions(aGuard).size() )
+    throw std::runtime_error("waitUntilReadyToRunAction: actions already running");
+  else if ( mStatus.mWaitingToRunAction )
+    throw std::runtime_error("waitUntilReadyToRunAction: another thread already waiting");
+  
+  mStatus.mWaitingToRunAction = true;
+  
+  while ( isUpdatingMetrics(aGuard) )
+  {
+    mConditionVar.wait(getUniqueLock(aGuard));
+  }
+
+  mStatus.mRunningActions.push_back(&aAction);  
+  mStatus.mWaitingToRunAction = false;
+}
+
+
+void MutableActionableStatus::waitUntilReadyToRunAction(const std::vector<std::pair<MutableActionableStatus*, ActionableStatusGuard*> >& aVec, const Functionoid& aAction)
+{
+  // 1) Check that:
+  //     - there aren't any NULL pointers; and ...
+  //     - the guards are all for the correct status instance;
+  typedef std::vector<std::pair<MutableActionableStatus*, ActionableStatusGuard*> > Vec_t;
+  for(Vec_t::const_iterator lIt=aVec.begin(); lIt!=aVec.end(); lIt++)
+  {
+    if (lIt->first == NULL)
+      std::runtime_error("waitUntilReadyToRunAction: status pointer in element " + boost::lexical_cast<std::string>(lIt-aVec.begin()) + " is NULL");
+    else if (lIt->second == NULL)
+      std::runtime_error("waitUntilReadyToRunAction: guard pointer in element " + boost::lexical_cast<std::string>(lIt-aVec.begin()) + " is NULL");
+
+    lIt->first->throwIfWrongGuard(*lIt->second);
+  }
+
+  // 2) Check that:
+  //     - no actions are already running; and ...
+  //     - no other threads are already waiting
+  for(Vec_t::const_iterator lIt=aVec.begin(); lIt!=aVec.end(); lIt++)
+  {
+    if ( lIt->first->getRunningActions(*lIt->second).size() )
+      throw std::runtime_error("waitUntilReadyToRunAction: actions already running");
+    else if ( lIt->first->mStatus.mWaitingToRunAction )
+      throw std::runtime_error("waitUntilReadyToRunAction: another thread already waiting");
+  }
+
+  // 3) Declare action waiting to run on each status instance, and unlock the mutexes (to avoid deadlocks whilst waiting for each status to change)
+  for(Vec_t::const_iterator lIt=aVec.begin(); lIt!=aVec.end(); lIt++)
+  {
+    lIt->first->mStatus.mWaitingToRunAction = true;
+    lIt->first->getUniqueLock(*lIt->second).unlock();
+  }
+
+  // 4) Re-lock the mutex for each status instance individually, and wait until isUpdatingMetrics() returns false
+  for(Vec_t::const_iterator lIt=aVec.begin(); lIt!=aVec.end(); lIt++)
+  {
+    ActionableStatusGuard lGuard(*lIt->first);
+    while ( lIt->first->isUpdatingMetrics(lGuard) )
+    {
+      lIt->first->mConditionVar.wait(lIt->first->getUniqueLock(lGuard));
+    }
+    lIt->first->mStatus.mRunningActions.push_back(&aAction);  
+    lIt->first->mStatus.mWaitingToRunAction = false;
+  }
+
+  // 5) Re-lock all the original lock guard objects 
+  std::vector<boost::unique_lock<boost::mutex>*> lLockGuardVec;
+  for(Vec_t::const_iterator lIt=aVec.begin(); lIt!=aVec.end(); lIt++)
+    lLockGuardVec.push_back( &lIt->first->getUniqueLock(*lIt->second) );
+
+  boost::indirect_iterator<std::vector<boost::unique_lock<boost::mutex>*>::iterator> begin(lLockGuardVec.begin()), end(lLockGuardVec.end());
+  boost::lock(begin, end);
+}
+
+
+//------------------------------------------------------------------------------------
+void MutableActionableStatus::throwIfWrongGuard(const MonitorableStatusGuard& aGuard) const
 {
   if ( ! aGuard.isCorrectGuard(*this) )
     throw IncorrectActionableGuard("");

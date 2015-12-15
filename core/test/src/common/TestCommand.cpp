@@ -28,7 +28,7 @@ namespace test {
 
 struct CommandTestSetup {
   CommandTestSetup():
-    obj( new DummyActionableObject(), ActionableObject::Deleter() ),
+    obj( new DummyActionableObject("dummyObj"), ActionableObject::Deleter() ),
     cmd( obj->registerCommand<DummyCommand>("dummy_cmd") ),
     warning_cmd( obj->registerCommand<DummyWarningCommand>("dummy_warning_cmd") ),
     error_cmd( obj->registerCommand<DummyErrorCommand>("dummy_error_cmd") ),

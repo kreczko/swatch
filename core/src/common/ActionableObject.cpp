@@ -42,7 +42,9 @@ ActionableObject& ObjectFunctionoid::getActionable() {
 ActionableObject::ActionableObject( const std::string& aId, const std::string& aLoggerName ) :
   MonitorableObject( aId  ),
   mStatus(),
-  mLogger(swatch::logger::Logger::getInstance(aLoggerName)) {
+  mLogger(swatch::logger::Logger::getInstance(aLoggerName))
+{
+  setMonitorableStatus(mStatus);
 }
 
 
@@ -209,6 +211,11 @@ ActionableObject::ActionFmt::~ActionFmt()
 }
 
 
+std::string ActionableObject::ActionFmt::str() const
+{
+  return boost::lexical_cast<std::string>(*this);
+}
+
 std::ostream& operator<<(std::ostream& aStream, const ActionableObject::ActionFmt& aActionFmt)
 {
   if (dynamic_cast<const Command*>(aActionFmt.mAction) != NULL)
@@ -242,7 +249,7 @@ BusyGuard::BusyGuard(ObjectFunctionoid& aAction, MutableActionableStatus& aStatu
 
 
 //------------------------------------------------------------------------------------
-BusyGuard::BusyGuard(ActionableObject& aResource, MutableActionableStatus& aStatus, const ActionableStatusGuard& aStatusGuard, const Functionoid& aAction, const BusyGuard* aOuterGuard) : 
+BusyGuard::BusyGuard(ActionableObject& aResource, MutableActionableStatus& aStatus, ActionableStatusGuard& aStatusGuard, const Functionoid& aAction, const BusyGuard* aOuterGuard) : 
   mActionableObj(aResource),
   mStatus(aStatus),
   mAction(aAction),
@@ -253,7 +260,25 @@ BusyGuard::BusyGuard(ActionableObject& aResource, MutableActionableStatus& aStat
 
 
 //------------------------------------------------------------------------------------
-void BusyGuard::initialise(const ActionableStatusGuard& aStatusGuard)
+BusyGuard::BusyGuard(ActionableObject& aResource, MutableActionableStatus& aStatus, ActionableStatusGuard& aStatusGuard, const Functionoid& aAction, const Adopt) : 
+  mActionableObj(aResource),
+  mStatus(aStatus),
+  mAction(aAction),
+  mOuterGuard(NULL)
+{
+  if ( mStatus.getSnapshot(aStatusGuard).isActionWaitingToRun() )
+    throw WrongBusyGuard("BusyGuard cannot adopt action '"+mAction.getPath()+"' on object '"+mActionableObj.getPath()+"' : Object is currently waiting for an action to run");
+  else if ( mStatus.getRunningActions(aStatusGuard).size() != size_t(1) )
+    throw WrongBusyGuard("BusyGuard cannot adopt action '"+mAction.getPath()+"' on object '"+mActionableObj.getPath()+"' : Action stack contains "+boost::lexical_cast<std::string>(mStatus.getRunningActions(aStatusGuard).size())+" actions");
+  else if ( mStatus.getRunningActions(aStatusGuard).at(0) != &mAction )
+    throw WrongBusyGuard("BusyGuard cannot adopt action '"+mAction.getPath()+"' on object '"+mActionableObj.getPath()+"' : Object is running "+ActionFmt_t(mStatus.getRunningActions(aStatusGuard).at(0)).str());
+
+  LOG4CPLUS_INFO(mActionableObj.getLogger(), mActionableObj.getPath() << " : Starting " << ActionFmt_t(&mAction) << " (adopted)");
+}
+
+
+//------------------------------------------------------------------------------------
+void BusyGuard::initialise(ActionableStatusGuard& aStatusGuard)
 {
   ActionableStatus lStatusSnapshot = mStatus.getSnapshot(aStatusGuard);
   // Consistency checks on outer busy guard
@@ -284,10 +309,15 @@ void BusyGuard::initialise(const ActionableStatusGuard& aStatusGuard)
   if ( lStatusSnapshot.isAlive() && ( (mOuterGuard != NULL) || !lStatusSnapshot.isRunning() ) )
   {
     if ( !lStatusSnapshot.isRunning() )
+    {
       LOG4CPLUS_INFO(mActionableObj.getLogger(), mActionableObj.getPath() << " : Starting " << ActionFmt_t(&mAction));
+      mStatus.waitUntilReadyToRunAction(mAction, aStatusGuard);
+    }
     else
+    {
       LOG4CPLUS_INFO(mActionableObj.getLogger(), mActionableObj.getPath() << " : Starting " << ActionFmt_t(&mAction) << " within " << ActionFmt_t(lStatusSnapshot.getLastRunningAction()));
-    mStatus.addAction(mAction, aStatusGuard);
+      mStatus.addAction(mAction, aStatusGuard);
+    }
   }
   else
   {

@@ -144,7 +144,7 @@ DaqTTCManager::registerInterface(TTCInterface* aTTCInterface) {
     delete aTTCInterface;
     throw DaqTTCManagerInterfaceAlreadyDefined("TTCInterface already defined for amc13 '" + getPath() + "'");
   }
-  this->addObj(aTTCInterface);
+  this->addMonitorable(aTTCInterface);
   mTTC = aTTCInterface;
   return *mTTC;
 }
@@ -157,7 +157,7 @@ DaqTTCManager::registerInterface(SLinkExpress* aSLink) {
     delete aSLink;
     throw DaqTTCManagerInterfaceAlreadyDefined("SLink already defined for amc13 '" + getPath() + "'");
   }
-  this->addObj(aSLink);
+  this->addMonitorable(aSLink);
   mSLink = aSLink;
   return *mSLink;
 }
@@ -170,7 +170,7 @@ DaqTTCManager::registerInterface( dtm::AMCPortCollection* aAMCPortCollection )
     delete aAMCPortCollection;
     throw DaqTTCManagerInterfaceAlreadyDefined( "PortCollection already defined for amc13 '" + getPath() + "'" );
   }
-  this->addObj(aAMCPortCollection);
+  this->addMonitorable(aAMCPortCollection);
   mAMCPorts = aAMCPortCollection;
   return *mAMCPorts;
 }
@@ -182,7 +182,7 @@ DaqTTCManager::registerInterface(EVBInterface* aEventBuilder) {
     delete aEventBuilder;
     throw DaqTTCManagerInterfaceAlreadyDefined("TTCInterface already defined for amc13 '" + getPath() + "'");
   }
-  this->addObj(aEventBuilder);
+  this->addMonitorable(aEventBuilder);
   mEvb = aEventBuilder;
   return *mEvb;
 }
