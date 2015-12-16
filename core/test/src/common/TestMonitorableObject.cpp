@@ -6,7 +6,7 @@
  */
 #include <boost/test/unit_test.hpp>
 
-// swatch headers
+// SWATCH headers
 #include "swatch/core/MetricConditions.hpp"
 #include "swatch/logger/Log.hpp"
 #include "swatch/core/test/DummyMonitorableObjects.hpp"

@@ -13,7 +13,7 @@ namespace swatch {
 namespace processor {
 
 InputPort::InputPort( const std::string& aId) : 
-    MonitorableObject(aId),
+    MaskableObject(aId),
     metricIsLocked_( registerMetric<bool>("isLocked", core::EqualCondition<bool>(false)) ),
     metricIsAligned_( registerMetric<bool>("isAligned", core::EqualCondition<bool>(false)) ),
     metricCRCErrors_( registerMetric<uint32_t>("crcErrors", core::GreaterThanCondition<uint32_t>(0)) )        
@@ -27,7 +27,7 @@ const std::vector<std::string> InputPort::defaultMetrics = { "isLocked", "isAlig
 
 
 OutputPort::OutputPort( const std::string& aId ) :
-    MonitorableObject(aId ),
+    MonitorableObject(aId),
     metricIsOperating_( registerMetric<bool>("isOperating", core::EqualCondition<bool>(false)) )
 {
 }

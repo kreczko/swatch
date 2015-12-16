@@ -37,19 +37,19 @@ public:
   /// Destructor
   virtual ~XmlGateKeeper();
 
-//    GateKeeper::tTable getTable( const std::string& aKey , const std::string& aId );
-
 private:
+
+  void readXmlDocument(const pugi::xml_document& aXmlDoc, const std::string& aRunKey);
 
   std::pair<std::string, GateKeeper::tParameter> createParameter(pugi::xml_node& aEntry);
   std::pair<std::string, GateKeeper::tTable> createTable(pugi::xml_node& aTable);
-
-  void readXmlDocument(const pugi::xml_document& aXmlDoc, const std::string& aRunKey);
 
   std::pair<std::string, GateKeeper::tMonitoringSetting> createMonitoringSetting(
       const pugi::xml_node& aEntry) const;
   std::pair<std::string, GateKeeper::tSettingsTable> createSettingsTable(
       const pugi::xml_node& aTable) const;
+
+  std::pair < std::string, GateKeeper::MasksTable_t> createMasksTable(const pugi::xml_node& aTable) const;
 
   std::string mFileName;
   XmlSerializer* mSerializer;

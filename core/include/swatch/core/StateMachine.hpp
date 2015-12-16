@@ -71,13 +71,16 @@ public:
    */
   Transition& addTransition(const std::string& aTransitionId, const std::string& aFromState, const std::string& aToState);
 
-  void engage();
+  //! Engage this FSM
+  void engage(const GateKeeper& aGateKeeper);
   
   //! Disengage this FSM
   void disengage();
 
   //! Reset this FSM to initial state
-  void reset();
+  void reset(const GateKeeper& aGateKeeper);
+
+  static void resetMaskableObjects(ActionableObject& aObj, const GateKeeper& aGateKeeper);
   
   typedef CommandVecStatus TransitionStatus;
 

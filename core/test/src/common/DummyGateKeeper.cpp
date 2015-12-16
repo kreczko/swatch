@@ -1,32 +1,35 @@
 
 #include "swatch/core/test/DummyGateKeeper.hpp"
-#include "swatch/core/CommandSequence.hpp"
 
-#include <sstream>
-
-#include <xdata/Integer.h>
-#include <xdata/String.h>
 
 namespace swatch {
 namespace core {
 namespace test {
+
 
 DummyGateKeeper::DummyGateKeeper():
   core::GateKeeper( "__dummyGK__" )
 {
 }
 
+
 DummyGateKeeper::~DummyGateKeeper()
 {
 }
 
 
-void DummyGateKeeper::addTable(const std::string& aId, tTable& aTable)
+void DummyGateKeeper::addTable(const std::string& aId, const tTable& aTable)
 {
   add(aId, aTable);
 }
 
-void DummyGateKeeper::addSettingsTable(const std::string& aId, tSettingsTable& aTable)
+void DummyGateKeeper::addSettingsTable(const std::string& aId, const tSettingsTable& aTable)
+{
+  add(aId, aTable);
+}
+  
+  
+void DummyGateKeeper::addMasksTable(const std::string& aId, const MasksTable_t& aTable)
 {
   add(aId, aTable);
 }

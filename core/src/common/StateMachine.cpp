@@ -9,6 +9,7 @@
 #include "swatch/core/GateKeeper.hpp"
 #include "swatch/core/ReadOnlyXParameterSet.hpp"
 #include "swatch/core/ThreadPool.hpp"
+#include "swatch/core/MaskableObject.hpp"
 
 
 namespace swatch {
@@ -120,7 +121,7 @@ StateMachine::Transition& StateMachine::addTransition(const std::string& aTransi
 
 
 //------------------------------------------------------------------------------------
-void StateMachine::engage()
+void StateMachine::engage(const GateKeeper& aGateKeeper)
 {
   ActionableStatusGuard lGuard(mStatus);
   
@@ -129,6 +130,9 @@ void StateMachine::engage()
     throw ResourceInWrongStateMachine("Cannot engage other state machine; resource '"+getPath()+"' currently in state machine '"+mStatus.getStateMachineId(lGuard)+"'");
 
   mStatus.setStateMachine(getId(), getInitialState(), lGuard);
+
+  // Reset maskable objects (unmasked unless specified otherwise in gatekeeper)
+  resetMaskableObjects(mResource, aGateKeeper);
 }
 
 
@@ -159,10 +163,10 @@ void StateMachine::disengage()
 
 
 //------------------------------------------------------------------------------------
-void StateMachine::reset()
+void StateMachine::reset(const GateKeeper& aGateKeeper)
 {
   ActionableStatusGuard lGuard(mStatus);
-  
+
   // Throw if currently in other state machine
   if ( mStatus.getStateMachineId(lGuard) != this->getId() )
   {
@@ -180,6 +184,20 @@ void StateMachine::reset()
     throw ActionableObjectIsBusy("Cannot reset '"+mResource.getPath()+"', state machine '"+getId()+"'; busy running action '"+mStatus.getLastRunningAction(lGuard)->getPath()+"'");  
   
   mStatus.setState(getInitialState(), lGuard);
+
+  // Reset maskable objects (unmasked unless specified otherwise in gatekeeper)
+  resetMaskableObjects(mResource, aGateKeeper);
+}
+
+
+void StateMachine::resetMaskableObjects(ActionableObject& aObj, const GateKeeper& aGateKeeper)
+{
+  std::vector<std::string> lDescendants = aObj.getDescendants();
+  for(std::vector<std::string>::const_iterator lIdIt=lDescendants.begin(); lIdIt!=lDescendants.end(); lIdIt++)
+  {
+    if(MaskableObject* lMaskableObj = aObj.getObj<MaskableObject>(*lIdIt))
+      lMaskableObj->setMasked( aGateKeeper.getMask(*lIdIt, aObj.getGateKeeperTables()) );
+  }
 }
 
 

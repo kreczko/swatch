@@ -214,13 +214,13 @@ public:
   SystemTransition& addTransition(const std::string& aTransitionId, const std::string& aFromState, const std::string& aToState);
 
   //! Engage this FSM, and FSMs of participating child objects
-  void engage();
+  void engage(const GateKeeper& aGateKeeper);
 
   //! Disengage this FSM, and FSMs of participating child objects
   void disengage();
   
   //! Reset this FSM, and FSMs of participating child objects, to initial state
-  void reset();
+  void reset(const GateKeeper& aGateKeeper);
   
 private:
   //! Throws if system/children are in other state machine, or running transition; need to lock externally ...

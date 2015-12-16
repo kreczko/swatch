@@ -7,6 +7,7 @@
 #define	__SWATCH_PROCESSOR_PORT_HPP__
 
 
+#include "swatch/core/MaskableObject.hpp"
 #include "swatch/core/MonitorableObject.hpp"
 
 
@@ -14,7 +15,7 @@ namespace swatch {
 namespace processor {
 
 //! Base class defining the interface of an input optical port 
-class InputPort : public core::MonitorableObject {
+class InputPort : public core::MaskableObject {
 protected:
     explicit InputPort( const std::string& aId);
 

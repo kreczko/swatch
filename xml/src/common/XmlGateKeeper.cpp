@@ -21,14 +21,14 @@ namespace swatch {
 namespace xml {
 using namespace swatch::core;
 
-//------------------------------------------------------------------------------------------------------------------
-XmlGateKeeper::XmlGateKeeper(const std::string& aFileName,
-    const std::string& aKey) :
-        GateKeeper(aKey),
-        mFileName(swatch::core::shellExpandPath(aFileName)),
-		mSerializer(new XmlSerializer()),
-		mLogger(swatch::logger::Logger::getInstance("swatch.xml.XmlGateKeeper")) {
 
+//------------------------------------------------------------------------------------------------------------------
+XmlGateKeeper::XmlGateKeeper(const std::string& aFileName, const std::string& aKey) :
+  GateKeeper(aKey),
+  mFileName(swatch::core::shellExpandPath(aFileName)),
+  mSerializer(new XmlSerializer()),
+  mLogger(swatch::logger::Logger::getInstance("swatch.xml.XmlGateKeeper"))
+{
   pugi::xml_document lXmlDoc;
   pugi::xml_parse_result lLoadResult = lXmlDoc.load_file(mFileName.c_str());
 
@@ -43,74 +43,86 @@ XmlGateKeeper::XmlGateKeeper(const std::string& aFileName,
   readXmlDocument(lXmlDoc, aKey);
 }
 
+
+//------------------------------------------------------------------------------------------------------------------
 XmlGateKeeper::XmlGateKeeper(const pugi::xml_document& aXmlDoc, const std::string& aRunKey) :
-				GateKeeper(aRunKey),
-				mFileName(""),
-				mSerializer(new XmlSerializer()),
-				mLogger(swatch::logger::Logger::getInstance("swatch.xml.XmlGateKeeper")) {
-	readXmlDocument(aXmlDoc, aRunKey);
-
-}
-//------------------------------------------------------------------------------------------------------------------
-
-void XmlGateKeeper::readXmlDocument(const pugi::xml_document& aXmlDoc, const std::string& aRunKey) {
-	pugi::xml_node lRun(aXmlDoc.child("db").find_child_by_attribute("run", "key", aRunKey.c_str()));
-
-	for (pugi::xml_node lTable(lRun.child("table")); lTable; lTable = lTable.next_sibling("table")) {
-		std::pair < std::string, GateKeeper::tTable > lParameterTable(createTable(lTable));
-		add(lParameterTable.first, lParameterTable.second);
-
-		std::pair < std::string, GateKeeper::tSettingsTable > lSettingsTable(createSettingsTable(lTable));
-		add(lSettingsTable.first, lSettingsTable.second);
-	}
+  GateKeeper(aRunKey),
+  mFileName(""),
+  mSerializer(new XmlSerializer()),
+  mLogger(swatch::logger::Logger::getInstance("swatch.xml.XmlGateKeeper"))
+{
+ readXmlDocument(aXmlDoc, aRunKey);
 }
 
-//------------------------------------------------------------------------------------------------------------------
-XmlGateKeeper::~XmlGateKeeper() {
-}
-//------------------------------------------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------------------------------------------
-std::pair<std::string, GateKeeper::tParameter> XmlGateKeeper::createParameter(pugi::xml_node& aEntry) {
-	std::string lEntryId(aEntry.attribute("id").value());
-	std::string lType(aEntry.attribute("type").value());
-	std::string lValue(aEntry.child_value());
-	xdata::Serializable* lSerializable(mSerializer->import(aEntry));
+void XmlGateKeeper::readXmlDocument(const pugi::xml_document& aXmlDoc, const std::string& aRunKey)
+{
+  pugi::xml_node lRun(aXmlDoc.child("db").find_child_by_attribute("run", "key", aRunKey.c_str()));
 
-	return std::make_pair(lEntryId, GateKeeper::tParameter(lSerializable));
+  for (pugi::xml_node lTable(lRun.child("table")); lTable; lTable = lTable.next_sibling("table"))
+  {
+    std::pair < std::string, GateKeeper::tTable > lParameterTable(createTable(lTable));
+    add(lParameterTable.first, lParameterTable.second);
 
-}
-//------------------------------------------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------------------------------------------
-std::pair<std::string, GateKeeper::tTable> XmlGateKeeper::createTable(pugi::xml_node& aTable) {
-	std::string lTableId(aTable.attribute("id").value());
-	tTable lParameterTable(new tParameters());
-
-	for (pugi::xml_node lEntry(aTable.child("entry")); lEntry; lEntry = lEntry.next_sibling("entry")) {
-		std::pair<std::string, GateKeeper::tParameter> lParameter;
-		try {
-			lParameter = createParameter(lEntry);
-		} catch (const std::exception& e) {
-			std::string lEntryId(lEntry.attribute("id").value());
-			std::string lMsg("Error parsing parameter '" + lEntryId + "' from table '" + lTableId + "'");
-			LOG4CPLUS_FATAL(mLogger, lMsg + ": " << e.what());
-			throw e;
-		}
-
-		if (lParameterTable->find(lParameter.first) != lParameterTable->end()) {
-			throw ParameterWithGivenIdAlreadyExistsInTable(
-					"Parameter with ID '" + lParameter.first + "' already exists in table '" + lTableId + "' in file '"
-							+ mFileName + "'");
-		}
-
-		lParameterTable->insert(lParameter);
-	}
-	return std::make_pair(lTableId, lParameterTable);
+    std::pair < std::string, GateKeeper::tSettingsTable > lSettingsTable(createSettingsTable(lTable));
+    add(lSettingsTable.first, lSettingsTable.second);
+    
+    std::pair < std::string, GateKeeper::MasksTable_t> lMasksTable(createMasksTable(lTable));
+    add(lMasksTable.first, lMasksTable.second);
+  }
 }
 
+
+//------------------------------------------------------------------------------------------------------------------
+XmlGateKeeper::~XmlGateKeeper()
+{
+}
+
+
+//------------------------------------------------------------------------------------------------------------------
+std::pair<std::string, GateKeeper::tParameter> XmlGateKeeper::createParameter(pugi::xml_node& aEntry)
+{
+  std::string lEntryId(aEntry.attribute("id").value());
+  std::string lType(aEntry.attribute("type").value());
+  std::string lValue(aEntry.child_value());
+  xdata::Serializable* lSerializable(mSerializer->import(aEntry));
+
+  return std::make_pair(lEntryId, GateKeeper::tParameter(lSerializable));
+}
+
+
+//------------------------------------------------------------------------------------------------------------------
+std::pair<std::string, GateKeeper::tTable> XmlGateKeeper::createTable(pugi::xml_node& aTable)
+{
+  std::string lTableId(aTable.attribute("id").value());
+  tTable lParameterTable(new tParameters());
+
+  for (pugi::xml_node lEntry(aTable.child("entry")); lEntry; lEntry = lEntry.next_sibling("entry")) {
+    std::pair<std::string, GateKeeper::tParameter> lParameter;
+    try {
+      lParameter = createParameter(lEntry);
+    } catch (const std::exception& e) {
+      std::string lEntryId(lEntry.attribute("id").value());
+      std::string lMsg("Error parsing parameter '" + lEntryId + "' from table '" + lTableId + "'");
+      LOG4CPLUS_FATAL(mLogger, lMsg + ": " << e.what());
+      throw e;
+    }
+
+    if (lParameterTable->find(lParameter.first) != lParameterTable->end()) {
+      throw ParameterWithGivenIdAlreadyExistsInTable("Parameter with ID '" + lParameter.first + "' already exists in table '" + lTableId + "' in file '" + mFileName + "'");
+    }
+
+    lParameterTable->insert(lParameter);
+  }
+  return std::make_pair(lTableId, lParameterTable);
+}
+
+
+//------------------------------------------------------------------------------------------------------------------
 std::pair<std::string, GateKeeper::tSettingsTable> XmlGateKeeper::createSettingsTable(
-    const pugi::xml_node& aTable) const {
+    const pugi::xml_node& aTable) const
+{
   std::string lTableId(aTable.attribute("id").value());
   tSettingsTable lSettingsTable(new tMonitoringSettings());
 
@@ -151,14 +163,15 @@ std::pair<std::string, GateKeeper::tSettingsTable> XmlGateKeeper::createSettings
       }
 
       lSettingsTable->insert(lSetting);
-
     }
   }
   return std::make_pair(lTableId, lSettingsTable);
 }
 
-std::pair<std::string, GateKeeper::tMonitoringSetting> XmlGateKeeper::createMonitoringSetting(
-    const pugi::xml_node& aEntry) const {
+
+//------------------------------------------------------------------------------------------------------------------
+std::pair<std::string, GateKeeper::tMonitoringSetting> XmlGateKeeper::createMonitoringSetting(const pugi::xml_node& aEntry) const 
+{
   std::string lId(aEntry.attribute("id").value());
   std::string lStatus(aEntry.attribute("status").value());
 
@@ -167,5 +180,24 @@ std::pair<std::string, GateKeeper::tMonitoringSetting> XmlGateKeeper::createMoni
   return std::make_pair(lId, lMonSetting);
 }
 
-} /* namespace core */
-} /* namespace swatch */
+//------------------------------------------------------------------------------------------------------------------
+std::pair<std::string, GateKeeper::MasksTable_t> XmlGateKeeper::createMasksTable(const pugi::xml_node& aTable) const
+{
+  std::string lTableId(aTable.attribute("id").value());
+  MasksTable_t lMaskTable(new Masks_t());
+
+  for (pugi::xml_node lEntry(aTable.child("mask")); lEntry; lEntry = lEntry.next_sibling("mask")) {
+
+    std::string lId = lEntry.attribute("id").value();
+    
+    if (lMaskTable->find(lId) != lMaskTable->end())
+      throw ParameterWithGivenIdAlreadyExistsInTable("Mask with ID '" + lId + "' already exists in table '" + lTableId + "' in file '" + mFileName + "'");
+
+    lMaskTable->insert(lId);
+  }
+  return std::make_pair(lTableId, lMaskTable);
+}
+
+
+} // namespace core
+} // namespace swatch

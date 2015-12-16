@@ -21,10 +21,10 @@ GateKeeper::GateKeeper(const std::string& aKey) :
         mSettings(),
         mUpdateTime() {
   tTable lParameters(new tParameters()); //Best practice to always use named shared_ptrs
-  mCache.insert(std::make_pair(mRuntimeTableLabel, lParameters));
+  mCache.insert(std::make_pair(kRuntimeTableLabel, lParameters));
 
   tSettingsTable lSettings(new tMonitoringSettings());
-  mSettings.insert(std::make_pair(mRuntimeTableLabel, lSettings));
+  mSettings.insert(std::make_pair(kRuntimeTableLabel, lSettings));
 }
 
 GateKeeper::~GateKeeper() {
@@ -145,21 +145,21 @@ GateKeeper::tParameter GateKeeper::get(const std::string& aSequencePath,
 
 GateKeeper::tParameter GateKeeper::get(const std::string& aSequenceId,
     const std::string& aCommandId, const std::string& aParameterId,
-    const std::vector<std::string>& aTables) const {
+    const std::vector<std::string>& aTablesToLookIn) const {
 
   std::string lCommandPath(aCommandId + "." + aParameterId);
   std::string lSequencePath(aSequenceId + "." + lCommandPath);
 
   //See if the value was set at Run-time
   tParameter lData;
-  lData = get(lSequencePath, lCommandPath, aParameterId, mRuntimeTableLabel);
+  lData = get(lSequencePath, lCommandPath, aParameterId, kRuntimeTableLabel);
   if (lData) {
     return lData; //perfectly acceptable for specific table not hold the requested data, just try the table with the next highest priority
   }
 
   //We could add runtime overriding of values to the GateKeeper and check them first...
-  for (std::vector<std::string>::const_iterator lIt(aTables.begin());
-      lIt != aTables.end(); ++lIt) {
+  for (std::vector<std::string>::const_iterator lIt(aTablesToLookIn.begin());
+      lIt != aTablesToLookIn.end(); ++lIt) {
     LOG(logger::kDebug) << "Searching : " << lSequencePath << ", "
         << lCommandPath << ", " << aParameterId << " in  " << *lIt << std::endl;
     lData = get(lSequencePath, lCommandPath, aParameterId, *lIt);
@@ -178,7 +178,7 @@ GateKeeper::tMonitoringSetting GateKeeper::getMonitoringSetting(
 
   //See if the value was set at Run-time
   tMonitoringSetting setting;
-  setting = getMonitoringSetting(statePath, aMetricId, mRuntimeTableLabel);
+  setting = getMonitoringSetting(statePath, aMetricId, kRuntimeTableLabel);
   if (setting) {
     return setting; //perfectly acceptable for specific table not hold the requested data, just try the table with the next highest priority
   }
@@ -234,12 +234,48 @@ GateKeeper::tMonitoringSetting GateKeeper::getMonitoringSetting(
   return settings->second;  //We found data!
 }
 
+
+bool GateKeeper::getMask(const std::string& aObjId, const std::vector<std::string>& aTablesToLookIn) const
+{
+  bool lMask = false;
+  
+  for (std::vector<std::string>::const_iterator lIt(aTablesToLookIn.begin()); lIt != aTablesToLookIn.end(); ++lIt) {
+    LOG(logger::kDebug) << "Searching for mask for '" << aObjId << "', in table " << *lIt << std::endl;
+    lMask = getMask(aObjId, *lIt);
+    if (lMask)
+      return lMask;
+  }
+  
+  return false;
+}
+
+
+bool GateKeeper::getMask(const std::string& aObjId, const std::string& aTableToLookIn) const
+{
+   MasksTableCache_t::const_iterator lTable(mMasks.find(aTableToLookIn));
+
+  if (lTable == mMasks.end()) {
+    //perfectly acceptable for table name to not exist, just try the table with the next highest priority
+    return false;
+  }
+
+  Masks_t::const_iterator lMaskIt = lTable->second->find(aObjId);
+
+  if (lMaskIt == lTable->second->end()) {
+    //perfectly acceptable for table name to not exist, just try the table with the next highest priority
+    return false;
+  }
+
+  return true;  //We found data!
+}
+
+
 void GateKeeper::add(const std::string& aId, tTable aTable) {
   tTableCache::iterator lTableIt(mCache.find(aId));
 
   if (lTableIt != mCache.end()) {
     throw TableWithIdAlreadyExists(
-        "Table With Id '" + aId + "' Already Exists");
+        "Table With Id '" + aId + "' already exists");
   }
 
   mCache.insert(std::make_pair(aId, aTable));
@@ -250,11 +286,22 @@ void GateKeeper::add(const std::string& aId, tSettingsTable aTable) {
   tSettingsTableCache::iterator lTableIt(mSettings.find(aId));
   if (lTableIt != mSettings.end()) {
     throw TableWithIdAlreadyExists(
-        "Table With Id '" + aId + "' Already Exists");
+        "Table of monitoring settings With Id '" + aId + "' already exists");
   }
 
   mSettings.insert(std::make_pair(aId, aTable));
 }
+
+
+void GateKeeper::add(const std::string& aId, MasksTable_t aTable)
+{
+  MasksTableCache_t::const_iterator lTableIt(mMasks.find(aId));
+  if (lTableIt != mMasks.end())
+    throw TableWithIdAlreadyExists("Table of masks with Id '" + aId + "' already exists");
+
+  mMasks.insert(std::make_pair(aId, aTable));
+}
+
 
 const boost::posix_time::ptime& GateKeeper::lastUpdated() {
   return mUpdateTime;
@@ -262,7 +309,7 @@ const boost::posix_time::ptime& GateKeeper::lastUpdated() {
 
 void GateKeeper::SetRuntimeParameter(const std::string& aParam,
     tParameter aData) {
-  tTableCache::iterator lTable(mCache.find(mRuntimeTableLabel));
+  tTableCache::iterator lTable(mCache.find(kRuntimeTableLabel));
   tParameters::iterator lIt(lTable->second->find(aParam));
 
   if (lIt != lTable->second->end()) {
@@ -272,7 +319,7 @@ void GateKeeper::SetRuntimeParameter(const std::string& aParam,
   lTable->second->insert(std::make_pair(aParam, aData));
 }
 
-const std::string GateKeeper::mRuntimeTableLabel = std::string("__runtime__");
+const std::string GateKeeper::kRuntimeTableLabel = std::string("__runtime__");
 
 std::ostream& operator<<(std::ostream& aStr,
     const swatch::core::GateKeeper& aGateKeeper) {

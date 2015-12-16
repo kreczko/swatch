@@ -17,18 +17,17 @@ namespace swatch {
 namespace core {
 namespace test {
 
-class DummyGateKeeper : public core::GateKeeper {
+class DummyGateKeeper : public GateKeeper {
   public:
 
-  /// Constructor
   DummyGateKeeper();
 
-  /// Destructor
   virtual ~DummyGateKeeper();
 
-  // Expose gatekeeper "add" method as public for unit testing 
-  void addTable( const std::string& aId, tTable&);
-  void addSettingsTable(const std::string& aId, tSettingsTable& aTable);
+  // Expose gatekeeper "add" methods as public for unit testing 
+  void addTable( const std::string& aId, const tTable&);
+  void addSettingsTable(const std::string& aId, const tSettingsTable& aTable);
+  void addMasksTable(const std::string& aId, const MasksTable_t& aTable);
 };
 
 } /* namespace test */
