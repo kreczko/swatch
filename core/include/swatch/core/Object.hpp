@@ -15,6 +15,7 @@
 #include <iosfwd>
 
 // boost headers
+#include "boost/noncopyable.hpp"
 #include "boost/type_traits/is_base_of.hpp"
 #include "boost/unordered_map.hpp"
 
@@ -36,7 +37,7 @@ std::ostream& operator<< ( std::ostream& aStr , const swatch::core::Object& aObj
   Hierarchical base class for swatch classes. Inspired by uhal::Node
 */
 //! Base class allowing for registration of children using string ID; child objects must be heap-allocated are owned by their parent
-class Object
+class Object : public boost::noncopyable
 {
   public:
   //! Functor interface used for destruction of objects in object tree (allows deletion to be delayed until all threads are done with the object)
