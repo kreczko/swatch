@@ -1,0 +1,8 @@
+
+BasedOnStyle:  Google
+AccessModifierOffset: -2
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+ColumnLimit:     800
+MaxEmptyLinesToKeep: 3
+
