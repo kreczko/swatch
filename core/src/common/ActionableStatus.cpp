@@ -80,6 +80,30 @@ bool ActionableStatus::isActionWaitingToRun() const
 }
 
 
+
+
+//------------------------------------------------------------------------------------
+ActionableStatusGuardMap_t lockMutexes(const std::map<const MonitorableObject*, const MutableActionableStatus*>& aStatusMap)
+{
+  typedef std::map<const MonitorableObject*, const MutableActionableStatus*>::const_iterator ConstIt_t;
+
+  // Lock the mutexes ...
+  std::vector<boost::mutex*> lMutexes;
+  for(ConstIt_t lIt=aStatusMap.begin(); lIt != aStatusMap.end(); lIt++)
+    lMutexes.push_back(& lIt->second->mMutex);
+
+  boost::indirect_iterator<std::vector<boost::mutex*>::iterator> begin(lMutexes.begin()), end(lMutexes.end());
+  boost::lock(begin, end);
+
+  // ... then put them into lock guards
+  ActionableStatusGuardMap_t lLockGuardMap;
+  for(ConstIt_t lIt=aStatusMap.begin(); lIt != aStatusMap.end(); lIt++)
+    lLockGuardMap[lIt->first] = ActionableStatusGuardPtr_t(new ActionableStatusGuard(*lIt->second, boost::adopt_lock_t()));
+  
+  return lLockGuardMap;
+}
+
+
 //------------------------------------------------------------------------------------
 MutableActionableStatus::MutableActionableStatus() : 
   mStatus()

@@ -124,6 +124,17 @@ typedef MonitorableStatusGuard ActionableStatusGuard;
 DEFINE_SWATCH_EXCEPTION(IncorrectActionableGuard);
 
 
+typedef boost::shared_ptr<ActionableStatusGuard> ActionableStatusGuardPtr_t;
+typedef std::map<const MonitorableObject*, ActionableStatusGuardPtr_t> ActionableStatusGuardMap_t;
+
+//! Locks mutexes of all mutable actionable status instances in supplied collection
+template <typename Iterator>
+ActionableStatusGuardMap_t lockMutexes(const Iterator& aBegin, const Iterator& aEnd);
+
+//! Locks mutexes of all mutable actionable status instances in supplied collection
+ActionableStatusGuardMap_t lockMutexes(const std::map<const MonitorableObject*, const MutableActionableStatus*>& aStatusMap);
+
+
 class MutableActionableStatus : public AbstractMonitorableStatus {
 public:
   MutableActionableStatus();
@@ -186,10 +197,29 @@ private:
 
   ActionableStatus mStatus;
   boost::condition_variable mConditionVar;
-  
-  friend class ActionableSystem; // Temporary fix during refactoring - for ActionableSystem::lockMutexes
+
+  friend ActionableStatusGuardMap_t lockMutexes(const std::map<const MonitorableObject*, const MutableActionableStatus*>& aStatusMap);
 };
 
+
+
+template <typename Iterator>
+ActionableStatusGuardMap_t lockMutexes(const Iterator& aBegin, const Iterator& aEnd)
+{
+  typedef typename std::iterator_traits<Iterator>::value_type val_type;
+  typedef typename val_type::first_type first_type;
+  typedef typename val_type::second_type second_type;
+  BOOST_STATIC_ASSERT_MSG( (boost::is_convertible<first_type, const MonitorableObject*>::value) , "Dereferencing type Iterator::first_type must result in a pointer to a type that inherits from swatch::core::MonitorableObject");
+  BOOST_STATIC_ASSERT_MSG( (boost::is_convertible<second_type, MutableActionableStatus*>::value) , "Dereferencing type Iterator::second_type must result in a pointer to a type that inherits from swatch::core::MutableActionableStatus");
+
+  std::map<const MonitorableObject*, const MutableActionableStatus*> lStatusMap;
+  for(Iterator lIt=aBegin; lIt != aEnd; lIt++)
+  {
+    lStatusMap.insert(std::pair<const MonitorableObject*, const MutableActionableStatus*>(lIt->first, lIt->second));
+  }
+  
+  return lockMutexes(lStatusMap);
+}
 
 template<class T>
 const T* MutableActionableStatus::getFirstRunningActionOfType(const ActionableStatusGuard& aGuard) const

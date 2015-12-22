@@ -20,17 +20,59 @@
 namespace swatch {
 namespace core {
 
-class SystemStateMachine;
-class SystemTransition;
-class Functionoid;
+class ActionableSystem;
+
+
+class SystemFunctionoid : public Functionoid {
+public:
+  virtual ~SystemFunctionoid() { }
+  
+  const ActionableSystem& getActionable() const;
+
+  ActionableSystem& getActionable();
+
+  const std::set<ActionableObject*>& getParticipants();
+  
+protected:
+  SystemFunctionoid(const std::string& aId, ActionableSystem& aActionable);
+  
+  //! Register a child of the system as participating in this functionoid (if child is already in participants list, method completes successfully but has no effect)
+  void addParticipant(ActionableObject& aObj);
+
+private:
+  ActionableSystem& mActionable;
+  std::set<ActionableObject*> mParticipants;
+};
 
 
 class ActionableSystem : public MonitorableObject {
-  class BusyGuard;
 public:
   typedef ActionableStatus Status_t;
   typedef MutableActionableStatus MutableStatus_t;
+
+  class StatusContainer : boost::noncopyable {
+  public:
+    StatusContainer(const ActionableSystem& aSystem, MutableStatus_t& aSysStatus);
+    ~StatusContainer();
+
+    const MutableStatus_t& getSystemStatus() const;
+    const ActionableObject::MutableStatus& getStatus(const ActionableObject& aChild ) const;
+  
+    MutableStatus_t& getSystemStatus();
+    ActionableObject::MutableStatus& getStatus(const ActionableObject& aChild );
+
+    typedef std::map<const MonitorableObject*, ActionableObject::MutableStatus*>::const_iterator iterator;
+
+    iterator begin();
+    iterator end();
     
+  private:
+    MutableStatus_t& mSysStatus;
+    std::map<const MonitorableObject*, ActionableObject::MutableStatus*> mStatusMap;
+    
+    friend class ActionableSystem;
+  };
+
   ActionableSystem(const std::string& aId, const std::string& aLoggerName);
 
   virtual ~ActionableSystem();
@@ -58,12 +100,7 @@ public:
     
     void operator()(Object* aObject);
   };
-  
-  //! Locks mutex of system & all children involved in system state machine
-  typedef boost::shared_ptr<ActionableStatusGuard> StatusGuardPtr_t;
-  typedef std::map<const swatch::core::MonitorableObject*, StatusGuardPtr_t> StatusGuardMap_t;
-  // TODO: move into being private state method of ActionableStatusGuard (or just method in same file), with collection of status pointers as argument
-  static StatusGuardMap_t lockMutexes(const SystemStateMachine&);
+
 
 protected:
   /*!
@@ -76,30 +113,34 @@ protected:
 
   virtual void retrieveMetricValues() {}
   
+  void addActionable(ActionableObject* aChildObject);
+  
 private:
-  
-  tStateMachineMap mFSMs;
-  
-  MutableStatus_t mStatus;  
-  log4cplus::Logger mLogger;
-  
-  class BusyGuard : public boost::noncopyable {
-  public:
-    BusyGuard(ActionableSystem& aResource, const Functionoid& aAction);
-    
-    ~BusyGuard();
-    
-    const swatch::core::BusyGuard& getChildGuard(const ActionableObject& aChild) const;
-    
-  private:
-    ActionableSystem& mSystem;
-    MutableActionableStatus& mStatus;
-    const Functionoid& mAction;
-    typedef boost::shared_ptr<const swatch::core::BusyGuard> tChildGuardPtr;
-    std::map<const ActionableObject*, tChildGuardPtr> mChildGuardMap;
-  };
 
-  friend class SystemTransition;
+  tStateMachineMap mFSMs;
+
+  MutableStatus_t mStatus;
+  StatusContainer mStatusMap;
+  log4cplus::Logger mLogger;
+};
+
+
+class SystemBusyGuard : public boost::noncopyable {
+public:
+  typedef boost::function<void(const ActionableStatusGuard&)> Callback_t;
+
+  SystemBusyGuard(SystemFunctionoid& aAction, ActionableSystem::StatusContainer& aStatusMap, const ActionableStatusGuardMap_t& aStatusGuardMap, const Callback_t& aCallback);
+  ~SystemBusyGuard();
+
+  const BusyGuard& getChildGuard(const ActionableObject& aChild) const;
+
+private:
+  ActionableSystem& mSystem;
+  ActionableSystem::StatusContainer& mStatusMap;
+  const SystemFunctionoid& mAction;
+  const Callback_t mPostActionCallback;
+  typedef boost::shared_ptr<const BusyGuard> ChildGuardPtr_t;
+  std::map<const ActionableObject*, ChildGuardPtr_t> mChildGuardMap;
 };
 
 

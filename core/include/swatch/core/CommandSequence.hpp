@@ -23,8 +23,8 @@ class StateMachine;
 //! Represents a sequence of commands, executed in succession.
 class CommandSequence : public CommandVec {
 public:
-  CommandSequence( const std::string& aId, ActionableObject& aResource, const std::string& aFirstCommandId, const std::string& aFirstCommandNamespace="");
-  CommandSequence( const std::string& aId, ActionableObject& aResource, Command& aFirstCommand, const std::string& aFirstCommandNamespace="");
+  CommandSequence( const std::string& aId, ActionableObject& aResource, MutableActionableStatus& aActionableStatus, const std::string& aFirstCommandId, const std::string& aFirstCommandNamespace="");
+  CommandSequence( const std::string& aId, ActionableObject& aResource, MutableActionableStatus& aActionableStatus, Command& aFirstCommand, const std::string& aFirstCommandNamespace="");
 
   virtual ~CommandSequence();
   
@@ -39,10 +39,24 @@ public:
   CommandSequence& run( const std::string& aCommand, const std::string& aNamespace="");
   CommandSequence& then( const std::string& aCommand, const std::string& aNamespace="");
 
-protected:
-  virtual void prepareCommands(const tReadOnlyXParameterSets& aParameters, const tMonitoringSettings& aMonSettings);
-  virtual void finaliseCommands(const tReadOnlyXParameterSets& aParameters, const tMonitoringSettings& aMonSettings);
-  virtual void extractMonitoringSettings(const GateKeeper& aGateKeeper, tMonitoringSettings& aMonSettings) const;
+  /**
+   * Run the sequence, extracting the parameters for each command from the supplied gatekeeper
+   * 
+   * @param aGateKeeper Gatekeeper that's used to extract the parameters
+   * @param aUseThreadPool Run the sequence asynchronously in the swatch::core::ThreadPool ; if equals false, then the sequence is run synchronously
+   */
+  void exec(const GateKeeper& aGateKeeper, const bool& aUseThreadPool = true ); 
+
+  /** 
+   * Run this sequence from another functionoid that already has control of resource, extracting the parameters for each command from the supplied gatekeeper
+   * 
+   * @param aGateKeeper Gatekeeper that's used to extract the parameters
+   * @param aUseThreadPool Run the command asynchronously in the swatch::core::ThreadPool ; if equals false, then the command is run synchronously
+   */
+  void exec(const BusyGuard* aGuard, const GateKeeper& aGateKeeper, const bool& aUseThreadPool = true );
+
+private:
+  MutableActionableStatus& mActionableStatus;
 };
 
 

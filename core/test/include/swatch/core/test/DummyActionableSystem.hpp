@@ -27,16 +27,18 @@ public:
   SystemStateMachine& registerStateMachine(const std::string& aId, const std::string& aInitialState, const std::string& aErrorState );
 
   // Expose protected method as public for unit testing ...
-  template< typename ObjType, typename DeleterType>
-  ObjType& add( ObjType* aChild , DeleterType aDeleter);
+  template< typename ObjType>
+  ObjType& addActionable( ObjType* aChild);
 };
 
 
-template< typename ObjType, typename DeleterType>
-ObjType& DummyActionableSystem::add( ObjType* aChild , DeleterType aDeleter)
-{ 
+template <class ObjType>
+ObjType& DummyActionableSystem::addActionable(ObjType* aChild)
+{
+  BOOST_STATIC_ASSERT_MSG( (boost::is_base_of<ActionableObject, ObjType>::value) , "class ObjType must be derived from ActionableObject");
+
   const std::string& childId = aChild->getId();
-  this->Object::addObj(aChild, aDeleter);
+  ActionableSystem::addActionable(aChild);
   return *getObj<ObjType>(childId);
 }
 

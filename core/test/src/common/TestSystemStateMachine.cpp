@@ -25,9 +25,9 @@ struct SystemStateMachineTestSetup {
   SystemStateMachineTestSetup() :
     sys(new DummyActionableSystem("dummySys"), ActionableSystem::Deleter()),
     fsm( sys->registerStateMachine("mySysFSM", sysState0, sysStateErr) ),
-    child1( sys->add(new DummyActionableObject("child1"), ActionableObject::Deleter()) ),
-    child2( sys->add(new DummyActionableObject("child2"), ActionableObject::Deleter()) ),
-    child3( sys->add(new DummyActionableObject("child3"), ActionableObject::Deleter()) ),
+    child1( sys->addActionable(new DummyActionableObject("child1")) ),
+    child2( sys->addActionable(new DummyActionableObject("child2")) ),
+    child3( sys->addActionable(new DummyActionableObject("child3")) ),
     children{&child1.obj, &child2.obj, &child3.obj}
   {
     fsm.addState(sysStateA);

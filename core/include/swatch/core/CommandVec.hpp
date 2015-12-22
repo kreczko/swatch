@@ -12,6 +12,7 @@
 #include "swatch/core/Functionoid.hpp"
 #include "swatch/core/GateKeeper.hpp"
 #include "swatch/core/ReadOnlyXParameterSet.hpp"
+#include "swatch/core/ThreadPool.hpp"
 
 #include "boost/date_time/posix_time/posix_time_types.hpp"
 #include "boost/thread/mutex.hpp"
@@ -23,6 +24,7 @@ namespace swatch {
 namespace core {
 
 class ActionableSystem;
+class BusyGuard;
 class Command;
 class CommandStatus;
 class CommandVecStatus;
@@ -70,7 +72,7 @@ public:
    * Run the sequence, extracting the parameters for each command from the supplied gatekeeper
    * 
    * @param aGateKeeper Gatekeeper that's used to extract the parameters
-   * @param aUseThreadPool Run the sequence asynchronously in the swatch::core::ThreadPool ; if equals false, then the sequence is run synchronously (i.e. only )
+   * @param aUseThreadPool Run the sequence asynchronously in the swatch::core::ThreadPool ; if equals false, then the sequence is run synchronously
    */
   void exec(const GateKeeper& aGateKeeper, const bool& aUseThreadPool = true ); 
 
@@ -98,7 +100,12 @@ public:
 
   void checkForMissingParameters(const GateKeeper& aGateKeeper, std::vector<ReadOnlyXParameterSet>& aParamSets, std::vector<MissingParam>& aMissingParams) const;
 
-private:
+protected:
+  typedef tReadOnlyXParameterSets tParameterSets;
+
+  //! Resets this CommandVec's state variables
+  void reset(const tParameterSets& aParamSets);
+
   /*!
    * Extracts from gatekeeper the parameter sets for running commands 
    * @param aParamSets vector containing the extracted parameter sets
@@ -110,22 +117,20 @@ private:
   //! thread safe exception-catching wrapper for code()
   void runCommands(boost::shared_ptr<BusyGuard> aGuard);
 
-//  ActionableObject& mResource;
+  template<class OBJECT>
+  void scheduleAction( OBJECT* cmd , boost::function<void(OBJECT*, boost::shared_ptr<BusyGuard>)> aFunction, const boost::shared_ptr<BusyGuard>& resourceGuard );
 
-  MutableActionableStatus& mActionableStatus;
+  
+private:
   typedef std::vector< Element > tCommandVector;
   tCommandVector mCommands;
 
-  typedef tReadOnlyXParameterSets tParameterSets;
   tParameterSets mCachedParameters;
-
-  tMonitoringSettings mCachedMonitoringSettings;
 
   /// The last time a table was updated from the Gatekeeper
   boost::posix_time::ptime mParamUpdateTime;
 
-  mutable boost::mutex mMutex; //mObjectMutex
-  
+  mutable boost::mutex mMutex;
   ActionStatus::State mState;
 
   tCommandVector::iterator mCommandIt;
@@ -134,15 +139,18 @@ private:
   boost::posix_time::ptime mExecEndTime;
   
   std::vector<CommandStatus> mStatusOfCompletedCommands;
-  
-//  GateKeeper mCachedGateKeeper;
-
-protected:
-  virtual void prepareCommands(const tReadOnlyXParameterSets& aParameters, const tMonitoringSettings& aMonSettings) = 0;
-  virtual void finaliseCommands(const tReadOnlyXParameterSets& aParameters, const tMonitoringSettings& aMonSettings) = 0;
-  virtual void extractMonitoringSettings(const GateKeeper& aGateKeeper, tMonitoringSettings& aMonSettings) const = 0;
-
 };
+
+
+template<class OBJECT>
+void CommandVec::scheduleAction( OBJECT* aAction , boost::function<void(OBJECT*, boost::shared_ptr<BusyGuard>)> aFunction, const boost::shared_ptr<BusyGuard>& aGuard )
+{ 
+  boost::unique_lock<boost::mutex> lock(mMutex);
+  mState = ActionStatus::kScheduled;
+    
+  ThreadPool& pool = ThreadPool::getInstance();
+  pool.addTask<OBJECT, BusyGuard>(aAction , aFunction, aGuard);
+}
 
 
 std::ostream& operator << (std::ostream& aOstream, const CommandVec::MissingParam& aMissingParam );

@@ -48,9 +48,9 @@ public:
   template<typename T> const T& getActionable() const ;
 
   template<typename T> T& getActionable();
-  
+
 protected:
-  ObjectFunctionoid(const std::string& aId, ActionableObject& aActionable );
+  ObjectFunctionoid(const std::string& aId, ActionableObject& aActionable);
   
 private:
   ActionableObject& mActionable;
@@ -163,15 +163,17 @@ public:
 
   friend class ActionableSystem;
   friend class Command;
-  friend class CommandVec;
 };
 
 
 class BusyGuard : public boost::noncopyable {
 public:
   struct Adopt {};
-  
+
+  typedef boost::function<void(const ActionableStatusGuard&)> Callback_t;
+
   BusyGuard(ObjectFunctionoid& aAction, MutableActionableStatus& aStatus, const BusyGuard* aOuterGuard=NULL);
+  BusyGuard(ObjectFunctionoid& aAction, MutableActionableStatus& aStatus, ActionableStatusGuard& aStatusGuard, const Callback_t& aCallback, const BusyGuard* aOuterGuard=NULL);
   BusyGuard(ActionableObject& aResource, MutableActionableStatus& aStatus, ActionableStatusGuard& aStatusGuard, const Functionoid& aAction, const BusyGuard* aOuterGuard=NULL);
   BusyGuard(ActionableObject& aResource, MutableActionableStatus& aStatus, ActionableStatusGuard& aStatusGuard, const Functionoid& aAction, const Adopt);
 
@@ -182,7 +184,8 @@ private:
   MutableActionableStatus& mStatus;
   const Functionoid& mAction;
   const BusyGuard* mOuterGuard;
-  
+  const Callback_t mPostActionCallback;
+
   typedef ActionableObject::ActionFmt ActionFmt_t;
 
   void initialise(ActionableStatusGuard& aStatusGuard);

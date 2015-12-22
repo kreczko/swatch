@@ -24,6 +24,11 @@
 // Forward declarations
 namespace swatch {
 
+namespace core {
+class SystemTransition;
+class SystemStateMachine;
+}
+
 namespace processor {
 class Processor;
 class Link;

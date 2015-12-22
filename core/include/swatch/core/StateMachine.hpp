@@ -86,7 +86,7 @@ public:
 
   class Transition : public CommandVec {
   public:
-    Transition(const std::string& aId, StateMachine& aFSM, const std::string& aStartState, const std::string& aEndState);
+    Transition(const std::string& aId, StateMachine& aFSM, MutableActionableStatus& aActionableStatus, const std::string& aStartState, const std::string& aEndState);
 
     //! State that this transition starts from
     const std::string& getStartState() const;
@@ -110,17 +110,36 @@ public:
     //! Add all commands from specified sequence to this transition
     Transition& add(CommandSequence& aSequence);
 
-  protected:
-    virtual void prepareCommands(const tReadOnlyXParameterSets& aParameters, const tMonitoringSettings& aMonSettings);
-    virtual void finaliseCommands(const tReadOnlyXParameterSets& aParameters, const tMonitoringSettings& aMonSettings);
-    virtual void extractMonitoringSettings(const GateKeeper& aGateKeeper, tMonitoringSettings& aMonSettings) const;
+    /**
+     * Run the sequence, extracting the parameters for each command from the supplied gatekeeper
+     * 
+     * @param aGateKeeper Gatekeeper that's used to extract the parameters
+     * @param aUseThreadPool Run the sequence asynchronously in the swatch::core::ThreadPool ; if equals false, then the sequence is run synchronously
+     */
+    void exec(const GateKeeper& aGateKeeper, const bool& aUseThreadPool = true ); 
+
+    /** 
+     * Run this sequence from another functionoid that already has control of resource, extracting the parameters for each command from the supplied gatekeeper
+     * 
+     * @param aGateKeeper Gatekeeper that's used to extract the parameters
+     * @param aUseThreadPool Run the command asynchronously in the swatch::core::ThreadPool ; if equals false, then the command is run synchronously
+     */
+    void exec(const BusyGuard* aGuard, const GateKeeper& aGateKeeper, const bool& aUseThreadPool = true );
 
   private:
+    virtual void extractMonitoringSettings(const GateKeeper& aGateKeeper, tMonitoringSettings& aMonSettings) const;
+
+    void run(boost::shared_ptr<BusyGuard> aGuard);
+
+    void applyMonitoringSettings();
+
+    void changeState(const ActionableStatusGuard& lGuard);
+
     StateMachine& mStateMachine;
+    MutableActionableStatus& mActionableStatus;
     const std::string mStartState;
     const std::string mEndState;
-
-    void applyMonitoringSettings(const tMonitoringSettings& aMonSettings);
+    tMonitoringSettings mCachedMonitoringSettings;
   };
 
 private:
@@ -145,8 +164,6 @@ private:
   std::vector<std::string> mStates;
 
   std::map<std::string, State*> mStateMap;
-  
-  friend class SystemStateMachine;
 };
 
 DEFINE_SWATCH_EXCEPTION(StateNotDefined);

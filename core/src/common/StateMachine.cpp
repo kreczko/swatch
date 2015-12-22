@@ -114,7 +114,7 @@ StateMachine::Transition& StateMachine::addTransition(const std::string& aTransi
   else if (lFromState.transitionMap.count(aTransitionId))
     throw TransitionAlreadyDefined("Transition '"+aTransitionId+"' from state '"+aFromState+"' already defined in state machine '"+getPath()+"'");
  
-  Transition* t = new Transition(aTransitionId, *this, aFromState, aToState);
+  Transition* t = new Transition(aTransitionId, *this, mStatus, aFromState, aToState);
   lFromState.addTransition(t);
   return *t;
 }
@@ -201,9 +201,10 @@ void StateMachine::resetMaskableObjects(ActionableObject& aObj, const GateKeeper
 }
 
 
-StateMachine::Transition::Transition(const std::string& aId, StateMachine& aOp, const std::string& aStartState, const std::string& aEndState) :
+StateMachine::Transition::Transition(const std::string& aId, StateMachine& aOp, MutableActionableStatus& aActionableStatus, const std::string& aStartState, const std::string& aEndState) :
   CommandVec(aId, aOp.getActionable()),
   mStateMachine(aOp),
+  mActionableStatus(aActionableStatus),
   mStartState(aStartState),
   mEndState(aEndState)
 {
@@ -255,6 +256,62 @@ StateMachine::Transition& StateMachine::Transition::add(CommandSequence& aSequen
 
 
 //------------------------------------------------------------------------------------
+void StateMachine::Transition::exec(const GateKeeper& aGateKeeper, const bool& aUseThreadPool )
+{
+  exec(NULL, aGateKeeper, aUseThreadPool);
+}
+
+
+//------------------------------------------------------------------------------------
+void StateMachine::Transition::exec(const BusyGuard* aOuterBusyGuard, const GateKeeper& aGateKeeper, const bool& aUseThreadPool )
+{
+  // 1) Extract parameters before creating busy guard (so that resource doesn't change states if parameter is missing)
+  std::vector<ReadOnlyXParameterSet> lParamSets;
+  std::vector<MissingParam> lMissingParams;
+  tMonitoringSettings lMonSettings;
+  extractParameters(aGateKeeper, lParamSets, lMissingParams, true);
+  extractMonitoringSettings(aGateKeeper, lMonSettings);
+
+  // 2) Check current state; if in correct state, then create busy guard and continue
+  boost::shared_ptr<BusyGuard> lBusyGuard;
+  {
+    ActionableStatusGuard lGuard(mActionableStatus);
+    if( mActionableStatus.getStateMachineId(lGuard) != getStateMachine().getId())
+      throw ResourceInWrongState("Resource '"+getActionable().getPath()+"' is not yet engaged in state machine '"+getStateMachine().getId()+"'");
+    else if ( mActionableStatus.getState(lGuard) != getStartState() )
+      throw ResourceInWrongState("Resource '"+getActionable().getPath()+"' is in state '"+mActionableStatus.getState(lGuard)+"'; transition '"+getId()+"' cannot be run");
+
+    BusyGuard::Callback_t lCallback = boost::bind(&StateMachine::Transition::changeState, this, _1);
+    lBusyGuard.reset(new BusyGuard(*this, mActionableStatus, lGuard, lCallback, aOuterBusyGuard));
+  }
+
+// FIXME: Re-implement parameter cache at some future date; disabled by Tom on 28th August, since ...
+//        ... current logic doesn't work correctly with different gatekeepers - need to change to ...
+//        ... updating cache if either gatekeeper filename/runkey different or cache update timestamp older than gatekeeper.lastUpdated 
+//  // Is our cache of parameters up to date?
+//  boost::posix_time::ptime lUpdateTime( aGateKeeper.lastUpdated() );
+//  if( mParamUpdateTime != lUpdateTime )
+//  {
+//    updateParameterCache(aGateKeeper);
+//    mParamUpdateTime = lUpdateTime; // We are up to date :)
+//  }
+  
+  // 3) Reset this sequence's state variables
+  reset(lParamSets);
+  mCachedMonitoringSettings = lMonSettings;
+
+  // 4) Run the commands
+  if (aUseThreadPool) {
+    scheduleAction<StateMachine::Transition>(this, &StateMachine::Transition::run, lBusyGuard);
+  }
+  else {
+    // otherwise execute in same thread
+    run(lBusyGuard);
+  }
+}
+
+
+//------------------------------------------------------------------------------------
 void StateMachine::Transition::extractMonitoringSettings(const GateKeeper& aGateKeeper,
 	tMonitoringSettings& aMonSettings) const {
   aMonSettings.clear();
@@ -289,19 +346,21 @@ void StateMachine::Transition::extractMonitoringSettings(const GateKeeper& aGate
 
 
 //------------------------------------------------------------------------------------
-void StateMachine::Transition::prepareCommands(const tReadOnlyXParameterSets& aParameters, const tMonitoringSettings& aMonSettings) {
-}
-
-
-//------------------------------------------------------------------------------------
-void StateMachine::Transition::finaliseCommands(const tReadOnlyXParameterSets& aParameters, const tMonitoringSettings& aMonSettings) {
-  applyMonitoringSettings(aMonSettings);
-}
-
-
-//------------------------------------------------------------------------------------
-void StateMachine::Transition::applyMonitoringSettings(const tMonitoringSettings& aMonSettings) {
+void StateMachine::Transition::run(boost::shared_ptr<BusyGuard> aGuard)
+{
+  // 1) Run the commands [as is done in a command sequence]
+  CommandVec::runCommands(aGuard);
   
+  // 2) Apply monitoring settings
+  applyMonitoringSettings();
+  
+  // 3) The actionable object's state will change when BusyGuard gets destroyed
+}
+
+
+//------------------------------------------------------------------------------------
+void StateMachine::Transition::applyMonitoringSettings()
+{
   // get a list of all MonitorableObjects
   ActionableObject& lResource = mStateMachine.getActionable();
   std::vector<std::string> lDescendants = lResource.getDescendants();
@@ -313,7 +372,7 @@ void StateMachine::Transition::applyMonitoringSettings(const tMonitoringSettings
       // query the GateKeeper for relevant settings for each object
       std::string lPath = *lIt;
       
-      for (tMonitoringSettings::const_iterator lMonSetting = aMonSettings.begin(); lMonSetting != aMonSettings.end();
+      for (tMonitoringSettings::const_iterator lMonSetting = mCachedMonitoringSettings.begin(); lMonSetting != mCachedMonitoringSettings.end();
           ++lMonSetting) {
         LOG(logger::kInfo) << lPath << " " << lMonSetting->getId();
         
@@ -332,6 +391,17 @@ void StateMachine::Transition::applyMonitoringSettings(const tMonitoringSettings
       }
     }
   }
+}
+
+
+//------------------------------------------------------------------------------------
+void StateMachine::Transition::changeState(const ActionableStatusGuard& lGuard)
+{
+  ActionStatus::State lActionState = getState();
+  if((lActionState == ActionStatus::kDone) || (lActionState == ActionStatus::kWarning))
+    mActionableStatus.setState(getEndState(), lGuard);
+  else
+    mActionableStatus.setState(getStateMachine().getErrorState(), lGuard);
 }
 
 

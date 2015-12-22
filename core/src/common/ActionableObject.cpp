@@ -119,7 +119,7 @@ CommandSequence& ActionableObject::registerSequence( const std::string& aId, con
   if (mCommandSequences.count(aId)) {
     throw CommandSequenceAlreadyExistsInActionableObject( "CommandSequence With ID '"+aId+"' already exists" );
   }
-  CommandSequence* lSequence = new CommandSequence(aId, *this, aFirstCommandId, aFirstCommandNamespace);
+  CommandSequence* lSequence = new CommandSequence(aId, *this, mStatus, aFirstCommandId, aFirstCommandNamespace);
   addObj(lSequence);
   mCommandSequences.insert( std::make_pair( aId , lSequence ) );
   return *lSequence;
@@ -132,7 +132,7 @@ CommandSequence& ActionableObject::registerSequence( const std::string& aId, Com
   if (mCommandSequences.count(aId)) {
     throw CommandSequenceAlreadyExistsInActionableObject( "CommandSequence With ID '"+aId+"' already exists" );
   }
-  CommandSequence* lSequence = new CommandSequence(aId, *this, aFirstCommand, aFirstCommandNamespace);
+  CommandSequence* lSequence = new CommandSequence(aId, *this, mStatus, aFirstCommand, aFirstCommandNamespace);
   addObj(lSequence);
   mCommandSequences.insert( std::make_pair( aId , lSequence ) );
   return *lSequence;
@@ -249,6 +249,18 @@ BusyGuard::BusyGuard(ObjectFunctionoid& aAction, MutableActionableStatus& aStatu
 
 
 //------------------------------------------------------------------------------------
+BusyGuard::BusyGuard(ObjectFunctionoid& aAction, MutableActionableStatus& aStatus, ActionableStatusGuard& aStatusGuard, const Callback_t& aCallback, const BusyGuard* aOuterGuard) : 
+  mActionableObj(aAction.getActionable()),
+  mStatus(aStatus),
+  mAction(aAction),
+  mOuterGuard(aOuterGuard),
+  mPostActionCallback(aCallback)
+{
+  initialise(aStatusGuard);
+}
+
+
+//------------------------------------------------------------------------------------
 BusyGuard::BusyGuard(ActionableObject& aResource, MutableActionableStatus& aStatus, ActionableStatusGuard& aStatusGuard, const Functionoid& aAction, const BusyGuard* aOuterGuard) : 
   mActionableObj(aResource),
   mStatus(aStatus),
@@ -292,19 +304,10 @@ void BusyGuard::initialise(ActionableStatusGuard& aStatusGuard)
       throw WrongBusyGuard( "Outer BusyGuard (resource: '"+mActionableObj.getPath()+"', action: '"+mOuterGuard->mAction.getId()+"') is not for current action '"+lStatusSnapshot.getLastRunningAction()->getId()+"'" );
   }
 
-  // 0) Check that this this action isn't already running
+  // 1) Check that this this action isn't already running
   if (std::count(lStatusSnapshot.getRunningActions().begin(), lStatusSnapshot.getRunningActions().end(), &mAction) > 0 )
     throw ActionableObjectIsBusy( "Action '"+mAction.getId()+"' is already running on resource '"+mActionableObj.getPath()+"'" );
 
-  // 1) For transitions, check that state machine is engaged, and we're in the right state
-  if (const StateMachine::Transition* t = dynamic_cast<const StateMachine::Transition*>(&mAction))
-  {
-	if( lStatusSnapshot.getStateMachineId() != t->getStateMachine().getId())
-      throw ResourceInWrongState("Resource '"+mActionableObj.getPath()+"' is not yet engaged in state machine '"+t->getStateMachine().getId()+"'");
-        else if ( lStatusSnapshot.getState() != t->getStartState() )
-      throw ResourceInWrongState("Resource '"+mActionableObj.getPath()+"' is in state '"+lStatusSnapshot.getState()+"'; transition '"+t->getId()+"' cannot be run");
-  }
-  
   // 2) Claim the resource if free; else throw if can't get sole control of it
   if ( lStatusSnapshot.isAlive() && ( (mOuterGuard != NULL) || !lStatusSnapshot.isRunning() ) )
   {
@@ -345,14 +348,8 @@ BusyGuard::~BusyGuard()
   {
     mStatus.popAction(lGuard);
     
-    // In case this was a transition, also update object's current state
-    if (const StateMachine::Transition* t = dynamic_cast<const StateMachine::Transition*>(&mAction))
-    {
-      if(t->getStatus().getState() == ActionStatus::kError)
-        mStatus.setState(t->getStateMachine().getErrorState(), lGuard);
-      else
-        mStatus.setState(t->getEndState(), lGuard);
-    }
+    if( ! mPostActionCallback.empty() )
+      mPostActionCallback(lGuard);
   }
   else
   {

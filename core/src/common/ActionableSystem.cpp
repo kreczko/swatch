@@ -18,11 +18,85 @@
 namespace swatch {
 namespace core {
 
+
+const ActionableSystem& SystemFunctionoid::getActionable() const
+{
+  return mActionable;
+}
+
+ActionableSystem& SystemFunctionoid::getActionable()
+{
+  return mActionable;
+}
+
+const std::set<ActionableObject*>& SystemFunctionoid::getParticipants() 
+{
+  return mParticipants;
+}
+
+SystemFunctionoid::SystemFunctionoid(const std::string& aId, ActionableSystem& aActionable) :
+  Functionoid(aId),
+  mActionable(aActionable)
+{
+}
+
+
+void SystemFunctionoid::addParticipant(ActionableObject& aObj)
+{
+  mParticipants.insert(&aObj);
+}
+
+
+
+ActionableSystem::StatusContainer::StatusContainer(const ActionableSystem& aSystem, ActionableSystem::MutableStatus_t& aSysStatus) :
+  mSysStatus(aSysStatus)
+{
+  mStatusMap[&aSystem] = &aSysStatus;
+}
+
+ActionableSystem::StatusContainer::~StatusContainer()
+{
+}
+
+const ActionableSystem::MutableStatus_t& ActionableSystem::StatusContainer::getSystemStatus() const
+{
+  return mSysStatus;
+}
+
+const ActionableObject::MutableStatus& ActionableSystem::StatusContainer::getStatus(const ActionableObject& aChild ) const
+{
+  return *mStatusMap.at(&aChild);
+}
+
+ActionableSystem::MutableStatus_t& ActionableSystem::StatusContainer::getSystemStatus()
+{
+  return mSysStatus;
+}
+
+
+ActionableObject::MutableStatus& ActionableSystem::StatusContainer::getStatus(const ActionableObject& aChild )
+{
+  return *mStatusMap.at(&aChild);
+}
+
+ActionableSystem::StatusContainer::iterator ActionableSystem::StatusContainer::begin()
+{
+  return mStatusMap.cbegin();
+}
+
+ActionableSystem::StatusContainer::iterator ActionableSystem::StatusContainer::end()
+{
+  return mStatusMap.cend();
+}
+
+
 //------------------------------------------------------------------------------------
 ActionableSystem::ActionableSystem(const std::string& aId, const std::string& aLoggerName) :
   MonitorableObject(aId),
   mStatus(),
-  mLogger(swatch::logger::Logger::getInstance(aLoggerName)){
+  mStatusMap(*this, mStatus),
+  mLogger(swatch::logger::Logger::getInstance(aLoggerName))
+{
 }
 
 
@@ -64,10 +138,19 @@ SystemStateMachine& ActionableSystem::registerStateMachine( const std::string& a
   if (mFSMs.count(aId))
     throw StateMachineAlreadyExistsInActionableObject( "State machine With ID '"+aId+"' already exists" );
 
-  SystemStateMachine* lFSM = new SystemStateMachine(aId, *this, mStatus, aInitialState, aErrorState);
+  SystemStateMachine* lFSM = new SystemStateMachine(aId, *this, mStatusMap, aInitialState, aErrorState);
   addObj(lFSM);
   mFSMs.insert( std::make_pair( aId , lFSM ) );
   return *lFSM;
+}
+
+
+//------------------------------------------------------------------------------------
+void ActionableSystem::addActionable(ActionableObject* aChildActionable)
+{
+  addObj(aChildActionable, ActionableObject::Deleter());
+  
+  mStatusMap.mStatusMap[aChildActionable] = &aChildActionable->mStatus;
 }
 
 
@@ -101,97 +184,49 @@ void ActionableSystem::Deleter::operator ()(Object* aObject) {
 
 
 //------------------------------------------------------------------------------------
-ActionableSystem::StatusGuardMap_t ActionableSystem::lockMutexes(const SystemStateMachine& aOp)
+SystemBusyGuard::SystemBusyGuard(SystemFunctionoid& aAction, ActionableSystem::StatusContainer& aStatusMap, const ActionableStatusGuardMap_t& aStatusGuardMap, const Callback_t& aCallback) : 
+  mSystem(aAction.getActionable()),
+  mStatusMap(aStatusMap),
+  mAction(aAction),
+  mPostActionCallback(aCallback)
 {
-  // Lock the mutexes ...
-  std::vector<boost::mutex*> lMutexes;
-  lMutexes.push_back( &aOp.getActionable().mStatus.mMutex );
-  for(std::set<const StateMachine*>::const_iterator lIt=aOp.getParticipants().begin(); lIt!=aOp.getParticipants().end(); lIt++)
-    lMutexes.push_back( &(*lIt)->getActionable().mStatus.mMutex );
-
-  boost::indirect_iterator<std::vector<boost::mutex*>::iterator> begin(lMutexes.begin()), end(lMutexes.end());
-  boost::lock(begin, end);
-
-  // ... then put them into lock guards
-  std::map<const MonitorableObject*, StatusGuardPtr_t> lLockGuardMap;
-  lLockGuardMap[&aOp.getActionable()] = StatusGuardPtr_t(new ActionableStatusGuard(aOp.getActionable().mStatus, boost::adopt_lock_t()));
-  for(std::set<const StateMachine*>::const_iterator lIt=aOp.getParticipants().begin(); lIt!=aOp.getParticipants().end(); lIt++)
-    lLockGuardMap[&(*lIt)->getActionable()] = StatusGuardPtr_t( new ActionableStatusGuard((*lIt)->getActionable().mStatus, boost::adopt_lock_t()) );
+  ActionableStatusGuard& lSysGuard = *aStatusGuardMap.at(&mSystem);
+  ActionableSystem::MutableStatus_t& lSysStatus = mStatusMap.getSystemStatus();
   
-  return lLockGuardMap;
-}
-
-
-//------------------------------------------------------------------------------------
-ActionableSystem::BusyGuard::BusyGuard(ActionableSystem& aResource, const Functionoid& aAction) : 
-  mSystem(aResource),
-  mStatus(aResource.mStatus),
-  mAction(aAction)
-{
-  const SystemTransition& lTransition = dynamic_cast<const SystemTransition&>(aAction);
-  const SystemStateMachine& lOp = lTransition.getStateMachine();
-  
-  // Put the mutexes into lock guards before continuing
-  std::map<const MonitorableObject*, StatusGuardPtr_t> lStatusGuardMap = ActionableSystem::lockMutexes(lOp);
-  ActionableStatusGuard& lStatusGuard = *lStatusGuardMap.at(&mSystem);
-
-  // 1a) Check that system is engaged in correct state machine, and is in the correct state
-  if( mStatus.getStateMachineId(lStatusGuard) !=  lTransition.getStateMachine().getId())
-    throw ResourceInWrongStateMachine("Resource '"+aResource.getPath()+"' is not yet engaged in state machine '"+lTransition.getStateMachine().getId()+"'");
-
-  else if ( mStatus.getState(lStatusGuard) != lTransition.getStartState() )
-    throw ResourceInWrongState("Resource '"+aResource.getPath()+"' is in state '"+mStatus.getState(lStatusGuard)+"'; transition '"+lTransition.getId()+"' cannot be run");
-  
-  // 1b) Check that children are engaged in correct state machine, and are in the correct state
-  typedef std::map<ActionableObject*, const StateMachine::Transition* > tObjTransitionMap;
-  tObjTransitionMap childTransitionMap;
-  for(SystemTransition::const_iterator lIt=(lTransition.end()-1); lIt != (lTransition.begin()-1); lIt--)
-  {
-    for(std::vector<StateMachine::Transition*>::const_iterator lIt2=lIt->cget().begin(); lIt2!=lIt->cget().end(); lIt2++)
-      childTransitionMap[ &(*lIt2)->getStateMachine().getActionable() ] = *lIt2;
-  }
-
-  BOOST_FOREACH( const tObjTransitionMap::value_type e, childTransitionMap ) {
-    const ActionableStatusGuard& lGuard = *lStatusGuardMap.at(e.first);
-    if( e.first->mStatus.getStateMachineId(lGuard) != e.second->getStateMachine().getId() )
-      throw ResourceInWrongStateMachine("Resource '"+e.first->getPath()+"' is not yet engaged in state machine '"+e.second->getStateMachine().getId()+"'");
-    else if ( e.first->mStatus.getState(lGuard) != e.second->getStartState() )
-      throw ResourceInWrongState("Resource '"+e.first->getPath()+"' is in state "+e.first->mStatus.getState(lGuard)+", transition '"+e.second->getId()+"' cannot be run");
-  }
-  
-  // 2a) Check that the system is not busy
-  Status_t lSysSnapshot = mStatus.getSnapshot(lStatusGuard);
+  // 1) Check that the system is not busy
+  ActionableSystem::Status_t lSysSnapshot = lSysStatus.getSnapshot(lSysGuard);
   if ( !lSysSnapshot.isAlive() || lSysSnapshot.isRunning() )
   {
     std::ostringstream oss;
-    oss << "Could not run action '" << lTransition.getId() << "' on resource '" << aResource.getPath() << "'. ";
+    oss << "Could not run action '" << mAction.getId() << "' on resource '" << mSystem.getPath() << "'. ";
 
     if ( lSysSnapshot.isRunning() )
       oss << "Resource currently busy running functionoid '" << lSysSnapshot.getLastRunningAction()->getId() << "'.";
     else
       oss << "Actions currently disabled on this resource.";
 
-    LOG4CPLUS_INFO(aResource.getLogger(), oss.str());
+    LOG4CPLUS_INFO(mSystem.getLogger(), oss.str());
     throw ActionableObjectIsBusy(oss.str());
   }
 
-  // 2b) Check that none of the children are busy
-  BOOST_FOREACH( const tObjTransitionMap::value_type e, childTransitionMap )
+  // 2) Check that none of the children are busy
+  typedef std::set<ActionableObject*>::const_iterator ChildIt_t;
+  for (ChildIt_t lIt = aAction.getParticipants().begin(); lIt != aAction.getParticipants().end(); lIt++)
   {
-    const ActionableObject::MutableStatus& lChild = (e.first)->mStatus;
-    const ActionableStatusGuard& lGuard = *lStatusGuardMap.at(e.first);
+    const ActionableObject::MutableStatus& lChildStatus = mStatusMap.getStatus(**lIt);
+    const ActionableStatusGuard& lChildGuard = *aStatusGuardMap.at(*lIt);
 
-    if ( !lChild.isAlive(lGuard) || lChild.isBusy(lGuard) )
+    if ( !lChildStatus.isAlive(lChildGuard) || lChildStatus.isBusy(lChildGuard) )
     {
       std::ostringstream oss;
-      oss << "Could not run system action '" << lTransition.getId() << "' due to child resource '" << aResource.getPath() << "'. ";
+      oss << "Could not run system action '" << mAction.getId() << "' due to child resource '" << (*lIt)->getPath() << "'. ";
 
-      if ( lChild.isBusy(lGuard) )
-        oss << "Child currently busy running functionoid '" << lChild.getLastRunningAction(lGuard)->getId() << "'.";
+      if ( lChildStatus.isBusy(lChildGuard) )
+        oss << "Child currently busy running functionoid '" << lChildStatus.getLastRunningAction(lChildGuard)->getId() << "'.";
       else
         oss << "Actions currently disabled on this child.";
 
-      LOG4CPLUS_INFO(aResource.getLogger(), oss.str());
+      LOG4CPLUS_INFO(mSystem.getLogger(), oss.str());
       throw ActionableObjectIsBusy(oss.str());
     }
   } 
@@ -199,27 +234,29 @@ ActionableSystem::BusyGuard::BusyGuard(ActionableSystem& aResource, const Functi
   // 3) If got this far, then all is good: 
   //    a) wait until actions ready to run on system and child objects; then ...
   //    b) create the busy guards for the children
-  LOG4CPLUS_INFO(aResource.getLogger(), mSystem.getPath() << " : Starting action '" << mAction.getId() << "'");
+  LOG4CPLUS_INFO(mSystem.getLogger(), mSystem.getPath() << " : Starting action '" << mAction.getId() << "'");
 
   std::vector<std::pair<MutableActionableStatus*, ActionableStatusGuard*> > lStatusVec;
-  lStatusVec.push_back( std::pair<MutableActionableStatus*, ActionableStatusGuard*>(&mStatus, &lStatusGuard) );
-  BOOST_FOREACH( const tObjTransitionMap::value_type e, childTransitionMap )
+  lStatusVec.push_back( std::pair<MutableActionableStatus*, ActionableStatusGuard*>(&lSysStatus, &lSysGuard) );
+  for (ChildIt_t lIt = aAction.getParticipants().begin(); lIt != aAction.getParticipants().end(); lIt++)
   {
-    lStatusVec.push_back( std::pair<MutableActionableStatus*, ActionableStatusGuard*>(&(e.first)->mStatus, lStatusGuardMap[e.first].get()) );
+    lStatusVec.push_back( std::pair<MutableActionableStatus*, ActionableStatusGuard*>(&mStatusMap.getStatus(**lIt), aStatusGuardMap.at(*lIt).get()) );
   }
   MutableActionableStatus::waitUntilReadyToRunAction(lStatusVec, mAction);
   
-  BOOST_FOREACH( const tObjTransitionMap::value_type e, childTransitionMap )
+  for (ChildIt_t lIt = aAction.getParticipants().begin(); lIt != aAction.getParticipants().end(); lIt++)
   {
-    this->mChildGuardMap[ e.first ] = tChildGuardPtr(new swatch::core::BusyGuard(*e.first, (e.first)->mStatus, *lStatusGuardMap[e.first].get(), lTransition, core::BusyGuard::Adopt()) );
+    ActionableStatusGuard& lChildGuard = *aStatusGuardMap.at(*lIt).get();
+    ActionableObject::MutableStatus& lChildStatus = mStatusMap.getStatus(**lIt);
+    mChildGuardMap[ *lIt ] = ChildGuardPtr_t(new BusyGuard(**lIt, lChildStatus, lChildGuard, mAction, BusyGuard::Adopt()) );
   }
 }
 
 
 //------------------------------------------------------------------------------------
-const swatch::core::BusyGuard& ActionableSystem::BusyGuard::getChildGuard(const ActionableObject& aChild) const
+const BusyGuard& SystemBusyGuard::getChildGuard(const ActionableObject& aChild) const
 {
-  std::map<const ActionableObject*, tChildGuardPtr>::const_iterator lIt = mChildGuardMap.find(&aChild);
+  std::map<const ActionableObject*, ChildGuardPtr_t>::const_iterator lIt = mChildGuardMap.find(&aChild);
   if (lIt == mChildGuardMap.end())
     throw std::runtime_error("Non-child object '"+aChild.getPath()+"' passed to BusyGuard for system '"+mSystem.getPath()+"', action '"+mAction.getId()+"'");
   return *(lIt->second);
@@ -227,28 +264,24 @@ const swatch::core::BusyGuard& ActionableSystem::BusyGuard::getChildGuard(const 
 
 
 //------------------------------------------------------------------------------------
-ActionableSystem::BusyGuard::~BusyGuard()
+SystemBusyGuard::~SystemBusyGuard()
 {
-  ActionableStatusGuard lGuard(mStatus);
+  ActionableSystem::MutableStatus_t& lSysStatus = mStatusMap.getSystemStatus();
+  ActionableStatusGuard lSysGuard(lSysStatus);
+
   LOG4CPLUS_INFO(mSystem.getLogger(), mSystem.getPath() << " : Finished action '" << mAction.getId() << "'");
 
-  if ( mStatus.isBusy(lGuard) && (&mAction == mStatus.getLastRunningAction(lGuard)) )
+  if ( lSysStatus.isBusy(lSysGuard) && (&mAction == lSysStatus.getLastRunningAction(lSysGuard)) )
   {
-    mStatus.popAction(lGuard);
+    lSysStatus.popAction(lSysGuard);
     
-    // In case this was a transition, also update object's current state
-    if (const SystemTransition* t = dynamic_cast<const SystemTransition*>(&mAction))
-    {
-      if(t->getStatus().getState() == ActionStatus::kError)
-        mStatus.setState(t->getStateMachine().getErrorState(), lGuard);
-      else
-        mStatus.setState(t->getEndState(), lGuard);
-    }
+    if ( !mPostActionCallback.empty() )
+      mPostActionCallback(lSysGuard);
   }
   else
   {
-    size_t lNrActions = mStatus.getRunningActions(lGuard).size();
-    const std::string activeFuncId(lNrActions > 0 ? "NULL" : "'" + mStatus.getLastRunningAction(lGuard)->getId() + "' (innermost of "+boost::lexical_cast<std::string>(lNrActions)+")");
+    size_t lNrActions = lSysStatus.getRunningActions(lSysGuard).size();
+    const std::string activeFuncId(lNrActions > 0 ? "NULL" : "'" + lSysStatus.getLastRunningAction(lSysGuard)->getId() + "' (innermost of "+boost::lexical_cast<std::string>(lNrActions)+")");
     LOG4CPLUS_ERROR(mSystem.getLogger(),
         "unexpected active functionoid " << activeFuncId << "  in BusyGuard destructor for system '"
         << mSystem.getPath() << "', functionoid '" << mAction.getId() << "'");

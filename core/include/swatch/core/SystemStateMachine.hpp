@@ -22,7 +22,7 @@ class SystemTransitionStatus;
 
 
 //! Represents transition  of a class that inherits from ActionableSystem, for an FSM modeled by SystemStateMachine
-class SystemTransition : public Functionoid {
+class SystemTransition : public SystemFunctionoid {
 public:
 
   //! Represents a single step in a system transition - i.e. multiple transitions on child objects, executed in parallel
@@ -39,7 +39,7 @@ public:
     std::vector<StateMachine::Transition*> mTransitions;
   };
 
-  SystemTransition(const std::string& aId, SystemStateMachine& aFSM, const std::string& aStartState, const std::string& aEndState);
+  SystemTransition(const std::string& aId, SystemStateMachine& aFSM, ActionableSystem::StatusContainer& aStatusMap, const std::string& aStartState, const std::string& aEndState);
   virtual ~SystemTransition();
 
   // Iteration over all steps in the transition
@@ -130,9 +130,12 @@ public:
   void exec(const GateKeeper& aGateKeeper, const bool& aUseThreadPool = true ); 
 
 private:
-  void runSteps(boost::shared_ptr<ActionableSystem::BusyGuard> aGuard);
+  void runSteps(boost::shared_ptr<SystemBusyGuard> aGuard);
+
+  void changeState(const ActionableStatusGuard& lGuard);
 
   SystemStateMachine& mFSM;
+  ActionableSystem::StatusContainer& mStatusMap;
   const std::string mStartState;
   const std::string mEndState;
   std::vector<Step> mSteps;
@@ -176,7 +179,8 @@ public:
   
 class SystemStateMachine : public Object {
 public:
-  SystemStateMachine(const std::string& aId, ActionableSystem& aSystem, MutableActionableStatus& aStatus, const std::string& aInitialState, const std::string& aErrorState);
+  SystemStateMachine(const std::string& aId, ActionableSystem& aSystem, ActionableSystem::StatusContainer& aStatusMap, const std::string& aInitialState, const std::string& aErrorState);
+
   virtual ~SystemStateMachine();
 
   //! Returns actionable system that this FSM belongs to
@@ -223,8 +227,11 @@ public:
   void reset(const GateKeeper& aGateKeeper);
   
 private:
+  
+  ActionableStatusGuardMap_t lockMutexes();
+  
   //! Throws if system/children are in other state machine, or running transition; need to lock externally ...
-  void checkStateMachineEngagedAndNotInTransition(const std::string& aAction, const ActionableSystem::StatusGuardMap_t& aGuardMap) const;
+  void checkStateMachineEngagedAndNotInTransition(const std::string& aAction, const ActionableStatusGuardMap_t& aGuardMap) const;
   
   struct State : public Object {
     State(const std::string& aId);
@@ -237,7 +244,7 @@ private:
   State& getState(const std::string& aStateId);
 
   ActionableSystem& mResource;
-  MutableActionableStatus& mStatus;
+  ActionableSystem::StatusContainer& mStatusMap;
 
   typedef std::vector<std::string> tStateVec;
   typedef tStateVec::const_iterator tStateIt;

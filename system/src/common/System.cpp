@@ -149,7 +149,7 @@ System::add(processor::Processor* aProcessor) {
   }
 
   // build a family
-  this->addObj(aProcessor, core::ActionableObject::Deleter());
+  addActionable(aProcessor);
 
   // but keep it aside
   processors_.push_back(aProcessor);
@@ -175,7 +175,7 @@ System::add(dtm::DaqTTCManager* aAMC13) {
     throw std::invalid_argument("AMC13 pointer is NULL!");
 
   // build a family
-  this->addObj(aAMC13, core::ActionableObject::Deleter());
+  addActionable(aAMC13);
 
   // but keep it aside
   daqTtc_.push_back(aAMC13);

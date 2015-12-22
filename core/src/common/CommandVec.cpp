@@ -18,10 +18,8 @@ namespace core {
 
 CommandVec::CommandVec( const std::string& aId, ActionableObject& aActionable) :
   ObjectFunctionoid( aId, aActionable ),
-  mActionableStatus(aActionable.mStatus),
   mCommands(),
   mCachedParameters(),
-  mCachedMonitoringSettings(),
   mParamUpdateTime() ,
   mState( ActionStatus::kInitial ),
   mCommandIt( mCommands.end() )
@@ -107,61 +105,6 @@ std::vector<Command*> CommandVec::getCommands()
 }
 
 
-void CommandVec::exec(const GateKeeper& aGateKeeper, const bool& aUseThreadPool )
-{
-  exec(NULL, aGateKeeper, aUseThreadPool);
-}
-
-void CommandVec::exec(const BusyGuard* aOuterBusyGuard, const GateKeeper& aGateKeeper, const bool& aUseThreadPool )
-{
-  // 1) Extract parameters before creating busy guard (so that resource doesn't change states if parameter is missing)
-  std::vector<ReadOnlyXParameterSet> lParamSets;
-  std::vector<MissingParam> lMissingParams;
-  tMonitoringSettings lMonSettings;
-  extractParameters(aGateKeeper, lParamSets, lMissingParams, true);
-  extractMonitoringSettings(aGateKeeper, lMonSettings);
-
-  // 2) Create busy guard
-  boost::shared_ptr<BusyGuard> lBusyGuard(new BusyGuard(*this, mActionableStatus, aOuterBusyGuard));
-
-// FIXME: Re-implement parameter cache at some future date; disabled by Tom on 28th August, since ...
-//        ... current logic doesn't work correctly with different gatekeepers - need to change to ...
-//        ... updating cache if either gatekeeper filename/runkey different or cache update timestamp older than gatekeeper.lastUpdated 
-//  // Is our cache of parameters up to date?
-//  boost::posix_time::ptime lUpdateTime( aGateKeeper.lastUpdated() );
-//  if( mParamUpdateTime != lUpdateTime )
-//  {
-//    updateParameterCache(aGateKeeper);
-//    mParamUpdateTime = lUpdateTime; // We are up to date :)
-//  }
-  
-  // 1) Reset the status of this sequence's state variables
-  {
-    boost::unique_lock<boost::mutex> lock( mMutex );
-    
-    mState = ActionStatus::kInitial;
-    mCommandIt = mCommands.end();
-    mCachedParameters = lParamSets;
-    mCachedMonitoringSettings = lMonSettings;
-    mStatusOfCompletedCommands.clear();
-    mStatusOfCompletedCommands.reserve(mCommands.size());
-  }  
-
-  // 2) Execute the command
-  if ( aUseThreadPool){
-    boost::unique_lock<boost::mutex> lock(mMutex);
-    mState = ActionStatus::kScheduled;
-    
-    ThreadPool& pool = ThreadPool::getInstance();
-    pool.addTask<CommandVec, BusyGuard>( this , &CommandVec::runCommands, lBusyGuard);
-  }
-  else{
-    // otherwise execute in same thread
-    this->runCommands(lBusyGuard);
-  }
-}
-
-
 ActionStatus::State CommandVec::getState() const 
 {
   boost::unique_lock<boost::mutex> lock(mMutex);
@@ -203,7 +146,6 @@ void CommandVec::runCommands(boost::shared_ptr<BusyGuard> aGuard)
   // 1) Declare that I'm running 
   {
     boost::unique_lock<boost::mutex> lock( mMutex );
-    prepareCommands(mCachedParameters, mCachedMonitoringSettings);
     mExecStartTime = boost::posix_time::microsec_clock::universal_time();
     // Finish straight away if there aren't any commands to run
     if( mCommands.empty() )
@@ -211,7 +153,6 @@ void CommandVec::runCommands(boost::shared_ptr<BusyGuard> aGuard)
       mState = ActionStatus::kDone;
       mCommandIt = mCommands.end();
       mExecEndTime = mExecStartTime;
-      finaliseCommands(mCachedParameters, mCachedMonitoringSettings);
       return;
     }
     else
@@ -256,7 +197,6 @@ void CommandVec::runCommands(boost::shared_ptr<BusyGuard> aGuard)
             mState = ActionStatus::kWarning;
         }
         mExecEndTime = boost::posix_time::microsec_clock::universal_time();
-        finaliseCommands(mCachedParameters, mCachedMonitoringSettings);
         return;
       }
     }
@@ -286,6 +226,18 @@ CommandVec::MissingParam::MissingParam(const std::string& aNamespace, const std:
 void CommandVec::checkForMissingParameters(const GateKeeper& aGateKeeper, std::vector<ReadOnlyXParameterSet>& aParamSets, std::vector<MissingParam>& aMissingParams) const
 {
   extractParameters(aGateKeeper, aParamSets, aMissingParams, false);
+}
+
+
+void CommandVec::reset(const tParameterSets& aParamSets)
+{
+  boost::unique_lock<boost::mutex> lock( mMutex );
+
+  mState = ActionStatus::kInitial;
+  mCommandIt = mCommands.end();
+  mCachedParameters = aParamSets;
+  mStatusOfCompletedCommands.clear();
+  mStatusOfCompletedCommands.reserve(mCommands.size());
 }
 
 
