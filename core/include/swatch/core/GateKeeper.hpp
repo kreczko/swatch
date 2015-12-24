@@ -89,7 +89,7 @@ public:
 
   const boost::posix_time::ptime& lastUpdated();
 
-  void SetRuntimeParameter( const std::string& aParam , tParameter aData );
+  void setRuntimeParameter( const std::string& aParam , tParameter aData );
 
 protected:
   /**

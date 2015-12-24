@@ -35,7 +35,7 @@ void ReadWriteXParameterSet::adopt( const std::string& name , const boost::share
     // entries_.emplace( name, &typeid(T), static_cast<XCloner>(cloner_<T>), data );
     entries_[ name ] = XEntry(&typeid(T), static_cast<XCloner>(cloner_<T>), data) ;
     */
-    std::pair<EntryMap::iterator, bool> it = emplace( name, &typeid(T), static_cast<XCloner>(cloner_<T>), boost::shared_ptr<xdata::Serializable>(data) );
+    std::pair<EntryMap::iterator, bool> it = emplace( name, &typeid(T), static_cast<XCloner>(clone<T>), boost::shared_ptr<xdata::Serializable>(data) );
     // Throw if failed to emplace
     if ( !it.second )
       throw XParameterExists(name + " is already defined");
@@ -59,7 +59,7 @@ template<typename T>
 void ReadWriteXParameterSet::add( const std::string& name , const T& data ) {
     BOOST_STATIC_ASSERT( (boost::is_base_of<xdata::Serializable,T>::value) ); 
     
-    XCloner cloner = static_cast<XCloner>(cloner_<T>);
+    XCloner cloner = static_cast<XCloner>(clone<T>);
     T* clone = static_cast<T*>(cloner(&data));
 
     adopt(name, boost::shared_ptr<T>(clone));
@@ -76,7 +76,7 @@ const T& ReadWriteXParameterSet::get( const std::string& name ) const
 
 //---
 template<typename T>
-xdata::Serializable* ReadWriteXParameterSet::cloner_( const xdata::Serializable* other ) {
+xdata::Serializable* ReadWriteXParameterSet::clone( const xdata::Serializable* other ) {
   const T* xother = dynamic_cast<const T*>(other); 
   return new T(*xother);
 }

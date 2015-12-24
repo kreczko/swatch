@@ -131,7 +131,7 @@ private:
     
     //! Creates copy of xdata::Serializable object of type T on heap
     template<typename T>
-    static xdata::Serializable* cloneSerializable_( const xdata::Serializable* other );
+    static xdata::Serializable* clone( const xdata::Serializable* other );
 
     typedef xdata::Serializable* (*ResultXCloner)( const xdata::Serializable* );
 

@@ -96,7 +96,7 @@ public:
 private:
 
   template<typename T>
-  static xdata::Serializable* cloner_( const xdata::Serializable* other );
+  static xdata::Serializable* clone( const xdata::Serializable* other );
 
   typedef xdata::Serializable* (*XCloner)( const xdata::Serializable* );
 

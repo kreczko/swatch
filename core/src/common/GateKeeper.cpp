@@ -307,7 +307,7 @@ const boost::posix_time::ptime& GateKeeper::lastUpdated() {
   return mUpdateTime;
 }
 
-void GateKeeper::SetRuntimeParameter(const std::string& aParam,
+void GateKeeper::setRuntimeParameter(const std::string& aParam,
     tParameter aData) {
   tTableCache::iterator lTable(mCache.find(kRuntimeTableLabel));
   tParameters::iterator lIt(lTable->second->find(aParam));

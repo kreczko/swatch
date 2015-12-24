@@ -25,7 +25,7 @@ Command::Command( const std::string& aId , ActionableObject& aResource, const T&
         statusMsg_("initialised"),
         result_(),
         mutex_(),
-        resultCloner_(static_cast<ResultXCloner>(cloneSerializable_<T>)) 
+        resultCloner_(static_cast<ResultXCloner>(clone<T>)) 
 {
   // T must be derived from xdata::Serializable
   BOOST_STATIC_ASSERT((boost::is_base_of<xdata::Serializable, T>::value));
@@ -41,7 +41,7 @@ void Command::registerParameter(const std::string name, const T& defaultValue){
 
 
 template<typename T>
-xdata::Serializable* Command::cloneSerializable_(const xdata::Serializable* other) {
+xdata::Serializable* Command::clone(const xdata::Serializable* other) {
   // T must be derived from xdata::Serializable
   BOOST_STATIC_ASSERT((boost::is_base_of<xdata::Serializable, T>::value));
 
