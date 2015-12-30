@@ -37,8 +37,8 @@ ReadOnlyXParameterSet::ReadOnlyXParameterSet(const XParameterSet& orig)
   }
   else if (const ReadWriteXParameterSet * const origPtr = dynamic_cast<ReadWriteXParameterSet const * const> (&orig) )
   {
-    typedef ReadWriteXParameterSet::EntryMap_t::const_iterator tConstIt;
-    for(tConstIt it = origPtr->entries_.begin(); it != origPtr->entries_.end(); it++)
+    typedef ReadWriteXParameterSet::EntryMap_t::const_iterator ConstIt_t;
+    for(ConstIt_t it = origPtr->entries_.begin(); it != origPtr->entries_.end(); it++)
       entries_.emplace(it->first, it->second.object);
   }
   else

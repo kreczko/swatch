@@ -101,10 +101,10 @@ public:
   void checkForMissingParameters(const GateKeeper& aGateKeeper, std::vector<ReadOnlyXParameterSet>& aParamSets, std::vector<MissingParam>& aMissingParams) const;
 
 protected:
-  typedef tReadOnlyXParameterSets tParameterSets;
+  typedef tReadOnlyXParameterSets ParameterSets_t;
 
   //! Resets this CommandVec's state variables
-  void reset(const tParameterSets& aParamSets);
+  void reset(const ParameterSets_t& aParamSets);
 
   /*!
    * Extracts from gatekeeper the parameter sets for running commands 
@@ -122,10 +122,10 @@ protected:
 
   
 private:
-  typedef std::vector< Element > tCommandVector;
-  tCommandVector mCommands;
+  typedef std::vector< Element > CommandVector_t;
+  CommandVector_t mCommands;
 
-  tParameterSets mCachedParameters;
+  ParameterSets_t mCachedParameters;
 
   /// The last time a table was updated from the Gatekeeper
   boost::posix_time::ptime mParamUpdateTime;
@@ -133,7 +133,7 @@ private:
   mutable boost::mutex mMutex;
   ActionStatus::State mState;
 
-  tCommandVector::iterator mCommandIt;
+  CommandVector_t::iterator mCommandIt;
 
   boost::posix_time::ptime mExecStartTime;
   boost::posix_time::ptime mExecEndTime;

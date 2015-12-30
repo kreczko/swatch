@@ -164,7 +164,7 @@ void CommandVec::runCommands(boost::shared_ptr<BusyGuard> aGuard)
 
   // 2) Run the commands
   try {
-    tParameterSets::iterator lIt( mCachedParameters.begin() );
+    ParameterSets_t::iterator lIt( mCachedParameters.begin() );
     
     while( true ) 
     {
@@ -229,7 +229,7 @@ void CommandVec::checkForMissingParameters(const GateKeeper& aGateKeeper, std::v
 }
 
 
-void CommandVec::reset(const tParameterSets& aParamSets)
+void CommandVec::reset(const ParameterSets_t& aParamSets)
 {
   boost::unique_lock<boost::mutex> lock( mMutex );
 
@@ -248,7 +248,7 @@ void CommandVec::extractParameters(const GateKeeper& aGateKeeper, std::vector<Re
 
   aMissingParams.clear();
 
-  for( tCommandVector::const_iterator lIt( mCommands.begin()) ; lIt != mCommands.end() ; ++lIt )
+  for( CommandVector_t::const_iterator lIt( mCommands.begin()) ; lIt != mCommands.end() ; ++lIt )
   {
     const Command& lCommand( lIt->get() );
 //    const std::string& lCommandAlias = (lIt->getAlias().empty() ? lCommand.getId() : lIt->getAlias());

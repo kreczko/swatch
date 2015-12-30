@@ -48,7 +48,7 @@ public:
     
 private:
     
-    typedef std::map<std::string, swatch::core::AbstractMetric*> MetricMap;
+    typedef std::map<std::string, swatch::core::AbstractMetric*> MetricMap_t;
     
     std::map<std::string, swatch::core::AbstractMetric*> metricsMap_;
     
