@@ -42,8 +42,7 @@ Libraries =	\
 	xoap \
 	boost_regex \
 	pthread \
-	boost_thread \
-	cactus_extern_pugixml
+	boost_thread
 	
 
 include ${SWATCH_ROOT}/config/mfRules.mk
