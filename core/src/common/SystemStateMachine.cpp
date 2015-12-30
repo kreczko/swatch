@@ -251,15 +251,15 @@ void SystemTransition::exec(const GateKeeper& aGateKeeper, const bool& aUseThrea
       throw ResourceInWrongState("System '"+lSystem.getPath()+"' is in state '"+lSysStatus.getState(lSysGuard)+"'; transition '"+getId()+"' cannot be run");
 
     // 1b) Check that children are engaged in correct state machine, and are in the correct state
-    typedef std::map<ActionableObject*, const StateMachine::Transition* > tObjTransitionMap;
-    tObjTransitionMap childTransitionMap;
+    typedef std::map<ActionableObject*, const StateMachine::Transition* > ObjTransitionMap_t;
+    ObjTransitionMap_t childTransitionMap;
     for(SystemTransition::const_iterator lIt=(end()-1); lIt != (begin()-1); lIt--)
     {
       for(std::vector<StateMachine::Transition*>::const_iterator lIt2=lIt->cget().begin(); lIt2!=lIt->cget().end(); lIt2++)
         childTransitionMap[ &(*lIt2)->getStateMachine().getActionable() ] = *lIt2;
     }
 
-    BOOST_FOREACH( const tObjTransitionMap::value_type e, childTransitionMap )
+    BOOST_FOREACH( const ObjTransitionMap_t::value_type e, childTransitionMap )
     {
       const ActionableStatusGuard& lChildGuard = *lStatusGuardMap.at(e.first);
       const ActionableObject::MutableStatus_t& lChildStatus = mStatusMap.getStatus(*e.first);
@@ -702,10 +702,10 @@ float SystemTransitionStatus::getProgress() const
     float baseProgress = float(mStepStatuses.size() - 1)/float(mTotalNumSteps);
     
     // Determine progress of slowest parallel transition in last step
-    typedef std::vector<boost::shared_ptr<const StateMachine::TransitionStatus> > tStepStatus;
-    const tStepStatus& lStatusLastStep = mStepStatuses.back();
+    typedef std::vector<boost::shared_ptr<const StateMachine::TransitionStatus> > StepStatus_t;
+    const StepStatus_t& lStatusLastStep = mStepStatuses.back();
     std::vector<float> lLastStepProgressVec;
-    for(tStepStatus::const_iterator lIt=lStatusLastStep.begin(); lIt!=lStatusLastStep.end(); lIt++)
+    for(StepStatus_t::const_iterator lIt=lStatusLastStep.begin(); lIt!=lStatusLastStep.end(); lIt++)
       lLastStepProgressVec.push_back((*lIt)->getProgress());
     float lastStepProgress = (*std::min_element(lLastStepProgressVec.begin(), lLastStepProgressVec.end()))/float(mTotalNumSteps);
     return baseProgress + lastStepProgress;
