@@ -101,7 +101,7 @@ public:
   void checkForMissingParameters(const GateKeeper& aGateKeeper, std::vector<ReadOnlyXParameterSet>& aParamSets, std::vector<MissingParam>& aMissingParams) const;
 
 protected:
-  typedef tReadOnlyXParameterSets ParameterSets_t;
+  typedef std::vector<ReadOnlyXParameterSet> ParameterSets_t;
 
   //! Resets this CommandVec's state variables
   void reset(const ParameterSets_t& aParamSets);

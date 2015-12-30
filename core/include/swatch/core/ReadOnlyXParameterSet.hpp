@@ -96,7 +96,6 @@ private:
 
   EntryMap_t entries_;
 };
-typedef std::vector< ReadOnlyXParameterSet > tReadOnlyXParameterSets;
 
 
 } // namespace core
