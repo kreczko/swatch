@@ -633,20 +633,20 @@ BOOST_FIXTURE_TEST_CASE(TestRunTransitionMissingParams, SystemStateMachineTestSe
   BOOST_CHECK_EQUAL( child3.obj.getStatus().getState(), childState0);
 
   // checkMissingParams method should return correct list of missing parameters 
-  typedef CommandVec::MissingParam tMissingParam;
-  std::vector<tMissingParam> result, expected;
-  expected.push_back(tMissingParam("", child1.cmdNormal1.getId(), DummyCommand::paramToDo));
-  expected.push_back(tMissingParam("", child1.cmdNormal1.getId(), DummyCommand::paramX));
+  typedef CommandVec::MissingParam MissingParam_t;
+  std::vector<MissingParam_t> result, expected;
+  expected.push_back(MissingParam_t("", child1.cmdNormal1.getId(), DummyCommand::paramToDo));
+  expected.push_back(MissingParam_t("", child1.cmdNormal1.getId(), DummyCommand::paramX));
 
-  std::map<const StateMachine::Transition*, std::vector<tMissingParam> > missingParamMap;
+  std::map<const StateMachine::Transition*, std::vector<MissingParam_t> > missingParamMap;
   sysItoA->checkForMissingParameters(DummyGateKeeper(), missingParamMap);
   BOOST_CHECK_EQUAL(missingParamMap.size(), size_t(2));
   BOOST_REQUIRE_EQUAL( missingParamMap.count(child1.ItoA), size_t(1));
   BOOST_CHECK_EQUAL_COLLECTIONS(missingParamMap[child1.ItoA].begin(), missingParamMap[child1.ItoA].end(), expected.begin(), expected.end());
 
   expected.clear();
-  expected.push_back(tMissingParam("", child3.cmdNormal2.getId(), DummyCommand::paramToDo));
-  expected.push_back(tMissingParam("", child3.cmdNormal2.getId(), DummyCommand::paramX));
+  expected.push_back(MissingParam_t("", child3.cmdNormal2.getId(), DummyCommand::paramToDo));
+  expected.push_back(MissingParam_t("", child3.cmdNormal2.getId(), DummyCommand::paramX));
   BOOST_REQUIRE_EQUAL( missingParamMap.count(child3.ItoA), size_t(1));
   BOOST_CHECK_EQUAL_COLLECTIONS(missingParamMap[child3.ItoA].begin(), missingParamMap[child3.ItoA].end(), expected.begin(), expected.end());
 }
