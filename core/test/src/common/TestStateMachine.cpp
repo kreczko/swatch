@@ -453,14 +453,14 @@ BOOST_FIXTURE_TEST_CASE(TestTransitionMissingParams, StateMachineTestSetup) {
   BOOST_CHECK_EQUAL( obj->getStatus().getState(), fsmState0);
 
   // checkMissingParams method should return correct parameters 
-  typedef CommandVec::MissingParam tMissingParam;
-  std::vector<tMissingParam> result, expected;
-  expected.push_back(tMissingParam("", cmdNormal1.getId(), DummyCommand::paramToDo));
-  expected.push_back(tMissingParam("", cmdNormal1.getId(), DummyCommand::paramX));
-  expected.push_back(tMissingParam(cmdSeq.getId(), cmdNormal1.getId(), DummyCommand::paramToDo));
-  expected.push_back(tMissingParam(cmdSeq.getId(), cmdNormal1.getId(), DummyCommand::paramX));
-  expected.push_back(tMissingParam(cmdSeq.getId(), cmdNormal2.getId(), DummyCommand::paramToDo));
-  expected.push_back(tMissingParam(cmdSeq.getId(), cmdNormal2.getId(), DummyCommand::paramX));
+  typedef CommandVec::MissingParam MissingParam_t;
+  std::vector<MissingParam_t> result, expected;
+  expected.push_back(MissingParam_t("", cmdNormal1.getId(), DummyCommand::paramToDo));
+  expected.push_back(MissingParam_t("", cmdNormal1.getId(), DummyCommand::paramX));
+  expected.push_back(MissingParam_t(cmdSeq.getId(), cmdNormal1.getId(), DummyCommand::paramToDo));
+  expected.push_back(MissingParam_t(cmdSeq.getId(), cmdNormal1.getId(), DummyCommand::paramX));
+  expected.push_back(MissingParam_t(cmdSeq.getId(), cmdNormal2.getId(), DummyCommand::paramToDo));
+  expected.push_back(MissingParam_t(cmdSeq.getId(), cmdNormal2.getId(), DummyCommand::paramX));
 
   std::vector<ReadOnlyXParameterSet> paramSets;
   transitionItoA->checkForMissingParameters(lEmptyGK, paramSets, result);

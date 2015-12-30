@@ -15,8 +15,7 @@
 
 
 // Type definition         
-typedef swatch::core::AbstractFactory<swatch::core::Object> ObjFactory;
-typedef swatch::core::test::DummyObject DummyObject;
+typedef swatch::core::AbstractFactory<swatch::core::Object> ObjFactory_t;
 
 // Standard factory registration macros
 #define SWATCH_TEST_REGISTER_OBJ( classname ) _SWATCH_ABSTRACT_REGISTER_CLASS( swatch::core::Object, classname )
@@ -34,7 +33,7 @@ public:
     virtual swatch::core::Object* operator()(const std::string& aId, const swatch::core::XParameterSet& params);
 };
 */
-class DummyCreator : public ObjFactory::CreatorInterface {
+class DummyCreator : public ObjFactory_t::CreatorInterface {
 public:
     virtual swatch::core::Object* operator()( const swatch::core::AbstractStub& aStub );
 };
@@ -44,10 +43,6 @@ DummyCreator::operator ()( const swatch::core::AbstractStub& aStub ) {
     swatch::core::test::DummyObject* so = new swatch::core::test::DummyObject(aStub);
     so->setValue(1234.5678);
     return so;
-}
-
-}
-}
 }
 
 
@@ -60,7 +55,7 @@ BOOST_AUTO_TEST_SUITE( FactoryTestSuite )
 
 BOOST_AUTO_TEST_CASE( TestFactory ) {
     
-    ObjFactory* f = ObjFactory::get();
+    ObjFactory_t* f = ObjFactory_t::get();
     swatch::core::AbstractStub d1("d1");    
 //    swatch::core::XParameterSet none;
     swatch::core::Object* obj;
@@ -87,3 +82,6 @@ BOOST_AUTO_TEST_CASE( TestFactory ) {
         
 BOOST_AUTO_TEST_SUITE_END() // CoreTestSuite
 
+} /* namespace test */
+} /* namespace core */
+} /* namespace swatch */
