@@ -157,8 +157,8 @@ private:
   ActionableObject& mResource;
   MutableActionableStatus& mStatus;
     
-  typedef std::vector<std::string> tStateVec;
-  typedef tStateVec::const_iterator tStateIt;
+  typedef std::vector<std::string> StateVec_t;
+  typedef StateVec_t::const_iterator StateIt_t;
   const std::string mInitialState;
   const std::string mErrorState;
   std::vector<std::string> mStates;

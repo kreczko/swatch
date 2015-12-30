@@ -108,7 +108,7 @@ ActionableSystem::~ActionableSystem() {
 std::set<std::string> ActionableSystem::getStateMachines() const
 {
   std::set<std::string> lNames;
-  for(tStateMachineMap::const_iterator lIt=mFSMs.begin(); lIt!=mFSMs.end(); lIt++)
+  for(StateMachineMap_t::const_iterator lIt=mFSMs.begin(); lIt!=mFSMs.end(); lIt++)
     lNames.insert( lIt->first );
   return lNames;
 }

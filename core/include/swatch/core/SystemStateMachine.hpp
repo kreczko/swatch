@@ -246,8 +246,8 @@ private:
   ActionableSystem& mResource;
   ActionableSystem::StatusContainer& mStatusMap;
 
-  typedef std::vector<std::string> tStateVec;
-  typedef tStateVec::const_iterator tStateIt;
+  typedef std::vector<std::string> StateVec_t;
+  typedef StateVec_t::const_iterator StateIt_t;
   const std::string mInitialState;
   const std::string mErrorState;
   std::vector<std::string> mStates;
@@ -264,8 +264,8 @@ template<class Iterator>
 SystemTransition& 
 SystemTransition::add(Iterator aBegin, Iterator aEnd, const std::string& aFromState, const std::string& aTransition)
 {
-  typedef typename std::iterator_traits< Iterator >::value_type val_type;
-  BOOST_STATIC_ASSERT_MSG( (boost::is_convertible<val_type, ActionableObject*>::value) , "Dereferencing type Iterator must result in a pointer to a type that inherits from swatch::core::ActionableObject");
+  typedef typename std::iterator_traits< Iterator >::value_type IteratorVal_t;
+  BOOST_STATIC_ASSERT_MSG( (boost::is_convertible<IteratorVal_t, ActionableObject*>::value) , "Dereferencing type Iterator must result in a pointer to a type that inherits from swatch::core::ActionableObject");
   
   return add(aBegin, aEnd, getStateMachine().getId(), aFromState, aTransition);
 }
@@ -276,8 +276,8 @@ template<class Iterator>
 SystemTransition& 
 SystemTransition::add(Iterator aBegin, Iterator aEnd, const std::string& aFSM, const std::string& aFromState, const std::string& aTransition)
 {
-  typedef typename std::iterator_traits< Iterator >::value_type val_type;
-  BOOST_STATIC_ASSERT_MSG( (boost::is_convertible<val_type, ActionableObject*>::value) , "Dereferencing type Iterator must result in a pointer to a type that inherits from swatch::core::ActionableObject");
+  typedef typename std::iterator_traits< Iterator >::value_type IteratorVal_t;
+  BOOST_STATIC_ASSERT_MSG( (boost::is_convertible<IteratorVal_t, ActionableObject*>::value) , "Dereferencing type Iterator must result in a pointer to a type that inherits from swatch::core::ActionableObject");
   
   std::vector< StateMachine::Transition* > lTransitions;
   for(Iterator lIt=aBegin; lIt!=aEnd; lIt++)

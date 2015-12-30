@@ -90,7 +90,7 @@ public:
 
   log4cplus::Logger& getLogger();
 
-  typedef boost::unordered_map< std::string , SystemStateMachine* > tStateMachineMap;
+  typedef boost::unordered_map< std::string , SystemStateMachine* > StateMachineMap_t;
 
   //! Deleter functor that only deletes the actionable system after all system-level actions have finished running
   class Deleter : public Object::Deleter {
@@ -117,7 +117,7 @@ protected:
   
 private:
 
-  tStateMachineMap mFSMs;
+  StateMachineMap_t mFSMs;
 
   MutableStatus_t mStatus;
   StatusContainer mStatusMap;
