@@ -262,7 +262,7 @@ void SystemTransition::exec(const GateKeeper& aGateKeeper, const bool& aUseThrea
     BOOST_FOREACH( const tObjTransitionMap::value_type e, childTransitionMap )
     {
       const ActionableStatusGuard& lChildGuard = *lStatusGuardMap.at(e.first);
-      const ActionableObject::MutableStatus& lChildStatus = mStatusMap.getStatus(*e.first);
+      const ActionableObject::MutableStatus_t& lChildStatus = mStatusMap.getStatus(*e.first);
 
       if( lChildStatus.getStateMachineId(lChildGuard) != e.second->getStateMachine().getId() )
         throw ResourceInWrongStateMachine("Resource '"+e.first->getPath()+"' is not yet engaged in state machine '"+e.second->getStateMachine().getId()+"'");
@@ -516,7 +516,7 @@ void SystemStateMachine::reset(const GateKeeper& aGateKeeper)
   for(std::set<StateMachine*>::const_iterator smIt=mNonConstChildFSMs.begin(); smIt != mNonConstChildFSMs.end(); smIt++)
   {
     const ActionableStatusGuard& lChildGuard = *lGuardMap.at(&(*smIt)->getActionable());
-    ActionableObject::MutableStatus& lChildStatus = mStatusMap.getStatus((*smIt)->getActionable());
+    ActionableObject::MutableStatus_t& lChildStatus = mStatusMap.getStatus((*smIt)->getActionable());
 
     lChildStatus.setState((*smIt)->getInitialState(), lChildGuard);
 
@@ -540,7 +540,7 @@ void SystemStateMachine::engage(const GateKeeper& aGateKeeper)
   for(std::set<const StateMachine*>::const_iterator lIt=this->getParticipants().begin(); lIt!=this->getParticipants().end(); lIt++)
   {
     const ActionableStatusGuard& lChildGuard = *lGuardMap.at(&(*lIt)->getActionable());
-    const ActionableObject::MutableStatus& lChildStatus = mStatusMap.getStatus((*lIt)->getActionable());
+    const ActionableObject::MutableStatus_t& lChildStatus = mStatusMap.getStatus((*lIt)->getActionable());
     if (lChildStatus.isEngaged(lChildGuard))
       throw ResourceInWrongStateMachine("Cannot engage other state machine; resource '"+(*lIt)->getActionable().getPath()+"' currently in state machine '"+lChildStatus.getStateMachineId(lChildGuard)+"'");
   }
@@ -551,7 +551,7 @@ void SystemStateMachine::engage(const GateKeeper& aGateKeeper)
   for(auto lIt=mNonConstChildFSMs.begin(); lIt != mNonConstChildFSMs.end(); lIt++)
   {
     const ActionableStatusGuard& lChildGuard = *lGuardMap.at(&(*lIt)->getActionable());
-    ActionableObject::MutableStatus& lChildStatus = mStatusMap.getStatus((*lIt)->getActionable());
+    ActionableObject::MutableStatus_t& lChildStatus = mStatusMap.getStatus((*lIt)->getActionable());
     lChildStatus.setStateMachine((*lIt)->getId(), (*lIt)->getInitialState(), lChildGuard);
 
     // Reset maskable objects (unmasked unless specified otherwise in gatekeeper)
@@ -574,7 +574,7 @@ void SystemStateMachine::disengage()
   for(auto smIt = mNonConstChildFSMs.begin(); smIt!=mNonConstChildFSMs.end(); smIt++)
   {
     const ActionableStatusGuard& lChildGuard = *lGuardMap.at(&(*smIt)->getActionable());
-    ActionableObject::MutableStatus& lChildStatus = mStatusMap.getStatus((*smIt)->getActionable());
+    ActionableObject::MutableStatus_t& lChildStatus = mStatusMap.getStatus((*smIt)->getActionable());
 
     if( lChildStatus.getStateMachineId(lChildGuard) == (*smIt)->getId() )
       lChildStatus.setNoStateMachine(lChildGuard);
@@ -615,7 +615,7 @@ void SystemStateMachine::checkStateMachineEngagedAndNotInTransition(const std::s
   for(auto smIt=getParticipants().begin(); smIt!=getParticipants().end(); smIt++)
   {
     const ActionableObject& lChild = (*smIt)->getActionable();
-    ActionableObject::MutableStatus& lChildStatus = mStatusMap.getStatus(lChild);
+    ActionableObject::MutableStatus_t& lChildStatus = mStatusMap.getStatus(lChild);
     const ActionableStatusGuard& lChildGuard = *aGuardMap.at(&lChild);
     
     if(lChildStatus.getStateMachineId(lChildGuard) != (*smIt)->getId())

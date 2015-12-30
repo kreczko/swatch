@@ -56,19 +56,19 @@ public:
     ~StatusContainer();
 
     const MutableStatus_t& getSystemStatus() const;
-    const ActionableObject::MutableStatus& getStatus(const ActionableObject& aChild ) const;
+    const ActionableObject::MutableStatus_t& getStatus(const ActionableObject& aChild ) const;
   
     MutableStatus_t& getSystemStatus();
-    ActionableObject::MutableStatus& getStatus(const ActionableObject& aChild );
+    ActionableObject::MutableStatus_t& getStatus(const ActionableObject& aChild );
 
-    typedef std::map<const MonitorableObject*, ActionableObject::MutableStatus*>::const_iterator iterator;
+    typedef std::map<const MonitorableObject*, ActionableObject::MutableStatus_t*>::const_iterator iterator;
 
     iterator begin();
     iterator end();
     
   private:
     MutableStatus_t& mSysStatus;
-    std::map<const MonitorableObject*, ActionableObject::MutableStatus*> mStatusMap;
+    std::map<const MonitorableObject*, ActionableObject::MutableStatus_t*> mStatusMap;
     
     friend class ActionableSystem;
   };

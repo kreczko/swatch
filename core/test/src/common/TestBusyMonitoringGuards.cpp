@@ -119,7 +119,7 @@ BOOST_FIXTURE_TEST_CASE(TestBusyThenMetricWriteGuard, BusyMonitoringGuardTestSet
   boost::thread lUpdateMetricsThread(lUpdateMetricsFunctor);
 
   // 2) Check that busy guard has updated the actionable object's status
-  ActionableObject::Status lObjStatus = obj->getStatus();
+  ActionableObject::Status_t lObjStatus = obj->getStatus();
   BOOST_REQUIRE_EQUAL(lObjStatus.isRunning(), true);
   BOOST_REQUIRE_NE(lObjStatus.getRunningActions().size(), size_t(0));
   BOOST_REQUIRE_EQUAL(lObjStatus.isUpdatingMetrics(), false);
@@ -188,7 +188,7 @@ BOOST_FIXTURE_TEST_CASE(TestMetricWriteThenBusyGuard, BusyMonitoringGuardTestSet
   BOOST_CHECK_NE(lMetricSnapshot.getUpdateTimestamp().tv_sec, 0);
   BOOST_CHECK_NE(lMetricSnapshot.getUpdateTimestamp().tv_usec, 0);
   BOOST_CHECK_EQUAL(waitingCmd.getState(), ActionStatus::kInitial);
-  ActionableObject::Status lObjStatus = obj->getStatus();
+  ActionableObject::Status_t lObjStatus = obj->getStatus();
   BOOST_CHECK( lObjStatus.isUpdatingMetrics() );
   BOOST_REQUIRE( ! lObjStatus.isRunning() );
   BOOST_REQUIRE( lObjStatus.getRunningActions().empty() );

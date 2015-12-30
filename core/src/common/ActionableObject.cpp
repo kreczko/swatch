@@ -89,7 +89,7 @@ StateMachine& ActionableObject::getStateMachine( const std::string& aId )
 std::set<std::string> ActionableObject::getSequences() const
 {
   std::set<std::string> lNames;
-  BOOST_FOREACH( tCommandSequenceMap::value_type p, mCommandSequences) {
+  BOOST_FOREACH( CommandSequenceMap_t::value_type p, mCommandSequences) {
     lNames.insert( p.first );
   }
   return lNames;
@@ -98,7 +98,7 @@ std::set<std::string> ActionableObject::getSequences() const
 std::set<std::string> ActionableObject::getCommands() const
 {
   std::set<std::string> lNames;
-  BOOST_FOREACH( tCommandMap::value_type p, mCommands) {
+  BOOST_FOREACH( CommandMap_t::value_type p, mCommands) {
     lNames.insert( p.first );
   }
   return lNames;
@@ -107,7 +107,7 @@ std::set<std::string> ActionableObject::getCommands() const
 std::set<std::string> ActionableObject::getStateMachines() const
 {
   std::set<std::string> lNames;
-  BOOST_FOREACH( tStateMachineMap::value_type p, mFSMs) {
+  BOOST_FOREACH( StateMachineMap_t::value_type p, mFSMs) {
     lNames.insert( p.first );
   }
   return lNames;
@@ -165,7 +165,7 @@ StateMachine& ActionableObject::registerStateMachine( const std::string& aId, co
 
 
 //------------------------------------------------------------------------------------
-ActionableObject::Status ActionableObject::getStatus() const
+ActionableObject::Status_t ActionableObject::getStatus() const
 {
   ActionableStatusGuard lGuard(mStatus);
   return mStatus.getSnapshot(lGuard);

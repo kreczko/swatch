@@ -64,8 +64,8 @@ private:
 
 class ActionableObject : public MonitorableObject {
 public:
-  typedef ActionableStatus Status;
-  typedef MutableActionableStatus MutableStatus;
+  typedef ActionableStatus Status_t;
+  typedef MutableActionableStatus MutableStatus_t;
 
   explicit ActionableObject( const std::string& aId, const std::string& aLoggerName );
 
@@ -100,16 +100,16 @@ public:
 
   virtual const std::vector<std::string>& getGateKeeperTables() const = 0;
   
-  Status getStatus() const;
+  Status_t getStatus() const;
   
   //! Engage state machine of specified ID
   void engageStateMachine(const std::string& aStateMachine);
   
   log4cplus::Logger& getLogger();
 
-  typedef boost::unordered_map< std::string , CommandSequence* > tCommandSequenceMap;
-  typedef boost::unordered_map< std::string , Command* > tCommandMap;
-  typedef boost::unordered_map< std::string , StateMachine* > tStateMachineMap;
+  typedef boost::unordered_map< std::string , CommandSequence* > CommandSequenceMap_t;
+  typedef boost::unordered_map< std::string , Command* > CommandMap_t;
+  typedef boost::unordered_map< std::string , StateMachine* > StateMachineMap_t;
 
   //! Deleter functor that only deletes the actionable object after all commands, command sequences and transitions have finished running
   class Deleter : public Object::Deleter {
@@ -143,11 +143,11 @@ protected:
   StateMachine& registerStateMachine(const std::string& aId, const std::string& aInitialState, const std::string& aErrorState );    
   
 private:
-  tCommandSequenceMap mCommandSequences;
-  tCommandMap mCommands;
-  tStateMachineMap mFSMs;
+  CommandSequenceMap_t mCommandSequences;
+  CommandMap_t mCommands;
+  StateMachineMap_t mFSMs;
 
-  MutableStatus mStatus;
+  MutableStatus_t mStatus;
   log4cplus::Logger mLogger;
 
 public:

@@ -63,7 +63,7 @@ const ActionableSystem::MutableStatus_t& ActionableSystem::StatusContainer::getS
   return mSysStatus;
 }
 
-const ActionableObject::MutableStatus& ActionableSystem::StatusContainer::getStatus(const ActionableObject& aChild ) const
+const ActionableObject::MutableStatus_t& ActionableSystem::StatusContainer::getStatus(const ActionableObject& aChild ) const
 {
   return *mStatusMap.at(&aChild);
 }
@@ -74,7 +74,7 @@ ActionableSystem::MutableStatus_t& ActionableSystem::StatusContainer::getSystemS
 }
 
 
-ActionableObject::MutableStatus& ActionableSystem::StatusContainer::getStatus(const ActionableObject& aChild )
+ActionableObject::MutableStatus_t& ActionableSystem::StatusContainer::getStatus(const ActionableObject& aChild )
 {
   return *mStatusMap.at(&aChild);
 }
@@ -213,7 +213,7 @@ SystemBusyGuard::SystemBusyGuard(SystemFunctionoid& aAction, ActionableSystem::S
   typedef std::set<ActionableObject*>::const_iterator ChildIt_t;
   for (ChildIt_t lIt = aAction.getParticipants().begin(); lIt != aAction.getParticipants().end(); lIt++)
   {
-    const ActionableObject::MutableStatus& lChildStatus = mStatusMap.getStatus(**lIt);
+    const ActionableObject::MutableStatus_t& lChildStatus = mStatusMap.getStatus(**lIt);
     const ActionableStatusGuard& lChildGuard = *aStatusGuardMap.at(*lIt);
 
     if ( !lChildStatus.isAlive(lChildGuard) || lChildStatus.isBusy(lChildGuard) )
@@ -247,7 +247,7 @@ SystemBusyGuard::SystemBusyGuard(SystemFunctionoid& aAction, ActionableSystem::S
   for (ChildIt_t lIt = aAction.getParticipants().begin(); lIt != aAction.getParticipants().end(); lIt++)
   {
     ActionableStatusGuard& lChildGuard = *aStatusGuardMap.at(*lIt).get();
-    ActionableObject::MutableStatus& lChildStatus = mStatusMap.getStatus(**lIt);
+    ActionableObject::MutableStatus_t& lChildStatus = mStatusMap.getStatus(**lIt);
     mChildGuardMap[ *lIt ] = ChildGuardPtr_t(new BusyGuard(**lIt, lChildStatus, lChildGuard, mAction, BusyGuard::Adopt()) );
   }
 }
