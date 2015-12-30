@@ -92,9 +92,9 @@ public:
 
 
 private:
-  typedef boost::unordered_map<std::string, boost::shared_ptr<xdata::Serializable> > EntryMap;
+  typedef boost::unordered_map<std::string, boost::shared_ptr<xdata::Serializable> > EntryMap_t;
 
-  EntryMap entries_;
+  EntryMap_t entries_;
 };
 typedef std::vector< ReadOnlyXParameterSet > tReadOnlyXParameterSets;
 
