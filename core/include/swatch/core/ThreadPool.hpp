@@ -40,8 +40,8 @@ public:
   Worker(ThreadPool &pool, bool run_until_queue_empty);
   void operator()();
 private:
-  ThreadPool &pool_;
-  bool run_until_queue_empty_;
+  ThreadPool &mPool;
+  bool mRunUntilQueueEmpty;
 };
 
 
@@ -109,17 +109,17 @@ private:
   // pointer to the only ThreadPool instance
   static ThreadPool* instance_;
   // number of simultaneous threads
-  size_t n_threads_;
+  size_t mNumThreads;
   // thread group for the workers
-  boost::thread_group workers_;
+  boost::thread_group mWorkers;
   // task queue
-  std::deque<boost::packaged_task<void> > tasks_;
+  std::deque<boost::packaged_task<void> > mTasks;
 
   // synchronisation
   static boost::mutex mutex_;
-  boost::mutex queue_mutex_;
-  boost::condition_variable condition_;
-  bool stop_, force_thread_cancellation_;
+  boost::mutex mQueueMutex;
+  boost::condition_variable mCondition;
+  bool mStop, mForceThreadCancellation;
 
 };
 

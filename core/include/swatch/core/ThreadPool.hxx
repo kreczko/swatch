@@ -17,14 +17,14 @@ void ThreadPool::addTask(OBJECT* cmd,
   boost::packaged_task<void> task(boost::bind(function, cmd, resourceGuard, boost::ref(param)));
   {
     // lock mutex
-    boost::lock_guard<boost::mutex> guard(queue_mutex_);
-    if (stop_) {
+    boost::lock_guard<boost::mutex> guard(mQueueMutex);
+    if (mStop) {
       throw OperationOnStoppedThreadPool(
           "ThreadPool is stopped, cannot schedule tasks.");
     }
-    tasks_.push_back(boost::move(task));
+    mTasks.push_back(boost::move(task));
   }
-  condition_.notify_one();
+  mCondition.notify_one();
 }
 
 template<class OBJECT, class ResourceGuardType>
@@ -33,14 +33,14 @@ void ThreadPool::addTask( OBJECT* cmd , boost::function<void(OBJECT*, boost::sha
   boost::packaged_task<void> task(boost::bind(function, cmd, resourceGuard));
   {
     // lock mutex
-    boost::lock_guard<boost::mutex> guard(queue_mutex_);
-    if (stop_) {
+    boost::lock_guard<boost::mutex> guard(mQueueMutex);
+    if (mStop) {
       throw OperationOnStoppedThreadPool(
           "ThreadPool is stopped, cannot schedule tasks.");
     }
-    tasks_.push_back(boost::move(task));
+    mTasks.push_back(boost::move(task));
   }
-  condition_.notify_one();
+  mCondition.notify_one();
 }
 
 
