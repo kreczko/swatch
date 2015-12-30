@@ -113,9 +113,9 @@ protected:
   void setMonitorableStatus(AbstractMonitorableStatus& aStatus);
 
 private:
-  typedef boost::unordered_map< std::string , AbstractMetric* > tMetricMap;
+  typedef boost::unordered_map< std::string , AbstractMetric* > MetricMap_t;
 
-  tMetricMap metrics_;
+  MetricMap_t metrics_;
 
   //! Stores details in case error occurs when updating the metric values
   std::string updateErrorMsg_;

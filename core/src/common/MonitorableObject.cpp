@@ -24,7 +24,7 @@ MonitorableObject::MonitorableObject( const std::string& aId ) :
 
 MonitorableObject::~MonitorableObject()
 {
-  BOOST_FOREACH( tMetricMap::value_type p, metrics_) {
+  BOOST_FOREACH( MetricMap_t::value_type p, metrics_) {
     delete p.second;
   }
   metrics_.clear();
@@ -34,7 +34,7 @@ MonitorableObject::~MonitorableObject()
 std::vector<std::string> MonitorableObject::getMetrics() const
 {
   std::vector<std::string> lNames;
-  BOOST_FOREACH( tMetricMap::value_type p, metrics_) {
+  BOOST_FOREACH( MetricMap_t::value_type p, metrics_) {
     lNames.push_back( p.first );
   }
   return lNames;
@@ -78,7 +78,7 @@ StatusFlag MonitorableObject::getStatusFlag() const
     }
   }
   
-  BOOST_FOREACH( tMetricMap::value_type p, metrics_) {
+  BOOST_FOREACH( MetricMap_t::value_type p, metrics_) {
     // only enabled metrics contribute to the status
     if (p.second->getSnapshot().getMonitoringStatus() == monitoring::kEnabled)
       result = result & p.second->getSnapshot().getStatusFlag();
@@ -116,7 +116,7 @@ void MonitorableObject::updateMetrics(const MetricWriteGuard& aGuard)
     updateErrorMsg_ = e.what();
   }
 
-  BOOST_FOREACH(tMetricMap::value_type p, metrics_) {
+  BOOST_FOREACH(MetricMap_t::value_type p, metrics_) {
     timeval lastUpdateTime = p.second->getUpdateTimestamp();
     // last update before start time equals failure
     bool failedUpdate = timercmp(&lastUpdateTime, &startTime, <);

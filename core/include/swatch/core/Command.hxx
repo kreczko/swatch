@@ -25,7 +25,7 @@ Command::Command( const std::string& aId , ActionableObject& aResource, const T&
         statusMsg_("initialised"),
         result_(),
         mutex_(),
-        resultCloner_(static_cast<ResultXCloner>(clone<T>)) 
+        resultCloner_(static_cast<ResultXCloner_t>(clone<T>)) 
 {
   // T must be derived from xdata::Serializable
   BOOST_STATIC_ASSERT((boost::is_base_of<xdata::Serializable, T>::value));

@@ -18,7 +18,7 @@ Metric<DataType>& MonitorableObject::registerMetric(const std::string& aId)
     throw MetricAlreadyExistsInMonitorableObject("Metric of ID \"" + aId + "\" already exists in object of path \"" + getPath() + "\"");
 
   Metric<DataType>* m = new Metric<DataType>();
-  metrics_.insert( tMetricMap::value_type(aId, m) );
+  metrics_.insert( MetricMap_t::value_type(aId, m) );
   return *m;
 }
 
@@ -32,7 +32,7 @@ Metric<DataType>& MonitorableObject::registerMetric(const std::string& aId, cons
     throw MetricAlreadyExistsInMonitorableObject("Metric of ID \"" + aId + "\" already exists in object of path \"" + getPath() + "\"");
 
   Metric<DataType>* m = new Metric<DataType>( new ErrorCondition(aErrorCondition) );
-  metrics_.insert( tMetricMap::value_type(aId, m) );
+  metrics_.insert( MetricMap_t::value_type(aId, m) );
   return *m;
 }
 
@@ -47,7 +47,7 @@ Metric<DataType>& MonitorableObject::registerMetric(const std::string& aId, cons
     throw MetricAlreadyExistsInMonitorableObject("Metric of ID \"" + aId + "\" already exists in object of path \"" + getPath() + "\"");
 
   Metric<DataType>* m = new Metric<DataType>( new ErrorCondition(aErrorCondition), new WarnCondition(aWarnCondition) );
-  metrics_.insert( tMetricMap::value_type(aId, m) );
+  metrics_.insert( MetricMap_t::value_type(aId, m) );
   return *m;
 }
 

@@ -54,7 +54,7 @@ class Object : public boost::noncopyable
   //! Class to iterate over the children of an object
   class iterator : public std::iterator< std::forward_iterator_tag , Object >
   {
-    typedef std::deque< std::deque< std::pair<Object*,Deleter*> >::const_iterator > Stack;
+    typedef std::deque< std::deque< std::pair<Object*,Deleter*> >::const_iterator > Stack_t;
   public:
     /**
       Default constructor
@@ -133,7 +133,7 @@ class Object : public boost::noncopyable
     /// Pointer to the current object or NULL if there are no more objects available
     Object* begin_;
     /// A stack to store the vertical position in the hierarchy
-    Stack itStack_;
+    Stack_t itStack_;
   };
 
         

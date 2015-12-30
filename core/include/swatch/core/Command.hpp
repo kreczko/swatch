@@ -133,10 +133,10 @@ private:
     template<typename T>
     static xdata::Serializable* clone( const xdata::Serializable* other );
 
-    typedef xdata::Serializable* (*ResultXCloner)( const xdata::Serializable* );
+    typedef xdata::Serializable* (*ResultXCloner_t)( const xdata::Serializable* );
 
     //! Used to clone default result into result_ at start of execution, just before the code method is called
-    ResultXCloner resultCloner_;
+    ResultXCloner_t resultCloner_;
 };
 
 
