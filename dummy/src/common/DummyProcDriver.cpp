@@ -3,7 +3,7 @@
 namespace swatch {
 namespace dummy {
 
-typedef boost::posix_time::microsec_clock ms_clk;
+typedef boost::posix_time::microsec_clock MicrosecClk_t;
 
 DummyProcDriver::DummyProcDriver() 
 {
@@ -24,7 +24,7 @@ uint64_t DummyProcDriver::getFirmwareVersion() const
 
 DummyProcDriver::TTCStatus DummyProcDriver::getTTCStatus() const 
 {
-  bool allOK = (ms_clk::universal_time() < mErrTimeClk);
+  bool allOK = (MicrosecClk_t::universal_time() < mErrTimeClk);
   
   TTCStatus s;
   s.bunchCounter = allOK ? 0x00001234 : 0;
@@ -42,7 +42,7 @@ DummyProcDriver::TTCStatus DummyProcDriver::getTTCStatus() const
 
 DummyProcDriver::ReadoutStatus DummyProcDriver::getReadoutStatus() const
 {
-  ptime lNow = ms_clk::universal_time();
+  ptime lNow = MicrosecClk_t::universal_time();
   if ( (lNow < mErrTimeClk) && (lNow < mErrTimeDaq) )
     return ReadoutStatus(true, 8);
   else
@@ -52,7 +52,7 @@ DummyProcDriver::ReadoutStatus DummyProcDriver::getReadoutStatus() const
 
 DummyProcDriver::RxPortStatus DummyProcDriver::getRxPortStatus(uint32_t channelId) const 
 {
-  if ( (ms_clk::universal_time() >= mErrTimeClk) || (ms_clk::universal_time() >= mErrTimeRx) )
+  if ( (MicrosecClk_t::universal_time() >= mErrTimeClk) || (MicrosecClk_t::universal_time() >= mErrTimeRx) )
     return RxPortStatus(false, false, 42);
   else
     return RxPortStatus(true, true, 0);
@@ -61,7 +61,7 @@ DummyProcDriver::RxPortStatus DummyProcDriver::getRxPortStatus(uint32_t channelI
 
 bool DummyProcDriver::isTxPortOperating(uint32_t channelId) const
 {
-  if ( (ms_clk::universal_time() >= mErrTimeClk) || (ms_clk::universal_time() >= mErrTimeTx) )
+  if ( (MicrosecClk_t::universal_time() >= mErrTimeClk) || (MicrosecClk_t::universal_time() >= mErrTimeTx) )
     return false;
   else
     return true;
@@ -80,7 +80,7 @@ void DummyProcDriver::reboot()
 
 void DummyProcDriver::reset(size_t aErrorAfter)
 {
-  mErrTimeClk = ms_clk::universal_time() + boost::posix_time::seconds(aErrorAfter);
+  mErrTimeClk = MicrosecClk_t::universal_time() + boost::posix_time::seconds(aErrorAfter);
 
   mErrTimeTx = ptime( boost::posix_time::min_date_time );
   mErrTimeRx = ptime( boost::posix_time::min_date_time );
@@ -90,37 +90,37 @@ void DummyProcDriver::reset(size_t aErrorAfter)
 
 void DummyProcDriver::configureTxPorts(size_t aErrorAfter)
 {
-  if ( ms_clk::universal_time() >= mErrTimeClk )
+  if ( MicrosecClk_t::universal_time() >= mErrTimeClk )
     throw std::runtime_error("Couldn't configure tx ports - no clock!");
   else
-    mErrTimeTx = ms_clk::universal_time() + boost::posix_time::seconds(aErrorAfter);
+    mErrTimeTx = MicrosecClk_t::universal_time() + boost::posix_time::seconds(aErrorAfter);
 }
 
 
 void DummyProcDriver::configureRxPorts(size_t aErrorAfter)
 {
-  if ( ms_clk::universal_time() >= mErrTimeClk )
+  if ( MicrosecClk_t::universal_time() >= mErrTimeClk )
     throw std::runtime_error("Couldn't configure rx ports - no clock!");
   else
-    mErrTimeRx = ms_clk::universal_time() + boost::posix_time::seconds(aErrorAfter);
+    mErrTimeRx = MicrosecClk_t::universal_time() + boost::posix_time::seconds(aErrorAfter);
 }
 
 
 void DummyProcDriver::configureReadout(size_t aErrorAfter)
 {
-  if ( ms_clk::universal_time() >= mErrTimeClk )
+  if ( MicrosecClk_t::universal_time() >= mErrTimeClk )
     throw std::runtime_error("Couldn't configure readout block - no clock!");
   else
-    mErrTimeDaq = ms_clk::universal_time() + boost::posix_time::seconds(aErrorAfter);
+    mErrTimeDaq = MicrosecClk_t::universal_time() + boost::posix_time::seconds(aErrorAfter);
 }
 
 
 void DummyProcDriver::configureAlgo(size_t aErrorAfter)
 {
-  if ( ms_clk::universal_time() >= mErrTimeClk )
+  if ( MicrosecClk_t::universal_time() >= mErrTimeClk )
     throw std::runtime_error("Couldn't configure algo - no clock!");
   else
-    mErrTimeAlgo = ms_clk::universal_time() + boost::posix_time::seconds(aErrorAfter);
+    mErrTimeAlgo = MicrosecClk_t::universal_time() + boost::posix_time::seconds(aErrorAfter);
 }
 
 
