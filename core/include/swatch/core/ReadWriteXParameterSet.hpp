@@ -98,7 +98,7 @@ private:
   template<typename T>
   static xdata::Serializable* clone( const xdata::Serializable* other );
 
-  typedef xdata::Serializable* (*XCloner)( const xdata::Serializable* );
+  typedef xdata::Serializable* (*XCloner_t)( const xdata::Serializable* );
 
   struct XEntry {
 
@@ -109,7 +109,7 @@ private:
      * @param c Cloner function pointer
      * @param s Data to store in the entry
      */
-    XEntry( const std::type_info* t, XCloner c, const boost::shared_ptr<xdata::Serializable>& s );
+    XEntry( const std::type_info* t, XCloner_t c, const boost::shared_ptr<xdata::Serializable>& s );
     
     /**
      * Copy constructor
@@ -128,13 +128,13 @@ private:
     boost::shared_ptr<xdata::Serializable> object;
   };
   
-  typedef boost::unordered_map<std::string, XEntry> EntryMap;
+  typedef boost::unordered_map<std::string, XEntry> EntryMap_t;
   
-  std::pair<EntryMap::iterator,bool> emplace( const std::string& name, const std::type_info* t, XCloner c, const boost::shared_ptr<xdata::Serializable>& s );
-  std::pair<EntryMap::iterator,bool> emplace( const std::string& name, const XEntry& );
+  std::pair<EntryMap_t::iterator,bool> emplace( const std::string& name, const std::type_info* t, XCloner_t c, const boost::shared_ptr<xdata::Serializable>& s );
+  std::pair<EntryMap_t::iterator,bool> emplace( const std::string& name, const XEntry& );
 
   //! Map storing the values
-  EntryMap entries_;
+  EntryMap_t entries_;
   
   friend class ReadOnlyXParameterSet;
   

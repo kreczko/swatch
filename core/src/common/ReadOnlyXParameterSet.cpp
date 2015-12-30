@@ -37,7 +37,7 @@ ReadOnlyXParameterSet::ReadOnlyXParameterSet(const XParameterSet& orig)
   }
   else if (const ReadWriteXParameterSet * const origPtr = dynamic_cast<ReadWriteXParameterSet const * const> (&orig) )
   {
-    typedef ReadWriteXParameterSet::EntryMap::const_iterator tConstIt;
+    typedef ReadWriteXParameterSet::EntryMap_t::const_iterator tConstIt;
     for(tConstIt it = origPtr->entries_.begin(); it != origPtr->entries_.end(); it++)
       entries_.emplace(it->first, it->second.object);
   }
@@ -137,7 +137,7 @@ void ReadOnlyXParameterSet::adopt(const std::string& name , const ReadOnlyXParam
 //---
 void ReadOnlyXParameterSet::adopt(const std::string& name , const ReadWriteXParameterSet& otherSet)
 {
-  ReadWriteXParameterSet::EntryMap::const_iterator it = otherSet.entries_.find(name);
+  ReadWriteXParameterSet::EntryMap_t::const_iterator it = otherSet.entries_.find(name);
   
   if ( it == otherSet.entries_.end() )
     throw XParameterNotFound("Parameter '" + name + "' does not exist in this set");
