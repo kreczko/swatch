@@ -1,11 +1,14 @@
 
-BasedOnStyle:  Google
+BasedOnStyle:  Mozilla
 AccessModifierOffset: -2
 
 BreakBeforeBraces: Stroustrup
 AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+BinPackParameters: false
+BreakConstructorInitializersBeforeComma: true
 
-ColumnLimit:     800
+ColumnLimit:     160
 MaxEmptyLinesToKeep: 3
 
