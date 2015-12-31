@@ -268,7 +268,7 @@ void StateMachine::Transition::exec(const BusyGuard* aOuterBusyGuard, const Gate
   // 1) Extract parameters before creating busy guard (so that resource doesn't change states if parameter is missing)
   std::vector<ReadOnlyXParameterSet> lParamSets;
   std::vector<MissingParam> lMissingParams;
-  tMonitoringSettings lMonSettings;
+  MonitoringSettings_t lMonSettings;
   extractParameters(aGateKeeper, lParamSets, lMissingParams, true);
   extractMonitoringSettings(aGateKeeper, lMonSettings);
 
@@ -313,7 +313,7 @@ void StateMachine::Transition::exec(const BusyGuard* aOuterBusyGuard, const Gate
 
 //------------------------------------------------------------------------------------
 void StateMachine::Transition::extractMonitoringSettings(const GateKeeper& aGateKeeper,
-	tMonitoringSettings& aMonSettings) const {
+	MonitoringSettings_t& aMonSettings) const {
   aMonSettings.clear();
 
   // get a list of all MonitorableObjects
@@ -372,7 +372,7 @@ void StateMachine::Transition::applyMonitoringSettings()
       // query the GateKeeper for relevant settings for each object
       std::string lPath = *lIt;
       
-      for (tMonitoringSettings::const_iterator lMonSetting = mCachedMonitoringSettings.begin(); lMonSetting != mCachedMonitoringSettings.end();
+      for (MonitoringSettings_t::const_iterator lMonSetting = mCachedMonitoringSettings.begin(); lMonSetting != mCachedMonitoringSettings.end();
           ++lMonSetting) {
         LOG(logger::kInfo) << lPath << " " << lMonSetting->getId();
         

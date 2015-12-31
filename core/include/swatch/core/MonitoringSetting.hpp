@@ -14,12 +14,13 @@
 
 namespace swatch {
 namespace core {
+namespace monitoring {
+
 /**
  * Flag for deciding if failures of MonitorableObject will affect the parent.
  * If set to kENABLED they will (default behaviour) and if set to kNON_CRITICAL
  * they will not.
  */
-namespace monitoring {
 enum Status {
   kEnabled,
   kNonCritical,
@@ -57,8 +58,8 @@ private:
 //    const boost::shared_ptr<AbstractMetricCondition> mWarnCondition;
 };
 
-typedef std::vector<MonitoringSetting> tMonitoringSettings;
-typedef boost::shared_ptr<MonitoringSetting> tMonitoringSettingPtr;
+typedef std::vector<MonitoringSetting> MonitoringSettings_t;
+typedef boost::shared_ptr<MonitoringSetting> MonitoringSettingPtr_t;
 
 } // namespace core
 } // namespace swatch

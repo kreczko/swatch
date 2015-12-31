@@ -45,7 +45,7 @@ public:
   typedef boost::unordered_map< std::string, tTable > tTableCache;
 
    // for monitoring settings
-  typedef tMonitoringSettingPtr tMonitoringSetting;
+  typedef MonitoringSettingPtr_t tMonitoringSetting;
   typedef boost::unordered_map<std::string, tMonitoringSetting> tMonitoringSettings;
   typedef boost::shared_ptr<tMonitoringSettings> tSettingsTable;
   typedef boost::unordered_map< std::string, tSettingsTable > tSettingsTableCache;

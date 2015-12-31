@@ -127,7 +127,7 @@ public:
     void exec(const BusyGuard* aGuard, const GateKeeper& aGateKeeper, const bool& aUseThreadPool = true );
 
   private:
-    virtual void extractMonitoringSettings(const GateKeeper& aGateKeeper, tMonitoringSettings& aMonSettings) const;
+    virtual void extractMonitoringSettings(const GateKeeper& aGateKeeper, MonitoringSettings_t& aMonSettings) const;
 
     void run(boost::shared_ptr<BusyGuard> aGuard);
 
@@ -139,7 +139,7 @@ public:
     MutableActionableStatus& mActionableStatus;
     const std::string mStartState;
     const std::string mEndState;
-    tMonitoringSettings mCachedMonitoringSettings;
+    MonitoringSettings_t mCachedMonitoringSettings;
   };
 
 private:
