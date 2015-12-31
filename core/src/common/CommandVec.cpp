@@ -257,7 +257,7 @@ void CommandVec::extractParameters(const GateKeeper& aGateKeeper, std::vector<Re
     std::set< std::string > lKeys( lCommand.getDefaultParams().keys() );
     for( std::set< std::string >::iterator lIt2( lKeys.begin() ); lIt2!=lKeys.end(); ++lIt2 )
     {
-      GateKeeper::tParameter lData( aGateKeeper.get( lIt->getNamespace() , lCommand.getId() , *lIt2 , getActionable().getGateKeeperTables() ) );
+      GateKeeper::Parameter_t lData( aGateKeeper.get( lIt->getNamespace() , lCommand.getId() , *lIt2 , getActionable().getGateKeeperTables() ) );
       if ( lData.get() != NULL )
       {
         lParams.adopt( *lIt2 , lData );

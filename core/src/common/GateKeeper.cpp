@@ -20,10 +20,10 @@ GateKeeper::GateKeeper(const std::string& aKey) :
         mCache(),
         mSettings(),
         mUpdateTime() {
-  tTable lParameters(new tParameters()); //Best practice to always use named shared_ptrs
+  ParametersTable_t lParameters(new Parameters_t()); //Best practice to always use named shared_ptrs
   mCache.insert(std::make_pair(kRuntimeTableLabel, lParameters));
 
-  tSettingsTable lSettings(new tMonitoringSettings());
+  SettingsTable_t lSettings(new MonitoringSettings_t());
   mSettings.insert(std::make_pair(kRuntimeTableLabel, lSettings));
 }
 
@@ -81,18 +81,18 @@ GateKeeper::~GateKeeper() {
 //      return true;
 //    }
 
-GateKeeper::tParameter GateKeeper::get(const std::string& aParam,
+GateKeeper::Parameter_t GateKeeper::get(const std::string& aParam,
     const std::string& aTable) const {
-  tTableCache::const_iterator lTable(mCache.find(aTable));
+  ParametersTableCache_t::const_iterator lTable(mCache.find(aTable));
 
   if (lTable == mCache.end()) {
-    return tParameter(); //perfectly acceptable for table name to not exist, just try the table with the next highest priority
+    return Parameter_t(); //perfectly acceptable for table name to not exist, just try the table with the next highest priority
   }
 
-  tParameters::iterator lData(lTable->second->find(aParam));
+  Parameters_t::iterator lData(lTable->second->find(aParam));
 
   if (lData == lTable->second->end()) {
-    return tParameter(); //perfectly acceptable for table name to not exist, just try the table with the next highest priority
+    return Parameter_t(); //perfectly acceptable for table name to not exist, just try the table with the next highest priority
   }
 
   return lData->second;  //We found data!
@@ -121,11 +121,11 @@ GateKeeper::tParameter GateKeeper::get(const std::string& aParam,
 //       return tParameter(); //to stop the compiler complaining...
 //     }
 
-GateKeeper::tParameter GateKeeper::get(const std::string& aSequencePath,
+GateKeeper::Parameter_t GateKeeper::get(const std::string& aNamespace,
     const std::string& aCommandPath, const std::string& aParameterId,
     const std::string& aTable) const {
-  tParameter lData;
-  lData = get(aSequencePath, aTable);
+  Parameter_t lData;
+  lData = get(aNamespace, aTable);
   if (lData) {
     return lData; //perfectly acceptable for specific table not hold the requested data, just try the table with the next highest priority
   }
@@ -140,10 +140,10 @@ GateKeeper::tParameter GateKeeper::get(const std::string& aSequencePath,
     return lData; //perfectly acceptable for specific table not hold the requested data, just try the table with the next highest priority
   }
 
-  return tParameter();
+  return Parameter_t();
 }
 
-GateKeeper::tParameter GateKeeper::get(const std::string& aSequenceId,
+GateKeeper::Parameter_t GateKeeper::get(const std::string& aSequenceId,
     const std::string& aCommandId, const std::string& aParameterId,
     const std::vector<std::string>& aTablesToLookIn) const {
 
@@ -151,7 +151,7 @@ GateKeeper::tParameter GateKeeper::get(const std::string& aSequenceId,
   std::string lSequencePath(aSequenceId + "." + lCommandPath);
 
   //See if the value was set at Run-time
-  tParameter lData;
+  Parameter_t lData;
   lData = get(lSequencePath, lCommandPath, aParameterId, kRuntimeTableLabel);
   if (lData) {
     return lData; //perfectly acceptable for specific table not hold the requested data, just try the table with the next highest priority
@@ -168,16 +168,16 @@ GateKeeper::tParameter GateKeeper::get(const std::string& aSequenceId,
     }
   }
 
-  return tParameter();
+  return Parameter_t();
 }
 
-GateKeeper::tMonitoringSetting GateKeeper::getMonitoringSetting(
+GateKeeper::MonitoringSetting_t GateKeeper::getMonitoringSetting(
     const std::string& aState, const std::string& aMetricId,
     const std::vector<std::string>& aTablesToLookIn) const {
   std::string statePath(aState + "." + aMetricId);
 
   //See if the value was set at Run-time
-  tMonitoringSetting setting;
+  MonitoringSetting_t setting;
   setting = getMonitoringSetting(statePath, aMetricId, kRuntimeTableLabel);
   if (setting) {
     return setting; //perfectly acceptable for specific table not hold the requested data, just try the table with the next highest priority
@@ -194,13 +194,13 @@ GateKeeper::tMonitoringSetting GateKeeper::getMonitoringSetting(
     }
   }
 
-  return tMonitoringSetting();
+  return MonitoringSetting_t();
 }
 
-GateKeeper::tMonitoringSetting GateKeeper::getMonitoringSetting(
+GateKeeper::MonitoringSetting_t GateKeeper::getMonitoringSetting(
     const std::string& aStatePath, const std::string& aMetricId,
     const std::string& aTableToLookIn) const {
-  tMonitoringSetting setting;
+  MonitoringSetting_t setting;
   setting = getMonitoringSetting(aStatePath, aTableToLookIn);
   if (setting) {
     return setting; //perfectly acceptable for specific table not hold the requested data, just try the table with the next highest priority
@@ -211,24 +211,24 @@ GateKeeper::tMonitoringSetting GateKeeper::getMonitoringSetting(
     return setting; //perfectly acceptable for specific table not hold the requested data, just try the table with the next highest priority
   }
 
-  return tMonitoringSetting();
+  return MonitoringSetting_t();
 }
 
-GateKeeper::tMonitoringSetting GateKeeper::getMonitoringSetting(
+GateKeeper::MonitoringSetting_t GateKeeper::getMonitoringSetting(
     const std::string& aMetricId, const std::string& aTableToLookIn) const {
 
-  tSettingsTableCache::const_iterator lTable(mSettings.find(aTableToLookIn));
+  SettingsTableCache_t::const_iterator lTable(mSettings.find(aTableToLookIn));
 
   if (lTable == mSettings.end()) {
     //perfectly acceptable for table name to not exist, just try the table with the next highest priority
-    return tMonitoringSetting();
+    return MonitoringSetting_t();
   }
 
-  tMonitoringSettings::iterator settings(lTable->second->find(aMetricId));
+  MonitoringSettings_t::iterator settings(lTable->second->find(aMetricId));
 
   if (settings == lTable->second->end()) {
     //perfectly acceptable for table name to not exist, just try the table with the next highest priority
-    return tMonitoringSetting();
+    return MonitoringSetting_t();
   }
 
   return settings->second;  //We found data!
@@ -270,8 +270,8 @@ bool GateKeeper::getMask(const std::string& aObjId, const std::string& aTableToL
 }
 
 
-void GateKeeper::add(const std::string& aId, tTable aTable) {
-  tTableCache::iterator lTableIt(mCache.find(aId));
+void GateKeeper::add(const std::string& aId, ParametersTable_t aTable) {
+  ParametersTableCache_t::iterator lTableIt(mCache.find(aId));
 
   if (lTableIt != mCache.end()) {
     throw TableWithIdAlreadyExists(
@@ -282,8 +282,8 @@ void GateKeeper::add(const std::string& aId, tTable aTable) {
   mUpdateTime = boost::posix_time::microsec_clock::universal_time();
 }
 
-void GateKeeper::add(const std::string& aId, tSettingsTable aTable) {
-  tSettingsTableCache::iterator lTableIt(mSettings.find(aId));
+void GateKeeper::add(const std::string& aId, SettingsTable_t aTable) {
+  SettingsTableCache_t::iterator lTableIt(mSettings.find(aId));
   if (lTableIt != mSettings.end()) {
     throw TableWithIdAlreadyExists(
         "Table of monitoring settings With Id '" + aId + "' already exists");
@@ -308,9 +308,9 @@ const boost::posix_time::ptime& GateKeeper::lastUpdated() {
 }
 
 void GateKeeper::setRuntimeParameter(const std::string& aParam,
-    tParameter aData) {
-  tTableCache::iterator lTable(mCache.find(kRuntimeTableLabel));
-  tParameters::iterator lIt(lTable->second->find(aParam));
+    Parameter_t aData) {
+  ParametersTableCache_t::iterator lTable(mCache.find(kRuntimeTableLabel));
+  Parameters_t::iterator lIt(lTable->second->find(aParam));
 
   if (lIt != lTable->second->end()) {
     lIt->second = aData;
@@ -324,7 +324,7 @@ const std::string GateKeeper::kRuntimeTableLabel = std::string("__runtime__");
 std::ostream& operator<<(std::ostream& aStr,
     const swatch::core::GateKeeper& aGateKeeper) {
   std::string lDelimeter(100, '-');
-  for (GateKeeper::tTableCache::const_iterator lTableIt(
+  for (GateKeeper::ParametersTableCache_t::const_iterator lTableIt(
       aGateKeeper.mCache.begin()); lTableIt != aGateKeeper.mCache.end();
       ++lTableIt) {
     aStr << lDelimeter << std::endl;
@@ -343,7 +343,7 @@ std::ostream& operator<<(std::ostream& aStr,
     aStr << lDelimeter << std::endl;
   }
 
-  for (GateKeeper::tSettingsTableCache::const_iterator lTableIt(aGateKeeper.mSettings.begin());
+  for (GateKeeper::SettingsTableCache_t::const_iterator lTableIt(aGateKeeper.mSettings.begin());
       lTableIt != aGateKeeper.mSettings.end(); ++lTableIt) {
       aStr << lDelimeter << std::endl;
       aStr << "TABLE : " << lTableIt->first << std::endl;

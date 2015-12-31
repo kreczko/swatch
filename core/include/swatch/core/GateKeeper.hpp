@@ -39,16 +39,16 @@ class GateKeeper
 friend std::ostream& operator<< ( std::ostream& aStr , const swatch::core::GateKeeper& aGateKeeper );
 
 public:
-  typedef boost::shared_ptr<xdata::Serializable> tParameter;
-  typedef boost::unordered_map< std::string, tParameter > tParameters;
-  typedef boost::shared_ptr<tParameters> tTable;
-  typedef boost::unordered_map< std::string, tTable > tTableCache;
+  typedef boost::shared_ptr<xdata::Serializable> Parameter_t;
+  typedef boost::unordered_map<std::string, Parameter_t> Parameters_t;
+  typedef boost::shared_ptr<Parameters_t> ParametersTable_t;
+  typedef boost::unordered_map<std::string, ParametersTable_t> ParametersTableCache_t;
 
    // for monitoring settings
-  typedef MonitoringSettingPtr_t tMonitoringSetting;
-  typedef boost::unordered_map<std::string, tMonitoringSetting> tMonitoringSettings;
-  typedef boost::shared_ptr<tMonitoringSettings> tSettingsTable;
-  typedef boost::unordered_map< std::string, tSettingsTable > tSettingsTableCache;
+  typedef MonitoringSettingPtr_t MonitoringSetting_t;
+  typedef boost::unordered_map<std::string, MonitoringSetting_t> MonitoringSettings_t;
+  typedef boost::shared_ptr<MonitoringSettings_t> SettingsTable_t;
+  typedef boost::unordered_map< std::string, SettingsTable_t > SettingsTableCache_t;
 
   typedef boost::unordered_set<std::string> Masks_t;
   typedef boost::shared_ptr<Masks_t> MasksTable_t;
@@ -83,13 +83,13 @@ public:
     @param aTables A list of table identifiers (which may or may not exist) to look in for the requested parameters
     @return the requested data, or throw if the key is not found in any table
   */
-  tParameter get ( const std::string& aSequenceId , const std::string& aCommandId , const std::string& aParameterId , const std::vector<std::string>& aTablesToLookIn ) const;
-  tMonitoringSetting getMonitoringSetting(const std::string& aState, const std::string& aMetricId, const std::vector<std::string>& aTablesToLookIn ) const;
+  Parameter_t get ( const std::string& aSequenceId , const std::string& aCommandId , const std::string& aParameterId , const std::vector<std::string>& aTablesToLookIn ) const;
+  MonitoringSetting_t getMonitoringSetting(const std::string& aState, const std::string& aMetricId, const std::vector<std::string>& aTablesToLookIn ) const;
   bool getMask(const std::string& aObjId, const std::vector<std::string>& aTablesToLookIn) const;
 
   const boost::posix_time::ptime& lastUpdated();
 
-  void setRuntimeParameter( const std::string& aParam , tParameter aData );
+  void setRuntimeParameter( const std::string& aParam , Parameter_t aData );
 
 protected:
   /**
@@ -97,8 +97,8 @@ protected:
     @param aId the name of the table
     @param aTable a new xdata table, of which the Gatekeeper will take ownership
   */
-  void add ( const std::string& aId , tTable aTable );
-  void add ( const std::string& aId , tSettingsTable aTable );
+  void add ( const std::string& aId , ParametersTable_t aTable );
+  void add ( const std::string& aId , SettingsTable_t aTable );
   void add ( const std::string& aId , MasksTable_t aTable );
 
 private:
@@ -109,20 +109,20 @@ private:
     @param aTable A table identifier (which may or may not exist) to look in for the requested parameters
     @return the requested data, or throw if the key is not found in any table
   */
-  tParameter get ( const std::string& aParam , const std::string& aTable ) const;
+  Parameter_t get ( const std::string& aParam , const std::string& aTable ) const;
 
-  tParameter get ( const std::string& aSequencePath , const std::string& aCommandPath , const std::string& aParameterId , const std::string& aTable ) const;
+  Parameter_t get ( const std::string& aNamespace , const std::string& aCommandPath , const std::string& aParameterId , const std::string& aTable ) const;
 
-  tMonitoringSetting getMonitoringSetting(const std::string& aStatePath, const std::string& aMetricId, const std::string& aTableToLookIn ) const;
-  tMonitoringSetting getMonitoringSetting(const std::string& aMetricId, const std::string& aTableToLookIn ) const;
+  MonitoringSetting_t getMonitoringSetting(const std::string& aStatePath, const std::string& aMetricId, const std::string& aTableToLookIn ) const;
+  MonitoringSetting_t getMonitoringSetting(const std::string& aMetricId, const std::string& aTableToLookIn ) const;
   bool getMask(const std::string& aObjId, const std::string& aTablesToLookIn) const;
 
   /// The global run-identifier
   std::string mKey;
 
   /// The cache of tables
-  tTableCache mCache;
-  tSettingsTableCache mSettings;
+  ParametersTableCache_t mCache;
+  SettingsTableCache_t mSettings;
   MasksTableCache_t mMasks;
 
   /// The last time a table was modified

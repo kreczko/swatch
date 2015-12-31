@@ -24,25 +24,25 @@ struct TestGateKeeperSetup {
   TestGateKeeperSetup() :
     mGk()
   {
-    typedef GateKeeper::tParameters Parameters_t;
-    typedef GateKeeper::tMonitoringSettings MonSettings_t;
+    typedef GateKeeper::Parameters_t Parameters_t;
+    typedef GateKeeper::MonitoringSettings_t MonSettings_t;
     typedef GateKeeper::Masks_t Masks_t;
-    GateKeeper::tTable commonParams(new Parameters_t());
+    GateKeeper::ParametersTable_t commonParams(new Parameters_t());
     commonParams->insert(Parameters_t::value_type("hello", new xdata::String("World")));
     commonParams->insert(Parameters_t::value_type("answer", new xdata::Integer(42)));
     mGk.addTable("dummy_sys.common", commonParams);
 
-    GateKeeper::tTable childA1Params(new Parameters_t());
+    GateKeeper::ParametersTable_t childA1Params(new Parameters_t());
     childA1Params->insert( Parameters_t::value_type("hello", new xdata::String("World! (childA1)")));
     mGk.addTable("dummy_sys.childA1", childA1Params);
 
-    GateKeeper::tTable childTypeAParams(new GateKeeper::tParameters());
+    GateKeeper::ParametersTable_t childTypeAParams(new GateKeeper::Parameters_t());
     childTypeAParams->insert( Parameters_t::value_type("sequence_1.command_1.parameter_1", new xdata::String("sequence")));
     childTypeAParams->insert( Parameters_t::value_type("command_1.parameter_1", new xdata::String("command")));
     mGk.addTable("dummy_sys.childTypeA", childTypeAParams);
 
     // monitoring status
-    GateKeeper::tSettingsTable metricSettings(new GateKeeper::tMonitoringSettings());
+    GateKeeper::SettingsTable_t metricSettings(new GateKeeper::MonitoringSettings_t());
     metricSettings->insert( MonSettings_t::value_type("criticalMetric", new MonitoringSetting("criticalMetric",monitoring::kEnabled)));
     metricSettings->insert( MonSettings_t::value_type("weird_state.criticalMetric",
         new MonitoringSetting("weird_state.criticalMetric", monitoring::kDisabled)));
@@ -77,11 +77,11 @@ BOOST_FIXTURE_TEST_CASE ( TestCommonParameters, TestGateKeeperSetup ) {
   std::vector<std::string> tablesToLookIn;
   tablesToLookIn.push_back("dummy_sys.common");
 
-  GateKeeper::tParameter p(mGk.get("", "", "hello", tablesToLookIn));
+  GateKeeper::Parameter_t p(mGk.get("", "", "hello", tablesToLookIn));
   BOOST_REQUIRE(p != NULL);
   BOOST_CHECK_EQUAL(p->toString(), "World");
 
-  GateKeeper::tParameter p2(mGk.get("", "", "answer", tablesToLookIn));
+  GateKeeper::Parameter_t p2(mGk.get("", "", "answer", tablesToLookIn));
   BOOST_REQUIRE(p2 != NULL);
   BOOST_CHECK_EQUAL(p2->toString(), "42");
 }
@@ -91,7 +91,7 @@ BOOST_FIXTURE_TEST_CASE ( TestChildParameters, TestGateKeeperSetup ) {
 
   std::vector<std::string> tablesToLookIn {"dummy_sys.childA1", "dummy_sys.common"};
 
-  GateKeeper::tParameter p(mGk.get("", "", "hello", tablesToLookIn));
+  GateKeeper::Parameter_t p(mGk.get("", "", "hello", tablesToLookIn));
   BOOST_REQUIRE(p != NULL);
   BOOST_CHECK_EQUAL(p->toString(), "World! (childA1)");
 }
@@ -102,12 +102,12 @@ BOOST_FIXTURE_TEST_CASE ( TestSequenceParameters, TestGateKeeperSetup ) {
   std::vector<std::string> tablesToLookIn;
   tablesToLookIn.push_back("dummy_sys.childTypeA");
 
-  GateKeeper::tParameter p(
+  GateKeeper::Parameter_t p(
       mGk.get("sequence_1", "command_1", "parameter_1", tablesToLookIn));
   BOOST_REQUIRE(p != NULL);
   BOOST_CHECK_EQUAL(p->toString(), "sequence");
 
-  GateKeeper::tParameter p2(
+  GateKeeper::Parameter_t p2(
       mGk.get("", "command_1", "parameter_1", tablesToLookIn));
   BOOST_REQUIRE(p != NULL);
   BOOST_CHECK_EQUAL(p2->toString(), "command");
@@ -119,17 +119,17 @@ BOOST_FIXTURE_TEST_CASE ( TestMonitoringSettings, TestGateKeeperSetup ) {
   std::vector<std::string> tablesToLookIn;
   tablesToLookIn.push_back("dummy_sys.childTypeA");
 
-  GateKeeper::tMonitoringSetting p(
+  GateKeeper::MonitoringSetting_t p(
       mGk.getMonitoringSetting("", "nonCriticalMetric", tablesToLookIn));
   BOOST_REQUIRE(p != NULL);
   BOOST_CHECK_EQUAL(p->getStatus(), monitoring::kNonCritical);
 
-  GateKeeper::tMonitoringSetting p2(
+  GateKeeper::MonitoringSetting_t p2(
       mGk.getMonitoringSetting("", "criticalMetric", tablesToLookIn));
   BOOST_REQUIRE(p2 != NULL);
   BOOST_CHECK_EQUAL(p2->getStatus(), monitoring::kEnabled);
 
-  GateKeeper::tMonitoringSetting p3(
+  GateKeeper::MonitoringSetting_t p3(
       mGk.getMonitoringSetting("weird_state", "criticalMetric",
           tablesToLookIn));
   BOOST_REQUIRE(p3 != NULL);

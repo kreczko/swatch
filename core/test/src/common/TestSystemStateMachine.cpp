@@ -35,9 +35,9 @@ struct SystemStateMachineTestSetup {
     sysItoA = &fsm.addTransition("sysIToA", sysState0, sysStateA);
     sysAtoB = &fsm.addTransition("sysAToB", sysStateA, sysStateB);
     
-    GateKeeper::tTable tbl(new GateKeeper::tParameters());
-    tbl->insert( GateKeeper::tParameters::value_type(DummyCommand::paramToDo, GateKeeper::tParameter(new xdata::String(""))));
-    tbl->insert( GateKeeper::tParameters::value_type(DummyCommand::paramX, GateKeeper::tParameter(new xdata::Integer(42))));
+    GateKeeper::ParametersTable_t tbl(new GateKeeper::Parameters_t());
+    tbl->insert( GateKeeper::Parameters_t::value_type(DummyCommand::paramToDo, GateKeeper::Parameter_t(new xdata::String(""))));
+    tbl->insert( GateKeeper::Parameters_t::value_type(DummyCommand::paramX, GateKeeper::Parameter_t(new xdata::Integer(42))));
     gk.addTable(sys->getId()+".common", tbl);
 
     GateKeeper::MasksTable_t lMasksTable(new GateKeeper::Masks_t());

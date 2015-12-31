@@ -18,12 +18,12 @@ DummyGateKeeper::~DummyGateKeeper()
 }
 
 
-void DummyGateKeeper::addTable(const std::string& aId, const tTable& aTable)
+void DummyGateKeeper::addTable(const std::string& aId, const ParametersTable_t& aTable)
 {
   add(aId, aTable);
 }
 
-void DummyGateKeeper::addSettingsTable(const std::string& aId, const tSettingsTable& aTable)
+void DummyGateKeeper::addSettingsTable(const std::string& aId, const SettingsTable_t& aTable)
 {
   add(aId, aTable);
 }

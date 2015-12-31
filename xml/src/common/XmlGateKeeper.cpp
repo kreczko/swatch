@@ -62,10 +62,10 @@ void XmlGateKeeper::readXmlDocument(const pugi::xml_document& aXmlDoc, const std
 
   for (pugi::xml_node lTable(lRun.child("table")); lTable; lTable = lTable.next_sibling("table"))
   {
-    std::pair < std::string, GateKeeper::tTable > lParameterTable(createTable(lTable));
+    std::pair < std::string, GateKeeper::ParametersTable_t > lParameterTable(createTable(lTable));
     add(lParameterTable.first, lParameterTable.second);
 
-    std::pair < std::string, GateKeeper::tSettingsTable > lSettingsTable(createSettingsTable(lTable));
+    std::pair < std::string, GateKeeper::SettingsTable_t > lSettingsTable(createSettingsTable(lTable));
     add(lSettingsTable.first, lSettingsTable.second);
     
     std::pair < std::string, GateKeeper::MasksTable_t> lMasksTable(createMasksTable(lTable));
@@ -81,25 +81,25 @@ XmlGateKeeper::~XmlGateKeeper()
 
 
 //------------------------------------------------------------------------------------------------------------------
-std::pair<std::string, GateKeeper::tParameter> XmlGateKeeper::createParameter(pugi::xml_node& aEntry)
+std::pair<std::string, GateKeeper::Parameter_t> XmlGateKeeper::createParameter(pugi::xml_node& aEntry)
 {
   std::string lEntryId(aEntry.attribute("id").value());
   std::string lType(aEntry.attribute("type").value());
   std::string lValue(aEntry.child_value());
   xdata::Serializable* lSerializable(mSerializer->import(aEntry));
 
-  return std::make_pair(lEntryId, GateKeeper::tParameter(lSerializable));
+  return std::make_pair(lEntryId, GateKeeper::Parameter_t(lSerializable));
 }
 
 
 //------------------------------------------------------------------------------------------------------------------
-std::pair<std::string, GateKeeper::tTable> XmlGateKeeper::createTable(pugi::xml_node& aTable)
+std::pair<std::string, GateKeeper::ParametersTable_t> XmlGateKeeper::createTable(pugi::xml_node& aTable)
 {
   std::string lTableId(aTable.attribute("id").value());
-  tTable lParameterTable(new tParameters());
+  ParametersTable_t lParameterTable(new Parameters_t());
 
   for (pugi::xml_node lEntry(aTable.child("entry")); lEntry; lEntry = lEntry.next_sibling("entry")) {
-    std::pair<std::string, GateKeeper::tParameter> lParameter;
+    std::pair<std::string, GateKeeper::Parameter_t> lParameter;
     try {
       lParameter = createParameter(lEntry);
     } catch (const std::exception& e) {
@@ -120,11 +120,11 @@ std::pair<std::string, GateKeeper::tTable> XmlGateKeeper::createTable(pugi::xml_
 
 
 //------------------------------------------------------------------------------------------------------------------
-std::pair<std::string, GateKeeper::tSettingsTable> XmlGateKeeper::createSettingsTable(
+std::pair<std::string, GateKeeper::SettingsTable_t> XmlGateKeeper::createSettingsTable(
     const pugi::xml_node& aTable) const
 {
   std::string lTableId(aTable.attribute("id").value());
-  tSettingsTable lSettingsTable(new tMonitoringSettings());
+  SettingsTable_t lSettingsTable(new MonitoringSettings_t());
 
   for (pugi::xml_node lEntry(aTable.child("state")); lEntry;
       lEntry = lEntry.next_sibling("state")) {
@@ -132,7 +132,7 @@ std::pair<std::string, GateKeeper::tSettingsTable> XmlGateKeeper::createSettings
     //metric + mon-obj
     for (pugi::xml_node lMetric(lEntry.child("metric")); lMetric; lMetric =
         lMetric.next_sibling("metric")) {
-      std::pair<std::string, GateKeeper::tMonitoringSetting> lSetting(
+      std::pair<std::string, GateKeeper::MonitoringSetting_t> lSetting(
           createMonitoringSetting(lMetric));
 
       std::string lStatePath = lStateId + "." + lSetting.first;
@@ -150,7 +150,7 @@ std::pair<std::string, GateKeeper::tSettingsTable> XmlGateKeeper::createSettings
 
     for (pugi::xml_node lMonObj(lEntry.child("mon-obj")); lMonObj; lMonObj =
         lMonObj.next_sibling("mon-obj")) {
-      std::pair<std::string, GateKeeper::tMonitoringSetting> lSetting(
+      std::pair<std::string, GateKeeper::MonitoringSetting_t> lSetting(
           createMonitoringSetting(lMonObj));
 
       std::string lStatePath = lStateId + "." + lSetting.first;
@@ -170,13 +170,13 @@ std::pair<std::string, GateKeeper::tSettingsTable> XmlGateKeeper::createSettings
 
 
 //------------------------------------------------------------------------------------------------------------------
-std::pair<std::string, GateKeeper::tMonitoringSetting> XmlGateKeeper::createMonitoringSetting(const pugi::xml_node& aEntry) const 
+std::pair<std::string, GateKeeper::MonitoringSetting_t> XmlGateKeeper::createMonitoringSetting(const pugi::xml_node& aEntry) const 
 {
   std::string lId(aEntry.attribute("id").value());
   std::string lStatus(aEntry.attribute("status").value());
 
   monitoring::Status lMonStatus(monitoring::StringToStatus.at(lStatus)); // add check
-  GateKeeper::tMonitoringSetting lMonSetting(new MonitoringSetting(lId, lMonStatus));
+  GateKeeper::MonitoringSetting_t lMonSetting(new MonitoringSetting(lId, lMonStatus));
   return std::make_pair(lId, lMonSetting);
 }
 

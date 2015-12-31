@@ -40,25 +40,25 @@ namespace test {
       transitionBtoI = & testFSM.addTransition("t2", fsmStateB, fsmState0);
 
 
-      GateKeeper::tTable tbl(new GateKeeper::tParameters());
-      tbl->insert( GateKeeper::tParameters::value_type(DummyCommand::paramToDo, GateKeeper::tParameter(new xdata::String(""))));
-      tbl->insert( GateKeeper::tParameters::value_type(DummyCommand::paramX, GateKeeper::tParameter(new xdata::Integer(42))));
+      GateKeeper::ParametersTable_t tbl(new GateKeeper::Parameters_t());
+      tbl->insert( GateKeeper::Parameters_t::value_type(DummyCommand::paramToDo, GateKeeper::Parameter_t(new xdata::String(""))));
+      tbl->insert( GateKeeper::Parameters_t::value_type(DummyCommand::paramX, GateKeeper::Parameter_t(new xdata::Integer(42))));
       gk.addTable("common", tbl);
 
       // for child1
-      GateKeeper::tSettingsTable settings_child1(new GateKeeper::tMonitoringSettings());
-      GateKeeper::tMonitoringSetting mon_setting1(new MonitoringSetting("child1", monitoring::kNonCritical));
-      GateKeeper::tMonitoringSetting mon_setting2(new MonitoringSetting("child1.grandChild1", monitoring::kDisabled));
-      GateKeeper::tMonitoringSetting mon_setting3(new MonitoringSetting("grandChild2", monitoring::kDisabled));
+      GateKeeper::SettingsTable_t settings_child1(new GateKeeper::MonitoringSettings_t());
+      GateKeeper::MonitoringSetting_t mon_setting1(new MonitoringSetting("child1", monitoring::kNonCritical));
+      GateKeeper::MonitoringSetting_t mon_setting2(new MonitoringSetting("child1.grandChild1", monitoring::kDisabled));
+      GateKeeper::MonitoringSetting_t mon_setting3(new MonitoringSetting("grandChild2", monitoring::kDisabled));
       // for child1 metric
-      GateKeeper::tMonitoringSetting mon_setting4(new MonitoringSetting("child1.dummyMetric", monitoring::kDisabled));
+      GateKeeper::MonitoringSetting_t mon_setting4(new MonitoringSetting("child1.dummyMetric", monitoring::kDisabled));
 
-      settings_child1->insert(GateKeeper::tMonitoringSettings::value_type(fsmStateB + ".child1", mon_setting1));
-      settings_child1->insert(GateKeeper::tMonitoringSettings::value_type(fsmStateB + ".child1.grandChild1", mon_setting2));
+      settings_child1->insert(GateKeeper::MonitoringSettings_t::value_type(fsmStateB + ".child1", mon_setting1));
+      settings_child1->insert(GateKeeper::MonitoringSettings_t::value_type(fsmStateB + ".child1.grandChild1", mon_setting2));
       // this one should fail, as paths need to be relative to obj!
-      settings_child1->insert(GateKeeper::tMonitoringSettings::value_type(fsmStateB + ".grandChild2", mon_setting3));
+      settings_child1->insert(GateKeeper::MonitoringSettings_t::value_type(fsmStateB + ".grandChild2", mon_setting3));
       // metric
-      settings_child1->insert(GateKeeper::tMonitoringSettings::value_type(fsmStateB + ".child1.dummyMetric", mon_setting4));
+      settings_child1->insert(GateKeeper::MonitoringSettings_t::value_type(fsmStateB + ".child1.dummyMetric", mon_setting4));
       gk.addSettingsTable("common", settings_child1);
       
       GateKeeper::MasksTable_t lMasksTable(new GateKeeper::Masks_t());

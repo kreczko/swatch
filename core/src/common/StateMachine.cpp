@@ -326,7 +326,7 @@ void StateMachine::Transition::extractMonitoringSettings(const GateKeeper& aGate
       // query the GateKeeper for relevant settings for each object
       std::string lPath = *lIt;
       const std::vector<std::string>& lTablesToLookIn = lResource.getGateKeeperTables();
-      const GateKeeper::tMonitoringSetting lMonSetting = aGateKeeper.getMonitoringSetting(mEndState, lPath,
+      const GateKeeper::MonitoringSetting_t lMonSetting = aGateKeeper.getMonitoringSetting(mEndState, lPath,
           lTablesToLookIn);
       if (lMonSetting)
         aMonSettings.push_back(*lMonSetting);
@@ -335,7 +335,7 @@ void StateMachine::Transition::extractMonitoringSettings(const GateKeeper& aGate
       const std::vector<std::string> lMetricIds = lDescendant->getMetrics();
       for (auto lMetricIt = lMetricIds.begin(); lMetricIt != lMetricIds.end(); lMetricIt++) {
         const std::string lMetricPath = lPath + "." + *lMetricIt;
-        const GateKeeper::tMonitoringSetting lMetricSetting = aGateKeeper.getMonitoringSetting(mEndState, lMetricPath,
+        const GateKeeper::MonitoringSetting_t lMetricSetting = aGateKeeper.getMonitoringSetting(mEndState, lMetricPath,
             lTablesToLookIn);
         if (lMetricSetting)
           aMonSettings.push_back(*lMetricSetting);

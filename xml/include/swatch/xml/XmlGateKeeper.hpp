@@ -41,12 +41,12 @@ private:
 
   void readXmlDocument(const pugi::xml_document& aXmlDoc, const std::string& aRunKey);
 
-  std::pair<std::string, GateKeeper::tParameter> createParameter(pugi::xml_node& aEntry);
-  std::pair<std::string, GateKeeper::tTable> createTable(pugi::xml_node& aTable);
+  std::pair<std::string, GateKeeper::Parameter_t> createParameter(pugi::xml_node& aEntry);
+  std::pair<std::string, GateKeeper::ParametersTable_t> createTable(pugi::xml_node& aTable);
 
-  std::pair<std::string, GateKeeper::tMonitoringSetting> createMonitoringSetting(
+  std::pair<std::string, GateKeeper::MonitoringSetting_t> createMonitoringSetting(
       const pugi::xml_node& aEntry) const;
-  std::pair<std::string, GateKeeper::tSettingsTable> createSettingsTable(
+  std::pair<std::string, GateKeeper::SettingsTable_t> createSettingsTable(
       const pugi::xml_node& aTable) const;
 
   std::pair < std::string, GateKeeper::MasksTable_t> createMasksTable(const pugi::xml_node& aTable) const;
