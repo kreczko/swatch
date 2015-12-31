@@ -44,8 +44,8 @@ public:
     InputPort& getInput( const std::string& aId );
     OutputPort& getOutput( const std::string& aId );
 
-    typedef std::deque<InputPort*> tInputPortDeque;
-    typedef std::deque<OutputPort*> tOutputPortDeque;
+    typedef std::deque<InputPort*> InputPortDeque_t;
+    typedef std::deque<OutputPort*> OutputPortDeque_t;
 
 //protected:
 
@@ -56,8 +56,8 @@ protected:
     void retrieveMetricValues() {}
 
 private:
-    tInputPortDeque inputs_;
-    tOutputPortDeque outputs_;
+    InputPortDeque_t inputs_;
+    OutputPortDeque_t outputs_;
 };
 
 }
