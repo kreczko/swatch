@@ -206,11 +206,11 @@ private:
 template <typename Iterator>
 ActionableStatusGuardMap_t lockMutexes(const Iterator& aBegin, const Iterator& aEnd)
 {
-  typedef typename std::iterator_traits<Iterator>::value_type val_type;
-  typedef typename val_type::first_type first_type;
-  typedef typename val_type::second_type second_type;
-  BOOST_STATIC_ASSERT_MSG( (boost::is_convertible<first_type, const MonitorableObject*>::value) , "Dereferencing type Iterator::first_type must result in a pointer to a type that inherits from swatch::core::MonitorableObject");
-  BOOST_STATIC_ASSERT_MSG( (boost::is_convertible<second_type, MutableActionableStatus*>::value) , "Dereferencing type Iterator::second_type must result in a pointer to a type that inherits from swatch::core::MutableActionableStatus");
+  typedef typename std::iterator_traits<Iterator>::value_type IteratorVal_t;
+  typedef typename IteratorVal_t::first_type IteratorValFirst_t;
+  typedef typename IteratorVal_t::second_type IteratorValSecond_t;
+  BOOST_STATIC_ASSERT_MSG( (boost::is_convertible<IteratorValFirst_t, const MonitorableObject*>::value) , "Dereferencing type Iterator::first_type must result in a pointer to a type that inherits from swatch::core::MonitorableObject");
+  BOOST_STATIC_ASSERT_MSG( (boost::is_convertible<IteratorValSecond_t, MutableActionableStatus*>::value) , "Dereferencing type Iterator::second_type must result in a pointer to a type that inherits from swatch::core::MutableActionableStatus");
 
   std::map<const MonitorableObject*, const MutableActionableStatus*> lStatusMap;
   for(Iterator lIt=aBegin; lIt != aEnd; lIt++)
