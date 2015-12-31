@@ -110,7 +110,7 @@ private:
 class System : public core::ActionableSystem {
 public:
   
-  typedef boost::unordered_map<std::string, Crate*> CratesMap;
+  typedef boost::unordered_map<std::string, Crate*> CratesMap_t;
 
   System( const swatch::core::AbstractStub& aStub );
   virtual ~System();
@@ -121,7 +121,7 @@ public:
   const std::deque<Service*>& getServices();
   const std::deque<dtm::DaqTTCManager*>& getDaqTTCs();
   const std::deque<processor::Link*>& getLinks();
-  const CratesMap& getCrates();
+  const CratesMap_t& getCrates();
     
   bool hasCrate(const std::string& aCrateId) const;
 
@@ -160,7 +160,7 @@ private:
     std::deque<processor::Link*> links_; 
 
     //! Map of crates
-    CratesMap cratesMap_;
+    CratesMap_t cratesMap_;
     
     RunControlFSM mRunControlFSM;
 };

@@ -153,7 +153,7 @@ BOOST_FIXTURE_TEST_CASE(AddCrateToMap, Params) {
     swsys::Crate * crate = new swsys::Crate(cA);
     emptyStub.crates.push_back(cA);
     swsys::System * system = new swsys::System(emptyStub);
-    swsys::System::CratesMap crates = system->getCrates();
+    swsys::System::CratesMap_t crates = system->getCrates();
     // check if map contains the object ID
     bool is_crate_in_map = crates.find(crate->getId()) != crates.end();
     BOOST_CHECK_EQUAL(is_crate_in_map, true );

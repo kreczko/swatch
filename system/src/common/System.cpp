@@ -127,7 +127,7 @@ const std::deque<processor::Link*>& System::getLinks() {
 
 
 //---
-const System::CratesMap& System::getCrates() {
+const System::CratesMap_t& System::getCrates() {
   return cratesMap_;
 }
 
@@ -185,7 +185,7 @@ System::add(dtm::DaqTTCManager* aAMC13) {
       // and give it a different view
   std::string crateId = aAMC13->getCrateId();
 
-  CratesMap::iterator cit = cratesMap_.find(crateId);
+  CratesMap_t::iterator cit = cratesMap_.find(crateId);
   if (!hasCrate(crateId)) {
     stringstream ss;
     ss << "System '" << this->getId() << "': Cannot find Crate " << crateId;
