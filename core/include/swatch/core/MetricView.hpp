@@ -50,9 +50,9 @@ private:
     
     typedef std::map<std::string, swatch::core::AbstractMetric*> MetricMap_t;
     
-    std::map<std::string, swatch::core::AbstractMetric*> metricsMap_;
+    std::map<std::string, swatch::core::AbstractMetric*> mMetricsMap;
     
-    std::set<swatch::core::MonitorableObject*> monitorableObjects_;
+    std::set<swatch::core::MonitorableObject*> mMonitorableObjects;
 };
 
 } // namespace core

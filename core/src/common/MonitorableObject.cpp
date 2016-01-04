@@ -14,9 +14,9 @@ namespace core {
 
 MonitorableObject::MonitorableObject( const std::string& aId ) :
     Object( aId ),
-    metrics_(),
-    updateErrorMsg_(""),
-    monitoringStatus_(monitoring::kEnabled),
+    mMetrics(),
+    mUpdateErrorMsg(""),
+    mMonitoringStatus(monitoring::kEnabled),
     mStatus(NULL)
 {
 }
@@ -24,17 +24,17 @@ MonitorableObject::MonitorableObject( const std::string& aId ) :
 
 MonitorableObject::~MonitorableObject()
 {
-  BOOST_FOREACH( MetricMap_t::value_type p, metrics_) {
+  BOOST_FOREACH( MetricMap_t::value_type p, mMetrics) {
     delete p.second;
   }
-  metrics_.clear();
+  mMetrics.clear();
 }
 
 
 std::vector<std::string> MonitorableObject::getMetrics() const
 {
   std::vector<std::string> lNames;
-  BOOST_FOREACH( MetricMap_t::value_type p, metrics_) {
+  BOOST_FOREACH( MetricMap_t::value_type p, mMetrics) {
     lNames.push_back( p.first );
   }
   return lNames;
@@ -44,7 +44,7 @@ std::vector<std::string> MonitorableObject::getMetrics() const
 const AbstractMetric& MonitorableObject::getMetric( const std::string& aId ) const
 {
   try {
-    return *metrics_.at( aId );
+    return *mMetrics.at( aId );
   } catch ( const std::out_of_range& e ) {
     throw MetricNotFoundInMonitorableObject("MonitorableObject \"" + getPath() + "\" does not contain metric of ID \"" + aId + "\"");
   }
@@ -55,7 +55,7 @@ const AbstractMetric& MonitorableObject::getMetric( const std::string& aId ) con
 AbstractMetric& MonitorableObject::getMetric( const std::string& aId )
 {
   try {
-    return *metrics_.at( aId );
+    return *mMetrics.at( aId );
   } catch ( const std::out_of_range& e ) {
     throw MetricNotFoundInMonitorableObject("MonitorableObject \"" + getPath() + "\" does not contain metric of ID \"" + aId + "\"");
   }
@@ -78,7 +78,7 @@ StatusFlag MonitorableObject::getStatusFlag() const
     }
   }
   
-  BOOST_FOREACH( MetricMap_t::value_type p, metrics_) {
+  BOOST_FOREACH( MetricMap_t::value_type p, mMetrics) {
     // only enabled metrics contribute to the status
     if (p.second->getSnapshot().getMonitoringStatus() == monitoring::kEnabled)
       result = result & p.second->getSnapshot().getStatusFlag();
@@ -108,15 +108,15 @@ void MonitorableObject::updateMetrics(const MetricWriteGuard& aGuard)
     this->retrieveMetricValues();
     
     // TODO: should lock a mutex ??
-    updateErrorMsg_.clear();
+    mUpdateErrorMsg.clear();
   }
   catch(const std::exception& e)
   {
     // TODO: should lock a mutex ??
-    updateErrorMsg_ = e.what();
+    mUpdateErrorMsg = e.what();
   }
 
-  BOOST_FOREACH(MetricMap_t::value_type p, metrics_) {
+  BOOST_FOREACH(MetricMap_t::value_type p, mMetrics) {
     timeval lastUpdateTime = p.second->getUpdateTimestamp();
     // last update before start time equals failure
     bool failedUpdate = timercmp(&lastUpdateTime, &startTime, <);
@@ -131,13 +131,13 @@ void MonitorableObject::updateMetrics(const MetricWriteGuard& aGuard)
 
 void MonitorableObject::setMonitoringStatus(const swatch::core::monitoring::Status m_status)
 {
-  monitoringStatus_ = m_status;
+  mMonitoringStatus = m_status;
 }
 
 swatch::core::monitoring::Status
 MonitorableObject::getMonitoringStatus() const
 {
-  return monitoringStatus_;
+  return mMonitoringStatus;
 }
 
 void MonitorableObject::addMonitorable(MonitorableObject* aMonObj)

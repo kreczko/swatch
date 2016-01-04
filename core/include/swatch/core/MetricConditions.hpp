@@ -25,7 +25,7 @@ public:
     bool operator()(const DataType& aValue) const;
     
 private:
-    const DataType value_;    
+    const DataType mValue;    
 };
 
 
@@ -40,7 +40,7 @@ public:
     bool operator()(const DataType& aValue) const;
     
 private:
-    const DataType value_;    
+    const DataType mValue;    
 };
 
 
@@ -56,8 +56,8 @@ public:
 private:
     void print(std::ostream& aStream) const;
 
-    const DataType lower_;    
-    const DataType upper_;    
+    const DataType mLower;    
+    const DataType mUpper;    
 };
 
 
@@ -72,8 +72,8 @@ public:
 private:
     void print(std::ostream& aStream) const;
     
-    const DataType lower_;
-    const DataType upper_;
+    const DataType mLower;
+    const DataType mUpper;
 };
 
 
@@ -89,7 +89,7 @@ public:
 private:
     void print(std::ostream& aStream) const;
 
-    const DataType limit_;
+    const DataType mLimit;
 };
 
 
@@ -104,7 +104,7 @@ public:
 private:
     void print(std::ostream& aStream) const;
 
-    const DataType limit_;
+    const DataType mLimit;
 };
 
 

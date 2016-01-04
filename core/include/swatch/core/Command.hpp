@@ -109,25 +109,25 @@ private:
 
     MutableActionableStatus& mActionableStatus;
     
-    ReadWriteXParameterSet defaultParams_;
+    ReadWriteXParameterSet mDefaultParams;
 
-    ReadOnlyXParameterSet runningParams_;
+    ReadOnlyXParameterSet mRunningParams;
 
-    xdata::Serializable* const defaultResult_;
+    xdata::Serializable* const mDefaultResult;
 
-    ActionStatus::State state_;
+    ActionStatus::State mState;
 
-    timeval execStartTime_;
-    timeval execEndTime_;
+    timeval mExecStartTime;
+    timeval mExecEndTime;
 
-    float progress_;
+    float mProgress;
 
-    std::string statusMsg_;
+    std::string mStatusMsg;
 
-    boost::shared_ptr<xdata::Serializable> result_;
+    boost::shared_ptr<xdata::Serializable> mResult;
 
     // Mutex for thread safety of read-/write-access of member data read-/write-access
-    mutable boost::mutex mutex_;
+    mutable boost::mutex mMutex;
     
     //! Creates copy of xdata::Serializable object of type T on heap
     template<typename T>
@@ -136,7 +136,7 @@ private:
     typedef xdata::Serializable* (*ResultXCloner_t)( const xdata::Serializable* );
 
     //! Used to clone default result into result_ at start of execution, just before the code method is called
-    ResultXCloner_t resultCloner_;
+    ResultXCloner_t mResultCloner;
 };
 
 

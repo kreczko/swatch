@@ -21,7 +21,7 @@ namespace core {
 
 //------------------------------------------------------------------------------------
 Command::~Command() {
-  if ( defaultResult_ ) delete defaultResult_;
+  if ( mDefaultResult ) delete mDefaultResult;
 }
 
 
@@ -46,15 +46,15 @@ Command::exec(const BusyGuard* aOuterBusyGuard, const XParameterSet& params, boo
   try {
     // if threadpool is to be used
     if ( aUseThreadPool ){
-      boost::unique_lock<boost::mutex> lock(mutex_);
-      state_ = ActionStatus::kScheduled;
+      boost::unique_lock<boost::mutex> lock(mMutex);
+      mState = ActionStatus::kScheduled;
       
       ThreadPool& pool = ThreadPool::getInstance();
-      pool.addTask<Command,BusyGuard>(this, &Command::runCode, lBusyGuard, runningParams_);
+      pool.addTask<Command,BusyGuard>(this, &Command::runCode, lBusyGuard, mRunningParams);
     }
     else{
       // otherwise execute in same thread
-      this->runCode(lBusyGuard, runningParams_);
+      this->runCode(lBusyGuard, mRunningParams);
     }
   } catch ( const std::exception& e ) {
     // TODO: log the error to error msg (or not?)
@@ -72,38 +72,38 @@ Command::exec(const BusyGuard* aOuterBusyGuard, const XParameterSet& params, boo
 void Command::runCode(boost::shared_ptr<BusyGuard> aActionGuard, const XParameterSet& params) {
   // 1) Declare that I'm running
   {
-    boost::unique_lock<boost::mutex> lock(mutex_);
-    state_ = ActionStatus::kRunning;
-    gettimeofday(&execStartTime_, NULL);
+    boost::unique_lock<boost::mutex> lock(mMutex);
+    mState = ActionStatus::kRunning;
+    gettimeofday(&mExecStartTime, NULL);
   }
   
   // 2) Run the code, handling any exceptions
   try {
     State s = this->code(params);
     
-    boost::unique_lock<boost::mutex> lock(mutex_);
-    gettimeofday(&execEndTime_, NULL);
+    boost::unique_lock<boost::mutex> lock(mMutex);
+    gettimeofday(&mExecEndTime, NULL);
     switch (s) { 
       case State::kDone :
       case State::kWarning :
-        progress_ = 1.0;
+        mProgress = 1.0;
       case State::kError : 
-        state_ = s;
+        mState = s;
         break;
       default : 
-        state_ = State::kError;
-        statusMsg_ = "Command::code() method returned invalid Status enum value '" + boost::lexical_cast<std::string>(s) + "'   \n Original status message was: " + statusMsg_;
+        mState = State::kError;
+        mStatusMsg = "Command::code() method returned invalid Status enum value '" + boost::lexical_cast<std::string>(s) + "'   \n Original status message was: " + mStatusMsg;
         // FIXME: replace with proper logging
-        LOG(swatch::logger::kError) << getActionable().getId() << "." << getId() << " : " << statusMsg_;
+        LOG(swatch::logger::kError) << getActionable().getId() << "." << getId() << " : " << mStatusMsg;
     }
   }
   catch (const std::exception& e) {
-    boost::unique_lock<boost::mutex> lock(mutex_);
-    gettimeofday(&execEndTime_, NULL);
-    state_ = State::kError;
-    statusMsg_ = std::string("An exception of type '" + demangleName(typeid(e).name()) + "' was thrown in Command::code(): ") + e.what();
+    boost::unique_lock<boost::mutex> lock(mMutex);
+    gettimeofday(&mExecEndTime, NULL);
+    mState = State::kError;
+    mStatusMsg = std::string("An exception of type '" + demangleName(typeid(e).name()) + "' was thrown in Command::code(): ") + e.what();
     // FIXME: replace with proper logging
-    LOG(swatch::logger::kError) << getActionable().getId() << "." << getId() << " : " << statusMsg_;
+    LOG(swatch::logger::kError) << getActionable().getId() << "." << getId() << " : " << mStatusMsg;
   }
   
   // 3) Release control of the resource - by destruction of the ActionGuard.
@@ -112,52 +112,52 @@ void Command::runCode(boost::shared_ptr<BusyGuard> aActionGuard, const XParamete
 
 //------------------------------------------------------------------------------------
 void Command::resetForRunning(const XParameterSet& params) {
-  boost::unique_lock<boost::mutex> lock(mutex_);
-  state_ = ActionStatus::kScheduled;
-  progress_ = 0.0;
-  statusMsg_ = "";
+  boost::unique_lock<boost::mutex> lock(mMutex);
+  mState = ActionStatus::kScheduled;
+  mProgress = 0.0;
+  mStatusMsg = "";
   
-  result_.reset(resultCloner_(defaultResult_));
+  mResult.reset(mResultCloner(mDefaultResult));
   
-  runningParams_ = mergeParametersWithDefaults(params);
+  mRunningParams = mergeParametersWithDefaults(params);
 }
 
 
 //------------------------------------------------------------------------------------
 ActionStatus::State
 Command::getState() const {
-  boost::unique_lock<boost::mutex> lock(mutex_);
-  return state_;
+  boost::unique_lock<boost::mutex> lock(mMutex);
+  return mState;
 }
 
 
 //------------------------------------------------------------------------------------
 CommandStatus Command::getStatus() const {
-  boost::unique_lock<boost::mutex> lock(mutex_);
+  boost::unique_lock<boost::mutex> lock(mMutex);
   
   // Only let user see the result once the command has completed (since its contents can change before then) ...
   boost::shared_ptr<xdata::Serializable> result((xdata::Serializable*) NULL);
-  if ( (state_ == ActionStatus::kDone) || (state_ == ActionStatus::kWarning) || (state_ == ActionStatus::kError))
-    result = result_;
+  if ( (mState == ActionStatus::kDone) || (mState == ActionStatus::kWarning) || (mState == ActionStatus::kError))
+    result = mResult;
   
   float runningTime = 0.0;
-  switch (state_) {
+  switch (mState) {
     case ActionStatus::kInitial :
     case ActionStatus::kScheduled : 
       break;
     default:
       timeval endTime;
-      if (state_ == ActionStatus::kRunning)
+      if (mState == ActionStatus::kRunning)
         gettimeofday(&endTime, NULL);
       else
-        endTime = execEndTime_;
+        endTime = mExecEndTime;
 
-      runningTime = double(endTime.tv_sec - execStartTime_.tv_sec);
-      runningTime += float(double(endTime.tv_usec) - double(execStartTime_.tv_usec))/1e6;
+      runningTime = double(endTime.tv_sec - mExecStartTime.tv_sec);
+      runningTime += float(double(endTime.tv_usec) - double(mExecStartTime.tv_usec))/1e6;
       break;
   }
     
-  return CommandStatus(getPath(), state_, runningTime, progress_, statusMsg_, runningParams_, result);
+  return CommandStatus(getPath(), mState, runningTime, mProgress, mStatusMsg, mRunningParams, result);
 }
 
 
@@ -171,8 +171,8 @@ Command::setProgress(float aProgress) {
     throw std::out_of_range(err.str());
   }
 
-  boost::unique_lock<boost::mutex> lock(mutex_);
-  progress_ = aProgress;
+  boost::unique_lock<boost::mutex> lock(mMutex);
+  mProgress = aProgress;
 }
 
 
@@ -186,9 +186,9 @@ Command::setProgress(float aProgress, const std::string& aMsg ) {
     throw std::out_of_range(err.str());
   }
 
-  boost::unique_lock<boost::mutex> lock(mutex_);
-  progress_ = aProgress;
-  statusMsg_ = aMsg;
+  boost::unique_lock<boost::mutex> lock(mMutex);
+  mProgress = aProgress;
+  mStatusMsg = aMsg;
 
   // FIXME: replace with proper logging
   LOG(swatch::logger::kInfo) << getActionable().getId() << "." << getId() << " : " << aMsg;
@@ -197,15 +197,15 @@ Command::setProgress(float aProgress, const std::string& aMsg ) {
 
 
 void Command::setResult( const xdata::Serializable& aResult ){
-  boost::unique_lock<boost::mutex> lock(mutex_);
-  result_->setValue(aResult);
+  boost::unique_lock<boost::mutex> lock(mMutex);
+  mResult->setValue(aResult);
 }
 
 
 //------------------------------------------------------------------------------------
 void Command::setStatusMsg(const std::string& aMsg) {
-  boost::unique_lock<boost::mutex> lock(mutex_);
-  statusMsg_ = aMsg;
+  boost::unique_lock<boost::mutex> lock(mMutex);
+  mStatusMsg = aMsg;
 
   // FIXME: replace with proper logging
   LOG(swatch::logger::kInfo) << getActionable().getId() << "." << getId() << " : " << aMsg;
@@ -214,13 +214,13 @@ void Command::setStatusMsg(const std::string& aMsg) {
 
 //------------------------------------------------------------------------------------
 const ReadWriteXParameterSet& Command::getDefaultParams() const {
-  return defaultParams_;
+  return mDefaultParams;
 }
 
 
 //------------------------------------------------------------------------------------
 const xdata::Serializable& Command::getDefaultResult() const {
-  return *defaultResult_;
+  return *mDefaultResult;
 }
 
 
@@ -228,11 +228,11 @@ const xdata::Serializable& Command::getDefaultResult() const {
 ReadOnlyXParameterSet Command::mergeParametersWithDefaults( const XParameterSet& params ) const {
   ReadOnlyXParameterSet merged = ReadOnlyXParameterSet(params);
   
-  std::set<std::string> keys = defaultParams_.keys();
+  std::set<std::string> keys = mDefaultParams.keys();
   BOOST_FOREACH(const std::string& k, keys)
   {
     if ( ! merged.has(k))
-      merged.adopt(k, defaultParams_);
+      merged.adopt(k, mDefaultParams);
   }
   
   return merged;

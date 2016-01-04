@@ -20,11 +20,11 @@ namespace core {
 
 template<typename DataType>
 Metric<DataType>::Metric() :
-  value_(NULL),
-  updateTimestamp_(),
-  errorCondition_(),
-  warnCondition_(),
-  monitoringStatus_(monitoring::kEnabled)
+  mValue(NULL),
+  mUpdateTimestamp(),
+  mErrorCondition(),
+  mWarnCondition(),
+  mMonitoringStatus(monitoring::kEnabled)
 {
 }
 
@@ -32,11 +32,11 @@ Metric<DataType>::Metric() :
 template<typename DataType>
 Metric<DataType>::Metric(MetricCondition<DataType>* aErrorCondition,
     MetricCondition<DataType>* aWarnCondition) :
-        value_(NULL),
-        updateTimestamp_(),
-        errorCondition_(aErrorCondition),
-        warnCondition_(aWarnCondition),
-        monitoringStatus_(monitoring::kEnabled) {
+        mValue(NULL),
+        mUpdateTimestamp(),
+        mErrorCondition(aErrorCondition),
+        mWarnCondition(aWarnCondition),
+        mMonitoringStatus(monitoring::kEnabled) {
 }
 
 
@@ -47,53 +47,53 @@ Metric<DataType>::~Metric(){
 
 template<typename DataType>
 MetricSnapshot Metric<DataType>::getSnapshot() const {
-    boost::lock_guard<boost::mutex> lock(mutex_);
+    boost::lock_guard<boost::mutex> lock(mMutex);
 
     swatch::core::StatusFlag flag = kUnknown;
     std::string value = boost::lexical_cast<std::string>(swatch::core::kUnknown);
     
-    if (this->value_ != NULL)
+    if (this->mValue != NULL)
     {
-    if ((errorCondition_ == NULL) && (warnCondition_ == NULL))
+    if ((mErrorCondition == NULL) && (mWarnCondition == NULL))
             flag = kNoLimit;
-        else if ( errorCondition_ && (*errorCondition_)(*value_))
+        else if ( mErrorCondition && (*mErrorCondition)(*mValue))
             flag = kError;
-        else if ( warnCondition_ && (*warnCondition_)(*value_))
+        else if ( mWarnCondition && (*mWarnCondition)(*mValue))
             flag = kWarning;
         else
             flag = kGood;
 
-        value = convertMetricDataToString(*value_);
+        value = convertMetricDataToString(*mValue);
     }
     
-    if (monitoringStatus_ == monitoring::kDisabled)
+    if (mMonitoringStatus == monitoring::kDisabled)
       flag = kNoLimit; //disabled metrics always return kNoLimit
 
-    return MetricSnapshot(flag, value, updateTimestamp_, errorCondition_, warnCondition_, monitoringStatus_);
+    return MetricSnapshot(flag, value, mUpdateTimestamp, mErrorCondition, mWarnCondition, mMonitoringStatus);
 }
 
 
 template<typename DataType>
 timeval Metric<DataType>::getUpdateTimestamp() const
 {
-    boost::lock_guard<boost::mutex> lock(mutex_);
-    return updateTimestamp_;
+    boost::lock_guard<boost::mutex> lock(mMutex);
+    return mUpdateTimestamp;
 }
 
 
 template<typename DataType>
 void Metric<DataType>::setValue(const DataType& value) {
-    boost::lock_guard<boost::mutex> lock(mutex_);
-    gettimeofday(&updateTimestamp_, NULL);
-    value_.reset(new DataType(value));
+    boost::lock_guard<boost::mutex> lock(mMutex);
+    gettimeofday(&mUpdateTimestamp, NULL);
+    mValue.reset(new DataType(value));
 }
 
 
 template<typename DataType>
 void Metric<DataType>::setValueUnknown() {
-    boost::lock_guard<boost::mutex> lock(mutex_);
-    gettimeofday(&updateTimestamp_, NULL);
-    value_.reset(NULL);
+    boost::lock_guard<boost::mutex> lock(mMutex);
+    gettimeofday(&mUpdateTimestamp, NULL);
+    mValue.reset(NULL);
 }
 
 template<typename DataType>
@@ -102,8 +102,8 @@ void Metric<DataType>::setErrorCondition(const ConditionType& aErrorCondition)
 {
   BOOST_STATIC_ASSERT_MSG( (boost::is_base_of<MetricCondition<DataType>, ConditionType >::value) , "class ConditionType must be a descendant of MetricCondtion<DataType>" );
 
-  boost::lock_guard<boost::mutex> lLock(mutex_);
-  errorCondition_.reset(new ConditionType(aErrorCondition));
+  boost::lock_guard<boost::mutex> lLock(mMutex);
+  mErrorCondition.reset(new ConditionType(aErrorCondition));
 }
 
 
@@ -113,21 +113,21 @@ void Metric<DataType>::setWarningCondition(const ConditionType& aWarningConditio
 {
   BOOST_STATIC_ASSERT_MSG( (boost::is_base_of<MetricCondition<DataType>, ConditionType >::value) , "class ConditionType must be a descendant of MetricCondtion<DataType>" );
 
-  boost::lock_guard<boost::mutex> lLock(mutex_);
-  warnCondition_.reset(new ConditionType(aWarningCondition));
+  boost::lock_guard<boost::mutex> lLock(mMutex);
+  mWarnCondition.reset(new ConditionType(aWarningCondition));
 }
 
 
 template<typename DataType>
 monitoring::Status Metric<DataType>::getMonitoringStatus() const{
-  boost::lock_guard<boost::mutex> lock(mutex_);
-  return monitoringStatus_;
+  boost::lock_guard<boost::mutex> lock(mMutex);
+  return mMonitoringStatus;
 }
 
 template<typename DataType>
 void Metric<DataType>::setMonitoringStatus(monitoring::Status status){
-  boost::lock_guard<boost::mutex> lock(mutex_);
-  monitoringStatus_ = status;
+  boost::lock_guard<boost::mutex> lock(mMutex);
+  mMonitoringStatus = status;
 }
 
 template<typename DataType>

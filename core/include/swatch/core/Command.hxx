@@ -19,13 +19,13 @@ template<typename T>
 Command::Command( const std::string& aId , ActionableObject& aResource, const T& aDefault ) :
         ObjectFunctionoid( aId, aResource ),
         mActionableStatus(aResource.mStatus),
-        defaultResult_(new T(aDefault)),
-        state_(ActionStatus::kInitial),
-        progress_(0.),
-        statusMsg_("initialised"),
-        result_(),
-        mutex_(),
-        resultCloner_(static_cast<ResultXCloner_t>(clone<T>)) 
+        mDefaultResult(new T(aDefault)),
+        mState(ActionStatus::kInitial),
+        mProgress(0.),
+        mStatusMsg("initialised"),
+        mResult(),
+        mMutex(),
+        mResultCloner(static_cast<ResultXCloner_t>(clone<T>)) 
 {
   // T must be derived from xdata::Serializable
   BOOST_STATIC_ASSERT((boost::is_base_of<xdata::Serializable, T>::value));
@@ -34,9 +34,9 @@ Command::Command( const std::string& aId , ActionableObject& aResource, const T&
 
 template<typename T>
 void Command::registerParameter(const std::string name, const T& defaultValue){
-  if (defaultParams_.has(name))
-    defaultParams_.erase(name);
-  defaultParams_.add(name, defaultValue);
+  if (mDefaultParams.has(name))
+    mDefaultParams.erase(name);
+  mDefaultParams.add(name, defaultValue);
 }
 
 

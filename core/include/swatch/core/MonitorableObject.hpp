@@ -115,11 +115,11 @@ protected:
 private:
   typedef boost::unordered_map< std::string , AbstractMetric* > MetricMap_t;
 
-  MetricMap_t metrics_;
+  MetricMap_t mMetrics;
 
   //! Stores details in case error occurs when updating the metric values
-  std::string updateErrorMsg_;
-  swatch::core::monitoring::Status monitoringStatus_;
+  std::string mUpdateErrorMsg;
+  swatch::core::monitoring::Status mMonitoringStatus;
   AbstractMonitorableStatus* mStatus;
           
   friend class MetricWriteGuard;

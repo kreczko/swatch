@@ -40,8 +40,8 @@ MetricView::MetricView(swatch::core::MonitorableObject& aMonObject, const std::s
         if ( boost::regex_match (metricPath.c_str(), match, boost::regex(aRegex)))
         {
           LOG(swatch::logger::kDebug) << "MetricView : metric with path \"" << metricPath << "\" matches regex";
-          metricsMap_[metricPath] = &(monObject->getMetric(metricId));
-          monitorableObjects_.insert(monObject);
+          mMetricsMap[metricPath] = &(monObject->getMetric(metricId));
+          mMonitorableObjects.insert(monObject);
         }
       }
     }
@@ -54,7 +54,7 @@ MetricView::~MetricView() {
 
 
 void MetricView::update() {
-  BOOST_FOREACH(std::set<swatch::core::MonitorableObject*>::value_type monObj, monitorableObjects_)
+  BOOST_FOREACH(std::set<swatch::core::MonitorableObject*>::value_type monObj, mMonitorableObjects)
   {
     monObj->updateMetrics();
   }
@@ -62,27 +62,27 @@ void MetricView::update() {
     
 
 size_t MetricView::size() const {
-  return metricsMap_.size();
+  return mMetricsMap.size();
 }
 
 
 MetricView::iterator MetricView::begin() {
-  return metricsMap_.begin();
+  return mMetricsMap.begin();
 }
 
 
 MetricView::iterator MetricView::end() {
-  return metricsMap_.end();
+  return mMetricsMap.end();
 }
 
 
 MetricView::const_iterator MetricView::begin() const {
-  return metricsMap_.begin();
+  return mMetricsMap.begin();
 }
 
 
 MetricView::const_iterator MetricView::end() const {
-  return metricsMap_.end();
+  return mMetricsMap.end();
 }
 
 

@@ -72,19 +72,19 @@ private:
 
     // TODO: Maybe eventually update to read-write mutex if needed ???
     //! Mutex used to stop corruption of value_
-    mutable boost::mutex mutex_;
+    mutable boost::mutex mMutex;
 
     //! Latest retrieved value of metric; set to NULL if metric value is unknown.
-    boost::scoped_ptr<DataType> value_;   
+    boost::scoped_ptr<DataType> mValue;   
 
-    timeval updateTimestamp_;
+    timeval mUpdateTimestamp;
     
-    boost::shared_ptr<MetricCondition<DataType> > errorCondition_;
-    boost::shared_ptr<MetricCondition<DataType> > warnCondition_;
-    
+    boost::shared_ptr<MetricCondition<DataType> > mErrorCondition;
+    boost::shared_ptr<MetricCondition<DataType> > mWarnCondition;
+
+    swatch::core::monitoring::Status mMonitoringStatus;
+
     friend class MonitorableObject;
-
-    swatch::core::monitoring::Status monitoringStatus_;
 };
 
 

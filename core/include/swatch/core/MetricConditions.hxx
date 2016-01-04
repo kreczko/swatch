@@ -20,7 +20,7 @@ namespace core {
 
 template<typename DataType>
 EqualCondition<DataType>::EqualCondition(const DataType& aValue) : 
-value_(aValue) {
+mValue(aValue) {
 }
 
 template<typename DataType>
@@ -28,12 +28,12 @@ EqualCondition<DataType>::~EqualCondition() {}
 
 template<typename DataType>
 bool EqualCondition<DataType>::operator()(const DataType& aValue) const {
-  return (value_ == aValue);
+  return (mValue == aValue);
 }
 
 template<typename DataType>
 void EqualCondition<DataType>::print(std::ostream& aStream) const {
-  aStream << " == " << value_;
+  aStream << " == " << mValue;
 }
 
 
@@ -41,7 +41,7 @@ void EqualCondition<DataType>::print(std::ostream& aStream) const {
 
 template<typename DataType>
 NotEqualCondition<DataType>::NotEqualCondition(const DataType& aValue) : 
-value_(aValue) {
+mValue(aValue) {
 }
 
 template<typename DataType>
@@ -49,12 +49,12 @@ NotEqualCondition<DataType>::~NotEqualCondition() {}
 
 template<typename DataType>
 bool NotEqualCondition<DataType>::operator()(const DataType& aValue) const {
-  return (value_ != aValue);
+  return (mValue != aValue);
 }
 
 template<typename DataType>
 void NotEqualCondition<DataType>::print(std::ostream& aStream) const {
-  aStream << " != " << value_;
+  aStream << " != " << mValue;
 }
 
 
@@ -63,8 +63,8 @@ void NotEqualCondition<DataType>::print(std::ostream& aStream) const {
 
 template<typename DataType>
 RangeCondition<DataType>::RangeCondition(const DataType& aLower, const DataType& aUpper) : 
-  lower_(aLower),
-  upper_(aUpper) {
+  mLower(aLower),
+  mUpper(aUpper) {
 }
 
 template<typename DataType>
@@ -72,12 +72,12 @@ RangeCondition<DataType>::~RangeCondition() {}
 
 template<typename DataType>
 bool RangeCondition<DataType>::operator()(const DataType& aValue) const {
-  return ( (aValue >= lower_) && (aValue <= upper_) );
+  return ( (aValue >= mLower) && (aValue <= mUpper) );
 }
 
 template<typename DataType>
 void RangeCondition<DataType>::print(std::ostream& aStream) const {
-  aStream << "[" << lower_ << ", " << upper_ << "]";
+  aStream << "[" << mLower << ", " << mUpper << "]";
 }
 
 
@@ -86,8 +86,8 @@ void RangeCondition<DataType>::print(std::ostream& aStream) const {
 
 template<typename DataType>
 InvRangeCondition<DataType>::InvRangeCondition(const DataType& aLower, const DataType& aUpper) : 
-  lower_(aLower),
-  upper_(aUpper) {
+  mLower(aLower),
+  mUpper(aUpper) {
 }
 
 template<typename DataType>
@@ -95,12 +95,12 @@ InvRangeCondition<DataType>::~InvRangeCondition() {}
 
 template<typename DataType>
 bool InvRangeCondition<DataType>::operator()(const DataType& aValue) const {
-  return ( (aValue < lower_) || (aValue > upper_) );
+  return ( (aValue < mLower) || (aValue > mUpper) );
 }
 
 template<typename DataType>
 void InvRangeCondition<DataType>::print(std::ostream& aStream) const {
-  aStream << " < " << lower_ << " or > " << upper_;
+  aStream << " < " << mLower << " or > " << mUpper;
 }
 
 
@@ -109,7 +109,7 @@ void InvRangeCondition<DataType>::print(std::ostream& aStream) const {
 
 template<typename DataType>
 LessThanCondition<DataType>::LessThanCondition(const DataType& aLimit) : 
-  limit_(aLimit) {
+  mLimit(aLimit) {
 }
 
 template<typename DataType>
@@ -117,12 +117,12 @@ LessThanCondition<DataType>::~LessThanCondition() {}
 
 template<typename DataType>
 bool LessThanCondition<DataType>::operator()(const DataType& aValue) const {
-  return (aValue < limit_);
+  return (aValue < mLimit);
 }
 
 template<typename DataType>
 void LessThanCondition<DataType>::print(std::ostream& aStream) const {
-  aStream << "< " << limit_ ;
+  aStream << "< " << mLimit ;
 }
 
 
@@ -131,7 +131,7 @@ void LessThanCondition<DataType>::print(std::ostream& aStream) const {
 
 template<typename DataType>
 GreaterThanCondition<DataType>::GreaterThanCondition(const DataType& aLimit) :
-  limit_(aLimit) {
+  mLimit(aLimit) {
 }
 
 template<typename DataType>
@@ -139,12 +139,12 @@ GreaterThanCondition<DataType>::~GreaterThanCondition() {}
 
 template<typename DataType>
 bool GreaterThanCondition<DataType>::operator()(const DataType& aValue) const {
-  return (aValue > limit_);
+  return (aValue > mLimit);
 }
 
 template<typename DataType>
 void GreaterThanCondition<DataType>::print(std::ostream& aStream) const {
-  aStream << "> " << limit_;
+  aStream << "> " << mLimit;
 }
 
 
