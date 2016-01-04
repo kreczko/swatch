@@ -31,18 +31,6 @@ const char* const Log::kLogNames[] = {
     "DEBUG4"
 };
 
-const char* logColors[] = {
-    ansi::kRed,
-    ansi::kRed,
-    ansi::kYellow,
-    ansi::kGreen,
-    ansi::kBlue,
-    ansi::kCyan,
-    ansi::kCyan,
-    ansi::kCyan,
-    ansi::kCyan,
-    ansi::kCyan
-    };
 
 Log::Log() :
   messageLevel_(LogLevel::kError) {
