@@ -8,20 +8,20 @@
 namespace swatch {
 namespace logger {
 
-bool Logger::mInitialised = false;
+bool Logger::sInitialised = false;
 // needs absolute path
-std::string Logger::mConfigFile = "log4cplus.properties";
+std::string Logger::sConfigFile = "log4cplus.properties";
 
 log4cplus::Logger Logger::getInstance(const log4cplus::tstring& aName) {
   using namespace log4cplus;
-  if (!mInitialised) {
+  if (!sInitialised) {
     {
       // this shoud probably have a lock
       ::log4cplus::initialize();
       // register our stuff
       Logger::registerCustomLoggingClasses();
-      PropertyConfigurator::doConfigure(Logger::mConfigFile);
-      Logger::mInitialised = true;
+      PropertyConfigurator::doConfigure(Logger::sConfigFile);
+      Logger::sInitialised = true;
     }
   }
   return log4cplus::Logger::getInstance(aName);

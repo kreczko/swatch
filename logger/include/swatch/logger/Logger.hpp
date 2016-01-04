@@ -37,8 +37,8 @@ public:
   static void log(LogLevel aLevel, const std::string& aMessage);
 
 private:
-  static bool mInitialised;
-  static std::string mConfigFile;
+  static bool sInitialised;
+  static std::string sConfigFile;
 
   /**
    * Registration of all custom log4cplus filters, layouts and appenders
