@@ -20,29 +20,29 @@ ReadOnlyXParameterSet::ReadOnlyXParameterSet() :
 
 
 //---
-ReadOnlyXParameterSet::ReadOnlyXParameterSet(const ReadOnlyXParameterSet& other) :
-  mEntries(other.mEntries)
+ReadOnlyXParameterSet::ReadOnlyXParameterSet(const ReadOnlyXParameterSet& aOther) :
+  mEntries(aOther.mEntries)
 {
 }
 
 
 //---
-ReadOnlyXParameterSet::ReadOnlyXParameterSet(const XParameterSet& orig) 
+ReadOnlyXParameterSet::ReadOnlyXParameterSet(const XParameterSet& aOrig) 
 {
   // FIXME: Is this the best solution for long term ?
   
-  if (const ReadOnlyXParameterSet * const origPtr = dynamic_cast<ReadOnlyXParameterSet const * const>(&orig) )
+  if (const ReadOnlyXParameterSet * const origPtr = dynamic_cast<ReadOnlyXParameterSet const * const>(&aOrig) )
   {
     *this = (*origPtr);
   }
-  else if (const ReadWriteXParameterSet * const origPtr = dynamic_cast<ReadWriteXParameterSet const * const> (&orig) )
+  else if (const ReadWriteXParameterSet * const origPtr = dynamic_cast<ReadWriteXParameterSet const * const> (&aOrig) )
   {
     typedef ReadWriteXParameterSet::EntryMap_t::const_iterator ConstIt_t;
     for(ConstIt_t it = origPtr->mEntries.begin(); it != origPtr->mEntries.end(); it++)
       mEntries.emplace(it->first, it->second.object);
   }
   else
-    throw std::runtime_error("Cannot create ReadOnlyXParameterSet from unknown XParameterSet type: " + demangleName(typeid(orig).name()));
+    throw std::runtime_error("Cannot create ReadOnlyXParameterSet from unknown XParameterSet type: " + demangleName(typeid(aOrig).name()));
 }
 
 
@@ -53,9 +53,9 @@ ReadOnlyXParameterSet::~ReadOnlyXParameterSet()
 
 
 //---
-bool ReadOnlyXParameterSet::operator==(const ReadOnlyXParameterSet& o) const
+bool ReadOnlyXParameterSet::operator==(const ReadOnlyXParameterSet& aOther) const
 {
-  return mEntries == o.mEntries;
+  return mEntries == aOther.mEntries;
 }
 
 
@@ -75,17 +75,17 @@ std::set<std::string> ReadOnlyXParameterSet::keys() const
 
 
 //---
-bool ReadOnlyXParameterSet::has(const std::string& name) const {
-  return mEntries.count(name);
+bool ReadOnlyXParameterSet::has(const std::string& aName) const {
+  return mEntries.count(aName);
 }
 
 
 //---
 const xdata::Serializable&
-ReadOnlyXParameterSet::get( const std::string& name ) const {
-  EntryMap_t::const_iterator it = mEntries.find(name);
+ReadOnlyXParameterSet::get( const std::string& aName ) const {
+  EntryMap_t::const_iterator it = mEntries.find(aName);
   if ( it == mEntries.end() ) {
-    throw XParameterNotFound(name +" not found");
+    throw XParameterNotFound(aName +" not found");
   }
 
   return *(it->second);
@@ -94,17 +94,17 @@ ReadOnlyXParameterSet::get( const std::string& name ) const {
 
 //---
 const xdata::Serializable&
-ReadOnlyXParameterSet::operator[](const std::string& name) const {
-  return get(name);
+ReadOnlyXParameterSet::operator[](const std::string& aName) const {
+  return get(aName);
 }
 
 
 //---
-std::string ReadOnlyXParameterSet::parameterAsString(const std::string& name) const
+std::string ReadOnlyXParameterSet::parameterAsString(const std::string& aName) const
 {
-  EntryMap_t::const_iterator it = mEntries.find(name);
+  EntryMap_t::const_iterator it = mEntries.find(aName);
   if ( it == mEntries.end() ) {
-    throw XParameterNotFound("Parameter '" + name + " not found");
+    throw XParameterNotFound("Parameter '" + aName + " not found");
   }
 
   return it->second->toString();
@@ -112,13 +112,13 @@ std::string ReadOnlyXParameterSet::parameterAsString(const std::string& name) co
 
 
 //---
-void ReadOnlyXParameterSet::adopt(const std::string& name , const boost::shared_ptr<xdata::Serializable>& data )
+void ReadOnlyXParameterSet::adopt(const std::string& aName , const boost::shared_ptr<xdata::Serializable>& data )
 {
-  std::pair<EntryMap_t::iterator, bool> it = mEntries.emplace(name, data);
+  std::pair<EntryMap_t::iterator, bool> it = mEntries.emplace(aName, data);
 
   // If failed to emplace, then throw
   if ( !it.second )
-    throw XParameterExists("Parameter '" + name + "' is already defined");
+    throw XParameterExists("Parameter '" + aName + "' is already defined");
 }
 
 

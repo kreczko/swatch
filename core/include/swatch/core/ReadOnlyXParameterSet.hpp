@@ -30,15 +30,15 @@ public:
   ReadOnlyXParameterSet();
 
   //! Copy constructor; performs SHALLOW COPY
-  ReadOnlyXParameterSet(const ReadOnlyXParameterSet& orig);
+  ReadOnlyXParameterSet(const ReadOnlyXParameterSet& aOrig);
 
   //! Constructor from any XParameterSet; performs SHALLOW COPY
-  ReadOnlyXParameterSet(const XParameterSet& orig);
+  ReadOnlyXParameterSet(const XParameterSet& aOrig);
 
   virtual ~ReadOnlyXParameterSet();
 
   
-  bool operator==(const ReadOnlyXParameterSet& o) const;
+  bool operator==(const ReadOnlyXParameterSet& aOther) const;
   
   
   /**
@@ -54,16 +54,16 @@ public:
   virtual std::set<std::string> keys() const;
 
   //! Returns whether parameter with given name exists
-  virtual bool has( const std::string& name ) const;
+  virtual bool has( const std::string& aName ) const;
 
-  virtual const xdata::Serializable& get( const std::string& name ) const;
+  virtual const xdata::Serializable& get( const std::string& aName ) const;
 
-  virtual const xdata::Serializable& operator[]( const std::string& name ) const;
+  virtual const xdata::Serializable& operator[]( const std::string& aName ) const;
 
   template<typename T>
-  const T& get( const std::string& name ) const { return this->XParameterSet::get<T>(name); }
+  const T& get( const std::string& aName ) const { return this->XParameterSet::get<T>(aName); }
 
-  virtual std::string parameterAsString(const std::string& name) const;
+  virtual std::string parameterAsString(const std::string& aName) const;
   
   /**
    * Adopt a parameter in the set; the data that is pointed to is not copied, and stored internally via a shared_ptr. The data type must be a derived from xdata::Serializable
@@ -71,7 +71,7 @@ public:
    * @param name Parameter name
    * @param data Pointer to import in the set
    */
-  void adopt( const std::string& name , const boost::shared_ptr<xdata::Serializable>& data );
+  void adopt( const std::string& aName , const boost::shared_ptr<xdata::Serializable>& aData );
   
   /**
    * Adopt a parameter that's already stored in another the set; the data that is pointed to is not copied - instead its shared between the parameter sets.

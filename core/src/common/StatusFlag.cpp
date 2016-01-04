@@ -33,15 +33,15 @@ std::ostream& operator<<(std::ostream& aOut, swatch::core::StatusFlag aValue) {
 }
 
 
-swatch::core::StatusFlag operator& (const swatch::core::StatusFlag& flag1, const swatch::core::StatusFlag& flag2)
+swatch::core::StatusFlag operator& (const swatch::core::StatusFlag& aFlag1, const swatch::core::StatusFlag& aFlag2)
 {
-  if (flag1 == kNoLimit && flag2 == kNoLimit)
+  if (aFlag1 == kNoLimit && aFlag2 == kNoLimit)
     return kNoLimit;
-  else if (flag1 == kError || flag2 == kError)
+  else if (aFlag1 == kError || aFlag2 == kError)
     return kError;
-  else if(flag1 == kUnknown || flag2 == kUnknown)
+  else if(aFlag1 == kUnknown || aFlag2 == kUnknown)
     return kUnknown;
-  else if (flag1 == kWarning || flag2 == kWarning)
+  else if (aFlag1 == kWarning || aFlag2 == kWarning)
     return kWarning;
   else
     return kGood;

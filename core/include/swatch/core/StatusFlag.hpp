@@ -24,10 +24,10 @@ enum StatusFlag{
 };
 
 
-std::ostream& operator<<(std::ostream& out, swatch::core::StatusFlag value);
+std::ostream& operator<<(std::ostream& aOut, swatch::core::StatusFlag aValue);
 
 
-swatch::core::StatusFlag operator& (const swatch::core::StatusFlag& flag1, const swatch::core::StatusFlag& flag2);
+swatch::core::StatusFlag operator& (const swatch::core::StatusFlag& aFlag1, const swatch::core::StatusFlag& aFlag2);
 
 
 } // namespace core
