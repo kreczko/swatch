@@ -91,7 +91,7 @@ class ClassNameInspector(Inspector):
 class FunctionNameInspector(Inspector):
     # Camel case (no numbers or underscores); first letter lowercase
     _operatorRegex = re.compile("operator.+$")
-    _normalRegex = re.compile("^[a-z]+[a-zA-Z]+$")
+    _normalRegex = re.compile("^[a-z]+[a-zA-Z0-9]+$")
 
     def __init__(self):
         Inspector.__init__(self)
@@ -140,15 +140,15 @@ def isPublic(aVar):
 
 class VariableInspector(Inspector):
     # Private/protected member data: mCamelCase
-    _privateMemberRegex = re.compile("^m[A-Z][a-zA-Z]+$")
+    _privateMemberRegex = re.compile("^m[A-Z][a-zA-Z0-9]+$")
     # Public member data: camelCase
-    _publicMemberRegex = re.compile("^[a-z][a-zA-Z]+$")
+    _publicMemberRegex = re.compile("^[a-z][a-zA-Z0-9]+$")
     # Const static member data / global variables: kCamelCase / sCamelCase
-    _staticMemberRegex = re.compile("^[ks][A-Z][a-zA-Z]+$")
+    _staticMemberRegex = re.compile("^[ks][A-Z][a-zA-Z0-9]+$")
     # Arguments: aCamelCase
-    _argumentRegex = re.compile("^a[A-Z][a-zA-Z]+$")
+    _argumentRegex = re.compile("^a[A-Z][a-zA-Z0-9]+$")
     # Local variables: lCamelCase
-    _localRegex = re.compile("^l[A-Z][a-zA-Z]+$")
+    _localRegex = re.compile("^l[A-Z][a-zA-Z0-9]+$")
 
 
     def __init__(self):

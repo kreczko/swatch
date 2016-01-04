@@ -15,7 +15,7 @@ import sys
 #  - Otherwise, if a "normal" type, name is 1st subgroup
 TYPEDEF_REGEX = re.compile('typedef\s+[A-Za-z_][\w &\*<>\(\),:]*\s+(?:(\w+)|\(\s*\*(\w+)\s*\)\s*\([\w &\*<>,:]*\))\s*;')
 # Name regex: CamelCase_t
-TYPEDEF_NAME_REGEX = re.compile('^[A-Z][A-Za-z]+_t$') # CamelCase_t
+TYPEDEF_NAME_REGEX = re.compile('^[A-Z][A-Za-z0-9]+_t$') # CamelCase_t
 
 
 
