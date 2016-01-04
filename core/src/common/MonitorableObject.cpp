@@ -129,9 +129,9 @@ void MonitorableObject::updateMetrics(const MetricWriteGuard& aGuard)
   
 }
 
-void MonitorableObject::setMonitoringStatus(const swatch::core::monitoring::Status m_status)
+void MonitorableObject::setMonitoringStatus(const swatch::core::monitoring::Status aMonStatus)
 {
-  mMonitoringStatus = m_status;
+  mMonitoringStatus = aMonStatus;
 }
 
 swatch::core::monitoring::Status

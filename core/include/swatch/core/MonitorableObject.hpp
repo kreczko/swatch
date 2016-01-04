@@ -56,7 +56,7 @@ public:
   //! Update values of this object's metrics
   void updateMetrics(const MetricWriteGuard& aGuard);
 
-  void setMonitoringStatus(const swatch::core::monitoring::Status m_status);
+  void setMonitoringStatus(const swatch::core::monitoring::Status aMonStatus);
   swatch::core::monitoring::Status getMonitoringStatus() const;
 
 protected:

@@ -68,7 +68,7 @@ public:
     CommandStatus getStatus() const;
     
     template<typename T>
-    void registerParameter(const std::string name, const T& defaultValue);
+    void registerParameter(const std::string& aName, const T& aDefaultValue);
 
     const ReadWriteXParameterSet& getDefaultParams() const;
     
@@ -76,7 +76,7 @@ public:
     
 protected:
     //! user-defined code for execution
-    virtual ActionStatus::State code( const XParameterSet& params ) = 0;
+    virtual ActionStatus::State code( const XParameterSet& aParams ) = 0;
 
     template<typename T>
     Command( const std::string& aId , ActionableObject& aResource, const T& aDefault );
@@ -96,13 +96,13 @@ protected:
 private:
 
     //! Reset state, with state set to scheduled, merging user-supplied parameter values with default values to set runningParams_ 
-    void resetForRunning(const XParameterSet& params);
+    void resetForRunning(const XParameterSet& aParams);
 
     /**
      * Merges a parameter set with the default parameter set.
      * Default values are only used if not present in params.
      */
-    ReadOnlyXParameterSet mergeParametersWithDefaults(const XParameterSet& params) const;
+    ReadOnlyXParameterSet mergeParametersWithDefaults(const XParameterSet& aParams) const;
     
     // thread safe exception catching wrapper for code()
     void runCode(boost::shared_ptr<BusyGuard> aGuard, const XParameterSet& aParams );

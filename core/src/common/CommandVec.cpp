@@ -282,9 +282,9 @@ std::ostream& operator << (std::ostream& aOstream, const CommandVec::MissingPara
 }
 
 
-bool operator !=(const CommandVec::MissingParam& l1, const CommandVec::MissingParam& l2)
+bool operator !=(const CommandVec::MissingParam& aParam1, const CommandVec::MissingParam& aParam2)
 {
-  return !( (l1.nspace == l2.nspace) && (l1.command == l2.command) && (l1.parameter == l2.parameter));
+  return !( (aParam1.nspace == aParam2.nspace) && (aParam1.command == aParam2.command) && (aParam1.parameter == aParam2.parameter));
 }
 
 

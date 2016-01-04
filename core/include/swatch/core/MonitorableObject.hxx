@@ -53,9 +53,9 @@ Metric<DataType>& MonitorableObject::registerMetric(const std::string& aId, cons
 
 
 template <typename DataType>
-void MonitorableObject::setMetricValue(Metric<DataType>& metric, const DataType& value)
+void MonitorableObject::setMetricValue(Metric<DataType>& aMetric, const DataType& aValue)
 {
-  metric.setValue(value);
+  aMetric.setValue(aValue);
 }
 
 

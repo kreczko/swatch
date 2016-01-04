@@ -90,10 +90,10 @@ private:
 
 //! Function template for representing metric data as string 
 template<typename DataType>
-std::string convertMetricDataToString(DataType data);
+std::string convertMetricDataToString(DataType aData);
 
 template<>
-std::string convertMetricDataToString<bool>(bool data);
+std::string convertMetricDataToString<bool>(bool aData);
 
 
 /**
@@ -117,7 +117,7 @@ public:
 
 
 
-#include "Metric.hxx"
+#include "swatch/core/Metric.hxx"
 
 #endif	/* __SWATCH_CORE_METRIC_HPP__ */
 

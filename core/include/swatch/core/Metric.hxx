@@ -82,10 +82,10 @@ timeval Metric<DataType>::getUpdateTimestamp() const
 
 
 template<typename DataType>
-void Metric<DataType>::setValue(const DataType& value) {
+void Metric<DataType>::setValue(const DataType& aValue) {
     boost::lock_guard<boost::mutex> lock(mMutex);
     gettimeofday(&mUpdateTimestamp, NULL);
-    mValue.reset(new DataType(value));
+    mValue.reset(new DataType(aValue));
 }
 
 
@@ -125,15 +125,15 @@ monitoring::Status Metric<DataType>::getMonitoringStatus() const{
 }
 
 template<typename DataType>
-void Metric<DataType>::setMonitoringStatus(monitoring::Status status){
+void Metric<DataType>::setMonitoringStatus(monitoring::Status aMonStatus){
   boost::lock_guard<boost::mutex> lock(mMutex);
-  mMonitoringStatus = status;
+  mMonitoringStatus = aMonStatus;
 }
 
 template<typename DataType>
-std::string convertMetricDataToString(DataType data)
+std::string convertMetricDataToString(DataType aData)
 {
-    return boost::lexical_cast<std::string>(data);
+    return boost::lexical_cast<std::string>(aData);
 }
 
 

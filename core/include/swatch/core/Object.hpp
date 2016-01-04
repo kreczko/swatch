@@ -110,10 +110,10 @@ class Object : public boost::noncopyable
 
     /**
       Postfix operator - increment the iterator
-      @param dummy a dummy arg to distinguish between pre- and postfix operators
+      @param aDummy a dummy arg to distinguish between pre- and postfix operators
       @return a copy of the iterator before the increment
     */
-    iterator operator++ ( int dummy );
+    iterator operator++ ( int aDummy );
 
     /**
       Equality operator

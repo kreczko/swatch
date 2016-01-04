@@ -112,7 +112,7 @@ protected:
    * @param aMissingParams vector of missing parameters for each command
    * @param aThrowOnMissing if true, then throws ParameterNotFound if gatekeeper can't find value of any parameter
    */
-  void extractParameters(const GateKeeper& aGateKeeper, std::vector<ReadOnlyXParameterSet>& aParamSets, std::vector<MissingParam>& aMissingParams, bool throwOnMissing) const;
+  void extractParameters(const GateKeeper& aGateKeeper, std::vector<ReadOnlyXParameterSet>& aParamSets, std::vector<MissingParam>& aMissingParams, bool aThrowOnMissing) const;
 
   //! thread safe exception-catching wrapper for code()
   void runCommands(boost::shared_ptr<BusyGuard> aGuard);
@@ -155,7 +155,7 @@ void CommandVec::scheduleAction( OBJECT* aAction , boost::function<void(OBJECT*,
 
 std::ostream& operator << (std::ostream& aOstream, const CommandVec::MissingParam& aMissingParam );
 
-bool operator !=(const CommandVec::MissingParam& l1, const CommandVec::MissingParam& l2);
+bool operator !=(const CommandVec::MissingParam& aParam1, const CommandVec::MissingParam& aParam2);
 
 
 //! Provides a snapshot of the progress/status of a swatch::core::CommandVec

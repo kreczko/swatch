@@ -48,7 +48,7 @@ public:
 
     //! Returns the monitoring status as defined in enum MonitoringStatus
     virtual monitoring::Status getMonitoringStatus() const = 0;
-    virtual void setMonitoringStatus(monitoring::Status status) = 0;
+    virtual void setMonitoringStatus(monitoring::Status aMonStatus) = 0;
 
     
 protected:
@@ -81,7 +81,7 @@ public:
   MetricSnapshot(swatch::core::StatusFlag , const std::string&, timeval,
       boost::shared_ptr<AbstractMetricCondition> aErrCond,
       boost::shared_ptr<AbstractMetricCondition> aWarnCond,
-      swatch::core::monitoring::Status m_status = monitoring::kEnabled);
+      swatch::core::monitoring::Status aMonStatus = monitoring::kEnabled);
 
     //! Returns status flag deduced from comparing the stored value with limits
     swatch::core::StatusFlag getStatusFlag() const;

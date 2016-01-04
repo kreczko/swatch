@@ -33,15 +33,15 @@ Command::Command( const std::string& aId , ActionableObject& aResource, const T&
 
 
 template<typename T>
-void Command::registerParameter(const std::string name, const T& defaultValue){
-  if (mDefaultParams.has(name))
-    mDefaultParams.erase(name);
-  mDefaultParams.add(name, defaultValue);
+void Command::registerParameter(const std::string& aName, const T& aDefaultValue){
+  if (mDefaultParams.has(aName))
+    mDefaultParams.erase(aName);
+  mDefaultParams.add(aName, aDefaultValue);
 }
 
 
 template<typename T>
-xdata::Serializable* Command::clone(const xdata::Serializable* other) {
+xdata::Serializable* Command::clone(const xdata::Serializable* aOther) {
   // T must be derived from xdata::Serializable
   BOOST_STATIC_ASSERT((boost::is_base_of<xdata::Serializable, T>::value));
 
