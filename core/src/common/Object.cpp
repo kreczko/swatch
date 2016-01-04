@@ -17,20 +17,20 @@ namespace core {
 
 
 Object::Object(const std::string& aId) : 
-  id_(aId), 
-  parent_(0x0)
+  mId(aId), 
+  mParent(0x0)
 {
-  if (id_.empty())
+  if (mId.empty())
     throw InvalidObjectId("Cannot create object with empty ID string");
-  else if(id_.find('.') != std::string::npos)
-    throw InvalidObjectId("Object ID string '" + id_ + "' contains a dot at position "+boost::lexical_cast<std::string>(id_.find('.')));
+  else if(mId.find('.') != std::string::npos)
+    throw InvalidObjectId("Object ID string '" + mId + "' contains a dot at position "+boost::lexical_cast<std::string>(mId.find('.')));
 }
 
 
 Object::~Object() {
-  objectsChart_.clear();
+  mObjectsChart.clear();
 
-  for (std::deque< std::pair<Object*,Deleter*> >::iterator it(children_.begin()); it != children_.end(); ++it) {
+  for (std::deque< std::pair<Object*,Deleter*> >::iterator it(mChildren.begin()); it != mChildren.end(); ++it) {
     if ( it->second != NULL )
     {
       (*it->second)(it->first);
@@ -48,13 +48,13 @@ std::string Object::getTypeName() const {
 
 
 void Object::setParent(Object* aParent) {
-  if (parent_) {
+  if (mParent) {
     stringstream ss;
-    ss << "Cannot set ancestor of " << this->getPath() << ". Already set to " << parent_->getPath();
+    ss << "Cannot set ancestor of " << this->getPath() << ". Already set to " << mParent->getPath();
     throw runtime_error(ss.str());
   }
 
-  parent_ = aParent;
+  mParent = aParent;
 }
 
 
@@ -62,13 +62,13 @@ void Object::addObj(Object* aChild) {
   aChild->setParent(this);
 
   // Insure the child does not have a twin
-  if (objectsChart_.find(aChild->getId()) != objectsChart_.end()) {
+  if (mObjectsChart.find(aChild->getId()) != mObjectsChart.end()) {
     throw std::runtime_error(aChild->getId() + " already exists in this family");
   }
 
   //    cout << this->id() << " - Adding " << aChild->id() << endl;
-  children_.push_back(std::make_pair(aChild, (Deleter*)NULL));
-  objectsChart_.insert(std::make_pair(aChild->getId(), aChild));
+  mChildren.push_back(std::make_pair(aChild, (Deleter*)NULL));
+  mObjectsChart.insert(std::make_pair(aChild->getId(), aChild));
 }
 
 
@@ -77,11 +77,11 @@ const Object* Object::getAncestor(const uint32_t& aDepth) const {
     return this;
   }
 
-  if (!parent_) {
+  if (!mParent) {
     return NULL;
   }
 
-  return parent_-> getAncestor(aDepth - 1);
+  return mParent-> getAncestor(aDepth - 1);
 }
 
 
@@ -90,16 +90,16 @@ Object* Object::getAncestor(const uint32_t& aDepth) {
     return this;
   }
 
-  if (!parent_) {
+  if (!mParent) {
     return NULL;
   }
 
-  return parent_-> getAncestor(aDepth - 1);
+  return mParent-> getAncestor(aDepth - 1);
 }
 
 
 const std::string& Object::getId() const {
-  return id_;
+  return mId;
 }
 
 
@@ -109,8 +109,8 @@ std::string Object::getPath() const {
   std::string lRet;
 
   for (std::deque< const Object* >::iterator lIt(lGenealogy.begin()); lIt != lGenealogy.end(); ++lIt) {
-    if ((**lIt).id_.size()) {
-      lRet += (**lIt).id_;
+    if ((**lIt).mId.size()) {
+      lRet += (**lIt).mId;
       lRet += ".";
     }
   }
@@ -126,16 +126,16 @@ std::string Object::getPath() const {
 void Object::getAncestors(std::deque<const Object*>& aGenealogy) const {
   aGenealogy.push_front(this);
 
-  if (parent_) {
-    parent_->getAncestors(aGenealogy);
+  if (mParent) {
+    mParent->getAncestors(aGenealogy);
   }
 }
 
 
 void Object::print(std::ostream& aStr, const uint32_t& aIndent) const {
-  aStr << '\n' << std::string(aIndent, ' ') << "- [" << getTypeName() << "] " << id_;
+  aStr << '\n' << std::string(aIndent, ' ') << "- [" << getTypeName() << "] " << mId;
 
-  for (std::deque< std::pair<Object*,Deleter*> >::const_iterator lIt = children_.begin(); lIt != children_.end(); ++lIt) {
+  for (std::deque< std::pair<Object*,Deleter*> >::const_iterator lIt = mChildren.begin(); lIt != mChildren.end(); ++lIt) {
     (*lIt->first).print(aStr, aIndent + 1);
   }
 }
@@ -146,24 +146,24 @@ void Object::getCharts(const std::string& basePath, boost::unordered_map<std::st
   // 1) Add children
   boost::unordered_map<std::string, Object*>::const_iterator itMap;
 
-  for (itMap = objectsChart_.begin(); itMap != objectsChart_.end(); ++itMap) {
+  for (itMap = mObjectsChart.begin(); itMap != mObjectsChart.end(); ++itMap) {
     chart.insert(std::make_pair(prefix + itMap->first, itMap->second));
   }
 
   // 2) Add children's children (ad infinitum) by recursive calls
   std::deque< std::pair<Object*,Deleter*> >::const_iterator it;
 
-  for (it = children_.begin(); it != children_.end(); ++it) {
-    it->first->getCharts(prefix + it->first->id_, chart);
+  for (it = mChildren.begin(); it != mChildren.end(); ++it) {
+    it->first->getCharts(prefix + it->first->mId, chart);
   }
 }
 
 
 std::vector<std::string> Object::getChildren() const {
   std::vector<std::string> names;
-  names.reserve(objectsChart_.size());
+  names.reserve(mObjectsChart.size());
 
-  for (boost::unordered_map<std::string, Object*>::const_iterator it = objectsChart_.begin(); it != objectsChart_.end(); it++) {
+  for (boost::unordered_map<std::string, Object*>::const_iterator it = mObjectsChart.begin(); it != mObjectsChart.end(); it++) {
     names.push_back(it->first);
   }
 
@@ -200,9 +200,9 @@ Object& Object::getObj(const std::string& aId) {
   //    cout << "father = '" << father << "'   child = '" << child << "'" << endl;
   boost::unordered_map<std::string, Object*>::const_iterator it;
 
-  if ((it = objectsChart_.find(father)) == objectsChart_.end()) {
+  if ((it = mObjectsChart.find(father)) == mObjectsChart.end()) {
     stringstream ss;
-    ss << "Object " << father << " not found in " << id_;
+    ss << "Object " << father << " not found in " << mId;
     throw runtime_error(ss.str());
   }
 
@@ -228,9 +228,9 @@ const Object& Object::getObj(const std::string& aId) const {
   //    cout << "father = '" << father << "'   child = '" << child << "'" << endl;
   boost::unordered_map<std::string, Object*>::const_iterator it;
 
-  if ((it = objectsChart_.find(father)) == objectsChart_.end()) {
+  if ((it = mObjectsChart.find(father)) == mObjectsChart.end()) {
     stringstream ss;
-    ss << "Object " << father << " not found in " << id_;
+    ss << "Object " << father << " not found in " << mId;
     throw runtime_error(ss.str());
   }
 
@@ -246,10 +246,10 @@ const Object& Object::getObj(const std::string& aId) const {
 
 std::vector<std::string> Object::getPaths() const {
   std::vector<std::string> names;
-  names.reserve(objectsChart_.size());
+  names.reserve(mObjectsChart.size());
   boost::unordered_map<std::string, Object*>::const_iterator it;
 
-  for (it = objectsChart_.begin(); it != objectsChart_.end(); ++it) {
+  for (it = mObjectsChart.begin(); it != mObjectsChart.end(); ++it) {
     names.push_back(it->second->getPath());
   }
 
@@ -289,11 +289,11 @@ ObjectView::~ObjectView() {
 
 void ObjectView::addObj(Object* aChild, const std::string& aAlias) {
   // Insure the child does not have a twin
-  if (objectsChart_.find(aChild->getId()) != objectsChart_.end()) {
+  if (mObjectsChart.find(aChild->getId()) != mObjectsChart.end()) {
     throw std::runtime_error(aChild->getId() + " already exists in this family");
   }
 
-  objectsChart_.insert(std::make_pair(aAlias, aChild));
+  mObjectsChart.insert(std::make_pair(aAlias, aChild));
 }
 
 
@@ -304,15 +304,15 @@ void ObjectView::addObj(Object* aChild) {
 
 // Object::iterator Methods Implementation
 
-Object::iterator::iterator() : begin_() {
+Object::iterator::iterator() : mBegin() {
 }
 
 
-Object::iterator::iterator(Object* aBegin) : begin_(aBegin) {
+Object::iterator::iterator(Object* aBegin) : mBegin(aBegin) {
 }
 
 
-Object::iterator::iterator(const iterator& aOrig) : begin_(aOrig.begin_), itStack_(aOrig.itStack_) {
+Object::iterator::iterator(const iterator& aOrig) : mBegin(aOrig.mBegin), mItStack(aOrig.mItStack) {
 }
 
 
@@ -331,7 +331,7 @@ Object* Object::iterator::operator->() const {
 
 
 Object& Object::iterator::value() const {
-  return ( itStack_.size()) ? ( * itStack_[0]->first) : (*begin_);
+  return ( mItStack.size()) ? ( * mItStack[0]->first) : (*mBegin);
 }
 
 
@@ -354,49 +354,49 @@ bool Object::iterator::operator!=(const Object::iterator& aIt) const {
 
 
 bool Object::iterator::operator==(const Object::iterator& aIt) const {
-  return ( aIt.begin_ == begin_) && (aIt.itStack_ == itStack_);
+  return ( aIt.mBegin == mBegin) && (aIt.mItStack == mItStack);
 }
 
 
 bool Object::iterator::next() {
   // Null iterator can't be incremented...
-  if (!begin_) {
+  if (!mBegin) {
     return false;
   }
 
-  if (!itStack_.size()) {
+  if (!mItStack.size()) {
     //We have just started and have no stack...
-    if (begin_->children_.size()) {
+    if (mBegin->mChildren.size()) {
       //We have children so recurse down to them
-      itStack_.push_front(begin_->children_.begin());
+      mItStack.push_front(mBegin->mChildren.begin());
       return true;
     }
 
     //We have no children so we are at the end of the iteration. Make Buffer NULL to stop infinite loop
-    begin_ = NULL;
+    mBegin = NULL;
     return false;
   }
 
   //We are already in the tree...
-  if (itStack_[0]->first->children_.size()) {
+  if (mItStack[0]->first->mChildren.size()) {
     // Entry has children, recurse...
-    itStack_.push_front(itStack_[0]->first->children_.begin());
+    mItStack.push_front(mItStack[0]->first->mChildren.begin());
     return true;
   }
 
   // No children so go to the next entry on this level
-  while (itStack_.size()) {
-    if (++(itStack_[0]) != ((itStack_.size() == 1) ? (*begin_) : (*itStack_[1]->first)).children_.end()) {
+  while (mItStack.size()) {
+    if (++(mItStack[0]) != ((mItStack.size() == 1) ? (*mBegin) : (*mItStack[1]->first)).mChildren.end()) {
       // Next entry on this level is valid - return
       return true;
     }
 
     // No more valid entries in this level, go back up tree
-    itStack_.pop_front();
+    mItStack.pop_front();
   }
 
   //We have no more children so we are at the end of the iteration. Make Buffer NULL to stop infinite loop
-  begin_ = NULL;
+  mBegin = NULL;
   return false;
 }
 

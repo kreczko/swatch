@@ -94,7 +94,7 @@ public:
 private:
   typedef boost::unordered_map<std::string, boost::shared_ptr<xdata::Serializable> > EntryMap_t;
 
-  EntryMap_t entries_;
+  EntryMap_t mEntries;
 };
 
 

@@ -10,27 +10,27 @@ using namespace std;
 
 swatch::core::exception::exception() throw() :
   std::exception(),
-  exThreadId_(boost::this_thread::get_id())
+  mThreadId(boost::this_thread::get_id())
 {
-  gettimeofday(&exTime_, NULL);
+  gettimeofday(&mTime, NULL);
 }
 
 
 
 swatch::core::exception::exception(const string& what) :
   std::exception(),
-  what_(what)
+  mWhat(what)
 {
-  gettimeofday(&exTime_, NULL);
+  gettimeofday(&mTime, NULL);
 }
 
 
 
 swatch::core::exception::exception(const swatch::core::exception& e) throw() :
   std::exception(),
-  exThreadId_(e.exThreadId_),
-  exTime_(e.exTime_),
-  what_(e.what_)
+  mThreadId(e.mThreadId),
+  mTime(e.mTime),
+  mWhat(e.mWhat)
 {
 }
 
@@ -45,9 +45,9 @@ swatch::core::exception::~exception() throw()
 swatch::core::exception&
 swatch::core::exception::operator=(const swatch::core::exception& e) throw()
 {
-  exThreadId_ = e.exThreadId_;
-  exTime_ = e.exTime_;
-  what_ = e.what_;
+  mThreadId = e.mThreadId;
+  mTime = e.mTime;
+  mWhat = e.mWhat;
 
   return *this;
 }
@@ -58,9 +58,9 @@ const char*
 swatch::core::exception::what() const throw()
 {
   char timeBuf[64];
-  strftime (timeBuf, sizeof timeBuf, "%Y-%m-%d %H:%M:%S", localtime (&exTime_.tv_sec));
+  strftime (timeBuf, sizeof timeBuf, "%Y-%m-%d %H:%M:%S", localtime (&mTime.tv_sec));
 
   ostringstream msg;
-  msg << "TIME: " << timeBuf << " DESCRIPTION: " << what_;
+  msg << "TIME: " << timeBuf << " DESCRIPTION: " << mWhat;
   return msg.str().c_str();
 }

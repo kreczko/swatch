@@ -73,17 +73,13 @@ public:
 protected:
 
     //! Thread ID in which the exception was thrown
-    boost::thread::id exThreadId_;
+    boost::thread::id mThreadId;
 
     //! Time at which the exception was thrown
-    timeval exTime_;
+    timeval mTime;
 
     //! Description of the exception
-    std::string what_;
-
-
-private:
-
+    std::string mWhat;
 };
 
 

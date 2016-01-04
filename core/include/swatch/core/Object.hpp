@@ -131,9 +131,9 @@ class Object : public boost::noncopyable
 
   private:
     /// Pointer to the current object or NULL if there are no more objects available
-    Object* begin_;
+    Object* mBegin;
     /// A stack to store the vertical position in the hierarchy
-    Stack_t itStack_;
+    Stack_t mItStack;
   };
 
         
@@ -280,16 +280,16 @@ private:
   void setParent ( Object* aParent );
 
   //! This object's ID
-  std::string id_;
+  std::string mId;
 
   //! Pointer to this object's parent
-  Object* parent_;
+  Object* mParent;
 
   //! Container for child objects, and their deleter functors. Children in this list are deleted by the destructor
-  std::deque< std::pair< Object*, Deleter* > > children_;
+  std::deque< std::pair< Object*, Deleter* > > mChildren;
 
   //! Map of children
-  boost::unordered_map< std::string, Object* > objectsChart_;
+  boost::unordered_map< std::string, Object* > mObjectsChart;
   
   friend class ObjectView;
 };
@@ -325,12 +325,12 @@ void Object::addObj (Object* aChild, T aDeleter)
   aChild->setParent(this);
 
   // Insure the child does not have a twin
-  if (objectsChart_.find(aChild->getId()) != objectsChart_.end()) {
+  if (mObjectsChart.find(aChild->getId()) != mObjectsChart.end()) {
     throw std::runtime_error(aChild->getId() + " already exists in this family");
   }
 
-  children_.push_back(std::make_pair(aChild, new T(aDeleter)));
-  objectsChart_.insert(std::make_pair(aChild->getId(), aChild));
+  mChildren.push_back(std::make_pair(aChild, new T(aDeleter)));
+  mObjectsChart.insert(std::make_pair(aChild->getId(), aChild));
 }
 
 

@@ -134,7 +134,7 @@ private:
   std::pair<EntryMap_t::iterator,bool> emplace( const std::string& name, const XEntry& );
 
   //! Map storing the values
-  EntryMap_t entries_;
+  EntryMap_t mEntries;
   
   friend class ReadOnlyXParameterSet;
   
