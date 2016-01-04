@@ -116,7 +116,7 @@ private:
   std::deque<boost::packaged_task<void> > mTasks;
 
   // synchronisation
-  static boost::mutex mutex_;
+  static boost::mutex sInstanceMutex;
   boost::mutex mQueueMutex;
   boost::condition_variable mCondition;
   bool mStop, mForceThreadCancellation;

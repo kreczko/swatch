@@ -7,13 +7,13 @@ namespace swatch {
 namespace core {
 
 
-boost::mutex ThreadPool::mutex_;
+boost::mutex ThreadPool::sInstanceMutex;
 ThreadPool* ThreadPool::sInstance = NULL;
 
 
 ThreadPool& ThreadPool::getInstance(size_t n_threads,
     bool run_until_queue_empty, bool force_thread_cancellation) {
-  boost::unique_lock<boost::mutex> lock(ThreadPool::mutex_);
+  boost::unique_lock<boost::mutex> lock(ThreadPool::sInstanceMutex);
   if (!sInstance) {
     sInstance = new ThreadPool(n_threads, run_until_queue_empty,
         force_thread_cancellation);
@@ -23,7 +23,7 @@ ThreadPool& ThreadPool::getInstance(size_t n_threads,
 
 
 void ThreadPool::reset() {
-  boost::unique_lock<boost::mutex> lock(ThreadPool::mutex_);
+  boost::unique_lock<boost::mutex> lock(ThreadPool::sInstanceMutex);
   delete ThreadPool::sInstance;
   ThreadPool::sInstance = NULL;
 }

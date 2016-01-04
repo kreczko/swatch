@@ -16,9 +16,9 @@
 namespace swatch {
 namespace logger {
 
-LogLevel Log::logThreshold_ = kInfo;
+LogLevel Log::sLogThreshold = kInfo;
 
-const char* Log::logNames_[] = {
+const char* const Log::kLogNames[] = {
     "FATAL",
     "ERROR",
     "WARNING",
@@ -70,12 +70,12 @@ Log::push(LogLevel level, const std::string& source, const std::string& message)
 }
 
 LogLevel& Log::logThreshold() {
-  return logThreshold_;
+  return sLogThreshold;
 }
 
 void
 Log::setLogThreshold(LogLevel level) {
-  logThreshold_ = level;
+  sLogThreshold = level;
 }
 
 

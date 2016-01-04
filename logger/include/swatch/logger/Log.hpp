@@ -58,9 +58,9 @@ private:
 private:
     LogLevel messageLevel_;
 
-    static LogLevel logThreshold_;
+    static LogLevel sLogThreshold;
 
-    static const char* logNames_[];
+    static const char* const kLogNames[];
 };
 
 template<typename T>

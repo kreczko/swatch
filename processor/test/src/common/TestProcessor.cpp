@@ -59,7 +59,7 @@ BOOST_AUTO_TEST_CASE(TestDefaultMetricsList) {
 
   DummyProcessor p(DummyProcessor::generateParams("dummy"));
 
-  for(auto it=Processor::defaultMetrics.begin(); it != Processor::defaultMetrics.end(); it++)
+  for(auto it=Processor::kDefaultMetrics.begin(); it != Processor::kDefaultMetrics.end(); it++)
   {
     BOOST_CHECK_NO_THROW(p.getMetric(*it));
   }
