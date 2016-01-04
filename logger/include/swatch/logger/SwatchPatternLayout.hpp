@@ -25,14 +25,14 @@ namespace logger {
 class LOG4CPLUS_EXPORT SwatchPatternLayout: public log4cplus::PatternLayout {
 
 public:
-  SwatchPatternLayout(const log4cplus::tstring& pattern);
-  SwatchPatternLayout(const log4cplus::helpers::Properties& properties);
+  SwatchPatternLayout(const log4cplus::tstring& aPattern);
+  SwatchPatternLayout(const log4cplus::helpers::Properties& aProperties);
   ~SwatchPatternLayout();
 
-  virtual void formatAndAppend(log4cplus::tostream& output, const log4cplus::spi::InternalLoggingEvent& event);
+  virtual void formatAndAppend(log4cplus::tostream& aOutput, const log4cplus::spi::InternalLoggingEvent& aEvent);
 
 protected:
-        void init(const log4cplus::tstring& pattern, unsigned ndcMaxDepth = 0);
+  void init(const log4cplus::tstring& aPattern, unsigned aNdcMaxDepth = 0);
 
 private:
       // Disallow copying of instances of this class
@@ -40,7 +40,6 @@ private:
   SwatchPatternLayout& operator=(const SwatchPatternLayout&);
 
   const char* getColourForLogLevel(log4cplus::LogLevel aLogLevel) const;
-
 };
 
 }

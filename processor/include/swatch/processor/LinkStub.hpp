@@ -36,7 +36,7 @@ public:
 };
 
 
-std::ostream& operator<<(std::ostream& os, const swatch::processor::LinkStub& pd);
+std::ostream& operator<<(std::ostream& aStream, const swatch::processor::LinkStub& aStub);
 
 
 } // namespace processor

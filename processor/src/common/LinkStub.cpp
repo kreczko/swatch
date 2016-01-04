@@ -13,14 +13,14 @@
 namespace swatch {
 namespace processor {
 
-std::ostream& operator<<(std::ostream& os, const swatch::processor::LinkStub& pd ) {
-    
-    os << "LinkStub[" << pd.id << "]:\n"
-       << "   - source port = " << pd.src << "\n"
-       << "   - destination port = " << pd.dst << "\n"
+std::ostream& operator<<(std::ostream& aStream, const swatch::processor::LinkStub& aStub)
+{    
+    aStream << "LinkStub[" << aStub.id << "]:\n"
+       << "   - source port = " << aStub.src << "\n"
+       << "   - destination port = " << aStub.dst << "\n"
        << std::flush;
 
-    return os;
+    return aStream;
 }
 
 } // namespace processor

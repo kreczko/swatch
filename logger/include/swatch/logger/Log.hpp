@@ -40,14 +40,14 @@ class Log {
 public:
     Log();
     virtual ~Log();
-    std::ostringstream& get(LogLevel level = kInfo);
+    std::ostringstream& get(LogLevel aLevel = kInfo);
 
     static LogLevel& logThreshold();
-    static void setLogThreshold( LogLevel level ); 
+    static void setLogThreshold( LogLevel aLevel ); 
     // static const std::string& toString(LogLevel level);
 
 protected:
-    void push( LogLevel level, const std::string& source, const std::string& message );
+    void push( LogLevel aLevel, const std::string& aSource, const std::string& aMessage );
 
     std::ostringstream mOSStream;
 

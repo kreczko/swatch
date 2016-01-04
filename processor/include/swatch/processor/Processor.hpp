@@ -169,7 +169,7 @@ private:
     RunControlFSM mRunControlFSM;
 
 private:
-    Processor( const Processor& other ); // non copyable
+    Processor( const Processor& ); // non copyable
     Processor& operator=( const Processor& ); // non copyable
 };
 
