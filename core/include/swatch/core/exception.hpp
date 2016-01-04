@@ -23,8 +23,8 @@
 		public:									\
 		T() : swatch::core::exception()			\
 		{}										\
-		T(const std::string& what) :			\
-		swatch::core::exception(what)			\
+		T(const std::string& aWhat) :			\
+		swatch::core::exception(aWhat)			\
 		{}										\
 	};
 
