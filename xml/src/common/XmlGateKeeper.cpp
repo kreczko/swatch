@@ -175,7 +175,7 @@ std::pair<std::string, GateKeeper::MonitoringSetting_t> XmlGateKeeper::createMon
   std::string lId(aEntry.attribute("id").value());
   std::string lStatus(aEntry.attribute("status").value());
 
-  monitoring::Status lMonStatus(monitoring::StringToStatus.at(lStatus)); // add check
+  monitoring::Status lMonStatus(monitoring::kStringToStatus.at(lStatus)); // add check
   GateKeeper::MonitoringSetting_t lMonSetting(new MonitoringSetting(lId, lMonStatus));
   return std::make_pair(lId, lMonSetting);
 }

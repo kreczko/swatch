@@ -27,7 +27,7 @@ enum Status {
   kDisabled,
 };
 
-extern const std::map<std::string, Status> StringToStatus;
+extern const std::map<std::string, Status> kStringToStatus;
 
 std::ostream& operator<<(std::ostream& aStream, const monitoring::Status aMonStatus);
 

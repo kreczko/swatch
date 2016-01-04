@@ -6,7 +6,7 @@ namespace core {
 
 namespace monitoring {
 
-extern const std::map<std::string, Status> StringToStatus = boost::assign::map_list_of("enabled", kEnabled)(
+extern const std::map<std::string, Status> kStringToStatus = boost::assign::map_list_of("enabled", kEnabled)(
     "non-critical", kNonCritical)("disabled", kDisabled);
 
 std::ostream& operator<<(std::ostream& aStream, const monitoring::Status aMonStatus) {
