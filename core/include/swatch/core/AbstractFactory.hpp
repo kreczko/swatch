@@ -24,11 +24,11 @@
 
 // Standard factory registration macros
 #define _SWATCH_ABSTRACT_REGISTER_CLASS( productname, classname ) \
-template<> bool swatch::core::ClassRegistrationHelper< productname, classname >::initialised_= \
+template<> bool swatch::core::ClassRegistrationHelper< productname, classname >::sInitialised= \
   swatch::core::ClassRegistrationHelper< productname, classname >::init(#classname);
 
 #define _SWATCH_ABSTRACT_REGISTER_CREATOR( productname, creatorname ) \
-template<> bool swatch::core::CreatorRegistrationHelper< productname, creatorname >::initialised_= \
+template<> bool swatch::core::CreatorRegistrationHelper< productname, creatorname >::sInitialised= \
   swatch::core::CreatorRegistrationHelper< productname, creatorname >::init(#creatorname);
 
 
@@ -104,8 +104,8 @@ private:
     bool add(const std::string& aCreatorName);
     
 private:        
-    static AbstractFactory* me_;
-    boost::unordered_map<std::string, boost::shared_ptr<CreatorInterface> > creators_;
+    static AbstractFactory* sInstance;
+    boost::unordered_map<std::string, boost::shared_ptr<CreatorInterface> > mCreators;
 };
 
 
@@ -118,7 +118,7 @@ private:
 template< typename A, typename D >
 struct ClassRegistrationHelper {
     //! Dummy variable required as initialisation target
-    static bool initialised_;
+    static bool sInitialised;
     
     static bool init(const std::string& aClassName) {
          AbstractFactory<A>::get()->template add< typename AbstractFactory<A>::template BasicCreator<D> > ( aClassName );
@@ -136,7 +136,7 @@ struct ClassRegistrationHelper {
 template< typename A, typename K >
 struct CreatorRegistrationHelper {
     //! Dummy variable required as initialisation target
-    static bool initialised_;
+    static bool sInitialised;
     
     static bool init(const std::string& aCreatorName) {
          AbstractFactory<A>::get()->template add< K > ( aCreatorName );

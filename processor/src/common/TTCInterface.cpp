@@ -28,7 +28,7 @@ TTCInterface::TTCInterface():
 
 
 const std::vector<std::string>
-TTCInterface::defaultMetrics = {
+TTCInterface::kDefaultMetrics = {
   "bunchCounter", 
   "eventCounter",
   "orbitCounter",

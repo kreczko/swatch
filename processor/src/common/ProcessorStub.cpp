@@ -14,7 +14,7 @@ namespace processor {
 
 ProcessorStub::ProcessorStub(const std::string& aId) :
   AbstractStub(aId),
-  slot(Processor::NoSlot)
+  slot(Processor::kNoSlot)
 { }
   
 std::ostream& operator<<(std::ostream& os, const swatch::processor::ProcessorStub& pd ) {

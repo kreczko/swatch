@@ -20,7 +20,7 @@ BOOST_AUTO_TEST_CASE(TestReadoutDefaultMetricsList) {
 
   DummyProcessor p(DummyProcessor::generateParams("dummy"));
 
-  for(auto it=ReadoutInterface::defaultMetrics.begin(); it != ReadoutInterface::defaultMetrics.end(); it++)
+  for(auto it=ReadoutInterface::kDefaultMetrics.begin(); it != ReadoutInterface::kDefaultMetrics.end(); it++)
   {
     BOOST_CHECK_NO_THROW(p.getReadout().getMetric(*it));
   }

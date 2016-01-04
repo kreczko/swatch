@@ -20,7 +20,7 @@ BOOST_AUTO_TEST_CASE(TestTTCDefaultMetricsList) {
 
   DummyProcessor p(DummyProcessor::generateParams("dummy"));
 
-  for(auto it=TTCInterface::defaultMetrics.begin(); it != TTCInterface::defaultMetrics.end(); it++)
+  for(auto it=TTCInterface::kDefaultMetrics.begin(); it != TTCInterface::kDefaultMetrics.end(); it++)
   {
     BOOST_CHECK_NO_THROW(p.getTTC().getMetric(*it));
   }

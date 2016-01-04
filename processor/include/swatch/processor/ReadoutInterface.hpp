@@ -20,7 +20,7 @@ public:
 
   virtual ~ReadoutInterface();
 
-  static const std::vector<std::string>  defaultMetrics;
+  static const std::vector<std::string>  kDefaultMetrics;
 
 protected:
   core::Metric<uint32_t>& mMetricTTS;

@@ -18,16 +18,16 @@ namespace core {
 
 //---
 template<typename T>
-AbstractFactory<T>* AbstractFactory<T>::me_ = 0x0;
+AbstractFactory<T>* AbstractFactory<T>::sInstance = 0x0;
 
 
 //---
 template<typename T>
 AbstractFactory<T>* AbstractFactory<T>::get() {
-    if ( !me_ ) 
-        me_ = new AbstractFactory<T>();
+    if ( !sInstance ) 
+        sInstance = new AbstractFactory<T>();
     
-    return me_;
+    return sInstance;
 }
 
 /*
@@ -115,9 +115,9 @@ P* AbstractFactory<T>::make( const std::string& aCreatorId, const AbstractStub& 
     // Basic consistency check at compile time
     BOOST_STATIC_ASSERT( (boost::is_base_of<T,P>::value) );
     
-    typename boost::unordered_map< std::string , boost::shared_ptr<CreatorInterface> >::const_iterator lIt = creators_.find ( aCreatorId );
+    typename boost::unordered_map< std::string , boost::shared_ptr<CreatorInterface> >::const_iterator lIt = mCreators.find ( aCreatorId );
 
-    if ( lIt == creators_.end() ) {
+    if ( lIt == mCreators.end() ) {
         throw CreatorNotFound(demangleName(typeid(this).name())+": Creator '"+aCreatorId+"' not found");
     }
     
@@ -157,13 +157,13 @@ template <typename T>
 template <typename K>
 bool 
 AbstractFactory<T>::add(const std::string& aName) {
-    typename boost::unordered_map<std::string, boost::shared_ptr<CreatorInterface> >::const_iterator lIt = creators_.find(aName);
+    typename boost::unordered_map<std::string, boost::shared_ptr<CreatorInterface> >::const_iterator lIt = mCreators.find(aName);
 
-    if (lIt != creators_.end()) {
+    if (lIt != mCreators.end()) {
         return false;
     }
 
-    creators_[aName] = boost::shared_ptr<CreatorInterface> (new K());
+    mCreators[aName] = boost::shared_ptr<CreatorInterface> (new K());
     return true;
 }
 

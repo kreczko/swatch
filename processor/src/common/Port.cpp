@@ -21,7 +21,7 @@ InputPort::InputPort( const std::string& aId) :
 }
 
 
-const std::vector<std::string> InputPort::defaultMetrics = { "isLocked", "isAligned", "crcErrors" };
+const std::vector<std::string> InputPort::kDefaultMetrics = { "isLocked", "isAligned", "crcErrors" };
   
 
 
@@ -33,7 +33,7 @@ OutputPort::OutputPort( const std::string& aId ) :
 }
 
 
-const std::vector<std::string> OutputPort::defaultMetrics = { "isOperating" };
+const std::vector<std::string> OutputPort::kDefaultMetrics = { "isOperating" };
 
 
 }

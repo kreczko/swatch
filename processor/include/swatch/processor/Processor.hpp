@@ -101,7 +101,7 @@ public:
     const std::string& getCrateId() const;
 
     //! Constant corresponding to no slot being assigned
-    static const uint32_t NoSlot;
+    static const uint32_t kNoSlot;
     
 //    /**
 //     * Additional firmware information.
@@ -123,9 +123,9 @@ public:
     //! Returns this processor's link interface
     PortCollection& getPorts();
     
-    static const std::vector<std::string> defaultMetrics;
+    static const std::vector<std::string> kDefaultMetrics;
 
-    static const std::vector<std::string> defaultMonitorableObjects;
+    static const std::vector<std::string> kDefaultMonitorableObjects;
 
     virtual const std::vector<std::string>& getGateKeeperTables() const;
 

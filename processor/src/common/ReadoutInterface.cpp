@@ -14,7 +14,7 @@ namespace swatch {
 namespace processor {
 
 // Static Members Initialization
-const std::vector<std::string> ReadoutInterface::defaultMetrics = {"tts"};
+const std::vector<std::string> ReadoutInterface::kDefaultMetrics = {"tts"};
 
   
 ReadoutInterface::ReadoutInterface() : 

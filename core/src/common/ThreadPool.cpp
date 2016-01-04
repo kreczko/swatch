@@ -8,24 +8,24 @@ namespace core {
 
 
 boost::mutex ThreadPool::mutex_;
-ThreadPool* ThreadPool::instance_ = NULL;
+ThreadPool* ThreadPool::sInstance = NULL;
 
 
 ThreadPool& ThreadPool::getInstance(size_t n_threads,
     bool run_until_queue_empty, bool force_thread_cancellation) {
   boost::unique_lock<boost::mutex> lock(ThreadPool::mutex_);
-  if (!instance_) {
-    instance_ = new ThreadPool(n_threads, run_until_queue_empty,
+  if (!sInstance) {
+    sInstance = new ThreadPool(n_threads, run_until_queue_empty,
         force_thread_cancellation);
   }
-  return *ThreadPool::instance_;
+  return *ThreadPool::sInstance;
 }
 
 
 void ThreadPool::reset() {
   boost::unique_lock<boost::mutex> lock(ThreadPool::mutex_);
-  delete ThreadPool::instance_;
-  ThreadPool::instance_ = NULL;
+  delete ThreadPool::sInstance;
+  ThreadPool::sInstance = NULL;
 }
 
 

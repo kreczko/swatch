@@ -21,7 +21,7 @@ BOOST_AUTO_TEST_CASE(TestInputPortDefaultMetricsList) {
 
   DummyProcessor p(DummyProcessor::generateParams("dummy"));
 
-  for(auto it=InputPort::defaultMetrics.begin(); it != InputPort::defaultMetrics.end(); it++)
+  for(auto it=InputPort::kDefaultMetrics.begin(); it != InputPort::kDefaultMetrics.end(); it++)
   {
     BOOST_CHECK_NO_THROW(p.getPorts().getInput("rxA").getMetric(*it));
   }
@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_CASE(TestOutputPortDefaultMetricsList) {
 
   DummyProcessor p(DummyProcessor::generateParams("dummy"));
 
-  for(auto it=OutputPort::defaultMetrics.begin(); it != OutputPort::defaultMetrics.end(); it++)
+  for(auto it=OutputPort::kDefaultMetrics.begin(); it != OutputPort::kDefaultMetrics.end(); it++)
   {
     BOOST_CHECK_NO_THROW(p.getPorts().getOutput("txA").getMetric(*it));
   }

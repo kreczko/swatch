@@ -48,7 +48,7 @@ protected:
     core::Metric<uint32_t>& metricDoubleBitErrors_;
     
 public:
-    static const std::vector<std::string> defaultMetrics;
+    static const std::vector<std::string> kDefaultMetrics;
     
 };
 

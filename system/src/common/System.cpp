@@ -144,7 +144,7 @@ System::add(processor::Processor* aProcessor) {
   if (aProcessor == NULL)
     throw std::invalid_argument("Processor pointer is NULL!");
   // check if slot and crate attribute are present
-  if (aProcessor->getCrateId().empty() || aProcessor->getSlot() == processor::Processor::NoSlot) {
+  if (aProcessor->getCrateId().empty() || aProcessor->getSlot() == processor::Processor::kNoSlot) {
     throw runtime_error("No crate, no slot, no party");
   }
 

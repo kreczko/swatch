@@ -107,7 +107,7 @@ private:
   // allow workers to access private variables
   friend class Worker;
   // pointer to the only ThreadPool instance
-  static ThreadPool* instance_;
+  static ThreadPool* sInstance;
   // number of simultaneous threads
   size_t mNumThreads;
   // thread group for the workers

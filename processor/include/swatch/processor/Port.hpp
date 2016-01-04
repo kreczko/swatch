@@ -22,7 +22,7 @@ protected:
 public:
     virtual ~InputPort() {}
 
-    static const std::vector<std::string> defaultMetrics;
+    static const std::vector<std::string> kDefaultMetrics;
 
 protected:
     core::Metric<bool>& metricIsLocked_;
@@ -39,7 +39,7 @@ protected:
 public:
     virtual ~OutputPort() {}
 
-    static const std::vector<std::string> defaultMetrics;
+    static const std::vector<std::string> kDefaultMetrics;
 
 protected:
     core::Metric<bool>& metricIsOperating_;

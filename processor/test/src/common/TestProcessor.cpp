@@ -72,7 +72,7 @@ BOOST_AUTO_TEST_CASE(TestDefaultMonitorableObjectsList) {
 
   DummyProcessor p(DummyProcessor::generateParams("dummy"));
 
-  for(auto it=Processor::defaultMonitorableObjects.begin(); it != Processor::defaultMonitorableObjects.end(); it++)
+  for(auto it=Processor::kDefaultMonitorableObjects.begin(); it != Processor::kDefaultMonitorableObjects.end(); it++)
   {
     BOOST_CHECK_NE(p.getObj<core::MonitorableObject>(*it), (swatch::core::MonitorableObject*)NULL);
   }
