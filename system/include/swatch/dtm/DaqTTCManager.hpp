@@ -104,9 +104,9 @@ public:
 
   uint16_t getFedId() const;
 
-  static const std::vector<std::string> defaultMetrics;
+  static const std::vector<std::string> kDefaultMetrics;
     
-  static const std::vector<std::string> defaultMonitorableObjects;
+  static const std::vector<std::string> kDefaultMonitorableObjects;
 
   virtual const std::vector<std::string>& getGateKeeperTables() const;
 

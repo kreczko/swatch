@@ -58,8 +58,8 @@ core::StateMachine& RunControlFSM::addStates(core::StateMachine& aFSM)
   return aFSM;
 }
 
-const std::vector<std::string> DaqTTCManager::defaultMetrics = {"fedId"};
-const std::vector<std::string> DaqTTCManager::defaultMonitorableObjects = {"ttc","evb","amcports"};
+const std::vector<std::string> DaqTTCManager::kDefaultMetrics = {"fedId"};
+const std::vector<std::string> DaqTTCManager::kDefaultMonitorableObjects = {"ttc","evb","amcports"};
 
 DaqTTCManager::DaqTTCManager(const swatch::core::AbstractStub& aStub ) : 
   swatch::core::ActionableObject(aStub.id, aStub.loggerName),
