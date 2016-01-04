@@ -52,20 +52,20 @@ public:
   std::set<std::string> keys() const;
 
   //! Returns whether parameter with given name exists
-  bool has( const std::string& name ) const;
+  bool has( const std::string& aName ) const;
 
-  xdata::Serializable& get( const std::string& name );
+  xdata::Serializable& get( const std::string& aName );
 
-  const xdata::Serializable& get( const std::string& name ) const;
+  const xdata::Serializable& get( const std::string& aName ) const;
 
-  xdata::Serializable& operator[]( const std::string& name );
+  xdata::Serializable& operator[]( const std::string& aName );
 
-  const xdata::Serializable& operator[]( const std::string& name ) const;
+  const xdata::Serializable& operator[]( const std::string& aName ) const;
 
   template<typename T>
-  const T& get( const std::string& name ) const;
+  const T& get( const std::string& aName ) const;
 
-  virtual std::string parameterAsString(const std::string& name) const;
+  virtual std::string parameterAsString(const std::string& aName) const;
 
 
   /* --- ADDING ENTRIES TO SET --- */
@@ -73,30 +73,30 @@ public:
   /**
    * Adopt a parameter in the set; the data that is pointed to is not copied, and stored internally via a shared_ptr. The data type must be a derived from xdata::Serializable
    * 
-   * @param name Parameter name
-   * @param data Pointer to import in the set
+   * @param aName Parameter name
+   * @param aData Pointer to import in the set
    */
   template<typename T>
-  void adopt( const std::string& name , const boost::shared_ptr<T>& data );
+  void adopt( const std::string& aName , const boost::shared_ptr<T>& aData );
 
   /**
    * Add a parameter to the set, by copying data into the set
    * 
-   * @param name Parameter name
-   * @param data Value to copy in the set.
+   * @param aName Parameter name
+   * @param aData Value to copy in the set.
    */
   template<typename T>
-  void add( const std::string& name , const T& data );
+  void add( const std::string& aName , const T& aData );
 
-  void deepCopyFrom(const ReadWriteXParameterSet& otherSet);
+  void deepCopyFrom(const ReadWriteXParameterSet& aOtherSet);
   
-  void erase( const std::string& name );
+  void erase( const std::string& aName );
 
 
 private:
 
   template<typename T>
-  static xdata::Serializable* clone( const xdata::Serializable* other );
+  static xdata::Serializable* clone( const xdata::Serializable* aOther );
 
   typedef xdata::Serializable* (*XCloner_t)( const xdata::Serializable* );
 
@@ -105,11 +105,11 @@ private:
     /**
      * Standard constructor
      *  
-     * @param t Type info pointer
-     * @param c Cloner function pointer
-     * @param s Data to store in the entry
+     * @param aType Type info pointer
+     * @param aCloner Cloner function pointer
+     * @param aData Data to store in the entry
      */
-    XEntry( const std::type_info* t, XCloner_t c, const boost::shared_ptr<xdata::Serializable>& s );
+    XEntry( const std::type_info* aType, XCloner_t aCloner, const boost::shared_ptr<xdata::Serializable>& aData );
     
     /**
      * Copy constructor

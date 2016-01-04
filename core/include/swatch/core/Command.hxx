@@ -45,7 +45,7 @@ xdata::Serializable* Command::clone(const xdata::Serializable* aOther) {
   // T must be derived from xdata::Serializable
   BOOST_STATIC_ASSERT((boost::is_base_of<xdata::Serializable, T>::value));
 
-  const T* xother = dynamic_cast<const T*>(other); 
+  const T* xother = dynamic_cast<const T*>(aOther); 
   return new T(*xother);
 }
 

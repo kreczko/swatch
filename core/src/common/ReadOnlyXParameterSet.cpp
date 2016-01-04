@@ -123,14 +123,14 @@ void ReadOnlyXParameterSet::adopt(const std::string& aName , const boost::shared
 
 
 //---
-void ReadOnlyXParameterSet::adopt(const std::string& name , const ReadOnlyXParameterSet& otherSet)
+void ReadOnlyXParameterSet::adopt(const std::string& aName , const ReadOnlyXParameterSet& aOtherSet)
 {
-  EntryMap_t::const_iterator it = otherSet.mEntries.find(name);
+  EntryMap_t::const_iterator it = aOtherSet.mEntries.find(aName);
   
-  if ( it == otherSet.mEntries.end() )
-    throw XParameterNotFound("Parameter '" + name + "' does not exist in this set");
+  if ( it == aOtherSet.mEntries.end() )
+    throw XParameterNotFound("Parameter '" + aName + "' does not exist in this set");
 
-  adopt(name, it->second);
+  adopt(aName, it->second);
 }
 
 

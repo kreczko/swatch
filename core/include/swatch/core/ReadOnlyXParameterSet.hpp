@@ -68,27 +68,27 @@ public:
   /**
    * Adopt a parameter in the set; the data that is pointed to is not copied, and stored internally via a shared_ptr. The data type must be a derived from xdata::Serializable
    * 
-   * @param name Parameter name
-   * @param data Pointer to import in the set
+   * @param aName Parameter name
+   * @param aData Pointer to import in the set
    */
   void adopt( const std::string& aName , const boost::shared_ptr<xdata::Serializable>& aData );
   
   /**
    * Adopt a parameter that's already stored in another the set; the data that is pointed to is not copied - instead its shared between the parameter sets.
    * 
-   * @param name Parameter name
+   * @param aName Parameter name
    */
-  void adopt( const std::string& name , const ReadOnlyXParameterSet& set);
+  void adopt( const std::string& aName , const ReadOnlyXParameterSet& aOtherSet);
 
   /**
    * Adopt a parameter that's already stored in another the set; the data that is pointed to is not copied - instead its shared between the parameter sets.
    * 
-   * @param name Parameter name
+   * @param aName Parameter name
    */
-  void adopt( const std::string& name , const ReadWriteXParameterSet& set);
+  void adopt( const std::string& aName , const ReadWriteXParameterSet& aOtherSet);
 
 
-  virtual void erase( const std::string& name );
+  virtual void erase( const std::string& aName );
 
 
 private:
