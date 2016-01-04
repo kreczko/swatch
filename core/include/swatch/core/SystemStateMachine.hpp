@@ -132,7 +132,7 @@ public:
 private:
   void runSteps(boost::shared_ptr<SystemBusyGuard> aGuard);
 
-  void changeState(const ActionableStatusGuard& lGuard);
+  void changeState(const ActionableStatusGuard& aGuard);
 
   SystemStateMachine& mFSM;
   ActionableSystem::StatusContainer& mStatusMap;

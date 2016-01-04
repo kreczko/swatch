@@ -34,7 +34,7 @@ public:
 
   XParameterSet();
 
-  XParameterSet(const XParameterSet& orig);
+  XParameterSet(const XParameterSet& aOther);
 
   virtual ~XParameterSet();
 
@@ -51,27 +51,27 @@ public:
   virtual std::set<std::string> keys() const = 0;
 
   //! Returns whether parameter with given name exists
-  virtual bool has( const std::string& name ) const = 0;
+  virtual bool has( const std::string& aName ) const = 0;
 
   //! Retrieve reference to parameter with specified name; throws XParameterNotFound if doesn't contain a parameter with specified name
-  virtual const xdata::Serializable& get( const std::string& name ) const = 0;
+  virtual const xdata::Serializable& get( const std::string& aName ) const = 0;
 
   //! Retrieve reference to parameter with specified name; throws XParameterNotFound if doesn't contain a parameter with specified name
-  virtual const xdata::Serializable& operator[]( const std::string& name ) const = 0;
+  virtual const xdata::Serializable& operator[]( const std::string& aName ) const = 0;
 
   //! Retrieve reference to parameter with specified name; throws XParameterFailedCast if dynamic cast fails; throws XParameterNotFound if doesn't contain a parameter with specified name
   template<typename T>
-  const T& get( const std::string& name ) const;
+  const T& get( const std::string& aName ) const;
   
   //! Retrieves string representation of parameter with specified name - i.e. the result of calling xdata::Serializable::toString() method; throws XParameterNotFound if doesn't contain a parameter with specified name
-  virtual std::string parameterAsString(const std::string& name) const = 0;
+  virtual std::string parameterAsString(const std::string& aName) const = 0;
 
   /**
    * Removes parameter of specified name from the list of variables.
    * 
-   * @param name ParameterSet entry to delete
+   * @param aName ParameterSet entry to delete
    */
-  virtual void erase( const std::string& name ) = 0;
+  virtual void erase( const std::string& aName ) = 0;
 
 };
 

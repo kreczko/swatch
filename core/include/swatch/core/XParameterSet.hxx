@@ -20,15 +20,15 @@ namespace core {
 
 //---
 template<typename T>
-const T& XParameterSet::get( const std::string& name ) const 
+const T& XParameterSet::get( const std::string& aName ) const 
 {
   BOOST_STATIC_ASSERT( (boost::is_base_of<xdata::Serializable,T>::value) ); 
   try{
-    return dynamic_cast<const T&>( get(name) );
+    return dynamic_cast<const T&>( get(aName) );
   }catch( const std::bad_cast& ){
-    const std::type_info* lFrom( &typeid(get(name)) );
+    const std::type_info* lFrom( &typeid(get(aName)) );
     const std::type_info* lTo( &typeid(T) );
-    throw XParameterFailedCast("Unable to cast '"+name+"' from '"+demangleName( lFrom->name() )+"' to '"+ demangleName( lTo->name() ) + "'" );
+    throw XParameterFailedCast("Unable to cast '"+aName+"' from '"+demangleName( lFrom->name() )+"' to '"+ demangleName( lTo->name() ) + "'" );
   }
 }
 

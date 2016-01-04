@@ -115,11 +115,11 @@ private:
      * Copy constructor
      * The object pointer is not copied but a new instance is created instead.
      * 
-     * @param orig Entry to copy from
+     * @param aOrig Entry to copy from
      */
-    XEntry( const XEntry& orig );
+    XEntry( const XEntry& aOrig );
 
-    bool operator==(const XEntry &other) const;
+    bool operator==(const XEntry& aOther) const;
     
     const std::type_info* typeinfo;
 
@@ -130,15 +130,15 @@ private:
   
   typedef boost::unordered_map<std::string, XEntry> EntryMap_t;
   
-  std::pair<EntryMap_t::iterator,bool> emplace( const std::string& name, const std::type_info* t, XCloner_t c, const boost::shared_ptr<xdata::Serializable>& s );
-  std::pair<EntryMap_t::iterator,bool> emplace( const std::string& name, const XEntry& );
+  std::pair<EntryMap_t::iterator,bool> emplace( const std::string& aName, const std::type_info* aType, XCloner_t aCloner, const boost::shared_ptr<xdata::Serializable>& aData );
+  std::pair<EntryMap_t::iterator,bool> emplace( const std::string& aName, const XEntry& );
 
   //! Map storing the values
   EntryMap_t mEntries;
   
   friend class ReadOnlyXParameterSet;
   
-  ReadWriteXParameterSet(const ReadWriteXParameterSet& orig); // non scopyable
+  ReadWriteXParameterSet(const ReadWriteXParameterSet& ); // non scopyable
   ReadWriteXParameterSet& operator=( const ReadWriteXParameterSet& ); // non copyable
 };
 

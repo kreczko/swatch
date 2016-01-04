@@ -133,7 +133,7 @@ public:
 
     void applyMonitoringSettings();
 
-    void changeState(const ActionableStatusGuard& lGuard);
+    void changeState(const ActionableStatusGuard& aGuard);
 
     StateMachine& mStateMachine;
     MutableActionableStatus& mActionableStatus;

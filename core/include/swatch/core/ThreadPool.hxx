@@ -9,12 +9,13 @@ namespace swatch {
 namespace core {
 
 template<class OBJECT, class ResourceGuardType>
-void ThreadPool::addTask(OBJECT* cmd,
-    boost::function<void(OBJECT*, boost::shared_ptr<ResourceGuardType>, const XParameterSet&)> function,
-    const boost::shared_ptr<ResourceGuardType>& resourceGuard,
-    const XParameterSet& param) {
+void ThreadPool::addTask(OBJECT* aCmd,
+    boost::function<void(OBJECT*, boost::shared_ptr<ResourceGuardType>, const XParameterSet&)> aFunction,
+    const boost::shared_ptr<ResourceGuardType>& aResourceGuard,
+    const XParameterSet& aParamSet)
+{
   // create packed_task
-  boost::packaged_task<void> task(boost::bind(function, cmd, resourceGuard, boost::ref(param)));
+  boost::packaged_task<void> task(boost::bind(aFunction, aCmd, aResourceGuard, boost::ref(aParamSet)));
   {
     // lock mutex
     boost::lock_guard<boost::mutex> guard(mQueueMutex);
@@ -28,9 +29,10 @@ void ThreadPool::addTask(OBJECT* cmd,
 }
 
 template<class OBJECT, class ResourceGuardType>
-void ThreadPool::addTask( OBJECT* cmd , boost::function<void(OBJECT*, boost::shared_ptr<ResourceGuardType>)> function, const boost::shared_ptr<ResourceGuardType>& resourceGuard ) {
+void ThreadPool::addTask( OBJECT* aCmd , boost::function<void(OBJECT*, boost::shared_ptr<ResourceGuardType>)> aFunction, const boost::shared_ptr<ResourceGuardType>& aResourceGuard )
+{
   // create packed_task
-  boost::packaged_task<void> task(boost::bind(function, cmd, resourceGuard));
+  boost::packaged_task<void> task(boost::bind(aFunction, aCmd, aResourceGuard));
   {
     // lock mutex
     boost::lock_guard<boost::mutex> guard(mQueueMutex);

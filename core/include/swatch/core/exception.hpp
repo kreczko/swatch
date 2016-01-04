@@ -43,20 +43,20 @@ public:
     /**
      * Overloaded constructor
      */
-    exception(const std::string& what);
+    exception(const std::string& aWhat);
 
     /**
      * Copy constructor
-     * @param e The to copy to build this exception object
+     * @param aOther The to copy to build this exception object
      */
-    exception(const exception& e) throw ();
+    exception(const exception& aOther) throw ();
 
     /**
      * Assignment operator
-     * @param e The exception object to assign to this one
+     * @param aOther The exception object to assign to this one
      * @return Reference to a new exception object
      */
-    exception& operator=(const exception& e) throw ();
+    exception& operator=(const exception& aOther) throw ();
 
     /**
      * Destructor. Destruction delegated to subclasses

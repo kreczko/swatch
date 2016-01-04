@@ -16,7 +16,7 @@
 
 namespace xdata {
 
-std::ostream& operator<< (std::ostream& stream, const xdata::Serializable& ser);
+std::ostream& operator<< (std::ostream& aStream, const xdata::Serializable& aSer);
 
 /*
  * xdata::SimpleType operators
@@ -26,18 +26,18 @@ std::ostream& operator<< (std::ostream& stream, const xdata::Serializable& ser);
  * operator==
  */
 template<typename T>
-int operator==(const xdata::SimpleType<T> & a, const xdata::SimpleType<T> & b) {
-    return const_cast<xdata::SimpleType<T>&>(a).operator ==(b);
+int operator==(const xdata::SimpleType<T> & aSer1, const xdata::SimpleType<T> & aSer2) {
+    return const_cast<xdata::SimpleType<T>&>(aSer1).operator ==(aSer2);
 }
 
 template<typename T>
-int operator==(const xdata::SimpleType<T> & a, const T & b) {
-    return const_cast<xdata::SimpleType<T>&>(a).operator ==(b);
+int operator==(const xdata::SimpleType<T> & aSer1, const T & aSer2) {
+    return const_cast<xdata::SimpleType<T>&>(aSer1).operator ==(aSer2);
 }
 
 template<typename T>
-int operator==(const T & a, const xdata::SimpleType<T> & b) {
-    return const_cast<xdata::SimpleType<T>&>(b).operator ==(a);
+int operator==(const T & aSer1, const xdata::SimpleType<T> & aSer2) {
+    return const_cast<xdata::SimpleType<T>&>(aSer2).operator ==(aSer1);
 }
 
 /*
@@ -47,15 +47,15 @@ int operator==(const T & a, const xdata::SimpleType<T> & b) {
  /*
  * operator==
  */
-int operator==(const xdata::String & a, const xdata::String & b);
+int operator==(const xdata::String & aStr1, const xdata::String & aStr2);
 
-int operator==(const xdata::String & a, const std::string & b);
+int operator==(const xdata::String & aStr1, const std::string & aStr2);
 
-int operator==(const xdata::String & a, const char* b);
+int operator==(const xdata::String & aStr1, const char* aStr2);
 
-int operator==(const std::string & a, const xdata::String & b);
+int operator==(const std::string & aStr1, const xdata::String & aStr2);
 
-int operator==(const char* & a, const xdata::String b);
+int operator==(const char* & aStr1, const xdata::String& bStr2);
 
 }
 

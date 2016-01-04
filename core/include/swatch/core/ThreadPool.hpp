@@ -37,8 +37,9 @@ class ThreadPool;
 class Worker {
 
 public:
-  Worker(ThreadPool &pool, bool run_until_queue_empty);
+  Worker(ThreadPool& aPool, bool aRunUntilQueueEmpty);
   void operator()();
+  
 private:
   ThreadPool &mPool;
   bool mRunUntilQueueEmpty;
@@ -61,7 +62,7 @@ public:
    * Returns an instance of a ThreadPool. Only one instance is allowed per program (SingleTon).
    * For information about the parameters, please see constructor documentation.
    */
-  static ThreadPool& getInstance(size_t n_threads = 1, bool run_until_queue_empty = false, bool force_thread_cancellation = false);
+  static ThreadPool& getInstance(size_t aNumThreads = 1, bool aRunUntilQueueEmpty = false, bool aForceThreadCancellation = false);
 
   /**
    * Terminates the current instance of the ThreadPool thus allowing
@@ -73,32 +74,32 @@ public:
 
   /**
    * Adds a task to the pool's queue.
-   * @param cmd: pointer to the object
-   * @param function: reference to the object function
-   * @param resourceGuard: shared pointer to RAII-style guard object corresponding for resource's "busy" state resource
-   * @param param: parameter set to be passed to the object function
+   * @param aCmd  pointer to the object
+   * @param aFunction  reference to the object function
+   * @param aResourceGuard  shared pointer to RAII-style guard object corresponding for resource's "busy" state resource
+   * @param aParamSet  parameter set to be passed to the object function
    */
   template<class OBJECT, class ResourceGuardType>
-  void addTask( OBJECT* cmd , boost::function<void(OBJECT*, boost::shared_ptr<ResourceGuardType>, const XParameterSet&)> function , const boost::shared_ptr<ResourceGuardType>& resourceGuard, const XParameterSet& param );
+  void addTask( OBJECT* aCmd , boost::function<void(OBJECT*, boost::shared_ptr<ResourceGuardType>, const XParameterSet&)> aFunction , const boost::shared_ptr<ResourceGuardType>& aResourceGuard, const XParameterSet& aParamSet );
 
 
   /**
    * Add a task to the pool's queue.
-   * @param cmd: pointer to the object
-   * @param function: reference to the object function
+   * @param aCmd  pointer to the object
+   * @param aFunction  reference to the object function
    */
   template<class OBJECT, class ResourceGuardType>
-  void addTask( OBJECT* cmd , boost::function<void(OBJECT*, boost::shared_ptr<ResourceGuardType>)> function, const boost::shared_ptr<ResourceGuardType>& resourceGuard );
+  void addTask( OBJECT* aCmd , boost::function<void(OBJECT*, boost::shared_ptr<ResourceGuardType>)> aFunction, const boost::shared_ptr<ResourceGuardType>& aResourceGuard );
 
 
 private:
   /**
    * ThreadPool constructor
-   * @param n_threads number of simultaneous threads
-   * @param run_until_queue_empty if true the pool will wait until the task queue is empty. Default is false
-   * @param force_thread_cancellation if true the pool will cancel all running threads when stopped. Default is false
+   * @param aNumThreads number of simultaneous threads
+   * @param aRunUntilQueueEmpty if true the pool will wait until the task queue is empty. Default is false
+   * @param aForceThreadCancellation if true the pool will cancel all running threads when stopped. Default is false
    */
-  ThreadPool(size_t n_threads = 1, bool run_until_queue_empty = false, bool force_thread_cancellation = false);
+  ThreadPool(size_t aNumThreads = 1, bool aRunUntilQueueEmpty = false, bool aForceThreadCancellation = false);
 
   ThreadPool(ThreadPool const&); // not implemented
   ThreadPool& operator=(ThreadPool const&); // not implemented

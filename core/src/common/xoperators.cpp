@@ -2,14 +2,15 @@
 
 namespace xdata {
 
-std::ostream& operator<< (std::ostream& stream, const xdata::Serializable& ser) {
+std::ostream& operator<< (std::ostream& aStream, const xdata::Serializable& aSer)
+{
 
     try {
-        stream << const_cast<xdata::Serializable&>(ser).toString();
+        aStream << const_cast<xdata::Serializable&>(aSer).toString();
     } catch ( const xdata::exception::Exception& ) { 
-        stream << "<" << swatch::core::demangleName(typeid(ser).name()) << ">";
+        aStream << "<" << swatch::core::demangleName(typeid(aSer).name()) << ">";
     }
-    return stream;
+    return aStream;
 }
 
 /*
@@ -20,24 +21,27 @@ std::ostream& operator<< (std::ostream& stream, const xdata::Serializable& ser) 
  * operator==
  */
  
-int operator==(const xdata::String & a, const xdata::String & b) {
-    return const_cast<xdata::String &>(a).operator ==(b);
+int operator==(const xdata::String & aStr1, const xdata::String & aStr2)
+{
+    return const_cast<xdata::String &>(aStr1).operator ==(aStr2);
 }
 
-int operator==(const xdata::String & a, const std::string & b) {
-    return const_cast<xdata::String &>(a).operator ==(b);
+int operator==(const xdata::String & aStr1, const std::string & aStr2)
+{
+    return const_cast<xdata::String &>(aStr1).operator ==(aStr2);
 }
 
-int operator==(const xdata::String & a, const char* b) {
-    return const_cast<xdata::String &>(a).operator ==(b);
+int operator==(const xdata::String & aStr1, const char* aStr2)
+{
+    return const_cast<xdata::String &>(aStr1).operator ==(aStr2);
 }
 
-int operator==(const std::string & a, const xdata::String & b) {
-    return const_cast<xdata::String &>(b).operator ==(a);
+int operator==(const std::string & aStr1, const xdata::String & aStr2) {
+    return const_cast<xdata::String &>(aStr2).operator ==(aStr1);
 }
 
-int operator==(const char* & a, const xdata::String b) {
-    return const_cast<xdata::String &>(b).operator ==(a);
+int operator==(const char* & aStr1, const xdata::String& aStr2) {
+    return const_cast<xdata::String &>(aStr2).operator ==(aStr1);
 }
 
 }

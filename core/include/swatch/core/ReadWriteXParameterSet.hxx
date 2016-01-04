@@ -24,7 +24,8 @@ namespace core {
 
 //---
 template<typename T>
-void ReadWriteXParameterSet::adopt( const std::string& name , const boost::shared_ptr<T>& data ) {
+void ReadWriteXParameterSet::adopt( const std::string& aName , const boost::shared_ptr<T>& aData )
+{
     BOOST_STATIC_ASSERT( (boost::is_base_of<xdata::Serializable,T>::value) ); 
     /*
     if ( entries_.count(name) ) {
@@ -35,10 +36,10 @@ void ReadWriteXParameterSet::adopt( const std::string& name , const boost::share
     // entries_.emplace( name, &typeid(T), static_cast<XCloner>(cloner_<T>), data );
     entries_[ name ] = XEntry(&typeid(T), static_cast<XCloner>(cloner_<T>), data) ;
     */
-    std::pair<EntryMap_t::iterator, bool> it = emplace( name, &typeid(T), static_cast<XCloner_t>(clone<T>), boost::shared_ptr<xdata::Serializable>(data) );
+    std::pair<EntryMap_t::iterator, bool> it = emplace( aName, &typeid(T), static_cast<XCloner_t>(clone<T>), boost::shared_ptr<xdata::Serializable>(aData) );
     // Throw if failed to emplace
     if ( !it.second )
-      throw XParameterExists(name + " is already defined");
+      throw XParameterExists(aName + " is already defined");
    
     //C+98 compliant
     /*
@@ -56,28 +57,30 @@ void ReadWriteXParameterSet::adopt( const std::string& name , const boost::share
 
 //---
 template<typename T>
-void ReadWriteXParameterSet::add( const std::string& name , const T& data ) {
+void ReadWriteXParameterSet::add( const std::string& aName , const T& aData )
+{
     BOOST_STATIC_ASSERT( (boost::is_base_of<xdata::Serializable,T>::value) ); 
     
     XCloner_t cloner = static_cast<XCloner_t>(clone<T>);
-    T* clone = static_cast<T*>(cloner(&data));
+    T* clone = static_cast<T*>(cloner(&aData));
 
-    adopt(name, boost::shared_ptr<T>(clone));
+    adopt(aName, boost::shared_ptr<T>(clone));
 }
 
 
 //---
 template<typename T>
-const T& ReadWriteXParameterSet::get( const std::string& name ) const
+const T& ReadWriteXParameterSet::get( const std::string& aName ) const
 { 
-  return this->XParameterSet::get<T>(name);
+  return this->XParameterSet::get<T>(aName);
 }
 
 
 //---
 template<typename T>
-xdata::Serializable* ReadWriteXParameterSet::clone( const xdata::Serializable* other ) {
-  const T* xother = dynamic_cast<const T*>(other); 
+xdata::Serializable* ReadWriteXParameterSet::clone( const xdata::Serializable* aOther )
+{
+  const T* xother = dynamic_cast<const T*>(aOther); 
   return new T(*xother);
 }
 
