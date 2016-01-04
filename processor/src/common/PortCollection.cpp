@@ -24,23 +24,23 @@ PortCollection::~PortCollection() {
 
 void PortCollection::addInput(InputPort* aInput) {
     this->addMonitorable(aInput);
-    inputs_.push_back(aInput);
+    mInputs.push_back(aInput);
 }
 
 
 void PortCollection::addOutput(OutputPort* aOutput) {
     this->addMonitorable(aOutput);
-    outputs_.push_back(aOutput);
+    mOutputs.push_back(aOutput);
 }
 
 
-uint32_t PortCollection::getNumInputs() const { return inputs_.size(); }
+uint32_t PortCollection::getNumInputs() const { return mInputs.size(); }
 
-uint32_t PortCollection::getNumOutputs() const { return outputs_.size(); }
+uint32_t PortCollection::getNumOutputs() const { return mOutputs.size(); }
 
-const std::deque<InputPort*>& PortCollection::getInputs() { return inputs_; }
+const std::deque<InputPort*>& PortCollection::getInputs() { return mInputs; }
 
-const std::deque<OutputPort*>& PortCollection::getOutputs() { return outputs_; }
+const std::deque<OutputPort*>& PortCollection::getOutputs() { return mOutputs; }
 
 
 InputPort& PortCollection::getInput( const std::string& aId )

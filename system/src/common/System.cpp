@@ -80,7 +80,7 @@ core::SystemStateMachine& RunControlFSM::addStates(core::SystemStateMachine& aFS
 //---
 System::System( const swatch::core::AbstractStub& aStub ) : 
   ActionableSystem(aStub.id, aStub.loggerName),
-  stub_(dynamic_cast<const swatch::system::SystemStub&>(aStub)),
+  mStub(dynamic_cast<const swatch::system::SystemStub&>(aStub)),
   mRunControlFSM( registerStateMachine(RunControlFSM::kId, RunControlFSM::kStateInitial, RunControlFSM::kStateError) )
 {
   addCrates();
@@ -98,43 +98,43 @@ System::~System() {
 
 //---
 const SystemStub& System::getStub() const {
-  return stub_;
+  return mStub;
 }
 
 
 //---
 const std::deque<processor::Processor*>& System::getProcessors() {
-  return processors_;
+  return mProcessors;
 }
 
 
 //---
 const std::deque<dtm::DaqTTCManager*>& System::getDaqTTCs() {
-  return daqTtc_;
+  return mDaqTtc;
 }
 
 
 //---
 const std::deque<Service*>& System::getServices() {
-  return services_;
+  return mServices;
 }
 
 
 //---
 const std::deque<processor::Link*>& System::getLinks() {
-  return links_;
+  return mLinks;
 }
 
 
 //---
 const System::CratesMap_t& System::getCrates() {
-  return cratesMap_;
+  return mCratesMap;
 }
 
 
 //---
 bool System::hasCrate(const std::string& crate_id) const{
-  return cratesMap_.find(crate_id) != cratesMap_.end();
+  return mCratesMap.find(crate_id) != mCratesMap.end();
 }
 
 
@@ -152,7 +152,7 @@ System::add(processor::Processor* aProcessor) {
   addActionable(aProcessor);
 
   // but keep it aside
-  processors_.push_back(aProcessor);
+  mProcessors.push_back(aProcessor);
 
   // and give it a different view
   std::string crateId = aProcessor->getCrateId();
@@ -162,7 +162,7 @@ System::add(processor::Processor* aProcessor) {
     throw runtime_error(ss.str());
   }
   else
-    cratesMap_[crateId]->add(aProcessor);
+    mCratesMap[crateId]->add(aProcessor);
 
   LOG(swlog::kDebug) <<  aProcessor->getId() <<  " added (path = " << aProcessor->getPath() <<  ")";
 }
@@ -178,20 +178,20 @@ System::add(dtm::DaqTTCManager* aAMC13) {
   addActionable(aAMC13);
 
   // but keep it aside
-  daqTtc_.push_back(aAMC13);
+  mDaqTtc.push_back(aAMC13);
   // Is this still a service?
 //    services_.push_back(aAMC13);
 
       // and give it a different view
   std::string crateId = aAMC13->getCrateId();
 
-  CratesMap_t::iterator cit = cratesMap_.find(crateId);
+  CratesMap_t::iterator cit = mCratesMap.find(crateId);
   if (!hasCrate(crateId)) {
     stringstream ss;
     ss << "System '" << this->getId() << "': Cannot find Crate " << crateId;
     throw runtime_error(ss.str());
   } else
-    cratesMap_[crateId]->add(aAMC13);
+    mCratesMap[crateId]->add(aAMC13);
 }
 
 
@@ -202,7 +202,7 @@ System::add(Service* aService) {
     throw std::invalid_argument("Service pointer is NULL!");
   
   this->addObj(aService);
-  services_.push_back(aService);
+  mServices.push_back(aService);
 }
 
 
@@ -212,7 +212,7 @@ System::add(processor::Link* aLink) {
   if (aLink == NULL)
     throw std::invalid_argument("Link pointer is NULL!");
   this->addObj(aLink);
-  links_.push_back(aLink);
+  mLinks.push_back(aLink);
 }
 
 
@@ -221,7 +221,7 @@ void System::add( Crate* crate ){
   if (crate == NULL)
     throw std::invalid_argument ("Crate pointer is NULL!");
   this->addObj(crate);
-  cratesMap_[crate->getId()] = crate;
+  mCratesMap[crate->getId()] = crate;
 }
 
 

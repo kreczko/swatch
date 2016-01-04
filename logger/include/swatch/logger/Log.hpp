@@ -41,7 +41,7 @@ public:
     Log();
     virtual ~Log();
     std::ostringstream& get(LogLevel level = kInfo);
-public:
+
     static LogLevel& logThreshold();
     static void setLogThreshold( LogLevel level ); 
     // static const std::string& toString(LogLevel level);
@@ -49,14 +49,13 @@ public:
 protected:
     void push( LogLevel level, const std::string& source, const std::string& message );
 
-    std::ostringstream os_;
+    std::ostringstream mOSStream;
 
 private:
     Log(const Log&);
     Log& operator=(const Log&);
 
-private:
-    LogLevel messageLevel_;
+    LogLevel mMessageLevel;
 
     static LogLevel sLogThreshold;
 

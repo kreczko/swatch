@@ -72,7 +72,7 @@ const std::vector<std::string> Processor::kDefaultMonitorableObjects = { "ttc", 
 Processor::Processor( const swatch::core::AbstractStub& aStub) :
     ActionableObject(aStub.id, aStub.loggerName),
     metricFirmwareVersion_( registerMetric<uint64_t>("firmwareVersion") ),
-    stub_(dynamic_cast<const processor::ProcessorStub&>(aStub)),
+    mStub(dynamic_cast<const processor::ProcessorStub&>(aStub)),
     mTTC(NULL),
     mReadout(NULL),
     mAlgo(NULL),
@@ -87,21 +87,21 @@ Processor::~Processor() {
 
 //---
 const ProcessorStub& Processor::getStub() const {
-  return stub_;
+  return mStub;
 }
 
 
 //---
 uint32_t
 Processor::getSlot() const {
-  return stub_.slot;
+  return mStub.slot;
 }
 
 
 //---
 const std::string&
 Processor::getCrateId() const {
-  return stub_.crate;
+  return mStub.crate;
 }
 
 
@@ -150,17 +150,17 @@ const std::vector<std::string>& Processor::getGateKeeperTables() const
 {
   // Can't set the table names in constructor, since don't know parent at that time ...
   // ... instead, have to set tables names first time this method is called
-  if( gateKeeperTables_.empty() )
+  if( mGateKeeperTables.empty() )
   {
-    gateKeeperTables_.push_back(getPath());
+    mGateKeeperTables.push_back(getPath());
 
     std::string basePath = getPath();
     basePath.resize(basePath.size() - getId().size());
-    gateKeeperTables_.push_back(basePath + getStub().role);
-    gateKeeperTables_.push_back(basePath + "processors");
-    gateKeeperTables_.push_back(basePath + getStub().hwtype);
+    mGateKeeperTables.push_back(basePath + getStub().role);
+    mGateKeeperTables.push_back(basePath + "processors");
+    mGateKeeperTables.push_back(basePath + getStub().hwtype);
   }
-  return gateKeeperTables_;
+  return mGateKeeperTables;
 }
 
 

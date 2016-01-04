@@ -43,7 +43,7 @@ public:
     
     processor::Processor* amc( uint32_t slot );
     
-    dtm::DaqTTCManager* amc13() { return amc13_; }
+    dtm::DaqTTCManager* amc13() { return mAMC13; }
     
     std::vector<uint32_t> getPopulatedSlots() const;
     
@@ -53,13 +53,15 @@ public:
     const CrateStub& getStub() const;
     
 private:
-    CrateStub stub_;
-    Service* mch_;
-    dtm::DaqTTCManager* amc13_;
-    std::vector<processor::Processor*> amcs_;
-    
-    uint32_t min_;
-    uint32_t max_;
+    CrateStub mStub;
+    Service* mMCH;
+    dtm::DaqTTCManager* mAMC13;
+    std::vector<processor::Processor*> mAMCs;
+
+    //! Lowest possible slot number for a processor
+    const uint32_t mMinSlot;
+    //! Highest possible slot number for a processor
+    const uint32_t mMaxSlot;
     
     friend class System;    
     friend std::ostream& (operator<<) (std::ostream& os, const swatch::system::Crate& cv);

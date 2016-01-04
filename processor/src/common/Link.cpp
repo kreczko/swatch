@@ -14,11 +14,11 @@ namespace processor {
 
 Link::Link(const std::string& aId, OutputPort* aSrc, InputPort* aDst) :
     ObjectView( aId ), 
-    src_(aSrc), 
-    dst_(aDst)
+    mSrc(aSrc), 
+    mDst(aDst)
 {
-    this->addObj(src_, "src");
-    this->addObj(dst_, "dst");
+    this->addObj(mSrc, "src");
+    this->addObj(mDst, "dst");
 }
 
 Link::~Link() {   

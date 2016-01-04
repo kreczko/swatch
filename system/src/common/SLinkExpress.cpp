@@ -17,7 +17,7 @@ namespace dtm {
 // --------------------------------------------------------
 SLinkExpress::SLinkExpress( uint32_t aSfpId ) : 
   swatch::core::MonitorableObject(swatch::core::strPrintf("slinkXp%d",aSfpId)),
-  sfpID(aSfpId) {
+  mSfpID(aSfpId) {
 }
 
 

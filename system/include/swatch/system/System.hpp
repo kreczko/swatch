@@ -145,22 +145,22 @@ private:
     void addDaqTTCs();
     void addLinks();
 
-    const SystemStub stub_;
+    const SystemStub mStub;
 
     //! List of processors
-    std::deque<processor::Processor*> processors_;
+    std::deque<processor::Processor*> mProcessors;
     
     //! List of AMC13s
-    std::deque<dtm::DaqTTCManager*> daqTtc_;
+    std::deque<dtm::DaqTTCManager*> mDaqTtc;
     
     //! List of services
-    std::deque<Service*> services_;
+    std::deque<Service*> mServices;
     
     //! List of internal links
-    std::deque<processor::Link*> links_; 
+    std::deque<processor::Link*> mLinks; 
 
     //! Map of crates
-    CratesMap_t cratesMap_;
+    CratesMap_t mCratesMap;
     
     RunControlFSM mRunControlFSM;
 };

@@ -160,10 +160,10 @@ public:
     std::string getResultAsString() const;
     
 private:
-    float progress_;
-    std::string statusMsg_;
-    ReadOnlyXParameterSet params_;
-    boost::shared_ptr<xdata::Serializable> result_;
+    float mProgress;
+    std::string mStatusMsg;
+    ReadOnlyXParameterSet mParams;
+    boost::shared_ptr<xdata::Serializable> mResult;
 };
 
 } // namespace core

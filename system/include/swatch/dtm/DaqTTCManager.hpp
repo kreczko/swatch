@@ -132,9 +132,9 @@ protected:
   RunControlFSM& getRunControlFSM();
 
 private:
-  DaqTTCStub stub_;
+  DaqTTCStub mStub;
 
-  mutable std::vector<std::string> gateKeeperTables_;
+  mutable std::vector<std::string> mGateKeeperTables;
   
   //!
   TTCInterface* mTTC;

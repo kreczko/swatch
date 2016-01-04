@@ -33,28 +33,28 @@ const char* const Log::kLogNames[] = {
 
 
 Log::Log() :
-  messageLevel_(LogLevel::kError) {
+  mMessageLevel(LogLevel::kError) {
 }
 
 Log::Log(const Log&) :
-  messageLevel_(LogLevel::kError) {
+  mMessageLevel(LogLevel::kError) {
 }
 
 Log::~Log() {
-  if (messageLevel_ <= logThreshold()) {
-    push(messageLevel_, "swatch", os_.str().c_str());
+  if (mMessageLevel <= logThreshold()) {
+    push(mMessageLevel, "swatch", mOSStream.str().c_str());
   }
 }
 
 std::ostringstream&
 Log::get(LogLevel level) {
-  messageLevel_ = level;
-  return os_;
+  mMessageLevel = level;
+  return mOSStream;
 }
 
 void
 Log::push(LogLevel level, const std::string& source, const std::string& message) {
-  Logger::log(messageLevel_, message);
+  Logger::log(mMessageLevel, message);
 }
 
 LogLevel& Log::logThreshold() {

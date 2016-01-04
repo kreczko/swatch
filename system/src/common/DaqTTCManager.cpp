@@ -63,13 +63,13 @@ const std::vector<std::string> DaqTTCManager::defaultMonitorableObjects = {"ttc"
 
 DaqTTCManager::DaqTTCManager(const swatch::core::AbstractStub& aStub ) : 
   swatch::core::ActionableObject(aStub.id, aStub.loggerName),
-  stub_(dynamic_cast<const DaqTTCStub&>(aStub)),
+  mStub(dynamic_cast<const DaqTTCStub&>(aStub)),
   mTTC(0x0),
   mSLink(0x0),
   mAMCPorts(0x0),
   mEvb(0x0),
   mRunControlFSM( registerStateMachine(RunControlFSM::kId, RunControlFSM::kStateInitial, RunControlFSM::kStateError) ),
-  daqMetricFedId_( registerMetric<uint16_t>("fedId", core::NotEqualCondition<uint16_t>(stub_.fedId)) )
+  daqMetricFedId_( registerMetric<uint16_t>("fedId", core::NotEqualCondition<uint16_t>(mStub.fedId)) )
 {
 }
 
@@ -79,25 +79,25 @@ DaqTTCManager::~DaqTTCManager() {
 
 
 const DaqTTCStub& DaqTTCManager::getStub() const {
-  return stub_;
+  return mStub;
 }
 
 
 uint32_t
 DaqTTCManager::getSlot() const {
-  return stub_.slot; 
+  return mStub.slot; 
 }
 
 
 const
 std::string& DaqTTCManager::getCrateId() const {
-  return stub_.crate;
+  return mStub.crate;
 }
 
 
 uint16_t
 DaqTTCManager::getFedId() const {
-  return stub_.fedId;
+  return mStub.fedId;
 }
 
 const std::vector<std::string>&
@@ -105,16 +105,16 @@ DaqTTCManager::getGateKeeperTables() const
 {
   // Can't set the table names in constructor, since don't know parent at that time ...
   // ... instead, have to set tables names first time this method is called
-  if( gateKeeperTables_.empty() )
+  if( mGateKeeperTables.empty() )
   {
-    gateKeeperTables_.push_back(getPath());
+    mGateKeeperTables.push_back(getPath());
 
     std::string basePath = getPath();
     basePath.resize(basePath.size() - getId().size());
-    gateKeeperTables_.push_back(basePath + getStub().role);
-    gateKeeperTables_.push_back(basePath + "daqttcs");
+    mGateKeeperTables.push_back(basePath + getStub().role);
+    mGateKeeperTables.push_back(basePath + "daqttcs");
   }
-  return gateKeeperTables_;
+  return mGateKeeperTables;
 }
 
 

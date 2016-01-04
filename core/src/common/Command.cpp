@@ -242,10 +242,10 @@ ReadOnlyXParameterSet Command::mergeParametersWithDefaults( const XParameterSet&
 //------------------------------------------------------------------------------------
 CommandStatus::CommandStatus(const std::string& aPath, ActionStatus::State aState, float aRunningTime, float aProgress, const std::string& aStatusMsg, const ReadOnlyXParameterSet& aParams, const boost::shared_ptr<xdata::Serializable>& aResult) :
   ActionStatus(aPath, aState, aRunningTime),
-  progress_(aProgress),
-  statusMsg_(aStatusMsg),
-  params_(aParams),
-  result_(aResult)
+  mProgress(aProgress),
+  mStatusMsg(aStatusMsg),
+  mParams(aParams),
+  mResult(aResult)
 {
 }
 
@@ -253,34 +253,34 @@ CommandStatus::CommandStatus(const std::string& aPath, ActionStatus::State aStat
 //------------------------------------------------------------------------------------
 float
 CommandStatus::getProgress() const {
-  return progress_;
+  return mProgress;
 }
 
 
 //------------------------------------------------------------------------------------
 const
 std::string& CommandStatus::getStatusMsg() const {
-  return statusMsg_;
+  return mStatusMsg;
 }
 
 
 //------------------------------------------------------------------------------------
 const XParameterSet& CommandStatus::getParameters() const {
-  return params_;
+  return mParams;
 }
 
     
 //------------------------------------------------------------------------------------
 const xdata::Serializable*
 const CommandStatus::getResult() const {
-  return result_.get();
+  return mResult.get();
 }
 
 
 //------------------------------------------------------------------------------------
 std::string
 CommandStatus::getResultAsString() const {
-  return result_->toString();
+  return mResult->toString();
 }
 
 

@@ -20,8 +20,7 @@ public:
 
 protected:
 
-  uint32_t sfpID;
-
+  const uint32_t mSfpID;
 };
 
 } // namespace dtm

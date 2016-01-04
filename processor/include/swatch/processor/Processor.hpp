@@ -150,7 +150,7 @@ protected:
     RunControlFSM& getRunControlFSM();
     
 private:
-    const ProcessorStub stub_;
+    const ProcessorStub mStub;
 
     //! TTC control interface
     TTCInterface* mTTC;
@@ -164,7 +164,7 @@ private:
     //! Optical link interface
     PortCollection* mPorts;
 
-    mutable std::vector<std::string> gateKeeperTables_;
+    mutable std::vector<std::string> mGateKeeperTables;
     
     RunControlFSM mRunControlFSM;
 

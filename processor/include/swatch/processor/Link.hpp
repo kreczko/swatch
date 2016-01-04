@@ -24,13 +24,13 @@ public:
 
     ~Link();
     
-    OutputPort* getSrc() { return src_; }
+    OutputPort* getSrc() { return mSrc; }
 
-    InputPort* getDst() { return dst_; }
+    InputPort* getDst() { return mDst; }
     
 protected:
-    OutputPort* src_;
-    InputPort* dst_;
+    OutputPort* mSrc;
+    InputPort* mDst;
 };
 
 

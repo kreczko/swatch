@@ -56,8 +56,8 @@ protected:
     void retrieveMetricValues() {}
 
 private:
-    InputPortDeque_t inputs_;
-    OutputPortDeque_t outputs_;
+    InputPortDeque_t mInputs;
+    OutputPortDeque_t mOutputs;
 };
 
 }
