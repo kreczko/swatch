@@ -25,5 +25,5 @@ AMCPortCollection::addPort(AMCPort* aAMCPort) {
 }
 
 
-} // namespace amc13
+} // namespace dtm
 } // namespace swatch 

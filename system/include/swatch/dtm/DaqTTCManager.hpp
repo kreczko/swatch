@@ -156,7 +156,7 @@ protected:
   core::Metric<uint16_t>& daqMetricFedId_;
   
 private:
-  DaqTTCManager( const DaqTTCManager& other ); // non copyable
+  DaqTTCManager( const DaqTTCManager& ); // non copyable
   DaqTTCManager& operator=( const DaqTTCManager& ); // non copyable
 
 };

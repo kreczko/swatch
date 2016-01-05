@@ -15,23 +15,23 @@ namespace swatch {
 namespace dtm {
 
 
-std::ostream& operator<<(std::ostream& os, const swatch::dtm::DaqTTCStub& sd ) {
-    
-    os << "DaqTTCStub[" << sd.id << "]:\n"
-       << "   - Uses creator = " << sd.creator << "\n"
-       << "   - Uri [T1] = " << sd.uriT1 << "\n"
-       << "   - Address Table [T1] = " << sd.addressTableT1 << "\n"
-       << "   - Uri [T2] = " << sd.uriT2 << "\n"
-       << "   - Address Table [T2] = " << sd.addressTableT2 << "\n"
-       << "   - Crate ID = " << sd.crate << "\n"
-       << "   - Crate Slot = " << sd.slot 
-       << "   - FED ID = " << sd.fedId << "\n"
-       << "   - AMC SLOTS = " << swatch::logger::shortVecFmt(sd.amcSlots)
+std::ostream& operator<<(std::ostream& aStream, const swatch::dtm::DaqTTCStub& aStub )
+{
+    aStream << "DaqTTCStub[" << aStub.id << "]:\n"
+       << "   - Uses creator = " << aStub.creator << "\n"
+       << "   - Uri [T1] = " << aStub.uriT1 << "\n"
+       << "   - Address Table [T1] = " << aStub.addressTableT1 << "\n"
+       << "   - Uri [T2] = " << aStub.uriT2 << "\n"
+       << "   - Address Table [T2] = " << aStub.addressTableT2 << "\n"
+       << "   - Crate ID = " << aStub.crate << "\n"
+       << "   - Crate Slot = " << aStub.slot 
+       << "   - FED ID = " << aStub.fedId << "\n"
+       << "   - AMC SLOTS = " << logger::shortVecFmt(aStub.amcSlots)
        << std::flush;
 
-    return os;
+    return aStream;
 }
 
 
-} // namespace system
+} // namespace dtm
 } // namespace swatch

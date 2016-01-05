@@ -62,7 +62,7 @@ public:
 };
 
 
-std::ostream& operator<<(std::ostream& os, const swatch::dtm::DaqTTCStub& sd);
+std::ostream& operator<<(std::ostream& aStream, const swatch::dtm::DaqTTCStub& aStub);
 
 
 } // namespace system

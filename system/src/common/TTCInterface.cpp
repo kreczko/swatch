@@ -23,5 +23,5 @@ TTCInterface::TTCInterface() :
 TTCInterface::~TTCInterface() {
 }
 
-} //namespace amc13
+} // namespace dtm
 } // namespace swatch 

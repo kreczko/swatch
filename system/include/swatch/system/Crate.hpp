@@ -30,7 +30,7 @@ namespace system {
 class Crate;
 class Service;
 
-std::ostream& operator<<(std::ostream& os, const swatch::system::Crate& cv);
+std::ostream& operator<<(std::ostream& aStream, const swatch::system::Crate& aCrate);
 
 //! Provides a view on the SWATCH objects in a crate. It doesn't own the objects it points to.
 class Crate : public core::ObjectView {
@@ -64,7 +64,7 @@ private:
     const uint32_t mMaxSlot;
     
     friend class System;    
-    friend std::ostream& (operator<<) (std::ostream& os, const swatch::system::Crate& cv);
+    friend std::ostream& (operator<<) (std::ostream& aStream, const swatch::system::Crate& aCrate);
 };
 
 DEFINE_SWATCH_EXCEPTION(CrateSlotTaken);

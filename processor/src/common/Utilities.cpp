@@ -28,7 +28,8 @@ namespace processor {
 //swatch::core::XParameterSet
 //treeToProcessorPars(const boost::property_tree::ptree& t) {
 ProcessorStub
-treeToProcessorStub(const boost::property_tree::ptree& t) {
+treeToProcessorStub(const boost::property_tree::ptree& aPTree)
+{
   
     // Fill the stub with basic info
     /*
@@ -43,23 +44,23 @@ treeToProcessorStub(const boost::property_tree::ptree& t) {
      */
   
   
-    ProcessorStub pStub(t.get<std::string>("NAME"));
-    pStub.creator      = t.get<std::string>("CREATOR");
-    pStub.hwtype       = t.get<std::string>("HARDWARE TYPE");
-    pStub.role         = t.get<std::string>("ROLE");
-    pStub.uri          = t.get<std::string>("URI");
-    pStub.addressTable = t.get<std::string>("ADDRESS TABLE");
-    pStub.crate        = t.get<std::string>("CRATE NAME");
-    pStub.slot         = t.get<uint32_t>("CRATE SLOT");
+    ProcessorStub pStub(aPTree.get<std::string>("NAME"));
+    pStub.creator      = aPTree.get<std::string>("CREATOR");
+    pStub.hwtype       = aPTree.get<std::string>("HARDWARE TYPE");
+    pStub.role         = aPTree.get<std::string>("ROLE");
+    pStub.uri          = aPTree.get<std::string>("URI");
+    pStub.addressTable = aPTree.get<std::string>("ADDRESS TABLE");
+    pStub.crate        = aPTree.get<std::string>("CRATE NAME");
+    pStub.slot         = aPTree.get<uint32_t>("CRATE SLOT");
     
     // Iterate over rx ports list
-    BOOST_FOREACH(const boost::property_tree::ptree::value_type& rxPortInfo, t.get_child("RX PORTS"))
+    BOOST_FOREACH(const boost::property_tree::ptree::value_type& rxPortInfo, aPTree.get_child("RX PORTS"))
     {
       expandPortSliceSyntax(rxPortInfo.second.get<std::string>("NAME"), rxPortInfo.second.get<std::string>("PID"), pStub.rxPorts);
     }
     
     // Iterate over tx ports list
-    BOOST_FOREACH(const boost::property_tree::ptree::value_type& txPortInfo, t.get_child("TX PORTS"))
+    BOOST_FOREACH(const boost::property_tree::ptree::value_type& txPortInfo, aPTree.get_child("TX PORTS"))
     {
       expandPortSliceSyntax(txPortInfo.second.get<std::string>("NAME"), txPortInfo.second.get<std::string>("PID"), pStub.txPorts);
     }
@@ -81,17 +82,17 @@ treeToProcessorStub(const boost::property_tree::ptree& t) {
 }
 
 
-void treeToLinkStub(const boost::property_tree::ptree& t, std::vector<LinkStub>& linkBags) 
+void treeToLinkStub(const boost::property_tree::ptree& aPTree, std::vector<LinkStub>& aLinkStubs) 
 {
-    const std::string name = t.get<std::string>("NAME");
-    const std::string src = t.get<std::string>("FROM");
-    const std::string dst = t.get<std::string>("TO");
+    const std::string name = aPTree.get<std::string>("NAME");
+    const std::string src = aPTree.get<std::string>("FROM");
+    const std::string dst = aPTree.get<std::string>("TO");
   
-    expandLinkSliceSyntax(name, src, dst, linkBags);
+    expandLinkSliceSyntax(name, src, dst, aLinkStubs);
 }
 
 
-void expandLinkSliceSyntax(const std::string& aName, const std::string& aSrc, const std::string& aDst, std::vector<swatch::processor::LinkStub>& aLinkStubVector)
+void expandLinkSliceSyntax(const std::string& aName, const std::string& aSrc, const std::string& aDst, std::vector<LinkStub>& aLinkStubs)
 {
     std::vector<std::string> names = expandPortSliceSyntax(aName);
     std::vector<std::string> src = expandPortSliceSyntax(aSrc);
@@ -107,12 +108,12 @@ void expandLinkSliceSyntax(const std::string& aName, const std::string& aSrc, co
         LinkStub b(names.at(i));
         b.src = src.at(i);
         b.dst = dst.at(i);
-        aLinkStubVector.push_back(b);
+        aLinkStubs.push_back(b);
     }
 }
 
 
-void expandPortSliceSyntax(const std::string& aName, const std::string& aIndex, std::vector<swatch::processor::ProcessorPortStub>& aPortStubVector)
+void expandPortSliceSyntax(const std::string& aName, const std::string& aIndex, std::vector<ProcessorPortStub>& aPortStubs)
 {
     std::vector<std::string> names = expandPortSliceSyntax(aName);
     std::vector<std::string> indices = expandPortSliceSyntax(aIndex);
@@ -128,7 +129,7 @@ void expandPortSliceSyntax(const std::string& aName, const std::string& aIndex, 
        */
       ProcessorPortStub b(names.at(i));
       b.number = boost::lexical_cast<unsigned>(indices.at(i));
-      aPortStubVector.push_back(b);
+      aPortStubs.push_back(b);
     }
 }
 

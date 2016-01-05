@@ -17,19 +17,19 @@ ProcessorStub::ProcessorStub(const std::string& aId) :
   slot(Processor::kNoSlot)
 { }
   
-std::ostream& operator<<(std::ostream& os, const swatch::processor::ProcessorStub& pd ) {
-    
-    os << "ProcessorDescriptor[" << pd.id << "]:\n"
-       << "   - User creator = " << pd.creator << "\n"
-       << "   - Hardware type = " << pd.hwtype << "\n"
-       << "   - Role = " << pd.role << "\n"
-       << "   - Uri = " << pd.uri << "\n"
-       << "   - Address table = " << pd.addressTable << "\n"
-       << "   - Crate ID = " << pd.crate << "\n"
-       << "   - Crate Slot = " << pd.slot 
+std::ostream& operator<<(std::ostream& aStream, const swatch::processor::ProcessorStub& aStub )
+{
+    aStream << "ProcessorDescriptor[" << aStub.id << "]:\n"
+       << "   - User creator = " << aStub.creator << "\n"
+       << "   - Hardware type = " << aStub.hwtype << "\n"
+       << "   - Role = " << aStub.role << "\n"
+       << "   - Uri = " << aStub.uri << "\n"
+       << "   - Address table = " << aStub.addressTable << "\n"
+       << "   - Crate ID = " << aStub.crate << "\n"
+       << "   - Crate Slot = " << aStub.slot 
        << std::flush;
 
-    return os;
+    return aStream;
 }
 
 } // namespace processor

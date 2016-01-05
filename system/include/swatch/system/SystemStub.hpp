@@ -48,7 +48,7 @@ public:
 };
 
 
-std::ostream& operator<<(std::ostream& os, const swatch::system::SystemStub& sd);
+std::ostream& operator<<(std::ostream& aStream, const swatch::system::SystemStub& aStub);
 
 
 } // namespace system

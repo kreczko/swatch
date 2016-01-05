@@ -34,7 +34,7 @@ public:
 };
 
 
-std::ostream& operator<<(std::ostream& os, const swatch::system::CrateStub& sd);
+std::ostream& operator<<(std::ostream& aStream, const swatch::system::CrateStub& aStub);
 
 } // namespace system
 } // namespace swatch

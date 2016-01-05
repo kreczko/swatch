@@ -133,8 +133,8 @@ const System::CratesMap_t& System::getCrates() {
 
 
 //---
-bool System::hasCrate(const std::string& crate_id) const{
-  return mCratesMap.find(crate_id) != mCratesMap.end();
+bool System::hasCrate(const std::string& aCrateId) const{
+  return mCratesMap.find(aCrateId) != mCratesMap.end();
 }
 
 

@@ -76,20 +76,21 @@ Crate::add(processor::Processor* aProcessor) {
 
 
 processor::Processor*
-Crate::amc(uint32_t slot) {
-
-    if (slot < mMinSlot || slot > mMaxSlot) {
+Crate::amc(uint32_t aSlot)
+{
+    if (aSlot < mMinSlot || aSlot > mMaxSlot) {
         stringstream ss;
-        ss << "Crate '"<< getId() << "': Slot " << slot << " out of range";
+        ss << "Crate '"<< getId() << "': Slot " << aSlot << " out of range";
         
         throw CrateSlotOutOfRange(ss.str());
     }
-    return mAMCs[slot-mMinSlot];
+    return mAMCs[aSlot-mMinSlot];
 }
 
 
 std::vector<uint32_t>
-Crate::getPopulatedSlots() const {
+Crate::getPopulatedSlots() const
+{
     std::vector<uint32_t> slots = getAMCSlots();
     
     if ( mAMC13 ) slots.push_back(mAMC13->getSlot());
@@ -98,7 +99,8 @@ Crate::getPopulatedSlots() const {
 
 
 std::vector<uint32_t>
-Crate::getAMCSlots() const {
+Crate::getAMCSlots() const
+{
     std::vector<uint32_t> slots;
     BOOST_FOREACH( processor::Processor* p, mAMCs ) {
         if (p) slots.push_back(p->getSlot());
@@ -108,23 +110,26 @@ Crate::getAMCSlots() const {
 }
 
 
-bool Crate::isAMCSlotTaken( uint32_t slot ) const {
-  return mAMCs[slot - mMinSlot] != NULL;
+bool Crate::isAMCSlotTaken( uint32_t aSlot ) const
+{
+  return mAMCs[aSlot - mMinSlot] != NULL;
 }
 
 
-const CrateStub& Crate::getStub() const {
+const CrateStub& Crate::getStub() const
+{
   return mStub; 
 }
 
 
 std::ostream&
-operator<<(std::ostream& os, const swatch::system::Crate& cv) {
-    os << "mch(" << cv.mMCH << ") amc13(" << cv.mAMC13 << ")";
-    for ( uint8_t i = cv.mMinSlot; i < cv.mMaxSlot; ++i ) {
-        os << " amc[" << (int)i << "](" << cv.mAMCs[i] << ")"; 
+operator<<(std::ostream& aStream, const swatch::system::Crate& aCrate)
+{
+    aStream << "mch(" << aCrate.mMCH << ") amc13(" << aCrate.mAMC13 << ")";
+    for ( uint8_t i = aCrate.mMinSlot; i < aCrate.mMaxSlot; ++i ) {
+        aStream << " amc[" << (int)i << "](" << aCrate.mAMCs[i] << ")"; 
     }
-    return os;
+    return aStream;
 }
 
 

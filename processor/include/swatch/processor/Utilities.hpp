@@ -20,16 +20,16 @@ namespace swatch {
 namespace processor {
 
 //swatch::core::XParameterSet treeToProcessorPars(const boost::property_tree::ptree& t);
-ProcessorStub treeToProcessorStub(const boost::property_tree::ptree& t);
+ProcessorStub treeToProcessorStub(const boost::property_tree::ptree& aPTree);
 
 
-void treeToLinkStub(const boost::property_tree::ptree& t, std::vector<LinkStub>& aLikStubs);
+void treeToLinkStub(const boost::property_tree::ptree& aPTree, std::vector<LinkStub>& aLinkStubs);
 
 
-void expandLinkSliceSyntax(const std::string& aName, const std::string& aSrc, const std::string& aDst, std::vector<swatch::processor::LinkStub>& aPortStubVector);
+void expandLinkSliceSyntax(const std::string& aName, const std::string& aSrc, const std::string& aDst, std::vector<LinkStub>& aLinkStubs);
 
 
-void expandPortSliceSyntax(const std::string& aName, const std::string& aIndex, std::vector<swatch::processor::ProcessorPortStub>& aPortStubVector);
+void expandPortSliceSyntax(const std::string& aName, const std::string& aIndex, std::vector<ProcessorPortStub>& aPortStubs);
 
 
 std::vector<std::string> expandPortSliceSyntax(const std::string& aString);

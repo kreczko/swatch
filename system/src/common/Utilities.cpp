@@ -22,19 +22,20 @@ namespace dtm {
 
 //---
 swatch::dtm::DaqTTCStub
-treeToDaqTTCStub(const boost::property_tree::ptree& t) {
-    DaqTTCStub aStub(t.get<std::string>("NAME"));
+treeToDaqTTCStub(const boost::property_tree::ptree& aPTree)
+{
+    DaqTTCStub aStub(aPTree.get<std::string>("NAME"));
 
-    aStub.creator        = t.get<std::string>("CREATOR");
-    aStub.role           = t.get<std::string>("ROLE");
-    aStub.uriT1          = t.get<std::string>("URI T1");
-    aStub.addressTableT1 = t.get<std::string>("ADDRESS TABLE T1"); // FIXME
-    aStub.uriT2          = t.get<std::string>("URI T2");
-    aStub.addressTableT2 = t.get<std::string>("ADDRESS TABLE T2"); // FIXME
-    aStub.crate          = t.get<std::string>("CRATE NAME");
-    aStub.slot           = t.get<uint32_t>("CRATE SLOT");
-    aStub.fedId          = t.get<uint16_t>("FED ID");
-    BOOST_FOREACH( const auto &v, t.get_child("AMC SLOTS")) {
+    aStub.creator        = aPTree.get<std::string>("CREATOR");
+    aStub.role           = aPTree.get<std::string>("ROLE");
+    aStub.uriT1          = aPTree.get<std::string>("URI T1");
+    aStub.addressTableT1 = aPTree.get<std::string>("ADDRESS TABLE T1"); // FIXME
+    aStub.uriT2          = aPTree.get<std::string>("URI T2");
+    aStub.addressTableT2 = aPTree.get<std::string>("ADDRESS TABLE T2"); // FIXME
+    aStub.crate          = aPTree.get<std::string>("CRATE NAME");
+    aStub.slot           = aPTree.get<uint32_t>("CRATE SLOT");
+    aStub.fedId          = aPTree.get<uint16_t>("FED ID");
+    BOOST_FOREACH( const auto &v, aPTree.get_child("AMC SLOTS")) {
       aStub.amcSlots.emplace_back(
         v.second.get_value<uint32_t>()
       );
@@ -42,7 +43,7 @@ treeToDaqTTCStub(const boost::property_tree::ptree& t) {
     return aStub;
 }
 
-} // namespace system
+} // namespace dtm
 } // namespace swatch
 
 
@@ -52,12 +53,12 @@ namespace system {
 
 //---
 swatch::system::CrateStub
-treeToCrateStub(const boost::property_tree::ptree& t) {
+treeToCrateStub(const boost::property_tree::ptree& aPTree) {
 
-    CrateStub astub(t.get<std::string>("NAME"));
+    CrateStub astub(aPTree.get<std::string>("NAME"));
     
-    astub.location = t.get<std::string>("LOCATION");
-    astub.description = t.get<std::string>("DESCRIPTION");
+    astub.location = aPTree.get<std::string>("LOCATION");
+    astub.description = aPTree.get<std::string>("DESCRIPTION");
     
     return astub;
 }
@@ -65,8 +66,8 @@ treeToCrateStub(const boost::property_tree::ptree& t) {
 
 //---
 swatch::system::SystemStub 
-treeToSystemPars( const boost::property_tree::ptree& t ) {
-
+treeToSystemPars( const boost::property_tree::ptree& t )
+{
     using boost::property_tree::ptree;
     using boost::property_tree::json_parser::read_json;
 

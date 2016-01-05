@@ -68,7 +68,7 @@ public:
   std::vector<ProcessorPortStub> txPorts;
 };
 
-std::ostream& operator<<(std::ostream& os, const swatch::processor::ProcessorStub& pd);
+std::ostream& operator<<(std::ostream& aStream, const swatch::processor::ProcessorStub& aStub);
 
 
 } // namespace processor

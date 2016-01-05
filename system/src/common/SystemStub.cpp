@@ -14,14 +14,14 @@ namespace swatch {
 namespace system {
 
   
-std::ostream& operator<<(std::ostream& os, const swatch::system::SystemStub& sd ) {
+std::ostream& operator<<(std::ostream& aStream, const swatch::system::SystemStub& aStub ) {
 
-  os << "SystemStub[" << sd.id << "]:\n"
+  aStream << "SystemStub[" << aStub.id << "]:\n"
 //       << "   - Location = " << sd.location << "\n"
 //       << "   - Description = " << sd.description << "\n"
      << std::flush;
 
-  return os;
+  return aStream;
 }
 
 
