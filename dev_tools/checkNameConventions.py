@@ -145,8 +145,8 @@ class VariableInspector(Inspector):
     _publicMemberRegex = re.compile("^[a-z][a-zA-Z0-9]+$")
     # Const static member data / global variables: kCamelCase / sCamelCase
     _staticMemberRegex = re.compile("^[ks][A-Z][a-zA-Z0-9]+$")
-    # Arguments: aCamelCase
-    _argumentRegex = re.compile("^a[A-Z][a-zA-Z0-9]+$")
+    # Parameters: aCamelCase
+    _parameterRegex = re.compile("^a[A-Z][a-zA-Z0-9]+$")
     # Local variables: lCamelCase
     _localRegex = re.compile("^l[A-Z][a-zA-Z0-9]+$")
 
@@ -163,7 +163,7 @@ class VariableInspector(Inspector):
              warnCondition = None
 
              if v.isArgument:
-                 errorCondition = ('ARGUMENT', VariableInspector._argumentRegex)
+                 errorCondition = ('PARAMETER', VariableInspector._parameterRegex)
 
              # Static vars
              elif v.isStatic:
