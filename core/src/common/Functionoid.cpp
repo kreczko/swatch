@@ -11,21 +11,23 @@ Functionoid::Functionoid( const std::string& aId ) :
 }
 
 
-Functionoid::~Functionoid() {
+Functionoid::~Functionoid()
+{
 }
 
 
-std::ostream& operator<<(std::ostream& out, swatch::core::ActionStatus::State s) {
-  switch (s) {
-    case ActionStatus::kInitial   : out << "Initial"; break;
-    case ActionStatus::kScheduled : out << "Scheduled"; break;
-    case ActionStatus::kRunning   : out << "Running"; break;
-    case ActionStatus::kWarning   : out << "Warning"; break;
-    case ActionStatus::kError     : out << "Error"; break;
-    case ActionStatus::kDone      : out << "Done"; break;
-    default : out << "Unknown value of swatch::core::ActionStatus::Status enum"; 
+std::ostream& operator<<(std::ostream& aStream, swatch::core::ActionStatus::State aState)
+{
+  switch (aState) {
+    case ActionStatus::kInitial   : aStream << "Initial"; break;
+    case ActionStatus::kScheduled : aStream << "Scheduled"; break;
+    case ActionStatus::kRunning   : aStream << "Running"; break;
+    case ActionStatus::kWarning   : aStream << "Warning"; break;
+    case ActionStatus::kError     : aStream << "Error"; break;
+    case ActionStatus::kDone      : aStream << "Done"; break;
+    default : aStream << "Unknown value of swatch::core::ActionStatus::Status enum"; 
   }
-  return out;
+  return aStream;
 }
 
 

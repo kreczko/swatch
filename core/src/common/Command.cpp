@@ -35,12 +35,12 @@ Command::exec( const XParameterSet& aParams, bool aUseThreadPool )
 
 //------------------------------------------------------------------------------------
 void 
-Command::exec(const BusyGuard* aOuterBusyGuard, const XParameterSet& params, bool aUseThreadPool ) 
+Command::exec(const BusyGuard* aOuterBusyGuard, const XParameterSet& aParams, bool aUseThreadPool ) 
 {
   boost::shared_ptr<BusyGuard> lBusyGuard(new BusyGuard(*this, mActionableStatus, aOuterBusyGuard));
 
   // Reset the status before doing anything else, merging user-supplied parameter values with default values
-  resetForRunning(params);
+  resetForRunning(aParams);
 
   // Execute the command protected by a very generic try/catch
   try {
@@ -69,7 +69,7 @@ Command::exec(const BusyGuard* aOuterBusyGuard, const XParameterSet& params, boo
 
 
 //------------------------------------------------------------------------------------
-void Command::runCode(boost::shared_ptr<BusyGuard> aActionGuard, const XParameterSet& params) {
+void Command::runCode(boost::shared_ptr<BusyGuard> aActionGuard, const XParameterSet& aParams) {
   // 1) Declare that I'm running
   {
     boost::unique_lock<boost::mutex> lock(mMutex);
@@ -79,7 +79,7 @@ void Command::runCode(boost::shared_ptr<BusyGuard> aActionGuard, const XParamete
   
   // 2) Run the code, handling any exceptions
   try {
-    State s = this->code(params);
+    State s = this->code(aParams);
     
     boost::unique_lock<boost::mutex> lock(mMutex);
     gettimeofday(&mExecEndTime, NULL);
@@ -111,7 +111,7 @@ void Command::runCode(boost::shared_ptr<BusyGuard> aActionGuard, const XParamete
 
 
 //------------------------------------------------------------------------------------
-void Command::resetForRunning(const XParameterSet& params) {
+void Command::resetForRunning(const XParameterSet& aParams) {
   boost::unique_lock<boost::mutex> lock(mMutex);
   mState = ActionStatus::kScheduled;
   mProgress = 0.0;
@@ -119,7 +119,7 @@ void Command::resetForRunning(const XParameterSet& params) {
   
   mResult.reset(mResultCloner(mDefaultResult));
   
-  mRunningParams = mergeParametersWithDefaults(params);
+  mRunningParams = mergeParametersWithDefaults(aParams);
 }
 
 
@@ -225,8 +225,8 @@ const xdata::Serializable& Command::getDefaultResult() const {
 
 
 //------------------------------------------------------------------------------------
-ReadOnlyXParameterSet Command::mergeParametersWithDefaults( const XParameterSet& params ) const {
-  ReadOnlyXParameterSet merged = ReadOnlyXParameterSet(params);
+ReadOnlyXParameterSet Command::mergeParametersWithDefaults( const XParameterSet& aParams ) const {
+  ReadOnlyXParameterSet merged = ReadOnlyXParameterSet(aParams);
   
   std::set<std::string> keys = mDefaultParams.keys();
   BOOST_FOREACH(const std::string& k, keys)

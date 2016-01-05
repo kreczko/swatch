@@ -7,30 +7,30 @@
 namespace swatch {
 namespace logger {
 
-SwatchPatternLayout::SwatchPatternLayout(const log4cplus::tstring& pattern) :
-        log4cplus::PatternLayout(pattern) {
-  PatternLayout::init(pattern, 0);
+SwatchPatternLayout::SwatchPatternLayout(const log4cplus::tstring& aPattern) :
+        log4cplus::PatternLayout(aPattern) {
+  PatternLayout::init(aPattern, 0);
 }
 
-SwatchPatternLayout::SwatchPatternLayout(const log4cplus::helpers::Properties& properties) :
-        log4cplus::PatternLayout(properties) {
+SwatchPatternLayout::SwatchPatternLayout(const log4cplus::helpers::Properties& aProperties) :
+        log4cplus::PatternLayout(aProperties) {
 }
 
 SwatchPatternLayout::~SwatchPatternLayout() {
 
 }
 
-void SwatchPatternLayout::formatAndAppend(log4cplus::tostream& output,
-    const log4cplus::spi::InternalLoggingEvent& event) {
-  log4cplus::LogLevel lLoglevel = event.getLogLevel();
+void SwatchPatternLayout::formatAndAppend(log4cplus::tostream& aOutput,
+    const log4cplus::spi::InternalLoggingEvent& aEvent) {
+  log4cplus::LogLevel lLoglevel = aEvent.getLogLevel();
   const char* lColour = getColourForLogLevel(lLoglevel);
-  output << lColour;
-  PatternLayout::formatAndAppend(output, event);
-  output << ansi::kReset;
+  aOutput << lColour;
+  PatternLayout::formatAndAppend(aOutput, aEvent);
+  aOutput << ansi::kReset;
 }
 
-void SwatchPatternLayout::init(const log4cplus::tstring& pattern, unsigned ndcMaxDepth) {
-  PatternLayout::init(pattern, ndcMaxDepth);
+void SwatchPatternLayout::init(const log4cplus::tstring& aPattern, unsigned aNdcMaxDepth) {
+  PatternLayout::init(aPattern, aNdcMaxDepth);
 }
 
 const char* SwatchPatternLayout::getColourForLogLevel(log4cplus::LogLevel aLogLevel) const {

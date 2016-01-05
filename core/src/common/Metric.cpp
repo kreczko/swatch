@@ -12,10 +12,10 @@ namespace core {
 
 
 template<>
-std::string convertMetricDataToString<bool>(bool data)
+std::string convertMetricDataToString<bool>(bool aData)
 {
     std::ostringstream oss;
-    oss << std::boolalpha << data;
+    oss << std::boolalpha << aData;
     return oss.str();
 }
 

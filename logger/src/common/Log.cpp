@@ -47,14 +47,14 @@ Log::~Log() {
 }
 
 std::ostringstream&
-Log::get(LogLevel level) {
-  mMessageLevel = level;
+Log::get(LogLevel aLevel) {
+  mMessageLevel = aLevel;
   return mOSStream;
 }
 
 void
-Log::push(LogLevel level, const std::string& source, const std::string& message) {
-  Logger::log(mMessageLevel, message);
+Log::push(LogLevel aLevel, const std::string& aSource, const std::string& aMessage) {
+  Logger::log(mMessageLevel, aMessage);
 }
 
 LogLevel& Log::logThreshold() {
@@ -62,8 +62,8 @@ LogLevel& Log::logThreshold() {
 }
 
 void
-Log::setLogThreshold(LogLevel level) {
-  sLogThreshold = level;
+Log::setLogThreshold(LogLevel aLevel) {
+  sLogThreshold = aLevel;
 }
 
 

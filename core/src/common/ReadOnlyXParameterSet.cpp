@@ -112,9 +112,9 @@ std::string ReadOnlyXParameterSet::parameterAsString(const std::string& aName) c
 
 
 //---
-void ReadOnlyXParameterSet::adopt(const std::string& aName , const boost::shared_ptr<xdata::Serializable>& data )
+void ReadOnlyXParameterSet::adopt(const std::string& aName , const boost::shared_ptr<xdata::Serializable>& aData )
 {
-  std::pair<EntryMap_t::iterator, bool> it = mEntries.emplace(aName, data);
+  std::pair<EntryMap_t::iterator, bool> it = mEntries.emplace(aName, aData);
 
   // If failed to emplace, then throw
   if ( !it.second )
@@ -135,11 +135,11 @@ void ReadOnlyXParameterSet::adopt(const std::string& aName , const ReadOnlyXPara
 
 
 //---
-void ReadOnlyXParameterSet::adopt(const std::string& name , const ReadWriteXParameterSet& otherSet)
+void ReadOnlyXParameterSet::adopt(const std::string& name , const ReadWriteXParameterSet& aOtherSet)
 {
-  ReadWriteXParameterSet::EntryMap_t::const_iterator it = otherSet.mEntries.find(name);
+  ReadWriteXParameterSet::EntryMap_t::const_iterator it = aOtherSet.mEntries.find(name);
   
-  if ( it == otherSet.mEntries.end() )
+  if ( it == aOtherSet.mEntries.end() )
     throw XParameterNotFound("Parameter '" + name + "' does not exist in this set");
 
   adopt(name, it->second.object);
@@ -147,9 +147,9 @@ void ReadOnlyXParameterSet::adopt(const std::string& name , const ReadWriteXPara
 
 
 //---
-void ReadOnlyXParameterSet::erase(const std::string& name) 
+void ReadOnlyXParameterSet::erase(const std::string& aName) 
 {
-  mEntries.erase(name);
+  mEntries.erase(aName);
 }
 
 

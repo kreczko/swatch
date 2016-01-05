@@ -141,20 +141,20 @@ void Object::print(std::ostream& aStr, const uint32_t& aIndent) const {
 }
 
 
-void Object::getCharts(const std::string& basePath, boost::unordered_map<std::string, Object*>& chart) const {
-  std::string prefix(basePath.empty() ? "" : basePath + '.');
+void Object::getCharts(const std::string& aBasePath, boost::unordered_map<std::string, Object*>& aChart) const {
+  std::string prefix(aBasePath.empty() ? "" : aBasePath + '.');
   // 1) Add children
   boost::unordered_map<std::string, Object*>::const_iterator itMap;
 
   for (itMap = mObjectsChart.begin(); itMap != mObjectsChart.end(); ++itMap) {
-    chart.insert(std::make_pair(prefix + itMap->first, itMap->second));
+    aChart.insert(std::make_pair(prefix + itMap->first, itMap->second));
   }
 
   // 2) Add children's children (ad infinitum) by recursive calls
   std::deque< std::pair<Object*,Deleter*> >::const_iterator it;
 
   for (it = mChildren.begin(); it != mChildren.end(); ++it) {
-    it->first->getCharts(prefix + it->first->mId, chart);
+    it->first->getCharts(prefix + it->first->mId, aChart);
   }
 }
 

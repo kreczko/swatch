@@ -25,14 +25,15 @@ ReadWriteXParameterSet::~ReadWriteXParameterSet()
 
 
 //---
-bool ReadWriteXParameterSet::operator==(const ReadWriteXParameterSet& o) const
+bool ReadWriteXParameterSet::operator==(const ReadWriteXParameterSet& aOther) const
 {
-  return mEntries == o.mEntries;
+  return mEntries == aOther.mEntries;
 }
 
 
 //---
-size_t ReadWriteXParameterSet::size() const {
+size_t ReadWriteXParameterSet::size() const
+{
   return mEntries.size();
 }
 
@@ -47,17 +48,19 @@ std::set<std::string> ReadWriteXParameterSet::keys() const
 
 
 //---
-bool ReadWriteXParameterSet::has(const std::string& name) const {
-  return mEntries.count(name);
+bool ReadWriteXParameterSet::has(const std::string& aName) const
+{
+  return mEntries.count(aName);
 }
 
 
 //---
 const xdata::Serializable&
-ReadWriteXParameterSet::get( const std::string& name ) const {
-  EntryMap_t::const_iterator it = mEntries.find(name);
+ReadWriteXParameterSet::get( const std::string& aName ) const
+{
+  EntryMap_t::const_iterator it = mEntries.find(aName);
   if ( it == mEntries.end() ) {
-    throw XParameterNotFound(name +" not found");
+    throw XParameterNotFound(aName +" not found");
   }
 
   return *(it->second.object);
@@ -66,10 +69,11 @@ ReadWriteXParameterSet::get( const std::string& name ) const {
 
 //---
 xdata::Serializable&
-ReadWriteXParameterSet::get( const std::string& name ) {
-  EntryMap_t::iterator it = mEntries.find(name);
+ReadWriteXParameterSet::get( const std::string& aName )
+{
+  EntryMap_t::iterator it = mEntries.find(aName);
   if ( it == mEntries.end() ) {
-    throw XParameterNotFound(name +" not found");
+    throw XParameterNotFound(aName +" not found");
   }
 
   return *(it->second.object);
@@ -78,23 +82,26 @@ ReadWriteXParameterSet::get( const std::string& name ) {
 
 //---
 xdata::Serializable&
-ReadWriteXParameterSet::operator[](const std::string& name) {
-  return get(name);
+ReadWriteXParameterSet::operator[](const std::string& aName)
+{
+  return get(aName);
 }
 
 
 //---
 const xdata::Serializable&
-ReadWriteXParameterSet::operator[](const std::string& name) const {
-  return get(name);
+ReadWriteXParameterSet::operator[](const std::string& aName) const
+{
+  return get(aName);
 }
 
 
 //---
-std::string ReadWriteXParameterSet::parameterAsString(const std::string& name) const {
-  EntryMap_t::const_iterator it = mEntries.find(name);
+std::string ReadWriteXParameterSet::parameterAsString(const std::string& aName) const
+{
+  EntryMap_t::const_iterator it = mEntries.find(aName);
   if ( it == mEntries.end() ) {
-    throw XParameterNotFound(name +" not found");
+    throw XParameterNotFound(aName +" not found");
   }
 
   return it->second.object->toString();
@@ -102,9 +109,9 @@ std::string ReadWriteXParameterSet::parameterAsString(const std::string& name) c
 
 
 //---
-void ReadWriteXParameterSet::deepCopyFrom(const ReadWriteXParameterSet& otherSet)
+void ReadWriteXParameterSet::deepCopyFrom(const ReadWriteXParameterSet& aOtherSet)
 {
-  for( EntryMap_t::const_iterator it = otherSet.mEntries.begin(); it != otherSet.mEntries.end(); it++)
+  for( EntryMap_t::const_iterator it = aOtherSet.mEntries.begin(); it != aOtherSet.mEntries.end(); it++)
   {
     boost::shared_ptr<xdata::Serializable> clonedData( it->second.cloner(it->second.object.get()) );
     
@@ -115,62 +122,62 @@ void ReadWriteXParameterSet::deepCopyFrom(const ReadWriteXParameterSet& otherSet
 
 
 //---
-void ReadWriteXParameterSet::erase(const std::string& name) 
+void ReadWriteXParameterSet::erase(const std::string& aName) 
 {
-  mEntries.erase(name);
+  mEntries.erase(aName);
 }
 
 
 //---
-ReadWriteXParameterSet::XEntry::XEntry(const std::type_info* t, XCloner_t c, const boost::shared_ptr<xdata::Serializable>& s) :
-  typeinfo(t),
-  cloner(c),
-  object(s) {
+ReadWriteXParameterSet::XEntry::XEntry(const std::type_info* aType, XCloner_t aCloner, const boost::shared_ptr<xdata::Serializable>& aData) :
+  typeinfo(aType),
+  cloner(aCloner),
+  object(aData)
+{
 }
 
 
 //---
-ReadWriteXParameterSet::XEntry::XEntry(const XEntry& orig) :
-  typeinfo(orig.typeinfo),
-  cloner( orig.cloner),
-  object( boost::shared_ptr<xdata::Serializable>( orig.object ) )
+ReadWriteXParameterSet::XEntry::XEntry(const XEntry& aOther) :
+  typeinfo(aOther.typeinfo),
+  cloner( aOther.cloner),
+  object( boost::shared_ptr<xdata::Serializable>( aOther.object ) )
 {
-
 }
 
 
 //---
 bool 
-ReadWriteXParameterSet::XEntry::operator==(const XEntry& other) const {
-
-  if ( this->typeinfo != other.typeinfo ) {
+ReadWriteXParameterSet::XEntry::operator==(const XEntry& aOther) const
+{
+  if ( this->typeinfo != aOther.typeinfo ) {
     // Different type
     return false;
-  } else if ( (this->object == 0x0 ) != (other.object == 0x0 )  ) {
+  } else if ( (this->object == 0x0 ) != (aOther.object == 0x0 )  ) {
     // One of the 2 is null
     return false;
-  } else if ( (this->object == 0x0 ) && (other.object == 0x0 ) ) {
+  } else if ( (this->object == 0x0 ) && (aOther.object == 0x0 ) ) {
     // Both are null
     return true;
   } else {
-    return this->object->equals(*other.object);
+    return this->object->equals(*aOther.object);
   }
 }
 
 
 //---
 std::pair<ReadWriteXParameterSet::EntryMap_t::iterator, bool>
-ReadWriteXParameterSet::emplace(const std::string& name, const std::type_info* t, XCloner_t c, const boost::shared_ptr<xdata::Serializable>& s)
+ReadWriteXParameterSet::emplace(const std::string& aName, const std::type_info* aType, XCloner_t aCloner, const boost::shared_ptr<xdata::Serializable>& aData)
 {
-  return mEntries.emplace(name, t, c, s);
+  return mEntries.emplace(aName, aType, aCloner, aData);
 }
 
 
 //---
 std::pair<ReadWriteXParameterSet::EntryMap_t::iterator, bool>
-ReadWriteXParameterSet::emplace(const std::string& name, const XEntry& entry)
+ReadWriteXParameterSet::emplace(const std::string& aName, const XEntry& aEntry)
 {
-  return mEntries.emplace(name, entry);
+  return mEntries.emplace(aName, aEntry);
 }
 
 

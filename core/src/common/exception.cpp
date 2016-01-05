@@ -17,20 +17,20 @@ swatch::core::exception::exception() throw() :
 
 
 
-swatch::core::exception::exception(const string& what) :
+swatch::core::exception::exception(const string& aWhat) :
   std::exception(),
-  mWhat(what)
+  mWhat(aWhat)
 {
   gettimeofday(&mTime, NULL);
 }
 
 
 
-swatch::core::exception::exception(const swatch::core::exception& e) throw() :
+swatch::core::exception::exception(const swatch::core::exception& aOther) throw() :
   std::exception(),
-  mThreadId(e.mThreadId),
-  mTime(e.mTime),
-  mWhat(e.mWhat)
+  mThreadId(aOther.mThreadId),
+  mTime(aOther.mTime),
+  mWhat(aOther.mWhat)
 {
 }
 
@@ -43,11 +43,11 @@ swatch::core::exception::~exception() throw()
 
 
 swatch::core::exception&
-swatch::core::exception::operator=(const swatch::core::exception& e) throw()
+swatch::core::exception::operator=(const swatch::core::exception& aOther) throw()
 {
-  mThreadId = e.mThreadId;
-  mTime = e.mTime;
-  mWhat = e.mWhat;
+  mThreadId = aOther.mThreadId;
+  mTime = aOther.mTime;
+  mWhat = aOther.mWhat;
 
   return *this;
 }
