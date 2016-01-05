@@ -17,6 +17,14 @@ This section introduces the core team members.
 * Vagrant information: https://github.com/cms-l1t-online/cactus-vagrant-box
 * unit testing: http://alexott.net/en/cpp/CppTestingIntro.html
 
+## Naming and Code style
+ * variables: camel case starting with lower case. First letter denotes the namespace (local variabe = l, function parameter = a, class member variable = m). Examples: ```lLocalVariable, aParameterVariable, mClassMemberVariable```
+ * methods: camel case starting with lower case. Example: ```getMeSomething();```
+ * classes: camel case starting with upper case. Example: ```MyAwesomeFritter```
+ * custom types: ```MyType_t```
+ * code style: K&R (https://en.wikipedia.org/wiki/Indent_style#K.26R_style), as provided by most IDEs, with line wrapping at 120 characters.
+Some of the above can be checked using the scripts in swatch/dev_tools/*. Please check ```<script> -h``` for usage instructions.
+
 ## Adding new features
 * This is how we like people to add new features:         
 * Here are some specifics on the coding style we prefer:   
