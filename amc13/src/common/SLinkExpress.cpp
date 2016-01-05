@@ -83,8 +83,8 @@ SLinkExpress::~SLinkExpress() {
 void SLinkExpress::retrieveMetricValues() {
   using ::amc13::AMC13;
 
-  const std::string prefixA = swatch::core::strPrintf("STATUS.SFP.SFP%d.LSC.", sfpID);
-  const std::string prefixB = swatch::core::strPrintf("STATUS.LSC.SFP%d.", sfpID);
+  const std::string prefixA = swatch::core::strPrintf("STATUS.SFP.SFP%d.LSC.", mSfpID);
+  const std::string prefixB = swatch::core::strPrintf("STATUS.LSC.SFP%d.", mSfpID);
   setMetricValue<>(mRevision, mDriver.read(AMC13::T1,prefixA+"VERSION"));
   setMetricValue<>(mCoreInitialised, (bool)mDriver.read(AMC13::T1,prefixA+"INITIALIZED"));
   setMetricValue<>(mLinkUp, (bool)mDriver.read(AMC13::T1,prefixA+"LINK_UP"));
