@@ -20,7 +20,7 @@ XParameterSet::XParameterSet() {}
 
 
 //---
-XParameterSet::XParameterSet(const XParameterSet& other) {}
+XParameterSet::XParameterSet(const XParameterSet& aOther) {}
 
 
 //---

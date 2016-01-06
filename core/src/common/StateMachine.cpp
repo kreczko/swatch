@@ -395,13 +395,13 @@ void StateMachine::Transition::applyMonitoringSettings()
 
 
 //------------------------------------------------------------------------------------
-void StateMachine::Transition::changeState(const ActionableStatusGuard& lGuard)
+void StateMachine::Transition::changeState(const ActionableStatusGuard& aGuard)
 {
   ActionStatus::State lActionState = getState();
   if((lActionState == ActionStatus::kDone) || (lActionState == ActionStatus::kWarning))
-    mActionableStatus.setState(getEndState(), lGuard);
+    mActionableStatus.setState(getEndState(), aGuard);
   else
-    mActionableStatus.setState(getStateMachine().getErrorState(), lGuard);
+    mActionableStatus.setState(getStateMachine().getErrorState(), aGuard);
 }
 
 

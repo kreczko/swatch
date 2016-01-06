@@ -66,7 +66,7 @@ treeToCrateStub(const boost::property_tree::ptree& aPTree) {
 
 //---
 swatch::system::SystemStub 
-treeToSystemPars( const boost::property_tree::ptree& t )
+treeToSystemPars( const boost::property_tree::ptree& aPTree )
 {
     using boost::property_tree::ptree;
     using boost::property_tree::json_parser::read_json;
@@ -74,7 +74,7 @@ treeToSystemPars( const boost::property_tree::ptree& t )
 
 //    XParameterSet sysPars;
 
-    const ptree &pt_system = t.get_child("SYSTEM");
+    const ptree &pt_system = aPTree.get_child("SYSTEM");
     SystemStub aStub(pt_system.get<std::string>("NAME"));
     aStub.loggerName = aStub.id;
 //    sysPars.add("name", xdata::String(pt_system.get<std::string>("NAME")));

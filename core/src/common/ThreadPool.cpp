@@ -64,9 +64,9 @@ ThreadPool::~ThreadPool() {
 }
 
 
-Worker::Worker(ThreadPool &pool, bool run_until_queue_empty) :
-        mPool(pool),
-        mRunUntilQueueEmpty(run_until_queue_empty) {
+Worker::Worker(ThreadPool& aPool, bool aRunUntilQueueEmpty) :
+        mPool(aPool),
+        mRunUntilQueueEmpty(aRunUntilQueueEmpty) {
 
 }
 

@@ -392,13 +392,13 @@ void SystemTransition::runSteps(boost::shared_ptr<SystemBusyGuard> aGuard)
 
 
 //------------------------------------------------------------------------------------
-void SystemTransition::changeState(const ActionableStatusGuard& lGuard)
+void SystemTransition::changeState(const ActionableStatusGuard& aGuard)
 {
   ActionStatus::State lActionState = getStatus().getState();
   if((lActionState == ActionStatus::kDone) || (lActionState == ActionStatus::kWarning))
-    mStatusMap.getSystemStatus().setState(getEndState(), lGuard);
+    mStatusMap.getSystemStatus().setState(getEndState(), aGuard);
   else
-    mStatusMap.getSystemStatus().setState(getStateMachine().getErrorState(), lGuard);
+    mStatusMap.getSystemStatus().setState(getStateMachine().getErrorState(), aGuard);
 }
 
 

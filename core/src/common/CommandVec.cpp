@@ -241,7 +241,7 @@ void CommandVec::reset(const ParameterSets_t& aParamSets)
 }
 
 
-void CommandVec::extractParameters(const GateKeeper& aGateKeeper, std::vector<ReadOnlyXParameterSet>& aParamSets, std::vector<MissingParam>& aMissingParams, bool throwOnMissing) const
+void CommandVec::extractParameters(const GateKeeper& aGateKeeper, std::vector<ReadOnlyXParameterSet>& aParamSets, std::vector<MissingParam>& aMissingParams, bool aThrowOnMissing) const
 {
   aParamSets.clear();
   aParamSets.reserve( mCommands.size() );
@@ -262,7 +262,7 @@ void CommandVec::extractParameters(const GateKeeper& aGateKeeper, std::vector<Re
       {
         lParams.adopt( *lIt2 , lData );
       }
-      else if (throwOnMissing) {
+      else if (aThrowOnMissing) {
         std::ostringstream oss;
         oss << "Could not find value of parameter '" << *lIt2 << "' for command '" << lCommand.getId() << "' in namespace '" << lIt->getNamespace() << "' of resource '" << getActionable().getId() << "'";
         LOG(swatch::logger::kError) << oss.str();

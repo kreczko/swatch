@@ -135,14 +135,14 @@ void ReadOnlyXParameterSet::adopt(const std::string& aName , const ReadOnlyXPara
 
 
 //---
-void ReadOnlyXParameterSet::adopt(const std::string& name , const ReadWriteXParameterSet& aOtherSet)
+void ReadOnlyXParameterSet::adopt(const std::string& aName , const ReadWriteXParameterSet& aOtherSet)
 {
-  ReadWriteXParameterSet::EntryMap_t::const_iterator it = aOtherSet.mEntries.find(name);
+  ReadWriteXParameterSet::EntryMap_t::const_iterator it = aOtherSet.mEntries.find(aName);
   
   if ( it == aOtherSet.mEntries.end() )
-    throw XParameterNotFound("Parameter '" + name + "' does not exist in this set");
+    throw XParameterNotFound("Parameter '" + aName + "' does not exist in this set");
 
-  adopt(name, it->second.object);
+  adopt(aName, it->second.object);
 }
 
 
