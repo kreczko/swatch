@@ -53,6 +53,8 @@ public:
   typedef boost::unordered_set<std::string> Masks_t;
   typedef boost::shared_ptr<Masks_t> MasksTable_t;
   typedef boost::unordered_map<std::string, MasksTable_t> MasksTableCache_t;
+  
+  typedef boost::unordered_set<std::string> DisabledSet_t;
 
   /**
     Constructor
@@ -87,6 +89,8 @@ public:
   MonitoringSetting_t getMonitoringSetting(const std::string& aState, const std::string& aMetricId, const std::vector<std::string>& aTablesToLookIn ) const;
   bool getMask(const std::string& aObjId, const std::vector<std::string>& aTablesToLookIn) const;
 
+  bool isEnabled(const std::string& aObjId) const;
+  
   const boost::posix_time::ptime& lastUpdated();
 
   void setRuntimeParameter( const std::string& aParam , Parameter_t aData );
@@ -100,6 +104,9 @@ protected:
   void add ( const std::string& aId , ParametersTable_t aTable );
   void add ( const std::string& aId , SettingsTable_t aTable );
   void add ( const std::string& aId , MasksTable_t aTable );
+
+  //! Add specified ID string to the set of disabled object IDs
+  void addToDisabledSet ( const std::string& aId );
 
 private:
 
@@ -124,6 +131,7 @@ private:
   ParametersTableCache_t mCache;
   SettingsTableCache_t mSettings;
   MasksTableCache_t mMasks;
+  DisabledSet_t mDisabledObjs;
 
   /// The last time a table was modified
   boost::posix_time::ptime mUpdateTime;

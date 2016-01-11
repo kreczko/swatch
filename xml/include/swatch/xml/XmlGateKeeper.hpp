@@ -50,6 +50,8 @@ private:
       const pugi::xml_node& aTable) const;
 
   std::pair < std::string, GateKeeper::MasksTable_t> createMasksTable(const pugi::xml_node& aTable) const;
+  
+  std::string parseDisableNode(const pugi::xml_node& aTable) const;
 
   std::string mFileName;
   XmlSerializer* mSerializer;

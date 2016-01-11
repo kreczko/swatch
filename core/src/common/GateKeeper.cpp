@@ -270,6 +270,12 @@ bool GateKeeper::getMask(const std::string& aObjId, const std::string& aTableToL
 }
 
 
+bool GateKeeper::isEnabled(const std::string& aObjId) const
+{
+  return (mDisabledObjs.find(aObjId) == mDisabledObjs.end());
+}
+
+
 void GateKeeper::add(const std::string& aId, ParametersTable_t aTable) {
   ParametersTableCache_t::iterator lTableIt(mCache.find(aId));
 
@@ -300,6 +306,16 @@ void GateKeeper::add(const std::string& aId, MasksTable_t aTable)
     throw TableWithIdAlreadyExists("Table of masks with Id '" + aId + "' already exists");
 
   mMasks.insert(std::make_pair(aId, aTable));
+}
+
+
+void GateKeeper::addToDisabledSet ( const std::string& aId )
+{
+  DisabledSet_t::const_iterator lIt(mDisabledObjs.find(aId));
+  if (lIt != mDisabledObjs.end())
+    throw TableWithIdAlreadyExists("ID path '"+ aId + "' is already present in set of disabled IDs");
+  
+  mDisabledObjs.insert(aId);
 }
 
 

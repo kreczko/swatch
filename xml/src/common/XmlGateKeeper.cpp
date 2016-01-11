@@ -71,6 +71,9 @@ void XmlGateKeeper::readXmlDocument(const pugi::xml_document& aXmlDoc, const std
     std::pair < std::string, GateKeeper::MasksTable_t> lMasksTable(createMasksTable(lTable));
     add(lMasksTable.first, lMasksTable.second);
   }
+
+  for (pugi::xml_node lNode(lRun.child("disable")); lNode; lNode = lNode.next_sibling("disable"))
+    addToDisabledSet(parseDisableNode(lNode));
 }
 
 
@@ -197,6 +200,17 @@ std::pair<std::string, GateKeeper::MasksTable_t> XmlGateKeeper::createMasksTable
   }
   return std::make_pair(lTableId, lMaskTable);
 }
+
+
+//------------------------------------------------------------------------------------------------------------------
+std::string XmlGateKeeper::parseDisableNode(const pugi::xml_node& aNode) const
+{
+  std::cout << "XML GK: " << aNode.name() << " ; id=" << aNode.attribute("id").value() << std::endl;
+
+  std::string lId(aNode.attribute("id").value());
+  return lId;
+}
+
 
 
 } // namespace core

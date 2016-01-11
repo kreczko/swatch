@@ -28,6 +28,7 @@ class DummyGateKeeper : public GateKeeper {
   void addTable( const std::string& aId, const ParametersTable_t&);
   void addSettingsTable(const std::string& aId, const SettingsTable_t& aTable);
   void addMasksTable(const std::string& aId, const MasksTable_t& aTable);
+  void addDisabledId(const std::string& aId);
 };
 
 } /* namespace test */

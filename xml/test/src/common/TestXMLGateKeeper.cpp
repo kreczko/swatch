@@ -108,6 +108,14 @@ struct TestXmlGateKeeperSetup {
         "   <run key=\"OtherRunKey\">"
         "   </run>"
         "</db>";
+    config_with_exclusions_str = "<db>"
+        "   <run key=\"RunKey1\">"
+        "       <disable id=\"dummy_sys.childA1\"/>"
+        "       <disable id=\"dummy_sys.child42\"/>"
+        "   </run>"
+        "   <run key=\"OtherRunKey\">"
+        "   </run>"
+        "</db>";
 
     // make sure we the strings are valid configs
     BOOST_REQUIRE_EQUAL(base_config.load(base_config_str.c_str()), true);
@@ -115,12 +123,14 @@ struct TestXmlGateKeeperSetup {
     BOOST_REQUIRE_EQUAL(config_with_disabled_processor.load(config_with_disabled_processor_str.c_str()), true);
     BOOST_REQUIRE_EQUAL(config_with_vector_parameters.load(config_with_vector_parameters_str.c_str()), true);
     BOOST_REQUIRE_EQUAL(config_with_masks.load(config_with_masks_str.c_str()), true);
+    BOOST_REQUIRE_EQUAL(config_with_exclusions.load(config_with_exclusions_str.c_str()), true);
   }
 
   std::string base_config_str, config_with_metrics_str, config_with_disabled_processor_str;
   std::string config_with_vector_parameters_str;
   std::string config_with_masks_str;
-  pugi::xml_document base_config, config_with_metrics, config_with_disabled_processor, config_with_vector_parameters, config_with_masks;
+  std::string config_with_exclusions_str;
+  pugi::xml_document base_config, config_with_metrics, config_with_disabled_processor, config_with_vector_parameters, config_with_masks, config_with_exclusions;
 };
 
 BOOST_AUTO_TEST_SUITE( TestXmlGateKeeper )
@@ -229,6 +239,19 @@ BOOST_FIXTURE_TEST_CASE(TestMask, TestXmlGateKeeperSetup) // Same as code in cor
   BOOST_CHECK_EQUAL(lGK.getMask("componentB", lTablesToLookIn), true);
   BOOST_CHECK_EQUAL(lGK.getMask("componentC", lTablesToLookIn), true);
   BOOST_CHECK_EQUAL(lGK.getMask("otherComponent", lTablesToLookIn), false);
+}
+
+
+BOOST_FIXTURE_TEST_CASE(TestDisabled, TestXmlGateKeeperSetup) // Same as code in core::GateKeeper's tests (at least in Jan 2016)
+{
+  LOG(kInfo) << "Running TestXmlGateKeeper/TestDisabled";
+
+  XmlGateKeeper lGK(config_with_exclusions, "RunKey1");
+
+  BOOST_CHECK_EQUAL(lGK.isEnabled("dummy_sys.childA1"), false);
+  BOOST_CHECK_EQUAL(lGK.isEnabled("dummy_sys.childA2"), true);
+  BOOST_CHECK_EQUAL(lGK.isEnabled("dummy_sys.unkownChild"), true);
+  BOOST_CHECK_EQUAL(lGK.isEnabled("dummy_sys.child42"), false);
 }
 
 

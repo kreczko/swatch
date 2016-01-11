@@ -27,6 +27,7 @@ struct TestGateKeeperSetup {
     typedef GateKeeper::Parameters_t Parameters_t;
     typedef GateKeeper::MonitoringSettings_t MonSettings_t;
     typedef GateKeeper::Masks_t Masks_t;
+
     GateKeeper::ParametersTable_t commonParams(new Parameters_t());
     commonParams->insert(Parameters_t::value_type("hello", new xdata::String("World")));
     commonParams->insert(Parameters_t::value_type("answer", new xdata::Integer(42)));
@@ -62,6 +63,10 @@ struct TestGateKeeperSetup {
     GateKeeper::MasksTable_t proc1Masks(new Masks_t());
     proc1Masks->insert( "componentC" );
     mGk.addMasksTable("dummy_sys.childA1", proc1Masks);
+    
+    // Disable some IDs
+    mGk.addDisabledId("dummy_sys.childA1");
+    mGk.addDisabledId("dummy_sys.child42");
   }
 
   DummyGateKeeper mGk;
@@ -176,6 +181,17 @@ BOOST_FIXTURE_TEST_CASE(TestMask, TestGateKeeperSetup)
   BOOST_CHECK_EQUAL(mGk.getMask("componentB", lTablesToLookIn), true);
   BOOST_CHECK_EQUAL(mGk.getMask("componentC", lTablesToLookIn), true);
   BOOST_CHECK_EQUAL(mGk.getMask("otherComponent", lTablesToLookIn), false);
+}
+
+
+BOOST_FIXTURE_TEST_CASE(TestDisabled, TestGateKeeperSetup)
+{
+  LOG(kInfo) << "Running TestGateKeeper/TestDisabled";
+
+  BOOST_CHECK_EQUAL(mGk.isEnabled("dummy_sys.childA1"), false);
+  BOOST_CHECK_EQUAL(mGk.isEnabled("dummy_sys.childA2"), true);
+  BOOST_CHECK_EQUAL(mGk.isEnabled("dummy_sys.unkownChild"), true);
+  BOOST_CHECK_EQUAL(mGk.isEnabled("dummy_sys.child42"), false);
 }
 
 

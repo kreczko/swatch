@@ -34,7 +34,11 @@ void DummyGateKeeper::addMasksTable(const std::string& aId, const MasksTable_t& 
   add(aId, aTable);
 }
   
-  
+void DummyGateKeeper::addDisabledId(const std::string& aId)
+{
+  addToDisabledSet(aId);
+}
+
 
 } /* namespace test */
 } /* namespace core */
