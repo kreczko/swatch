@@ -50,7 +50,6 @@ Libraries =	\
 		boost_regex \
 		boost_thread \
 		boost_unit_test_framework \
-		cactus_extern_pugixml \
 		cactus_uhal_uhal \
 		cactus_uhal_log \
 		cactus_swatch_logger \

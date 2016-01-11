@@ -27,15 +27,16 @@ Includes =	\
 		$(XDAQ_ROOT)/include/linux
 
 LibraryPaths =  \
-        lib \
-        ${SWATCH_ROOT}/core/lib \
-        ${SWATCH_ROOT}/logger/lib \
+		lib \
+		${SWATCH_ROOT}/core/lib \
+		${SWATCH_ROOT}/logger/lib \
 		${CACTUS_ROOT}/lib \
 		$(XDAQ_ROOT)/lib \ 
 	
 Libraries =	\
 		cactus_swatch_core \
 		cactus_swatch_logger \
+		cactus_extern_pugixml
 
 include ${SWATCH_ROOT}/config/mfRules.mk
 include ${SWATCH_ROOT}/config/mfRPMRules.mk
