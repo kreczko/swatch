@@ -105,7 +105,11 @@ SystemTransitionStatus SystemTransition::getStatus() const
   
   const Step* currentStep =  ( ((mStepIt == mSteps.end()) || (mState == State::kError)) ? NULL : &*mStepIt);
   
-  return SystemTransitionStatus(getPath(), mState, runningTime, currentStep, mStatusOfCompletedSteps, mSteps.size());
+  std::set<std::string> lEnabledChildren;
+  for(auto lIt=mEnabledChildren.begin(); lIt != mEnabledChildren.end(); lIt++)
+    lEnabledChildren.insert((*lIt)->getPath());
+  
+  return SystemTransitionStatus(getPath(), mState, runningTime, currentStep, mStatusOfCompletedSteps, mSteps.size(), lEnabledChildren);
 }
 
 
@@ -208,12 +212,23 @@ SystemTransition& SystemTransition::add(const std::vector<StateMachine::Transiti
 
 void SystemTransition::checkForMissingParameters(const GateKeeper& aGateKeeper, std::map<const StateMachine::Transition*, std::vector<CommandVec::MissingParam> >& aMissingParams) const
 {
+  checkForMissingParameters(aGateKeeper, aMissingParams, lockMutexes<>(mStatusMap.begin(), mStatusMap.end()));
+}
+
+
+void SystemTransition::checkForMissingParameters(const GateKeeper& aGateKeeper, std::map<const StateMachine::Transition*, std::vector<CommandVec::MissingParam> >& aMissingParams, const ActionableStatusGuardMap_t& aGuardMap) const
+{
   aMissingParams.clear();
   
   for(std::vector<Step>::const_iterator lIt=mSteps.begin(); lIt!=mSteps.end(); lIt++)
   {
     for(std::vector<StateMachine::Transition*>::const_iterator lIt2=lIt->cget().begin(); lIt2!=lIt->cget().end(); lIt2++)
     {
+      const ActionableObject& lChild = (*lIt2)->getActionable();
+      // Ignore this transition in case the child has been disabled
+      if (!mStatusMap.getStatus(lChild).isEnabled(*aGuardMap.at(&lChild)))
+        continue;
+
       std::vector<ReadOnlyXParameterSet> lParamSets;
       std::vector<CommandVec::MissingParam> lMissingParams;
       (*lIt2)->checkForMissingParameters(aGateKeeper, lParamSets, lMissingParams);
@@ -226,19 +241,21 @@ void SystemTransition::checkForMissingParameters(const GateKeeper& aGateKeeper, 
 
 void SystemTransition::exec(const GateKeeper& aGateKeeper, const bool& aUseThreadPool)
 {
-  // 0) Throw if any parameters are missing from gatekeeper
-  std::map<const StateMachine::Transition*, std::vector<CommandVec::MissingParam> > lMissingParams;
-  checkForMissingParameters(aGateKeeper, lMissingParams);
-  if ( ! lMissingParams.empty() )
-    throw ParameterNotFound("Could not find value of parameters for " + boost::lexical_cast<std::string>(lMissingParams.size()) + " transitions");
-
-  // 1) Check current state; if in correct state, then 
-  //    request control of the resource (incl. children), and continue
   boost::shared_ptr<SystemBusyGuard> lBusyGuard;
+  std::set<const ActionableObject*> lEnabledChildren;
   {
-    // Put the mutexes into lock guards before continuing
+    // Put the actionable status mutexes into lock guards before doing anything
+    // (even checkForMissingParameters relies on status member data - enabled/disabled flag)
     ActionableStatusGuardMap_t lStatusGuardMap = lockMutexes<>(mStatusMap.begin(), mStatusMap.end());
 
+    // 0) Throw if any parameters are missing from gatekeeper
+    std::map<const StateMachine::Transition*, std::vector<CommandVec::MissingParam> > lMissingParams;
+    checkForMissingParameters(aGateKeeper, lMissingParams, lStatusGuardMap);
+    if ( ! lMissingParams.empty() )
+      throw ParameterNotFound("Could not find value of parameters for " + boost::lexical_cast<std::string>(lMissingParams.size()) + " transitions");
+
+    // 1) Check current state; if in correct state, then 
+    //    request control of the resource (incl. children), and continue
     const ActionableSystem& lSystem = getStateMachine().getActionable();
     ActionableSystem::MutableStatus_t& lSysStatus = mStatusMap.getSystemStatus();
     ActionableStatusGuard& lSysGuard = *lStatusGuardMap.at(&lSystem);
@@ -250,7 +267,7 @@ void SystemTransition::exec(const GateKeeper& aGateKeeper, const bool& aUseThrea
     else if ( lSysStatus.getState(lSysGuard) != getStartState() )
       throw ResourceInWrongState("System '"+lSystem.getPath()+"' is in state '"+lSysStatus.getState(lSysGuard)+"'; transition '"+getId()+"' cannot be run");
 
-    // 1b) Check that children are engaged in correct state machine, and are in the correct state
+    // 1b) Check that enabled children are engaged in correct state machine, and are in the correct state
     typedef std::map<ActionableObject*, const StateMachine::Transition* > ObjTransitionMap_t;
     ObjTransitionMap_t childTransitionMap;
     for(SystemTransition::const_iterator lIt=(end()-1); lIt != (begin()-1); lIt--)
@@ -264,6 +281,11 @@ void SystemTransition::exec(const GateKeeper& aGateKeeper, const bool& aUseThrea
       const ActionableStatusGuard& lChildGuard = *lStatusGuardMap.at(e.first);
       const ActionableObject::MutableStatus_t& lChildStatus = mStatusMap.getStatus(*e.first);
 
+      // Ignore children that aren't enabled
+      if(!lChildStatus.isEnabled(lChildGuard))
+        continue;
+
+      lEnabledChildren.insert(e.first);
       if( lChildStatus.getStateMachineId(lChildGuard) != e.second->getStateMachine().getId() )
         throw ResourceInWrongStateMachine("Resource '"+e.first->getPath()+"' is not yet engaged in state machine '"+e.second->getStateMachine().getId()+"'");
       else if ( lChildStatus.getState(lChildGuard) != e.second->getStartState() )
@@ -283,6 +305,7 @@ void SystemTransition::exec(const GateKeeper& aGateKeeper, const bool& aUseThrea
     mStepIt = mSteps.end();
     mStatusOfCompletedSteps.clear();
     mStatusOfCompletedSteps.reserve(mSteps.size());
+    mEnabledChildren = lEnabledChildren;
   }  
 
   // 3) Execute the command
@@ -327,11 +350,13 @@ void SystemTransition::runSteps(boost::shared_ptr<SystemBusyGuard> aGuard)
 
     while( true ) 
     {
-      // 2.i) Start running the child transitions in this step
+      // 2.i) Start running the child transitions in this step (for enabled children)
       for(auto lIt=mStepIt->get().begin(); lIt!=mStepIt->get().end(); lIt++)
       {
         StateMachine::Transition& lChildTransition = *(*lIt);
-        ActionableObject& lChild = (*lIt)->getStateMachine().getActionable();
+        if (mEnabledChildren.count(&lChildTransition.getActionable()) == 0)
+          continue;
+        ActionableObject& lChild = (*lIt)->getActionable();
         lChildTransition.exec(&aGuard->getChildGuard(lChild), *mGateKeeper); 
       }
       
@@ -339,7 +364,10 @@ void SystemTransition::runSteps(boost::shared_ptr<SystemBusyGuard> aGuard)
       bool lErrorOccurred = false;
       for(auto lIt=mStepIt->get().begin(); lIt!=mStepIt->get().end(); lIt++)
       {
-        while( (*lIt)->getStateMachine().getActionable().getStatus().getRunningActions().back() != this )
+        if (mEnabledChildren.count(&(*lIt)->getActionable()) == 0)
+          continue;
+
+        while( (*lIt)->getActionable().getStatus().getRunningActions().back() != this )
         {
           boost::this_thread::sleep_for(boost::chrono::microseconds(100));
         }
@@ -350,9 +378,15 @@ void SystemTransition::runSteps(boost::shared_ptr<SystemBusyGuard> aGuard)
       }
       
       // 2.iii) Harvest the status objects (before locking mutex, to avoid deadlock scenarios)
+      //        (For disabled objects, there is no status object, so use NULL pointer)
       std::vector<boost::shared_ptr<const StateMachine::TransitionStatus> > lStatusVec;
       for(auto lIt=mStepIt->get().begin(); lIt!=mStepIt->get().end(); lIt++)
-        lStatusVec.push_back( boost::shared_ptr<const StateMachine::TransitionStatus>(new StateMachine::TransitionStatus( (*lIt)->getStatus())) );
+      {
+        boost::shared_ptr<const StateMachine::TransitionStatus> lStatus;
+        if (mEnabledChildren.count(&(*lIt)->getActionable()))
+          lStatus.reset(new StateMachine::TransitionStatus((*lIt)->getStatus()));
+        lStatusVec.push_back(lStatus);
+      }
       
       // 2.iv) Lock the mutex, and update member data
       boost::unique_lock<boost::mutex> lock(mMutex);
@@ -379,8 +413,7 @@ void SystemTransition::runSteps(boost::shared_ptr<SystemBusyGuard> aGuard)
     }
     
   } catch (const std::exception& e) {
-//     this->setError( "An exception occured in Command::code(): " + std::string(e.what()));
-    std::cout << "An exception occurred in CommandSequence::runCommands(): " << e.what() << std::endl;
+    std::cout << "An exception occurred in SystemTransition::runSteps method: " << e.what() << std::endl;
     
     boost::unique_lock<boost::mutex> lock( mMutex );
     mState = ActionStatus::kError;
@@ -506,22 +539,35 @@ SystemTransition& SystemStateMachine::addTransition(const std::string& aTransiti
 void SystemStateMachine::reset(const GateKeeper& aGateKeeper)
 {
   ActionableStatusGuardMap_t lGuardMap = lockMutexes();
+  const ActionableStatusGuard& lGuard = *lGuardMap.at(&getActionable());
 
   // Throw if system/children are not in this state machine or running transition
-  checkStateMachineEngagedAndNotInTransition("reset", lGuardMap);
-
-  const ActionableStatusGuard& lGuard = *lGuardMap.at(&getActionable());
+  checkEngagedAndNotInTransition(lGuard, "reset");
+  for (auto smIt = mNonConstChildFSMs.begin(); smIt!=mNonConstChildFSMs.end(); smIt++)
+  {
+    const ActionableStatusGuard& lChildGuard = *lGuardMap.at(&(*smIt)->getActionable());
+    if (aGateKeeper.isEnabled((*smIt)->getActionable().getPath()))
+      checkChildEngagedAndNotInTransition(**smIt, lChildGuard, "reset");
+  }
+  
+  // If not thrown already, then all is good: enable/disable children ...
+  // ... reset states of system + enabled children; and reset their maskables of enabled children
   mStatusMap.getSystemStatus().setState(getInitialState(), lGuard);
+
+  resetEnableFlagOnChildren(aGateKeeper, lGuardMap);
 
   for(std::set<StateMachine*>::const_iterator smIt=mNonConstChildFSMs.begin(); smIt != mNonConstChildFSMs.end(); smIt++)
   {
-    const ActionableStatusGuard& lChildGuard = *lGuardMap.at(&(*smIt)->getActionable());
+    ActionableObject& lChild = (*smIt)->getActionable();
+    const ActionableStatusGuard& lChildGuard = *lGuardMap.at(&lChild);
     ActionableObject::MutableStatus_t& lChildStatus = mStatusMap.getStatus((*smIt)->getActionable());
 
-    lChildStatus.setState((*smIt)->getInitialState(), lChildGuard);
+    if (lChildStatus.isEnabled(lChildGuard)) {
+      lChildStatus.setState((*smIt)->getInitialState(), lChildGuard);
 
-    // Reset maskable objects (unmasked unless specified otherwise in gatekeeper)
-    StateMachine::resetMaskableObjects((*smIt)->getActionable(), aGateKeeper);
+      // Reset maskable objects (unmasked unless specified otherwise in gatekeeper)
+      StateMachine::resetMaskableObjects((*smIt)->getActionable(), aGateKeeper);
+    }
   }  
 }
 
@@ -532,30 +578,39 @@ void SystemStateMachine::engage(const GateKeeper& aGateKeeper)
   ActionableStatusGuardMap_t lGuardMap = lockMutexes();
   const ActionableStatusGuard& lSysGuard = *lGuardMap.at(&getActionable());
   ActionableSystem::MutableStatus_t& lSysStatus = mStatusMap.getSystemStatus();
-  
-  // Throw if system or any of the participating children are already in a state machine
+
+  // Throw if system or any of the non-disabled participating children are already in a state machine
   if (lSysStatus.isEngaged(lSysGuard))
     throw ResourceInWrongStateMachine("Cannot engage other state machine; system '"+getPath()+"' currently in state machine"+lSysStatus.getStateMachineId(lSysGuard)+"'");
   
-  for(std::set<const StateMachine*>::const_iterator lIt=this->getParticipants().begin(); lIt!=this->getParticipants().end(); lIt++)
+  for(auto lIt=this->getParticipants().begin(); lIt!=this->getParticipants().end(); lIt++)
   {
-    const ActionableStatusGuard& lChildGuard = *lGuardMap.at(&(*lIt)->getActionable());
-    const ActionableObject::MutableStatus_t& lChildStatus = mStatusMap.getStatus((*lIt)->getActionable());
-    if (lChildStatus.isEngaged(lChildGuard))
-      throw ResourceInWrongStateMachine("Cannot engage other state machine; resource '"+(*lIt)->getActionable().getPath()+"' currently in state machine '"+lChildStatus.getStateMachineId(lChildGuard)+"'");
+    const ActionableObject& lChild = (*lIt)->getActionable();
+    const ActionableStatusGuard& lChildGuard = *lGuardMap.at(&lChild);
+    const ActionableObject::MutableStatus_t& lChildStatus = mStatusMap.getStatus(lChild);
+    if (aGateKeeper.isEnabled(lChild.getPath()) && lChildStatus.isEngaged(lChildGuard))
+      throw ResourceInWrongStateMachine("Cannot engage other state machine; resource '"+lChild.getPath()+"' currently in state machine '"+lChildStatus.getStateMachineId(lChildGuard)+"'");
   }
 
-  // ... otherwise all is good, engage system & all participating children in appropriate state machine
+  // If not thrown already, then all is good: enable/disable children, engage system in this state machine
+  // ... put enabled children in appropriate state machine, and reset their maskables
   lSysStatus.setStateMachine(getId(), getInitialState(), lSysGuard);
+
+  resetEnableFlagOnChildren(aGateKeeper, lGuardMap);
 
   for(auto lIt=mNonConstChildFSMs.begin(); lIt != mNonConstChildFSMs.end(); lIt++)
   {
-    const ActionableStatusGuard& lChildGuard = *lGuardMap.at(&(*lIt)->getActionable());
-    ActionableObject::MutableStatus_t& lChildStatus = mStatusMap.getStatus((*lIt)->getActionable());
-    lChildStatus.setStateMachine((*lIt)->getId(), (*lIt)->getInitialState(), lChildGuard);
+    ActionableObject& lChild = (*lIt)->getActionable();
+    const ActionableStatusGuard& lChildGuard = *lGuardMap.at(&lChild);
+    ActionableObject::MutableStatus_t& lChildStatus = mStatusMap.getStatus(lChild);
 
-    // Reset maskable objects (unmasked unless specified otherwise in gatekeeper)
-    StateMachine::resetMaskableObjects((*lIt)->getActionable(), aGateKeeper);
+    if (lChildStatus.isEnabled(lChildGuard))
+    {
+      lChildStatus.setStateMachine((*lIt)->getId(), (*lIt)->getInitialState(), lChildGuard);
+
+      // Reset maskable objects (unmasked unless specified otherwise in gatekeeper)
+      StateMachine::resetMaskableObjects(lChild, aGateKeeper);
+    }
   }
 }
 
@@ -564,11 +619,18 @@ void SystemStateMachine::engage(const GateKeeper& aGateKeeper)
 void SystemStateMachine::disengage()
 {
   ActionableStatusGuardMap_t lGuardMap = lockMutexes();
+  const ActionableStatusGuard& lSysGuard = *lGuardMap.at(&getActionable());
   
   // Throw if system/children are not in this state machine or running transition
-  checkStateMachineEngagedAndNotInTransition("disengage", lGuardMap);
+  checkEngagedAndNotInTransition(lSysGuard, "disengage");
+  for (auto smIt = mNonConstChildFSMs.begin(); smIt!=mNonConstChildFSMs.end(); smIt++)
+  {
+    const ActionableStatusGuard& lChildGuard = *lGuardMap.at(&(*smIt)->getActionable());
+    if (mStatusMap.getStatus((*smIt)->getActionable()).isEnabled(lChildGuard))
+      checkChildEngagedAndNotInTransition(**smIt, lChildGuard, "disengage");
+  }
 
-  const ActionableStatusGuard& lSysGuard = *lGuardMap.at(&getActionable());
+  // If haven't thrown so far, then disengage the state machines
   mStatusMap.getSystemStatus().setNoStateMachine(lSysGuard);
 
   for(auto smIt = mNonConstChildFSMs.begin(); smIt!=mNonConstChildFSMs.end(); smIt++)
@@ -583,60 +645,73 @@ void SystemStateMachine::disengage()
 
 
 //------------------------------------------------------------------------------------
-ActionableStatusGuardMap_t SystemStateMachine::lockMutexes()
+ActionableStatusGuardMap_t SystemStateMachine::lockMutexes() const
 {
   return ::swatch::core::lockMutexes<>(mStatusMap.begin(), mStatusMap.end());
 }
 
 
 //------------------------------------------------------------------------------------
-void SystemStateMachine::checkStateMachineEngagedAndNotInTransition(const std::string& aAction, const ActionableStatusGuardMap_t& aGuardMap) const
+void SystemStateMachine::checkEngagedAndNotInTransition(const ActionableStatusGuard& aGuard, const std::string& aAction) const
 {
-  const ActionableStatusGuard& lSysGuard = *aGuardMap.at(&getActionable());
-  const ActionableSystem::MutableStatus_t& lSysStatus = mStatusMap.getSystemStatus();
+  const ActionableSystem::MutableStatus_t& lStatus = mStatusMap.getSystemStatus();
 
   // Throw if system is not in this state machine
-  if ( lSysStatus.getStateMachineId(lSysGuard) != this->getId() )
+  if ( lStatus.getStateMachineId(aGuard) != getId() )
   {
     std::ostringstream oss;
     oss << "Cannot " << aAction << " state machine '" << getId() << "' of '" << getActionable().getPath() << "'; ";
-    if ( ! lSysStatus.isEngaged(lSysGuard) )
+    if ( ! lStatus.isEngaged(aGuard) )
       oss << "NOT in any state machine.";
     else
-      oss << "currently in state machine '" << lSysStatus.getStateMachineId(lSysGuard) << "'";
+      oss << "currently in state machine '" << lStatus.getStateMachineId(aGuard) << "'";
     throw ResourceInWrongStateMachine(oss.str());
   }
   
-  // Throw if system or any of the participating children are currently running a transition
-  if(const SystemTransition* t = lSysStatus.getFirstRunningActionOfType<SystemTransition>(lSysGuard))
+  // Throw if system is currently running a transition
+  if(const SystemTransition* t = lStatus.getFirstRunningActionOfType<SystemTransition>(aGuard))
     throw ActionableSystemIsBusy("Cannot "+aAction+" state machine '"+getId()+"'; resource '"+getActionable().getPath()+"' is busy in transition '"+t->getId()+"'");
-  
-  // Throw if any children in wrong state machine, or 
-  for(auto smIt=getParticipants().begin(); smIt!=getParticipants().end(); smIt++)
-  {
-    const ActionableObject& lChild = (*smIt)->getActionable();
-    ActionableObject::MutableStatus_t& lChildStatus = mStatusMap.getStatus(lChild);
-    const ActionableStatusGuard& lChildGuard = *aGuardMap.at(&lChild);
-    
-    if(lChildStatus.getStateMachineId(lChildGuard) != (*smIt)->getId())
-    {
-      std::ostringstream oss;
-      oss << "Cannot " << aAction << " state machine '" << (*smIt)->getId() << "' of '" << lChild.getPath() << "'; ";
-      if ( ! lChildStatus.isEngaged(lChildGuard) )
-        oss << "NOT in any state machine.";
-      else
-        oss << "currently in state machine '" << lChildStatus.getStateMachineId(lChildGuard) << "'";
-      throw ResourceInWrongStateMachine(oss.str());
-    }
-    else
-    {
-      if (const StateMachine::Transition* t = lChildStatus.getFirstRunningActionOfType<StateMachine::Transition>(lChildGuard))
-        throw ActionableObjectIsBusy("Cannot "+aAction+" state machine '"+getId()+"'; child resource '"+lChild.getPath()+"' is busy in transition '"+t->getId()+"'");
-    }
-  }
-
 }
 
+
+//------------------------------------------------------------------------------------
+void SystemStateMachine::checkChildEngagedAndNotInTransition(const StateMachine& aStateMachine, const ActionableStatusGuard& aGuard, const std::string& aAction) const
+{
+  const ActionableObject& lChild = aStateMachine.getActionable();
+  ActionableObject::MutableStatus_t& lStatus = mStatusMap.getStatus(lChild);
+
+  // Throw if child is in wrong state machine
+  if(lStatus.getStateMachineId(aGuard) != aStateMachine.getId())
+  {
+    std::ostringstream oss;
+    oss << "Cannot " << aAction << " state machine '" << aStateMachine.getId() << "' of '" << lChild.getPath() << "'; ";
+    if ( ! lStatus.isEngaged(aGuard) )
+      oss << "NOT in any state machine.";
+    else
+      oss << "currently in state machine '" << lStatus.getStateMachineId(aGuard) << "'";
+    throw ResourceInWrongStateMachine(oss.str());
+  }
+  // Throw if child currently in a transition
+  else if (const StateMachine::Transition* t = lStatus.getFirstRunningActionOfType<StateMachine::Transition>(aGuard))
+    throw ActionableObjectIsBusy("Cannot "+aAction+" state machine '"+getId()+"'; child resource '"+lChild.getPath()+"' is busy in transition '"+t->getId()+"'");
+}
+
+
+//------------------------------------------------------------------------------------
+void SystemStateMachine::resetEnableFlagOnChildren(const GateKeeper& aGateKeeper, const ActionableStatusGuardMap_t& aGuardMap)
+{
+  for(auto lIt=mResource.getActionableChildren().begin(); lIt != mResource.getActionableChildren().end(); lIt++)
+  {
+    const ActionableObject& lChild = *(lIt->second);
+    const ActionableStatusGuard& lGuard = *aGuardMap.at(&lChild);
+    ActionableObject::MutableStatus_t& lStatus = mStatusMap.getStatus(lChild);
+
+    if(aGateKeeper.isEnabled(lChild.getPath()))
+      lStatus.enable(lGuard);
+    else
+      lStatus.disable(lGuard);
+  }
+}
 
 SystemStateMachine::State::State(const std::string& aId) : 
   Object(aId)
@@ -673,10 +748,11 @@ SystemStateMachine::State& SystemStateMachine::getState(const std::string& aStat
 //------------------------------------------------------------------------------------
 
 
-SystemTransitionStatus::SystemTransitionStatus(const std::string& aPath, ActionStatus::State aState, float aRunningTime, const SystemTransition::Step* aCurrentStep, const StepStatusVec_t& aFinishedStepStatuses, size_t aTotalNumSteps) :
+SystemTransitionStatus::SystemTransitionStatus(const std::string& aPath, ActionStatus::State aState, float aRunningTime, const SystemTransition::Step* aCurrentStep, const StepStatusVec_t& aFinishedStepStatuses, size_t aTotalNumSteps, const std::set<std::string>& aEnabledChildren) :
   ActionStatus(aPath, aState, aRunningTime),
   mTotalNumSteps( aTotalNumSteps ),
   mNumCompletedSteps( aFinishedStepStatuses.size() ),
+  mEnabledChildren(aEnabledChildren),
   mStepStatuses( aFinishedStepStatuses )
 {
   if (aCurrentStep != NULL)
@@ -726,6 +802,11 @@ size_t SystemTransitionStatus::getTotalNumberOfSteps() const
   return mTotalNumSteps;
 }
 
+
+const std::set<std::string>& SystemTransitionStatus::getEnabledChildren() const 
+{
+  return mEnabledChildren;
+}
 
 const std::vector< std::vector<boost::shared_ptr<const StateMachine::TransitionStatus> > >& SystemTransitionStatus::getStepStatus() const
 {

@@ -102,9 +102,6 @@ public:
   
   Status_t getStatus() const;
   
-  //! Engage state machine of specified ID
-  void engageStateMachine(const std::string& aStateMachine);
-  
   log4cplus::Logger& getLogger();
 
   typedef boost::unordered_map< std::string , CommandSequence* > CommandSequenceMap_t;

@@ -25,7 +25,8 @@ ActionableStatus::ActionableStatus() :
   mStateMachineId(kNullStateMachineId),
   mState(kNullStateId),
   mUpdatingMetrics(false),
-  mWaitingToRunAction(false)
+  mWaitingToRunAction(false),
+  mEnabled(true)
 {
 }
 
@@ -58,7 +59,10 @@ const std::string& ActionableStatus::getState() const {
 
 //------------------------------------------------------------------------------------
 const Functionoid* ActionableStatus::getLastRunningAction() const {
-  return mRunningActions.back();
+  if (mRunningActions.empty())
+    return NULL;
+  else
+    return mRunningActions.back();
 }
 
 
@@ -71,6 +75,12 @@ const std::vector<const Functionoid*>& ActionableStatus::getRunningActions() con
 //------------------------------------------------------------------------------------
 const std::string& ActionableStatus::getStateMachineId() const {
   return mStateMachineId;
+}
+
+
+//------------------------------------------------------------------------------------
+bool ActionableStatus::isEnabled() const {
+  return mEnabled;
 }
 
 
@@ -177,6 +187,31 @@ const Functionoid* MutableActionableStatus::getLastRunningAction(const Actionabl
   throwIfWrongGuard(aGuard);
   return mStatus.getLastRunningAction();
 }
+
+
+//------------------------------------------------------------------------------------
+bool MutableActionableStatus::isEnabled(const ActionableStatusGuard& aGuard) const
+{
+  throwIfWrongGuard(aGuard);
+  return mStatus.isEnabled();
+}
+
+
+//------------------------------------------------------------------------------------
+void MutableActionableStatus::enable(const ActionableStatusGuard& aGuard)
+{
+  throwIfWrongGuard(aGuard);
+  mStatus.mEnabled = true;
+}
+
+
+//------------------------------------------------------------------------------------
+void MutableActionableStatus::disable(const ActionableStatusGuard& aGuard)
+{
+  throwIfWrongGuard(aGuard);
+  mStatus.mEnabled = false;
+}
+
 
 //------------------------------------------------------------------------------------
 void MutableActionableStatus::setStateMachine(const std::string& aStateMachine, const std::string& aState, const ActionableStatusGuard& aGuard)

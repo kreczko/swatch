@@ -76,6 +76,9 @@ public:
   //!
   const std::string& getStateMachineId() const;
   
+  //! Returns true if corresponding actionable takes part in actions of higher-level actionables
+  bool isEnabled() const;
+  
   //!
   static const std::string kNullStateMachineId;
   
@@ -99,6 +102,8 @@ private:
   bool mUpdatingMetrics;
   
   bool mWaitingToRunAction;
+
+  bool mEnabled;
 
   friend class MutableActionableStatus;
 };
@@ -160,6 +165,13 @@ public:
   
   template<class T>
   const T* getFirstRunningActionOfType(const ActionableStatusGuard& aGuard) const;
+
+  //! Returns true if corresponding actionable takes part in actions of higher-level actionables
+  bool isEnabled(const ActionableStatusGuard& aGuard) const;
+  
+  void enable(const ActionableStatusGuard& aGuard);
+  
+  void disable(const ActionableStatusGuard& aGuard);
 
   void setStateMachine(const std::string& aStateMachine, const std::string& aState, const ActionableStatusGuard& aGuard);
 

@@ -327,7 +327,8 @@ BOOST_FIXTURE_TEST_CASE(TestEngageFSM, SystemStateMachineTestSetup) {
   BOOST_CHECK_EQUAL( child2.obj.getStatus().getStateMachineId(), child2.fsm.getId());
   BOOST_CHECK_EQUAL( child2.obj.getStatus().getState(), childState0);
   BOOST_CHECK_EQUAL( child3.obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
-  BOOST_CHECK_EQUAL( child3.obj.getStatus().getState(), ActionableStatus::kNullStateId);}
+  BOOST_CHECK_EQUAL( child3.obj.getStatus().getState(), ActionableStatus::kNullStateId);
+}
 
 
 BOOST_FIXTURE_TEST_CASE(TestEngageFSMChildComplication, SystemStateMachineTestSetup) {
@@ -526,6 +527,125 @@ BOOST_FIXTURE_TEST_CASE(TestMaskablesMaskedDuringEngage, SystemStateMachineTestS
 }
 
 
+BOOST_FIXTURE_TEST_CASE(TestChildrenDisabledDuringEngage, SystemStateMachineTestSetup)
+{
+  LOG(kInfo) << "Running SystemStateMachineTestSuite/TestChildrenDisabledDuringEngage";
+  typedef std::vector<Child*>::const_iterator ChildIt_t;
+  const std::vector<Child*> lChildren = {&child1, &child2, &child3};
+
+  // Finish off setup: Add child1 & child2 to state machine
+  sysItoA->add(children.begin(), children.end()-1, child1.fsm.getId(), childState0, child1.ItoA->getId());
+
+  // PURPOSE: Check that engage ...
+  //    - Disables children specified in gatekeeper (i.e. child2)
+  //    - Leaves all other children enabled (i.e. child1, child3)
+  //    - Doesn't care if disabled children are in other state machines
+  //    - Only changes masks on children that are enabled (i.e. child1)
+
+  // SETUP:
+  gk.addDisabledId(child2.obj.getPath());
+
+  // 1) Engage child2 and child3 other single-object FSMs 
+  //    (to make sure that system FSM doesn't care if disabled objects already engaged)
+  child2.obj.registerStateMachine("anotherFSM", "anotherInitialState", "sE").engage(DummyGateKeeper());
+  child3.obj.registerStateMachine("anotherFSM", "anotherInitialState", "sE").engage(DummyGateKeeper());
+  BOOST_REQUIRE_EQUAL(child2.obj.getStatus().getStateMachineId(), "anotherFSM");
+  BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getStateMachineId(), "anotherFSM");
+
+  // 2) Mask maskableC on each child (giving inverse of final result); require that starting assumptions are correct before testing
+  for(ChildIt_t lIt=lChildren.begin(); lIt!=lChildren.end(); lIt++)
+  {
+    (*lIt)->maskableC.setMasked(true);
+    BOOST_REQUIRE_EQUAL((*lIt)->maskableA.isMasked(), false);
+    BOOST_REQUIRE_EQUAL((*lIt)->maskableB.isMasked(), false);
+    BOOST_REQUIRE_EQUAL((*lIt)->maskableC.isMasked(), true);
+  }
+
+  // THE TEST:
+  //  * Engage FSM; check that for child1,  A & B now masked, but C unmasked; no change on child2 & 3
+  BOOST_CHECK_NO_THROW(fsm.engage(gk));
+  
+  BOOST_CHECK_EQUAL(sys->getStatus().getStateMachineId(), fsm.getId());
+  BOOST_CHECK_EQUAL(sys->getStatus().getState(), sysState0);
+
+  BOOST_CHECK_EQUAL(child1.obj.getStatus().isEnabled(), true);
+  BOOST_CHECK_EQUAL(child2.obj.getStatus().isEnabled(), false);
+  BOOST_CHECK_EQUAL(child3.obj.getStatus().isEnabled(), true);
+
+  BOOST_CHECK_EQUAL(child1.obj.getStatus().getStateMachineId(), child1.fsm.getId());
+  BOOST_CHECK_EQUAL(child1.obj.getStatus().getState(), childState0);
+  BOOST_CHECK_EQUAL(child1.maskableA.isMasked(), true);
+  BOOST_CHECK_EQUAL(child1.maskableB.isMasked(), true);
+  BOOST_CHECK_EQUAL(child1.maskableC.isMasked(), false);
+
+  for(ChildIt_t lIt=lChildren.begin()+1; lIt!=lChildren.end(); lIt++)
+  {
+    const Child& lChild = **lIt;
+
+    BOOST_CHECK_EQUAL(lChild.obj.getStatus().getStateMachineId(), "anotherFSM");
+    BOOST_CHECK_EQUAL(lChild.obj.getStatus().getState(), "anotherInitialState");
+    BOOST_CHECK_EQUAL(lChild.maskableA.isMasked(), false);
+    BOOST_CHECK_EQUAL(lChild.maskableB.isMasked(), false);
+    BOOST_CHECK_EQUAL(lChild.maskableC.isMasked(), true);
+  }
+}
+
+
+BOOST_FIXTURE_TEST_CASE(TestChildSettingsNotChangedByFailedEngage, SystemStateMachineTestSetup)
+{
+  LOG(kInfo) << "Running SystemStateMachineTestSuite/TestChildSettingsNotChangedByFailedEngage";
+  typedef std::vector<Child*>::const_iterator ChildIt_t;
+  const std::vector<Child*> lChildren = {&child1, &child2, &child3};
+
+  // SETUP:
+  //  * child1 & child2 are in state machine
+  sysItoA->add(children.begin(), children.end()-1, child1.fsm.getId(), childState0, child1.ItoA->getId());
+  //  * But child1 is already engaged in another state machine
+  child1.obj.registerStateMachine("anotherFSM", "anotherInitialState", "sE").engage(DummyGateKeeper());
+  BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getStateMachineId(), "anotherFSM");
+  //  * Maskables A & B are unmasked, but C is masked (inverse of result from successful "engage")
+  for(ChildIt_t lIt=lChildren.begin(); lIt!=lChildren.end(); lIt++)
+  {
+    (*lIt)->maskableA.setMasked(false);
+    (*lIt)->maskableB.setMasked(false);
+    (*lIt)->maskableC.setMasked(true);
+    BOOST_REQUIRE_EQUAL((*lIt)->maskableA.isMasked(), false);
+    BOOST_REQUIRE_EQUAL((*lIt)->maskableB.isMasked(), false);
+    BOOST_REQUIRE_EQUAL((*lIt)->maskableC.isMasked(), true);
+  }
+  //  * GateKeeper (GK): child2 is set as disabled
+  gk.addDisabledId(child2.obj.getPath());
+
+
+  // GOAL:
+  //  * In case the engage was successful:
+  //    - child2 would be disabled based on GK info
+  //    - child3 would be disabled since not in system state machine
+  //    - maskable children of child1 would be masked/unmasked based on GK info
+  //  * This test case checks that none of these changes occur if child1 is already engaged :)
+
+  BOOST_CHECK_THROW(fsm.engage(gk), ResourceInWrongStateMachine);
+  
+  BOOST_CHECK_EQUAL( sys->getStatus().getStateMachineId(), ActionableSystem::Status_t::kNullStateMachineId);
+  BOOST_CHECK_EQUAL( sys->getStatus().getState(), ActionableSystem::Status_t::kNullStateId );
+  BOOST_CHECK_EQUAL( child1.obj.getStatus().isEnabled(), true);
+  BOOST_CHECK_EQUAL( child1.obj.getStatus().getStateMachineId(), "anotherFSM");
+  BOOST_CHECK_EQUAL( child1.obj.getStatus().getState(), "anotherInitialState");
+  BOOST_CHECK_EQUAL( child3.obj.getStatus().isEnabled(), true);
+  BOOST_CHECK_EQUAL( child2.obj.getStatus().getStateMachineId(), ActionableObject::Status_t::kNullStateMachineId);
+  BOOST_CHECK_EQUAL( child2.obj.getStatus().getState(), ActionableObject::Status_t::kNullStateId);
+  BOOST_CHECK_EQUAL( child3.obj.getStatus().isEnabled(), true);
+  BOOST_CHECK_EQUAL( child3.obj.getStatus().getStateMachineId(), ActionableObject::Status_t::kNullStateMachineId);
+  BOOST_CHECK_EQUAL( child3.obj.getStatus().getState(), ActionableObject::Status_t::kNullStateId);
+
+  for(ChildIt_t lIt=lChildren.begin(); lIt!=lChildren.end(); lIt++)
+  {
+    BOOST_CHECK_EQUAL((*lIt)->maskableA.isMasked(), false);
+    BOOST_CHECK_EQUAL((*lIt)->maskableB.isMasked(), false);
+    BOOST_CHECK_EQUAL((*lIt)->maskableC.isMasked(), true);
+  }
+}
+
 
 /* ---------------------------------------------------------------- */
 /*   PART 3: RUNNING TRANSITIONS                                    */
@@ -569,6 +689,7 @@ BOOST_FIXTURE_TEST_CASE(TestRunEmptyTransition, SystemStateMachineTestSetup) {
   BOOST_CHECK_EQUAL( s.getStepStatus().size(), size_t(0));
   BOOST_CHECK_EQUAL( s.getNumberOfCompletedSteps(), size_t(0));
   BOOST_CHECK_EQUAL( s.getTotalNumberOfSteps(), size_t(0));
+  BOOST_CHECK_EQUAL( s.getEnabledChildren().size(), size_t(0));
 }
 
 
@@ -652,6 +773,45 @@ BOOST_FIXTURE_TEST_CASE(TestRunTransitionMissingParams, SystemStateMachineTestSe
 }
 
 
+BOOST_FIXTURE_TEST_CASE(TestCheckMissingParamsWithChildrenDisabled, SystemStateMachineTestSetup) {
+  LOG(kInfo) << "Running SystemStateMachineTestSuite/TestCheckMissingParamsWithChildrenDisabled";
+
+  sysItoA->add(std::vector<StateMachine::Transition*>{child1.ItoA, child2.ItoA});
+  sysItoA->add(std::vector<StateMachine::Transition*>{child3.ItoA});
+  child1.ItoA->add(child1.cmdNormal1);
+  child3.ItoA->add(child3.cmdNormal2);
+
+  // Engage FSM, and confirm objects are ready for following tests
+  DummyGateKeeper lGK;
+  lGK.addDisabledId(child2.obj.getPath());
+  lGK.addDisabledId(child3.obj.getPath());
+  
+  fsm.engage(lGK);
+  BOOST_REQUIRE_EQUAL( sys->getStatus().getStateMachineId(), fsm.getId());
+  BOOST_REQUIRE_EQUAL( sys->getStatus().getState(), sysState0);
+  BOOST_REQUIRE_EQUAL( child1.obj.getStatus().getStateMachineId(), child1.fsm.getId());
+  BOOST_REQUIRE_EQUAL( child1.obj.getStatus().getState(), childState0);
+  BOOST_REQUIRE_EQUAL( child2.obj.getStatus().isEngaged(), false);
+  BOOST_REQUIRE_EQUAL( child3.obj.getStatus().isEngaged(), false);
+  BOOST_REQUIRE_EQUAL( child2.obj.getStatus().getState(), ActionableStatus::kNullStateId);
+  BOOST_REQUIRE_EQUAL( child3.obj.getStatus().getState(), ActionableStatus::kNullStateId);
+  
+  // checkMissingParams method should return missing parameters  for child1's transition ...
+  // ... but NOT for child3 (since child3 has been disabled)
+  typedef CommandVec::MissingParam MissingParam_t;
+  std::vector<MissingParam_t> result, expected;
+  expected.push_back(MissingParam_t("", child1.cmdNormal1.getId(), DummyCommand::paramToDo));
+  expected.push_back(MissingParam_t("", child1.cmdNormal1.getId(), DummyCommand::paramX));
+
+  std::map<const StateMachine::Transition*, std::vector<MissingParam_t> > missingParamMap;
+  sysItoA->checkForMissingParameters(DummyGateKeeper(), missingParamMap);
+  BOOST_CHECK_EQUAL(missingParamMap.size(), size_t(1));
+  BOOST_REQUIRE_EQUAL( missingParamMap.count(child1.ItoA), size_t(1));
+  BOOST_CHECK_EQUAL_COLLECTIONS(missingParamMap[child1.ItoA].begin(), missingParamMap[child1.ItoA].end(), expected.begin(), expected.end());
+}
+
+
+
 BOOST_FIXTURE_TEST_CASE(TestRunGoodTransition, SystemStateMachineTestSetup) {
   LOG(kInfo) << "Running SystemStateMachineTestSuite/TestRunGoodTransition";
 
@@ -694,8 +854,10 @@ BOOST_FIXTURE_TEST_CASE(TestRunGoodTransition, SystemStateMachineTestSetup) {
   BOOST_CHECK_GT( s.getRunningTime(), 0.0 );
   BOOST_CHECK_EQUAL( s.getNumberOfCompletedSteps(), size_t(2) );
   BOOST_CHECK_EQUAL( s.getTotalNumberOfSteps(), size_t(2) );
+  std::set<std::string> lExpectedEnabled = {child1.obj.getPath(), child2.obj.getPath(), child3.obj.getPath()};
+  BOOST_CHECK_EQUAL_COLLECTIONS(s.getEnabledChildren().begin(), s.getEnabledChildren().end(), lExpectedEnabled.begin(), lExpectedEnabled.end());
   BOOST_REQUIRE_EQUAL( s.getStepStatus().size(), size_t(2) );
-  
+
   // Check status of step 1
   BOOST_REQUIRE_EQUAL( s.getStepStatus().at(0).size(), size_t(2) );
   const StateMachine::TransitionStatus& child1Status = *s.getStepStatus().at(0).at(0);
@@ -728,6 +890,90 @@ BOOST_FIXTURE_TEST_CASE(TestRunGoodTransition, SystemStateMachineTestSetup) {
   BOOST_CHECK_EQUAL( child3Status.getTotalNumberOfCommands(), size_t(3) );
   BOOST_CHECK_EQUAL( child3Status.getCommandStatus().size(), size_t(3) );
   BOOST_CHECK_EQUAL( child3Status.getResults().size(), size_t(3) );
+}
+
+
+BOOST_FIXTURE_TEST_CASE(TestRunGoodTransitionWithChildrenDisabled, SystemStateMachineTestSetup) {
+  LOG(kInfo) << "Running SystemStateMachineTestSuite/TestRunGoodTransitionWithChildrenDisabled";
+
+  // SETUP: 
+  //   * Add child transitions & commands (from all children)
+  child1.ItoA->add(child1.cmdNormal1);
+  child2.ItoA->add(child2.cmdNormal1);
+  child2.ItoA->add(child2.cmdNormal2);
+  child3.ItoA->add(child3.cmdNormal1);
+  child3.ItoA->add(child3.cmdNormal2);
+  child3.ItoA->add(child3.cmdNormal1);
+  sysItoA->add( std::vector<StateMachine::Transition*>{child1.ItoA, child2.ItoA});
+  sysItoA->add( std::vector<StateMachine::Transition*>{child3.ItoA});
+  //   * Engage FSM with child2 and child3 disabled
+  DummyGateKeeper lGK;
+  lGK.addDisabledId(child2.obj.getPath());
+  lGK.addDisabledId(child3.obj.getPath());
+  fsm.engage(lGK);
+
+  // Check assumptions before starting unit tests
+  BOOST_REQUIRE_EQUAL(sys->getStatus().getStateMachineId(), fsm.getId());
+  BOOST_REQUIRE_EQUAL(sys->getStatus().getState(), sysState0);
+  BOOST_REQUIRE_EQUAL(sysItoA->getStatus().getState(), Functionoid::State::kInitial);
+  BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getStateMachineId(), child1.fsm.getId() );
+  BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getState(), childState0);
+  BOOST_REQUIRE_EQUAL(child2.obj.getStatus().isEngaged(), false );
+  BOOST_REQUIRE_EQUAL(child3.obj.getStatus().isEngaged(), false );
+  BOOST_REQUIRE_EQUAL(child2.obj.getStatus().getState(), ActionableStatus::kNullStateId);
+  BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getState(), ActionableStatus::kNullStateId);
+  
+  // Running transition: Should work, but only call child1's transition
+  BOOST_CHECK_NO_THROW( sysItoA->exec(gk, false) );
+  BOOST_CHECK_EQUAL( sys->getStatus().getStateMachineId(), fsm.getId());
+  BOOST_CHECK_EQUAL( sys->getStatus().getState(), sysStateA );
+  BOOST_CHECK_EQUAL( child1.obj.getStatus().getStateMachineId(), child1.fsm.getId()  );
+  BOOST_CHECK_EQUAL( child1.obj.getStatus().getState(), childStateA );
+  BOOST_CHECK_EQUAL( child2.obj.getStatus().isEngaged(), false );
+  BOOST_CHECK_EQUAL( child3.obj.getStatus().isEngaged(), false );
+  BOOST_CHECK_EQUAL( child2.obj.getStatus().getState(), ActionableStatus::kNullStateId );
+  BOOST_CHECK_EQUAL( child3.obj.getStatus().getState(), ActionableStatus::kNullStateId );
+
+  // Check the transition status object
+  SystemTransitionStatus s = sysItoA->getStatus();
+  BOOST_CHECK_EQUAL( s.getActionPath(), sysItoA->getPath() );
+  BOOST_CHECK_EQUAL( s.getState(), Functionoid::State::kDone );
+  BOOST_CHECK_EQUAL( s.getProgress(), 1.0 );
+  BOOST_CHECK_GT( s.getRunningTime(), 0.0 );
+  BOOST_CHECK_EQUAL( s.getNumberOfCompletedSteps(), size_t(2) );
+  BOOST_CHECK_EQUAL( s.getTotalNumberOfSteps(), size_t(2) );
+  std::set<std::string> lExpectedEnabled = {child1.obj.getPath()};
+  BOOST_CHECK_EQUAL_COLLECTIONS(s.getEnabledChildren().begin(), s.getEnabledChildren().end(), lExpectedEnabled.begin(), lExpectedEnabled.end());
+  BOOST_REQUIRE_EQUAL( s.getStepStatus().size(), size_t(2) );
+  
+  // Check status of step 1:
+  //  * Should be 2-element vector
+  BOOST_REQUIRE_EQUAL( s.getStepStatus().at(0).size(), size_t(2) );
+  //  * 1st element: child1's status
+  BOOST_REQUIRE( s.getStepStatus().at(0).at(0) != NULL );
+  const StateMachine::TransitionStatus& child1Status = *s.getStepStatus().at(0).at(0);
+  BOOST_CHECK_EQUAL( child1Status.getActionPath(), child1.ItoA->getPath() );
+  BOOST_CHECK_EQUAL( child1Status.getState(), Functionoid::State::kDone );
+  BOOST_CHECK_EQUAL( child1Status.getProgress(), 1.0 );
+  BOOST_CHECK_GT( child1Status.getRunningTime(), 0.0 );
+  BOOST_CHECK_EQUAL( child1Status.getNumberOfCompletedCommands(), size_t(1) );
+  BOOST_CHECK_EQUAL( child1Status.getTotalNumberOfCommands(), size_t(1) );
+  BOOST_CHECK_EQUAL( child1Status.getCommandStatus().size(), size_t(1) );
+  BOOST_CHECK_EQUAL( child1Status.getResults().size(), size_t(1) );
+  //  * 2nd element: child2's transition - child2 was disabled, so pointer should be NULL
+  BOOST_CHECK( s.getStepStatus().at(0).at(1) == NULL );
+  //    Also check that child2's commands weren't run
+  BOOST_CHECK_EQUAL( child2.cmdNormal1.getStatus().getState(), Functionoid::State::kInitial );
+  BOOST_CHECK_EQUAL( child2.cmdNormal2.getStatus().getState(), Functionoid::State::kInitial );
+
+  // Check status of step 2
+  // * Should be 1-element vector
+  // * 1st element: child3's transition - child3 was disabled, so pointer should be NULL
+  BOOST_REQUIRE_EQUAL( s.getStepStatus().at(1).size(), size_t(1) );
+  BOOST_CHECK( s.getStepStatus().at(1).at(0) == NULL );
+  //    Also check that child3's commands weren't run
+  BOOST_CHECK_EQUAL( child3.cmdNormal1.getStatus().getState(), Functionoid::State::kInitial );
+  BOOST_CHECK_EQUAL( child3.cmdNormal2.getStatus().getState(), Functionoid::State::kInitial );
 }
 
 
@@ -773,8 +1019,10 @@ BOOST_FIXTURE_TEST_CASE(TestRunWarningTransition, SystemStateMachineTestSetup) {
   BOOST_CHECK_GT( s.getRunningTime(), 0.0 );
   BOOST_CHECK_EQUAL( s.getNumberOfCompletedSteps(), size_t(2) );
   BOOST_CHECK_EQUAL( s.getTotalNumberOfSteps(), size_t(2) );
+  std::set<std::string> lExpectedEnabled = {child1.obj.getPath(), child2.obj.getPath(), child3.obj.getPath()};
+  BOOST_CHECK_EQUAL_COLLECTIONS(s.getEnabledChildren().begin(), s.getEnabledChildren().end(), lExpectedEnabled.begin(), lExpectedEnabled.end());
   BOOST_REQUIRE_EQUAL( s.getStepStatus().size(), size_t(2) );
-  
+
   // Check status of step 1
   BOOST_REQUIRE_EQUAL( s.getStepStatus().at(0).size(), size_t(2) );
   const StateMachine::TransitionStatus& child1Status = *s.getStepStatus().at(0).at(0);
@@ -852,8 +1100,10 @@ BOOST_FIXTURE_TEST_CASE(TestRunErrorTransition, SystemStateMachineTestSetup) {
   BOOST_CHECK_GT( s.getRunningTime(), 0.0 );
   BOOST_CHECK_EQUAL( s.getNumberOfCompletedSteps(), size_t(1) );
   BOOST_CHECK_EQUAL( s.getTotalNumberOfSteps(), size_t(2) );
+  std::set<std::string> lExpectedEnabled = {child1.obj.getPath(), child2.obj.getPath(), child3.obj.getPath()};
+  BOOST_CHECK_EQUAL_COLLECTIONS(s.getEnabledChildren().begin(), s.getEnabledChildren().end(), lExpectedEnabled.begin(), lExpectedEnabled.end());
   BOOST_REQUIRE_EQUAL( s.getStepStatus().size(), size_t(1) );
-  
+
   // Check status of step 1
   BOOST_REQUIRE_EQUAL( s.getStepStatus().at(0).size(), size_t(2) );
   const StateMachine::TransitionStatus& child1Status = *s.getStepStatus().at(0).at(0);
@@ -986,7 +1236,7 @@ BOOST_FIXTURE_TEST_CASE(TestRunTransitionDisengagedChildFSM, SystemStateMachineT
 
   // Preparation: 
   //   * Define transitions: I->A = child1 & child2
-  //                         A->B = all threee children
+  //                         A->B = all three children
   //   * Engage system FSM & then engage child1 in another FSM w/ same initial state
   //   * Require that state is correct before testing
   sysItoA->add(children.begin(), children.end()-1, child1.fsm.getId(), childState0, child1.ItoA->getId());
@@ -1036,10 +1286,12 @@ BOOST_FIXTURE_TEST_CASE(TestRunTransitionDisengagedChildFSM, SystemStateMachineT
   BOOST_CHECK_EQUAL( s.getState(), Functionoid::State::kDone);
   BOOST_CHECK_EQUAL( s.getProgress(), 1.0);
   BOOST_CHECK_GE( s.getRunningTime(), 0.0);
-  BOOST_REQUIRE_EQUAL( s.getStepStatus().size(), size_t(1));
-  BOOST_CHECK_EQUAL( s.getStepStatus().at(0).size(), size_t(2));
   BOOST_CHECK_EQUAL( s.getNumberOfCompletedSteps(), size_t(1));
   BOOST_CHECK_EQUAL( s.getTotalNumberOfSteps(), size_t(1));
+  std::set<std::string> lExpectedEnabled = {child1.obj.getPath(), child2.obj.getPath()};
+  BOOST_CHECK_EQUAL_COLLECTIONS(s.getEnabledChildren().begin(), s.getEnabledChildren().end(), lExpectedEnabled.begin(), lExpectedEnabled.end());
+  BOOST_REQUIRE_EQUAL( s.getStepStatus().size(), size_t(1));
+  BOOST_CHECK_EQUAL( s.getStepStatus().at(0).size(), size_t(2));
 }
 
 
@@ -1049,7 +1301,7 @@ BOOST_FIXTURE_TEST_CASE(TestRunTransitionDisengagedChildFSM, SystemStateMachineT
 /* ---------------------------------------------------------------- */
 
 BOOST_FIXTURE_TEST_CASE(TestResetFSM, SystemStateMachineTestSetup) {
-  LOG(kInfo) << "Running SystemStateMachineTestSuite/TestResetFSMNoChildren";
+  LOG(kInfo) << "Running SystemStateMachineTestSuite/TestResetFSM";
   
   // Add children to system FSM, engage, and confirm initial state to prepare for following tests
   sysItoA->add(children.begin(), children.end()-1, child1.fsm.getId(), childState0, child1.ItoA->getId());
@@ -1231,6 +1483,88 @@ BOOST_FIXTURE_TEST_CASE(TestMaskablesMaskedDuringReset, SystemStateMachineTestSe
     BOOST_CHECK_EQUAL((*lIt)->maskableA.isMasked(), true);
     BOOST_CHECK_EQUAL((*lIt)->maskableB.isMasked(), true);
     BOOST_CHECK_EQUAL((*lIt)->maskableC.isMasked(), false);
+  }
+}
+
+
+BOOST_FIXTURE_TEST_CASE(TestChildrenDisabledDuringReset, SystemStateMachineTestSetup)
+{
+  LOG(kInfo) << "Running SystemStateMachineTestSuite/TestChildrenDisabledDuringReset";
+  typedef std::vector<Child*>::const_iterator ChildIt_t;
+  const std::vector<Child*> lChildren = {&child1, &child2, &child3};
+
+  // Finish off setup: Add all children to state machine
+  sysItoA->add(children.begin(), children.end(), child1.fsm.getId(), childState0, child1.ItoA->getId());
+
+  // PURPOSE: Check that reset ...
+  //    - Disables children specified in gatekeeper (child1)
+  //    - Leaves all other children enabled (child2 + child3)
+  //    - Doesn't care if disabled children are in other state machines 
+  //    - Only changes masks on children that are enabled (i.e. child2 + child3)
+
+  // SETUP:
+  //  * Engage system FSM with only child1 & child2 enabled
+  DummyGateKeeper lEngageGK;
+  lEngageGK.addDisabledId(child3.obj.getPath());
+  fsm.engage(lEngageGK);
+  BOOST_REQUIRE_EQUAL(sys->getStatus().getStateMachineId(), fsm.getId());
+  BOOST_REQUIRE_EQUAL(sys->getStatus().getState(), fsm.getInitialState());
+
+  //  * Engage child3 in main FSM (will be enabled in reset)
+  child3.fsm.engage(DummyGateKeeper());
+
+  //  * Engage child1 in another FSM (will be disabled in reset, hence reset shouldn't care)
+  child1.fsm.disengage();
+  child1.obj.registerStateMachine("anotherFSM", "anotherInitialState", "sE").engage(DummyGateKeeper());
+
+  BOOST_REQUIRE_EQUAL(child1.obj.getStatus().isEnabled(), true);
+  BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getStateMachineId(), "anotherFSM");
+  BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getState(), "anotherInitialState");
+  BOOST_REQUIRE_EQUAL(child2.obj.getStatus().isEnabled(), true);
+  BOOST_REQUIRE_EQUAL(child2.obj.getStatus().getStateMachineId(), child2.fsm.getId());
+  BOOST_REQUIRE_EQUAL(child2.obj.getStatus().getState(), childState0);
+  BOOST_REQUIRE_EQUAL(child3.obj.getStatus().isEnabled(), false);
+  BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getStateMachineId(), child3.fsm.getId());
+  BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getState(), childState0);
+
+  //  * Mask maskableC on each child (giving inverse of final result); require that starting assumptions are correct before testing
+  for(ChildIt_t lIt=lChildren.begin(); lIt!=lChildren.end(); lIt++)
+  {
+    (*lIt)->maskableC.setMasked(true);
+    BOOST_REQUIRE_EQUAL((*lIt)->maskableA.isMasked(), false);
+    BOOST_REQUIRE_EQUAL((*lIt)->maskableB.isMasked(), false);
+    BOOST_REQUIRE_EQUAL((*lIt)->maskableC.isMasked(), true);
+  }
+
+
+  // THE TEST: Reset system FSM, check that:
+  //  * child1 has been disabled; it's maskable descendants unchanged.
+  //  * child2 & child3 are enabled, maskable children: A & B now masked, but C unmasked
+  gk.addDisabledId(child1.obj.getPath());
+  BOOST_CHECK_NO_THROW(fsm.reset(gk));
+  
+  BOOST_CHECK_EQUAL(sys->getStatus().getStateMachineId(), fsm.getId());
+  BOOST_CHECK_EQUAL(sys->getStatus().getState(), sysState0);
+
+  BOOST_CHECK_EQUAL(child1.obj.getStatus().isEnabled(), false);
+  BOOST_CHECK_EQUAL(child2.obj.getStatus().isEnabled(), true);
+  BOOST_CHECK_EQUAL(child3.obj.getStatus().isEnabled(), true);
+
+  BOOST_CHECK_EQUAL(child1.obj.getStatus().getStateMachineId(), "anotherFSM");
+  BOOST_CHECK_EQUAL(child1.obj.getStatus().getState(), "anotherInitialState");
+  BOOST_CHECK_EQUAL(child1.maskableA.isMasked(), false);
+  BOOST_CHECK_EQUAL(child1.maskableB.isMasked(), false);
+  BOOST_CHECK_EQUAL(child1.maskableC.isMasked(), true);
+
+  for(ChildIt_t lIt=lChildren.begin()+1; lIt!=lChildren.end(); lIt++)
+  {
+    const Child& lChild = **lIt;
+
+    BOOST_CHECK_EQUAL(lChild.obj.getStatus().getStateMachineId(), lChild.fsm.getId());
+    BOOST_CHECK_EQUAL(lChild.obj.getStatus().getState(), childState0);
+    BOOST_CHECK_EQUAL(lChild.maskableA.isMasked(), true);
+    BOOST_CHECK_EQUAL(lChild.maskableB.isMasked(), true);
+    BOOST_CHECK_EQUAL(lChild.maskableC.isMasked(), false);
   }
 }
 

@@ -65,7 +65,7 @@ public:
 
     iterator begin();
     iterator end();
-    
+
   private:
     MutableStatus_t& mSysStatus;
     std::map<const MonitorableObject*, ActionableObject::MutableStatus_t*> mStatusMap;
@@ -86,11 +86,16 @@ public:
   //! Get registered state machine of specified ID
   SystemStateMachine& getStateMachine( const std::string& aId );
 
+
   Status_t getStatus() const;
 
   log4cplus::Logger& getLogger();
 
   typedef boost::unordered_map< std::string , SystemStateMachine* > StateMachineMap_t;
+  typedef boost::unordered_map< std::string , ActionableObject* > ActionableChildMap_t;
+
+  //! Get registered actionable children
+  const ActionableChildMap_t& getActionableChildren();
 
   //! Deleter functor that only deletes the actionable system after all system-level actions have finished running
   class Deleter : public Object::Deleter {
@@ -118,6 +123,7 @@ protected:
 private:
 
   StateMachineMap_t mFSMs;
+  ActionableChildMap_t mActionableChildren;
 
   MutableStatus_t mStatus;
   StatusContainer mStatusMap;
@@ -136,7 +142,7 @@ public:
 
 private:
   ActionableSystem& mSystem;
-  ActionableSystem::StatusContainer& mStatusMap;
+  ActionableSystem::MutableStatus_t& mSysStatus;
   const SystemFunctionoid& mAction;
   const Callback_t mPostActionCallback;
   typedef boost::shared_ptr<const BusyGuard> ChildGuardPtr_t;

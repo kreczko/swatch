@@ -77,6 +77,25 @@ const std::string ActionableObjectTestSetup::opStateB = "sB";
 BOOST_AUTO_TEST_SUITE( ActionableObjectTestSuite)
 
 
+BOOST_FIXTURE_TEST_CASE(TestConstruction, ActionableObjectTestSetup)
+{
+  LOG(kInfo) << "Running ActionableObjectTestSuite/TestConstruction";
+  
+  // Check that status is correct
+  ActionableObject::Status_t lStatus = handler->getStatus();
+  BOOST_CHECK_EQUAL(lStatus.isAlive(), true);
+  BOOST_CHECK_EQUAL(lStatus.isRunning(), false);
+  BOOST_CHECK_EQUAL(lStatus.getRunningActions().empty(), true);
+  BOOST_CHECK_EQUAL(lStatus.getFirstRunningActionOfType<Functionoid>(), (const Functionoid*) NULL);
+  BOOST_CHECK_EQUAL(lStatus.getLastRunningAction(), (const Functionoid*) NULL);
+  BOOST_CHECK_EQUAL(lStatus.isUpdatingMetrics(), false);
+  
+  BOOST_CHECK_EQUAL(lStatus.isEngaged(), false);
+  BOOST_CHECK_EQUAL(lStatus.getStateMachineId(), ActionableObject::Status_t::kNullStateMachineId);
+  BOOST_CHECK_EQUAL(lStatus.getState(), ActionableObject::Status_t::kNullStateId);
+  BOOST_CHECK_EQUAL(lStatus.isEnabled(), true);
+}
+
 BOOST_FIXTURE_TEST_CASE(TestRegisterCommand,  ActionableObjectTestSetup) {
   LOG(kInfo) << "Running ActionableObjectTestSuite/TestRegisterCommand";
   size_t n_commands = handler->getCommands().size();

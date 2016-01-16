@@ -121,6 +121,8 @@ public:
 
   void checkForMissingParameters(const GateKeeper& aGateKeeper, std::map< const StateMachine::Transition*, std::vector<CommandVec::MissingParam> >& aMissingParams) const;
 
+  void checkForMissingParameters(const GateKeeper& aGateKeeper, std::map< const StateMachine::Transition*, std::vector<CommandVec::MissingParam> >& aMissingParams, const ActionableStatusGuardMap_t& aGuardMap) const;
+
   /*!
    * @brief Run the transition, extracting the parameters for each child transition from the supplied gatekeeper
    * 
@@ -146,6 +148,7 @@ private:
   std::vector<Step>::iterator mStepIt;
   boost::posix_time::ptime mExecStartTime;
   boost::posix_time::ptime mExecEndTime;
+  std::set<const ActionableObject*> mEnabledChildren;
   std::vector< std::vector<boost::shared_ptr<const StateMachine::TransitionStatus> > > mStatusOfCompletedSteps;
 };
 
@@ -157,7 +160,7 @@ public:
   typedef std::vector<StepStatus_t> StepStatusVec_t;
   typedef StepStatusVec_t::const_iterator const_iterator;
 
-  SystemTransitionStatus(const std::string& aPath, ActionStatus::State aState, float aRunningTime, const SystemTransition::Step* aCurrentStep, const StepStatusVec_t& aFinishedStepStatuses, size_t aTotalNumSteps);
+  SystemTransitionStatus(const std::string& aPath, ActionStatus::State aState, float aRunningTime, const SystemTransition::Step* aCurrentStep, const StepStatusVec_t& aFinishedStepStatuses, size_t aTotalNumSteps, const std::set<std::string>& aEnabledChildren);
 
   //! Returns fraction progress of transition - range [0,1] inclusive
   float getProgress() const;
@@ -168,11 +171,15 @@ public:
   //! Number of steps in the transition
   size_t getTotalNumberOfSteps() const;
 
-  //! Returns status of steps that have started/completed execution 
+  //! Returns ID paths of children that took part in this transition (i.e. only enabled children)
+  const std::set<std::string>& getEnabledChildren() const;
+    
+    //! Returns status of steps that have started/completed execution 
   const StepStatusVec_t& getStepStatus() const;
 
   size_t mTotalNumSteps;
   size_t mNumCompletedSteps;
+  std::set<std::string> mEnabledChildren;
   StepStatusVec_t mStepStatuses;
 };
   
@@ -228,11 +235,17 @@ public:
   
 private:
   
-  ActionableStatusGuardMap_t lockMutexes();
+  //TODO: move to ActionableSystem::StatusContainer ??
+  ActionableStatusGuardMap_t lockMutexes() const;
   
-  //! Throws if system/children are in other state machine, or running transition; need to lock externally ...
-  void checkStateMachineEngagedAndNotInTransition(const std::string& aAction, const ActionableStatusGuardMap_t& aGuardMap) const;
-  
+  //! Throws if system is not engaged in this state machine, or running transition; does NOT check children.
+  void checkEngagedAndNotInTransition(const ActionableStatusGuard& aGuard, const std::string& aAction) const;
+
+  //! Throws if child is not engaged in specified state machine, or running transition
+  void checkChildEngagedAndNotInTransition(const StateMachine& aStateMachine, const ActionableStatusGuard& aGuard, const std::string& aAction) const;
+
+  void resetEnableFlagOnChildren(const GateKeeper& aGateKeeper, const ActionableStatusGuardMap_t& aGuardMap);
+
   struct State : public Object {
     State(const std::string& aId);
     void addTransition(SystemTransition* aTransition);
