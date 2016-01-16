@@ -242,8 +242,8 @@ BOOST_FIXTURE_TEST_CASE(TestEngageFSM, StateMachineTestSetup)
   LOG(kInfo) << "Running StateMachineTestSuite/TestEngageFSM";
 
   // Confirm correct construction before staring tests
-  BOOST_REQUIRE_EQUAL( obj->getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId );
-  BOOST_REQUIRE_EQUAL( obj->getStatus().getState(), ActionableStatus::kNullStateId );
+  BOOST_REQUIRE_EQUAL( obj->getStatus().getStateMachineId(), ActionableSnapshot::kNullStateMachineId );
+  BOOST_REQUIRE_EQUAL( obj->getStatus().getState(), ActionableSnapshot::kNullStateId );
 
   // Engaging FSM should put object into FSM's initial state
   BOOST_CHECK_NO_THROW( testFSM.engage(gk) );
@@ -281,13 +281,13 @@ BOOST_AUTO_TEST_CASE(TestDisengageFSM) {
   StateMachine& testFSM = obj.registerStateMachine("myFSM", initialState, "myErrorState");
 
   // Confirm correct construction before testing disengage method
-  BOOST_REQUIRE_EQUAL( obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId );
-  BOOST_REQUIRE_EQUAL( obj.getStatus().getState(), ActionableStatus::kNullStateId );
+  BOOST_REQUIRE_EQUAL( obj.getStatus().getStateMachineId(), ActionableSnapshot::kNullStateMachineId );
+  BOOST_REQUIRE_EQUAL( obj.getStatus().getState(), ActionableSnapshot::kNullStateId );
   
   // Can't disengage if FSM isn't yet engaged
   BOOST_CHECK_THROW( testFSM.disengage(), ResourceInWrongStateMachine);
-  BOOST_CHECK_EQUAL( obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
-  BOOST_CHECK_EQUAL( obj.getStatus().getState(), ActionableStatus::kNullStateId);
+  BOOST_CHECK_EQUAL( obj.getStatus().getStateMachineId(), ActionableSnapshot::kNullStateMachineId);
+  BOOST_CHECK_EQUAL( obj.getStatus().getState(), ActionableSnapshot::kNullStateId);
   
   // Engage FSM before continuing unit tests for disengage
   testFSM.engage(DummyGateKeeper());
@@ -302,8 +302,8 @@ BOOST_AUTO_TEST_CASE(TestDisengageFSM) {
 
   // Disengaging the engaged FSM
   BOOST_CHECK_NO_THROW( testFSM.disengage() );
-  BOOST_CHECK_EQUAL( obj.getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId );
-  BOOST_CHECK_EQUAL( obj.getStatus().getState(), ActionableStatus::kNullStateId );
+  BOOST_CHECK_EQUAL( obj.getStatus().getStateMachineId(), ActionableSnapshot::kNullStateMachineId );
+  BOOST_CHECK_EQUAL( obj.getStatus().getState(), ActionableSnapshot::kNullStateId );
 }
 
 
@@ -358,8 +358,8 @@ BOOST_FIXTURE_TEST_CASE(TestRunTransitionDisengagedFSM, StateMachineTestSetup) {
   BOOST_CHECK_THROW( transitionItoA->exec(lEmptyGK, false), ResourceInWrongState);
   BOOST_CHECK_EQUAL( transitionItoA->getState(), Functionoid::State::kInitial);
   BOOST_CHECK_EQUAL( transitionItoA->getStatus().getState(), Functionoid::State::kInitial);
-  BOOST_CHECK_EQUAL( obj->getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
-  BOOST_CHECK_EQUAL( obj->getStatus().getState(), ActionableStatus::kNullStateId);
+  BOOST_CHECK_EQUAL( obj->getStatus().getStateMachineId(), ActionableSnapshot::kNullStateMachineId);
+  BOOST_CHECK_EQUAL( obj->getStatus().getState(), ActionableSnapshot::kNullStateId);
 
   // Running transition with other FSM engaged: should throw, and leave state/TransitionStatus unchanged
   StateMachine& otherFSM = obj->registerStateMachine("anotherFSM", fsmState0, fsmStateError);
@@ -397,7 +397,7 @@ BOOST_FIXTURE_TEST_CASE(TestRunEmptyTransitions, StateMachineTestSetup) {
   BOOST_CHECK_NO_THROW( transitionItoA->exec(emptyGK, false) );
   BOOST_CHECK_EQUAL( obj->getStatus().getState(), fsmStateA );
   BOOST_CHECK_EQUAL( transitionItoA->getState(), Functionoid::State::kDone );
-  StateMachine::TransitionStatus s = transitionItoA->getStatus();
+  StateMachine::TransitionSnapshot s = transitionItoA->getStatus();
   BOOST_CHECK_EQUAL( s.getActionPath(), transitionItoA->getPath() );
   BOOST_CHECK( s.getCommandStatus().empty());
   BOOST_CHECK_EQUAL( s.getNumberOfCompletedCommands(), size_t(0));
@@ -486,7 +486,7 @@ BOOST_FIXTURE_TEST_CASE(TestRunErrorTransition, StateMachineTestSetup) {
   BOOST_CHECK_EQUAL(obj->getStatus().getState(), fsmStateError);
   BOOST_CHECK_EQUAL(transitionItoA->getState(), Functionoid::State::kError);
 
-  StateMachine::TransitionStatus s = transitionItoA->getStatus();
+  StateMachine::TransitionSnapshot s = transitionItoA->getStatus();
   BOOST_CHECK_EQUAL(s.getActionPath(), transitionItoA->getPath());
   BOOST_CHECK_EQUAL(s.getNumberOfCompletedCommands(), size_t(2));
   BOOST_CHECK_EQUAL(s.getTotalNumberOfCommands(), size_t(3));
@@ -526,7 +526,7 @@ BOOST_FIXTURE_TEST_CASE(TestRunWarningTransition, StateMachineTestSetup) {
   BOOST_CHECK_EQUAL(obj->getStatus().getState(), fsmStateA);
   BOOST_CHECK_EQUAL(transitionItoA->getState(), Functionoid::State::kWarning);
 
-  StateMachine::TransitionStatus s = transitionItoA->getStatus();
+  StateMachine::TransitionSnapshot s = transitionItoA->getStatus();
   BOOST_CHECK_EQUAL(s.getActionPath(), transitionItoA->getPath());
   BOOST_CHECK_EQUAL(s.getNumberOfCompletedCommands(), size_t(3));
   BOOST_CHECK_EQUAL(s.getTotalNumberOfCommands(), size_t(3));
@@ -563,7 +563,7 @@ BOOST_FIXTURE_TEST_CASE(TestRunGoodTransition, StateMachineTestSetup) {
   BOOST_CHECK_EQUAL(obj->getStatus().getState(), fsmStateA);
   BOOST_CHECK_EQUAL(transitionItoA->getState(), Functionoid::State::kDone);
 
-  StateMachine::TransitionStatus s = transitionItoA->getStatus();
+  StateMachine::TransitionSnapshot s = transitionItoA->getStatus();
   BOOST_CHECK_EQUAL(s.getActionPath(), transitionItoA->getPath());
   BOOST_CHECK_EQUAL(s.getNumberOfCompletedCommands(), size_t(2));
   BOOST_CHECK_EQUAL(s.getTotalNumberOfCommands(), size_t(2));
@@ -644,8 +644,8 @@ BOOST_FIXTURE_TEST_CASE(TestResetDisengagedFSM, StateMachineTestSetup) {
 
   // Resetting FSM before engaged: Should throw, and leave state + MaskableObjects unchanged
   BOOST_CHECK_THROW( testFSM.reset(gk), ResourceInWrongStateMachine);
-  BOOST_CHECK_EQUAL( obj->getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId );
-  BOOST_CHECK_EQUAL( obj->getStatus().getState(), ActionableStatus::kNullStateId );
+  BOOST_CHECK_EQUAL( obj->getStatus().getStateMachineId(), ActionableSnapshot::kNullStateMachineId );
+  BOOST_CHECK_EQUAL( obj->getStatus().getState(), ActionableSnapshot::kNullStateId );
   
   BOOST_CHECK_EQUAL(maskableA.isMasked(), false);
   BOOST_CHECK_EQUAL(maskableB.isMasked(), false);

@@ -16,7 +16,7 @@ namespace swatch {
 namespace core {
 
 
-CommandSequence::CommandSequence( const std::string& aId, ActionableObject& aResource, MutableActionableStatus& aActionableStatus, const std::string& aFirstCommandId, const std::string& aFirstCommandAlias) :
+CommandSequence::CommandSequence( const std::string& aId, ActionableObject& aResource, ActionableStatus& aActionableStatus, const std::string& aFirstCommandId, const std::string& aFirstCommandAlias) :
   CommandVec(aId, aResource),
   mActionableStatus(aActionableStatus)
 {
@@ -24,7 +24,7 @@ CommandSequence::CommandSequence( const std::string& aId, ActionableObject& aRes
 }
 
 
-CommandSequence::CommandSequence( const std::string& aId, ActionableObject& aResource, MutableActionableStatus& aActionableStatus, Command& aFirstCommand, const std::string& aFirstCommandAlias) :
+CommandSequence::CommandSequence( const std::string& aId, ActionableObject& aResource, ActionableStatus& aActionableStatus, Command& aFirstCommand, const std::string& aFirstCommandAlias) :
   CommandVec(aId, aResource),
   mActionableStatus(aActionableStatus)
 {

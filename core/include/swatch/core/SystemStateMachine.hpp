@@ -18,7 +18,7 @@ namespace swatch {
 namespace core {
 
 class SystemStateMachine;
-class SystemTransitionStatus;
+class SystemTransitionSnapshot;
 
 
 //! Represents transition  of a class that inherits from ActionableSystem, for an FSM modeled by SystemStateMachine
@@ -55,7 +55,7 @@ public:
   size_t size() const; 
 
   //! Returns status of transition
-  SystemTransitionStatus getStatus() const;
+  SystemTransitionSnapshot getStatus() const;
 
   //! State that this transition starts from
   const std::string& getStartState() const;
@@ -144,23 +144,23 @@ private:
 
   mutable boost::mutex mMutex;
   const GateKeeper* mGateKeeper;
-  ActionStatus::State mState;
+  ActionSnapshot::State mState;
   std::vector<Step>::iterator mStepIt;
   boost::posix_time::ptime mExecStartTime;
   boost::posix_time::ptime mExecEndTime;
   std::set<const ActionableObject*> mEnabledChildren;
-  std::vector< std::vector<boost::shared_ptr<const StateMachine::TransitionStatus> > > mStatusOfCompletedSteps;
+  std::vector< std::vector<boost::shared_ptr<const StateMachine::TransitionSnapshot> > > mStatusOfCompletedSteps;
 };
 
 
-class SystemTransitionStatus : public ActionStatus {
+class SystemTransitionSnapshot : public ActionSnapshot {
 public:
-  typedef boost::shared_ptr<const StateMachine::TransitionStatus> ChildStatusRef_t;
+  typedef boost::shared_ptr<const StateMachine::TransitionSnapshot> ChildStatusRef_t;
   typedef std::vector<ChildStatusRef_t> StepStatus_t;
   typedef std::vector<StepStatus_t> StepStatusVec_t;
   typedef StepStatusVec_t::const_iterator const_iterator;
 
-  SystemTransitionStatus(const std::string& aPath, ActionStatus::State aState, float aRunningTime, const SystemTransition::Step* aCurrentStep, const StepStatusVec_t& aFinishedStepStatuses, size_t aTotalNumSteps, const std::set<std::string>& aEnabledChildren);
+  SystemTransitionSnapshot(const std::string& aPath, ActionSnapshot::State aState, float aRunningTime, const SystemTransition::Step* aCurrentStep, const StepStatusVec_t& aFinishedStepStatuses, size_t aTotalNumSteps, const std::set<std::string>& aEnabledChildren);
 
   //! Returns fraction progress of transition - range [0,1] inclusive
   float getProgress() const;

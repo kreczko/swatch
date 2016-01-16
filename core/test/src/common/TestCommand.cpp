@@ -81,10 +81,10 @@ BOOST_FIXTURE_TEST_CASE(TestCommandInitialState,  CommandTestSetup) {
   
   for(auto it=cmds.begin(); it != cmds.end(); it++)
   {
-    BOOST_CHECK_EQUAL( (*it)->getState(), ActionStatus::kInitial );
+    BOOST_CHECK_EQUAL( (*it)->getState(), ActionSnapshot::kInitial );
     
-    CommandStatus s = (*it)->getStatus();
-    BOOST_CHECK_EQUAL(s.getState(), ActionStatus::kInitial);
+    CommandSnapshot s = (*it)->getStatus();
+    BOOST_CHECK_EQUAL(s.getState(), ActionSnapshot::kInitial);
     BOOST_CHECK_EQUAL(s.getProgress(), 0.0);
     BOOST_CHECK_EQUAL(s.getStatusMsg(), "initialised");
     BOOST_CHECK_EQUAL(s.getParameters().size(), size_t(0));
@@ -102,12 +102,12 @@ BOOST_FIXTURE_TEST_CASE(TestSuccessfulCommand,  CommandTestSetup) {
   BOOST_CHECK_NE(params.get<xdata::Integer>("x").value_, DummyCommand::defaultResult.value_);
   cmd.exec(params);
   do {
-  } while ( (cmd.getState() == ActionStatus::kScheduled) || (cmd.getState() == ActionStatus::kRunning) );
+  } while ( (cmd.getState() == ActionSnapshot::kScheduled) || (cmd.getState() == ActionSnapshot::kRunning) );
 
   BOOST_CHECK_EQUAL(obj->getNumber(), uint32_t(54));
   
-  CommandStatus s = cmd.getStatus();
-  BOOST_CHECK_EQUAL(s.getState(), ActionStatus::kDone);
+  CommandSnapshot s = cmd.getStatus();
+  BOOST_CHECK_EQUAL(s.getState(), ActionSnapshot::kDone);
   BOOST_CHECK_EQUAL(s.getProgress(), 1.0);
   BOOST_CHECK_EQUAL(s.getStatusMsg(), DummyCommand::finalMsgUseResource);
   BOOST_CHECK_EQUAL(s.getParameters().size(), size_t(2));
@@ -124,10 +124,10 @@ BOOST_FIXTURE_TEST_CASE(TestCommandWarning,  CommandTestSetup) {
   warning_cmd.exec(params);
   
   do {
-  } while ( (warning_cmd.getState() == ActionStatus::kScheduled) || (warning_cmd.getState() == ActionStatus::kRunning) );
+  } while ( (warning_cmd.getState() == ActionSnapshot::kScheduled) || (warning_cmd.getState() == ActionSnapshot::kRunning) );
   
-  CommandStatus s = warning_cmd.getStatus();
-  BOOST_CHECK_EQUAL(s.getState(), ActionStatus::kWarning);
+  CommandSnapshot s = warning_cmd.getStatus();
+  BOOST_CHECK_EQUAL(s.getState(), ActionSnapshot::kWarning);
   BOOST_CHECK_EQUAL(s.getProgress(), 1.0);
   BOOST_CHECK_EQUAL(s.getStatusMsg(), DummyWarningCommand::finalMsg);
   //BOOST_CHECK_EQUAL(s.getParameters().size(), size_t(0));
@@ -141,10 +141,10 @@ BOOST_FIXTURE_TEST_CASE(TestCommandError,  CommandTestSetup) {
 
   error_cmd.exec(params);
   do {
-  } while ( (error_cmd.getState() == ActionStatus::kScheduled) || (error_cmd.getState() == ActionStatus::kRunning) );
+  } while ( (error_cmd.getState() == ActionSnapshot::kScheduled) || (error_cmd.getState() == ActionSnapshot::kRunning) );
   
-  CommandStatus s = error_cmd.getStatus();
-  BOOST_CHECK_EQUAL(s.getState(), ActionStatus::kError);
+  CommandSnapshot s = error_cmd.getStatus();
+  BOOST_CHECK_EQUAL(s.getState(), ActionSnapshot::kError);
   BOOST_CHECK_EQUAL(s.getProgress(), DummyErrorCommand::finalProgress);
   BOOST_CHECK_EQUAL(s.getStatusMsg(), DummyErrorCommand::finalMsg);
   BOOST_CHECK_EQUAL(s.getParameters().size(), size_t(0));
@@ -160,11 +160,11 @@ BOOST_FIXTURE_TEST_CASE(TestThrowingCommand,  CommandTestSetup) {
   Log::setLogThreshold( swatch::logger::kFatal );
   throw_cmd.exec(params);
   do {
-  } while ( (throw_cmd.getState() == ActionStatus::kScheduled) || (throw_cmd.getState() == ActionStatus::kRunning) );
+  } while ( (throw_cmd.getState() == ActionSnapshot::kScheduled) || (throw_cmd.getState() == ActionSnapshot::kRunning) );
   Log::setLogThreshold( lLogThr );
   
-  CommandStatus s = throw_cmd.getStatus();
-  BOOST_CHECK_EQUAL(s.getState(), ActionStatus::kError);
+  CommandSnapshot s = throw_cmd.getStatus();
+  BOOST_CHECK_EQUAL(s.getState(), ActionSnapshot::kError);
   BOOST_CHECK_EQUAL(s.getProgress(), DummyThrowCommand::finalProgress);
   BOOST_CHECK_EQUAL(s.getStatusMsg(), "An exception of type 'std::runtime_error' was thrown in Command::code(): " + DummyThrowCommand::exceptionMsg);
   BOOST_CHECK_EQUAL(s.getParameters().size(), size_t(0));

@@ -20,7 +20,7 @@ Command::Command( const std::string& aId , ActionableObject& aResource, const T&
         ObjectFunctionoid( aId, aResource ),
         mActionableStatus(aResource.mStatus),
         mDefaultResult(new T(aDefault)),
-        mState(ActionStatus::kInitial),
+        mState(ActionSnapshot::kInitial),
         mProgress(0.),
         mStatusMsg("initialised"),
         mResult(),

@@ -21,7 +21,7 @@ CommandVec::CommandVec( const std::string& aId, ActionableObject& aActionable) :
   mCommands(),
   mCachedParameters(),
   mParamUpdateTime() ,
-  mState( ActionStatus::kInitial ),
+  mState( ActionSnapshot::kInitial ),
   mCommandIt( mCommands.end() )
 {
 }
@@ -105,25 +105,25 @@ std::vector<Command*> CommandVec::getCommands()
 }
 
 
-ActionStatus::State CommandVec::getState() const 
+ActionSnapshot::State CommandVec::getState() const 
 {
   boost::unique_lock<boost::mutex> lock(mMutex);
   return mState;
 }
 
 
-CommandVecStatus CommandVec::getStatus() const 
+CommandVecSnapshot CommandVec::getStatus() const 
 {
   boost::unique_lock<boost::mutex> lock(mMutex);
   
   float runningTime = 0.0;
   switch (mState) {
-    case ActionStatus::kInitial : 
-    case ActionStatus::kScheduled :
+    case ActionSnapshot::kInitial : 
+    case ActionSnapshot::kScheduled :
       break;
     default :
       boost::posix_time::ptime endTime;
-      if (mState == ActionStatus::kRunning)
+      if (mState == ActionSnapshot::kRunning)
         endTime = boost::posix_time::microsec_clock::universal_time();
       else
         endTime = mExecEndTime;
@@ -137,7 +137,7 @@ CommandVecStatus CommandVec::getStatus() const
   
   const Command* currentCommand =  ( ((mCommandIt == mCommands.end()) || (mState == State::kError)) ? NULL : &mCommandIt->get());
   
-  return CommandVecStatus(getPath(), mState, runningTime, currentCommand, mStatusOfCompletedCommands, mCommands.size());
+  return CommandVecSnapshot(getPath(), mState, runningTime, currentCommand, mStatusOfCompletedCommands, mCommands.size());
 }
 
 
@@ -150,14 +150,14 @@ void CommandVec::runCommands(boost::shared_ptr<BusyGuard> aGuard)
     // Finish straight away if there aren't any commands to run
     if( mCommands.empty() )
     {
-      mState = ActionStatus::kDone;
+      mState = ActionSnapshot::kDone;
       mCommandIt = mCommands.end();
       mExecEndTime = mExecStartTime;
       return;
     }
     else
     {
-      mState = ActionStatus::kRunning;
+      mState = ActionSnapshot::kRunning;
       mCommandIt = mCommands.begin();
     }
   }
@@ -171,14 +171,14 @@ void CommandVec::runCommands(boost::shared_ptr<BusyGuard> aGuard)
       mCommandIt->get().exec(aGuard.get(), *lIt , false ); // False = run the commands in this thread!
       //FIXME: Make exec method return CommandStatus to remove any possibility of race condition ?
 
-      CommandStatus status = mCommandIt->get().getStatus();
+      CommandSnapshot status = mCommandIt->get().getStatus();
       boost::unique_lock<boost::mutex> lock(mMutex);
       mStatusOfCompletedCommands.push_back(status);
 
       // Don't execute any more commands if there was an error
-      if( status.getState() == ActionStatus::kError )
+      if( status.getState() == ActionSnapshot::kError )
       {
-        mState = ActionStatus::kError;
+        mState = ActionSnapshot::kError;
         mExecEndTime = boost::posix_time::microsec_clock::universal_time();
         return;
       }
@@ -190,11 +190,11 @@ void CommandVec::runCommands(boost::shared_ptr<BusyGuard> aGuard)
       // Exit the loop if no more commands remain
       if( mCommandIt == mCommands.end() )
       {
-        mState = ActionStatus::kDone;
-        for(std::vector<CommandStatus>::const_iterator statusIt=mStatusOfCompletedCommands.begin(); statusIt != mStatusOfCompletedCommands.end(); statusIt++)
+        mState = ActionSnapshot::kDone;
+        for(std::vector<CommandSnapshot>::const_iterator statusIt=mStatusOfCompletedCommands.begin(); statusIt != mStatusOfCompletedCommands.end(); statusIt++)
         {
-          if(statusIt->getState() == ActionStatus::kWarning)
-            mState = ActionStatus::kWarning;
+          if(statusIt->getState() == ActionSnapshot::kWarning)
+            mState = ActionSnapshot::kWarning;
         }
         mExecEndTime = boost::posix_time::microsec_clock::universal_time();
         return;
@@ -207,7 +207,7 @@ void CommandVec::runCommands(boost::shared_ptr<BusyGuard> aGuard)
     std::cout << "An exception occurred in CommandVec::runCommands(): " << e.what() << std::endl;
     
     boost::unique_lock<boost::mutex> lock( mMutex );
-    mState = ActionStatus::kError;
+    mState = ActionSnapshot::kError;
     mExecEndTime = boost::posix_time::microsec_clock::universal_time();
   }
   
@@ -233,7 +233,7 @@ void CommandVec::reset(const ParameterSets_t& aParamSets)
 {
   boost::unique_lock<boost::mutex> lock( mMutex );
 
-  mState = ActionStatus::kInitial;
+  mState = ActionSnapshot::kInitial;
   mCommandIt = mCommands.end();
   mCachedParameters = aParamSets;
   mStatusOfCompletedCommands.clear();
@@ -288,8 +288,8 @@ bool operator !=(const CommandVec::MissingParam& aParam1, const CommandVec::Miss
 }
 
 
-CommandVecStatus::CommandVecStatus(const std::string& aPath, ActionStatus::State aState, float aRunningTime, const Command* aCurrentCommand, const std::vector<CommandStatus>& aStatusOfCompletedCommands,  size_t aTotalNumberOfCommands) : 
-  ActionStatus(aPath, aState, aRunningTime),
+CommandVecSnapshot::CommandVecSnapshot(const std::string& aPath, ActionSnapshot::State aState, float aRunningTime, const Command* aCurrentCommand, const std::vector<CommandSnapshot>& aStatusOfCompletedCommands,  size_t aTotalNumberOfCommands) : 
+  ActionSnapshot(aPath, aState, aRunningTime),
   mTotalNumberOfCommands( aTotalNumberOfCommands ),
   mCommandStatuses(aStatusOfCompletedCommands)
 {
@@ -303,7 +303,7 @@ CommandVecStatus::CommandVecStatus(const std::string& aPath, ActionStatus::State
 }
 
 
-float CommandVecStatus::getProgress() const
+float CommandVecSnapshot::getProgress() const
 {
   if ((mTotalNumberOfCommands == 0) && (getState() == kDone))
     return 1.0;
@@ -316,23 +316,23 @@ float CommandVecStatus::getProgress() const
 }
 
 
-size_t CommandVecStatus::getNumberOfCompletedCommands() const {
+size_t CommandVecSnapshot::getNumberOfCompletedCommands() const {
   return mResults.size();
 }
 
 
-size_t CommandVecStatus::getTotalNumberOfCommands() const {
+size_t CommandVecSnapshot::getTotalNumberOfCommands() const {
   return mTotalNumberOfCommands;
 }
 
 
-const std::vector<const xdata::Serializable*>& CommandVecStatus::getResults() const
+const std::vector<const xdata::Serializable*>& CommandVecSnapshot::getResults() const
 {
   return mResults;
 }
 
 
-const std::vector<CommandStatus>& CommandVecStatus::getCommandStatus() const
+const std::vector<CommandSnapshot>& CommandVecSnapshot::getCommandStatus() const
 {
   return mCommandStatuses;
 }

@@ -15,7 +15,7 @@ namespace swatch {
 namespace core {
 
 class Command;
-class CommandStatus;
+class CommandSnapshot;
 class GateKeeper;
 class StateMachine;
 
@@ -23,8 +23,8 @@ class StateMachine;
 //! Represents a sequence of commands, executed in succession.
 class CommandSequence : public CommandVec {
 public:
-  CommandSequence( const std::string& aId, ActionableObject& aResource, MutableActionableStatus& aActionableStatus, const std::string& aFirstCommandId, const std::string& aFirstCommandNamespace="");
-  CommandSequence( const std::string& aId, ActionableObject& aResource, MutableActionableStatus& aActionableStatus, Command& aFirstCommand, const std::string& aFirstCommandNamespace="");
+  CommandSequence( const std::string& aId, ActionableObject& aResource, ActionableStatus& aActionableStatus, const std::string& aFirstCommandId, const std::string& aFirstCommandNamespace="");
+  CommandSequence( const std::string& aId, ActionableObject& aResource, ActionableStatus& aActionableStatus, Command& aFirstCommand, const std::string& aFirstCommandNamespace="");
 
   virtual ~CommandSequence();
   
@@ -56,11 +56,11 @@ public:
   void exec(const BusyGuard* aGuard, const GateKeeper& aGateKeeper, const bool& aUseThreadPool = true );
 
 private:
-  MutableActionableStatus& mActionableStatus;
+  ActionableStatus& mActionableStatus;
 };
 
 
-typedef CommandVecStatus CommandSequenceStatus;
+typedef CommandVecSnapshot CommandSequenceSnapshot;
 
 } /* namespace core */
 } /* namespace swatch */

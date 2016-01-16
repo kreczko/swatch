@@ -16,44 +16,44 @@ Functionoid::~Functionoid()
 }
 
 
-std::ostream& operator<<(std::ostream& aStream, swatch::core::ActionStatus::State aState)
+std::ostream& operator<<(std::ostream& aStream, swatch::core::ActionSnapshot::State aState)
 {
   switch (aState) {
-    case ActionStatus::kInitial   : aStream << "Initial"; break;
-    case ActionStatus::kScheduled : aStream << "Scheduled"; break;
-    case ActionStatus::kRunning   : aStream << "Running"; break;
-    case ActionStatus::kWarning   : aStream << "Warning"; break;
-    case ActionStatus::kError     : aStream << "Error"; break;
-    case ActionStatus::kDone      : aStream << "Done"; break;
+    case ActionSnapshot::kInitial   : aStream << "Initial"; break;
+    case ActionSnapshot::kScheduled : aStream << "Scheduled"; break;
+    case ActionSnapshot::kRunning   : aStream << "Running"; break;
+    case ActionSnapshot::kWarning   : aStream << "Warning"; break;
+    case ActionSnapshot::kError     : aStream << "Error"; break;
+    case ActionSnapshot::kDone      : aStream << "Done"; break;
     default : aStream << "Unknown value of swatch::core::ActionStatus::Status enum"; 
   }
   return aStream;
 }
 
 
-ActionStatus::~ActionStatus() 
+ActionSnapshot::~ActionSnapshot() 
 {
 }
 
 
-const std::string& ActionStatus::getActionPath() const
+const std::string& ActionSnapshot::getActionPath() const
 {
   return mPath;
 }
 
 
-ActionStatus::State ActionStatus::getState() const
+ActionSnapshot::State ActionSnapshot::getState() const
 {
   return mState;
 }
 
 
-float ActionStatus::getRunningTime() const
+float ActionSnapshot::getRunningTime() const
 {
   return mRunningTime;
 }
   
-ActionStatus::ActionStatus(const std::string& aPath, State aState, float aRunningTime) : 
+ActionSnapshot::ActionSnapshot(const std::string& aPath, State aState, float aRunningTime) : 
   mPath(aPath),
   mState(aState),
   mRunningTime(aRunningTime)

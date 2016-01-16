@@ -18,7 +18,7 @@ namespace core {
 
 
 class ActionableSystem;
-class ActionStatus;
+class ActionSnapshot;
 class Command;
 class CommandSequence;
 class GateKeeper;
@@ -30,7 +30,7 @@ class StateMachine : public Object {
 public:
   class Transition;
   
-  StateMachine(const std::string& aId, ActionableObject& aResource, MutableActionableStatus& aStatus, const std::string& aInitialState, const std::string& aErrorState); 
+  StateMachine(const std::string& aId, ActionableObject& aResource, ActionableStatus& aStatus, const std::string& aInitialState, const std::string& aErrorState); 
  
   virtual ~StateMachine();
 
@@ -82,11 +82,11 @@ public:
 
   static void resetMaskableObjects(ActionableObject& aObj, const GateKeeper& aGateKeeper);
   
-  typedef CommandVecStatus TransitionStatus;
+  typedef CommandVecSnapshot TransitionSnapshot;
 
   class Transition : public CommandVec {
   public:
-    Transition(const std::string& aId, StateMachine& aFSM, MutableActionableStatus& aActionableStatus, const std::string& aStartState, const std::string& aEndState);
+    Transition(const std::string& aId, StateMachine& aFSM, ActionableStatus& aActionableStatus, const std::string& aStartState, const std::string& aEndState);
 
     //! State that this transition starts from
     const std::string& getStartState() const;
@@ -136,7 +136,7 @@ public:
     void changeState(const ActionableStatusGuard& aGuard);
 
     StateMachine& mStateMachine;
-    MutableActionableStatus& mActionableStatus;
+    ActionableStatus& mActionableStatus;
     const std::string mStartState;
     const std::string mEndState;
     MonitoringSettings_t mCachedMonitoringSettings;
@@ -155,7 +155,7 @@ private:
   State& getState(const std::string& aStateId);
     
   ActionableObject& mResource;
-  MutableActionableStatus& mStatus;
+  ActionableStatus& mStatus;
     
   typedef std::vector<std::string> StateVec_t;
   typedef StateVec_t::const_iterator StateIt_t;

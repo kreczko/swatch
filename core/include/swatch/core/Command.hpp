@@ -33,7 +33,7 @@ namespace core {
 
 
 class ActionableObject;
-class CommandStatus;
+class CommandSnapshot;
 
 //! Represents a one-shot action on a resource (a class that inherits from swatch::core::ActionableObject)
 class Command : public ObjectFunctionoid {
@@ -62,10 +62,10 @@ public:
     void exec(const BusyGuard* aOuterBusyGuard, const XParameterSet& aParams , bool aUseThreadPool = true );
 
     //! Returns current state of this command
-    ActionStatus::State getState() const;
+    ActionSnapshot::State getState() const;
 
     //! Returns snapshot of this command's current status (state flag value, running time, progress fraction, status message and result) as a CommandStatus instance
-    CommandStatus getStatus() const;
+    CommandSnapshot getStatus() const;
     
     template<typename T>
     void registerParameter(const std::string& aName, const T& aDefaultValue);
@@ -76,7 +76,7 @@ public:
     
 protected:
     //! user-defined code for execution
-    virtual ActionStatus::State code( const XParameterSet& aParams ) = 0;
+    virtual ActionSnapshot::State code( const XParameterSet& aParams ) = 0;
 
     template<typename T>
     Command( const std::string& aId , ActionableObject& aResource, const T& aDefault );
@@ -107,7 +107,7 @@ private:
     // thread safe exception catching wrapper for code()
     void runCode(boost::shared_ptr<BusyGuard> aGuard, const XParameterSet& aParams );
 
-    MutableActionableStatus& mActionableStatus;
+    ActionableStatus& mActionableStatus;
     
     ReadWriteXParameterSet mDefaultParams;
 
@@ -115,7 +115,7 @@ private:
 
     xdata::Serializable* const mDefaultResult;
 
-    ActionStatus::State mState;
+    ActionSnapshot::State mState;
 
     timeval mExecStartTime;
     timeval mExecEndTime;
@@ -141,9 +141,9 @@ private:
 
 
 //! Provides a snapshot of the progress/status of a swatch::core::Command
-class CommandStatus : public ActionStatus {
+class CommandSnapshot : public ActionSnapshot {
 public:
-    CommandStatus(const std::string& aPath, ActionStatus::State aState, float aRunningTime, float aProgress, const std::string& aStatusMsg, const ReadOnlyXParameterSet& aParamSet, const boost::shared_ptr<xdata::Serializable>& aResult);
+    CommandSnapshot(const std::string& aPath, ActionSnapshot::State aState, float aRunningTime, float aProgress, const std::string& aStatusMsg, const ReadOnlyXParameterSet& aParamSet, const boost::shared_ptr<xdata::Serializable>& aResult);
 
     //! Returns fractional progress of command; range [0,1]
     float getProgress() const;

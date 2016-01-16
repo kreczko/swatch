@@ -47,7 +47,7 @@ DummyActionableObject::WaitCommand::~WaitCommand()
 }
 
 
-ActionStatus::State DummyActionableObject::WaitCommand::code(const XParameterSet& aParams)
+ActionSnapshot::State DummyActionableObject::WaitCommand::code(const XParameterSet& aParams)
 {
   DummyActionableObject& aObj = getActionable<DummyActionableObject>();
 
@@ -57,7 +57,7 @@ ActionStatus::State DummyActionableObject::WaitCommand::code(const XParameterSet
   
   setProgress(0.8, "I've finished waiting!");
   
-  return ActionStatus::kDone;
+  return ActionSnapshot::kDone;
 }
 
 

@@ -40,7 +40,7 @@ SystemTransition::SystemTransition(const std::string& aId, SystemStateMachine& a
   mStartState(aStartState),
   mEndState(aEndState),
   mGateKeeper(NULL),
-  mState(ActionStatus::kInitial),
+  mState(ActionSnapshot::kInitial),
   mStepIt(mSteps.end()) {
 }
 
@@ -80,18 +80,18 @@ size_t SystemTransition::size() const
 }
 
 
-SystemTransitionStatus SystemTransition::getStatus() const
+SystemTransitionSnapshot SystemTransition::getStatus() const
 {
   boost::unique_lock<boost::mutex> lock(mMutex);
   
   float runningTime = 0.0;
   switch (mState) {
-    case ActionStatus::kInitial : 
-    case ActionStatus::kScheduled :
+    case ActionSnapshot::kInitial : 
+    case ActionSnapshot::kScheduled :
       break;
     default :
       boost::posix_time::ptime endTime;
-      if (mState == ActionStatus::kRunning)
+      if (mState == ActionSnapshot::kRunning)
         endTime = boost::posix_time::microsec_clock::universal_time();
       else
         endTime = mExecEndTime;
@@ -109,7 +109,7 @@ SystemTransitionStatus SystemTransition::getStatus() const
   for(auto lIt=mEnabledChildren.begin(); lIt != mEnabledChildren.end(); lIt++)
     lEnabledChildren.insert((*lIt)->getPath());
   
-  return SystemTransitionStatus(getPath(), mState, runningTime, currentStep, mStatusOfCompletedSteps, mSteps.size(), lEnabledChildren);
+  return SystemTransitionSnapshot(getPath(), mState, runningTime, currentStep, mStatusOfCompletedSteps, mSteps.size(), lEnabledChildren);
 }
 
 
@@ -257,7 +257,7 @@ void SystemTransition::exec(const GateKeeper& aGateKeeper, const bool& aUseThrea
     // 1) Check current state; if in correct state, then 
     //    request control of the resource (incl. children), and continue
     const ActionableSystem& lSystem = getStateMachine().getActionable();
-    ActionableSystem::MutableStatus_t& lSysStatus = mStatusMap.getSystemStatus();
+    ActionableStatus& lSysStatus = mStatusMap.getSystemStatus();
     ActionableStatusGuard& lSysGuard = *lStatusGuardMap.at(&lSystem);
 
     // 1a) Check that system is engaged in correct state machine, and is in the correct state
@@ -279,7 +279,7 @@ void SystemTransition::exec(const GateKeeper& aGateKeeper, const bool& aUseThrea
     BOOST_FOREACH( const ObjTransitionMap_t::value_type e, childTransitionMap )
     {
       const ActionableStatusGuard& lChildGuard = *lStatusGuardMap.at(e.first);
-      const ActionableObject::MutableStatus_t& lChildStatus = mStatusMap.getStatus(*e.first);
+      const ActionableStatus& lChildStatus = mStatusMap.getStatus(*e.first);
 
       // Ignore children that aren't enabled
       if(!lChildStatus.isEnabled(lChildGuard))
@@ -301,7 +301,7 @@ void SystemTransition::exec(const GateKeeper& aGateKeeper, const bool& aUseThrea
     boost::unique_lock<boost::mutex> lock( mMutex );
 
     mGateKeeper = & aGateKeeper;
-    mState = ActionStatus::kInitial;
+    mState = ActionSnapshot::kInitial;
     mStepIt = mSteps.end();
     mStatusOfCompletedSteps.clear();
     mStatusOfCompletedSteps.reserve(mSteps.size());
@@ -311,7 +311,7 @@ void SystemTransition::exec(const GateKeeper& aGateKeeper, const bool& aUseThrea
   // 3) Execute the command
   if ( aUseThreadPool){
     boost::unique_lock<boost::mutex> lock(mMutex);
-    mState = ActionStatus::kScheduled;
+    mState = ActionSnapshot::kScheduled;
     
     ThreadPool& pool = ThreadPool::getInstance();
     pool.addTask<SystemTransition, SystemBusyGuard>(this , &SystemTransition::runSteps, lBusyGuard);
@@ -332,14 +332,14 @@ void SystemTransition::runSteps(boost::shared_ptr<SystemBusyGuard> aGuard)
     // Finish straight away if there aren't any steps to run
     if( mSteps.empty() )
     {
-      mState = ActionStatus::kDone;
+      mState = ActionSnapshot::kDone;
       mStepIt = mSteps.end();
       mExecEndTime = mExecStartTime;
       return;
     }
     else
     {
-      mState = ActionStatus::kRunning;
+      mState = ActionSnapshot::kRunning;
       mStepIt = mSteps.begin();
     }
   }
@@ -371,20 +371,20 @@ void SystemTransition::runSteps(boost::shared_ptr<SystemBusyGuard> aGuard)
         {
           boost::this_thread::sleep_for(boost::chrono::microseconds(100));
         }
-        if ( (*lIt)->getState() == ActionStatus::kError )
+        if ( (*lIt)->getState() == ActionSnapshot::kError )
           lErrorOccurred = true;
-        else if ( (*lIt)->getState() == ActionStatus::kWarning )
+        else if ( (*lIt)->getState() == ActionSnapshot::kWarning )
           lWarningOccurred = true;
       }
       
       // 2.iii) Harvest the status objects (before locking mutex, to avoid deadlock scenarios)
       //        (For disabled objects, there is no status object, so use NULL pointer)
-      std::vector<boost::shared_ptr<const StateMachine::TransitionStatus> > lStatusVec;
+      std::vector<boost::shared_ptr<const StateMachine::TransitionSnapshot> > lStatusVec;
       for(auto lIt=mStepIt->get().begin(); lIt!=mStepIt->get().end(); lIt++)
       {
-        boost::shared_ptr<const StateMachine::TransitionStatus> lStatus;
+        boost::shared_ptr<const StateMachine::TransitionSnapshot> lStatus;
         if (mEnabledChildren.count(&(*lIt)->getActionable()))
-          lStatus.reset(new StateMachine::TransitionStatus((*lIt)->getStatus()));
+          lStatus.reset(new StateMachine::TransitionSnapshot((*lIt)->getStatus()));
         lStatusVec.push_back(lStatus);
       }
       
@@ -395,7 +395,7 @@ void SystemTransition::runSteps(boost::shared_ptr<SystemBusyGuard> aGuard)
       // Don't execute any more steps if there was an error
       if( lErrorOccurred )
       {
-        mState = ActionStatus::kError;
+        mState = ActionSnapshot::kError;
         mExecEndTime = boost::posix_time::microsec_clock::universal_time();
         return;
       }
@@ -406,7 +406,7 @@ void SystemTransition::runSteps(boost::shared_ptr<SystemBusyGuard> aGuard)
       // Exit the loop if no more steps remain
       if( mStepIt == mSteps.end() )
       {
-        mState = ( lWarningOccurred ? ActionStatus::kWarning : ActionStatus::kDone );
+        mState = ( lWarningOccurred ? ActionSnapshot::kWarning : ActionSnapshot::kDone );
         mExecEndTime = boost::posix_time::microsec_clock::universal_time();
         return;
       }
@@ -416,7 +416,7 @@ void SystemTransition::runSteps(boost::shared_ptr<SystemBusyGuard> aGuard)
     std::cout << "An exception occurred in SystemTransition::runSteps method: " << e.what() << std::endl;
     
     boost::unique_lock<boost::mutex> lock( mMutex );
-    mState = ActionStatus::kError;
+    mState = ActionSnapshot::kError;
     mExecEndTime = boost::posix_time::microsec_clock::universal_time();
   }
   
@@ -427,8 +427,8 @@ void SystemTransition::runSteps(boost::shared_ptr<SystemBusyGuard> aGuard)
 //------------------------------------------------------------------------------------
 void SystemTransition::changeState(const ActionableStatusGuard& aGuard)
 {
-  ActionStatus::State lActionState = getStatus().getState();
-  if((lActionState == ActionStatus::kDone) || (lActionState == ActionStatus::kWarning))
+  ActionSnapshot::State lActionState = getStatus().getState();
+  if((lActionState == ActionSnapshot::kDone) || (lActionState == ActionSnapshot::kWarning))
     mStatusMap.getSystemStatus().setState(getEndState(), aGuard);
   else
     mStatusMap.getSystemStatus().setState(getStateMachine().getErrorState(), aGuard);
@@ -560,7 +560,7 @@ void SystemStateMachine::reset(const GateKeeper& aGateKeeper)
   {
     ActionableObject& lChild = (*smIt)->getActionable();
     const ActionableStatusGuard& lChildGuard = *lGuardMap.at(&lChild);
-    ActionableObject::MutableStatus_t& lChildStatus = mStatusMap.getStatus((*smIt)->getActionable());
+    ActionableStatus& lChildStatus = mStatusMap.getStatus((*smIt)->getActionable());
 
     if (lChildStatus.isEnabled(lChildGuard)) {
       lChildStatus.setState((*smIt)->getInitialState(), lChildGuard);
@@ -577,7 +577,7 @@ void SystemStateMachine::engage(const GateKeeper& aGateKeeper)
 {
   ActionableStatusGuardMap_t lGuardMap = lockMutexes();
   const ActionableStatusGuard& lSysGuard = *lGuardMap.at(&getActionable());
-  ActionableSystem::MutableStatus_t& lSysStatus = mStatusMap.getSystemStatus();
+  ActionableStatus& lSysStatus = mStatusMap.getSystemStatus();
 
   // Throw if system or any of the non-disabled participating children are already in a state machine
   if (lSysStatus.isEngaged(lSysGuard))
@@ -587,7 +587,7 @@ void SystemStateMachine::engage(const GateKeeper& aGateKeeper)
   {
     const ActionableObject& lChild = (*lIt)->getActionable();
     const ActionableStatusGuard& lChildGuard = *lGuardMap.at(&lChild);
-    const ActionableObject::MutableStatus_t& lChildStatus = mStatusMap.getStatus(lChild);
+    const ActionableStatus& lChildStatus = mStatusMap.getStatus(lChild);
     if (aGateKeeper.isEnabled(lChild.getPath()) && lChildStatus.isEngaged(lChildGuard))
       throw ResourceInWrongStateMachine("Cannot engage other state machine; resource '"+lChild.getPath()+"' currently in state machine '"+lChildStatus.getStateMachineId(lChildGuard)+"'");
   }
@@ -602,7 +602,7 @@ void SystemStateMachine::engage(const GateKeeper& aGateKeeper)
   {
     ActionableObject& lChild = (*lIt)->getActionable();
     const ActionableStatusGuard& lChildGuard = *lGuardMap.at(&lChild);
-    ActionableObject::MutableStatus_t& lChildStatus = mStatusMap.getStatus(lChild);
+    ActionableStatus& lChildStatus = mStatusMap.getStatus(lChild);
 
     if (lChildStatus.isEnabled(lChildGuard))
     {
@@ -636,7 +636,7 @@ void SystemStateMachine::disengage()
   for(auto smIt = mNonConstChildFSMs.begin(); smIt!=mNonConstChildFSMs.end(); smIt++)
   {
     const ActionableStatusGuard& lChildGuard = *lGuardMap.at(&(*smIt)->getActionable());
-    ActionableObject::MutableStatus_t& lChildStatus = mStatusMap.getStatus((*smIt)->getActionable());
+    ActionableStatus& lChildStatus = mStatusMap.getStatus((*smIt)->getActionable());
 
     if( lChildStatus.getStateMachineId(lChildGuard) == (*smIt)->getId() )
       lChildStatus.setNoStateMachine(lChildGuard);
@@ -654,7 +654,7 @@ ActionableStatusGuardMap_t SystemStateMachine::lockMutexes() const
 //------------------------------------------------------------------------------------
 void SystemStateMachine::checkEngagedAndNotInTransition(const ActionableStatusGuard& aGuard, const std::string& aAction) const
 {
-  const ActionableSystem::MutableStatus_t& lStatus = mStatusMap.getSystemStatus();
+  const ActionableStatus& lStatus = mStatusMap.getSystemStatus();
 
   // Throw if system is not in this state machine
   if ( lStatus.getStateMachineId(aGuard) != getId() )
@@ -678,7 +678,7 @@ void SystemStateMachine::checkEngagedAndNotInTransition(const ActionableStatusGu
 void SystemStateMachine::checkChildEngagedAndNotInTransition(const StateMachine& aStateMachine, const ActionableStatusGuard& aGuard, const std::string& aAction) const
 {
   const ActionableObject& lChild = aStateMachine.getActionable();
-  ActionableObject::MutableStatus_t& lStatus = mStatusMap.getStatus(lChild);
+  ActionableStatus& lStatus = mStatusMap.getStatus(lChild);
 
   // Throw if child is in wrong state machine
   if(lStatus.getStateMachineId(aGuard) != aStateMachine.getId())
@@ -704,7 +704,7 @@ void SystemStateMachine::resetEnableFlagOnChildren(const GateKeeper& aGateKeeper
   {
     const ActionableObject& lChild = *(lIt->second);
     const ActionableStatusGuard& lGuard = *aGuardMap.at(&lChild);
-    ActionableObject::MutableStatus_t& lStatus = mStatusMap.getStatus(lChild);
+    ActionableStatus& lStatus = mStatusMap.getStatus(lChild);
 
     if(aGateKeeper.isEnabled(lChild.getPath()))
       lStatus.enable(lGuard);
@@ -748,8 +748,8 @@ SystemStateMachine::State& SystemStateMachine::getState(const std::string& aStat
 //------------------------------------------------------------------------------------
 
 
-SystemTransitionStatus::SystemTransitionStatus(const std::string& aPath, ActionStatus::State aState, float aRunningTime, const SystemTransition::Step* aCurrentStep, const StepStatusVec_t& aFinishedStepStatuses, size_t aTotalNumSteps, const std::set<std::string>& aEnabledChildren) :
-  ActionStatus(aPath, aState, aRunningTime),
+SystemTransitionSnapshot::SystemTransitionSnapshot(const std::string& aPath, ActionSnapshot::State aState, float aRunningTime, const SystemTransition::Step* aCurrentStep, const StepStatusVec_t& aFinishedStepStatuses, size_t aTotalNumSteps, const std::set<std::string>& aEnabledChildren) :
+  ActionSnapshot(aPath, aState, aRunningTime),
   mTotalNumSteps( aTotalNumSteps ),
   mNumCompletedSteps( aFinishedStepStatuses.size() ),
   mEnabledChildren(aEnabledChildren),
@@ -757,20 +757,20 @@ SystemTransitionStatus::SystemTransitionStatus(const std::string& aPath, ActionS
 {
   if (aCurrentStep != NULL)
   {
-    mStepStatuses.push_back( std::vector< boost::shared_ptr<const StateMachine::TransitionStatus> > ());
+    mStepStatuses.push_back( std::vector< boost::shared_ptr<const StateMachine::TransitionSnapshot> > ());
     for(std::vector<StateMachine::Transition*>::const_iterator lIt=aCurrentStep->cget().begin(); lIt!=aCurrentStep->cget().end(); lIt++)
     {
-      boost::shared_ptr<const StateMachine::TransitionStatus> childStatus(new StateMachine::TransitionStatus((*lIt)->getStatus())); 
+      boost::shared_ptr<const StateMachine::TransitionSnapshot> childStatus(new StateMachine::TransitionSnapshot((*lIt)->getStatus())); 
       mStepStatuses.back().push_back( childStatus );
     }
   } 
 }
 
 
-float SystemTransitionStatus::getProgress() const
+float SystemTransitionSnapshot::getProgress() const
 {
   if(mTotalNumSteps == 0)
-    return (getState() == ActionStatus::kDone) ? 1.0: 0.0;
+    return (getState() == ActionSnapshot::kDone) ? 1.0: 0.0;
   else if(mStepStatuses.empty())
     return 0.0;
   else if((getState() == kError) || (getState() == kRunning))
@@ -778,7 +778,7 @@ float SystemTransitionStatus::getProgress() const
     float baseProgress = float(mStepStatuses.size() - 1)/float(mTotalNumSteps);
     
     // Determine progress of slowest parallel transition in last step
-    typedef std::vector<boost::shared_ptr<const StateMachine::TransitionStatus> > StepStatus_t;
+    typedef std::vector<boost::shared_ptr<const StateMachine::TransitionSnapshot> > StepStatus_t;
     const StepStatus_t& lStatusLastStep = mStepStatuses.back();
     std::vector<float> lLastStepProgressVec;
     for(StepStatus_t::const_iterator lIt=lStatusLastStep.begin(); lIt!=lStatusLastStep.end(); lIt++)
@@ -791,24 +791,24 @@ float SystemTransitionStatus::getProgress() const
 }
 
 
-size_t SystemTransitionStatus::getNumberOfCompletedSteps() const
+size_t SystemTransitionSnapshot::getNumberOfCompletedSteps() const
 {
   return mNumCompletedSteps;
 }
 
 
-size_t SystemTransitionStatus::getTotalNumberOfSteps() const
+size_t SystemTransitionSnapshot::getTotalNumberOfSteps() const
 {
   return mTotalNumSteps;
 }
 
 
-const std::set<std::string>& SystemTransitionStatus::getEnabledChildren() const 
+const std::set<std::string>& SystemTransitionSnapshot::getEnabledChildren() const 
 {
   return mEnabledChildren;
 }
 
-const std::vector< std::vector<boost::shared_ptr<const StateMachine::TransitionStatus> > >& SystemTransitionStatus::getStepStatus() const
+const std::vector< std::vector<boost::shared_ptr<const StateMachine::TransitionSnapshot> > >& SystemTransitionSnapshot::getStepStatus() const
 {
   return mStepStatuses;
 }

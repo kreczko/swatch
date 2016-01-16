@@ -23,7 +23,7 @@ namespace core {
 
    
 //! Abstract base class for snapshots of the progress/status of an action (e.g. Command, CommandSequence, Transition)
-class ActionStatus {
+class ActionSnapshot {
 public:
   //! Represents state of action's execution
   enum State {
@@ -35,7 +35,7 @@ public:
     kDone
   };
   
-  virtual ~ActionStatus();
+  virtual ~ActionSnapshot();
   
   //! Returns the path of the action (command, sequence, transition, ...)
   const std::string& getActionPath() const;
@@ -50,7 +50,7 @@ public:
   virtual float getProgress() const = 0;
   
 protected:
-  ActionStatus(const std::string& aPath, State aState, float aRunningTime);
+  ActionSnapshot(const std::string& aPath, State aState, float aRunningTime);
   
 private:
   std::string mPath;
@@ -59,7 +59,7 @@ private:
 };
 
 
-std::ostream& operator<<(std::ostream& out, swatch::core::ActionStatus::State s);
+std::ostream& operator<<(std::ostream& out, swatch::core::ActionSnapshot::State s);
 
 
 class Functionoid : public Object {
@@ -70,7 +70,7 @@ public:
   /// Destructor
   virtual ~Functionoid();
   
-  typedef ActionStatus::State State;
+  typedef ActionSnapshot::State State;
 //
 };
 

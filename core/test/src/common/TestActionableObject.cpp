@@ -113,7 +113,7 @@ BOOST_FIXTURE_TEST_CASE(TestRegisterCommand,  ActionableObjectTestSetup) {
 BOOST_FIXTURE_TEST_CASE(TestGetCommand,  ActionableObjectTestSetup) {
   LOG(kInfo) << "Running ActionableObjectTestSuite/TestGetCommand";
   Command& dummy_1 = handler->getCommand("dummy_1");
-  BOOST_CHECK_EQUAL(dummy_1.getState(), ActionStatus::kInitial);
+  BOOST_CHECK_EQUAL(dummy_1.getState(), ActionSnapshot::kInitial);
 }
 
 
@@ -142,8 +142,8 @@ BOOST_FIXTURE_TEST_CASE(TestActionableIntialState,  ActionableObjectTestSetup) {
   BOOST_CHECK( !handler->getStatus().isRunning() );
   BOOST_CHECK( handler->getStatus().isAlive() );
   BOOST_CHECK( !handler->getStatus().isEngaged() );
-  BOOST_CHECK_EQUAL( handler->getStatus().getStateMachineId(), ActionableStatus::kNullStateMachineId);
-  BOOST_CHECK_EQUAL( handler->getStatus().getState(), ActionableStatus::kNullStateId);
+  BOOST_CHECK_EQUAL( handler->getStatus().getStateMachineId(), ActionableSnapshot::kNullStateMachineId);
+  BOOST_CHECK_EQUAL( handler->getStatus().getState(), ActionableSnapshot::kNullStateId);
 }
 
 

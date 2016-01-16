@@ -15,12 +15,12 @@ namespace core {
 
   
 // STATIC MEMBERS INITIALIZATION
-const std::string ActionableStatus::kNullStateMachineId = "";
-const std::string ActionableStatus::kNullStateId = "";
+const std::string ActionableSnapshot::kNullStateMachineId = "";
+const std::string ActionableSnapshot::kNullStateId = "";
 
 
 //------------------------------------------------------------------------------------
-ActionableStatus::ActionableStatus() :
+ActionableSnapshot::ActionableSnapshot() :
   mAlive(true), 
   mStateMachineId(kNullStateMachineId),
   mState(kNullStateId),
@@ -32,33 +32,33 @@ ActionableStatus::ActionableStatus() :
 
 
 //------------------------------------------------------------------------------------
-bool ActionableStatus::isAlive() const {
+bool ActionableSnapshot::isAlive() const {
   return mAlive;
 }
 
 //------------------------------------------------------------------------------------
-bool ActionableStatus::isEngaged() const {
+bool ActionableSnapshot::isEngaged() const {
   return mStateMachineId != kNullStateMachineId;
 }
 
 
 //------------------------------------------------------------------------------------
-bool ActionableStatus::isRunning() const {
+bool ActionableSnapshot::isRunning() const {
   return !mRunningActions.empty();
 }
 
 //------------------------------------------------------------------------------------
-bool ActionableStatus::isUpdatingMetrics() const {
+bool ActionableSnapshot::isUpdatingMetrics() const {
   return mUpdatingMetrics;
 }
 
 //------------------------------------------------------------------------------------
-const std::string& ActionableStatus::getState() const {
+const std::string& ActionableSnapshot::getState() const {
   return mState;
 }
 
 //------------------------------------------------------------------------------------
-const Functionoid* ActionableStatus::getLastRunningAction() const {
+const Functionoid* ActionableSnapshot::getLastRunningAction() const {
   if (mRunningActions.empty())
     return NULL;
   else
@@ -67,24 +67,24 @@ const Functionoid* ActionableStatus::getLastRunningAction() const {
 
 
 //------------------------------------------------------------------------------------
-const std::vector<const Functionoid*>& ActionableStatus::getRunningActions() const {
+const std::vector<const Functionoid*>& ActionableSnapshot::getRunningActions() const {
   return mRunningActions;
 }
 
 
 //------------------------------------------------------------------------------------
-const std::string& ActionableStatus::getStateMachineId() const {
+const std::string& ActionableSnapshot::getStateMachineId() const {
   return mStateMachineId;
 }
 
 
 //------------------------------------------------------------------------------------
-bool ActionableStatus::isEnabled() const {
+bool ActionableSnapshot::isEnabled() const {
   return mEnabled;
 }
 
 
-bool ActionableStatus::isActionWaitingToRun() const
+bool ActionableSnapshot::isActionWaitingToRun() const
 {
   return mWaitingToRunAction;
 }
@@ -93,9 +93,9 @@ bool ActionableStatus::isActionWaitingToRun() const
 
 
 //------------------------------------------------------------------------------------
-ActionableStatusGuardMap_t lockMutexes(const std::map<const MonitorableObject*, const MutableActionableStatus*>& aStatusMap)
+ActionableStatusGuardMap_t lockMutexes(const std::map<const MonitorableObject*, const ActionableStatus*>& aStatusMap)
 {
-  typedef std::map<const MonitorableObject*, const MutableActionableStatus*>::const_iterator ConstIt_t;
+  typedef std::map<const MonitorableObject*, const ActionableStatus*>::const_iterator ConstIt_t;
 
   // Lock the mutexes ...
   std::vector<boost::mutex*> lMutexes;
@@ -115,74 +115,74 @@ ActionableStatusGuardMap_t lockMutexes(const std::map<const MonitorableObject*, 
 
 
 //------------------------------------------------------------------------------------
-MutableActionableStatus::MutableActionableStatus() : 
+ActionableStatus::ActionableStatus() : 
   mStatus()
 {
 }
 
 //------------------------------------------------------------------------------------
-MutableActionableStatus::~MutableActionableStatus()
+ActionableStatus::~ActionableStatus()
 {
 }
 
 //------------------------------------------------------------------------------------
-ActionableStatus MutableActionableStatus::getSnapshot(const ActionableStatusGuard& aGuard) const
+ActionableSnapshot ActionableStatus::getSnapshot(const ActionableStatusGuard& aGuard) const
 {
   throwIfWrongGuard(aGuard);
   return mStatus;
 }
 
 //------------------------------------------------------------------------------------
-bool MutableActionableStatus::isAlive(const ActionableStatusGuard& aGuard) const
+bool ActionableStatus::isAlive(const ActionableStatusGuard& aGuard) const
 {
   throwIfWrongGuard(aGuard);
   return mStatus.isAlive();
 }
 
 //------------------------------------------------------------------------------------
-bool MutableActionableStatus::isEngaged(const ActionableStatusGuard& aGuard) const
+bool ActionableStatus::isEngaged(const ActionableStatusGuard& aGuard) const
 {
   throwIfWrongGuard(aGuard);
   return mStatus.isEngaged();
 }
 
 //------------------------------------------------------------------------------------
-const std::string& MutableActionableStatus::getStateMachineId(const ActionableStatusGuard& aGuard) const
+const std::string& ActionableStatus::getStateMachineId(const ActionableStatusGuard& aGuard) const
 {
   throwIfWrongGuard(aGuard);
   return mStatus.getStateMachineId();
 }
 
 //------------------------------------------------------------------------------------
-const std::string& MutableActionableStatus::getState(const ActionableStatusGuard& aGuard) const
+const std::string& ActionableStatus::getState(const ActionableStatusGuard& aGuard) const
 {
   throwIfWrongGuard(aGuard);
   return mStatus.getState();
 }
 
 //------------------------------------------------------------------------------------
-bool MutableActionableStatus::isBusy(const ActionableStatusGuard& aGuard) const
+bool ActionableStatus::isBusy(const ActionableStatusGuard& aGuard) const
 {
   throwIfWrongGuard(aGuard);
   return mStatus.isRunning();
 }
 
 //------------------------------------------------------------------------------------
-bool MutableActionableStatus::isUpdatingMetrics(const MonitorableStatusGuard& aGuard) const
+bool ActionableStatus::isUpdatingMetrics(const MonitorableStatusGuard& aGuard) const
 {
   throwIfWrongGuard(aGuard);
   return mStatus.isUpdatingMetrics();
 }
 
 //------------------------------------------------------------------------------------
-const std::vector<const Functionoid*>& MutableActionableStatus::getRunningActions(const ActionableStatusGuard& aGuard) const
+const std::vector<const Functionoid*>& ActionableStatus::getRunningActions(const ActionableStatusGuard& aGuard) const
 {
   throwIfWrongGuard(aGuard);
   return mStatus.getRunningActions();
 }
 
 //------------------------------------------------------------------------------------
-const Functionoid* MutableActionableStatus::getLastRunningAction(const ActionableStatusGuard& aGuard) const
+const Functionoid* ActionableStatus::getLastRunningAction(const ActionableStatusGuard& aGuard) const
 {
   throwIfWrongGuard(aGuard);
   return mStatus.getLastRunningAction();
@@ -190,7 +190,7 @@ const Functionoid* MutableActionableStatus::getLastRunningAction(const Actionabl
 
 
 //------------------------------------------------------------------------------------
-bool MutableActionableStatus::isEnabled(const ActionableStatusGuard& aGuard) const
+bool ActionableStatus::isEnabled(const ActionableStatusGuard& aGuard) const
 {
   throwIfWrongGuard(aGuard);
   return mStatus.isEnabled();
@@ -198,7 +198,7 @@ bool MutableActionableStatus::isEnabled(const ActionableStatusGuard& aGuard) con
 
 
 //------------------------------------------------------------------------------------
-void MutableActionableStatus::enable(const ActionableStatusGuard& aGuard)
+void ActionableStatus::enable(const ActionableStatusGuard& aGuard)
 {
   throwIfWrongGuard(aGuard);
   mStatus.mEnabled = true;
@@ -206,7 +206,7 @@ void MutableActionableStatus::enable(const ActionableStatusGuard& aGuard)
 
 
 //------------------------------------------------------------------------------------
-void MutableActionableStatus::disable(const ActionableStatusGuard& aGuard)
+void ActionableStatus::disable(const ActionableStatusGuard& aGuard)
 {
   throwIfWrongGuard(aGuard);
   mStatus.mEnabled = false;
@@ -214,7 +214,7 @@ void MutableActionableStatus::disable(const ActionableStatusGuard& aGuard)
 
 
 //------------------------------------------------------------------------------------
-void MutableActionableStatus::setStateMachine(const std::string& aStateMachine, const std::string& aState, const ActionableStatusGuard& aGuard)
+void ActionableStatus::setStateMachine(const std::string& aStateMachine, const std::string& aState, const ActionableStatusGuard& aGuard)
 {
   throwIfWrongGuard(aGuard);
   mStatus.mStateMachineId = aStateMachine;
@@ -222,29 +222,29 @@ void MutableActionableStatus::setStateMachine(const std::string& aStateMachine, 
 }
 
 //------------------------------------------------------------------------------------
-void MutableActionableStatus::setNoStateMachine(const ActionableStatusGuard& aGuard)
+void ActionableStatus::setNoStateMachine(const ActionableStatusGuard& aGuard)
 {
   throwIfWrongGuard(aGuard);
-  mStatus.mStateMachineId = ActionableStatus::kNullStateMachineId;
-  mStatus.mState = ActionableStatus::kNullStateId;
+  mStatus.mStateMachineId = ActionableSnapshot::kNullStateMachineId;
+  mStatus.mState = ActionableSnapshot::kNullStateId;
 }
 
 //------------------------------------------------------------------------------------
-void MutableActionableStatus::setState(const std::string& aState, const ActionableStatusGuard& aGuard)
+void ActionableStatus::setState(const std::string& aState, const ActionableStatusGuard& aGuard)
 {
   throwIfWrongGuard(aGuard);
   mStatus.mState = aState;
 }
 
 //------------------------------------------------------------------------------------
-void MutableActionableStatus::addAction(const Functionoid& aAction, const ActionableStatusGuard& aGuard)
+void ActionableStatus::addAction(const Functionoid& aAction, const ActionableStatusGuard& aGuard)
 {
   throwIfWrongGuard(aGuard);
   mStatus.mRunningActions.push_back(&aAction);  
 }
 
 //------------------------------------------------------------------------------------
-void MutableActionableStatus::popAction(const ActionableStatusGuard& aGuard)
+void ActionableStatus::popAction(const ActionableStatusGuard& aGuard)
 {
   throwIfWrongGuard(aGuard);
   mStatus.mRunningActions.pop_back();
@@ -253,7 +253,7 @@ void MutableActionableStatus::popAction(const ActionableStatusGuard& aGuard)
 }
 
 //------------------------------------------------------------------------------------
-void MutableActionableStatus::kill(const ActionableStatusGuard& aGuard)
+void ActionableStatus::kill(const ActionableStatusGuard& aGuard)
 {
   throwIfWrongGuard(aGuard);
   mStatus.mAlive = false;
@@ -261,7 +261,7 @@ void MutableActionableStatus::kill(const ActionableStatusGuard& aGuard)
 
 
 //------------------------------------------------------------------------------------
-void MutableActionableStatus::finishedUpdatingMetrics(const MonitorableStatusGuard& aGuard)
+void ActionableStatus::finishedUpdatingMetrics(const MonitorableStatusGuard& aGuard)
 {
   throwIfWrongGuard(aGuard);
   assert ( mStatus.mUpdatingMetrics );
@@ -272,7 +272,7 @@ void MutableActionableStatus::finishedUpdatingMetrics(const MonitorableStatusGua
 
 
 //------------------------------------------------------------------------------------
-void MutableActionableStatus::waitUntilReadyToUpdateMetrics(MonitorableStatusGuard& aGuard)
+void ActionableStatus::waitUntilReadyToUpdateMetrics(MonitorableStatusGuard& aGuard)
 {
   throwIfWrongGuard(aGuard);
 
@@ -286,7 +286,7 @@ void MutableActionableStatus::waitUntilReadyToUpdateMetrics(MonitorableStatusGua
 
 
 //------------------------------------------------------------------------------------
-void MutableActionableStatus::waitUntilReadyToRunAction(const Functionoid& aAction, ActionableStatusGuard& aGuard)
+void ActionableStatus::waitUntilReadyToRunAction(const Functionoid& aAction, ActionableStatusGuard& aGuard)
 {
   throwIfWrongGuard(aGuard);
   
@@ -307,12 +307,12 @@ void MutableActionableStatus::waitUntilReadyToRunAction(const Functionoid& aActi
 }
 
 
-void MutableActionableStatus::waitUntilReadyToRunAction(const std::vector<std::pair<MutableActionableStatus*, ActionableStatusGuard*> >& aVec, const Functionoid& aAction)
+void ActionableStatus::waitUntilReadyToRunAction(const std::vector<std::pair<ActionableStatus*, ActionableStatusGuard*> >& aVec, const Functionoid& aAction)
 {
   // 1) Check that:
   //     - there aren't any NULL pointers; and ...
   //     - the guards are all for the correct status instance;
-  typedef std::vector<std::pair<MutableActionableStatus*, ActionableStatusGuard*> > Vec_t;
+  typedef std::vector<std::pair<ActionableStatus*, ActionableStatusGuard*> > Vec_t;
   for(Vec_t::const_iterator lIt=aVec.begin(); lIt!=aVec.end(); lIt++)
   {
     if (lIt->first == NULL)
@@ -364,7 +364,7 @@ void MutableActionableStatus::waitUntilReadyToRunAction(const std::vector<std::p
 
 
 //------------------------------------------------------------------------------------
-void MutableActionableStatus::throwIfWrongGuard(const MonitorableStatusGuard& aGuard) const
+void ActionableStatus::throwIfWrongGuard(const MonitorableStatusGuard& aGuard) const
 {
   if ( ! aGuard.isCorrectGuard(*this) )
     throw IncorrectActionableGuard("");

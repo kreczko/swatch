@@ -47,7 +47,7 @@ Command::exec(const BusyGuard* aOuterBusyGuard, const XParameterSet& aParams, bo
     // if threadpool is to be used
     if ( aUseThreadPool ){
       boost::unique_lock<boost::mutex> lock(mMutex);
-      mState = ActionStatus::kScheduled;
+      mState = ActionSnapshot::kScheduled;
       
       ThreadPool& pool = ThreadPool::getInstance();
       pool.addTask<Command,BusyGuard>(this, &Command::runCode, lBusyGuard, mRunningParams);
@@ -73,7 +73,7 @@ void Command::runCode(boost::shared_ptr<BusyGuard> aActionGuard, const XParamete
   // 1) Declare that I'm running
   {
     boost::unique_lock<boost::mutex> lock(mMutex);
-    mState = ActionStatus::kRunning;
+    mState = ActionSnapshot::kRunning;
     gettimeofday(&mExecStartTime, NULL);
   }
   
@@ -113,7 +113,7 @@ void Command::runCode(boost::shared_ptr<BusyGuard> aActionGuard, const XParamete
 //------------------------------------------------------------------------------------
 void Command::resetForRunning(const XParameterSet& aParams) {
   boost::unique_lock<boost::mutex> lock(mMutex);
-  mState = ActionStatus::kScheduled;
+  mState = ActionSnapshot::kScheduled;
   mProgress = 0.0;
   mStatusMsg = "";
   
@@ -124,7 +124,7 @@ void Command::resetForRunning(const XParameterSet& aParams) {
 
 
 //------------------------------------------------------------------------------------
-ActionStatus::State
+ActionSnapshot::State
 Command::getState() const {
   boost::unique_lock<boost::mutex> lock(mMutex);
   return mState;
@@ -132,22 +132,22 @@ Command::getState() const {
 
 
 //------------------------------------------------------------------------------------
-CommandStatus Command::getStatus() const {
+CommandSnapshot Command::getStatus() const {
   boost::unique_lock<boost::mutex> lock(mMutex);
   
   // Only let user see the result once the command has completed (since its contents can change before then) ...
   boost::shared_ptr<xdata::Serializable> result((xdata::Serializable*) NULL);
-  if ( (mState == ActionStatus::kDone) || (mState == ActionStatus::kWarning) || (mState == ActionStatus::kError))
+  if ( (mState == ActionSnapshot::kDone) || (mState == ActionSnapshot::kWarning) || (mState == ActionSnapshot::kError))
     result = mResult;
   
   float runningTime = 0.0;
   switch (mState) {
-    case ActionStatus::kInitial :
-    case ActionStatus::kScheduled : 
+    case ActionSnapshot::kInitial :
+    case ActionSnapshot::kScheduled : 
       break;
     default:
       timeval endTime;
-      if (mState == ActionStatus::kRunning)
+      if (mState == ActionSnapshot::kRunning)
         gettimeofday(&endTime, NULL);
       else
         endTime = mExecEndTime;
@@ -157,7 +157,7 @@ CommandStatus Command::getStatus() const {
       break;
   }
     
-  return CommandStatus(getPath(), mState, runningTime, mProgress, mStatusMsg, mRunningParams, result);
+  return CommandSnapshot(getPath(), mState, runningTime, mProgress, mStatusMsg, mRunningParams, result);
 }
 
 
@@ -240,8 +240,8 @@ ReadOnlyXParameterSet Command::mergeParametersWithDefaults( const XParameterSet&
 
     
 //------------------------------------------------------------------------------------
-CommandStatus::CommandStatus(const std::string& aPath, ActionStatus::State aState, float aRunningTime, float aProgress, const std::string& aStatusMsg, const ReadOnlyXParameterSet& aParams, const boost::shared_ptr<xdata::Serializable>& aResult) :
-  ActionStatus(aPath, aState, aRunningTime),
+CommandSnapshot::CommandSnapshot(const std::string& aPath, ActionSnapshot::State aState, float aRunningTime, float aProgress, const std::string& aStatusMsg, const ReadOnlyXParameterSet& aParams, const boost::shared_ptr<xdata::Serializable>& aResult) :
+  ActionSnapshot(aPath, aState, aRunningTime),
   mProgress(aProgress),
   mStatusMsg(aStatusMsg),
   mParams(aParams),
@@ -252,34 +252,34 @@ CommandStatus::CommandStatus(const std::string& aPath, ActionStatus::State aStat
 
 //------------------------------------------------------------------------------------
 float
-CommandStatus::getProgress() const {
+CommandSnapshot::getProgress() const {
   return mProgress;
 }
 
 
 //------------------------------------------------------------------------------------
 const
-std::string& CommandStatus::getStatusMsg() const {
+std::string& CommandSnapshot::getStatusMsg() const {
   return mStatusMsg;
 }
 
 
 //------------------------------------------------------------------------------------
-const XParameterSet& CommandStatus::getParameters() const {
+const XParameterSet& CommandSnapshot::getParameters() const {
   return mParams;
 }
 
     
 //------------------------------------------------------------------------------------
 const xdata::Serializable*
-const CommandStatus::getResult() const {
+const CommandSnapshot::getResult() const {
   return mResult.get();
 }
 
 
 //------------------------------------------------------------------------------------
 std::string
-CommandStatus::getResultAsString() const {
+CommandSnapshot::getResultAsString() const {
   return mResult->toString();
 }
 

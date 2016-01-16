@@ -29,14 +29,14 @@ namespace core {
 
 class ActionableSystem;
 class Functionoid;
-class MutableActionableStatus;
+class ActionableStatus;
 
 
 //! Represents the current aggregate state (engaged FSM, FSM state, running actions, ...) of an ActionableObject/ActionableSystem
-class ActionableStatus {
+class ActionableSnapshot {
 public:
     
-  ActionableStatus();
+  ActionableSnapshot();
 
   /**
    * The object is alive i.e. it is not bound for destruction
@@ -105,12 +105,12 @@ private:
 
   bool mEnabled;
 
-  friend class MutableActionableStatus;
+  friend class ActionableStatus;
 };
 
 
 template<class T>
-const T* ActionableStatus::getFirstRunningActionOfType() const
+const T* ActionableSnapshot::getFirstRunningActionOfType() const
 {
   BOOST_STATIC_ASSERT( (boost::is_base_of<swatch::core::Functionoid,T>::value) );
   
@@ -132,20 +132,20 @@ DEFINE_SWATCH_EXCEPTION(IncorrectActionableGuard);
 typedef boost::shared_ptr<ActionableStatusGuard> ActionableStatusGuardPtr_t;
 typedef std::map<const MonitorableObject*, ActionableStatusGuardPtr_t> ActionableStatusGuardMap_t;
 
-//! Locks mutexes of all mutable actionable status instances in supplied collection
+//! Locks mutexes of all actionable status instances in supplied collection
 template <typename Iterator>
 ActionableStatusGuardMap_t lockMutexes(const Iterator& aBegin, const Iterator& aEnd);
 
-//! Locks mutexes of all mutable actionable status instances in supplied collection
-ActionableStatusGuardMap_t lockMutexes(const std::map<const MonitorableObject*, const MutableActionableStatus*>& aStatusMap);
+//! Locks mutexes of all actionable status instances in supplied collection
+ActionableStatusGuardMap_t lockMutexes(const std::map<const MonitorableObject*, const ActionableStatus*>& aStatusMap);
 
 
-class MutableActionableStatus : public AbstractMonitorableStatus {
+class ActionableStatus : public AbstractMonitorableStatus {
 public:
-  MutableActionableStatus();
-  ~MutableActionableStatus();
+  ActionableStatus();
+  ~ActionableStatus();
 
-  ActionableStatus getSnapshot(const ActionableStatusGuard& aGuard) const;
+  ActionableSnapshot getSnapshot(const ActionableStatusGuard& aGuard) const;
 
   bool isAlive(const ActionableStatusGuard& aGuard) const;
   
@@ -201,16 +201,16 @@ public:
    * @brief Blocks calling thread until each status instance in vector is ready to run action (i.e. isUpdatingMetrics() = false), and then adds specified Functionoid to "running actions" stack of each status instance before returning
    * @throws if an action is already running, or an action is already queued (another thread waiting in this method)
    */
-  static void waitUntilReadyToRunAction(const std::vector<std::pair<MutableActionableStatus*, ActionableStatusGuard*> >&, const Functionoid& aAction);
+  static void waitUntilReadyToRunAction(const std::vector<std::pair<ActionableStatus*, ActionableStatusGuard*> >&, const Functionoid& aAction);
   
 private:
   //! Throws if guard is not for this status instance
   void throwIfWrongGuard(const MonitorableStatusGuard& aGuard) const;
 
-  ActionableStatus mStatus;
+  ActionableSnapshot mStatus;
   boost::condition_variable mConditionVar;
 
-  friend ActionableStatusGuardMap_t lockMutexes(const std::map<const MonitorableObject*, const MutableActionableStatus*>& aStatusMap);
+  friend ActionableStatusGuardMap_t lockMutexes(const std::map<const MonitorableObject*, const ActionableStatus*>& aStatusMap);
 };
 
 
@@ -222,19 +222,19 @@ ActionableStatusGuardMap_t lockMutexes(const Iterator& aBegin, const Iterator& a
   typedef typename IteratorVal_t::first_type IteratorValFirst_t;
   typedef typename IteratorVal_t::second_type IteratorValSecond_t;
   BOOST_STATIC_ASSERT_MSG( (boost::is_convertible<IteratorValFirst_t, const MonitorableObject*>::value) , "Dereferencing type Iterator::first_type must result in a pointer to a type that inherits from swatch::core::MonitorableObject");
-  BOOST_STATIC_ASSERT_MSG( (boost::is_convertible<IteratorValSecond_t, MutableActionableStatus*>::value) , "Dereferencing type Iterator::second_type must result in a pointer to a type that inherits from swatch::core::MutableActionableStatus");
+  BOOST_STATIC_ASSERT_MSG( (boost::is_convertible<IteratorValSecond_t, ActionableStatus*>::value) , "Dereferencing type Iterator::second_type must result in a pointer to a type that inherits from swatch::core::ActionableStatus");
 
-  std::map<const MonitorableObject*, const MutableActionableStatus*> lStatusMap;
+  std::map<const MonitorableObject*, const ActionableStatus*> lStatusMap;
   for(Iterator lIt=aBegin; lIt != aEnd; lIt++)
   {
-    lStatusMap.insert(std::pair<const MonitorableObject*, const MutableActionableStatus*>(lIt->first, lIt->second));
+    lStatusMap.insert(std::pair<const MonitorableObject*, const ActionableStatus*>(lIt->first, lIt->second));
   }
   
   return lockMutexes(lStatusMap);
 }
 
 template<class T>
-const T* MutableActionableStatus::getFirstRunningActionOfType(const ActionableStatusGuard& aGuard) const
+const T* ActionableStatus::getFirstRunningActionOfType(const ActionableStatusGuard& aGuard) const
 {
   throwIfWrongGuard(aGuard);
   return mStatus.getFirstRunningActionOfType<T>();

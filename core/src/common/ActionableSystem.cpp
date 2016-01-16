@@ -48,7 +48,7 @@ void SystemFunctionoid::addParticipant(ActionableObject& aObj)
 
 
 
-ActionableSystem::StatusContainer::StatusContainer(const ActionableSystem& aSystem, ActionableSystem::MutableStatus_t& aSysStatus) :
+ActionableSystem::StatusContainer::StatusContainer(const ActionableSystem& aSystem, ActionableStatus& aSysStatus) :
   mSysStatus(aSysStatus)
 {
   mStatusMap[&aSystem] = &aSysStatus;
@@ -58,23 +58,23 @@ ActionableSystem::StatusContainer::~StatusContainer()
 {
 }
 
-const ActionableSystem::MutableStatus_t& ActionableSystem::StatusContainer::getSystemStatus() const
+const ActionableStatus& ActionableSystem::StatusContainer::getSystemStatus() const
 {
   return mSysStatus;
 }
 
-const ActionableObject::MutableStatus_t& ActionableSystem::StatusContainer::getStatus(const ActionableObject& aChild ) const
+const ActionableStatus& ActionableSystem::StatusContainer::getStatus(const ActionableObject& aChild ) const
 {
   return *mStatusMap.at(&aChild);
 }
 
-ActionableSystem::MutableStatus_t& ActionableSystem::StatusContainer::getSystemStatus()
+ActionableStatus& ActionableSystem::StatusContainer::getSystemStatus()
 {
   return mSysStatus;
 }
 
 
-ActionableObject::MutableStatus_t& ActionableSystem::StatusContainer::getStatus(const ActionableObject& aChild )
+ActionableStatus& ActionableSystem::StatusContainer::getStatus(const ActionableObject& aChild )
 {
   return *mStatusMap.at(&aChild);
 }
@@ -199,7 +199,7 @@ SystemBusyGuard::SystemBusyGuard(SystemFunctionoid& aAction, ActionableSystem::S
   mPostActionCallback(aCallback)
 {
   ActionableStatusGuard& lSysGuard = *aStatusGuardMap.at(&mSystem);
-  ActionableSystem::MutableStatus_t& lSysStatus = aStatusMap.getSystemStatus();
+  ActionableStatus& lSysStatus = aStatusMap.getSystemStatus();
   
   // 1) Check that the system is not busy
   ActionableSystem::Status_t lSysSnapshot = lSysStatus.getSnapshot(lSysGuard);
@@ -230,7 +230,7 @@ SystemBusyGuard::SystemBusyGuard(SystemFunctionoid& aAction, ActionableSystem::S
   // 2) Check that none of the children are busy
   for (ChildIt_t lIt = lEnabledParticipants.begin(); lIt != lEnabledParticipants.end(); lIt++)
   {
-    const ActionableObject::MutableStatus_t& lChildStatus = aStatusMap.getStatus(**lIt);
+    const ActionableStatus& lChildStatus = aStatusMap.getStatus(**lIt);
     const ActionableStatusGuard& lChildGuard = *aStatusGuardMap.at(*lIt);
     
     if ( !lChildStatus.isAlive(lChildGuard) || lChildStatus.isBusy(lChildGuard) )
@@ -253,18 +253,18 @@ SystemBusyGuard::SystemBusyGuard(SystemFunctionoid& aAction, ActionableSystem::S
   //    b) create the busy guards for the children
   LOG4CPLUS_INFO(mSystem.getLogger(), mSystem.getPath() << " : Starting action '" << mAction.getId() << "'");
 
-  std::vector<std::pair<MutableActionableStatus*, ActionableStatusGuard*> > lStatusVec;
-  lStatusVec.push_back( std::pair<MutableActionableStatus*, ActionableStatusGuard*>(&lSysStatus, &lSysGuard) );
+  std::vector<std::pair<ActionableStatus*, ActionableStatusGuard*> > lStatusVec;
+  lStatusVec.push_back( std::pair<ActionableStatus*, ActionableStatusGuard*>(&lSysStatus, &lSysGuard) );
   for (ChildIt_t lIt = lEnabledParticipants.begin(); lIt != lEnabledParticipants.end(); lIt++)
   {
-    lStatusVec.push_back( std::pair<MutableActionableStatus*, ActionableStatusGuard*>(&aStatusMap.getStatus(**lIt), aStatusGuardMap.at(*lIt).get()) );
+    lStatusVec.push_back( std::pair<ActionableStatus*, ActionableStatusGuard*>(&aStatusMap.getStatus(**lIt), aStatusGuardMap.at(*lIt).get()) );
   }
-  MutableActionableStatus::waitUntilReadyToRunAction(lStatusVec, mAction);
+  ActionableStatus::waitUntilReadyToRunAction(lStatusVec, mAction);
   
   for (ChildIt_t lIt = lEnabledParticipants.begin(); lIt != lEnabledParticipants.end(); lIt++)
   {
     ActionableStatusGuard& lChildGuard = *aStatusGuardMap.at(*lIt).get();
-    ActionableObject::MutableStatus_t& lChildStatus = aStatusMap.getStatus(**lIt);
+    ActionableStatus& lChildStatus = aStatusMap.getStatus(**lIt);
     mChildGuardMap[ *lIt ] = ChildGuardPtr_t(new BusyGuard(**lIt, lChildStatus, lChildGuard, mAction, BusyGuard::Adopt()) );
   }
 }

@@ -109,7 +109,7 @@ BOOST_FIXTURE_TEST_CASE(TestBusyThenMetricWriteGuard, BusyMonitoringGuardTestSet
   BOOST_REQUIRE_EQUAL(lMetricSnapshot.getStatusFlag(), swatch::core::kUnknown);
   BOOST_REQUIRE_EQUAL(lMetricSnapshot.getUpdateTimestamp().tv_sec, 0);
   BOOST_REQUIRE_EQUAL(lMetricSnapshot.getUpdateTimestamp().tv_usec, 0);
-  BOOST_REQUIRE_EQUAL(waitingCmd.getState(), ActionStatus::kInitial);
+  BOOST_REQUIRE_EQUAL(waitingCmd.getState(), ActionSnapshot::kInitial);
 
   // 1a) Run command in another thread (via thread pool)
   obj->pleaseWaitNextTime();
@@ -123,7 +123,7 @@ BOOST_FIXTURE_TEST_CASE(TestBusyThenMetricWriteGuard, BusyMonitoringGuardTestSet
   BOOST_REQUIRE_EQUAL(lObjStatus.isRunning(), true);
   BOOST_REQUIRE_NE(lObjStatus.getRunningActions().size(), size_t(0));
   BOOST_REQUIRE_EQUAL(lObjStatus.isUpdatingMetrics(), false);
-  BOOST_REQUIRE_NE(waitingCmd.getState(), ActionStatus::kInitial);
+  BOOST_REQUIRE_NE(waitingCmd.getState(), ActionSnapshot::kInitial);
   
   // 3) Sleep until command is waiting; then check that metric still hasn't been updated
   while ( obj->getWaitingThread() == boost::thread::id() )
@@ -131,7 +131,7 @@ BOOST_FIXTURE_TEST_CASE(TestBusyThenMetricWriteGuard, BusyMonitoringGuardTestSet
     boost::this_thread::sleep_for(boost::chrono::milliseconds(2));
   }
   boost::this_thread::sleep_for(boost::chrono::milliseconds(10));
-  BOOST_REQUIRE_EQUAL(waitingCmd.getState(), ActionStatus::kRunning);
+  BOOST_REQUIRE_EQUAL(waitingCmd.getState(), ActionSnapshot::kRunning);
   lMetricSnapshot = obj->getDummyMetric().getSnapshot();
   BOOST_REQUIRE_EQUAL(lMetricSnapshot.getStatusFlag(), swatch::core::kUnknown);
   BOOST_REQUIRE_EQUAL(lMetricSnapshot.getUpdateTimestamp().tv_sec, 0);
@@ -143,7 +143,7 @@ BOOST_FIXTURE_TEST_CASE(TestBusyThenMetricWriteGuard, BusyMonitoringGuardTestSet
   {
     boost::this_thread::sleep_for(boost::chrono::milliseconds(2));
   }
-  BOOST_REQUIRE_EQUAL(waitingCmd.getState(), ActionStatus::kDone);
+  BOOST_REQUIRE_EQUAL(waitingCmd.getState(), ActionSnapshot::kDone);
   lMetricSnapshot = obj->getDummyMetric().getSnapshot();
   BOOST_REQUIRE_EQUAL(lMetricSnapshot.getStatusFlag(), swatch::core::kNoLimit);
   BOOST_REQUIRE_NE(lMetricSnapshot.getUpdateTimestamp().tv_sec, 0);
@@ -171,7 +171,7 @@ BOOST_FIXTURE_TEST_CASE(TestMetricWriteThenBusyGuard, BusyMonitoringGuardTestSet
   BOOST_REQUIRE_EQUAL(lMetricSnapshot.getStatusFlag(), swatch::core::kUnknown);
   BOOST_REQUIRE_EQUAL(lMetricSnapshot.getUpdateTimestamp().tv_sec, 0);
   BOOST_REQUIRE_EQUAL(lMetricSnapshot.getUpdateTimestamp().tv_usec, 0);
-  BOOST_REQUIRE_EQUAL(waitingCmd.getState(), ActionStatus::kInitial);
+  BOOST_REQUIRE_EQUAL(waitingCmd.getState(), ActionSnapshot::kInitial);
   
   // 1) Spawn a thread that will update metrics 
   obj->pleaseWaitNextTime();
@@ -187,7 +187,7 @@ BOOST_FIXTURE_TEST_CASE(TestMetricWriteThenBusyGuard, BusyMonitoringGuardTestSet
   BOOST_CHECK_NE(lMetricSnapshot.getStatusFlag(), swatch::core::kUnknown);
   BOOST_CHECK_NE(lMetricSnapshot.getUpdateTimestamp().tv_sec, 0);
   BOOST_CHECK_NE(lMetricSnapshot.getUpdateTimestamp().tv_usec, 0);
-  BOOST_CHECK_EQUAL(waitingCmd.getState(), ActionStatus::kInitial);
+  BOOST_CHECK_EQUAL(waitingCmd.getState(), ActionSnapshot::kInitial);
   ActionableObject::Status_t lObjStatus = obj->getStatus();
   BOOST_CHECK( lObjStatus.isUpdatingMetrics() );
   BOOST_REQUIRE( ! lObjStatus.isRunning() );
@@ -218,7 +218,7 @@ BOOST_FIXTURE_TEST_CASE(TestMetricWriteThenBusyGuard, BusyMonitoringGuardTestSet
   BOOST_REQUIRE( ! lObjStatus.isActionWaitingToRun() );
   BOOST_REQUIRE_EQUAL( lObjStatus.getRunningActions().size(), size_t(1) );
   BOOST_REQUIRE_EQUAL( lObjStatus.getRunningActions().at(0), &waitingCmd );
-  BOOST_REQUIRE_EQUAL( waitingCmd.getState(), ActionStatus::kRunning );
+  BOOST_REQUIRE_EQUAL( waitingCmd.getState(), ActionSnapshot::kRunning );
 
   // 5) Let "run command" thread continue; once it's finished, check that actionable object's status is correct
   obj->pleaseContinue();
@@ -230,7 +230,7 @@ BOOST_FIXTURE_TEST_CASE(TestMetricWriteThenBusyGuard, BusyMonitoringGuardTestSet
   BOOST_CHECK( lObjStatus.getRunningActions().empty() );
 
   // 5) Finally, check that the other command has never been run
-  BOOST_CHECK_EQUAL( anotherCmd.getState(), ActionStatus::kInitial );
+  BOOST_CHECK_EQUAL( anotherCmd.getState(), ActionSnapshot::kInitial );
 }
 
 

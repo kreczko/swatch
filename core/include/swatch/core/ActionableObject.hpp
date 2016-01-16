@@ -64,8 +64,7 @@ private:
 
 class ActionableObject : public MonitorableObject {
 public:
-  typedef ActionableStatus Status_t;
-  typedef MutableActionableStatus MutableStatus_t;
+  typedef ActionableSnapshot Status_t;
 
   explicit ActionableObject( const std::string& aId, const std::string& aLoggerName );
 
@@ -144,7 +143,7 @@ private:
   CommandMap_t mCommands;
   StateMachineMap_t mFSMs;
 
-  MutableStatus_t mStatus;
+  ActionableStatus mStatus;
   log4cplus::Logger mLogger;
 
 public:
@@ -169,16 +168,16 @@ public:
 
   typedef boost::function<void(const ActionableStatusGuard&)> Callback_t;
 
-  BusyGuard(ObjectFunctionoid& aAction, MutableActionableStatus& aStatus, const BusyGuard* aOuterGuard=NULL);
-  BusyGuard(ObjectFunctionoid& aAction, MutableActionableStatus& aStatus, ActionableStatusGuard& aStatusGuard, const Callback_t& aCallback, const BusyGuard* aOuterGuard=NULL);
-  BusyGuard(ActionableObject& aResource, MutableActionableStatus& aStatus, ActionableStatusGuard& aStatusGuard, const Functionoid& aAction, const BusyGuard* aOuterGuard=NULL);
-  BusyGuard(ActionableObject& aResource, MutableActionableStatus& aStatus, ActionableStatusGuard& aStatusGuard, const Functionoid& aAction, const Adopt);
+  BusyGuard(ObjectFunctionoid& aAction, ActionableStatus& aStatus, const BusyGuard* aOuterGuard=NULL);
+  BusyGuard(ObjectFunctionoid& aAction, ActionableStatus& aStatus, ActionableStatusGuard& aStatusGuard, const Callback_t& aCallback, const BusyGuard* aOuterGuard=NULL);
+  BusyGuard(ActionableObject& aResource, ActionableStatus& aStatus, ActionableStatusGuard& aStatusGuard, const Functionoid& aAction, const BusyGuard* aOuterGuard=NULL);
+  BusyGuard(ActionableObject& aResource, ActionableStatus& aStatus, ActionableStatusGuard& aStatusGuard, const Functionoid& aAction, const Adopt);
 
   ~BusyGuard();
 
 private:
   ActionableObject& mActionableObj;
-  MutableActionableStatus& mStatus;
+  ActionableStatus& mStatus;
   const Functionoid& mAction;
   const BusyGuard* mOuterGuard;
   const Callback_t mPostActionCallback;

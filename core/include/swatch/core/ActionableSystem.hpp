@@ -47,28 +47,27 @@ private:
 
 class ActionableSystem : public MonitorableObject {
 public:
-  typedef ActionableStatus Status_t;
-  typedef MutableActionableStatus MutableStatus_t;
+  typedef ActionableSnapshot Status_t;
 
   class StatusContainer : boost::noncopyable {
   public:
-    StatusContainer(const ActionableSystem& aSystem, MutableStatus_t& aSysStatus);
+    StatusContainer(const ActionableSystem& aSystem, ActionableStatus& aSysStatus);
     ~StatusContainer();
 
-    const MutableStatus_t& getSystemStatus() const;
-    const ActionableObject::MutableStatus_t& getStatus(const ActionableObject& aChild ) const;
+    const ActionableStatus& getSystemStatus() const;
+    const ActionableStatus& getStatus(const ActionableObject& aChild ) const;
   
-    MutableStatus_t& getSystemStatus();
-    ActionableObject::MutableStatus_t& getStatus(const ActionableObject& aChild );
+    ActionableStatus& getSystemStatus();
+    ActionableStatus& getStatus(const ActionableObject& aChild );
 
-    typedef std::map<const MonitorableObject*, ActionableObject::MutableStatus_t*>::const_iterator iterator;
+    typedef std::map<const MonitorableObject*, ActionableStatus*>::const_iterator iterator;
 
     iterator begin();
     iterator end();
 
   private:
-    MutableStatus_t& mSysStatus;
-    std::map<const MonitorableObject*, ActionableObject::MutableStatus_t*> mStatusMap;
+    ActionableStatus& mSysStatus;
+    std::map<const MonitorableObject*, ActionableStatus*> mStatusMap;
     
     friend class ActionableSystem;
   };
@@ -125,7 +124,7 @@ private:
   StateMachineMap_t mFSMs;
   ActionableChildMap_t mActionableChildren;
 
-  MutableStatus_t mStatus;
+  ActionableStatus mStatus;
   StatusContainer mStatusMap;
   log4cplus::Logger mLogger;
 };
@@ -142,7 +141,7 @@ public:
 
 private:
   ActionableSystem& mSystem;
-  ActionableSystem::MutableStatus_t& mSysStatus;
+  ActionableStatus& mSysStatus;
   const SystemFunctionoid& mAction;
   const Callback_t mPostActionCallback;
   typedef boost::shared_ptr<const BusyGuard> ChildGuardPtr_t;

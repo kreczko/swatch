@@ -16,7 +16,7 @@ namespace swatch {
 namespace core {
     
 //------------------------------------------------------------------------------------
-StateMachine::StateMachine(const std::string& aId, ActionableObject& aResource, MutableActionableStatus& aStatus, const std::string& aInitialState, const std::string& aErrorState) :
+StateMachine::StateMachine(const std::string& aId, ActionableObject& aResource, ActionableStatus& aStatus, const std::string& aInitialState, const std::string& aErrorState) :
   Object(aId),
   mResource(aResource),
   mStatus(aStatus),
@@ -126,7 +126,7 @@ void StateMachine::engage(const GateKeeper& aGateKeeper)
   ActionableStatusGuard lGuard(mStatus);
   
   // Throw if currently in other state machine
-  if (mStatus.getStateMachineId(lGuard) != ActionableStatus::kNullStateMachineId )
+  if (mStatus.getStateMachineId(lGuard) != ActionableSnapshot::kNullStateMachineId )
     throw ResourceInWrongStateMachine("Cannot engage other state machine; resource '"+getPath()+"' currently in state machine '"+mStatus.getStateMachineId(lGuard)+"'");
 
   mStatus.setStateMachine(getId(), getInitialState(), lGuard);
@@ -201,7 +201,7 @@ void StateMachine::resetMaskableObjects(ActionableObject& aObj, const GateKeeper
 }
 
 
-StateMachine::Transition::Transition(const std::string& aId, StateMachine& aOp, MutableActionableStatus& aActionableStatus, const std::string& aStartState, const std::string& aEndState) :
+StateMachine::Transition::Transition(const std::string& aId, StateMachine& aOp, ActionableStatus& aActionableStatus, const std::string& aStartState, const std::string& aEndState) :
   CommandVec(aId, aOp.getActionable()),
   mStateMachine(aOp),
   mActionableStatus(aActionableStatus),
@@ -397,8 +397,8 @@ void StateMachine::Transition::applyMonitoringSettings()
 //------------------------------------------------------------------------------------
 void StateMachine::Transition::changeState(const ActionableStatusGuard& aGuard)
 {
-  ActionStatus::State lActionState = getState();
-  if((lActionState == ActionStatus::kDone) || (lActionState == ActionStatus::kWarning))
+  ActionSnapshot::State lActionState = getState();
+  if((lActionState == ActionSnapshot::kDone) || (lActionState == ActionSnapshot::kWarning))
     mActionableStatus.setState(getEndState(), aGuard);
   else
     mActionableStatus.setState(getStateMachine().getErrorState(), aGuard);

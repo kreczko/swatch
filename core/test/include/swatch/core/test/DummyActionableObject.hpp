@@ -38,7 +38,7 @@ public:
     WaitCommand(const std::string& aId, ActionableObject& aActionable);
     ~WaitCommand();
   protected:
-    ActionStatus::State code(const XParameterSet& aParams);
+    ActionSnapshot::State code(const XParameterSet& aParams);
   };
 
   

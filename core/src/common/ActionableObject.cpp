@@ -237,7 +237,7 @@ std::ostream& operator<<(std::ostream& aStream, const ActionableObject::ActionFm
 
 
 //------------------------------------------------------------------------------------
-BusyGuard::BusyGuard(ObjectFunctionoid& aAction, MutableActionableStatus& aStatus, const BusyGuard* aOuterGuard) : 
+BusyGuard::BusyGuard(ObjectFunctionoid& aAction, ActionableStatus& aStatus, const BusyGuard* aOuterGuard) : 
   mActionableObj(aAction.getActionable()),
   mStatus(aStatus),
   mAction(aAction),
@@ -249,7 +249,7 @@ BusyGuard::BusyGuard(ObjectFunctionoid& aAction, MutableActionableStatus& aStatu
 
 
 //------------------------------------------------------------------------------------
-BusyGuard::BusyGuard(ObjectFunctionoid& aAction, MutableActionableStatus& aStatus, ActionableStatusGuard& aStatusGuard, const Callback_t& aCallback, const BusyGuard* aOuterGuard) : 
+BusyGuard::BusyGuard(ObjectFunctionoid& aAction, ActionableStatus& aStatus, ActionableStatusGuard& aStatusGuard, const Callback_t& aCallback, const BusyGuard* aOuterGuard) : 
   mActionableObj(aAction.getActionable()),
   mStatus(aStatus),
   mAction(aAction),
@@ -261,7 +261,7 @@ BusyGuard::BusyGuard(ObjectFunctionoid& aAction, MutableActionableStatus& aStatu
 
 
 //------------------------------------------------------------------------------------
-BusyGuard::BusyGuard(ActionableObject& aResource, MutableActionableStatus& aStatus, ActionableStatusGuard& aStatusGuard, const Functionoid& aAction, const BusyGuard* aOuterGuard) : 
+BusyGuard::BusyGuard(ActionableObject& aResource, ActionableStatus& aStatus, ActionableStatusGuard& aStatusGuard, const Functionoid& aAction, const BusyGuard* aOuterGuard) : 
   mActionableObj(aResource),
   mStatus(aStatus),
   mAction(aAction),
@@ -272,7 +272,7 @@ BusyGuard::BusyGuard(ActionableObject& aResource, MutableActionableStatus& aStat
 
 
 //------------------------------------------------------------------------------------
-BusyGuard::BusyGuard(ActionableObject& aResource, MutableActionableStatus& aStatus, ActionableStatusGuard& aStatusGuard, const Functionoid& aAction, const Adopt) : 
+BusyGuard::BusyGuard(ActionableObject& aResource, ActionableStatus& aStatus, ActionableStatusGuard& aStatusGuard, const Functionoid& aAction, const Adopt) : 
   mActionableObj(aResource),
   mStatus(aStatus),
   mAction(aAction),
@@ -292,7 +292,7 @@ BusyGuard::BusyGuard(ActionableObject& aResource, MutableActionableStatus& aStat
 //------------------------------------------------------------------------------------
 void BusyGuard::initialise(ActionableStatusGuard& aStatusGuard)
 {
-  ActionableStatus lStatusSnapshot = mStatus.getSnapshot(aStatusGuard);
+  ActionableSnapshot lStatusSnapshot = mStatus.getSnapshot(aStatusGuard);
   // Consistency checks on outer busy guard
   if(mOuterGuard != NULL)
   {
@@ -341,7 +341,7 @@ void BusyGuard::initialise(ActionableStatusGuard& aStatusGuard)
 BusyGuard::~BusyGuard()
 {  
   ActionableStatusGuard lGuard(mStatus);
-  ActionableStatus lStatusSnapshot = mStatus.getSnapshot(lGuard);
+  ActionableSnapshot lStatusSnapshot = mStatus.getSnapshot(lGuard);
   LOG4CPLUS_INFO(mActionableObj.getLogger(), mActionableObj.getPath() << " : Finished " << ActionFmt_t(&mAction));
 
   if ( lStatusSnapshot.isRunning() && (&mAction == lStatusSnapshot.getLastRunningAction()) )

@@ -26,8 +26,8 @@ namespace core {
 class ActionableSystem;
 class BusyGuard;
 class Command;
-class CommandStatus;
-class CommandVecStatus;
+class CommandSnapshot;
+class CommandVecSnapshot;
 class GateKeeper;
 
 //! Represents a sequence of commands, executed in succession.
@@ -85,10 +85,10 @@ public:
   void exec(const BusyGuard* aGuard, const GateKeeper& aGateKeeper, const bool& aUseThreadPool = true );
 
   //! Returns current state of this command sequence
-  ActionStatus::State getState() const;
+  ActionSnapshot::State getState() const;
   
   //! Returns snapshot of this command's current status (state flag value, running time, current command, overall progress fraction)
-  CommandVecStatus getStatus() const;
+  CommandVecSnapshot getStatus() const;
 
   struct MissingParam 
   {
@@ -131,14 +131,14 @@ private:
   boost::posix_time::ptime mParamUpdateTime;
 
   mutable boost::mutex mMutex;
-  ActionStatus::State mState;
+  ActionSnapshot::State mState;
 
   CommandVector_t::iterator mCommandIt;
 
   boost::posix_time::ptime mExecStartTime;
   boost::posix_time::ptime mExecEndTime;
   
-  std::vector<CommandStatus> mStatusOfCompletedCommands;
+  std::vector<CommandSnapshot> mStatusOfCompletedCommands;
 };
 
 
@@ -146,7 +146,7 @@ template<class OBJECT>
 void CommandVec::scheduleAction( OBJECT* aAction , boost::function<void(OBJECT*, boost::shared_ptr<BusyGuard>)> aFunction, const boost::shared_ptr<BusyGuard>& aGuard )
 { 
   boost::unique_lock<boost::mutex> lock(mMutex);
-  mState = ActionStatus::kScheduled;
+  mState = ActionSnapshot::kScheduled;
     
   ThreadPool& pool = ThreadPool::getInstance();
   pool.addTask<OBJECT, BusyGuard>(aAction , aFunction, aGuard);
@@ -159,9 +159,9 @@ bool operator !=(const CommandVec::MissingParam& aParam1, const CommandVec::Miss
 
 
 //! Provides a snapshot of the progress/status of a swatch::core::CommandVec
-class CommandVecStatus : public ActionStatus {
+class CommandVecSnapshot : public ActionSnapshot {
 public:
-    CommandVecStatus(const std::string& aPath, ActionStatus::State aState, float aRunningTime, const Command* aCurrentCommand, const std::vector<CommandStatus>& aFinishedCommandStatuses, size_t aTotalNumberOfCommands);
+    CommandVecSnapshot(const std::string& aPath, ActionSnapshot::State aState, float aRunningTime, const Command* aCurrentCommand, const std::vector<CommandSnapshot>& aFinishedCommandStatuses, size_t aTotalNumberOfCommands);
 
     //! Returns fraction progress of sequence - range [0,1] inclusive
     float getProgress() const;
@@ -176,13 +176,13 @@ public:
     const std::vector<const xdata::Serializable*>& getResults() const;
 
     //! Returns status of commands that have started/completed execution 
-    const std::vector<CommandStatus>& getCommandStatus() const;
+    const std::vector<CommandSnapshot>& getCommandStatus() const;
     
 private:
     // const Command* mCurrentCommand;
     size_t mTotalNumberOfCommands;
     std::vector<const xdata::Serializable*> mResults;
-    std::vector<CommandStatus> mCommandStatuses;
+    std::vector<CommandSnapshot> mCommandStatuses;
 };
 
 } /* namespace core */
