@@ -24,7 +24,7 @@
 namespace swatch {
 namespace core {
 
-class MetricWriteGuard;
+class MetricUpdateGuard;
 class AbstractMonitorableStatus;
 
 
@@ -54,7 +54,7 @@ public:
   void updateMetrics();
 
   //! Update values of this object's metrics
-  void updateMetrics(const MetricWriteGuard& aGuard);
+  void updateMetrics(const MetricUpdateGuard& aGuard);
 
   void setMonitoringStatus(const swatch::core::monitoring::Status aMonStatus);
   swatch::core::monitoring::Status getMonitoringStatus() const;
@@ -122,7 +122,7 @@ private:
   swatch::core::monitoring::Status mMonitoringStatus;
   AbstractMonitorableStatus* mStatus;
           
-  friend class MetricWriteGuard;
+  friend class MetricUpdateGuard;
 };
 
 
@@ -130,10 +130,10 @@ DEFINE_SWATCH_EXCEPTION(MetricAlreadyExistsInMonitorableObject);
 DEFINE_SWATCH_EXCEPTION(MetricNotFoundInMonitorableObject);
 
 
-class MetricWriteGuard : boost::noncopyable {
+class MetricUpdateGuard : boost::noncopyable {
 public:
-  MetricWriteGuard(MonitorableObject& aMonObj);
-  ~MetricWriteGuard();
+  MetricUpdateGuard(MonitorableObject& aMonObj);
+  ~MetricUpdateGuard();
   
   bool isCorrectGuard(const MonitorableObject& aMonObj) const;
 

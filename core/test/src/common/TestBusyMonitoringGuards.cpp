@@ -62,7 +62,7 @@ UpdateMetrics::~UpdateMetrics() {}
 
 void UpdateMetrics::operator()()
 {
-  MetricWriteGuard lGuard(mObj);
+  MetricUpdateGuard lGuard(mObj);
   mObj.updateMetrics(lGuard);
 }
 

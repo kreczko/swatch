@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_CASE(MetricWriteGuardRequiresStatus)
   BOOST_REQUIRE_EQUAL(obj.getCriticalMetric().getSnapshot().getStatusFlag(), swatch::core::kUnknown);
   //TODO: same check for each metric
   // 1b) Try to create guard or update metrics
-  BOOST_CHECK_THROW( MetricWriteGuard lMetricWriteGuard(obj), std::runtime_error);
+  BOOST_CHECK_THROW( MetricUpdateGuard lMetricWriteGuard(obj), std::runtime_error);
   BOOST_CHECK_THROW( obj.updateMetrics(), std::runtime_error);
   // 1c) Check that retriveMetricValues() hasn't been called
   BOOST_CHECK_EQUAL(obj.getStatusFlag(), swatch::core::kUnknown);
@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE(MetricWriteGuardRequiresStatus)
   BOOST_REQUIRE_EQUAL(masterObj.getNonCriticalMetric().getSnapshot().getStatusFlag(), swatch::core::kUnknown);
   BOOST_REQUIRE_EQUAL(masterObj.getCriticalMetric().getSnapshot().getStatusFlag(), swatch::core::kUnknown);
   // 2b) Try to create guard or update metrics - should succeed without throwing
-  BOOST_CHECK_NO_THROW( MetricWriteGuard lMetricWriteGuard2(masterObj) );
+  BOOST_CHECK_NO_THROW( MetricUpdateGuard lMetricWriteGuard2(masterObj) );
   BOOST_CHECK_NO_THROW( masterObj.updateMetrics() );
   // 2c) Check that retriveMetricValues() has been called
   BOOST_CHECK_NE(masterObj.getStatusFlag(), swatch::core::kUnknown);
@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE(IncorrectMetricWriteGuardCaseA)
 
   DummyMasterMonitorableObject lMasterObj1, lMasterObj2;
 
-  MetricWriteGuard lWriteGuard(lMasterObj1);
+  MetricUpdateGuard lWriteGuard(lMasterObj1);
   
   // 1) Guard should work fine with lMasterObj1
   BOOST_REQUIRE_EQUAL(lMasterObj1.getStatusFlag(), swatch::core::kUnknown);
@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE(IncorrectMetricWriteGuardCaseB)
   // Case B: Using write guard with a DummyMonitorableObject whose status pointer hasn't been set yet
 
   DummyMasterMonitorableObject lMasterObj;
-  MetricWriteGuard lWriteGuard(lMasterObj);
+  MetricUpdateGuard lWriteGuard(lMasterObj);
   
   // 1) Guard should work fine with lMasterObj1
   BOOST_REQUIRE_EQUAL(lMasterObj.getStatusFlag(), swatch::core::kUnknown);
@@ -130,7 +130,7 @@ BOOST_AUTO_TEST_CASE(SettingStatusPointer_AddChildFirst)
   // Case A: Add child to master; then add grandchild to child
   
   DummyMasterMonitorableObject lMaster;
-  MetricWriteGuard lWriteGuard(lMaster);
+  MetricUpdateGuard lWriteGuard(lMaster);
   DummyMonitorableObject& lChild = dynamic_cast<DummyMonitorableObject&>(lMaster.addMonitorable( new DummyMonitorableObject() ));
   DummyMonitorableObject& lGrandChild = dynamic_cast<DummyMonitorableObject&>(lChild.addMonitorable( new DummyMonitorableObject() ));
 
@@ -160,7 +160,7 @@ BOOST_AUTO_TEST_CASE(SettingStatusPointer_AddGrandChildFirst)
   // Case B: Add grandchild to child; then add child to master
   
   DummyMasterMonitorableObject lMaster;
-  MetricWriteGuard lWriteGuard(lMaster);
+  MetricUpdateGuard lWriteGuard(lMaster);
   DummyMonitorableObject* lChild = new DummyMonitorableObject();
   DummyMonitorableObject& lGrandChild = dynamic_cast<DummyMonitorableObject&>(lChild->addMonitorable( new DummyMonitorableObject() ));
   lMaster.addMonitorable(lChild);

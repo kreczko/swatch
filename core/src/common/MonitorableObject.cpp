@@ -90,13 +90,13 @@ StatusFlag MonitorableObject::getStatusFlag() const
 
 void MonitorableObject::updateMetrics() 
 {
-  MetricWriteGuard lGuard(*this);
+  MetricUpdateGuard lGuard(*this);
   
   updateMetrics(lGuard);
 }
 
 
-void MonitorableObject::updateMetrics(const MetricWriteGuard& aGuard)
+void MonitorableObject::updateMetrics(const MetricUpdateGuard& aGuard)
 {
   if (!aGuard.isCorrectGuard(*this))
     throw std::runtime_error("Metric write guard for incorrect object given to monitorable object '" + getId() + "'");
@@ -168,7 +168,7 @@ void MonitorableObject::setMonitorableStatus(AbstractMonitorableStatus& aStatus)
 
 
 
-MetricWriteGuard::MetricWriteGuard(MonitorableObject& aMonObj) :
+MetricUpdateGuard::MetricUpdateGuard(MonitorableObject& aMonObj) :
   mObjStatus(*aMonObj.mStatus)
 {
   if (aMonObj.mStatus == NULL)
@@ -179,14 +179,14 @@ MetricWriteGuard::MetricWriteGuard(MonitorableObject& aMonObj) :
 }
 
 
-MetricWriteGuard::~MetricWriteGuard()
+MetricUpdateGuard::~MetricUpdateGuard()
 {
   MonitorableStatusGuard lLockGuard(mObjStatus);
   mObjStatus.finishedUpdatingMetrics(lLockGuard);
 }
 
 
-bool MetricWriteGuard::isCorrectGuard(const MonitorableObject& aMonObj) const
+bool MetricUpdateGuard::isCorrectGuard(const MonitorableObject& aMonObj) const
 {
   return (aMonObj.mStatus == &mObjStatus);
 }
