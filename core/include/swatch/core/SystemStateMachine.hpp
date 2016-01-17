@@ -177,6 +177,7 @@ public:
     //! Returns status of steps that have started/completed execution 
   const StepStatusVec_t& getStepStatus() const;
 
+private:
   size_t mTotalNumSteps;
   size_t mNumCompletedSteps;
   std::set<std::string> mEnabledChildren;
