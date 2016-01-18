@@ -760,7 +760,10 @@ SystemTransitionSnapshot::SystemTransitionSnapshot(const std::string& aPath, Act
     mStepStatuses.push_back( std::vector< boost::shared_ptr<const StateMachine::TransitionSnapshot> > ());
     for(std::vector<StateMachine::Transition*>::const_iterator lIt=aCurrentStep->cget().begin(); lIt!=aCurrentStep->cget().end(); lIt++)
     {
-      boost::shared_ptr<const StateMachine::TransitionSnapshot> childStatus(new StateMachine::TransitionSnapshot((*lIt)->getStatus())); 
+      boost::shared_ptr<const StateMachine::TransitionSnapshot> childStatus;
+      // Only set child status pointer to non-NULL value if that child is enabled 
+      if ( mEnabledChildren.count((*lIt)->getActionable().getPath()) > 0)
+        childStatus.reset(new StateMachine::TransitionSnapshot((*lIt)->getStatus())); 
       mStepStatuses.back().push_back( childStatus );
     }
   } 
