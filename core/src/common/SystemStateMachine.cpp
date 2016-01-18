@@ -761,7 +761,7 @@ SystemTransitionSnapshot::SystemTransitionSnapshot(const std::string& aPath, Act
     for(std::vector<StateMachine::Transition*>::const_iterator lIt=aCurrentStep->cget().begin(); lIt!=aCurrentStep->cget().end(); lIt++)
     {
       boost::shared_ptr<const StateMachine::TransitionSnapshot> childStatus;
-      // Only set child status pointer to non-NULL value if that child is enabled 
+      // Only set child snapshot pointer to non-NULL value if that child is enabled 
       if ( mEnabledChildren.count((*lIt)->getActionable().getPath()) > 0)
         childStatus.reset(new StateMachine::TransitionSnapshot((*lIt)->getStatus())); 
       mStepStatuses.back().push_back( childStatus );
@@ -784,8 +784,11 @@ float SystemTransitionSnapshot::getProgress() const
     typedef std::vector<boost::shared_ptr<const StateMachine::TransitionSnapshot> > StepStatus_t;
     const StepStatus_t& lStatusLastStep = mStepStatuses.back();
     std::vector<float> lLastStepProgressVec;
-    for(StepStatus_t::const_iterator lIt=lStatusLastStep.begin(); lIt!=lStatusLastStep.end(); lIt++)
-      lLastStepProgressVec.push_back((*lIt)->getProgress());
+    for(StepStatus_t::const_iterator lIt=lStatusLastStep.begin(); lIt!=lStatusLastStep.end(); lIt++) {
+      // Child snapshot pointer will be NULL if that child wasn't enabled
+      if (*lIt != NULL)
+        lLastStepProgressVec.push_back((*lIt)->getProgress());
+    }
     float lastStepProgress = (*std::min_element(lLastStepProgressVec.begin(), lLastStepProgressVec.end()))/float(mTotalNumSteps);
     return baseProgress + lastStepProgress;
   }
