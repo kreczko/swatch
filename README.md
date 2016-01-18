@@ -55,3 +55,16 @@ If you are not working on a Scientific Linux 6 machine, it might be worthwhile
 to have a look at Vagrant so you can compile the code and run the tests on your machine.
 Instructions for swatch are provided here:
 https://github.com/cms-l1t-online/cactus-vagrant-box
+
+## Docker
+Even easier than Vagrant, you can use a pre-built docker container for code development. Simply install Docker on your machine and launch the SWATCH container via
+```
+docker run -v <path to cactus on your machine>/cactus/cactuscore/swatch:/opt/swatch -t -i kreczko/swatch
+```
+and you will be given a shell inside the docker container. Then
+```
+cd /opt/swatch
+# to compile
+make jobs=2
+```
+The ```docker run``` command will download the docker image ```kreczko/swatch```, mount your local swatch path to /opt/swatch inside the container and start it.
