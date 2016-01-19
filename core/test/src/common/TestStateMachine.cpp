@@ -111,9 +111,8 @@ BOOST_AUTO_TEST_SUITE( StateMachineTestSuite )
 /*   PART 1: CONSTRUCTION & INITIALISATION (defining states & transitions)   */
 /* ------------------------------------------------------------------------- */
 
-BOOST_AUTO_TEST_CASE(TestConstruction) {
-  LOG(kInfo) << "Running StateMachineTestSuite/TestConstruction";
-
+BOOST_AUTO_TEST_CASE(TestConstruction)
+{
   DummyActionableObject obj("dummy");
   StateMachine& fsm = obj.registerStateMachine("anOp", "someState", "myErrState");
 
@@ -131,9 +130,8 @@ BOOST_AUTO_TEST_CASE(TestConstruction) {
 }
 
 
-BOOST_AUTO_TEST_CASE(TestAddState) {
-  LOG(kInfo) << "Running StateMachineTestSuite/TestAddState";
-
+BOOST_AUTO_TEST_CASE(TestAddState)
+{
   DummyActionableObject obj("dummy");
   swatch::core::StateMachine& fsm = obj.registerStateMachine("anOp", "someState", "myErrState");
 
@@ -151,9 +149,8 @@ BOOST_AUTO_TEST_CASE(TestAddState) {
 }
 
 
-BOOST_AUTO_TEST_CASE(TestAddTransition) {
-  LOG(kInfo) << "Running StateMachineTestSuite/TestAddTransition";
-
+BOOST_AUTO_TEST_CASE(TestAddTransition)
+{
   DummyActionableObject obj("dummy");  
   swatch::core::StateMachine& fsm = obj.registerStateMachine("aFSM", "state0", "errState");
   fsm.addState("state1");
@@ -183,9 +180,8 @@ BOOST_AUTO_TEST_CASE(TestAddTransition) {
 }
 
 
-BOOST_AUTO_TEST_CASE(TestAddTransitionSteps) {
-  LOG(kInfo) << "Running StateMachineTestSuite/TestAddTransitionSteps";
-
+BOOST_AUTO_TEST_CASE(TestAddTransitionSteps)
+{
   DummyActionableObject obj("dummy");
   Command& cmd = obj.registerCommand<DummyCommand>("aCmd");
   CommandSequence& cmdSeq = obj.registerSequence("aCmdSeq", cmd);
@@ -239,8 +235,6 @@ BOOST_AUTO_TEST_CASE(TestAddTransitionSteps) {
 
 BOOST_FIXTURE_TEST_CASE(TestEngageFSM, StateMachineTestSetup)
 {
-  LOG(kInfo) << "Running StateMachineTestSuite/TestEngageFSM";
-
   // Confirm correct construction before staring tests
   BOOST_REQUIRE_EQUAL( obj->getStatus().getStateMachineId(), ActionableSnapshot::kNullStateMachineId );
   BOOST_REQUIRE_EQUAL( obj->getStatus().getState(), ActionableSnapshot::kNullStateId );
@@ -274,8 +268,8 @@ BOOST_FIXTURE_TEST_CASE(TestEngageFSM, StateMachineTestSetup)
 }
 
 
-BOOST_AUTO_TEST_CASE(TestDisengageFSM) {
-  LOG(kInfo) << "Running StateMachineTestSuite/TestDisengageFSM";
+BOOST_AUTO_TEST_CASE(TestDisengageFSM)
+{
   DummyActionableObject obj("dummy");
   const std::string initialState = "myInitialState";
   StateMachine& testFSM = obj.registerStateMachine("myFSM", initialState, "myErrorState");
@@ -309,8 +303,6 @@ BOOST_AUTO_TEST_CASE(TestDisengageFSM) {
 
 BOOST_FIXTURE_TEST_CASE(TestDescendantsMaskedDuringEngage, StateMachineTestSetup)
 {
-  LOG(kInfo) << "Running StateMachineTestSuite/TestDescendantsMaskedDuringEngage";
-
   // PART A :
   //  * Goal: Check that MaskableObjects we ask it to mask are being masked
   //  * Start off with everything unmasked
@@ -350,8 +342,8 @@ BOOST_FIXTURE_TEST_CASE(TestDescendantsMaskedDuringEngage, StateMachineTestSetup
 /*   PART 3: RUNNING TRANSITIONS                                    */
 /* ---------------------------------------------------------------- */
 
-BOOST_FIXTURE_TEST_CASE(TestRunTransitionDisengagedFSM, StateMachineTestSetup) {
-  LOG(kInfo) << "Running StateMachineTestSuite/TestRunTransitionDisengagedFSM";
+BOOST_FIXTURE_TEST_CASE(TestRunTransitionDisengagedFSM, StateMachineTestSetup)
+{
   DummyGateKeeper lEmptyGK;
   
   // Running transition before FSM is engaged: should throw, and leave state/TransitionStatus unchanged
@@ -373,8 +365,8 @@ BOOST_FIXTURE_TEST_CASE(TestRunTransitionDisengagedFSM, StateMachineTestSetup) {
 }
 
 
-BOOST_FIXTURE_TEST_CASE(TestRunEmptyTransitions, StateMachineTestSetup) {
-  LOG(kInfo) << "Running StateMachineTestSuite/TestRunEmptyTransitions";
+BOOST_FIXTURE_TEST_CASE(TestRunEmptyTransitions, StateMachineTestSetup)
+{
   DummyGateKeeper emptyGK;
 
   // Engage state machine and confirm initial state to prepare for testing
@@ -431,8 +423,8 @@ BOOST_FIXTURE_TEST_CASE(TestRunEmptyTransitions, StateMachineTestSetup) {
 }
 
 
-BOOST_FIXTURE_TEST_CASE(TestTransitionMissingParams, StateMachineTestSetup) {
-  LOG(kInfo) << "Running StateMachineTestSuite/TestTransitionMissingParams";
+BOOST_FIXTURE_TEST_CASE(TestTransitionMissingParams, StateMachineTestSetup)
+{
   DummyGateKeeper lEmptyGK;
   transitionItoA->add(cmdNormal1);
   transitionItoA->add(cmdSeq);
@@ -469,8 +461,8 @@ BOOST_FIXTURE_TEST_CASE(TestTransitionMissingParams, StateMachineTestSetup) {
 }
 
 
-BOOST_FIXTURE_TEST_CASE(TestRunErrorTransition, StateMachineTestSetup) {
-  LOG(kInfo) << "Running StateMachineTestSuite/TestRunErrorTransition";
+BOOST_FIXTURE_TEST_CASE(TestRunErrorTransition, StateMachineTestSetup)
+{
   transitionItoA->add(cmdNormal1);
   transitionItoA->add(cmdError);
   transitionItoA->add(cmdNormal2);
@@ -509,8 +501,8 @@ BOOST_FIXTURE_TEST_CASE(TestRunErrorTransition, StateMachineTestSetup) {
 }
 
 
-BOOST_FIXTURE_TEST_CASE(TestRunWarningTransition, StateMachineTestSetup) {
-  LOG(kInfo) << "Running StateMachineTestSuite/TestRunWarningTransition";
+BOOST_FIXTURE_TEST_CASE(TestRunWarningTransition, StateMachineTestSetup)
+{
   transitionItoA->add(cmdNormal1);
   transitionItoA->add(cmdWarning);
   transitionItoA->add(cmdNormal2);
@@ -547,8 +539,8 @@ BOOST_FIXTURE_TEST_CASE(TestRunWarningTransition, StateMachineTestSetup) {
 }
 
 
-BOOST_FIXTURE_TEST_CASE(TestRunGoodTransition, StateMachineTestSetup) {
-  LOG(kInfo) << "Running StateMachineTestSuite/TestRunGoodTransition";
+BOOST_FIXTURE_TEST_CASE(TestRunGoodTransition, StateMachineTestSetup)
+{
   transitionItoA->add(cmdNormal1);
   transitionItoA->add(cmdNormal2);
   
@@ -580,9 +572,8 @@ BOOST_FIXTURE_TEST_CASE(TestRunGoodTransition, StateMachineTestSetup) {
   BOOST_CHECK_EQUAL(s.getResults().at(1) , cmdNormal2.getStatus().getResult() );
 }
 
-BOOST_FIXTURE_TEST_CASE(TestDescendantMonitoringSettings, StateMachineTestSetup) {
-  LOG(kInfo) << "Running StateMachineTestSuite/TestDescendantMonitoringSettings";
-
+BOOST_FIXTURE_TEST_CASE(TestDescendantMonitoringSettings, StateMachineTestSetup)
+{
   BOOST_REQUIRE_EQUAL(child1.getMonitoringStatus(), monitoring::kEnabled);
   BOOST_REQUIRE_EQUAL(child1.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kEnabled);
   testFSM.engage(gk);
@@ -607,8 +598,8 @@ BOOST_FIXTURE_TEST_CASE(TestDescendantMonitoringSettings, StateMachineTestSetup)
 /* ---------------------------------------------------------------- */
 
 
-BOOST_FIXTURE_TEST_CASE(TestResetFSM, StateMachineTestSetup) {
-  LOG(kInfo) << "Running StateMachineTestSuite/TestResetFSM";
+BOOST_FIXTURE_TEST_CASE(TestResetFSM, StateMachineTestSetup)
+{
   DummyGateKeeper lEmptyGK;
   
   // Engage state machine and confirm initial state to prepare for following tests
@@ -639,9 +630,8 @@ BOOST_FIXTURE_TEST_CASE(TestResetFSM, StateMachineTestSetup) {
 }
 
 
-BOOST_FIXTURE_TEST_CASE(TestResetDisengagedFSM, StateMachineTestSetup) {
-  LOG(kInfo) << "Running StateMachineTestSuite/TestResetDisengagedFSM";
-
+BOOST_FIXTURE_TEST_CASE(TestResetDisengagedFSM, StateMachineTestSetup)
+{
   // Resetting FSM before engaged: Should throw, and leave state + MaskableObjects unchanged
   BOOST_CHECK_THROW( testFSM.reset(gk), ResourceInWrongStateMachine);
   BOOST_CHECK_EQUAL( obj->getStatus().getStateMachineId(), ActionableSnapshot::kNullStateMachineId );
@@ -655,8 +645,6 @@ BOOST_FIXTURE_TEST_CASE(TestResetDisengagedFSM, StateMachineTestSetup) {
 
 BOOST_FIXTURE_TEST_CASE(TestDescendantsMaskedDuringReset, StateMachineTestSetup)
 {
-  LOG(kInfo) << "Running StateMachineTestSuite/TestDescendantsMaskedDuringReset";
-
   // PART A :
   //  * Goal: Check that MaskableObjects we ask it to mask are being masked
   //  * Start off with everything unmasked

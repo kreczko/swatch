@@ -23,8 +23,6 @@ BOOST_AUTO_TEST_SUITE( MaskableObjectTestSuite )
         
 BOOST_AUTO_TEST_CASE(NotMaskedAtConstruction)
 {
-  LOG(swatch::logger::kInfo) << "Running MaskableObjectTestSuite/NotMaskedAtConstruction";
-  
   DummyMaskableObject lObj("testMaskable");
   BOOST_CHECK_EQUAL( lObj.isMasked(), false);
 }
@@ -32,8 +30,6 @@ BOOST_AUTO_TEST_CASE(NotMaskedAtConstruction)
 
 BOOST_AUTO_TEST_CASE(TestSetMasked)
 {
-  LOG(swatch::logger::kInfo) << "Running MaskableObjectTestSuite/TestSetMasked";
-  
   DummyMaskableObject lObj("testMaskable");
   
   // 1) setMasked() - no arguments - should change mask to true

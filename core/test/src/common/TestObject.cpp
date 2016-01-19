@@ -70,7 +70,6 @@ BOOST_AUTO_TEST_CASE(ObjectIdEmpty)
 
 BOOST_AUTO_TEST_CASE(ObjectIdContainsDots)
 {
-  
   // Should throw if ID string contains one or more dots (regardless of location)
   BOOST_CHECK_THROW( Object("."), InvalidObjectId );
   BOOST_CHECK_THROW( Object(".anId"), InvalidObjectId );
@@ -84,7 +83,8 @@ BOOST_AUTO_TEST_CASE(ObjectIdContainsDots)
 }
 
 
-BOOST_AUTO_TEST_CASE(ObjectGetTests) {
+BOOST_AUTO_TEST_CASE(ObjectGetTests)
+{
     using namespace swatch::core;
     using namespace swatch::core::test;
     
@@ -113,7 +113,8 @@ BOOST_AUTO_TEST_CASE(ObjectGetTests) {
 } 
 
 
-BOOST_AUTO_TEST_CASE(ObjectAddTests) {
+BOOST_AUTO_TEST_CASE(ObjectAddTests)
+{
   DummyObject anObject("parent");
   
   // Setup: Add a dummy child
@@ -128,7 +129,8 @@ BOOST_AUTO_TEST_CASE(ObjectAddTests) {
 }
 
 
-BOOST_AUTO_TEST_CASE(ObjectIdPathTests) {
+BOOST_AUTO_TEST_CASE(ObjectIdPathTests)
+{
   using namespace swatch::core;
   using namespace swatch::core::test;
   
@@ -154,7 +156,8 @@ BOOST_AUTO_TEST_CASE(ObjectIdPathTests) {
 
 
 
-BOOST_AUTO_TEST_CASE(ObjectChildrenTests) {
+BOOST_AUTO_TEST_CASE(ObjectChildrenTests)
+{
      using namespace swatch::core;
      using namespace swatch::core::test;
      
@@ -192,7 +195,8 @@ BOOST_AUTO_TEST_CASE(ObjectChildrenTests) {
      
 }
 
-BOOST_AUTO_TEST_CASE(ObjectDescendantsTests) {
+BOOST_AUTO_TEST_CASE(ObjectDescendantsTests)
+{
      using namespace swatch::core;
      using namespace swatch::core::test;
      

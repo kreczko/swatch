@@ -50,9 +50,8 @@ struct CommandTestSetup {
 BOOST_AUTO_TEST_SUITE( CommandTestSuite )
 
 
-BOOST_AUTO_TEST_CASE(TestConstruction) {
-  LOG(kInfo) << "Running CommandTestSuite/TestConstruction";
-
+BOOST_AUTO_TEST_CASE(TestConstruction)
+{
   DummyActionableObject obj("dummy");
   swatch::core::Command& cmd = obj.registerCommand<DummyCommand>("myTestCommand");
   
@@ -65,18 +64,16 @@ BOOST_AUTO_TEST_CASE(TestConstruction) {
 }
 
 
-BOOST_FIXTURE_TEST_CASE(TestDefaultParams, CommandTestSetup) {
-  LOG(kInfo) << "Running CommandTestSuite/TestDefaultParams";
-
+BOOST_FIXTURE_TEST_CASE(TestDefaultParams, CommandTestSetup)
+{
   BOOST_CHECK_EQUAL(cmd.getDefaultParams().get<xdata::Integer>("x").value_ , 15);
   BOOST_CHECK_EQUAL(cmd.getDefaultParams().get<xdata::String>("todo").value_ , "");
 }
 
 
 
-BOOST_FIXTURE_TEST_CASE(TestCommandInitialState,  CommandTestSetup) {
-  LOG(kInfo) << "Running CommandTestSuite/TestCommandInitialState";
-
+BOOST_FIXTURE_TEST_CASE(TestCommandInitialState,  CommandTestSetup)
+{
   const std::vector<const Command*> cmds = { &cmd, &warning_cmd, &error_cmd, &throw_cmd};
   
   for(auto it=cmds.begin(); it != cmds.end(); it++)
@@ -93,8 +90,8 @@ BOOST_FIXTURE_TEST_CASE(TestCommandInitialState,  CommandTestSetup) {
 }
 
 
-BOOST_FIXTURE_TEST_CASE(TestSuccessfulCommand,  CommandTestSetup) {
-  LOG(kInfo) << "Running CommandTestSuite/TestSuccessfulCommand";
+BOOST_FIXTURE_TEST_CASE(TestSuccessfulCommand,  CommandTestSetup)
+{
   BOOST_CHECK_NE(obj->getNumber(), size_t(54));
   
   params.add("todo", xdata::String("useResource"));
@@ -118,9 +115,8 @@ BOOST_FIXTURE_TEST_CASE(TestSuccessfulCommand,  CommandTestSetup) {
 }
 
 
-BOOST_FIXTURE_TEST_CASE(TestCommandWarning,  CommandTestSetup) {
-  LOG(kInfo) << "Running CommandTestSuite/TestCommandWarning";
-
+BOOST_FIXTURE_TEST_CASE(TestCommandWarning,  CommandTestSetup)
+{
   warning_cmd.exec(params);
   
   do {
@@ -136,9 +132,8 @@ BOOST_FIXTURE_TEST_CASE(TestCommandWarning,  CommandTestSetup) {
 }
 
 
-BOOST_FIXTURE_TEST_CASE(TestCommandError,  CommandTestSetup) {
-  LOG(kInfo) << "Running CommandTestSuite/TestCommandError";
-
+BOOST_FIXTURE_TEST_CASE(TestCommandError,  CommandTestSetup)
+{
   error_cmd.exec(params);
   do {
   } while ( (error_cmd.getState() == ActionSnapshot::kScheduled) || (error_cmd.getState() == ActionSnapshot::kRunning) );
@@ -153,9 +148,8 @@ BOOST_FIXTURE_TEST_CASE(TestCommandError,  CommandTestSetup) {
 }
 
 
-BOOST_FIXTURE_TEST_CASE(TestThrowingCommand,  CommandTestSetup) {
-  LOG(kInfo) << "Running CommandTestSuite/TestThrowingCommand";
-
+BOOST_FIXTURE_TEST_CASE(TestThrowingCommand,  CommandTestSetup)
+{
   LogLevel lLogThr = Log::logThreshold();
   Log::setLogThreshold( swatch::logger::kFatal );
   throw_cmd.exec(params);

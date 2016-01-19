@@ -102,8 +102,6 @@ BOOST_AUTO_TEST_SUITE( BusyMonitoringGuardsTestSuite )
 
 BOOST_FIXTURE_TEST_CASE(TestBusyThenMetricWriteGuard, BusyMonitoringGuardTestSetup)
 {
-  LOG(kInfo) << "Running BusyMonitoringGuardsTestSuite/TestBusyThenMetricWriteGuard";
-
   // 0) Check that metrics are "unknown" and command status "initialised" before proceed with tests.
   MetricSnapshot lMetricSnapshot = obj->getDummyMetric().getSnapshot();
   BOOST_REQUIRE_EQUAL(lMetricSnapshot.getStatusFlag(), swatch::core::kUnknown);
@@ -164,8 +162,6 @@ BOOST_FIXTURE_TEST_CASE(TestBusyThenMetricWriteGuard, BusyMonitoringGuardTestSet
 
 BOOST_FIXTURE_TEST_CASE(TestMetricWriteThenBusyGuard, BusyMonitoringGuardTestSetup)
 {
-  LOG(kInfo) << "Running BusyMonitoringGuardsTestSuite/TestMetricWriteThenBusyGuard";
-
   // 0) Check that metrics are "unknown" and command status "initialised" before proceed with tests.
   MetricSnapshot lMetricSnapshot = obj->getDummyMetric().getSnapshot();
   BOOST_REQUIRE_EQUAL(lMetricSnapshot.getStatusFlag(), swatch::core::kUnknown);

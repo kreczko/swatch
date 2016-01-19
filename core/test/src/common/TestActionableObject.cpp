@@ -79,8 +79,6 @@ BOOST_AUTO_TEST_SUITE( ActionableObjectTestSuite)
 
 BOOST_FIXTURE_TEST_CASE(TestConstruction, ActionableObjectTestSetup)
 {
-  LOG(kInfo) << "Running ActionableObjectTestSuite/TestConstruction";
-  
   // Check that status is correct
   ActionableObject::Status_t lStatus = handler->getStatus();
   BOOST_CHECK_EQUAL(lStatus.isAlive(), true);
@@ -96,8 +94,8 @@ BOOST_FIXTURE_TEST_CASE(TestConstruction, ActionableObjectTestSetup)
   BOOST_CHECK_EQUAL(lStatus.isEnabled(), true);
 }
 
-BOOST_FIXTURE_TEST_CASE(TestRegisterCommand,  ActionableObjectTestSetup) {
-  LOG(kInfo) << "Running ActionableObjectTestSuite/TestRegisterCommand";
+BOOST_FIXTURE_TEST_CASE(TestRegisterCommand,  ActionableObjectTestSetup)
+{
   size_t n_commands = handler->getCommands().size();
   Command& registeredCmd = handler->registerCommand<DummyCommand>("dummy_5000");
   
@@ -110,15 +108,15 @@ BOOST_FIXTURE_TEST_CASE(TestRegisterCommand,  ActionableObjectTestSetup) {
 }
 
 
-BOOST_FIXTURE_TEST_CASE(TestGetCommand,  ActionableObjectTestSetup) {
-  LOG(kInfo) << "Running ActionableObjectTestSuite/TestGetCommand";
+BOOST_FIXTURE_TEST_CASE(TestGetCommand,  ActionableObjectTestSetup)
+{
   Command& dummy_1 = handler->getCommand("dummy_1");
   BOOST_CHECK_EQUAL(dummy_1.getState(), ActionSnapshot::kInitial);
 }
 
 
-BOOST_FIXTURE_TEST_CASE(TestRegisterStateMachine,  ActionableObjectTestSetup) {
-  LOG(kInfo) << "Running ActionableObjectTestSuite/TestRegisterStateMachine";
+BOOST_FIXTURE_TEST_CASE(TestRegisterStateMachine,  ActionableObjectTestSetup)
+{
   size_t n_fsm = handler->getStateMachines().size();
   StateMachine& registeredSM = handler->registerStateMachine("dummyOp_5000", "NULL", "ERR");
   
@@ -130,15 +128,14 @@ BOOST_FIXTURE_TEST_CASE(TestRegisterStateMachine,  ActionableObjectTestSetup) {
 }
 
 
-BOOST_FIXTURE_TEST_CASE(TestGetStateMachine,  ActionableObjectTestSetup) {
-  LOG(kInfo) << "Running ActionableObjectTestSuite/TestGetStateMachine";
+BOOST_FIXTURE_TEST_CASE(TestGetStateMachine,  ActionableObjectTestSetup)
+{
   BOOST_CHECK_EQUAL( &testOp, & handler->getStateMachine("myTestOp"));
 }
 
 
-BOOST_FIXTURE_TEST_CASE(TestActionableIntialState,  ActionableObjectTestSetup) {
-  LOG(kInfo) << "Running ActionableObjectTestSuite/TestActionableIntialState";
-  
+BOOST_FIXTURE_TEST_CASE(TestActionableIntialState,  ActionableObjectTestSetup)
+{
   BOOST_CHECK( !handler->getStatus().isRunning() );
   BOOST_CHECK( handler->getStatus().isAlive() );
   BOOST_CHECK( !handler->getStatus().isEngaged() );
@@ -147,13 +144,13 @@ BOOST_FIXTURE_TEST_CASE(TestActionableIntialState,  ActionableObjectTestSetup) {
 }
 
 
-BOOST_AUTO_TEST_CASE(TestSafeDeletionOfBusyActionableObject) {
+BOOST_AUTO_TEST_CASE(TestSafeDeletionOfBusyActionableObject)
+{
   std::cout << " Setting log threshold to info ... " << std::endl;
   LogLevel lLogThr = swatch::logger::Log::logThreshold();
   swatch::logger::Log::setLogThreshold( swatch::logger::kFatal );
   {
     ActionableObjectTestSetup setup;
-    LOG(kInfo) << "Running ActionableObjectTestSuite/TestSafeDeletionOfBusyActionableObject";
   
     Command& sleepCommand = setup.handler->getCommand("sleep");
   

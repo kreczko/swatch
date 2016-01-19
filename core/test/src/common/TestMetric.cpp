@@ -18,16 +18,16 @@ namespace core {
 namespace test {
 BOOST_AUTO_TEST_SUITE( MetricTestSuite )
 
-BOOST_AUTO_TEST_CASE(SimpleMetric) {
-  LOG(kInfo) << "Running MetricTestSuite/SimpleMetric";
+BOOST_AUTO_TEST_CASE(SimpleMetric)
+{
   DummyMetric<int> m(1);
   MetricSnapshot ms = m.getSnapshot();
   BOOST_CHECK_EQUAL(ms.getValue(), "1");
   BOOST_CHECK_EQUAL(ms.getStatusFlag(), swatch::core::StatusFlag::kNoLimit);
 }
 
-BOOST_AUTO_TEST_CASE(MetricWithConditions) {
-  LOG(kInfo) << "Running MetricTestSuite/MetricWithConditions";
+BOOST_AUTO_TEST_CASE(MetricWithConditions)
+{
   DummyMetric<int> m(1, new LessThanCondition<int>(0));
   MetricSnapshot ms = m.getSnapshot();
   BOOST_CHECK_EQUAL(ms.getValue(), "1");
@@ -37,8 +37,8 @@ BOOST_AUTO_TEST_CASE(MetricWithConditions) {
   BOOST_CHECK_EQUAL(ms2.getStatusFlag(), StatusFlag::kError);
 }
 
-BOOST_AUTO_TEST_CASE(NonCriticalMetric) {
-  LOG(kInfo) << "Running MetricTestSuite/NonCriticalMetric";
+BOOST_AUTO_TEST_CASE(NonCriticalMetric)
+{
   DummyMetric<int> m(1);
   m.setMonitoringStatus(monitoring::kNonCritical);
   MetricSnapshot ms = m.getSnapshot();
@@ -46,8 +46,8 @@ BOOST_AUTO_TEST_CASE(NonCriticalMetric) {
   BOOST_CHECK_EQUAL(ms.getMonitoringStatus(), monitoring::kNonCritical);
 }
 
-BOOST_AUTO_TEST_CASE(DisabledMetric) {
-  LOG(kInfo) << "Running MetricTestSuite/DisabledMetric";
+BOOST_AUTO_TEST_CASE(DisabledMetric)
+{
   Metric<int>* m = new Metric<int>;
   m->setMonitoringStatus(monitoring::kDisabled);
   MetricSnapshot ms = m->getSnapshot();
@@ -55,8 +55,8 @@ BOOST_AUTO_TEST_CASE(DisabledMetric) {
   BOOST_CHECK_EQUAL(ms.getStatusFlag(), StatusFlag::kNoLimit);
 }
 
-BOOST_AUTO_TEST_CASE(DisabledMetricWithConditions) {
-  LOG(kInfo) << "Running MetricTestSuite/DisabledMetricWithConditions";
+BOOST_AUTO_TEST_CASE(DisabledMetricWithConditions)
+{
   DummyMetric<int> m(1, new LessThanCondition<int>(0));
   m.setMonitoringStatus(monitoring::kDisabled);
   MetricSnapshot ms = m.getSnapshot();

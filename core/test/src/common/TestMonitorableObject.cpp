@@ -23,8 +23,6 @@ BOOST_AUTO_TEST_SUITE( MonitorableObjectTestSuite )
 
 BOOST_AUTO_TEST_CASE(MetricWriteGuardRequiresStatus)
 {
-  LOG(kInfo) << "Running MonitorableObjectTestSuite/MetricWriteGuardRequiresStatus";
-
   // 1) DummyMonitorableObject: Doesn't have a status member variable (inheriting from AbstractMonitorableObject);
   // ... hence: MetricWriteGuard CTOR should throw; updateMetrics should throw before calling retrieveMetricValues
   DummyMonitorableObject obj;
@@ -61,7 +59,6 @@ BOOST_AUTO_TEST_CASE(MetricWriteGuardRequiresStatus)
 
 BOOST_AUTO_TEST_CASE(IncorrectMetricWriteGuardCaseA)
 {
-  LOG(kInfo) << "Running MonitorableObjectTestSuite/IncorrectMetricWriteGuardCaseA";
   // UpdateMetrics should throw if monitorable object is given a MetricWriteGuard for a different object
   // Case A: Using write guard from one master with another master
 
@@ -122,7 +119,6 @@ BOOST_AUTO_TEST_CASE(IncorrectMetricWriteGuardCaseB)
 
 BOOST_AUTO_TEST_CASE(SettingStatusPointer_AddChildFirst)
 {
-  LOG(kInfo) << "Running MonitorableObjectTestSuite/SettingStatusPointer_AddChildFirst";
   // Check that the addMonitorable method sets the child and grandchild's status pointers correctly
   //  - Master
   //    - Child
@@ -152,7 +148,6 @@ BOOST_AUTO_TEST_CASE(SettingStatusPointer_AddChildFirst)
 
 BOOST_AUTO_TEST_CASE(SettingStatusPointer_AddGrandChildFirst)
 {
-  LOG(kInfo) << "Running MonitorableObjectTestSuite/SettingStatusPointer_AddGrandChildFirst";
   // Check that the addMonitorable method sets the child and grandchild's status pointers correctly
   //  - Master
   //    - Child
@@ -181,8 +176,8 @@ BOOST_AUTO_TEST_CASE(SettingStatusPointer_AddGrandChildFirst)
 }
 
 
-BOOST_AUTO_TEST_CASE(GoodMonitorableObject) {
-  LOG(kInfo) << "Running MonitorableObjectTestSuite/GoodMonitorableObject";
+BOOST_AUTO_TEST_CASE(GoodMonitorableObject)
+{
   DummyMasterMonitorableObject m;
   m.updateMetrics();
   MetricSnapshot ms = m.getMetric("DummyCriticalInteger").getSnapshot();
@@ -194,8 +189,8 @@ BOOST_AUTO_TEST_CASE(GoodMonitorableObject) {
   BOOST_CHECK_EQUAL(m.getStatusFlag(), swatch::core::StatusFlag::kGood);
 }
 
-BOOST_AUTO_TEST_CASE(CriticalFailure) {
-  LOG(kInfo) << "Running MonitorableObjectTestSuite/CriticalFailure";
+BOOST_AUTO_TEST_CASE(CriticalFailure)
+{
   DummyMasterMonitorableObject m;
   m.updateMetrics();
   // set a value outside the range
@@ -209,8 +204,8 @@ BOOST_AUTO_TEST_CASE(CriticalFailure) {
   BOOST_CHECK_EQUAL(m.getStatusFlag(), swatch::core::StatusFlag::kError);
 }
 
-BOOST_AUTO_TEST_CASE(NonCriticalFailure) {
-  LOG(kInfo) << "Running MonitorableObjectTestSuite/NonCriticalFailure";
+BOOST_AUTO_TEST_CASE(NonCriticalFailure)
+{
   DummyMasterMonitorableObject m;
   m.updateMetrics();
   // set a value outside the range
@@ -227,8 +222,8 @@ BOOST_AUTO_TEST_CASE(NonCriticalFailure) {
   BOOST_CHECK_EQUAL(m.getStatusFlag(), swatch::core::StatusFlag::kGood);
 }
 
-BOOST_AUTO_TEST_CASE(DisabledFailure) {
-  LOG(kInfo) << "Running MonitorableObjectTestSuite/DisabledFailure";
+BOOST_AUTO_TEST_CASE(DisabledFailure)
+{
   DummyMasterMonitorableObject m;
   m.updateMetrics();
   // set a value outside the range
@@ -242,8 +237,8 @@ BOOST_AUTO_TEST_CASE(DisabledFailure) {
   BOOST_CHECK_EQUAL(m.getStatusFlag(), swatch::core::StatusFlag::kGood);
 }
 
-BOOST_AUTO_TEST_CASE(DisabledFailureNoUnknown) {
-  LOG(kInfo) << "Running MonitorableObjectTestSuite/DisabledFailure";
+BOOST_AUTO_TEST_CASE(DisabledFailureNoUnknown)
+{
   DummyMasterMonitorableObject m;
   m.updateMetrics();
   // at this point the time of last update should be 0

@@ -76,9 +76,8 @@ struct TestGateKeeperSetup {
 BOOST_AUTO_TEST_SUITE( TestGateKeeper )
 
 
-BOOST_FIXTURE_TEST_CASE ( TestCommonParameters, TestGateKeeperSetup ) {
-  LOG(kInfo) << "Running TestGateKeeper/TestCommonParameters";
-
+BOOST_FIXTURE_TEST_CASE ( TestCommonParameters, TestGateKeeperSetup )
+{
   std::vector<std::string> tablesToLookIn;
   tablesToLookIn.push_back("dummy_sys.common");
 
@@ -91,9 +90,8 @@ BOOST_FIXTURE_TEST_CASE ( TestCommonParameters, TestGateKeeperSetup ) {
   BOOST_CHECK_EQUAL(p2->toString(), "42");
 }
 
-BOOST_FIXTURE_TEST_CASE ( TestChildParameters, TestGateKeeperSetup ) {
-  LOG(kInfo) << "Running TestGateKeeper/TestChildParameters";
-
+BOOST_FIXTURE_TEST_CASE ( TestChildParameters, TestGateKeeperSetup )
+{
   std::vector<std::string> tablesToLookIn {"dummy_sys.childA1", "dummy_sys.common"};
 
   GateKeeper::Parameter_t p(mGk.get("", "", "hello", tablesToLookIn));
@@ -101,9 +99,8 @@ BOOST_FIXTURE_TEST_CASE ( TestChildParameters, TestGateKeeperSetup ) {
   BOOST_CHECK_EQUAL(p->toString(), "World! (childA1)");
 }
 
-BOOST_FIXTURE_TEST_CASE ( TestSequenceParameters, TestGateKeeperSetup ) {
-  LOG(kInfo) << "Running TestGateKeeper/TestSequenceParameters";
-
+BOOST_FIXTURE_TEST_CASE ( TestSequenceParameters, TestGateKeeperSetup )
+{
   std::vector<std::string> tablesToLookIn;
   tablesToLookIn.push_back("dummy_sys.childTypeA");
 
@@ -118,9 +115,8 @@ BOOST_FIXTURE_TEST_CASE ( TestSequenceParameters, TestGateKeeperSetup ) {
   BOOST_CHECK_EQUAL(p2->toString(), "command");
 }
 
-BOOST_FIXTURE_TEST_CASE ( TestMonitoringSettings, TestGateKeeperSetup ) {
-  LOG(kInfo) << "Running TestGateKeeper/TestMonitoringSettings";
-
+BOOST_FIXTURE_TEST_CASE ( TestMonitoringSettings, TestGateKeeperSetup )
+{
   std::vector<std::string> tablesToLookIn;
   tablesToLookIn.push_back("dummy_sys.childTypeA");
 
@@ -144,8 +140,6 @@ BOOST_FIXTURE_TEST_CASE ( TestMonitoringSettings, TestGateKeeperSetup ) {
 
 BOOST_FIXTURE_TEST_CASE(TestMask, TestGateKeeperSetup)
 {
-  LOG(kInfo) << "Running TestGateKeeper/TestMask";
-  
   std::vector<std::string> lTablesToLookIn;
   
   // 1) When tables vector is empty,  GateKeeper::getMask method should always return false
@@ -186,8 +180,6 @@ BOOST_FIXTURE_TEST_CASE(TestMask, TestGateKeeperSetup)
 
 BOOST_FIXTURE_TEST_CASE(TestDisabled, TestGateKeeperSetup)
 {
-  LOG(kInfo) << "Running TestGateKeeper/TestDisabled";
-
   BOOST_CHECK_EQUAL(mGk.isEnabled("dummy_sys.childA1"), false);
   BOOST_CHECK_EQUAL(mGk.isEnabled("dummy_sys.childA2"), true);
   BOOST_CHECK_EQUAL(mGk.isEnabled("dummy_sys.unkownChild"), true);
