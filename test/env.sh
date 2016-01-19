@@ -47,4 +47,7 @@ pathadd LD_LIBRARY_PATH "${SWATCH_ROOT}/xml/test/lib"
 pathadd LD_LIBRARY_PATH "${SWATCH_ROOT}/processor/test/lib"
 pathadd LD_LIBRARY_PATH "${SWATCH_ROOT}/system/test/lib"
 
-export PATH PYTHONPATH LD_LIBRARY_PATH CACTUS_ROOT SWATCH_ROOT SWATCH_TESTS 
+# include boost test framework's messages of form Entering/leaving case/suite "blah"
+BOOST_TEST_LOG_LEVEL=test_suite
+
+export PATH PYTHONPATH LD_LIBRARY_PATH CACTUS_ROOT SWATCH_ROOT SWATCH_TESTS BOOST_TEST_LOG_LEVEL
