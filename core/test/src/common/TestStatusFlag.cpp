@@ -11,8 +11,8 @@
 
 BOOST_AUTO_TEST_SUITE( StatusFlagTestSuite )
 
-BOOST_AUTO_TEST_CASE(StatusFlagStreamNoNamespace) {
-  
+BOOST_AUTO_TEST_CASE(StatusFlagStreamNoNamespace)
+{
   BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(swatch::core::kError) , "Error" );
 
   std::ostringstream oss;
@@ -21,7 +21,8 @@ BOOST_AUTO_TEST_CASE(StatusFlagStreamNoNamespace) {
 } 
 
 
-BOOST_AUTO_TEST_CASE(StatusFlagStreamUsingNamespaceSwatchCore) {
+BOOST_AUTO_TEST_CASE(StatusFlagStreamUsingNamespaceSwatchCore)
+{
   using namespace swatch::core;
   
   BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(swatch::core::kError) , "Error" );
@@ -34,8 +35,8 @@ BOOST_AUTO_TEST_CASE(StatusFlagStreamUsingNamespaceSwatchCore) {
 
 namespace test_arbitrary {
 
-BOOST_AUTO_TEST_CASE(StatusFlagStreamInArbitraryNamespace) {
-
+BOOST_AUTO_TEST_CASE(StatusFlagStreamInArbitraryNamespace)
+{
   BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(swatch::core::kGood), "Good" );
   BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(swatch::core::kWarning), "Warning" );
   BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(swatch::core::kError) , "Error" );
@@ -50,7 +51,8 @@ BOOST_AUTO_TEST_CASE(StatusFlagStreamInArbitraryNamespace) {
 }
 
 
-BOOST_AUTO_TEST_CASE(StatusFlagAndOperator) {
+BOOST_AUTO_TEST_CASE(StatusFlagAndOperator)
+{
   namespace swco = swatch::core;
 
   BOOST_CHECK_EQUAL ( swco::kGood & swco::kGood , swco::kGood );

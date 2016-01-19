@@ -135,9 +135,8 @@ struct TestXmlGateKeeperSetup {
 
 BOOST_AUTO_TEST_SUITE( TestXmlGateKeeper )
 
-BOOST_FIXTURE_TEST_CASE ( VerifyBaseConfig, TestXmlGateKeeperSetup ) {
-	LOG(kInfo) << "Running TestXmlGateKeeper/VerifyBaseConfig";
-
+BOOST_FIXTURE_TEST_CASE ( VerifyBaseConfig, TestXmlGateKeeperSetup )
+{
 	XmlGateKeeper gk(base_config, "RunKey1");
 	std::vector<std::string> tablesToLookIn;
 	tablesToLookIn.push_back("dummy_s1.processors");
@@ -164,9 +163,8 @@ BOOST_FIXTURE_TEST_CASE ( VerifyBaseConfig, TestXmlGateKeeperSetup ) {
 
 }
 
-BOOST_FIXTURE_TEST_CASE ( TestMetricSettings, TestXmlGateKeeperSetup ) {
-	LOG(kInfo) << "Running TestXmlGateKeeper/TestMetricSettings";
-
+BOOST_FIXTURE_TEST_CASE ( TestMetricSettings, TestXmlGateKeeperSetup )
+{
 	XmlGateKeeper gk(config_with_metrics, "RunKey1");
 	std::vector<std::string> tablesToLookIn;
 	tablesToLookIn.push_back("dummy_s1.processors");
@@ -180,8 +178,8 @@ BOOST_FIXTURE_TEST_CASE ( TestMetricSettings, TestXmlGateKeeperSetup ) {
 
 }
 
-BOOST_FIXTURE_TEST_CASE ( TestMonitoringSettings, TestXmlGateKeeperSetup ) {
-	LOG(kInfo) << "Running TestXmlGateKeeper/TestMonitoringSettings";
+BOOST_FIXTURE_TEST_CASE ( TestMonitoringSettings, TestXmlGateKeeperSetup )
+{
 //	std::string input_file = "${SWATCH_ROOT}/core/test/config/config_with_disabled_processor.xml";
 	XmlGateKeeper gk(config_with_disabled_processor, "RunKey1");
 	std::vector<std::string> tablesToLookIn;
@@ -190,8 +188,8 @@ BOOST_FIXTURE_TEST_CASE ( TestMonitoringSettings, TestXmlGateKeeperSetup ) {
 			monitoring::kDisabled);
 }
 
-BOOST_FIXTURE_TEST_CASE ( TestVectorParameters, TestXmlGateKeeperSetup ) {
-	LOG(kInfo) << "Running TestXmlGateKeeper/TestVectorParameters";
+BOOST_FIXTURE_TEST_CASE ( TestVectorParameters, TestXmlGateKeeperSetup )
+{
 	XmlGateKeeper gk(config_with_vector_parameters, "RunKey1");
 	std::vector<std::string> tablesToLookIn;
 	tablesToLookIn.push_back("dummy_s1.dummy_p2");
@@ -201,8 +199,6 @@ BOOST_FIXTURE_TEST_CASE ( TestVectorParameters, TestXmlGateKeeperSetup ) {
 
 BOOST_FIXTURE_TEST_CASE(TestMask, TestXmlGateKeeperSetup) // Same as code in core::GateKeeper's tests (at least in Dec 2015)
 {
-  LOG(kInfo) << "Running TestXmlGateKeeperSetup/TestMask";
-  
   XmlGateKeeper lGK(config_with_masks, "RunKey1");
   std::vector<std::string> lTablesToLookIn;
 
@@ -244,8 +240,6 @@ BOOST_FIXTURE_TEST_CASE(TestMask, TestXmlGateKeeperSetup) // Same as code in cor
 
 BOOST_FIXTURE_TEST_CASE(TestDisabled, TestXmlGateKeeperSetup) // Same as code in core::GateKeeper's tests (at least in Jan 2016)
 {
-  LOG(kInfo) << "Running TestXmlGateKeeper/TestDisabled";
-
   XmlGateKeeper lGK(config_with_exclusions, "RunKey1");
 
   BOOST_CHECK_EQUAL(lGK.isEnabled("dummy_sys.childA1"), false);

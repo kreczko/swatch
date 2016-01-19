@@ -125,9 +125,8 @@ BOOST_AUTO_TEST_SUITE( SystemStateMachineTestSuite )
 /*   PART 1: CONSTRUCTION & INITIALISATION (defining states & transitions)   */
 /* ------------------------------------------------------------------------- */
 
-BOOST_AUTO_TEST_CASE(TestConstruction) {
-  LOG(kInfo) << "Running SystemStateMachineTestSuite/TestConstruction";
-
+BOOST_AUTO_TEST_CASE(TestConstruction)
+{
   DummyActionableSystem sys("dummySys");
   swatch::core::SystemStateMachine& fsm = sys.registerStateMachine("aFSM", "someState", "myErrState");
   
@@ -142,9 +141,8 @@ BOOST_AUTO_TEST_CASE(TestConstruction) {
 }
 
 
-BOOST_AUTO_TEST_CASE(TestAddState) {
-  LOG(kInfo) << "Running SystemStateMachineTestSuite/TestAddState";
-
+BOOST_AUTO_TEST_CASE(TestAddState)
+{
   DummyActionableSystem sys("dummySys");
   swatch::core::SystemStateMachine& fsm = sys.registerStateMachine("aFSM", "someState", "myErrState");
 
@@ -162,9 +160,8 @@ BOOST_AUTO_TEST_CASE(TestAddState) {
 }
 
 
-BOOST_AUTO_TEST_CASE(TestAddTransition) {
-  LOG(kInfo) << "Running SystemStateMachineTestSuite/TestAddTransition";
-
+BOOST_AUTO_TEST_CASE(TestAddTransition)
+{
   DummyActionableSystem sys("dummySys");  
   swatch::core::SystemStateMachine& fsm = sys.registerStateMachine("aFSM", "state0", "errState");
   fsm.addState("state1");
@@ -195,9 +192,8 @@ BOOST_AUTO_TEST_CASE(TestAddTransition) {
 }
 
 
-BOOST_FIXTURE_TEST_CASE(TestAddTransitionSteps, SystemStateMachineTestSetup) {
-  LOG(kInfo) << "Running SystemStateMachineTestSuite/TestAddTransitionSteps";
-
+BOOST_FIXTURE_TEST_CASE(TestAddTransitionSteps, SystemStateMachineTestSetup)
+{
   // Confirm expected construction before starting tests
   BOOST_REQUIRE_EQUAL(fsm.getParticipants().size(), size_t(0));
   BOOST_REQUIRE_EQUAL(sysItoA->size(), size_t(0));
@@ -283,9 +279,8 @@ BOOST_FIXTURE_TEST_CASE(TestAddTransitionSteps, SystemStateMachineTestSetup) {
 /*   PART 2: ENGAGING & DISENGAGING                                 */
 /* ---------------------------------------------------------------- */
 
-BOOST_FIXTURE_TEST_CASE(TestEngageFSM, SystemStateMachineTestSetup) {
-  LOG(kInfo) << "Running SystemStateMachineTestSuite/TestEngageFSM";
-
+BOOST_FIXTURE_TEST_CASE(TestEngageFSM, SystemStateMachineTestSetup)
+{
   // Finish off setup: Add child1 & child2 to state machine; child3 is left out
   sysItoA->add(children.begin(), children.end()-1, child1.fsm.getId(), childState0, child1.ItoA->getId());
 
@@ -331,9 +326,8 @@ BOOST_FIXTURE_TEST_CASE(TestEngageFSM, SystemStateMachineTestSetup) {
 }
 
 
-BOOST_FIXTURE_TEST_CASE(TestEngageFSMChildComplication, SystemStateMachineTestSetup) {
-  LOG(kInfo) << "Running SystemStateMachineTestSuite/TestEngageFSMChildComplication";
-
+BOOST_FIXTURE_TEST_CASE(TestEngageFSMChildComplication, SystemStateMachineTestSetup)
+{
   // Finish off setup: Add child1 & child2 to state machine; child3 is left out
   sysItoA->add(children.begin(), children.end()-1, child1.fsm.getId(), childState0, child1.ItoA->getId());
 
@@ -370,9 +364,8 @@ BOOST_FIXTURE_TEST_CASE(TestEngageFSMChildComplication, SystemStateMachineTestSe
 }
 
 
-BOOST_FIXTURE_TEST_CASE(TestDisengageFSM, SystemStateMachineTestSetup) {
-  LOG(kInfo) << "Running SystemStateMachineTestSuite/TestDisengageFSM";
-
+BOOST_FIXTURE_TEST_CASE(TestDisengageFSM, SystemStateMachineTestSetup)
+{
   // Finish off setup: Add child1 & child2 to state machine; child3 is left out
   sysItoA->add(children.begin(), children.end()-1, child1.fsm.getId(), childState0, child1.ItoA->getId());
 
@@ -428,9 +421,8 @@ BOOST_FIXTURE_TEST_CASE(TestDisengageFSM, SystemStateMachineTestSetup) {
 }
 
 
-BOOST_FIXTURE_TEST_CASE(TestDisengageFSMChildComplications, SystemStateMachineTestSetup) {
-  LOG(kInfo) << "Running SystemStateMachineTestSuite/TestDisengageFSMChildComplications";
-
+BOOST_FIXTURE_TEST_CASE(TestDisengageFSMChildComplications, SystemStateMachineTestSetup)
+{
   // Finish off setup: Add child1 & child2 to state machine; child3 is left out
   sysItoA->add(children.begin(), children.end()-1, child1.fsm.getId(), childState0, child1.ItoA->getId());
 
@@ -474,7 +466,6 @@ BOOST_FIXTURE_TEST_CASE(TestDisengageFSMChildComplications, SystemStateMachineTe
 
 BOOST_FIXTURE_TEST_CASE(TestMaskablesMaskedDuringEngage, SystemStateMachineTestSetup)
 {
-  LOG(kInfo) << "Running SystemStateMachineTestSuite/TestMaskablesMaskedDuringEngage";
   typedef std::vector<Child*>::const_iterator ChildIt_t;
   const std::vector<Child*> lChildren = {&child1, &child2, &child3};
 
@@ -529,7 +520,6 @@ BOOST_FIXTURE_TEST_CASE(TestMaskablesMaskedDuringEngage, SystemStateMachineTestS
 
 BOOST_FIXTURE_TEST_CASE(TestChildrenDisabledDuringEngage, SystemStateMachineTestSetup)
 {
-  LOG(kInfo) << "Running SystemStateMachineTestSuite/TestChildrenDisabledDuringEngage";
   typedef std::vector<Child*>::const_iterator ChildIt_t;
   const std::vector<Child*> lChildren = {&child1, &child2, &child3};
 
@@ -593,7 +583,6 @@ BOOST_FIXTURE_TEST_CASE(TestChildrenDisabledDuringEngage, SystemStateMachineTest
 
 BOOST_FIXTURE_TEST_CASE(TestChildSettingsNotChangedByFailedEngage, SystemStateMachineTestSetup)
 {
-  LOG(kInfo) << "Running SystemStateMachineTestSuite/TestChildSettingsNotChangedByFailedEngage";
   typedef std::vector<Child*>::const_iterator ChildIt_t;
   const std::vector<Child*> lChildren = {&child1, &child2, &child3};
 
@@ -652,8 +641,8 @@ BOOST_FIXTURE_TEST_CASE(TestChildSettingsNotChangedByFailedEngage, SystemStateMa
 /* ---------------------------------------------------------------- */
 
 
-BOOST_FIXTURE_TEST_CASE(TestRunEmptyTransition, SystemStateMachineTestSetup) {
-  LOG(kInfo) << "Running SystemStateMachineTestSuite/TestRunEmptyTransition";
+BOOST_FIXTURE_TEST_CASE(TestRunEmptyTransition, SystemStateMachineTestSetup)
+{
   DummyGateKeeper lEmptyGK;
 
   // Preparation
@@ -693,8 +682,8 @@ BOOST_FIXTURE_TEST_CASE(TestRunEmptyTransition, SystemStateMachineTestSetup) {
 }
 
 
-BOOST_FIXTURE_TEST_CASE(TestRunTransitionDisengagedFSM, SystemStateMachineTestSetup) {
-  LOG(kInfo) << "Running SystemStateMachineTestSuite/TestRunTransitionDisengagedFSM";
+BOOST_FIXTURE_TEST_CASE(TestRunTransitionDisengagedFSM, SystemStateMachineTestSetup)
+{
   DummyGateKeeper lEmptyGK;
 
   // Running transition before FSM is engaged: should throw, and leave state/TransitionStatus unchanged
@@ -721,9 +710,8 @@ BOOST_FIXTURE_TEST_CASE(TestRunTransitionDisengagedFSM, SystemStateMachineTestSe
 }
 
 
-BOOST_FIXTURE_TEST_CASE(TestRunTransitionMissingParams, SystemStateMachineTestSetup) {
-  LOG(kInfo) << "Running SystemStateMachineTestSuite/TestRunTransitionMissingParams";
-
+BOOST_FIXTURE_TEST_CASE(TestRunTransitionMissingParams, SystemStateMachineTestSetup)
+{
   sysItoA->add(std::vector<StateMachine::Transition*>{child1.ItoA, child2.ItoA});
   sysItoA->add(std::vector<StateMachine::Transition*>{child3.ItoA});
   child1.ItoA->add(child1.cmdNormal1);
@@ -773,9 +761,8 @@ BOOST_FIXTURE_TEST_CASE(TestRunTransitionMissingParams, SystemStateMachineTestSe
 }
 
 
-BOOST_FIXTURE_TEST_CASE(TestCheckMissingParamsWithChildrenDisabled, SystemStateMachineTestSetup) {
-  LOG(kInfo) << "Running SystemStateMachineTestSuite/TestCheckMissingParamsWithChildrenDisabled";
-
+BOOST_FIXTURE_TEST_CASE(TestCheckMissingParamsWithChildrenDisabled, SystemStateMachineTestSetup)
+{
   sysItoA->add(std::vector<StateMachine::Transition*>{child1.ItoA, child2.ItoA});
   sysItoA->add(std::vector<StateMachine::Transition*>{child3.ItoA});
   child1.ItoA->add(child1.cmdNormal1);
@@ -812,9 +799,8 @@ BOOST_FIXTURE_TEST_CASE(TestCheckMissingParamsWithChildrenDisabled, SystemStateM
 
 
 
-BOOST_FIXTURE_TEST_CASE(TestRunGoodTransition, SystemStateMachineTestSetup) {
-  LOG(kInfo) << "Running SystemStateMachineTestSuite/TestRunGoodTransition";
-
+BOOST_FIXTURE_TEST_CASE(TestRunGoodTransition, SystemStateMachineTestSetup)
+{
   // Preparation: Add child transitions & commands, engage FSM; then check state before starting unit tests
   child1.ItoA->add(child1.cmdNormal1);
   child2.ItoA->add(child2.cmdNormal1);
@@ -893,9 +879,8 @@ BOOST_FIXTURE_TEST_CASE(TestRunGoodTransition, SystemStateMachineTestSetup) {
 }
 
 
-BOOST_FIXTURE_TEST_CASE(TestRunGoodTransitionWithChildrenDisabled, SystemStateMachineTestSetup) {
-  LOG(kInfo) << "Running SystemStateMachineTestSuite/TestRunGoodTransitionWithChildrenDisabled";
-
+BOOST_FIXTURE_TEST_CASE(TestRunGoodTransitionWithChildrenDisabled, SystemStateMachineTestSetup)
+{
   // SETUP: 
   //   * Add child transitions & commands (from all children)
   child1.ItoA->add(child1.cmdNormal1);
@@ -977,9 +962,8 @@ BOOST_FIXTURE_TEST_CASE(TestRunGoodTransitionWithChildrenDisabled, SystemStateMa
 }
 
 
-BOOST_FIXTURE_TEST_CASE(TestRunWarningTransition, SystemStateMachineTestSetup) {
-  LOG(kInfo) << "Running SystemStateMachineTestSuite/TestRunWarningTransition";
-
+BOOST_FIXTURE_TEST_CASE(TestRunWarningTransition, SystemStateMachineTestSetup)
+{
   // Preparation: Add child transitions & commands, engage FSM; then check state before starting unit tests
   child1.ItoA->add(child1.cmdNormal1);
   child2.ItoA->add(child2.cmdWarning);
@@ -1058,9 +1042,8 @@ BOOST_FIXTURE_TEST_CASE(TestRunWarningTransition, SystemStateMachineTestSetup) {
 }
 
 
-BOOST_FIXTURE_TEST_CASE(TestRunErrorTransition, SystemStateMachineTestSetup) {
-  LOG(kInfo) << "Running SystemStateMachineTestSuite/TestRunErrorTransition";
-
+BOOST_FIXTURE_TEST_CASE(TestRunErrorTransition, SystemStateMachineTestSetup)
+{
   // Preparation: Add child transitions & commands, engage FSM; then check state before starting unit tests
   child1.ItoA->add(child1.cmdNormal1);
   child2.ItoA->add(child2.cmdError);
@@ -1134,9 +1117,8 @@ BOOST_FIXTURE_TEST_CASE(TestRunErrorTransition, SystemStateMachineTestSetup) {
 }
 
 
-BOOST_FIXTURE_TEST_CASE(TestRunTransitionWrongSystemState, SystemStateMachineTestSetup) {
-  LOG(kInfo) << "Running SystemStateMachineTestSuite/TestRunTransitionWrongSystemState";
-
+BOOST_FIXTURE_TEST_CASE(TestRunTransitionWrongSystemState, SystemStateMachineTestSetup)
+{
   // Preparation: Engage FSM, check state before starting unit tests
   fsm.engage(DummyGateKeeper());
   BOOST_REQUIRE_EQUAL(sys->getStatus().getStateMachineId(), fsm.getId());
@@ -1164,9 +1146,8 @@ BOOST_FIXTURE_TEST_CASE(TestRunTransitionWrongSystemState, SystemStateMachineTes
 }
 
 
-BOOST_FIXTURE_TEST_CASE(TestRunTransitionWrongChildState, SystemStateMachineTestSetup) {
-  LOG(kInfo) << "Running SystemStateMachineTestSuite/TestRunTransitionWrongChildState";
-
+BOOST_FIXTURE_TEST_CASE(TestRunTransitionWrongChildState, SystemStateMachineTestSetup)
+{
   // Preparation: Add children to transitions, engage FSM, run child1 I->A already, and check state before starting unit tests
   sysItoA->add(children.begin(), children.end(), child1.fsm.getId(), childState0, child1.ItoA->getId());
   sysItoA->add(std::vector<StateMachine::Transition*>{&child1.fsm.addTransition("tmp_AtoA", childStateA, childStateA)});
@@ -1230,10 +1211,8 @@ BOOST_FIXTURE_TEST_CASE(TestRunTransitionWrongChildState, SystemStateMachineTest
 }
 
 
-BOOST_FIXTURE_TEST_CASE(TestRunTransitionDisengagedChildFSM, SystemStateMachineTestSetup) {
-  LOG(kInfo) << "Running SystemStateMachineTestSuite/TestRunTransitionDisengagedChildFSM";
-  DummyGateKeeper gk;
-
+BOOST_FIXTURE_TEST_CASE(TestRunTransitionDisengagedChildFSM, SystemStateMachineTestSetup)
+{
   // Preparation: 
   //   * Define transitions: I->A = child1 & child2
   //                         A->B = all three children
@@ -1300,9 +1279,8 @@ BOOST_FIXTURE_TEST_CASE(TestRunTransitionDisengagedChildFSM, SystemStateMachineT
 /*   PART 4: RESETTING                                              */
 /* ---------------------------------------------------------------- */
 
-BOOST_FIXTURE_TEST_CASE(TestResetFSM, SystemStateMachineTestSetup) {
-  LOG(kInfo) << "Running SystemStateMachineTestSuite/TestResetFSM";
-  
+BOOST_FIXTURE_TEST_CASE(TestResetFSM, SystemStateMachineTestSetup)
+{
   // Add children to system FSM, engage, and confirm initial state to prepare for following tests
   sysItoA->add(children.begin(), children.end()-1, child1.fsm.getId(), childState0, child1.ItoA->getId());
   BOOST_REQUIRE( fsm.getParticipants() == (std::set<const StateMachine*>{&child1.fsm, &child2.fsm}));
@@ -1354,9 +1332,8 @@ BOOST_FIXTURE_TEST_CASE(TestResetFSM, SystemStateMachineTestSetup) {
 }
 
 
-BOOST_FIXTURE_TEST_CASE(TestResetDisengagedFSM, SystemStateMachineTestSetup) {
-  LOG(kInfo) << "Running SystemStateMachineTestSuite/TestResetDisengagedFSM";
-
+BOOST_FIXTURE_TEST_CASE(TestResetDisengagedFSM, SystemStateMachineTestSetup)
+{
   // Resetting FSM before engaged: Should throw (regardless of whether or not contains children), and leave state + maskables unchanged
   BOOST_CHECK_THROW( fsm.reset(DummyGateKeeper()), ResourceInWrongStateMachine);
   BOOST_CHECK_EQUAL( sys->getStatus().getStateMachineId(), ActionableSnapshot::kNullStateMachineId  );
@@ -1381,9 +1358,8 @@ BOOST_FIXTURE_TEST_CASE(TestResetDisengagedFSM, SystemStateMachineTestSetup) {
 }
 
 
-BOOST_FIXTURE_TEST_CASE(TestResetFSMChildDisengaged, SystemStateMachineTestSetup) {
-  LOG(kInfo) << "Running SystemStateMachineTestSuite/TestResetFSMChildDisengaged";
-
+BOOST_FIXTURE_TEST_CASE(TestResetFSMChildDisengaged, SystemStateMachineTestSetup)
+{
   // Preparation: add children to system FSM, engage, run "I->A" transition & disengage 1 child 
   sysItoA->add(children.begin(), children.end(), child1.fsm.getId(), childState0, child1.ItoA->getId());
   fsm.engage(DummyGateKeeper());
@@ -1434,7 +1410,6 @@ BOOST_FIXTURE_TEST_CASE(TestResetFSMChildDisengaged, SystemStateMachineTestSetup
 
 BOOST_FIXTURE_TEST_CASE(TestMaskablesMaskedDuringReset, SystemStateMachineTestSetup)
 {
-  LOG(kInfo) << "Running SystemStateMachineTestSuite/TestMaskablesMaskedDuringReset";
   typedef std::vector<Child*>::const_iterator ChildIt_t;
   const std::vector<Child*> lChildren = {&child1, &child2, &child3};
 
@@ -1489,7 +1464,6 @@ BOOST_FIXTURE_TEST_CASE(TestMaskablesMaskedDuringReset, SystemStateMachineTestSe
 
 BOOST_FIXTURE_TEST_CASE(TestChildrenDisabledDuringReset, SystemStateMachineTestSetup)
 {
-  LOG(kInfo) << "Running SystemStateMachineTestSuite/TestChildrenDisabledDuringReset";
   typedef std::vector<Child*>::const_iterator ChildIt_t;
   const std::vector<Child*> lChildren = {&child1, &child2, &child3};
 

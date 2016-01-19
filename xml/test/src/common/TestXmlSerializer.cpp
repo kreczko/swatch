@@ -72,8 +72,8 @@ struct XmlSerializerTestSetup {
 
 BOOST_AUTO_TEST_SUITE( TestXmlSerializer )
 
-BOOST_FIXTURE_TEST_CASE(TestImport, XmlSerializerTestSetup) {
-	LOG(kInfo) << "Running TestXmlSerializer/TestImport";
+BOOST_FIXTURE_TEST_CASE(TestImport, XmlSerializerTestSetup)
+{
 	for(unsigned int i = 0; i < mInputs.size(); ++i){
 		pugi::xml_document doc;
 		BOOST_REQUIRE_EQUAL(doc.load(mInputs.at(i).c_str()), true);
@@ -86,8 +86,8 @@ BOOST_FIXTURE_TEST_CASE(TestImport, XmlSerializerTestSetup) {
 	}
 }
 
-BOOST_FIXTURE_TEST_CASE(TestInvalid, XmlSerializerTestSetup) {
-	LOG(kInfo) << "Running TestXmlSerializer/TestInvalid";
+BOOST_FIXTURE_TEST_CASE(TestInvalid, XmlSerializerTestSetup)
+{
 	std::string lInput = "<entry id='test' type='vector:uint'>40, error, 1, 2</entry>";
 	pugi::xml_document doc;
 	BOOST_REQUIRE_EQUAL(doc.load(lInput.c_str()), true);
@@ -96,8 +96,8 @@ BOOST_FIXTURE_TEST_CASE(TestInvalid, XmlSerializerTestSetup) {
 	BOOST_CHECK_THROW(mSerializer->import(lNode), swatch::xml::ValueError);
 }
 
-BOOST_FIXTURE_TEST_CASE(TestUnkownType, XmlSerializerTestSetup) {
-	LOG(kInfo) << "Running TestXmlSerializer/TesTestUnkownTypetImport";
+BOOST_FIXTURE_TEST_CASE(TestUnkownType, XmlSerializerTestSetup)
+{
 	std::string lInput = "<entry id='test' type='unknown'>I can't do that Bob.</entry>";
 	pugi::xml_document doc;
 	BOOST_REQUIRE_EQUAL(doc.load(lInput.c_str()), true);

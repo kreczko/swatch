@@ -20,8 +20,8 @@ namespace test {
 
 BOOST_AUTO_TEST_SUITE( TestVectorSerializer )
 
-BOOST_AUTO_TEST_CASE( TestUInt ) {
-	LOG(kInfo) << "Running TestVectorSerializer/TestUInt";
+BOOST_AUTO_TEST_CASE( TestUInt )
+{
 	pugi::xml_document doc;
 	doc.load("<entry id='test' type='vector:uint'>40, 30, 1, 2</entry>");
 	pugi::xml_node lNode = doc.child("entry");
@@ -34,8 +34,8 @@ BOOST_AUTO_TEST_CASE( TestUInt ) {
 	BOOST_CHECK_EQUAL(result->toString(), "[40,30,1,2]");
 }
 
-BOOST_AUTO_TEST_CASE( TestInt ) {
-	LOG(kInfo) << "Running TestVectorSerializer/TestInt";
+BOOST_AUTO_TEST_CASE( TestInt )
+{
 	pugi::xml_document doc;
 	doc.load("<entry id='test' type='vector:int'>-2</entry>");
 	pugi::xml_node lNode = doc.child("entry");
@@ -47,8 +47,8 @@ BOOST_AUTO_TEST_CASE( TestInt ) {
 	BOOST_CHECK_EQUAL(result->toString(), "[-2]");
 }
 
-BOOST_AUTO_TEST_CASE( TestBool ) {
-	LOG(kInfo) << "Running TestVectorSerializer/TestBool";
+BOOST_AUTO_TEST_CASE( TestBool )
+{
 	pugi::xml_document doc;
 	doc.load("<entry id='test' type='vector:bool'>true,false</entry>");
 	pugi::xml_node lNode = doc.child("entry");
@@ -60,8 +60,8 @@ BOOST_AUTO_TEST_CASE( TestBool ) {
 	BOOST_CHECK_EQUAL(result->toString(), "[true,false]");
 }
 
-BOOST_AUTO_TEST_CASE( TestFloat ) {
-	LOG(kInfo) << "Running TestVectorSerializer/TestFloat";
+BOOST_AUTO_TEST_CASE( TestFloat )
+{
 	pugi::xml_document doc;
 	doc.load("<entry id='test' type='vector:float'>2.0</entry>");
 	pugi::xml_node lNode = doc.child("entry");
@@ -73,8 +73,8 @@ BOOST_AUTO_TEST_CASE( TestFloat ) {
 	BOOST_CHECK_EQUAL(result->toString(), "[2.00000e+00]");
 }
 
-BOOST_AUTO_TEST_CASE( TestString ) {
-	LOG(kInfo) << "Running TestVectorSerializer/TestString";
+BOOST_AUTO_TEST_CASE( TestString )
+{
 	pugi::xml_document doc;
 	doc.load("<entry id='test' type='vector:string'>hello, world, and, all</entry>");
 	pugi::xml_node lNode = doc.child("entry");
@@ -86,8 +86,8 @@ BOOST_AUTO_TEST_CASE( TestString ) {
 	BOOST_CHECK_EQUAL(result->toString(), "[hello,world,and,all]");
 }
 
-BOOST_AUTO_TEST_CASE( TestCustomDelimiter ) {
-	LOG(kInfo) << "Running TestVectorSerializer/TestString";
+BOOST_AUTO_TEST_CASE( TestCustomDelimiter )
+{
 	pugi::xml_document doc;
 	doc.load("<entry id='test' type='vector:string' delimiter='|'>hello, world| and, all</entry>");
 	pugi::xml_node lNode = doc.child("entry");
@@ -99,8 +99,8 @@ BOOST_AUTO_TEST_CASE( TestCustomDelimiter ) {
 	BOOST_CHECK_EQUAL(result->toString(), "[hello, world,and, all]");
 }
 
-BOOST_AUTO_TEST_CASE( TestInvalid ) {
-	LOG(kInfo) << "Running TestVectorSerializer/TestInvalid";
+BOOST_AUTO_TEST_CASE( TestInvalid )
+{
 	pugi::xml_document doc;
 	doc.load("<entry id='test' type='string'>hello, test</entry>");
 	pugi::xml_node lNode = doc.child("entry");

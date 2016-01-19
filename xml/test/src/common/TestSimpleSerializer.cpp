@@ -20,8 +20,8 @@ namespace test {
 
 BOOST_AUTO_TEST_SUITE( TestSimpleSerializer )
 // Test all supported types
-BOOST_AUTO_TEST_CASE( TestUInt ) {
-	LOG(kInfo) << "Running TestSimpleSerializer/TestUInt";
+BOOST_AUTO_TEST_CASE( TestUInt )
+{
 	pugi::xml_document doc;
 	doc.load("<entry id='clkErrorTimeout' type='uint'>40</entry>");
 	pugi::xml_node lNode = doc.child("entry");
@@ -33,8 +33,8 @@ BOOST_AUTO_TEST_CASE( TestUInt ) {
 	BOOST_CHECK_EQUAL(result->toString(), "40");
 }
 
-BOOST_AUTO_TEST_CASE( TestInt ) {
-	LOG(kInfo) << "Running TestSimpleSerializer/TestInt";
+BOOST_AUTO_TEST_CASE( TestInt )
+{
 	pugi::xml_document doc;
 	doc.load("<entry id='test' type='int'>-2</entry>");
 	pugi::xml_node lNode = doc.child("entry");
@@ -46,8 +46,8 @@ BOOST_AUTO_TEST_CASE( TestInt ) {
 	BOOST_CHECK_EQUAL(result->toString(), "-2");
 }
 
-BOOST_AUTO_TEST_CASE( TestBool ) {
-	LOG(kInfo) << "Running TestSimpleSerializer/TestBool";
+BOOST_AUTO_TEST_CASE( TestBool )
+{
 	pugi::xml_document doc;
 	doc.load("<entry id='test' type='bool'>true</entry>");
 	pugi::xml_node lNode = doc.child("entry");
@@ -59,8 +59,8 @@ BOOST_AUTO_TEST_CASE( TestBool ) {
 	BOOST_CHECK_EQUAL(result->toString(), "true");
 }
 
-BOOST_AUTO_TEST_CASE( TestFloat ) {
-	LOG(kInfo) << "Running TestSimpleSerializer/TestFloat";
+BOOST_AUTO_TEST_CASE( TestFloat )
+{
 	pugi::xml_document doc;
 	doc.load("<entry id='test' type='float'>2.0</entry>");
 	pugi::xml_node lNode = doc.child("entry");
@@ -79,8 +79,8 @@ BOOST_AUTO_TEST_CASE( TestFloat ) {
 	BOOST_CHECK_EQUAL(result->toString(), test2->toString());
 }
 
-BOOST_AUTO_TEST_CASE( TestString ) {
-	LOG(kInfo) << "Running TestSimpleSerializer/TestString";
+BOOST_AUTO_TEST_CASE( TestString )
+{
 	pugi::xml_document doc;
 	doc.load("<entry id='test' type='string'>hello</entry>");
 	pugi::xml_node lNode = doc.child("entry");
@@ -92,8 +92,8 @@ BOOST_AUTO_TEST_CASE( TestString ) {
 	BOOST_CHECK_EQUAL(result->toString(), "hello");
 }
 
-BOOST_AUTO_TEST_CASE( TestInvalid ) {
-	LOG(kInfo) << "Running TestSimpleSerializer/TestInvalid";
+BOOST_AUTO_TEST_CASE( TestInvalid )
+{
 	pugi::xml_document doc;
 	doc.load("<entry id='test' type='string'>hello</entry>");
 	pugi::xml_node lNode = doc.child("entry");

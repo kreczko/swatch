@@ -146,9 +146,6 @@ BOOST_FIXTURE_TEST_CASE(TestActionableIntialState,  ActionableObjectTestSetup)
 
 BOOST_AUTO_TEST_CASE(TestSafeDeletionOfBusyActionableObject)
 {
-  std::cout << " Setting log threshold to info ... " << std::endl;
-  LogLevel lLogThr = swatch::logger::Log::logThreshold();
-  swatch::logger::Log::setLogThreshold( swatch::logger::kFatal );
   {
     ActionableObjectTestSetup setup;
   
@@ -162,7 +159,6 @@ BOOST_AUTO_TEST_CASE(TestSafeDeletionOfBusyActionableObject)
 
     boost::this_thread::sleep_for(boost::chrono::milliseconds(25));
   }
-  swatch::logger::Log::setLogThreshold(lLogThr);
 
   // Sleep for 25ms after the actionable object has been destroyed, ...
   // ... in order to ensure that if the object has been deleted before the command has finished, ...

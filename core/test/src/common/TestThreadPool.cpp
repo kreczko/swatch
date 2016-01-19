@@ -53,9 +53,8 @@ public:
 };
 
 BOOST_AUTO_TEST_SUITE( ThreadPoolTestSuite )
-BOOST_FIXTURE_TEST_CASE(TolerantPool1, ThreadPoolSetup) {
-  LOG(kInfo) << "Running ThreadPoolTestSuite/TolerantPool1";
-
+BOOST_FIXTURE_TEST_CASE(TolerantPool1, ThreadPoolSetup)
+{
   // create thread pool with 2 threads
   // does not finish queue
   // does not forcefully terminate running commands
@@ -78,9 +77,8 @@ BOOST_FIXTURE_TEST_CASE(TolerantPool1, ThreadPoolSetup) {
   BOOST_CHECK_EQUAL(cmd3.getStatus().getProgress(), 0);
 }
 
-BOOST_FIXTURE_TEST_CASE(TolerantPool2, ThreadPoolSetup) {
-  LOG(kInfo) << "Running ThreadPoolTestSuite/TolerantPool2";
-
+BOOST_FIXTURE_TEST_CASE(TolerantPool2, ThreadPoolSetup)
+{
   // create thread pool with 2 threads
   // does not finish queue
   // does not forcefully terminate running commands
@@ -88,7 +86,7 @@ BOOST_FIXTURE_TEST_CASE(TolerantPool2, ThreadPoolSetup) {
   cmd1.exec(params);
   cmd2.exec(params);
   cmd3.exec(params);
-  LOG(kInfo) << "cmd1 " << cmd1.getStatus().getProgress();
+  BOOST_TEST_MESSAGE("cmd1 " << cmd1.getStatus().getProgress());
   // now wait for a bit
   // in 18ms cmd1 and cmd2 should finish
   // and cmd3 start
@@ -103,9 +101,8 @@ BOOST_FIXTURE_TEST_CASE(TolerantPool2, ThreadPoolSetup) {
   BOOST_CHECK_EQUAL(cmd3.getState(), ActionSnapshot::kDone);
 }
 
-BOOST_FIXTURE_TEST_CASE(GoodGuyPool, ThreadPoolSetup) {
-  LOG(kInfo) << "Running ThreadPoolTestSuite/GoodGuyPool";
-
+BOOST_FIXTURE_TEST_CASE(GoodGuyPool, ThreadPoolSetup)
+{
   // create thread pool with 2 threads
   // this pool will wait until the queue is complete
   ThreadPool::getInstance(2, true, false);

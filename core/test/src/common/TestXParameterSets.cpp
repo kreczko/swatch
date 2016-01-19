@@ -66,8 +66,8 @@ XParTestSetup::XParTestSetup() :
 XParTestSetup::~XParTestSetup() {}
 
 
-BOOST_FIXTURE_TEST_CASE ( SimpleAdoptGetEraseTest, XParTestSetup) {
-  
+BOOST_FIXTURE_TEST_CASE ( SimpleAdoptGetEraseTest, XParTestSetup)
+{
   /*  ---  ReadOnlyXParameterSet  ---  */
   {
   ReadOnlyXParameterSet psetReadOnly;
@@ -206,8 +206,8 @@ BOOST_FIXTURE_TEST_CASE ( SimpleAdoptGetEraseTest, XParTestSetup) {
 
 
 
-BOOST_FIXTURE_TEST_CASE ( ReadOnlyShallowCopyTest, XParTestSetup) {
-  
+BOOST_FIXTURE_TEST_CASE ( ReadOnlyShallowCopyTest, XParTestSetup)
+{
   // Create the "source" set
   boost::scoped_ptr<ReadOnlyXParameterSet> originalPSet( new ReadOnlyXParameterSet() ); 
   originalPSet->adopt("aString", str);
@@ -260,7 +260,8 @@ BOOST_FIXTURE_TEST_CASE ( ReadOnlyShallowCopyTest, XParTestSetup) {
 
 
 
-BOOST_FIXTURE_TEST_CASE ( ReadWriteToReadOnlyShallowCopyTest, XParTestSetup) {
+BOOST_FIXTURE_TEST_CASE ( ReadWriteToReadOnlyShallowCopyTest, XParTestSetup)
+{
   // Create the "source" set
   boost::scoped_ptr<ReadWriteXParameterSet> originalPSet( new ReadWriteXParameterSet() );
   originalPSet->adopt("aString", str);
@@ -313,7 +314,8 @@ BOOST_FIXTURE_TEST_CASE ( ReadWriteToReadOnlyShallowCopyTest, XParTestSetup) {
 
 
 
-BOOST_FIXTURE_TEST_CASE ( ReadWriteDeepCopyTest, XParTestSetup) {
+BOOST_FIXTURE_TEST_CASE ( ReadWriteDeepCopyTest, XParTestSetup)
+{
   // Create the "source" set
   boost::scoped_ptr<ReadWriteXParameterSet> originalPSet( new ReadWriteXParameterSet() );
   originalPSet->adopt("aString", str);
