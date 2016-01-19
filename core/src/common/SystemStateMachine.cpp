@@ -559,6 +559,7 @@ void SystemStateMachine::reset(const GateKeeper& aGateKeeper)
   
   // If not thrown already, then all is good: enable/disable children ...
   // ... reset states of system + enabled children; and reset their maskables of enabled children
+  LOG4CPLUS_INFO(mResource.getLogger(), "Resetting system state machine '" << getId() << "'; entering state '" << getInitialState() << "'");
   mStatusMap.getSystemStatus().setState(getInitialState(), lGuard);
 
   resetEnableFlagOnChildren(aGateKeeper, lGuardMap);
@@ -570,6 +571,7 @@ void SystemStateMachine::reset(const GateKeeper& aGateKeeper)
     ActionableStatus& lChildStatus = mStatusMap.getStatus((*smIt)->getActionable());
 
     if (lChildStatus.isEnabled(lChildGuard)) {
+      LOG4CPLUS_INFO(lChild.getLogger(), "Resetting state machine '" << (*smIt)->getId() << "'; entering state '" << (*smIt)->getInitialState() << "'");
       lChildStatus.setState((*smIt)->getInitialState(), lChildGuard);
 
       // Reset maskable objects (unmasked unless specified otherwise in gatekeeper)
@@ -601,6 +603,7 @@ void SystemStateMachine::engage(const GateKeeper& aGateKeeper)
 
   // If not thrown already, then all is good: enable/disable children, engage system in this state machine
   // ... put enabled children in appropriate state machine, and reset their maskables
+  LOG4CPLUS_INFO(mResource.getLogger(), "Engaging state machine '" << getId() << "'; entering state '" << getInitialState() << "'");
   lSysStatus.setStateMachine(getId(), getInitialState(), lSysGuard);
 
   resetEnableFlagOnChildren(aGateKeeper, lGuardMap);
@@ -613,6 +616,7 @@ void SystemStateMachine::engage(const GateKeeper& aGateKeeper)
 
     if (lChildStatus.isEnabled(lChildGuard))
     {
+      LOG4CPLUS_INFO(lChild.getLogger(), "Engaging state machine '" << (*lIt)->getId() << "'; entering state '" << (*lIt)->getInitialState() << "'");
       lChildStatus.setStateMachine((*lIt)->getId(), (*lIt)->getInitialState(), lChildGuard);
 
       // Reset maskable objects (unmasked unless specified otherwise in gatekeeper)
@@ -638,15 +642,19 @@ void SystemStateMachine::disengage()
   }
 
   // If haven't thrown so far, then disengage the state machines
+  LOG4CPLUS_INFO(mResource.getLogger(), "Disengaging from state machine '" << getId() << "'");
   mStatusMap.getSystemStatus().setNoStateMachine(lSysGuard);
 
   for(auto smIt = mNonConstChildFSMs.begin(); smIt!=mNonConstChildFSMs.end(); smIt++)
   {
-    const ActionableStatusGuard& lChildGuard = *lGuardMap.at(&(*smIt)->getActionable());
+    ActionableObject& lChild = (*smIt)->getActionable();
+    const ActionableStatusGuard& lChildGuard = *lGuardMap.at(&lChild);
     ActionableStatus& lChildStatus = mStatusMap.getStatus((*smIt)->getActionable());
 
-    if( lChildStatus.getStateMachineId(lChildGuard) == (*smIt)->getId() )
+    if( lChildStatus.getStateMachineId(lChildGuard) == (*smIt)->getId() ) {
+      LOG4CPLUS_INFO(lChild.getLogger(), "Disengaging from state machine '" << (*smIt)->getId() << "'");
       lChildStatus.setNoStateMachine(lChildGuard);
+    }
   }  
 }
 
@@ -709,14 +717,16 @@ void SystemStateMachine::resetEnableFlagOnChildren(const GateKeeper& aGateKeeper
 {
   for(auto lIt=mResource.getActionableChildren().begin(); lIt != mResource.getActionableChildren().end(); lIt++)
   {
-    const ActionableObject& lChild = *(lIt->second);
+    ActionableObject& lChild = *(lIt->second);
     const ActionableStatusGuard& lGuard = *aGuardMap.at(&lChild);
     ActionableStatus& lStatus = mStatusMap.getStatus(lChild);
 
     if(aGateKeeper.isEnabled(lChild.getPath()))
       lStatus.enable(lGuard);
-    else
+    else {
+      LOG4CPLUS_INFO(lChild.getLogger(), "Disabling");
       lStatus.disable(lGuard);
+    }
   }
 }
 

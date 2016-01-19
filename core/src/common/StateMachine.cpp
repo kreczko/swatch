@@ -134,6 +134,7 @@ void StateMachine::engage(const GateKeeper& aGateKeeper)
   if (mStatus.getStateMachineId(lGuard) != ActionableSnapshot::kNullStateMachineId )
     throw ResourceInWrongStateMachine("Cannot engage other state machine; resource '"+getPath()+"' currently in state machine '"+mStatus.getStateMachineId(lGuard)+"'");
 
+  LOG4CPLUS_INFO(mResource.getLogger(), "Engaging state machine '" << getId() << "'; entering state '" << getInitialState() << "'");
   mStatus.setStateMachine(getId(), getInitialState(), lGuard);
 
   // Reset maskable objects (unmasked unless specified otherwise in gatekeeper)
@@ -162,7 +163,7 @@ void StateMachine::disengage()
   if ( mStatus.isBusy(lGuard) )
     throw ActionableObjectIsBusy("Cannot reset '"+mResource.getPath()+"', state machine '"+getId()+"'; busy running action '"+mStatus.getLastRunningAction(lGuard)->getPath()+"'");  
   
-  
+  LOG4CPLUS_INFO(mResource.getLogger(), "Disengaging from state machine '" << getId() << "'");
   mStatus.setNoStateMachine(lGuard);
 }
 
@@ -188,6 +189,7 @@ void StateMachine::reset(const GateKeeper& aGateKeeper)
   if ( mStatus.isBusy(lGuard) )
     throw ActionableObjectIsBusy("Cannot reset '"+mResource.getPath()+"', state machine '"+getId()+"'; busy running action '"+mStatus.getLastRunningAction(lGuard)->getPath()+"'");  
   
+  LOG4CPLUS_INFO(mResource.getLogger(), "Resetting state machine '" << getId() << "'; entering state '" << getInitialState() << "'");
   mStatus.setState(getInitialState(), lGuard);
 
   // Reset maskable objects (unmasked unless specified otherwise in gatekeeper)
