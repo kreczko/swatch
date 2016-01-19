@@ -251,7 +251,7 @@ SystemBusyGuard::SystemBusyGuard(SystemFunctionoid& aAction, ActionableSystem::S
   // 3) If got this far, then all is good: 
   //    a) wait until actions ready to run on system and child objects; then ...
   //    b) create the busy guards for the children
-  LOG4CPLUS_INFO(mSystem.getLogger(), mSystem.getPath() << " : Starting action '" << mAction.getId() << "'");
+  LOG4CPLUS_INFO(mSystem.getLogger(), "Starting system action '" << mAction.getId() << "'");
 
   std::vector<std::pair<ActionableStatus*, ActionableStatusGuard*> > lStatusVec;
   lStatusVec.push_back( std::pair<ActionableStatus*, ActionableStatusGuard*>(&lSysStatus, &lSysGuard) );
@@ -285,26 +285,29 @@ SystemBusyGuard::~SystemBusyGuard()
 {
   ActionableStatusGuard lSysGuard(mSysStatus);
 
-  LOG4CPLUS_INFO(mSystem.getLogger(), mSystem.getPath() << " : Finished action '" << mAction.getId() << "'");
-
   if ( mSysStatus.isBusy(lSysGuard) && (&mAction == mSysStatus.getLastRunningAction(lSysGuard)) )
   {
     mSysStatus.popAction(lSysGuard);
     
+    std::ostringstream lLogSuffixStream;
     if ( !mPostActionCallback.empty() )
-      mPostActionCallback(lSysGuard);
+      mPostActionCallback(lSysGuard, lLogSuffixStream);
+
+    std::string lLogMsgSuffix = (lLogSuffixStream.tellp() > 0 ? ". " + lLogSuffixStream.str() : std::string());
+    LOG4CPLUS_INFO(mSystem.getLogger(), "Finished system action '" << mAction.getId() << lLogMsgSuffix);
   }
   else
   {
     size_t lNrActions = mSysStatus.getRunningActions(lSysGuard).size();
     const std::string activeFuncId(lNrActions > 0 ? "NULL" : "'" + mSysStatus.getLastRunningAction(lSysGuard)->getId() + "' (innermost of "+boost::lexical_cast<std::string>(lNrActions)+")");
     LOG4CPLUS_ERROR(mSystem.getLogger(),
-        "unexpected active functionoid " << activeFuncId << "  in BusyGuard destructor for system '"
-        << mSystem.getPath() << "', functionoid '" << mAction.getId() << "'");
+        "unexpected active functionoid " << activeFuncId << "  in SystemBusyGuard destructor for action '" << mAction.getId() << "'");
   }
 }
 
-log4cplus::Logger& ActionableSystem::getLogger() {
+
+log4cplus::Logger& ActionableSystem::getLogger()
+{
   return mLogger;
 }
 

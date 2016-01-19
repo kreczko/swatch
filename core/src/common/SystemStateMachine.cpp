@@ -2,14 +2,19 @@
 #include "swatch/core/SystemStateMachine.hpp"
 
 
-// Swatch Headers
+// SWATCH headers
 #include "swatch/core/ActionableSystem.hpp"
 #include "swatch/core/ThreadPool.hpp"
 
-// Boost Headers
+// boost headers
 #include "boost/thread/pthread/thread_data.hpp"
 #include <boost/foreach.hpp>
 #include <bits/stl_map.h>
+
+// log4cplus headers
+#include <log4cplus/loggingmacros.h>
+
+
 
 namespace swatch {
 namespace core {
@@ -292,7 +297,7 @@ void SystemTransition::exec(const GateKeeper& aGateKeeper, const bool& aUseThrea
         throw ResourceInWrongState("Resource '"+e.first->getPath()+"' is in state "+lChildStatus.getState(lChildGuard)+", transition '"+e.second->getId()+"' cannot be run");
     }
 
-    SystemBusyGuard::Callback_t lCallback = boost::bind(&SystemTransition::changeState, this, _1);
+    SystemBusyGuard::Callback_t lCallback = boost::bind(&SystemTransition::changeState, this, _1, _2);
     lBusyGuard.reset(new SystemBusyGuard(*this, mStatusMap, lStatusGuardMap, lCallback));
   }
 
@@ -425,13 +430,15 @@ void SystemTransition::runSteps(boost::shared_ptr<SystemBusyGuard> aGuard)
 
 
 //------------------------------------------------------------------------------------
-void SystemTransition::changeState(const ActionableStatusGuard& aGuard)
+void SystemTransition::changeState(const ActionableStatusGuard& aGuard, std::ostream& aLogMessageSuffix)
 {
   ActionSnapshot::State lActionState = getStatus().getState();
-  if((lActionState == ActionSnapshot::kDone) || (lActionState == ActionSnapshot::kWarning))
-    mStatusMap.getSystemStatus().setState(getEndState(), aGuard);
-  else
-    mStatusMap.getSystemStatus().setState(getStateMachine().getErrorState(), aGuard);
+  std::string lNewState = getEndState();
+  if((lActionState != ActionSnapshot::kDone) && (lActionState != ActionSnapshot::kWarning))
+    lNewState = getStateMachine().getErrorState();
+
+  mStatusMap.getSystemStatus().setState(lNewState, aGuard);
+  aLogMessageSuffix << "Entering state '" << lNewState << "'";
 }
 
 

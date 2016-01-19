@@ -132,7 +132,7 @@ private:
 
 class SystemBusyGuard : public boost::noncopyable {
 public:
-  typedef boost::function<void(const ActionableStatusGuard&)> Callback_t;
+  typedef boost::function<void(const ActionableStatusGuard&, std::ostream&)> Callback_t;
 
   SystemBusyGuard(SystemFunctionoid& aAction, ActionableSystem::StatusContainer& aStatusMap, const ActionableStatusGuardMap_t& aStatusGuardMap, const Callback_t& aCallback);
   ~SystemBusyGuard();

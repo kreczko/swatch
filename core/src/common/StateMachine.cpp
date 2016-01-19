@@ -12,6 +12,11 @@
 #include "swatch/core/MaskableObject.hpp"
 
 
+// log4cplus headers
+#include <log4cplus/loggingmacros.h>
+
+
+
 namespace swatch {
 namespace core {
     
@@ -281,7 +286,7 @@ void StateMachine::Transition::exec(const BusyGuard* aOuterBusyGuard, const Gate
     else if ( mActionableStatus.getState(lGuard) != getStartState() )
       throw ResourceInWrongState("Resource '"+getActionable().getPath()+"' is in state '"+mActionableStatus.getState(lGuard)+"'; transition '"+getId()+"' cannot be run");
 
-    BusyGuard::Callback_t lCallback = boost::bind(&StateMachine::Transition::changeState, this, _1);
+    BusyGuard::Callback_t lCallback = boost::bind(&StateMachine::Transition::changeState, this, _1, _2);
     lBusyGuard.reset(new BusyGuard(*this, mActionableStatus, lGuard, lCallback, aOuterBusyGuard));
   }
 
@@ -395,13 +400,15 @@ void StateMachine::Transition::applyMonitoringSettings()
 
 
 //------------------------------------------------------------------------------------
-void StateMachine::Transition::changeState(const ActionableStatusGuard& aGuard)
+void StateMachine::Transition::changeState(const ActionableStatusGuard& aGuard, std::ostream& aLogMessageSuffix)
 {
   ActionSnapshot::State lActionState = getState();
-  if((lActionState == ActionSnapshot::kDone) || (lActionState == ActionSnapshot::kWarning))
-    mActionableStatus.setState(getEndState(), aGuard);
-  else
-    mActionableStatus.setState(getStateMachine().getErrorState(), aGuard);
+  std::string lNewState = getEndState();
+  if((lActionState != ActionSnapshot::kDone) && (lActionState != ActionSnapshot::kWarning))
+    lNewState = getStateMachine().getErrorState();
+
+  mActionableStatus.setState(lNewState, aGuard);
+  aLogMessageSuffix << "Entering state '" << lNewState << "'";
 }
 
 

@@ -285,7 +285,7 @@ BusyGuard::BusyGuard(ActionableObject& aResource, ActionableStatus& aStatus, Act
   else if ( mStatus.getRunningActions(aStatusGuard).at(0) != &mAction )
     throw WrongBusyGuard("BusyGuard cannot adopt action '"+mAction.getPath()+"' on object '"+mActionableObj.getPath()+"' : Object is running "+ActionFmt_t(mStatus.getRunningActions(aStatusGuard).at(0)).str());
 
-  LOG4CPLUS_INFO(mActionableObj.getLogger(), mActionableObj.getPath() << " : Starting " << ActionFmt_t(&mAction) << " (adopted)");
+  LOG4CPLUS_INFO(mActionableObj.getLogger(), "Starting " << ActionFmt_t(&mAction) << " (adopted)");
 }
 
 
@@ -313,12 +313,12 @@ void BusyGuard::initialise(ActionableStatusGuard& aStatusGuard)
   {
     if ( !lStatusSnapshot.isRunning() )
     {
-      LOG4CPLUS_INFO(mActionableObj.getLogger(), mActionableObj.getPath() << " : Starting " << ActionFmt_t(&mAction));
+      LOG4CPLUS_INFO(mActionableObj.getLogger(), "Starting " << ActionFmt_t(&mAction));
       mStatus.waitUntilReadyToRunAction(mAction, aStatusGuard);
     }
     else
     {
-      LOG4CPLUS_INFO(mActionableObj.getLogger(), mActionableObj.getPath() << " : Starting " << ActionFmt_t(&mAction) << " within " << ActionFmt_t(lStatusSnapshot.getLastRunningAction()));
+      LOG4CPLUS_INFO(mActionableObj.getLogger(), "Starting " << ActionFmt_t(&mAction) << " within " << ActionFmt_t(lStatusSnapshot.getLastRunningAction()));
       mStatus.addAction(mAction, aStatusGuard);
     }
   }
@@ -342,26 +342,30 @@ BusyGuard::~BusyGuard()
 {  
   ActionableStatusGuard lGuard(mStatus);
   ActionableSnapshot lStatusSnapshot = mStatus.getSnapshot(lGuard);
-  LOG4CPLUS_INFO(mActionableObj.getLogger(), mActionableObj.getPath() << " : Finished " << ActionFmt_t(&mAction));
 
   if ( lStatusSnapshot.isRunning() && (&mAction == lStatusSnapshot.getLastRunningAction()) )
   {
     mStatus.popAction(lGuard);
     
+    std::ostringstream lLogSuffixStream;
     if( ! mPostActionCallback.empty() )
-      mPostActionCallback(lGuard);
+      mPostActionCallback(lGuard, lLogSuffixStream);
+
+    std::string lLogMsgSuffix = (lLogSuffixStream.tellp() > 0 ? ". " + lLogSuffixStream.str() : std::string());
+    LOG4CPLUS_INFO(mActionableObj.getLogger(), "Finished " << ActionFmt_t(&mAction) << lLogMsgSuffix);
   }
   else
   {
     size_t lNrActions = lStatusSnapshot.getRunningActions().size();
     const std::string activeFuncId(lNrActions > 0 ? "NULL" : "'" + lStatusSnapshot.getLastRunningAction()->getId() + "' (innermost of "+boost::lexical_cast<std::string>(lNrActions)+")");
-    LOG4CPLUS_ERROR(mActionableObj.getLogger(), "unexpected active functionoid " << activeFuncId << "  in BusyGuard destructor for resource '" << mActionableObj.getPath() << "', functionoid '" << mAction.getId() << "'");
+    LOG4CPLUS_ERROR(mActionableObj.getLogger(), "Unexpected active functionoid " << activeFuncId << "  in BusyGuard destructor for " << ActionFmt_t(&mAction));
   }
 }
 
 
 
-log4cplus::Logger& ActionableObject::getLogger() {
+log4cplus::Logger& ActionableObject::getLogger()
+{
   return mLogger;
 }
 

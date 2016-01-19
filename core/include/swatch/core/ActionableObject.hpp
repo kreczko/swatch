@@ -166,7 +166,7 @@ class BusyGuard : public boost::noncopyable {
 public:
   struct Adopt {};
 
-  typedef boost::function<void(const ActionableStatusGuard&)> Callback_t;
+  typedef boost::function<void(const ActionableStatusGuard&, std::ostream&)> Callback_t;
 
   BusyGuard(ObjectFunctionoid& aAction, ActionableStatus& aStatus, const BusyGuard* aOuterGuard=NULL);
   BusyGuard(ObjectFunctionoid& aAction, ActionableStatus& aStatus, ActionableStatusGuard& aStatusGuard, const Callback_t& aCallback, const BusyGuard* aOuterGuard=NULL);

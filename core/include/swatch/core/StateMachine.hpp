@@ -133,7 +133,7 @@ public:
 
     void applyMonitoringSettings();
 
-    void changeState(const ActionableStatusGuard& aGuard);
+    void changeState(const ActionableStatusGuard& aGuard, std::ostream& aLogMessageSuffix);
 
     StateMachine& mStateMachine;
     ActionableStatus& mActionableStatus;
