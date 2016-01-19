@@ -11,7 +11,9 @@
 // SWATCH headers
 #include "swatch/core/ActionableObject.hpp"
 #include "swatch/core/ThreadPool.hpp"
-#include "swatch/logger/Log.hpp"
+
+// log4cplus headers
+#include <log4cplus/loggingmacros.h>
 
 
 
@@ -57,10 +59,7 @@ Command::exec(const BusyGuard* aOuterBusyGuard, const XParameterSet& aParams, bo
       this->runCode(lBusyGuard, mRunningParams);
     }
   } catch ( const std::exception& e ) {
-    // TODO: log the error to error msg (or not?)
-
-    // FIXME: replace with proper logging
-    LOG(swatch::logger::kError) << getActionable().getId() << "." << getId() << " : " << ( e.what() != 0x0 ? e.what() : "" ) ;
+    LOG4CPLUS_ERROR(getActionable().getLogger(), "Exception thrown when executing command '" << getId() << "' : " << ( e.what() != 0x0 ? e.what() : "" ));
 
     // Then rethrow the exception on to the higher layers of code.
     throw;
@@ -93,8 +92,7 @@ void Command::runCode(boost::shared_ptr<BusyGuard> aActionGuard, const XParamete
       default : 
         mState = State::kError;
         mStatusMsg = "Command::code() method returned invalid Status enum value '" + boost::lexical_cast<std::string>(s) + "'   \n Original status message was: " + mStatusMsg;
-        // FIXME: replace with proper logging
-        LOG(swatch::logger::kError) << getActionable().getId() << "." << getId() << " : " << mStatusMsg;
+        LOG4CPLUS_ERROR(getActionable().getLogger(), "Command '" << getId() << " : " << mStatusMsg);
     }
   }
   catch (const std::exception& e) {
@@ -102,8 +100,7 @@ void Command::runCode(boost::shared_ptr<BusyGuard> aActionGuard, const XParamete
     gettimeofday(&mExecEndTime, NULL);
     mState = State::kError;
     mStatusMsg = std::string("An exception of type '" + demangleName(typeid(e).name()) + "' was thrown in Command::code(): ") + e.what();
-    // FIXME: replace with proper logging
-    LOG(swatch::logger::kError) << getActionable().getId() << "." << getId() << " : " << mStatusMsg;
+    LOG4CPLUS_ERROR(getActionable().getLogger(), "Command '" << getId() << " : " << mStatusMsg);
   }
   
   // 3) Release control of the resource - by destruction of the ActionGuard.
@@ -190,12 +187,11 @@ Command::setProgress(float aProgress, const std::string& aMsg ) {
   mProgress = aProgress;
   mStatusMsg = aMsg;
 
-  // FIXME: replace with proper logging
-  LOG(swatch::logger::kInfo) << getActionable().getId() << "." << getId() << " : " << aMsg;
-
+  LOG4CPLUS_DEBUG(getActionable().getLogger(), "Command '" << getId() << "' : " << aMsg);
 }
 
 
+//------------------------------------------------------------------------------------
 void Command::setResult( const xdata::Serializable& aResult ){
   boost::unique_lock<boost::mutex> lock(mMutex);
   mResult->setValue(aResult);
@@ -207,8 +203,7 @@ void Command::setStatusMsg(const std::string& aMsg) {
   boost::unique_lock<boost::mutex> lock(mMutex);
   mStatusMsg = aMsg;
 
-  // FIXME: replace with proper logging
-  LOG(swatch::logger::kInfo) << getActionable().getId() << "." << getId() << " : " << aMsg;
+  LOG4CPLUS_DEBUG(getActionable().getLogger(), "Command '" << getId() << "' : " << aMsg);
 }
 
 
