@@ -25,7 +25,7 @@ struct TestXmlGateKeeperSetup {
     config_with_disabled_processor()
   {
 		base_config_str = "<db>"
-				"<run key=\"RunKey1\">"
+				"<key id=\"RunKey1\">"
 				"<!-- Common parameters for all processors -->"
 				"<!-- to be used with ${SWATCH_ROOT}/system/test/cfg/dummy_s1tem.json -->		"
 				"<table id=\"dummy_s1.processors\">"
@@ -56,11 +56,11 @@ struct TestXmlGateKeeperSetup {
 				"<entry id=\"reboot.cmdDuration\" type=\"uint\">12</entry>"
 				"<entry id=\"clkErrorTimeout\" type=\"uint\">120</entry>"
 				"</table>"
-				"</run>"
+				"</key>"
 				"</db>";
 
 		config_with_metrics_str = "<db>"
-				"<run key=\"RunKey1\">"
+				"<key id=\"RunKey1\">"
 				"<table id=\"dummy_s1.processors\">"
 				"<!-- Define metric status -->"
 				"<state id=\"weird_state\">"
@@ -72,10 +72,10 @@ struct TestXmlGateKeeperSetup {
 				"			<metric id=\"nonCriticalMetric\" status=\"enabled\" />"
 				"		</state>"
 				"	</table>"
-				"</run>"
+				"</key>"
 				"</db>";
 		config_with_disabled_processor_str = "<db>"
-				"	<run key=\"RunKey1\">"
+				"	<key id=\"RunKey1\">"
 				"		<table id=\"dummy_s1.dummy_p2\">"
 				"			<entry id=\"clkErrorTimeout\" type=\"uint\">40</entry>"
 				"			<state id=\"weird_state\">"
@@ -83,18 +83,18 @@ struct TestXmlGateKeeperSetup {
 				"				<mon-obj id=\"\" status=\"disabled\" />"
 				"			</state>"
 				"		</table>"
-				"	</run>"
+				"	</key>"
 				"</db>";
 		config_with_vector_parameters_str = "<db>"
-				"   <run key=\"RunKey1\">"
+				"   <key id=\"RunKey1\">"
 				"       <table id=\"dummy_s1.dummy_p2\">"
 				"           <entry id=\"clkErrorTimeout\" type=\"uint\">40</entry>"
 				"           <entry id=\"uintvector\" type=\"vector:uint\">5, 3, 42, 100</entry>"
 				"       </table>"
-				"   </run>"
+				"   </key>"
 				"</db>";
     config_with_masks_str = "<db>"
-        "   <run key=\"RunKey1\">"
+        "   <key id=\"RunKey1\">"
         "       <table id=\"dummy_sys.common\">"
         "           <mask id=\"componentA\"/>"
         "       </table>"
@@ -104,17 +104,17 @@ struct TestXmlGateKeeperSetup {
         "       <table id=\"dummy_sys.childA1\">"
         "           <mask id=\"componentC\"/>"
         "       </table>"
-        "   </run>"
-        "   <run key=\"OtherRunKey\">"
-        "   </run>"
+        "   </key>"
+        "   <key id=\"OtherRunKey\">"
+        "   </key>"
         "</db>";
     config_with_exclusions_str = "<db>"
-        "   <run key=\"RunKey1\">"
+        "   <key id=\"RunKey1\">"
         "       <disable id=\"dummy_sys.childA1\"/>"
         "       <disable id=\"dummy_sys.child42\"/>"
-        "   </run>"
-        "   <run key=\"OtherRunKey\">"
-        "   </run>"
+        "   </key>"
+        "   <key id=\"OtherRunKey\">"
+        "   </key>"
         "</db>";
 
     // make sure we the strings are valid configs

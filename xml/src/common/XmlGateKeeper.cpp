@@ -58,9 +58,9 @@ XmlGateKeeper::XmlGateKeeper(const pugi::xml_document& aXmlDoc, const std::strin
 //------------------------------------------------------------------------------------------------------------------
 void XmlGateKeeper::readXmlDocument(const pugi::xml_document& aXmlDoc, const std::string& aRunKey)
 {
-  pugi::xml_node lRun(aXmlDoc.child("db").find_child_by_attribute("run", "key", aRunKey.c_str()));
+  pugi::xml_node lKey(aXmlDoc.child("db").find_child_by_attribute("key", "id", aRunKey.c_str()));
 
-  for (pugi::xml_node lTable(lRun.child("table")); lTable; lTable = lTable.next_sibling("table"))
+  for (pugi::xml_node lTable(lKey.child("table")); lTable; lTable = lTable.next_sibling("table"))
   {
     std::pair < std::string, GateKeeper::ParametersTable_t > lParameterTable(createTable(lTable));
     add(lParameterTable.first, lParameterTable.second);
@@ -72,7 +72,7 @@ void XmlGateKeeper::readXmlDocument(const pugi::xml_document& aXmlDoc, const std
     add(lMasksTable.first, lMasksTable.second);
   }
 
-  for (pugi::xml_node lNode(lRun.child("disable")); lNode; lNode = lNode.next_sibling("disable"))
+  for (pugi::xml_node lNode(lKey.child("disable")); lNode; lNode = lNode.next_sibling("disable"))
     addToDisabledSet(parseDisableNode(lNode));
 }
 
