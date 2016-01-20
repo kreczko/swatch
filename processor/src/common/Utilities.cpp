@@ -20,7 +20,6 @@
 
 // SWATCH headers
 #include "swatch/processor/ProcessorStub.hpp"
-#include "swatch/processor/LinkStub.hpp"
 #include "swatch/core/toolbox/IdSliceParser.hpp"
 
 
@@ -75,18 +74,6 @@ treeToProcessorStub(const boost::property_tree::ptree& aPTree)
 }
 
 
-void treeToLinkStub(const boost::property_tree::ptree& aPTree, std::vector<LinkStub>& aLinkStubs) 
-{
-    const std::string name = aPTree.get<std::string>("NAME");
-    const std::string src = aPTree.get<std::string>("FROM");
-    const std::string dst = aPTree.get<std::string>("TO");
-  
-//    expandLinkSliceSyntax(name, src, dst, aLinkStubs);
-    pushBackLinkStubs(aLinkStubs, name, src, dst);
-    
-}
-
-
 void pushBackPortStubs(std::vector<ProcessorPortStub>& aPortStubs, const std::string& aName, const std::string& aIndex)
 {
   std::vector<std::string> names = core::toolbox::IdSliceParser::parse(aName);
@@ -102,27 +89,6 @@ void pushBackPortStubs(std::vector<ProcessorPortStub>& aPortStubs, const std::st
     aPortStubs.push_back(b);
   }
 }
-
-
-void pushBackLinkStubs(std::vector<LinkStub>& aLinkStubs, const std::string& aName, const std::string& aSrc, const std::string& aDst)
-{
-  std::vector<std::string> names = core::toolbox::IdSliceParser::parse(aName);
-  std::vector<std::string> src = core::toolbox::IdSliceParser::parse(aSrc);
-  std::vector<std::string> dst = core::toolbox::IdSliceParser::parse(aDst);
-
-  if (names.size() != src.size())
-    throw std::runtime_error(boost::lexical_cast<std::string>(names.size()) + " link names created from name \"" + aName + "\" using slice syntax, but " + boost::lexical_cast<std::string>(src.size()) + " source IDs created from \"" + aSrc + "\"");
-  else if (names.size() != dst.size())
-    throw std::runtime_error(boost::lexical_cast<std::string>(names.size()) + " link names created from name \"" + aName + "\" using slice syntax, but " + boost::lexical_cast<std::string>(dst.size()) + " destination IDs created from \"" + aDst + "\"");
-
-  for (size_t i = 0; i < names.size(); i++) {
-    LinkStub b(names.at(i));
-    b.src = src.at(i);
-    b.dst = dst.at(i);
-    aLinkStubs.push_back(b);
-  }
-}
-
 
 
 } // namespace processor

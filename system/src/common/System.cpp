@@ -14,7 +14,7 @@
 #include "swatch/core/Factory.hpp"
 #include "swatch/core/SystemStateMachine.hpp"
 #include "swatch/core/Utilities.hpp"
-#include "swatch/processor/Link.hpp"
+#include "swatch/system/Link.hpp"
 #include "swatch/processor/Port.hpp"
 #include "swatch/processor/Processor.hpp"
 #include "swatch/system/Crate.hpp"
@@ -121,7 +121,7 @@ const std::deque<Service*>& System::getServices() {
 
 
 //---
-const std::deque<processor::Link*>& System::getLinks() {
+const std::deque<system::Link*>& System::getLinks() {
   return mLinks;
 }
 
@@ -208,7 +208,7 @@ System::add(Service* aService) {
 
 //---
 void
-System::add(processor::Link* aLink) {
+System::add(system::Link* aLink) {
   if (aLink == NULL)
     throw std::invalid_argument("Link pointer is NULL!");
   this->addObj(aLink);
@@ -284,7 +284,7 @@ void System::addLinks()
       processor::OutputPort* srcPort = getObj<processor::OutputPort>(lStub.src);
       processor::InputPort*  dstPort = getObj<processor::InputPort>(lStub.dst);
     
-      processor::Link* link = new processor::Link(lStub.id, srcPort,dstPort);
+      system::Link* link = new system::Link(lStub.id, srcPort,dstPort);
       add(link);
     }
     catch (const core::exception& e) {

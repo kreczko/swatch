@@ -15,7 +15,7 @@
 #include "swatch/core/AbstractStub.hpp"
 
 namespace swatch {
-namespace processor {
+namespace system {
 
 
 //! Structure that holds data required to build a link
@@ -36,7 +36,7 @@ public:
 };
 
 
-std::ostream& operator<<(std::ostream& aStream, const swatch::processor::LinkStub& aStub);
+std::ostream& operator<<(std::ostream& aStream, const swatch::system::LinkStub& aStub);
 
 
 } // namespace processor

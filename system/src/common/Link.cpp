@@ -3,16 +3,15 @@
  * Author: ale
  */
 
-#include "swatch/processor/Link.hpp" 
-
+#include "swatch/system/Link.hpp" 
 
 #include "swatch/processor/Port.hpp"
 
 
 namespace swatch {
-namespace processor {
+namespace system {
 
-Link::Link(const std::string& aId, OutputPort* aSrc, InputPort* aDst) :
+Link::Link(const std::string& aId, processor::OutputPort* aSrc, processor::InputPort* aDst) :
     ObjectView( aId ), 
     mSrc(aSrc), 
     mDst(aDst)

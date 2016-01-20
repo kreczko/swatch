@@ -31,7 +31,6 @@ class SystemStateMachine;
 
 namespace processor {
 class Processor;
-class Link;
 }
 
 namespace dtm {
@@ -40,6 +39,7 @@ class DaqTTCManager;
 
 namespace system {
 
+class Link;
 class Crate;
 class Service;
 
@@ -120,7 +120,7 @@ public:
   const std::deque<processor::Processor*>& getProcessors() ;
   const std::deque<Service*>& getServices();
   const std::deque<dtm::DaqTTCManager*>& getDaqTTCs();
-  const std::deque<processor::Link*>& getLinks();
+  const std::deque<system::Link*>& getLinks();
   const CratesMap_t& getCrates();
     
   bool hasCrate(const std::string& aCrateId) const;
@@ -136,7 +136,7 @@ private:
     
     void add( processor::Processor* aProcessor );
     void add( dtm::DaqTTCManager* aAMC13 );
-    void add( processor::Link* aLink );
+    void add( system::Link* aLink );
     void add( system::Service* aService );
     void add( system::Crate* aCrate );
   
@@ -157,7 +157,7 @@ private:
     std::deque<Service*> mServices;
     
     //! List of internal links
-    std::deque<processor::Link*> mLinks; 
+    std::deque<Link*> mLinks; 
 
     //! Map of crates
     CratesMap_t mCratesMap;

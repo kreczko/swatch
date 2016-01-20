@@ -13,9 +13,11 @@
 #include "swatch/processor/ProcessorStub.hpp"
 #include "swatch/dtm/DaqTTCStub.hpp"
 #include "swatch/system/CrateStub.hpp"
+#include "swatch/core/toolbox/IdSliceParser.hpp"
 
 // boost headers
 #include "boost/foreach.hpp"
+#include "boost/lexical_cast.hpp"
 
 namespace swatch {
 namespace dtm {
@@ -97,7 +99,7 @@ treeToSystemStub( const boost::property_tree::ptree& aPTree )
 
     
     BOOST_FOREACH( const ptree::value_type& v, pt_system.get_child("LINKS")) {
-        swatch::processor::treeToLinkStub(v.second, aStub.links);
+        swatch::system::treeToLinkStub(v.second, aStub.links);
     }
     
     /* Enable if need services
@@ -112,7 +114,38 @@ treeToSystemStub( const boost::property_tree::ptree& aPTree )
     return aStub;
 }
 
-      
+    
+void treeToLinkStub(const boost::property_tree::ptree& aPTree, std::vector<LinkStub>& aLinkStubs) 
+{
+    const std::string name = aPTree.get<std::string>("NAME");
+    const std::string src = aPTree.get<std::string>("FROM");
+    const std::string dst = aPTree.get<std::string>("TO");
+  
+//    expandLinkSliceSyntax(name, src, dst, aLinkStubs);
+    pushBackLinkStubs(aLinkStubs, name, src, dst);
+    
+}  
+
+
+void pushBackLinkStubs(std::vector<LinkStub>& aLinkStubs, const std::string& aName, const std::string& aSrc, const std::string& aDst)
+{
+  std::vector<std::string> names = core::toolbox::IdSliceParser::parse(aName);
+  std::vector<std::string> src = core::toolbox::IdSliceParser::parse(aSrc);
+  std::vector<std::string> dst = core::toolbox::IdSliceParser::parse(aDst);
+
+  if (names.size() != src.size())
+    throw std::runtime_error(boost::lexical_cast<std::string>(names.size()) + " link names created from name \"" + aName + "\" using slice syntax, but " + boost::lexical_cast<std::string>(src.size()) + " source IDs created from \"" + aSrc + "\"");
+  else if (names.size() != dst.size())
+    throw std::runtime_error(boost::lexical_cast<std::string>(names.size()) + " link names created from name \"" + aName + "\" using slice syntax, but " + boost::lexical_cast<std::string>(dst.size()) + " destination IDs created from \"" + aDst + "\"");
+
+  for (size_t i = 0; i < names.size(); i++) {
+    LinkStub b(names.at(i));
+    b.src = src.at(i);
+    b.dst = dst.at(i);
+    aLinkStubs.push_back(b);
+  }
+}
+
 
 } // namespace system
 } // namespace swatch

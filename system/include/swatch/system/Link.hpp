@@ -13,24 +13,26 @@
 
 namespace swatch {
 namespace processor {
-
 class InputPort;
 class OutputPort;
+}
+
+namespace system {
 
 //! Rrepresents the connection between an output and input optical port on different processors
 class Link : public core::ObjectView {
 public:
-    explicit Link( const std::string& aId, OutputPort* aSrc, InputPort* aDst );
+    explicit Link( const std::string& aId, processor::OutputPort* aSrc, processor::InputPort* aDst );
 
     ~Link();
     
-    OutputPort* getSrc() { return mSrc; }
+    processor::OutputPort* getSrc() { return mSrc; }
 
-    InputPort* getDst() { return mDst; }
+    processor::InputPort* getDst() { return mDst; }
     
 protected:
-    OutputPort* mSrc;
-    InputPort* mDst;
+    processor::OutputPort* mSrc;
+    processor::InputPort* mDst;
 };
 
 

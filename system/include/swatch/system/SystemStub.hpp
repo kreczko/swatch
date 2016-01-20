@@ -13,7 +13,7 @@
 // SWATCH headers
 #include "swatch/core/AbstractStub.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
-#include "swatch/processor/LinkStub.hpp"
+#include "swatch/system/LinkStub.hpp"
 #include "swatch/system/CrateStub.hpp"
 #include "swatch/dtm/DaqTTCStub.hpp"
 
@@ -44,7 +44,7 @@ public:
 
   std::vector<swatch::dtm::DaqTTCStub> daqttcs;
 
-  std::vector<swatch::processor::LinkStub> links;
+  std::vector<swatch::system::LinkStub> links;
 };
 
 
