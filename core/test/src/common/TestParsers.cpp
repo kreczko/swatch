@@ -112,17 +112,11 @@ BOOST_AUTO_TEST_CASE(SliceSyntaxParsingTests) {
   
   
   // Finally, strings that don't contain port slice syntax
-  expected = {"abc[0]def"};
-  returned = toolbox::IdSliceParser::parse("abc[0]def");
-  BOOST_CHECK_EQUAL_COLLECTIONS(returned.begin(), returned.end(), expected.begin(), expected.end());
-
-  expected = {"abc[0:2:3:4]def"};
-  returned = toolbox::IdSliceParser::parse("abc[0:2:3:4]def");
-  BOOST_CHECK_EQUAL_COLLECTIONS(returned.begin(), returned.end(), expected.begin(), expected.end());
+  BOOST_CHECK_THROW(toolbox::IdSliceParser::parse("abc[0]def"), swatch::core::toolbox::FailedSliceParsing);
+        
+  BOOST_CHECK_THROW(toolbox::IdSliceParser::parse("abc[0:2:3:4]def"), swatch::core::toolbox::FailedSliceParsing);
   
-  expected = {"[a:b:c]"};
-  returned = toolbox::IdSliceParser::parse("[a:b:c]");
-  BOOST_CHECK_EQUAL_COLLECTIONS(returned.begin(), returned.end(), expected.begin(), expected.end());
+  BOOST_CHECK_THROW(toolbox::IdSliceParser::parse("[a:b:c]"), swatch::core::toolbox::FailedSliceParsing);
 
 }
 

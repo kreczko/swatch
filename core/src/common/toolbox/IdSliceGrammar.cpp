@@ -43,13 +43,13 @@ IdSliceGrammar::IdSliceGrammar() :
   
   mRange =
       (mLiteral >> '[' >> mNumber >> ':' >> mNumber >> -(':' >> mStep) >> ']' >> mLiteral )[
-        phx::bind(&push_back_range, qi::_val, qi::_1, qi::_2, qi::_3, qi::_4, qi::_5)
+        phx::bind(&pushBackRange, qi::_val, qi::_1, qi::_2, qi::_3, qi::_4, qi::_5)
       ];
 }
 
 
 // --------------------------------------------------------
-void IdSliceGrammar::push_back_range(std::vector<std::string>& aResult, const std::string& aPrefix, const std::string& aFirst, const std::string& aLast, const boost::optional<int32_t>& aStep, const boost::optional<std::string>& aPostfix)
+void IdSliceGrammar::pushBackRange(std::vector<std::string>& aResult, const std::string& aPrefix, const std::string& aFirst, const std::string& aLast, const boost::optional<int32_t>& aStep, const boost::optional<std::string>& aPostfix)
 {
     
     const int32_t lFirstId = boost::lexical_cast<int32_t>(aFirst);
@@ -73,7 +73,6 @@ void IdSliceGrammar::push_back_range(std::vector<std::string>& aResult, const st
             
     std::ostringstream oss;
     
-
     for( int32_t i(lFirstId); (lLastId-i)/(float)lStep > 0 ; i += lStep) {
         // Reset stream
         oss.str("");
@@ -83,7 +82,6 @@ void IdSliceGrammar::push_back_range(std::vector<std::string>& aResult, const st
 
         aResult.push_back( oss.str());
 
-        // std::cout << "(" << lLastId << "-" << i <<")/" << lStep << "=" << (lLastId-i)/(float)lStep << std::endl;
     }
     
 }

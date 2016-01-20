@@ -16,7 +16,9 @@
 
 #include <vector>
 #include <string>
- 
+
+#include "swatch/core/exception.hpp"
+
 namespace swatch {
 namespace core {
 namespace toolbox {
@@ -25,6 +27,9 @@ struct IdSliceParser {
     static std::vector<std::string> parse( const std::string& aStringSlice );
     static std::vector<std::string> parseList( const std::string& aStringSlice );
 };
+
+DEFINE_SWATCH_EXCEPTION(FailedSliceParsing);
+DEFINE_SWATCH_EXCEPTION(FailedSliceListParsing);
 
 } // namespace toolbox 
 } // namespace core 

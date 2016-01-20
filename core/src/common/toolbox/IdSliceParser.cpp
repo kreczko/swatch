@@ -11,6 +11,7 @@
  * Created on November 16, 2015, 4:58 PM
  */
 
+
 #include "swatch/core/toolbox/IdSliceParser.hpp"
 
 // SWATCH Heaers
@@ -37,10 +38,12 @@ IdSliceParser::parse(const std::string& aStringSlice) {
 
       // Throw if slice not fully parsed
       if ( lBegin != lEnd ) {
-          std::cout << "Warning: part of the phrase was not parsed" << std::endl; 
-          std::ostream_iterator<char> out_it (std::cout,"");
-          std::copy ( lBegin, lEnd, out_it );
-          std::cout << std::endl;
+        std::ostringstream oss;
+        oss << "Slice parsing stopped after at character " << std::distance(aStringSlice.begin(), lBegin) << " : "; 
+        std::ostream_iterator<char> out_it (oss,"");
+        std::copy ( aStringSlice.begin(), lBegin, out_it );
+        std::copy ( lBegin, lEnd, out_it );
+        throw FailedSliceParsing(oss.str());
       }
 
   } else {
@@ -68,10 +71,12 @@ IdSliceParser::parseList(const std::string& aStringSlice)
 
       // Throw if slice not fully parsed
       if ( lBegin != lEnd ) {
-          std::cout << "Warning: part of the phrase was not parsed" << std::endl; 
-          std::ostream_iterator<char> out_it (std::cout,"");
-          std::copy ( lBegin, lEnd, out_it );
-          std::cout << std::endl;
+        std::ostringstream oss;
+        oss << "SliceList parsing stopped after at character " << std::distance(aStringSlice.begin(), lBegin) << " : "; 
+        std::ostream_iterator<char> out_it (oss,"");
+        std::copy ( aStringSlice.begin(), lBegin, out_it );
+        std::copy ( lBegin, lEnd, out_it );
+        throw FailedSliceListParsing(oss.str());
       }
 
   } else {
