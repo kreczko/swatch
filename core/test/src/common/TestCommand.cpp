@@ -178,8 +178,6 @@ BOOST_FIXTURE_TEST_CASE(TestCommandResetCorrectly,  CommandTestSetup) {
 
 
 //BOOST_FIXTURE_TEST_CASE(TestRunPrint,  CommandTestSetup) {
-//  LOG(kInfo) << "Running CommandTestSuite/TestRunPrint";
-//
 //  cmd.exec( params );
 //  do {
 //  } while ( (print.getState() == swatch::core::Command::kScheduled) || (print.getState() == swatch::core::Command::kRunning) );
@@ -194,7 +192,6 @@ BOOST_FIXTURE_TEST_CASE(TestCommandResetCorrectly,  CommandTestSetup) {
 //}
 //
 //BOOST_FIXTURE_TEST_CASE(TestRunNothing,  CommandTestSetup) {
-//  LOG(kInfo) << "Running CommandTestSuite/TestRunNothing";
 //  nothing.exec( params );
 //
 //  do {
@@ -207,7 +204,6 @@ BOOST_FIXTURE_TEST_CASE(TestCommandResetCorrectly,  CommandTestSetup) {
 //}
 //
 //BOOST_FIXTURE_TEST_CASE(TestRunError,  CommandTestSetup) {
-//  LOG(kInfo) << "Running CommandTestSuite/TestRunError";
 //  error.exec( params );
 //
 //  do {

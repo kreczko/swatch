@@ -134,8 +134,6 @@ Aborted
  *
  */
 //BOOST_FIXTURE_TEST_CASE(AngryPool, ThreadPoolSetup) {
-//  LOG(kInfo) << "Running ThreadPoolTestSuite/AngryPool";
-//
 //  // create thread pool with 2 threads
 //  // does not finish queue
 //  // does forcefully terminate running commands

@@ -37,7 +37,6 @@ using swatch::processor::test::DummyProcessor;
 BOOST_AUTO_TEST_SUITE( SystemConstructionTestSuite )
 
 BOOST_AUTO_TEST_CASE(BuildMiniSystem) {// this is not a test
-    LOG(kInfo) << "Running SystemConstructionTestSuite/BuildMiniSystem";
     // TODO: add actual tests
     using namespace boost::assign;
     using namespace swatch::core;
@@ -144,7 +143,6 @@ BOOST_AUTO_TEST_CASE(BuildMiniSystem) {// this is not a test
 }
 
 BOOST_AUTO_TEST_CASE(BuildFullCrate) {
-  LOG(kInfo) << "Running SystemConstructionTestSuite/BuildFullCrate";
     using namespace boost::assign;
     using namespace swatch::core;
     using namespace swatch::system;

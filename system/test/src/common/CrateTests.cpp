@@ -40,8 +40,8 @@ using swatch::processor::test::DummyProcessor;
 
 BOOST_AUTO_TEST_SUITE( CrateTestSuite )
 
-BOOST_AUTO_TEST_CASE(SlotCanOnlyBeTakenOnce) {
-  LOG(kInfo) << "Running CrateTestSuite/SlotCanOnlyBeTakenOnce";
+BOOST_AUTO_TEST_CASE(SlotCanOnlyBeTakenOnce)
+{
   CrateStub cs("crateA");
 	Crate* crate = new Crate(cs);
 
@@ -61,9 +61,8 @@ BOOST_AUTO_TEST_CASE(SlotCanOnlyBeTakenOnce) {
 	BOOST_CHECK_THROW(crate->add(p2), CrateSlotTaken);
 }
 
-BOOST_AUTO_TEST_CASE(SlotOutOfRange) {
-  LOG(kInfo) << "Running CrateTestSuite/SlotOutOfRange";
-
+BOOST_AUTO_TEST_CASE(SlotOutOfRange)
+{
   CrateStub cs("crateA");
 	Crate* crate = new Crate(cs);
 

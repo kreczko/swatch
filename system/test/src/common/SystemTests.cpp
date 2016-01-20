@@ -128,8 +128,8 @@ struct Params {
 
 BOOST_AUTO_TEST_SUITE( SystemTestSuite )
 
-BOOST_FIXTURE_TEST_CASE(BuildSystemWithDefaultCreator, Params){
-  LOG(kInfo) << "Running SystemTestSuite/BuildSystemWithDefaultCreator";
+BOOST_FIXTURE_TEST_CASE(BuildSystemWithDefaultCreator, Params)
+{
 //    swsys::System * system = swsys::SystemFactory::get()->make("swatch::system::SystemLoggingCreator", ps_system.get<xdata::String>("name"), ps_system);
     // swsys::System * system = swco::Factory::get()->make<swsys::System>("swatch::system::SystemLoggingCreator", ps_system.get<xdata::String>("name"), ps_system);
     swsys::System system(sysStub);
@@ -140,16 +140,16 @@ BOOST_FIXTURE_TEST_CASE(BuildSystemWithDefaultCreator, Params){
     // should be done in the respective Creator tests.
 }
 
-BOOST_FIXTURE_TEST_CASE(AddCrate, Params) {
-  LOG(kInfo) << "Running SystemTestSuite/AddCrate";
+BOOST_FIXTURE_TEST_CASE(AddCrate, Params)
+{
     emptyStub.crates.push_back(cA);
     swsys::System * system = new swsys::System(emptyStub);
     swsys::Crate * stored_crate = system->getObj<swsys::Crate>("crateA");
     BOOST_CHECK_EQUAL(cA.id, stored_crate->getId() );
 }
 
-BOOST_FIXTURE_TEST_CASE(AddCrateToMap, Params) {
-  LOG(kInfo) << "Running SystemTestSuite/AddCrateToMap";
+BOOST_FIXTURE_TEST_CASE(AddCrateToMap, Params)
+{
     swsys::Crate * crate = new swsys::Crate(cA);
     emptyStub.crates.push_back(cA);
     swsys::System * system = new swsys::System(emptyStub);
@@ -159,9 +159,8 @@ BOOST_FIXTURE_TEST_CASE(AddCrateToMap, Params) {
     BOOST_CHECK_EQUAL(is_crate_in_map, true );
 }
 
-BOOST_FIXTURE_TEST_CASE(AddCrateShouldNotOverwrite, Params) {
-  LOG(kInfo) << "Running SystemTestSuite/AddCrateShouldNotOverwrite";
-
+BOOST_FIXTURE_TEST_CASE(AddCrateShouldNotOverwrite, Params)
+{
   swpro::ProcessorStub sPro("MP-10");
   sPro.creator = "swatch::processor::test::DummyProcessor";
   sPro.crate = "crateA";
@@ -206,16 +205,17 @@ BOOST_FIXTURE_TEST_CASE(AddLinkNULLPointerShouldThrowException, Params) {
  */
 
 
-BOOST_FIXTURE_TEST_CASE(HasCrate, Params) {
+BOOST_FIXTURE_TEST_CASE(HasCrate, Params)
+{
     emptyStub.crates.push_back(cA);
     swsys::System * system = new swsys::System(emptyStub);
     BOOST_CHECK_EQUAL(system->hasCrate("crateA"), true );
     BOOST_CHECK_EQUAL(system->hasCrate("MyImaginaryCrate"), false );
 }
 
-BOOST_FIXTURE_TEST_CASE(AddAMC13Service, Params) {
-  LOG(kInfo) << "Running SystemTestSuite/AddAMC13Service";
 
+BOOST_FIXTURE_TEST_CASE(AddAMC13Service, Params)
+{
   emptyStub.crates.push_back(cA);
   emptyStub.daqttcs.push_back(dts);
   swsys::System system(emptyStub);
