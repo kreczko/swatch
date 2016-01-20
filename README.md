@@ -12,10 +12,18 @@ The user's guide for subsystem developers can be found here: https://twiki.cern.
 
 ## Run the unit tests 
 
-The tests are based on the boost unit test framework. You can run tests either for all of swatch, per subsystem or individually
+The tests are based on the boost unit test framework. Before running the unit tests, you can setup
+your `LD_LIBRARY_PATH` using `test/env.sh` as follows:
+~~~
+source test/env.sh
+~~~
+This script also sets the `BOOST_TEST_LOG_LEVEL` environment variable, so that the boost unit test 
+framework prints to the console at the start and end of each test suite/case. 
+
+You can run tests either for all of swatch, per subsystem or individually
  - all:
 ~~~
-./test/bin/boostTest.exe --log_level=message
+./test/bin/boostTest.exe
 ~~~
 
  - per subsystem (library)
@@ -25,7 +33,13 @@ The tests are based on the boost unit test framework. You can run tests either f
 
  - individual:
 ~~~
- ./test/bin/boostTest.exe --log_level=message --run_test=SystemTestSuite/BuildSystem
+ ./test/bin/boostTest.exe --run_test=SystemTestSuite/BuildSystem
+~~~
+
+You can change the log threshold for the boost unit test framework using the `--log_level` 
+command-line option; e.g. to display all messages (including each time that a check passes):
+~~~
+./test/bin/boostTest --log_level=all
 ~~~
 
 
