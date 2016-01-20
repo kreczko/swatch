@@ -59,6 +59,72 @@ BOOST_AUTO_TEST_CASE(IdSliceRangeException) {
   
 }
 
+//____________________________________________________________________________//
+BOOST_AUTO_TEST_CASE(SliceSyntaxParsingTests) {
+  std::cout << "ProcessorTestSuite.SliceSyntaxParsingTests" << std::endl;
+  std::vector<std::string> expected, returned;
+  
+  
+  // Very basic strings (no prefix / suffix)
+  expected = {"0", "1"};
+  returned = toolbox::IdSliceParser::parse("[0:2]");
+  BOOST_CHECK_EQUAL_COLLECTIONS(returned.begin(), returned.end(), expected.begin(), expected.end());
+  returned = toolbox::IdSliceParser::parse("[0:2:1]");
+  BOOST_CHECK_EQUAL_COLLECTIONS(returned.begin(), returned.end(), expected.begin(), expected.end());
+  
+  expected = {"0", "3", "6"};
+  returned = toolbox::IdSliceParser::parse("[0:7:3]");
+  BOOST_CHECK_EQUAL_COLLECTIONS(returned.begin(), returned.end(), expected.begin(), expected.end());
+  returned = toolbox::IdSliceParser::parse("[0:9:3]");
+  BOOST_CHECK_EQUAL_COLLECTIONS(returned.begin(), returned.end(), expected.begin(), expected.end());
+
+  expected = {"12", "24", "36"};
+  returned = toolbox::IdSliceParser::parse("[12:37:12]");
+  BOOST_CHECK_EQUAL_COLLECTIONS(returned.begin(), returned.end(), expected.begin(), expected.end());
+  returned = toolbox::IdSliceParser::parse("[12:48:12]");
+  BOOST_CHECK_EQUAL_COLLECTIONS(returned.begin(), returned.end(), expected.begin(), expected.end());
+
+
+  // Very basic strings, decreasing numbers
+  expected = {"12", "11", "10"};
+  returned = toolbox::IdSliceParser::parse("[12:9:-1]");
+  BOOST_CHECK_EQUAL_COLLECTIONS(returned.begin(), returned.end(), expected.begin(), expected.end());
+  
+  expected = {"12", "09", "06"};
+  returned = toolbox::IdSliceParser::parse("[12:3:-3]");
+  BOOST_CHECK_EQUAL_COLLECTIONS(returned.begin(), returned.end(), expected.begin(), expected.end());
+  returned = toolbox::IdSliceParser::parse("[12:5:-3]");
+  BOOST_CHECK_EQUAL_COLLECTIONS(returned.begin(), returned.end(), expected.begin(), expected.end());
+
+
+  // Very basic strings (no prefix / suffix), fixed width
+  expected = {"00", "01"};
+  returned = toolbox::IdSliceParser::parse("[00:2]");
+  BOOST_CHECK_EQUAL_COLLECTIONS(returned.begin(), returned.end(), expected.begin(), expected.end());
+  returned = toolbox::IdSliceParser::parse("[0:02]");
+  BOOST_CHECK_EQUAL_COLLECTIONS(returned.begin(), returned.end(), expected.begin(), expected.end());
+  
+  
+  // Strings with prefix + suffix
+  expected = {"abc_rx00_def", "abc_rx05_def", "abc_rx10_def"};
+  returned = toolbox::IdSliceParser::parse("abc_rx[0:15:5]_def");
+  BOOST_CHECK_EQUAL_COLLECTIONS(returned.begin(), returned.end(), expected.begin(), expected.end());
+  
+  
+  // Finally, strings that don't contain port slice syntax
+  expected = {"abc[0]def"};
+  returned = toolbox::IdSliceParser::parse("abc[0]def");
+  BOOST_CHECK_EQUAL_COLLECTIONS(returned.begin(), returned.end(), expected.begin(), expected.end());
+
+  expected = {"abc[0:2:3:4]def"};
+  returned = toolbox::IdSliceParser::parse("abc[0:2:3:4]def");
+  BOOST_CHECK_EQUAL_COLLECTIONS(returned.begin(), returned.end(), expected.begin(), expected.end());
+  
+  expected = {"[a:b:c]"};
+  returned = toolbox::IdSliceParser::parse("[a:b:c]");
+  BOOST_CHECK_EQUAL_COLLECTIONS(returned.begin(), returned.end(), expected.begin(), expected.end());
+
+}
 
 BOOST_AUTO_TEST_SUITE_END() // ObjectTestSuite
 

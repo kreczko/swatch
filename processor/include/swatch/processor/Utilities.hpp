@@ -26,13 +26,19 @@ ProcessorStub treeToProcessorStub(const boost::property_tree::ptree& aPTree);
 void treeToLinkStub(const boost::property_tree::ptree& aPTree, std::vector<LinkStub>& aLinkStubs);
 
 
-void expandLinkSliceSyntax(const std::string& aName, const std::string& aSrc, const std::string& aDst, std::vector<LinkStub>& aLinkStubs);
+//void expandLinkSliceSyntax(const std::string& aName, const std::string& aSrc, const std::string& aDst, std::vector<LinkStub>& aLinkStubs);
 
 
-void expandPortSliceSyntax(const std::string& aName, const std::string& aIndex, std::vector<ProcessorPortStub>& aPortStubs);
+//void expandPortSliceSyntax(const std::string& aName, const std::string& aIndex, std::vector<ProcessorPortStub>& aPortStubs);
 
 
-std::vector<std::string> expandPortSliceSyntax(const std::string& aString);
+void pushBackPortStubs(std::vector<ProcessorPortStub>& aPortStubs, const std::string& aName, const std::string& aIndex);
+
+
+void pushBackLinkStubs(std::vector<LinkStub>& aLinkStubs, const std::string& aName, const std::string& aSrc, const std::string& aDst);
+
+
+//std::vector<std::string> expandPortSliceSyntax(const std::string& aString);
 
 
 } // namespace processor

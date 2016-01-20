@@ -52,6 +52,38 @@ IdSliceParser::parse(const std::string& aStringSlice) {
 }
 
 
+std::vector<std::string> 
+IdSliceParser::parseList(const std::string& aStringSlice)
+{
+  namespace qi = boost::spirit::qi;
+  namespace ascii = boost::spirit::ascii;
+  
+  std::string::const_iterator lBegin(aStringSlice.begin()), lEnd(aStringSlice.end());
+
+  IdSliceListGrammar lGrammar;
+  
+  std::vector<std::string> lIds;
+  bool success = qi::phrase_parse ( lBegin , lEnd , lGrammar , ascii::space , lIds );
+  if ( success ) {
+
+      // Throw if slice not fully parsed
+      if ( lBegin != lEnd ) {
+          std::cout << "Warning: part of the phrase was not parsed" << std::endl; 
+          std::ostream_iterator<char> out_it (std::cout,"");
+          std::copy ( lBegin, lEnd, out_it );
+          std::cout << std::endl;
+      }
+
+  } else {
+    // TODO: Should throw here
+    return std::vector<std::string>();
+  }
+      
+  return lIds;
+}
+
+
+
 } // namespace toolbox 
 } // namespace core 
 } // namespace swatch

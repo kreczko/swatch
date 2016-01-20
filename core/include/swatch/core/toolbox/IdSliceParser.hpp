@@ -23,6 +23,7 @@ namespace toolbox {
     
 struct IdSliceParser {
     static std::vector<std::string> parse( const std::string& aStringSlice );
+    static std::vector<std::string> parseList( const std::string& aStringSlice );
 };
 
 } // namespace toolbox 

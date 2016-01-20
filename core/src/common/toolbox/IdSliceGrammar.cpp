@@ -36,25 +36,10 @@ IdSliceGrammar::IdSliceGrammar() :
   namespace qi = boost::spirit::qi;
   namespace phx = boost::phoenix;
 
-  mQuery = mElement % ',';
-  mElement = (mRange | mLiteral);
+  mQuery = (mRange | mLiteral);
   mLiteral = *(qi::char_ - ',' - '[' - ':' - ']');
   mNumber = *(qi::char_("0-9"));
-  // mStep = *(qi::char_("0-9"));
   mStep = qi::int_;
-//  mRange =
-//      (mLiteral >> '[' >> mNumber >> ':' >> mNumber >> ']' >> -mLiteral)[
-//        phx::try_ [
-//          phx::bind(&push_back_range, qi::_val, qi::_1, qi::_4, qi::_2, qi::_3)
-//        ] .catch_<InvalidSliceRange>() [
-//          std::cout << phx::val(""),
-//          phx::throw_()
-//        ] .catch_all [
-//          qi::_pass = false
-//        ]
-//      ];
-
-  
   
   mRange =
       (mLiteral >> '[' >> mNumber >> ':' >> mNumber >> -(':' >> mStep) >> ']' >> mLiteral )[
@@ -75,7 +60,7 @@ void IdSliceGrammar::push_back_range(std::vector<std::string>& aResult, const st
     
     // Step 0? Not good 
     if ( !lStep )  {
-      throw InvalidSliceStep("Step=0 not allowed");
+      throw InvalidSliceStep("Invalid step 0");
     }
 
     // Check that the loop is not infinite 
@@ -102,6 +87,19 @@ void IdSliceGrammar::push_back_range(std::vector<std::string>& aResult, const st
     }
     
 }
+
+
+IdSliceListGrammar::IdSliceListGrammar() :
+  IdSliceListGrammar::base_type(mQuery)
+{
+  namespace qi = boost::spirit::qi;
+  namespace phx = boost::phoenix;
+  
+  mQuery = mElement % ',';
+  mElement = (mRange | mLiteral);
+  mLiteral = *(qi::char_ - ',' - '[' - ':' - ']');
+}
+
 
 
 } // namespace toolbox 

@@ -69,14 +69,46 @@ int main(int argc, char** argv)
     }
   }
 
-  // Test2
+  
   {
-    std::string bbb = "Rx10,Tx11, Tx[01:15], zz[9:14]xx, kk[1:10:5], oo[10:1:-2]";
-
+    std::string bbb = "Rx10";
+    
     std::cout << "Kazabum! " << bbb << std::endl;
 
     std::string::const_iterator lBegin(bbb.begin()), lEnd(bbb.end());
     swatch::core::toolbox::IdSliceGrammar lMyGrammar;
+
+    std::vector<std::string> lIds;
+    bool notDisaster = qi::phrase_parse(lBegin, lEnd, lMyGrammar, ascii::space, lIds);
+    if (notDisaster) {
+      std::cout << "Parsing didn't fail: " << lIds.size() << " obj generated" << std::endl;
+      std::cout << *lBegin << " -> "  << *lEnd << std::endl;
+
+      BOOST_FOREACH(std::string i, lIds)
+      {
+        std::cout << i << " ";
+      }
+      std::cout << std::endl;
+
+      if (lBegin != lEnd) {
+        std::cout << "Warning: part of the phrase was not parsed" << std::endl;
+        std::ostream_iterator<char> out_it(std::cout, "");
+        std::copy(lBegin, lEnd, out_it);
+        std::cout << std::endl;
+      }
+    } else {
+      std::cout << "pizello" << std::endl;
+    }
+
+  }
+  // Test3
+  {
+    std::string ccc = "Rx10,Tx11, Tx[01:15], zz[9:14]xx, kk[1:10:5], oo[10:1:-2]";
+
+    std::cout << "Kazabum! " << ccc << std::endl;
+
+    std::string::const_iterator lBegin(ccc.begin()), lEnd(ccc.end());
+    swatch::core::toolbox::IdSliceListGrammar lMyGrammar;
 
     std::vector<std::string> lIds;
     bool notDisaster = qi::phrase_parse(lBegin, lEnd, lMyGrammar, ascii::space, lIds);

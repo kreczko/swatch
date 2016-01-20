@@ -23,7 +23,7 @@ struct IdSliceGrammar : boost::spirit::qi::grammar<std::string::const_iterator, 
     IdSliceGrammar();
      
     boost::spirit::qi::rule<std::string::const_iterator, std::vector<std::string>(), boost::spirit::ascii::space_type > mQuery;
-    boost::spirit::qi::rule<std::string::const_iterator, std::vector<std::string>(), boost::spirit::ascii::space_type > mElement;
+//    boost::spirit::qi::rule<std::string::const_iterator, std::vector<std::string>(), boost::spirit::ascii::space_type > mElement;
     boost::spirit::qi::rule<std::string::const_iterator, std::string(), boost::spirit::ascii::space_type> mLiteral;
     boost::spirit::qi::rule<std::string::const_iterator, std::string(), boost::spirit::ascii::space_type> mNumber;
     boost::spirit::qi::rule<std::string::const_iterator, int32_t(), boost::spirit::ascii::space_type> mStep;
@@ -35,6 +35,15 @@ struct IdSliceGrammar : boost::spirit::qi::grammar<std::string::const_iterator, 
 
 DEFINE_SWATCH_EXCEPTION(InvalidSliceStep);
 DEFINE_SWATCH_EXCEPTION(InvalidSliceRange);
+
+struct IdSliceListGrammar : boost::spirit::qi::grammar<std::string::const_iterator, std::vector<std::string>(), boost::spirit::ascii::space_type > {
+  IdSliceListGrammar();
+  
+  boost::spirit::qi::rule<std::string::const_iterator, std::vector<std::string>(), boost::spirit::ascii::space_type > mQuery;
+  boost::spirit::qi::rule<std::string::const_iterator, std::vector<std::string>(), boost::spirit::ascii::space_type > mElement;
+  boost::spirit::qi::rule<std::string::const_iterator, std::string(), boost::spirit::ascii::space_type> mLiteral;
+  IdSliceGrammar mRange;
+};
  
 } // namespace tools
 } // namespace core
