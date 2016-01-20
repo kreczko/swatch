@@ -217,7 +217,7 @@ SystemTransition& SystemTransition::add(const std::vector<StateMachine::Transiti
 
 void SystemTransition::checkForMissingParameters(const GateKeeper& aGateKeeper, std::map<const StateMachine::Transition*, std::vector<CommandVec::MissingParam> >& aMissingParams) const
 {
-  checkForMissingParameters(aGateKeeper, aMissingParams, lockMutexes<>(mStatusMap.begin(), mStatusMap.end()));
+  checkForMissingParameters(aGateKeeper, aMissingParams, mStatusMap.lockMutexes());
 }
 
 
@@ -251,7 +251,7 @@ void SystemTransition::exec(const GateKeeper& aGateKeeper, const bool& aUseThrea
   {
     // Put the actionable status mutexes into lock guards before doing anything
     // (even checkForMissingParameters relies on status member data - enabled/disabled flag)
-    ActionableStatusGuardMap_t lStatusGuardMap = lockMutexes<>(mStatusMap.begin(), mStatusMap.end());
+    ActionableStatusGuardMap_t lStatusGuardMap = mStatusMap.lockMutexes();
 
     // 0) Throw if any parameters are missing from gatekeeper
     std::map<const StateMachine::Transition*, std::vector<CommandVec::MissingParam> > lMissingParams;
@@ -545,7 +545,7 @@ SystemTransition& SystemStateMachine::addTransition(const std::string& aTransiti
 //------------------------------------------------------------------------------------
 void SystemStateMachine::reset(const GateKeeper& aGateKeeper)
 {
-  ActionableStatusGuardMap_t lGuardMap = lockMutexes();
+  ActionableStatusGuardMap_t lGuardMap = mStatusMap.lockMutexes();
   const ActionableStatusGuard& lGuard = *lGuardMap.at(&getActionable());
 
   // Throw if system/children are not in this state machine or running transition
@@ -584,7 +584,7 @@ void SystemStateMachine::reset(const GateKeeper& aGateKeeper)
 //------------------------------------------------------------------------------------
 void SystemStateMachine::engage(const GateKeeper& aGateKeeper)
 {
-  ActionableStatusGuardMap_t lGuardMap = lockMutexes();
+  ActionableStatusGuardMap_t lGuardMap = mStatusMap.lockMutexes();
   const ActionableStatusGuard& lSysGuard = *lGuardMap.at(&getActionable());
   ActionableStatus& lSysStatus = mStatusMap.getSystemStatus();
 
@@ -629,7 +629,7 @@ void SystemStateMachine::engage(const GateKeeper& aGateKeeper)
 //------------------------------------------------------------------------------------
 void SystemStateMachine::disengage()
 {
-  ActionableStatusGuardMap_t lGuardMap = lockMutexes();
+  ActionableStatusGuardMap_t lGuardMap = mStatusMap.lockMutexes();
   const ActionableStatusGuard& lSysGuard = *lGuardMap.at(&getActionable());
   
   // Throw if system/children are not in this state machine or running transition
@@ -656,13 +656,6 @@ void SystemStateMachine::disengage()
       lChildStatus.setNoStateMachine(lChildGuard);
     }
   }  
-}
-
-
-//------------------------------------------------------------------------------------
-ActionableStatusGuardMap_t SystemStateMachine::lockMutexes() const
-{
-  return ::swatch::core::lockMutexes<>(mStatusMap.begin(), mStatusMap.end());
 }
 
 

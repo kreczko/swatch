@@ -236,9 +236,6 @@ public:
   
 private:
   
-  //TODO: move to ActionableSystem::StatusContainer ??
-  ActionableStatusGuardMap_t lockMutexes() const;
-  
   //! Throws if system is not engaged in this state machine, or running transition; does NOT check children.
   void checkEngagedAndNotInTransition(const ActionableStatusGuard& aGuard, const std::string& aAction) const;
 

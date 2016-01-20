@@ -79,14 +79,10 @@ ActionableStatus& ActionableSystem::StatusContainer::getStatus(const ActionableO
   return *mStatusMap.at(&aChild);
 }
 
-ActionableSystem::StatusContainer::iterator ActionableSystem::StatusContainer::begin()
-{
-  return mStatusMap.cbegin();
-}
 
-ActionableSystem::StatusContainer::iterator ActionableSystem::StatusContainer::end()
+ActionableStatusGuardMap_t ActionableSystem::StatusContainer::lockMutexes() const
 {
-  return mStatusMap.cend();
+  return swatch::core::lockMutexes<>(mStatusMap.cbegin(), mStatusMap.cend());
 }
 
 

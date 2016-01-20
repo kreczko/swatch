@@ -60,11 +60,12 @@ public:
     ActionableStatus& getSystemStatus();
     ActionableStatus& getStatus(const ActionableObject& aChild );
 
-    typedef std::map<const MonitorableObject*, ActionableStatus*>::const_iterator iterator;
-
-    iterator begin();
-    iterator end();
-
+    /*! 
+     * @brief Locks the mutexes for ActionableStatus object of the the system and all children known to this container.
+     * @returns map containing the guards for all locked status objects; key is pointer to the associated actionable system/object
+     */
+    ActionableStatusGuardMap_t lockMutexes() const;
+    
   private:
     ActionableStatus& mSysStatus;
     std::map<const MonitorableObject*, ActionableStatus*> mStatusMap;
