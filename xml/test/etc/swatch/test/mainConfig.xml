@@ -1,0 +1,7 @@
+<db>
+  <key id="MyDummyKey">
+    <load module="file://xml/test/etc/swatch/test/sub1.xml" />
+    <load module="file://xml/test/etc/swatch/test/sub2.xml" />
+    <load module="file://xml/test/etc/swatch/test/sub3.xml" />
+  </key>
+</db>

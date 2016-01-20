@@ -1,0 +1,7 @@
+<module>
+  <table id="system.processors">
+    <entry id="resetBoard.clockSource" type="string">external</entry>
+    <!--- many more entries -->
+  </table>
+  <!-- In practice, many more tables -->
+</module>

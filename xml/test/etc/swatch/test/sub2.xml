@@ -1,0 +1,12 @@
+<module>
+  <table id="system.processors">
+    <entry id="electronLookUpTable" type="vector:int">56, 345, 954, 310</entry>
+    <!--- many more entries -->
+  </table>
+  <table id="system.processor1">
+    <state id="Halted">
+      <mon-obj id="ports.Rx01" status="non-critical" />
+    </state>
+  </table>
+  <!-- In practice, many more tables -->
+</module>
