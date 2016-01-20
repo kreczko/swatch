@@ -87,6 +87,7 @@ void IdSliceGrammar::pushBackRange(std::vector<std::string>& aResult, const std:
 }
 
 
+// --------------------------------------------------------
 IdSliceListGrammar::IdSliceListGrammar() :
   IdSliceListGrammar::base_type(mQuery)
 {
