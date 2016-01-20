@@ -118,6 +118,8 @@ BOOST_AUTO_TEST_CASE(SliceSyntaxParsingTests) {
   
   BOOST_CHECK_THROW(toolbox::IdSliceParser::parse("[a:b:c]"), swatch::core::toolbox::FailedSliceParsing);
 
+  BOOST_CHECK_THROW(toolbox::IdSliceParser::parse("abc0:4]"), swatch::core::toolbox::FailedSliceParsing);
+toolbox::IdSliceParser::parse("Rx00:80]");
 }
 
 BOOST_AUTO_TEST_SUITE_END() // ObjectTestSuite

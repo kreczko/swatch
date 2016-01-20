@@ -23,7 +23,6 @@ struct IdSliceGrammar : boost::spirit::qi::grammar<std::string::const_iterator, 
     IdSliceGrammar();
      
     boost::spirit::qi::rule<std::string::const_iterator, std::vector<std::string>(), boost::spirit::ascii::space_type > mQuery;
-//    boost::spirit::qi::rule<std::string::const_iterator, std::vector<std::string>(), boost::spirit::ascii::space_type > mElement;
     boost::spirit::qi::rule<std::string::const_iterator, std::string(), boost::spirit::ascii::space_type> mLiteral;
     boost::spirit::qi::rule<std::string::const_iterator, std::string(), boost::spirit::ascii::space_type> mNumber;
     boost::spirit::qi::rule<std::string::const_iterator, int32_t(), boost::spirit::ascii::space_type> mStep;

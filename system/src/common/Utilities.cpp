@@ -66,54 +66,39 @@ treeToCrateStub(const boost::property_tree::ptree& aPTree) {
 
 //---
 swatch::system::SystemStub 
-treeToSystemPars( const boost::property_tree::ptree& aPTree )
+treeToSystemStub( const boost::property_tree::ptree& aPTree )
 {
     using boost::property_tree::ptree;
     using boost::property_tree::json_parser::read_json;
 
 
-//    XParameterSet sysPars;
-
     const ptree &pt_system = aPTree.get_child("SYSTEM");
     SystemStub aStub(pt_system.get<std::string>("NAME"));
     aStub.loggerName = aStub.id;
-//    sysPars.add("name", xdata::String(pt_system.get<std::string>("NAME")));
     aStub.creator = pt_system.get<std::string>("CREATOR");
 
-//    xdata::Vector<XParameterSet> crateSets;
-//    std::vector<CrateStub> crateStubs; 
     BOOST_FOREACH( const ptree::value_type &v, pt_system.get_child("CRATES")) {
-//      CrateStub cStubs = swatch::system::treeToCratePars(v.second);
       aStub.crates.emplace_back(
         swatch::system::treeToCrateStub(v.second)
       );
     }
-//    sysPars.add("crates", crateSets);
     
-//    xdata::Vector<XParameterSet> processorSets;
     BOOST_FOREACH( const ptree::value_type &v, pt_system.get_child("PROCESSORS")) {
       swatch::processor::ProcessorStub lProcStub(swatch::processor::treeToProcessorStub(v.second));
       lProcStub.loggerName = aStub.id + "." + lProcStub.id;
       aStub.processors.emplace_back(lProcStub);
     }
-//    sysPars.add("processors",processorSets);
 
-//    xdata::Vector<XParameterSet> daqTTCSets;
     BOOST_FOREACH( const ptree::value_type &v, pt_system.get_child("DAQTTCS")) {
-//        core::XParameterSet amc13Set = swatch::system::treeToDaqTTCPars(v.second);
-//        daqTTCSets.push_back(amc13Set);
         swatch::dtm::DaqTTCStub lDaqTTCStub(swatch::dtm::treeToDaqTTCStub(v.second));
         lDaqTTCStub.loggerName = aStub.id + "." + lDaqTTCStub.id;
         aStub.daqttcs.emplace_back(lDaqTTCStub);
     }
-//    sysPars.add("daqttcs",daqTTCSets);
 
     
-//    xdata::Vector<processor::LinkBag> linkBags;
     BOOST_FOREACH( const ptree::value_type& v, pt_system.get_child("LINKS")) {
         swatch::processor::treeToLinkStub(v.second, aStub.links);
     }
-//    sysPars.add("links", linkBags);
     
     /* Enable if need services
     xdata::Vector<XParameterSet> serviceSets;

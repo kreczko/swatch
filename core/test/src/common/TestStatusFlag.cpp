@@ -15,9 +15,9 @@ BOOST_AUTO_TEST_CASE(StatusFlagStreamNoNamespace)
 {
   BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(swatch::core::kError) , "Error" );
 
-  std::ostringstream oss;
-  oss << swatch::core::kError;
-  BOOST_CHECK_EQUAL( oss.str(), "Error" );
+  std::ostringstream msg;
+  msg << swatch::core::kError;
+  BOOST_CHECK_EQUAL( msg.str(), "Error" );
 } 
 
 

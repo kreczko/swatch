@@ -26,7 +26,7 @@ DaqTTCStub treeToDaqTTCStub( const boost::property_tree::ptree& t );
 namespace swatch {
 namespace system {
 
-SystemStub treeToSystemPars( const boost::property_tree::ptree& t );
+SystemStub treeToSystemStub( const boost::property_tree::ptree& t );
 
 CrateStub treeToCrateStub( const boost::property_tree::ptree& t );
 

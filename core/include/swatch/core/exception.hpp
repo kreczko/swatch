@@ -75,9 +75,6 @@ protected:
     //! Thread ID in which the exception was thrown
     boost::thread::id mThreadId;
 
-    //! Time at which the exception was thrown
-    timeval mTime;
-
     //! Description of the exception
     std::string mWhat;
 };

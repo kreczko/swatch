@@ -28,10 +28,10 @@ BOOST_AUTO_TEST_CASE(SliceSyntaxPortStubTests){
   size_t j=10;
   for(size_t i=0; i<10; i++, j+=5)
   {
-    std::ostringstream oss;
-    oss << "myPort_rx" << std::setw(2) << std::setfill('0') << i;
+    std::ostringstream msg;
+    msg << "myPort_rx" << std::setw(2) << std::setfill('0') << i;
     
-    ProcessorPortStub b(oss.str());
+    ProcessorPortStub b(msg.str());
     b.number = j;   
     expected.push_back(b);
   }

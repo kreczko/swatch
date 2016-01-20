@@ -38,12 +38,11 @@ IdSliceParser::parse(const std::string& aStringSlice) {
 
       // Throw if slice not fully parsed
       if ( lBegin != lEnd ) {
-        std::ostringstream oss;
-        oss << "Slice parsing stopped after at character " << std::distance(aStringSlice.begin(), lBegin) << " : "; 
-        std::ostream_iterator<char> out_it (oss,"");
-        std::copy ( aStringSlice.begin(), lBegin, out_it );
-        std::copy ( lBegin, lEnd, out_it );
-        throw FailedSliceParsing(oss.str());
+        std::ostringstream msg;
+        std::ostream_iterator<char> out_it (msg,"");
+        msg << "Slice parsing stopped at position " << std::distance(aStringSlice.begin(), lBegin) << " of string '" << aStringSlice << "'";
+
+        throw FailedSliceParsing(msg.str());
       }
 
   } else {
@@ -71,12 +70,10 @@ IdSliceParser::parseList(const std::string& aStringSlice)
 
       // Throw if slice not fully parsed
       if ( lBegin != lEnd ) {
-        std::ostringstream oss;
-        oss << "SliceList parsing stopped after at character " << std::distance(aStringSlice.begin(), lBegin) << " : "; 
-        std::ostream_iterator<char> out_it (oss,"");
-        std::copy ( aStringSlice.begin(), lBegin, out_it );
-        std::copy ( lBegin, lEnd, out_it );
-        throw FailedSliceListParsing(oss.str());
+        std::ostringstream msg;
+        msg << "SliceList parsing stopped at position " << std::distance(aStringSlice.begin(), lBegin) << " of string '" << aStringSlice << "'"; 
+
+        throw FailedSliceListParsing(msg.str());
       }
 
   } else {

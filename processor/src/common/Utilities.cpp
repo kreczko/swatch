@@ -10,6 +10,7 @@
 
 // C++ headers
 #include <iomanip>
+#include <sstream>
 
 // boost headers
 #include "boost/foreach.hpp"
@@ -33,17 +34,7 @@ treeToProcessorStub(const boost::property_tree::ptree& aPTree)
 {
   
     // Fill the stub with basic info
-    /*
-    ProcessorStub pstub;
-    pstub.name         = t.get<std::string>("PROCESSOR NAME");
-    pstub.hwtype       = t.get<std::string>("HARDWARE TYPE");
-    pstub.creator      = t.get<std::string>("PROCESSOR CREATOR");
-    pstub.uri          = t.get<std::string>("URI");
-    pstub.addressTable = t.get<std::string>("ADDRESS TABLE");
-    pstub.crate        = t.get<std::string>("CRATE NAME");
-    pstub.slot         = t.get<uint32_t>("CRATE SLOT");
-     */
-  
+ 
   
     ProcessorStub pStub(aPTree.get<std::string>("NAME"));
     pStub.creator      = aPTree.get<std::string>("CREATOR");
@@ -57,30 +48,29 @@ treeToProcessorStub(const boost::property_tree::ptree& aPTree)
     // Iterate over rx ports list
     BOOST_FOREACH(const boost::property_tree::ptree::value_type& rxPortInfo, aPTree.get_child("RX PORTS"))
     {
-//      expandPortSliceSyntax(rxPortInfo.second.get<std::string>("NAME"), rxPortInfo.second.get<std::string>("PID"), pStub.rxPorts);
-      pushBackPortStubs(pStub.rxPorts, rxPortInfo.second.get<std::string>("NAME"), rxPortInfo.second.get<std::string>("PID"));
+      try {
+        pushBackPortStubs(pStub.rxPorts, rxPortInfo.second.get<std::string>("NAME"), rxPortInfo.second.get<std::string>("PID"));
+      } catch ( const core::toolbox::FailedSliceParsing &e ) {
+        std::ostringstream msg;
+        msg << "Failed to parse processor '" << pStub.id << "' rx ports" << std::endl;
+        msg << "Details: " << e.what();
+        throw FailedJSONParsing( msg.str() );
+      }
     }
     
     // Iterate over tx ports list
     BOOST_FOREACH(const boost::property_tree::ptree::value_type& txPortInfo, aPTree.get_child("TX PORTS"))
     {
-//      expandPortSliceSyntax(txPortInfo.second.get<std::string>("NAME"), txPortInfo.second.get<std::string>("PID"), pStub.txPorts);
-      pushBackPortStubs(pStub.txPorts, txPortInfo.second.get<std::string>("NAME"), txPortInfo.second.get<std::string>("PID"));
+      try { 
+        pushBackPortStubs(pStub.txPorts, txPortInfo.second.get<std::string>("NAME"), txPortInfo.second.get<std::string>("PID"));
+      } catch ( const core::toolbox::FailedSliceParsing &e ) {
+        std::ostringstream msg;
+        msg << "Failed to parse processor '" << pStub.id << "' tx ports" << std::endl;
+        msg << "Details: " << e.what();
+        throw FailedJSONParsing( msg.str() );
+      }
     }
     
-    /*
-    // Finally, make the processor bag
-    ProcessorBag pbag;
-    pbag.bag = pstub;
-
-    // Store the bag in the XParameterSet
-    swatch::core::XParameterSet procSet;
-    procSet.add("name", pbag.bag.name);
-    procSet.add("class", pbag.bag.creator);
-    procSet.add("stub", pbag);
-    
-    return procSet;
-     */
     return pStub;
 }
 
@@ -106,10 +96,7 @@ void pushBackPortStubs(std::vector<ProcessorPortStub>& aPortStubs, const std::st
     throw std::runtime_error(boost::lexical_cast<std::string>(names.size()) + " port names created from name \"" + aName + "\" using slice syntax, but " + boost::lexical_cast<std::string>(indices.size()) + " indices created from \"" + aIndex + "\"");
 
   for (size_t i = 0; i < names.size(); i++) {
-    /* TO DELETE
-    ProcessorPortStub b;
-    b.name = names.at(i);
-     */
+
     ProcessorPortStub b(names.at(i));
     b.number = boost::lexical_cast<unsigned>(indices.at(i));
     aPortStubs.push_back(b);
