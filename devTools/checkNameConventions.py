@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 # coding=utf-8
 
+'''
+checkNameConventions.py - Finds names of classes, parameters, and variables that don't follow the SWATCH naming conventions (see docs/CONTRIBUTE.md)
+N.B. Requires the cppcheckdata python module
+USAGE: checkNameConventions.py <names of cppcheck dump files>
+'''
+
+
 import re
 import sys
-
-import cppcheckdata
-
 
 
 class Inspector:
@@ -193,6 +197,18 @@ class VariableInspector(Inspector):
                 
 
 inspectors = [NamespaceInspector(), ClassNameInspector(), FunctionNameInspector(), VariableInspector()]
+
+
+if "-h" in sys.argv[1:]:
+    print __doc__
+    sys.exit(0)
+elif "--help" in sys.argv[1:]:
+    print __doc__
+    sys.exit(0)
+
+
+import cppcheckdata
+
 
 for arg in sys.argv[1:]:
    print "\n---> FILE:", arg

@@ -2,8 +2,8 @@
 # coding=utf-8
 
 '''
-find_bad_typedefs.py  - Finds typedefs whose names don't conform to CamelCase_t rule
-USAGE: find_bad_typedefs.py <filenames>
+findBadTypedefNames.py  - Finds typedefs whose names don't conform to CamelCase_t rule
+USAGE: findBadTypedefNames.py <filenames>
 '''
 
 import re
@@ -36,7 +36,12 @@ if __name__ == "__main__":
         print "ERROR: Incorrect usage!"
         print __doc__
         sys.exit(1)
-
+    elif "-h" in sys.argv[1:]:
+        print __doc__
+        sys.exit(0)
+    elif "--help" in sys.argv[1:]:
+        print __doc__
+        sys.exit(0)
 
     filenames = sys.argv[1:]
     nr_typedefs_total = 0
