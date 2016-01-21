@@ -27,7 +27,7 @@ Name conventions:
    - non-constant global/static variable = s
    - class/struct private member variable = m
    - Exception: class/struct public member variable have no prefix
-   -. Examples: ```lLocalVariable, aParameterVariable, mClassMemberVariable```
+   - Examples: ```lLocalVariable, aParameterVariable, mClassMemberVariable```
  * methods: camel case starting with lower case. Example: ```getMeSomething();```
  * classes and enum types: camel case starting with upper case. Example: ```MyAwesomeFritter```
  * typedefs: Same as classes, but with `_t` suffix. Example: ```MyType_t```
