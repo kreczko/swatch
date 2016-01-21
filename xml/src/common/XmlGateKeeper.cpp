@@ -1,4 +1,5 @@
 #include "swatch/xml/XmlGateKeeper.hpp"
+#include "swatch/xml/XmlReader.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -30,15 +31,8 @@ XmlGateKeeper::XmlGateKeeper(const std::string& aFileName, const std::string& aK
   mLogger(swatch::logger::Logger::getInstance("swatch.xml.XmlGateKeeper"))
 {
   pugi::xml_document lXmlDoc;
-  pugi::xml_parse_result lLoadResult = lXmlDoc.load_file(mFileName.c_str());
-
-  if (not lLoadResult) {
-    LOG(swatch::logger::kError) << "Error reading XML file '" << aFileName
-        << "'. Details: " << lLoadResult.description() << std::endl;
-    throw XmlFileError(
-        "Error reading XML file '" + aFileName + "' : "
-            + lLoadResult.description());
-  }
+  XmlReader lReader;
+  lXmlDoc.load(lReader.readXmlConfig(mFileName).c_str());
 
   readXmlDocument(lXmlDoc, aKey);
 }
