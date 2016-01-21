@@ -18,11 +18,25 @@ This section introduces the core team members.
 * unit testing: http://alexott.net/en/cpp/CppTestingIntro.html
 
 ## Naming and Code style
+
+Name conventions:
  * variables: camel case starting with lower case. First letter denotes the namespace (local variabe = l, function parameter = a, class member variable = m). Examples: ```lLocalVariable, aParameterVariable, mClassMemberVariable```
  * methods: camel case starting with lower case. Example: ```getMeSomething();```
  * classes: camel case starting with upper case. Example: ```MyAwesomeFritter```
- * custom types: ```MyType_t```
- * code style: K&R (https://en.wikipedia.org/wiki/Indent_style#K.26R_style), as provided by most IDEs, with line wrapping at 120 characters.
+ * typedefs: Same as classes, but with `_t` suffix. Example: ```MyType_t```
+
+Code style:
+ * Indentation & braces: 
+   - K&R (https://en.wikipedia.org/wiki/Indent_style#K.26R_style), as provided by most IDEs. Basic summary:
+     - Functions: Opening brace on next line
+     - Blocks within functions (if, while, for, ...): Opening brace on same line as control statement.
+     - Namespaces: Opening brace on same line; no indentation due to namespace braces.
+     - Closing braces: On line of their own, unless followed by ```else``` or ```while``` keywords
+     - Statements within braces are indented, apart from namespace braces.
+   - Initialisation list: Each member variable on its own line; one level of indentation.
+   - Indent size: 2 spaces (NOT tab!)
+ * Line wrap at 120 characters
+
 Some of the above can be checked using the scripts in swatch/dev_tools/*. Please check ```<script> -h``` for usage instructions.
 
 ## Adding new features
