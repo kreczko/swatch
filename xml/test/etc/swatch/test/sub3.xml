@@ -1,0 +1,11 @@
+<module>
+  <table id="system.processor1">
+    <state id="Halted">
+      <mon-obj id="ports.Rx00" status="non-critical" />
+    </state>
+    <mask id="ports.Rx00"/>
+    <!--- many more entries -->
+  </table>
+  <!-- In practice, many more tables -->
+  <disable id="system.brokenProcessor" />
+</module>

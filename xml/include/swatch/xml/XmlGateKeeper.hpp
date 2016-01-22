@@ -58,8 +58,6 @@ private:
   log4cplus::Logger mLogger;
 };
 
-DEFINE_SWATCH_EXCEPTION(XmlFileError);
-
 } /* namespace xml */
 } /* namespace swatch */
 
