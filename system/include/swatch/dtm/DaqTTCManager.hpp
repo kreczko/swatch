@@ -114,6 +114,9 @@ public:
   TTCInterface& getTTC();
     
   //! Returns this amc13's link interface
+  const dtm::AMCPortCollection& getAMCPorts() const;
+    
+  //! Returns this amc13's link interface
   dtm::AMCPortCollection& getAMCPorts();
 
 protected:

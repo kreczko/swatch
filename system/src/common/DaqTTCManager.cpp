@@ -137,6 +137,13 @@ DaqTTCManager::getAMCPorts() {
   return *mAMCPorts;
 }
 
+
+// --------------------------------------------------------
+const dtm::AMCPortCollection& 
+DaqTTCManager::getAMCPorts() const {
+  return *mAMCPorts;
+}
+
 // --------------------------------------------------------
 TTCInterface&
 DaqTTCManager::registerInterface(TTCInterface* aTTCInterface) {

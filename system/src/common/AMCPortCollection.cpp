@@ -24,6 +24,16 @@ AMCPortCollection::addPort(AMCPort* aAMCPort) {
     mAMCPorts.push_back(aAMCPort);
 }
 
+AMCPortCollection::AMCPortDeque_t &
+AMCPortCollection::getPorts() {
+    return mAMCPorts;
+}
+
+const AMCPortCollection::AMCPortDeque_t &
+AMCPortCollection::getPorts() const {
+    return mAMCPorts;
+}
+
 
 } // namespace dtm
 } // namespace swatch 

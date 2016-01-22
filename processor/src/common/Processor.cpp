@@ -1,7 +1,7 @@
-/* 
+/*
  * File:   Processor.cpp
  * Author: ale
- * 
+ *
  * Created on July 11, 2014, 10:55 AM
  */
 
@@ -106,12 +106,32 @@ Processor::getCrateId() const {
 
 
 //---
+const TTCInterface&
+Processor::getTTC() const {
+  if (mTTC == NULL)
+    throw std::runtime_error("Processor \"" + getPath() + "\" has not registered any TTC interface object");
+  else
+    return *mTTC;
+}
+
+
+//---
 TTCInterface&
 Processor::getTTC() {
   if (mTTC == NULL)
     throw std::runtime_error("Processor \"" + getPath() + "\" has not registered any TTC interface object");
   else
     return *mTTC;
+}
+
+
+//---
+const ReadoutInterface&
+Processor::getReadout() const {
+  if (mReadout == NULL)
+    throw std::runtime_error("Processor \"" + getPath() + "\" has not registered any readout interface object");
+  else
+    return *mReadout;
 }
 
 
@@ -126,12 +146,32 @@ Processor::getReadout() {
 
 
 //---
+const AlgoInterface&
+Processor::getAlgo() const {
+  if (mAlgo == NULL)
+    throw std::runtime_error("Processor \"" + getPath() + "\" has not registered any algo interface object");
+  else
+    return *mAlgo;
+}
+
+
+//---
 AlgoInterface&
 Processor::getAlgo() {
   if (mAlgo == NULL)
     throw std::runtime_error("Processor \"" + getPath() + "\" has not registered any algo interface object");
   else
     return *mAlgo;
+}
+
+
+//---
+const PortCollection&
+Processor::getPorts() const {
+  if (mPorts == NULL)
+    throw std::runtime_error("Processor \"" + getPath() + "\" has not registered any link interface object");
+  else
+    return *mPorts;
 }
 
 

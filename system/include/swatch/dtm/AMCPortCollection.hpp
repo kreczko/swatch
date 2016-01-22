@@ -23,6 +23,10 @@ public:
   typedef std::deque<AMCPort*> AMCPortDeque_t;
 
   void addPort( AMCPort* aAMCPort );
+
+  AMCPortDeque_t & getPorts();
+
+  const AMCPortDeque_t & getPorts() const;
   
 protected:
 

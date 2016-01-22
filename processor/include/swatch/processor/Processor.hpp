@@ -85,7 +85,7 @@ protected:
 public:
     
     virtual ~Processor();
- 
+
     const ProcessorStub& getStub() const;
 
     /**
@@ -93,7 +93,7 @@ public:
      * @return the board's slot number in the crate
      */
     uint32_t getSlot() const;
-    
+
     /**
      * Processor crate ID getter
      * @return ID of the crate this processor that this processor is in
@@ -102,27 +102,40 @@ public:
 
     //! Constant corresponding to no slot being assigned
     static const uint32_t kNoSlot;
-    
+
 //    /**
 //     * Additional firmware information.
 //     * The string is meant to be informative for the user
 //     * @details [long description]
 //     * @return String containing additional firmware informations
 //     */
-//    virtual std::string firmwareInfo() const = 0; 
+//    virtual std::string firmwareInfo() const = 0;
+
+    //! Returns this processor's TTC interface
+    const TTCInterface& getTTC() const;
 
     //! Returns this processor's TTC interface
     TTCInterface& getTTC();
-    
+
+    //! Returns this processor's readout interface
+    const ReadoutInterface& getReadout() const;
+
     //! Returns this processor's readout interface
     ReadoutInterface& getReadout();
-    
+
+    //! Returns this processor's algo interface
+    const AlgoInterface& getAlgo() const;
+
     //! Returns this processor's algo interface
     AlgoInterface& getAlgo();
-    
-    //! Returns this processor's link interface
+
+    //! Returns this processor's port collection
+    const PortCollection& getPorts() const;
+
+    //! Returns this processor's port collection
     PortCollection& getPorts();
-    
+
+
     static const std::vector<std::string> kDefaultMetrics;
 
     static const std::vector<std::string> kDefaultMonitorableObjects;
@@ -165,7 +178,7 @@ private:
     PortCollection* mPorts;
 
     mutable std::vector<std::string> mGateKeeperTables;
-    
+
     RunControlFSM mRunControlFSM;
 
 private:

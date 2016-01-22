@@ -88,6 +88,18 @@ Crate::amc(uint32_t aSlot)
 }
 
 
+const processor::Processor* Crate::amc(uint32_t aSlot) const
+{
+  if (aSlot < mMinSlot || aSlot > mMaxSlot) {
+    stringstream ss;
+    ss << "Crate '"<< getId() << "': Slot " << aSlot << " out of range";
+
+    throw CrateSlotOutOfRange(ss.str());
+  }
+  return mAMCs[aSlot-mMinSlot];
+}
+
+
 std::vector<uint32_t>
 Crate::getPopulatedSlots() const
 {

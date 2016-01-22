@@ -37,9 +37,10 @@ public:
      */
     uint32_t getNumOutputs() const;
 
-    const std::deque<InputPort*>& getInputs();
+    const std::deque<InputPort*>& getInputs() const;
 
-    const std::deque<OutputPort*>& getOutputs();
+    const std::deque<OutputPort*>& getOutputs() const;
+
 
     InputPort& getInput( const std::string& aId );
     OutputPort& getOutput( const std::string& aId );
@@ -51,7 +52,7 @@ public:
 
     void addInput( InputPort* aInput );
     void addOutput( OutputPort*  aOutput );
-    
+
 protected:
     void retrieveMetricValues() {}
 

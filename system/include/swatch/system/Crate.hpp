@@ -40,14 +40,19 @@ public:
     
     void add( dtm::DaqTTCManager* aAMC13 );
     void add( processor::Processor* aProcessor );
-    
+   
     processor::Processor* amc( uint32_t slot );
+
+    const processor::Processor* amc(uint32_t aSlot) const;
     
     dtm::DaqTTCManager* amc13() { return mAMC13; }
-    
+
+    const dtm::DaqTTCManager* amc13() const { return mAMC13; }
+
     std::vector<uint32_t> getPopulatedSlots() const;
     
     std::vector<uint32_t> getAMCSlots() const;
+
     bool isAMCSlotTaken( uint32_t slot ) const;
     
     const CrateStub& getStub() const;

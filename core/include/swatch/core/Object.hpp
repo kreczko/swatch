@@ -216,6 +216,8 @@ class Object : public boost::noncopyable
   */
   template<typename T>
   T* getObj ( const std::string& aId );
+  template<typename T>
+  const T* getObj ( const std::string& aId ) const;
 
 //         template<typename T>
 //         std::deque<T*> getChildrenOfType();
