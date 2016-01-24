@@ -23,7 +23,7 @@ BOOST_AUTO_TEST_CASE(TestInputPortDefaultMetricsList) {
 
   for(auto it=InputPort::kDefaultMetrics.begin(); it != InputPort::kDefaultMetrics.end(); it++)
   {
-    BOOST_CHECK_NO_THROW(p.getPorts().getInput("rxA").getMetric(*it));
+    BOOST_CHECK_NO_THROW(p.getInputPorts().getPort("rxA").getMetric(*it));
   }
 }
 
@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_CASE(TestOutputPortDefaultMetricsList) {
 
   for(auto it=OutputPort::kDefaultMetrics.begin(); it != OutputPort::kDefaultMetrics.end(); it++)
   {
-    BOOST_CHECK_NO_THROW(p.getPorts().getOutput("txA").getMetric(*it));
+    BOOST_CHECK_NO_THROW(p.getOutputPorts().getPort("txA").getMetric(*it));
   }
 }
 

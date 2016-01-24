@@ -18,48 +18,66 @@ namespace processor {
 class InputPort;
 class OutputPort;
 
-//! Abstract class defining the optical link component interface of a processor
- class PortCollection : public core::MonitorableObject {
+
+//! Class that aggregates the input ports of a processor
+class InputPortCollection : public core::MonitorableObject {
 public:
-    PortCollection();
+    InputPortCollection();
 
-    virtual ~PortCollection();
+    virtual ~InputPortCollection();
 
-    /**
-     * Number of input channels
-     * @return Number of input channels
-     */
-    uint32_t getNumInputs() const;
+    //! Returns number of input channels
+    size_t getNumPorts() const;
+    
+    typedef std::deque<const InputPort*>::const_iterator const_iterator;
+    typedef std::deque<InputPort*>::const_iterator iterator;
 
-    /**
-     * Number of output channels
-     * @return Number of output channels
-     */
-    uint32_t getNumOutputs() const;
+    const std::deque<const InputPort*>& getPorts() const;
 
-    const std::deque<InputPort*>& getInputs() const;
+    const std::deque<InputPort*>& getPorts();
 
-    const std::deque<OutputPort*>& getOutputs() const;
+    InputPort& getPort( const std::string& aId );
 
-
-    InputPort& getInput( const std::string& aId );
-    OutputPort& getOutput( const std::string& aId );
-
-    typedef std::deque<InputPort*> InputPortDeque_t;
-    typedef std::deque<OutputPort*> OutputPortDeque_t;
-
-//protected:
-
-    void addInput( InputPort* aInput );
-    void addOutput( OutputPort*  aOutput );
+    void addPort( InputPort* aInput );
 
 protected:
     void retrieveMetricValues() {}
 
 private:
-    InputPortDeque_t mInputs;
-    OutputPortDeque_t mOutputs;
+    std::deque<const InputPort*> mConstPorts;
+    std::deque<InputPort*> mPorts;
 };
+
+
+//! Class that aggregates the output ports of a processor
+class OutputPortCollection : public core::MonitorableObject {
+public:
+    OutputPortCollection();
+
+    virtual ~OutputPortCollection();
+
+    //! Returns number of input channels
+    size_t getNumPorts() const;
+    
+    typedef std::deque<const OutputPort*>::const_iterator const_iterator;
+    typedef std::deque<OutputPort*>::const_iterator iterator;
+
+    const std::deque<const OutputPort*>& getPorts() const;
+
+    const std::deque<OutputPort*>& getPorts();
+
+    OutputPort& getPort( const std::string& aId );
+
+    void addPort( OutputPort* aOutput );
+
+protected:
+    void retrieveMetricValues() {}
+
+private:
+    std::deque<const OutputPort*> mConstPorts;
+    std::deque<OutputPort*> mPorts;
+};
+
 
 }
 }

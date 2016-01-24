@@ -81,13 +81,14 @@ MP7Processor::MP7Processor(const swatch::core::AbstractStub& aStub) :
   // Build subcomponents
   registerInterface( new MP7TTCInterface( *mDriver ) ); 
   registerInterface( new MP7ReadoutInterface( *mDriver) );
-  registerInterface( new swpro::PortCollection() );
+  registerInterface( new swpro::InputPortCollection() );
+  registerInterface( new swpro::OutputPortCollection() );
 
   // Add input and output ports
   for(auto it = stub.rxPorts.begin(); it != stub.rxPorts.end(); it++)
-    getPorts().addInput(new MP7RxPort(it->id, it->number, *mDriver));
+    getInputPorts().addPort(new MP7RxPort(it->id, it->number, *mDriver));
   for(auto it = stub.txPorts.begin(); it != stub.txPorts.end(); it++)
-    getPorts().addOutput(new MP7TxPort(it->id, it->number, *mDriver));
+    getOutputPorts().addPort(new MP7TxPort(it->id, it->number, *mDriver));
 
   // Register default MP7 commands
   registerCommand<UploadFirmwareCommand>(CmdIds::kUploadFw);

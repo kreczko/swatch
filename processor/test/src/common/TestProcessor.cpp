@@ -23,7 +23,8 @@ BOOST_AUTO_TEST_CASE(TestProcessorComponentAccess) {
   BOOST_CHECK( typeid(p.getAlgo()) == typeid(DummyAlgo) );
   BOOST_CHECK( typeid(p.getReadout()) == typeid(DummyReadoutInterface) );
   BOOST_CHECK( typeid(p.getTTC()) == typeid(DummyTTC) );
-  BOOST_CHECK( typeid(p.getPorts()) == typeid(swatch::processor::PortCollection) );
+  BOOST_CHECK( typeid(p.getInputPorts()) == typeid(swatch::processor::InputPortCollection) );
+  BOOST_CHECK( typeid(p.getOutputPorts()) == typeid(swatch::processor::OutputPortCollection) );
 }
 
 
@@ -39,17 +40,17 @@ BOOST_AUTO_TEST_CASE(CreationTest) {
   BOOST_CHECK_EQUAL(p.getCrateId(), p.getStub().crate);
 
   // Input and output ports
-  BOOST_CHECK_EQUAL(p.getPorts().getNumInputs(), size_t(5));
-  BOOST_CHECK_NO_THROW(p.getPorts().getInput("rxA"));
-  BOOST_CHECK_NO_THROW(p.getPorts().getInput("rxB"));
-  BOOST_CHECK_NO_THROW(p.getPorts().getInput("rxC"));
-  BOOST_CHECK_NO_THROW(p.getPorts().getInput("rxD"));
-  BOOST_CHECK_NO_THROW(p.getPorts().getInput("rxE"));
+  BOOST_CHECK_EQUAL(p.getInputPorts().getNumPorts(), size_t(5));
+  BOOST_CHECK_NO_THROW(p.getInputPorts().getPort("rxA"));
+  BOOST_CHECK_NO_THROW(p.getInputPorts().getPort("rxB"));
+  BOOST_CHECK_NO_THROW(p.getInputPorts().getPort("rxC"));
+  BOOST_CHECK_NO_THROW(p.getInputPorts().getPort("rxD"));
+  BOOST_CHECK_NO_THROW(p.getInputPorts().getPort("rxE"));
 
-  BOOST_CHECK_EQUAL(p.getPorts().getNumOutputs(), size_t(3));
-  BOOST_CHECK_NO_THROW(p.getPorts().getOutput("txA"));
-  BOOST_CHECK_NO_THROW(p.getPorts().getOutput("txB"));
-  BOOST_CHECK_NO_THROW(p.getPorts().getOutput("txC"));
+  BOOST_CHECK_EQUAL(p.getOutputPorts().getNumPorts(), size_t(3));
+  BOOST_CHECK_NO_THROW(p.getOutputPorts().getPort("txA"));
+  BOOST_CHECK_NO_THROW(p.getOutputPorts().getPort("txB"));
+  BOOST_CHECK_NO_THROW(p.getOutputPorts().getPort("txC"));
 }
 
 

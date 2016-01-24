@@ -33,8 +33,8 @@ namespace processor {
 class TTCInterface;
 class ReadoutInterface;
 class AlgoInterface;
-class PortCollection;
-class Processor;
+class InputPortCollection;
+class OutputPortCollection;
 
 
 struct RunControlFSM : public boost::noncopyable {
@@ -57,7 +57,7 @@ struct RunControlFSM : public boost::noncopyable {
   static const std::string kTrSetup;
   //! ID string for the 'configure' transition (synchronised state to configured state)
   static const std::string kTrConfigure;
-  //! ID string for teh 'align' transition (configured state to aligned state)
+  //! ID string for the 'align' transition (configured state to aligned state)
   static const std::string kTrAlign;
 
   //! The run control FSM object
@@ -129,11 +129,17 @@ public:
     //! Returns this processor's algo interface
     AlgoInterface& getAlgo();
 
-    //! Returns this processor's port collection
-    const PortCollection& getPorts() const;
+    //! Returns this processor's input port collection
+    const InputPortCollection& getInputPorts() const;
 
-    //! Returns this processor's port collection
-    PortCollection& getPorts();
+    //! Returns this processor's input port collection
+    InputPortCollection& getInputPorts();
+
+    //! Returns this processor's output port collection
+    const OutputPortCollection& getOutputPorts() const;
+
+    //! Returns this processor's output port collection
+    OutputPortCollection& getOutputPorts();
 
 
     static const std::vector<std::string> kDefaultMetrics;
@@ -141,7 +147,6 @@ public:
     static const std::vector<std::string> kDefaultMonitorableObjects;
 
     virtual const std::vector<std::string>& getGateKeeperTables() const;
-
 
 protected:
 
@@ -154,8 +159,11 @@ protected:
     //! Register the supplied (heap-allocated) algo interface in this processor; the processor base class takes ownership of the algo interface instance.
     AlgoInterface& registerInterface( AlgoInterface* aAlgoInterface );
 
-    //! Register the supplied (heap-allocated) link interface in this processor; the processor base class takes ownership of the link interface instance.
-    PortCollection& registerInterface( PortCollection* aPortCollection );
+    //! Register the supplied (heap-allocated) input port collection in this processor; the processor base class takes ownership of the supplied port collection.
+    InputPortCollection& registerInterface( InputPortCollection* aPortCollection );
+
+    //! Register the supplied (heap-allocated) output port collection in this processor; the processor base class takes ownership of the supplied port collection.
+    OutputPortCollection& registerInterface( OutputPortCollection* aPortCollection );
 
     //! Firmware version metric
     core::Metric<uint64_t>& metricFirmwareVersion_;
@@ -174,8 +182,11 @@ private:
     //! Algorithm control interface
     AlgoInterface* mAlgo;
 
-    //! Optical link interface
-    PortCollection* mPorts;
+    //! Optical input ports
+    InputPortCollection* mInputPorts;
+
+    //! Collection of optical output ports
+    OutputPortCollection* mOutputPorts;
 
     mutable std::vector<std::string> mGateKeeperTables;
 
@@ -187,7 +198,9 @@ private:
 };
 
 
-DEFINE_SWATCH_EXCEPTION(ProcessorInterfaceAlreadyDefined);
+DEFINE_SWATCH_EXCEPTION(InterfaceAlreadyDefined);
+DEFINE_SWATCH_EXCEPTION(InterfaceNotDefined);
+
 
 }
 }

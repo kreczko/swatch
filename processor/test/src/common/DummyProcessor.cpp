@@ -32,14 +32,15 @@ DummyProcessor::DummyProcessor(const swatch::core::AbstractStub& aStub) :
   registerInterface( new DummyTTC() );
   registerInterface( new DummyReadoutInterface() );
   registerInterface( new DummyAlgo() );
-  registerInterface( new processor::PortCollection() );
+  registerInterface( new processor::InputPortCollection() );
+  registerInterface( new processor::OutputPortCollection() );
   
   const ProcessorStub& stub = getStub();
   
   for(auto it = stub.rxPorts.begin(); it != stub.rxPorts.end(); it++)
-    getPorts().addInput(new DummyRxPort(it->id, it->number));
+    getInputPorts().addPort(new DummyRxPort(it->id, it->number));
   for(auto it = stub.txPorts.begin(); it != stub.txPorts.end(); it++)
-    getPorts().addOutput(new DummyTxPort(it->id, it->number));
+    getOutputPorts().addPort(new DummyTxPort(it->id, it->number));
 }
 
 

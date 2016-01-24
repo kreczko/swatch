@@ -2,9 +2,6 @@
 #include "swatch/processor/PortCollection.hpp"
 
 
-// C++ headers
-#include <iostream>
-
 // SWATCH headers
 #include "swatch/processor/Port.hpp"
 
@@ -12,38 +9,37 @@
 namespace swatch {
 namespace processor {
 
-PortCollection::PortCollection() :
-  core::MonitorableObject( "ports" )
+
+InputPortCollection::InputPortCollection() : 
+  core::MonitorableObject( "inputPorts" )
 {
 }
 
 
-PortCollection::~PortCollection() {
+InputPortCollection::~InputPortCollection()
+{
 }
 
 
-void PortCollection::addInput(InputPort* aInput) {
-    this->addMonitorable(aInput);
-    mInputs.push_back(aInput);
+size_t InputPortCollection::getNumPorts() const
+{
+  return mPorts.size();
 }
 
 
-void PortCollection::addOutput(OutputPort* aOutput) {
-    this->addMonitorable(aOutput);
-    mOutputs.push_back(aOutput);
+const std::deque<const InputPort*>& InputPortCollection::getPorts() const
+{
+  return mConstPorts;
 }
 
 
-uint32_t PortCollection::getNumInputs() const { return mInputs.size(); }
-
-uint32_t PortCollection::getNumOutputs() const { return mOutputs.size(); }
-
-const std::deque<InputPort*>& PortCollection::getInputs() const { return mInputs; }
-
-const std::deque<OutputPort*>& PortCollection::getOutputs() const { return mOutputs; }
+const std::deque<InputPort*>& InputPortCollection::getPorts()
+{
+  return mPorts;
+}
 
 
-InputPort& PortCollection::getInput( const std::string& aId )
+InputPort& InputPortCollection::getPort( const std::string& aId )
 {
   if (InputPort* in = getObj<InputPort>( aId ))
     return *in;
@@ -52,14 +48,61 @@ InputPort& PortCollection::getInput( const std::string& aId )
 }
 
 
-OutputPort& PortCollection::getOutput( const std::string& aId )
+void InputPortCollection::addPort(InputPort* aInput)
 {
-  if (OutputPort* out = getObj<OutputPort>( aId ))
-    return *out;
-  else
-    throw std::runtime_error("PortCollection \"" + this->getPath() + "\" does not contain any output port of ID \"" + aId + "\"");
+    addMonitorable(aInput);
+    mConstPorts.push_back(aInput);
+    mPorts.push_back(aInput);
 }
 
 
-} // end ns core
+
+
+OutputPortCollection::OutputPortCollection() : 
+  core::MonitorableObject( "outputPorts" )
+{
+}
+
+
+OutputPortCollection::~OutputPortCollection()
+{
+}
+
+
+size_t OutputPortCollection::getNumPorts() const
+{
+  return mPorts.size();
+}
+
+
+const std::deque<const OutputPort*>& OutputPortCollection::getPorts() const
+{
+  return mConstPorts;
+}
+
+
+const std::deque<OutputPort*>& OutputPortCollection::getPorts()
+{
+  return mPorts;
+}
+
+
+OutputPort& OutputPortCollection::getPort( const std::string& aId )
+{
+  if (OutputPort* in = getObj<OutputPort>( aId ))
+    return *in;
+  else
+    throw std::runtime_error("PortCollection \"" + this->getPath() + "\" does not contain any input port of ID \"" + aId + "\"");
+}
+
+
+void OutputPortCollection::addPort(OutputPort* aOutput)
+{
+    addMonitorable(aOutput);
+    mConstPorts.push_back(aOutput);
+    mPorts.push_back(aOutput);
+}
+
+
+} // end ns processor
 } // end ns swatch

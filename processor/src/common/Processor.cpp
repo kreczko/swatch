@@ -66,7 +66,7 @@ core::StateMachine& RunControlFSM::addStates(core::StateMachine& aFSM)
 //---
 const uint32_t Processor::kNoSlot =  0x7fffffffL;
 const std::vector<std::string> Processor::kDefaultMetrics = { "firmwareVersion" };
-const std::vector<std::string> Processor::kDefaultMonitorableObjects = { "ttc", "ports", "readout", "algo" };
+const std::vector<std::string> Processor::kDefaultMonitorableObjects = { "ttc", "inputPorts", "outputPorts", "readout", "algo" };
 
 //---
 Processor::Processor( const swatch::core::AbstractStub& aStub) :
@@ -76,7 +76,8 @@ Processor::Processor( const swatch::core::AbstractStub& aStub) :
     mTTC(NULL),
     mReadout(NULL),
     mAlgo(NULL),
-    mPorts(NULL),
+    mInputPorts(NULL),
+    mOutputPorts(NULL),
     mRunControlFSM( registerStateMachine(RunControlFSM::kId, RunControlFSM::kStateInitial, RunControlFSM::kStateError) )
 {
 }
@@ -159,29 +160,49 @@ Processor::getAlgo() const {
 AlgoInterface&
 Processor::getAlgo() {
   if (mAlgo == NULL)
-    throw std::runtime_error("Processor \"" + getPath() + "\" has not registered any algo interface object");
+    throw InterfaceNotDefined("Processor \"" + getPath() + "\" has not registered any algo interface object");
   else
     return *mAlgo;
 }
 
 
 //---
-const PortCollection&
-Processor::getPorts() const {
-  if (mPorts == NULL)
-    throw std::runtime_error("Processor \"" + getPath() + "\" has not registered any link interface object");
+const InputPortCollection& Processor::getInputPorts() const
+{
+  if (mInputPorts == NULL)
+    throw InterfaceNotDefined("Processor \"" + getPath() + "\" has not registered any input port collection");
   else
-    return *mPorts;
+    return *mInputPorts;
 }
 
 
 //---
-PortCollection&
-Processor::getPorts() {
-  if (mPorts == NULL)
-    throw std::runtime_error("Processor \"" + getPath() + "\" has not registered any link interface object");
+InputPortCollection& Processor::getInputPorts()
+{
+  if (mInputPorts == NULL)
+    throw InterfaceNotDefined("Processor \"" + getPath() + "\" has not registered any input port collection");
   else
-    return *mPorts;
+    return *mInputPorts;
+}
+
+
+//---
+const OutputPortCollection& Processor::getOutputPorts() const
+{
+  if (mOutputPorts == NULL)
+    throw InterfaceNotDefined("Processor \"" + getPath() + "\" has not registered any output port collection");
+  else
+    return *mOutputPorts;
+}
+
+
+//---
+OutputPortCollection& Processor::getOutputPorts()
+{
+  if (mOutputPorts == NULL)
+    throw InterfaceNotDefined("Processor \"" + getPath() + "\" has not registered any output port collection");
+  else
+    return *mOutputPorts;
 }
 
 
@@ -209,7 +230,7 @@ TTCInterface& Processor::registerInterface( TTCInterface* aTTCInterface )
 {
   if( mTTC ){
     delete aTTCInterface;
-    throw ProcessorInterfaceAlreadyDefined( "TTCInterface already defined for processor '" + getPath() + "'" );
+    throw InterfaceAlreadyDefined("TTCInterface already defined for processor '" + getPath() + "'");
   }
   this->addMonitorable(aTTCInterface);
   mTTC = aTTCInterface;
@@ -217,11 +238,12 @@ TTCInterface& Processor::registerInterface( TTCInterface* aTTCInterface )
 }
 
 
+//---
 ReadoutInterface& Processor::registerInterface( ReadoutInterface* aReadoutInterface )
 {
   if( mReadout ){
     delete aReadoutInterface;
-    throw ProcessorInterfaceAlreadyDefined( "ReadoutInterface already defined for processor '" + getPath() + "'" );
+    throw InterfaceAlreadyDefined("ReadoutInterface already defined for processor '" + getPath() + "'");
   }
   this->addMonitorable(aReadoutInterface);
   mReadout = aReadoutInterface;
@@ -229,11 +251,12 @@ ReadoutInterface& Processor::registerInterface( ReadoutInterface* aReadoutInterf
 }
 
 
+//---
 AlgoInterface& Processor::registerInterface( AlgoInterface* aAlgoInterface )
 {
   if( mAlgo ){
     delete aAlgoInterface;
-    throw ProcessorInterfaceAlreadyDefined( "AlgoInterface already defined for processor '" + getPath() + "'" );
+    throw InterfaceAlreadyDefined("AlgoInterface already defined for processor '" + getPath() + "'");
   }
   this->addMonitorable(aAlgoInterface);
   mAlgo = aAlgoInterface;
@@ -241,18 +264,33 @@ AlgoInterface& Processor::registerInterface( AlgoInterface* aAlgoInterface )
 }
 
 
-PortCollection& Processor::registerInterface( PortCollection* aPortCollection )
+//---
+InputPortCollection& Processor::registerInterface( InputPortCollection* aPortCollection )
 {
-  if( mPorts ){
+  if( mInputPorts ){
     delete aPortCollection;
-    throw ProcessorInterfaceAlreadyDefined( "PortCollection already defined for processor '" + getPath() + "'" );
+    throw InterfaceAlreadyDefined( "InputPortCollection already defined for processor '" + getPath() + "'" );
   }
   this->addMonitorable(aPortCollection);
-  mPorts = aPortCollection;
-  return *mPorts;
+  mInputPorts = aPortCollection;
+  return *mInputPorts;
 }
 
 
+//---
+OutputPortCollection& Processor::registerInterface( OutputPortCollection* aPortCollection )
+{
+  if( mOutputPorts ){
+    delete aPortCollection;
+    throw InterfaceAlreadyDefined( "OutputPortCollection already defined for processor '" + getPath() + "'" );
+  }
+  this->addMonitorable(aPortCollection);
+  mOutputPorts = aPortCollection;
+  return *mOutputPorts;
+}
+
+
+//---
 RunControlFSM& Processor::getRunControlFSM()
 {
   return mRunControlFSM;
