@@ -22,8 +22,9 @@ XmlReader::~XmlReader() {
 const std::string XmlReader::readXmlConfig(const std::string& aFileName) {
   pugi::xml_document lXmlDoc, lTmpDoc, lNewDoc;
   loadFromFile(aFileName, lXmlDoc);
-  if (!checkMainConfig(lXmlDoc))
-    throw InvalidConfig("The given XML configs is not valid SWATCH XML: " + aFileName);
+  std::string lErrorMsg("");
+  if (!checkMainConfig(lXmlDoc, lErrorMsg))
+    throw InvalidConfig("The given XML file is not a valid SWATCH XML main config: " + aFileName + "\n" + lErrorMsg);
 
   pugi::xml_node lDb = lXmlDoc.child("db");
   pugi::xml_node lTmpDb = lTmpDoc.append_child("db");
@@ -54,8 +55,9 @@ void XmlReader::mergeSubConfigs(const pugi::xml_node& aKeyNode, pugi::xml_node& 
     pugi::xml_document lSubConfig;
     loadFromFile(lSubConfigFile, lSubConfig);
     // check sub config
-    if (!checkSubConfig(lSubConfig))
-      throw InvalidConfig("The given XML configs is not valid SWATCH XML: " + lSubConfigFile);
+    std::string lErrorMsg("");
+    if (!checkSubConfig(lSubConfig, lErrorMsg))
+      throw InvalidConfig("The given XML file is not a valid SWATCH XML sub-config: " + lSubConfigFile + "\n" + lErrorMsg);
     // import modules
     pugi::xml_node lModule = lSubConfig.child("module");
     for (pugi::xml_node lSubTag = lModule.first_child(); lSubTag; lSubTag = lSubTag.next_sibling()) {
@@ -109,37 +111,46 @@ void XmlReader::XmlToStringWriter::write(const void* aData, size_t aSize) {
   mResult += std::string(static_cast<const char*>(aData), aSize);
 }
 
-bool XmlReader::checkMainConfig(const pugi::xml_document& aMainConfig) const {
+bool XmlReader::checkMainConfig(const pugi::xml_document& aMainConfig, std::string& aErrorMsg) const {
   // top level node is db
   pugi::xml_node lDb = aMainConfig.child("db");
   // only one <db> tag per config
   bool lResult = std::distance(aMainConfig.children("db").begin(), aMainConfig.children("db").end()) == 1;
+  if(!lResult) aErrorMsg += "More than one <db> tag detected\n";
   // the next level is one or more <key>
   for (pugi::xml_node lKey = lDb.first_child(); lKey; lKey = lKey.next_sibling()) {
-    lResult = lResult && (strcmp(lKey.name(), "key") == 0);
+    bool lIsKeyTag = strcmp(lKey.name(), "key") == 0;
+    if (!lIsKeyTag) aErrorMsg += "A non <key> detected as child of <db>: <" +  std::string(lKey.name()) + ">\n";
+    lResult = lResult && lIsKeyTag;
     // a <key> tag should only contain <load> tags
     for (pugi::xml_node lLoad = lKey.first_child(); lLoad; lLoad = lLoad.next_sibling()) {
-      lResult = lResult && (strcmp(lLoad.name(), "load") == 0);
+      bool lIsLoadTag = strcmp(lLoad.name(), "load") == 0;
+      if (!lIsLoadTag) aErrorMsg += "A non <load> detected as child of <key>: <" +  std::string(lLoad.name()) + ">\n";
+      lResult = lResult && lIsLoadTag;
     }
   }
 
   return lResult;
 }
 
-bool XmlReader::checkSubConfig(const pugi::xml_document& aSubConfig) const {
+bool XmlReader::checkSubConfig(const pugi::xml_document& aSubConfig, std::string& aErrorMsg) const {
   // top level node is module
   pugi::xml_node lModule = aSubConfig.child("module");
   // only one <db> tag per config
   bool lResult = std::distance(aSubConfig.children("module").begin(), aSubConfig.children("module").end()) == 1;
+  if(!lResult) aErrorMsg += "More than one <module> tag detected\n";
   // the next level is one or more <table> or <disable> tag
   for (pugi::xml_node lSubTag = lModule.first_child(); lSubTag; lSubTag = lSubTag.next_sibling()) {
     std::string lSubTagName(lSubTag.name());
     bool lTableOrDisableTag = lSubTagName == "table" || lSubTagName == "disable";
+    if (!lTableOrDisableTag) aErrorMsg += "A non <table> or <disable> detected as child of <module>: <" + lSubTagName + ">\n";
     lResult = lResult && lTableOrDisableTag;
     if (lSubTagName == "table") {
       // no load tags in <table>
       for (pugi::xml_node lTableEntry = lSubTag.first_child(); lTableEntry; lTableEntry = lTableEntry.next_sibling()) {
-        lResult = lResult && (strcmp(lTableEntry.name(), "load") != 0);
+        bool lIsLoadTag  = strcmp(lTableEntry.name(), "load") == 0;
+        if (lIsLoadTag) aErrorMsg += "A <load> detected as child of <table>: <" +  std::string(lTableEntry.name()) + ">\n";
+        lResult = lResult && (!lIsLoadTag);
       }
     }
   }

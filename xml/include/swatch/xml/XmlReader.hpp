@@ -47,7 +47,7 @@ public:
    *   </key>
    * </db>
    */
-  bool checkMainConfig(const pugi::xml_document& aMainConfig) const;
+  bool checkMainConfig(const pugi::xml_document& aMainConfig, std::string& aErrorMsg) const;
 
   /**
    * Checks if a sub config has the correct structure:
@@ -59,7 +59,7 @@ public:
    *   <disable id="system.brokenProcessor" /> <!-- 0 or more -->
    * </module>
    */
-  bool checkSubConfig(const pugi::xml_document& aSubConfig) const;
+  bool checkSubConfig(const pugi::xml_document& aSubConfig, std::string& aErrorMsg) const;
 
   /**
    * Returns the string representation of a XML document
