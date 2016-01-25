@@ -23,8 +23,8 @@ BOOST_AUTO_TEST_SUITE( TestVectorSerializer )
 BOOST_AUTO_TEST_CASE( TestUInt )
 {
 	pugi::xml_document doc;
-	doc.load("<entry id='test' type='vector:uint'>40, 30, 1, 2</entry>");
-	pugi::xml_node lNode = doc.child("entry");
+	doc.load("<param id='test' type='vector:uint'>40, 30, 1, 2</param>");
+	pugi::xml_node lNode = doc.child("param");
 	VectorSerializer<xdata::UnsignedInteger>* serializer = new VectorSerializer<xdata::UnsignedInteger>;
 
 	xdata::Serializable* result = serializer->import(lNode);
@@ -37,8 +37,8 @@ BOOST_AUTO_TEST_CASE( TestUInt )
 BOOST_AUTO_TEST_CASE( TestInt )
 {
 	pugi::xml_document doc;
-	doc.load("<entry id='test' type='vector:int'>-2</entry>");
-	pugi::xml_node lNode = doc.child("entry");
+	doc.load("<param id='test' type='vector:int'>-2</param>");
+	pugi::xml_node lNode = doc.child("param");
 	VectorSerializer<xdata::Integer>* serializer = new VectorSerializer<xdata::Integer>;
 
 	xdata::Serializable* result = serializer->import(lNode);
@@ -50,8 +50,8 @@ BOOST_AUTO_TEST_CASE( TestInt )
 BOOST_AUTO_TEST_CASE( TestBool )
 {
 	pugi::xml_document doc;
-	doc.load("<entry id='test' type='vector:bool'>true,false</entry>");
-	pugi::xml_node lNode = doc.child("entry");
+	doc.load("<param id='test' type='vector:bool'>true,false</param>");
+	pugi::xml_node lNode = doc.child("param");
 	VectorSerializer<xdata::Boolean>* serializer = new VectorSerializer<xdata::Boolean>;
 
 	xdata::Serializable* result = serializer->import(lNode);
@@ -63,8 +63,8 @@ BOOST_AUTO_TEST_CASE( TestBool )
 BOOST_AUTO_TEST_CASE( TestFloat )
 {
 	pugi::xml_document doc;
-	doc.load("<entry id='test' type='vector:float'>2.0</entry>");
-	pugi::xml_node lNode = doc.child("entry");
+	doc.load("<param id='test' type='vector:float'>2.0</param>");
+	pugi::xml_node lNode = doc.child("param");
 	VectorSerializer<xdata::Float>* serializer = new VectorSerializer<xdata::Float>;
 
 	xdata::Serializable* result = serializer->import(lNode);
@@ -76,8 +76,8 @@ BOOST_AUTO_TEST_CASE( TestFloat )
 BOOST_AUTO_TEST_CASE( TestString )
 {
 	pugi::xml_document doc;
-	doc.load("<entry id='test' type='vector:string'>hello, world, and, all</entry>");
-	pugi::xml_node lNode = doc.child("entry");
+	doc.load("<param id='test' type='vector:string'>hello, world, and, all</param>");
+	pugi::xml_node lNode = doc.child("param");
 	VectorSerializer<xdata::String>* serializer = new VectorSerializer<xdata::String>;
 
 	xdata::Serializable* result = serializer->import(lNode);
@@ -89,8 +89,8 @@ BOOST_AUTO_TEST_CASE( TestString )
 BOOST_AUTO_TEST_CASE( TestCustomDelimiter )
 {
 	pugi::xml_document doc;
-	doc.load("<entry id='test' type='vector:string' delimiter='|'>hello, world| and, all</entry>");
-	pugi::xml_node lNode = doc.child("entry");
+	doc.load("<param id='test' type='vector:string' delimiter='|'>hello, world| and, all</param>");
+	pugi::xml_node lNode = doc.child("param");
 	VectorSerializer<xdata::String>* serializer = new VectorSerializer<xdata::String>;
 
 	xdata::Serializable* result = serializer->import(lNode);
@@ -102,8 +102,8 @@ BOOST_AUTO_TEST_CASE( TestCustomDelimiter )
 BOOST_AUTO_TEST_CASE( TestInvalid )
 {
 	pugi::xml_document doc;
-	doc.load("<entry id='test' type='string'>hello, test</entry>");
-	pugi::xml_node lNode = doc.child("entry");
+	doc.load("<param id='test' type='string'>hello, test</param>");
+	pugi::xml_node lNode = doc.child("param");
 	VectorSerializer<xdata::Integer>* serializer = new VectorSerializer<xdata::Integer>;
 	BOOST_CHECK_EQUAL(serializer->type(), "vector:int");
 

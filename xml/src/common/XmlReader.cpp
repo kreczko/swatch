@@ -39,7 +39,7 @@ const std::string XmlReader::readXmlConfig(const std::string& aFileName) {
     pugi::xml_node lNewKey = lNewDb.append_child("key");
     lNewKey.append_attribute("id") = lKey.attribute("id").value();
 
-    mergeTables(lTmpKey, lNewKey);
+    mergeContexts(lTmpKey, lNewKey);
 
   }
 
@@ -77,7 +77,7 @@ const std::string XmlReader::normaliseSubConfigPath(const std::string& aMainConf
   }
 }
 
-void XmlReader::mergeTables(const pugi::xml_node& aKeyNode, pugi::xml_node& aNewKeyNode) const {
+void XmlReader::mergeContexts(const pugi::xml_node& aKeyNode, pugi::xml_node& aNewKeyNode) const {
   // this can be probably simplified
   for (pugi::xml_node lChild = aKeyNode.first_child(); lChild; lChild = lChild.next_sibling()) {
     // check if node has been already added
@@ -139,17 +139,17 @@ bool XmlReader::checkSubConfig(const pugi::xml_document& aSubConfig, std::string
   // only one <db> tag per config
   bool lResult = std::distance(aSubConfig.children("module").begin(), aSubConfig.children("module").end()) == 1;
   if(!lResult) aErrorMsg += "More than one <module> tag detected\n";
-  // the next level is one or more <table> or <disable> tag
+  // the next level is one or more <context> or <disable> tag
   for (pugi::xml_node lSubTag = lModule.first_child(); lSubTag; lSubTag = lSubTag.next_sibling()) {
     std::string lSubTagName(lSubTag.name());
-    bool lTableOrDisableTag = lSubTagName == "table" || lSubTagName == "disable";
-    if (!lTableOrDisableTag) aErrorMsg += "A non <table> or <disable> detected as child of <module>: <" + lSubTagName + ">\n";
-    lResult = lResult && lTableOrDisableTag;
-    if (lSubTagName == "table") {
-      // no load tags in <table>
-      for (pugi::xml_node lTableEntry = lSubTag.first_child(); lTableEntry; lTableEntry = lTableEntry.next_sibling()) {
-        bool lIsLoadTag  = strcmp(lTableEntry.name(), "load") == 0;
-        if (lIsLoadTag) aErrorMsg += "A <load> detected as child of <table>: <" +  std::string(lTableEntry.name()) + ">\n";
+    bool lContextOrDisableTag = lSubTagName == "context" || lSubTagName == "disable";
+    if (!lContextOrDisableTag) aErrorMsg += "A non <context> or <disable> detected as child of <module>: <" + lSubTagName + ">\n";
+    lResult = lResult && lContextOrDisableTag;
+    if (lSubTagName == "context") {
+      // no load tags in <context>
+      for (pugi::xml_node lParam = lSubTag.first_child(); lParam; lParam = lParam.next_sibling()) {
+        bool lIsLoadTag  = strcmp(lParam.name(), "load") == 0;
+        if (lIsLoadTag) aErrorMsg += "A <load> detected as child of <context>: <" +  std::string(lParam.name()) + ">\n";
         lResult = lResult && (!lIsLoadTag);
       }
     }

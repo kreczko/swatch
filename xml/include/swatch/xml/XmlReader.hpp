@@ -52,10 +52,10 @@ public:
   /**
    * Checks if a sub config has the correct structure:
    * <module>
-   *   <table id="tableId> <!-- 0 or more -->
-   *     <entry ... /> <!-- one or more -->
+   *   <context id="contextId> <!-- 0 or more -->
+   *     <param ... /> <!-- one or more -->
    *     ...
-   *   </table>
+   *   </context>
    *   <disable id="system.brokenProcessor" /> <!-- 0 or more -->
    * </module>
    */
@@ -84,9 +84,9 @@ private:
       const std::string& aMainConfigPath) const;
 
   /**
-   * Takes an XML document merges leafes from <table> & <state> under the same <key> and with the same ID.
+   * Takes an XML document merges leafes from <context> & <state> under the same <key> and with the same ID.
    */
-  void mergeTables(const pugi::xml_node& aKeyNode, pugi::xml_node& aNewKeyNode) const;
+  void mergeContexts(const pugi::xml_node& aKeyNode, pugi::xml_node& aNewKeyNode) const;
 
   /**
    * Normalises the path of subconfigs included with the <load> tag.

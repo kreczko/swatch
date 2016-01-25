@@ -23,8 +23,8 @@ BOOST_AUTO_TEST_SUITE( TestSimpleSerializer )
 BOOST_AUTO_TEST_CASE( TestUInt )
 {
 	pugi::xml_document doc;
-	doc.load("<entry id='clkErrorTimeout' type='uint'>40</entry>");
-	pugi::xml_node lNode = doc.child("entry");
+	doc.load("<param id='clkErrorTimeout' type='uint'>40</param>");
+	pugi::xml_node lNode = doc.child("param");
 	SimpleSerializer<xdata::UnsignedInteger>* serializer = new SimpleSerializer<xdata::UnsignedInteger>;
 	BOOST_CHECK_EQUAL(serializer->type(), "unsigned int");
 
@@ -36,8 +36,8 @@ BOOST_AUTO_TEST_CASE( TestUInt )
 BOOST_AUTO_TEST_CASE( TestInt )
 {
 	pugi::xml_document doc;
-	doc.load("<entry id='test' type='int'>-2</entry>");
-	pugi::xml_node lNode = doc.child("entry");
+	doc.load("<param id='test' type='int'>-2</param>");
+	pugi::xml_node lNode = doc.child("param");
 	SimpleSerializer<xdata::Integer>* serializer = new SimpleSerializer<xdata::Integer>;
 	BOOST_CHECK_EQUAL(serializer->type(), "int");
 
@@ -49,8 +49,8 @@ BOOST_AUTO_TEST_CASE( TestInt )
 BOOST_AUTO_TEST_CASE( TestBool )
 {
 	pugi::xml_document doc;
-	doc.load("<entry id='test' type='bool'>true</entry>");
-	pugi::xml_node lNode = doc.child("entry");
+	doc.load("<param id='test' type='bool'>true</param>");
+	pugi::xml_node lNode = doc.child("param");
 	SimpleSerializer<xdata::Boolean>* serializer = new SimpleSerializer<xdata::Boolean>;
 	BOOST_CHECK_EQUAL(serializer->type(), "bool");
 
@@ -62,8 +62,8 @@ BOOST_AUTO_TEST_CASE( TestBool )
 BOOST_AUTO_TEST_CASE( TestFloat )
 {
 	pugi::xml_document doc;
-	doc.load("<entry id='test' type='float'>2.0</entry>");
-	pugi::xml_node lNode = doc.child("entry");
+	doc.load("<param id='test' type='float'>2.0</param>");
+	pugi::xml_node lNode = doc.child("param");
 	SimpleSerializer<xdata::Float>* serializer = new SimpleSerializer<xdata::Float>;
 	BOOST_CHECK_EQUAL(serializer->type(), "float");
 
@@ -82,8 +82,8 @@ BOOST_AUTO_TEST_CASE( TestFloat )
 BOOST_AUTO_TEST_CASE( TestString )
 {
 	pugi::xml_document doc;
-	doc.load("<entry id='test' type='string'>hello</entry>");
-	pugi::xml_node lNode = doc.child("entry");
+	doc.load("<param id='test' type='string'>hello</param>");
+	pugi::xml_node lNode = doc.child("param");
 	SimpleSerializer<xdata::String>* serializer = new SimpleSerializer<xdata::String>;
 	BOOST_CHECK_EQUAL(serializer->type(), "string");
 
@@ -95,8 +95,8 @@ BOOST_AUTO_TEST_CASE( TestString )
 BOOST_AUTO_TEST_CASE( TestInvalid )
 {
 	pugi::xml_document doc;
-	doc.load("<entry id='test' type='string'>hello</entry>");
-	pugi::xml_node lNode = doc.child("entry");
+	doc.load("<param id='test' type='string'>hello</param>");
+	pugi::xml_node lNode = doc.child("param");
 	SimpleSerializer<xdata::Integer>* serializer = new SimpleSerializer<xdata::Integer>;
 	BOOST_CHECK_EQUAL(serializer->type(), "int");
 

@@ -41,17 +41,17 @@ private:
 
   void readXmlDocument(const pugi::xml_document& aXmlDoc, const std::string& aRunKey);
 
-  std::pair<std::string, GateKeeper::Parameter_t> createParameter(pugi::xml_node& aEntry);
-  std::pair<std::string, GateKeeper::ParametersTable_t> createTable(pugi::xml_node& aTable);
+  std::pair<std::string, GateKeeper::Parameter_t> createParameter(pugi::xml_node& aParam);
+  std::pair<std::string, GateKeeper::ParametersContext_t> createContext(pugi::xml_node& aContext);
 
   std::pair<std::string, GateKeeper::MonitoringSetting_t> createMonitoringSetting(
-      const pugi::xml_node& aEntry) const;
-  std::pair<std::string, GateKeeper::SettingsTable_t> createSettingsTable(
-      const pugi::xml_node& aTable) const;
+      const pugi::xml_node& aParam) const;
+  std::pair<std::string, GateKeeper::SettingsContext_t> createSettingsContext(
+      const pugi::xml_node& aContext) const;
 
-  std::pair < std::string, GateKeeper::MasksTable_t> createMasksTable(const pugi::xml_node& aTable) const;
+  std::pair < std::string, GateKeeper::MasksContext_t> createMasksContext(const pugi::xml_node& aContext) const;
   
-  std::string parseDisableNode(const pugi::xml_node& aTable) const;
+  std::string parseDisableNode(const pugi::xml_node& aContext) const;
 
   std::string mFileName;
   XmlSerializer* mSerializer;

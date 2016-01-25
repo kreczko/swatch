@@ -40,13 +40,13 @@ namespace test {
       transitionBtoI = & testFSM.addTransition("t2", fsmStateB, fsmState0);
 
 
-      GateKeeper::ParametersTable_t tbl(new GateKeeper::Parameters_t());
+      GateKeeper::ParametersContext_t tbl(new GateKeeper::Parameters_t());
       tbl->insert( GateKeeper::Parameters_t::value_type(DummyCommand::paramToDo, GateKeeper::Parameter_t(new xdata::String(""))));
       tbl->insert( GateKeeper::Parameters_t::value_type(DummyCommand::paramX, GateKeeper::Parameter_t(new xdata::Integer(42))));
-      gk.addTable("common", tbl);
+      gk.addContext("common", tbl);
 
       // for child1
-      GateKeeper::SettingsTable_t settings_child1(new GateKeeper::MonitoringSettings_t());
+      GateKeeper::SettingsContext_t settings_child1(new GateKeeper::MonitoringSettings_t());
       GateKeeper::MonitoringSetting_t mon_setting1(new MonitoringSetting("child1", monitoring::kNonCritical));
       GateKeeper::MonitoringSetting_t mon_setting2(new MonitoringSetting("child1.grandChild1", monitoring::kDisabled));
       GateKeeper::MonitoringSetting_t mon_setting3(new MonitoringSetting("grandChild2", monitoring::kDisabled));
@@ -59,16 +59,16 @@ namespace test {
       settings_child1->insert(GateKeeper::MonitoringSettings_t::value_type(fsmStateB + ".grandChild2", mon_setting3));
       // metric
       settings_child1->insert(GateKeeper::MonitoringSettings_t::value_type(fsmStateB + ".child1.dummyMetric", mon_setting4));
-      gk.addSettingsTable("common", settings_child1);
+      gk.addSettingsContext("common", settings_child1);
       
-      GateKeeper::MasksTable_t lMasksTable(new GateKeeper::Masks_t());
-      lMasksTable->insert("maskableA");
-      lMasksTable->insert("child1.maskableB");
+      GateKeeper::MasksContext_t lMasksContext(new GateKeeper::Masks_t());
+      lMasksContext->insert("maskableA");
+      lMasksContext->insert("child1.maskableB");
       // "maskableC": FALSE ENTRY (i.e. should not take effect on child1.maskableC)
       //   - here to check that masks are applied using MaskableObject's ID path relative to the ActionableObject (not just using ID string)
-      lMasksTable->insert("maskableC");
+      lMasksContext->insert("maskableC");
       
-      gk.addMasksTable("common", lMasksTable);
+      gk.addMasksContext("common", lMasksContext);
     }
     
     ~StateMachineTestSetup() {}

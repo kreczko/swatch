@@ -78,7 +78,7 @@ DummyActionableObject::~DummyActionableObject()
 }
 
 
-const std::vector<std::string>& DummyActionableObject::getGateKeeperTables() const
+const std::vector<std::string>& DummyActionableObject::getGateKeeperContexts() const
 {
   // Can't set the table names in constructor, since don't know parent at that time ...
   // ... instead, have to set tables names first time this method is called

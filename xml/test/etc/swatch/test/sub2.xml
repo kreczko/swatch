@@ -1,12 +1,12 @@
 <module>
-  <table id="system.processors">
-    <entry id="electronLookUpTable" type="vector:int">56, 345, 954, 310</entry>
-    <!--- many more entries -->
-  </table>
-  <table id="system.processor1">
+  <context id="system.processors">
+    <param id="electronLookUpTable" type="vector:int">56, 345, 954, 310</param>
+    <!--- many more params -->
+  </context>
+  <context id="system.processor1">
     <state id="Halted">
       <mon-obj id="ports.Rx01" status="non-critical" />
     </state>
-  </table>
-  <!-- In practice, many more tables -->
+  </context>
+  <!-- In practice, many more contexts -->
 </module>

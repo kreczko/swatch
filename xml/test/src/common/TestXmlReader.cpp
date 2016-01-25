@@ -35,18 +35,18 @@ struct TestXmlReaderSetup {
     mInvalidMainConfigStr = "<db>"
         "<key id=\"MyDummyKey\">"
         "<load module=\"file://xml/test/etc/swatch/test/sub1.xml\" />"
-        "<table id=\"system.processors\">"
-        "<entry id=\"resetBoard.clockSource\" type=\"string\">external</entry>"
-        "</table>"
+        "<context id=\"system.processors\">"
+        "<param id=\"resetBoard.clockSource\" type=\"string\">external</param>"
+        "</context>"
         "</key>"
         "</db>";
     mSubConfigStr = "<module>"
-        "<table id=\"system.processor1\">"
+        "<context id=\"system.processor1\">"
         "<state id=\"Halted\">"
         "<mon-obj id=\"ports.Rx00\" status=\"non-critical\" />"
         "</state>"
         "<mask id=\"ports.Rx00\" />"
-        "</table>"
+        "</context>"
         "<disable id=\"system.brokenProcessor\" />"
         "</module>";
     mInvalidSubConfigStr = "<module>"
@@ -55,12 +55,12 @@ struct TestXmlReaderSetup {
     // main config + sub config
     mMergedConfigStr = "<db>"
         "<key id=\"MyDummyKey\">"
-        "<table id=\"system.processor1\">"
+        "<context id=\"system.processor1\">"
         "<state id=\"Halted\">"
         "<mon-obj id=\"ports.Rx00\" status=\"non-critical\" />"
         "</state>"
         "<mask id=\"ports.Rx00\"/>"
-        "</table>"
+        "</context>"
         "<disable id=\"system.brokenProcessor\" />"
         "</key>"
         "</db>";
@@ -122,12 +122,12 @@ BOOST_AUTO_TEST_CASE( TestReadXmlConfig ) {
   lMainConfig.load_file(lTestFile.c_str());
   std::string lErrorMsg("");
   BOOST_REQUIRE_EQUAL(lReader.checkMainConfig(lMainConfig, lErrorMsg), true);
-  // but the merged config, where <load> has been replaced with tables and 'disable' tag, will fail
+  // but the merged config, where <load> has been replaced with contexts and 'disable' tag, will fail
   BOOST_REQUIRE_EQUAL(lReader.checkMainConfig(lMergedDoc, lErrorMsg), false);
-  // the merged config should now have 2 tables (merged from 3) and one <disable> tag
+  // the merged config should now have 2 contexts (merged from 3) and one <disable> tag
   pugi::xml_node lKey(lMergedDoc.child("db").find_child_by_attribute("key", "id", "MyDummyKey"));
 
-  int lResult = std::distance(lKey.children("table").begin(), lKey.children("table").end());
+  int lResult = std::distance(lKey.children("context").begin(), lKey.children("context").end());
   BOOST_REQUIRE_EQUAL(lResult, 2);
   lResult = std::distance(lKey.children("disable").begin(), lKey.children("disable").end());
   BOOST_REQUIRE_EQUAL(lResult, 1);

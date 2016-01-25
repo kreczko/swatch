@@ -35,18 +35,18 @@ struct SystemStateMachineTestSetup {
     sysItoA = &fsm.addTransition("sysIToA", sysState0, sysStateA);
     sysAtoB = &fsm.addTransition("sysAToB", sysStateA, sysStateB);
     
-    GateKeeper::ParametersTable_t tbl(new GateKeeper::Parameters_t());
+    GateKeeper::ParametersContext_t tbl(new GateKeeper::Parameters_t());
     tbl->insert( GateKeeper::Parameters_t::value_type(DummyCommand::paramToDo, GateKeeper::Parameter_t(new xdata::String(""))));
     tbl->insert( GateKeeper::Parameters_t::value_type(DummyCommand::paramX, GateKeeper::Parameter_t(new xdata::Integer(42))));
-    gk.addTable(sys->getId()+".common", tbl);
+    gk.addContext(sys->getId()+".common", tbl);
 
-    GateKeeper::MasksTable_t lMasksTable(new GateKeeper::Masks_t());
-    lMasksTable->insert("maskableA");
-    lMasksTable->insert("monChild.maskableB");
+    GateKeeper::MasksContext_t lMasksContext(new GateKeeper::Masks_t());
+    lMasksContext->insert("maskableA");
+    lMasksContext->insert("monChild.maskableB");
     // "maskableC": FALSE ENTRY (i.e. should not take effect on child1.maskableC)
     //   - here to check that masks are applied using MaskableObject's ID path relative to the ActionableObject (not just using ID string)
-    lMasksTable->insert("maskableC");
-    gk.addMasksTable(sys->getId()+".common", lMasksTable);
+    lMasksContext->insert("maskableC");
+    gk.addMasksContext(sys->getId()+".common", lMasksContext);
   }
 
   ~SystemStateMachineTestSetup() {}

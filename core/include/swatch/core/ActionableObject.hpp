@@ -97,7 +97,7 @@ public:
   //! Get registered state machine of specified ID
   StateMachine& getStateMachine( const std::string& aId );
 
-  virtual const std::vector<std::string>& getGateKeeperTables() const = 0;
+  virtual const std::vector<std::string>& getGateKeeperContexts() const = 0;
   
   Status_t getStatus() const;
   

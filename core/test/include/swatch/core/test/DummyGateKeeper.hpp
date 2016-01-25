@@ -25,9 +25,9 @@ class DummyGateKeeper : public GateKeeper {
   virtual ~DummyGateKeeper();
 
   // Expose gatekeeper "add" methods as public for unit testing 
-  void addTable( const std::string& aId, const ParametersTable_t&);
-  void addSettingsTable(const std::string& aId, const SettingsTable_t& aTable);
-  void addMasksTable(const std::string& aId, const MasksTable_t& aTable);
+  void addContext( const std::string& aId, const ParametersContext_t&);
+  void addSettingsContext(const std::string& aId, const SettingsContext_t& aContext);
+  void addMasksContext(const std::string& aId, const MasksContext_t& aContext);
   void addDisabledId(const std::string& aId);
 };
 
