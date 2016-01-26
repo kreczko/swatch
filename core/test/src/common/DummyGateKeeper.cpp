@@ -18,20 +18,20 @@ DummyGateKeeper::~DummyGateKeeper()
 }
 
 
-void DummyGateKeeper::addTable(const std::string& aId, const ParametersTable_t& aTable)
+void DummyGateKeeper::addContext(const std::string& aId, const ParametersContext_t& aContext)
 {
-  add(aId, aTable);
+  add(aId, aContext);
 }
 
-void DummyGateKeeper::addSettingsTable(const std::string& aId, const SettingsTable_t& aTable)
+void DummyGateKeeper::addSettingsContext(const std::string& aId, const SettingsContext_t& aContext)
 {
-  add(aId, aTable);
+  add(aId, aContext);
 }
   
   
-void DummyGateKeeper::addMasksTable(const std::string& aId, const MasksTable_t& aTable)
+void DummyGateKeeper::addMasksContext(const std::string& aId, const MasksContext_t& aContext)
 {
-  add(aId, aTable);
+  add(aId, aContext);
 }
   
 void DummyGateKeeper::addDisabledId(const std::string& aId)

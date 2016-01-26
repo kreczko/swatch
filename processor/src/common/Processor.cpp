@@ -207,7 +207,7 @@ OutputPortCollection& Processor::getOutputPorts()
 
 
 //---
-const std::vector<std::string>& Processor::getGateKeeperTables() const
+const std::vector<std::string>& Processor::getGateKeeperContexts() const
 {
   // Can't set the table names in constructor, since don't know parent at that time ...
   // ... instead, have to set tables names first time this method is called

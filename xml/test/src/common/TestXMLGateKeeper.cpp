@@ -25,82 +25,82 @@ struct TestXmlGateKeeperSetup {
         "<key id=\"RunKey1\">"
         "<!-- Common parameters for all processors -->"
         "<!-- to be used with ${SWATCH_ROOT}/system/test/cfg/dummy_s1tem.json -->		"
-        "<table id=\"dummy_s1.processors\">"
+        "<context id=\"dummy_s1.processors\">"
         "	<!-- Default parameter values for all commands in all sequences -->"
-        "	<entry id=\"cmdDuration\" type=\"uint\">6</entry>"
-        "	<entry id=\"clkErrorTimeout\" type=\"uint\">120</entry>"
+        "	<param id=\"cmdDuration\" type=\"uint\">6</param>"
+        "	<param id=\"clkErrorTimeout\" type=\"uint\">120</param>"
         "	<!-- Value for parameter 'cmdDuration' in 'reboot' command -->"
-        "	<entry id=\"reboot.cmdDuration\" type=\"uint\">8</entry>"
-        "</table>"
+        "	<param id=\"reboot.cmdDuration\" type=\"uint\">8</param>"
+        "</context>"
         ""
         "<!-- Different parameter values for processors with role 'dummy_p1' ; higher priority"
-        "than 'dummy_s1.processors' table -->"
-        "<table id=\"dummy_s1.dummy_p1\">"
+        "than 'dummy_s1.processors' context -->"
+        "<context id=\"dummy_s1.dummy_p1\">"
         "<!-- Default parameter values for all commands in all sequences -->"
-        "<entry id=\"cmdDuration\" type=\"uint\">8</entry>"
-        "<entry id=\"clkErrorTimeout\" type=\"uint\">60</entry>"
+        "<param id=\"cmdDuration\" type=\"uint\">8</param>"
+        "<param id=\"clkErrorTimeout\" type=\"uint\">60</param>"
         "<!-- Value for parameter \"cmdDuration\" in \"reboot\" command -->"
-        "<entry id=\"reboot.cmdDuration\" type=\"uint\">12</entry>"
-        "</table>"
+        "<param id=\"reboot.cmdDuration\" type=\"uint\">12</param>"
+        "</context>"
         ""
-        "<table id=\"dummy_s1.dummy_p2\">"
-        "			<entry id=\"clkErrorTimeout\" type=\"uint\">40</entry>"
-        "</table>"
+        "<context id=\"dummy_s1.dummy_p2\">"
+        "			<param id=\"clkErrorTimeout\" type=\"uint\">40</param>"
+        "</context>"
         ""
         "<!-- AMC13s ... -->"
-        "<table id=\"dummy_s1.daqttcs\">"
-        "<entry id=\"cmdDuration\" type=\"uint\">8</entry>"
-        "<entry id=\"reboot.cmdDuration\" type=\"uint\">12</entry>"
-        "<entry id=\"clkErrorTimeout\" type=\"uint\">120</entry>"
-        "</table>"
+        "<context id=\"dummy_s1.daqttcs\">"
+        "<param id=\"cmdDuration\" type=\"uint\">8</param>"
+        "<param id=\"reboot.cmdDuration\" type=\"uint\">12</param>"
+        "<param id=\"clkErrorTimeout\" type=\"uint\">120</param>"
+        "</context>"
         "</key>"
         "</db>";
 
     config_with_metrics_str = "<db>"
         "<key id=\"RunKey1\">"
-        "<table id=\"dummy_s1.processors\">"
+        "<context id=\"dummy_s1.processors\">"
         "<!-- Define metric status -->"
         "<state id=\"weird_state\">"
         "	<metric id=\"criticalMetric\" status=\"disabled\" />"
         "</state>"
-        "		</table>"
-        "	<table id=\"dummy_s1.dummy_p2\">"
+        "		</context>"
+        "	<context id=\"dummy_s1.dummy_p2\">"
         "		<state id=\"weird_state\">"
         "			<metric id=\"nonCriticalMetric\" status=\"enabled\" />"
         "		</state>"
-        "	</table>"
+        "	</context>"
         "</key>"
         "</db>";
     config_with_disabled_processor_str = "<db>"
         "	<key id=\"RunKey1\">"
-        "		<table id=\"dummy_s1.dummy_p2\">"
-        "			<entry id=\"clkErrorTimeout\" type=\"uint\">40</entry>"
+        "		<context id=\"dummy_s1.dummy_p2\">"
+        "			<param id=\"clkErrorTimeout\" type=\"uint\">40</param>"
         "			<state id=\"weird_state\">"
         "				<!-- disable whole processor -->"
         "				<mon-obj id=\"\" status=\"disabled\" />"
         "			</state>"
-        "		</table>"
+        "		</context>"
         "	</key>"
         "</db>";
     config_with_vector_parameters_str = "<db>"
         "   <key id=\"RunKey1\">"
-        "       <table id=\"dummy_s1.dummy_p2\">"
-        "           <entry id=\"clkErrorTimeout\" type=\"uint\">40</entry>"
-        "           <entry id=\"uintvector\" type=\"vector:uint\">5, 3, 42, 100</entry>"
-        "       </table>"
+        "       <context id=\"dummy_s1.dummy_p2\">"
+        "           <param id=\"clkErrorTimeout\" type=\"uint\">40</param>"
+        "           <param id=\"uintvector\" type=\"vector:uint\">5, 3, 42, 100</param>"
+        "       </context>"
         "   </key>"
         "</db>";
     config_with_masks_str = "<db>"
         "   <key id=\"RunKey1\">"
-        "       <table id=\"dummy_sys.common\">"
+        "       <context id=\"dummy_sys.common\">"
         "           <mask id=\"componentA\"/>"
-        "       </table>"
-        "       <table id=\"dummy_sys.childTypeA\">"
+        "       </context>"
+        "       <context id=\"dummy_sys.childTypeA\">"
         "           <mask id=\"componentB\"/>"
-        "       </table>"
-        "       <table id=\"dummy_sys.childA1\">"
+        "       </context>"
+        "       <context id=\"dummy_sys.childA1\">"
         "           <mask id=\"componentC\"/>"
-        "       </table>"
+        "       </context>"
         "   </key>"
         "   <key id=\"OtherRunKey\">"
         "   </key>"
@@ -136,42 +136,42 @@ BOOST_AUTO_TEST_SUITE( TestXmlGateKeeper )
 BOOST_FIXTURE_TEST_CASE ( VerifyBaseConfig, TestXmlGateKeeperSetup )
 {
 	XmlGateKeeper gk(base_config, "RunKey1");
-	std::vector<std::string> tablesToLookIn;
-	tablesToLookIn.push_back("dummy_s1.processors");
+	std::vector<std::string> contextsToLookIn;
+	contextsToLookIn.push_back("dummy_s1.processors");
 
-  BOOST_CHECK_EQUAL(gk.get("", "", "cmdDuration", tablesToLookIn)->toString(), "6");
-  BOOST_CHECK_EQUAL(gk.get("", "", "clkErrorTimeout", tablesToLookIn)->toString(), "120");
-  BOOST_CHECK_EQUAL(gk.get("", "reboot", "cmdDuration", tablesToLookIn)->toString(), "8");
+  BOOST_CHECK_EQUAL(gk.get("", "", "cmdDuration", contextsToLookIn)->toString(), "6");
+  BOOST_CHECK_EQUAL(gk.get("", "", "clkErrorTimeout", contextsToLookIn)->toString(), "120");
+  BOOST_CHECK_EQUAL(gk.get("", "reboot", "cmdDuration", contextsToLookIn)->toString(), "8");
 
-  tablesToLookIn.clear();
-  tablesToLookIn.push_back("dummy_s1.dummy_p1");
-  BOOST_CHECK_EQUAL(gk.get("", "", "cmdDuration", tablesToLookIn)->toString(), "8");
-  BOOST_CHECK_EQUAL(gk.get("", "", "clkErrorTimeout", tablesToLookIn)->toString(), "60");
-  BOOST_CHECK_EQUAL(gk.get("", "reboot", "cmdDuration", tablesToLookIn)->toString(), "12");
+  contextsToLookIn.clear();
+  contextsToLookIn.push_back("dummy_s1.dummy_p1");
+  BOOST_CHECK_EQUAL(gk.get("", "", "cmdDuration", contextsToLookIn)->toString(), "8");
+  BOOST_CHECK_EQUAL(gk.get("", "", "clkErrorTimeout", contextsToLookIn)->toString(), "60");
+  BOOST_CHECK_EQUAL(gk.get("", "reboot", "cmdDuration", contextsToLookIn)->toString(), "12");
 
-  tablesToLookIn.clear();
-  tablesToLookIn.push_back("dummy_s1.dummy_p2");
-  BOOST_CHECK_EQUAL(gk.get("", "", "clkErrorTimeout", tablesToLookIn)->toString(), "40");
+  contextsToLookIn.clear();
+  contextsToLookIn.push_back("dummy_s1.dummy_p2");
+  BOOST_CHECK_EQUAL(gk.get("", "", "clkErrorTimeout", contextsToLookIn)->toString(), "40");
 
-  tablesToLookIn.clear();
-  tablesToLookIn.push_back("dummy_s1.daqttcs");
-  BOOST_CHECK_EQUAL(gk.get("", "", "cmdDuration", tablesToLookIn)->toString(), "8");
-  BOOST_CHECK_EQUAL(gk.get("", "", "clkErrorTimeout", tablesToLookIn)->toString(), "120");
-  BOOST_CHECK_EQUAL(gk.get("", "reboot", "cmdDuration", tablesToLookIn)->toString(), "12");
+  contextsToLookIn.clear();
+  contextsToLookIn.push_back("dummy_s1.daqttcs");
+  BOOST_CHECK_EQUAL(gk.get("", "", "cmdDuration", contextsToLookIn)->toString(), "8");
+  BOOST_CHECK_EQUAL(gk.get("", "", "clkErrorTimeout", contextsToLookIn)->toString(), "120");
+  BOOST_CHECK_EQUAL(gk.get("", "reboot", "cmdDuration", contextsToLookIn)->toString(), "12");
 
 }
 
 BOOST_FIXTURE_TEST_CASE ( TestMetricSettings, TestXmlGateKeeperSetup )
 {
 	XmlGateKeeper gk(config_with_metrics, "RunKey1");
-	std::vector<std::string> tablesToLookIn;
-	tablesToLookIn.push_back("dummy_s1.processors");
-	BOOST_CHECK_EQUAL(gk.getMonitoringSetting("weird_state", "criticalMetric", tablesToLookIn)->getStatus(),
+	std::vector<std::string> contextsToLookIn;
+	contextsToLookIn.push_back("dummy_s1.processors");
+	BOOST_CHECK_EQUAL(gk.getMonitoringSetting("weird_state", "criticalMetric", contextsToLookIn)->getStatus(),
 			monitoring::kDisabled);
 
-  tablesToLookIn.clear();
-  tablesToLookIn.push_back("dummy_s1.dummy_p2");
-  BOOST_CHECK_EQUAL(gk.getMonitoringSetting("weird_state", "nonCriticalMetric", tablesToLookIn)->getStatus(),
+  contextsToLookIn.clear();
+  contextsToLookIn.push_back("dummy_s1.dummy_p2");
+  BOOST_CHECK_EQUAL(gk.getMonitoringSetting("weird_state", "nonCriticalMetric", contextsToLookIn)->getStatus(),
       monitoring::kEnabled);
 
 }
@@ -180,58 +180,58 @@ BOOST_FIXTURE_TEST_CASE ( TestMonitoringSettings, TestXmlGateKeeperSetup )
 {
 //	std::string input_file = "${SWATCH_ROOT}/core/test/config/config_with_disabled_processor.xml";
 	XmlGateKeeper gk(config_with_disabled_processor, "RunKey1");
-	std::vector<std::string> tablesToLookIn;
-	tablesToLookIn.push_back("dummy_s1.dummy_p2");
-	BOOST_CHECK_EQUAL(gk.getMonitoringSetting("weird_state", "", tablesToLookIn)->getStatus(),
+	std::vector<std::string> contextsToLookIn;
+	contextsToLookIn.push_back("dummy_s1.dummy_p2");
+	BOOST_CHECK_EQUAL(gk.getMonitoringSetting("weird_state", "", contextsToLookIn)->getStatus(),
 			monitoring::kDisabled);
 }
 
 BOOST_FIXTURE_TEST_CASE ( TestVectorParameters, TestXmlGateKeeperSetup )
 {
 	XmlGateKeeper gk(config_with_vector_parameters, "RunKey1");
-	std::vector<std::string> tablesToLookIn;
-	tablesToLookIn.push_back("dummy_s1.dummy_p2");
-	BOOST_CHECK_EQUAL(gk.get("", "", "uintvector", tablesToLookIn)->toString(), "[5,3,42,100]");
+	std::vector<std::string> contextsToLookIn;
+	contextsToLookIn.push_back("dummy_s1.dummy_p2");
+	BOOST_CHECK_EQUAL(gk.get("", "", "uintvector", contextsToLookIn)->toString(), "[5,3,42,100]");
 }
 
 BOOST_FIXTURE_TEST_CASE(TestMask, TestXmlGateKeeperSetup) // Same as code in core::GateKeeper's tests (at least in Dec 2015)
 {
   XmlGateKeeper lGK(config_with_masks, "RunKey1");
-  std::vector<std::string> lTablesToLookIn;
+  std::vector<std::string> lContextsToLookIn;
 
-  // 1) When tables vector is empty,  GateKeeper::getMask method should always return false
-  BOOST_CHECK_EQUAL(lGK.getMask("componentA", lTablesToLookIn), false);
-  BOOST_CHECK_EQUAL(lGK.getMask("componentB", lTablesToLookIn), false);
-  BOOST_CHECK_EQUAL(lGK.getMask("componentC", lTablesToLookIn), false);
-  BOOST_CHECK_EQUAL(lGK.getMask("otherComponent", lTablesToLookIn), false);
+  // 1) When contexts vector is empty,  GateKeeper::getMask method should always return false
+  BOOST_CHECK_EQUAL(lGK.getMask("componentA", lContextsToLookIn), false);
+  BOOST_CHECK_EQUAL(lGK.getMask("componentB", lContextsToLookIn), false);
+  BOOST_CHECK_EQUAL(lGK.getMask("componentC", lContextsToLookIn), false);
+  BOOST_CHECK_EQUAL(lGK.getMask("otherComponent", lContextsToLookIn), false);
 
-  // 2) Tables vector only contains common table
-  lTablesToLookIn.push_back("dummy_sys.common");
-  BOOST_CHECK_EQUAL(lGK.getMask("componentA", lTablesToLookIn), true);
-  BOOST_CHECK_EQUAL(lGK.getMask("componentB", lTablesToLookIn), false);
-  BOOST_CHECK_EQUAL(lGK.getMask("componentC", lTablesToLookIn), false);
-  BOOST_CHECK_EQUAL(lGK.getMask("otherComponent", lTablesToLookIn), false);
+  // 2) Contexts vector only contains common context
+  lContextsToLookIn.push_back("dummy_sys.common");
+  BOOST_CHECK_EQUAL(lGK.getMask("componentA", lContextsToLookIn), true);
+  BOOST_CHECK_EQUAL(lGK.getMask("componentB", lContextsToLookIn), false);
+  BOOST_CHECK_EQUAL(lGK.getMask("componentC", lContextsToLookIn), false);
+  BOOST_CHECK_EQUAL(lGK.getMask("otherComponent", lContextsToLookIn), false);
 
-  // 3) Tables vector contains proc1 and common tables
-  lTablesToLookIn = std::vector<std::string> { "dummy_sys.childA1", "dummy_sys.common" };
-  BOOST_CHECK_EQUAL(lGK.getMask("componentA", lTablesToLookIn), true);
-  BOOST_CHECK_EQUAL(lGK.getMask("componentB", lTablesToLookIn), false);
-  BOOST_CHECK_EQUAL(lGK.getMask("componentC", lTablesToLookIn), true);
-  BOOST_CHECK_EQUAL(lGK.getMask("otherComponent", lTablesToLookIn), false);
+  // 3) Contexts vector contains proc1 and common contexts
+  lContextsToLookIn = std::vector<std::string> { "dummy_sys.childA1", "dummy_sys.common" };
+  BOOST_CHECK_EQUAL(lGK.getMask("componentA", lContextsToLookIn), true);
+  BOOST_CHECK_EQUAL(lGK.getMask("componentB", lContextsToLookIn), false);
+  BOOST_CHECK_EQUAL(lGK.getMask("componentC", lContextsToLookIn), true);
+  BOOST_CHECK_EQUAL(lGK.getMask("otherComponent", lContextsToLookIn), false);
 
-  // 4) Tables vector contains processors and common tables
-  lTablesToLookIn = std::vector<std::string> { "dummy_sys.childTypeA", "dummy_sys.common" };
-  BOOST_CHECK_EQUAL(lGK.getMask("componentA", lTablesToLookIn), true);
-  BOOST_CHECK_EQUAL(lGK.getMask("componentB", lTablesToLookIn), true);
-  BOOST_CHECK_EQUAL(lGK.getMask("componentC", lTablesToLookIn), false);
-  BOOST_CHECK_EQUAL(lGK.getMask("otherComponent", lTablesToLookIn), false);
+  // 4) Contexts vector contains processors and common contexts
+  lContextsToLookIn = std::vector<std::string> { "dummy_sys.childTypeA", "dummy_sys.common" };
+  BOOST_CHECK_EQUAL(lGK.getMask("componentA", lContextsToLookIn), true);
+  BOOST_CHECK_EQUAL(lGK.getMask("componentB", lContextsToLookIn), true);
+  BOOST_CHECK_EQUAL(lGK.getMask("componentC", lContextsToLookIn), false);
+  BOOST_CHECK_EQUAL(lGK.getMask("otherComponent", lContextsToLookIn), false);
 
-  // 5) Tables vector contains all tables
-  lTablesToLookIn = std::vector<std::string> { "dummy_sys.childA1", "dummy_sys.childTypeA", "dummy_sys.common" };
-  BOOST_CHECK_EQUAL(lGK.getMask("componentA", lTablesToLookIn), true);
-  BOOST_CHECK_EQUAL(lGK.getMask("componentB", lTablesToLookIn), true);
-  BOOST_CHECK_EQUAL(lGK.getMask("componentC", lTablesToLookIn), true);
-  BOOST_CHECK_EQUAL(lGK.getMask("otherComponent", lTablesToLookIn), false);
+  // 5) Contexts vector contains all contexts
+  lContextsToLookIn = std::vector<std::string> { "dummy_sys.childA1", "dummy_sys.childTypeA", "dummy_sys.common" };
+  BOOST_CHECK_EQUAL(lGK.getMask("componentA", lContextsToLookIn), true);
+  BOOST_CHECK_EQUAL(lGK.getMask("componentB", lContextsToLookIn), true);
+  BOOST_CHECK_EQUAL(lGK.getMask("componentC", lContextsToLookIn), true);
+  BOOST_CHECK_EQUAL(lGK.getMask("otherComponent", lContextsToLookIn), false);
 }
 
 BOOST_FIXTURE_TEST_CASE(TestDisabled, TestXmlGateKeeperSetup) // Same as code in core::GateKeeper's tests (at least in Jan 2016)
@@ -248,19 +248,19 @@ BOOST_AUTO_TEST_CASE( CreateFromConfigFile ) {
   std::string lTestFile("xml/test/etc/swatch/test/mainConfig.xml");
   XmlGateKeeper lGK(lTestFile, "MyDummyKey");
 
-  std::vector<std::string> lTablesToLookIn;
-  lTablesToLookIn = std::vector<std::string> { "system.processors", "system.processor1" };
+  std::vector<std::string> lContextsToLookIn;
+  lContextsToLookIn = std::vector<std::string> { "system.processors", "system.processor1" };
 
   // from sub1.xml
-  BOOST_CHECK_EQUAL(lGK.get("", "", "resetBoard.clockSource", lTablesToLookIn)->toString(), "external");
+  BOOST_CHECK_EQUAL(lGK.get("", "", "resetBoard.clockSource", lContextsToLookIn)->toString(), "external");
   // from sub2.xml
-  BOOST_CHECK_EQUAL(lGK.get("", "", "electronLookUpTable", lTablesToLookIn)->toString(), "[56,345,954,310]");
+  BOOST_CHECK_EQUAL(lGK.get("", "", "electronLookUpTable", lContextsToLookIn)->toString(), "[56,345,954,310]");
   // from sub3.xml
-  BOOST_CHECK_EQUAL(lGK.getMonitoringSetting("Halted", "ports.Rx00", lTablesToLookIn)->getStatus(),
+  BOOST_CHECK_EQUAL(lGK.getMonitoringSetting("Halted", "ports.Rx00", lContextsToLookIn)->getStatus(),
       monitoring::kNonCritical);
-  BOOST_CHECK_EQUAL(lGK.getMonitoringSetting("Halted", "ports.Rx01", lTablesToLookIn)->getStatus(),
+  BOOST_CHECK_EQUAL(lGK.getMonitoringSetting("Halted", "ports.Rx01", lContextsToLookIn)->getStatus(),
       monitoring::kNonCritical);
-  BOOST_CHECK_EQUAL(lGK.getMask("ports.Rx00", lTablesToLookIn), true);
+  BOOST_CHECK_EQUAL(lGK.getMask("ports.Rx00", lContextsToLookIn), true);
   BOOST_CHECK_EQUAL(lGK.isEnabled("system.brokenProcessor"), false);
 }
 

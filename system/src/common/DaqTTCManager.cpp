@@ -101,7 +101,7 @@ DaqTTCManager::getFedId() const {
 }
 
 const std::vector<std::string>&
-DaqTTCManager::getGateKeeperTables() const
+DaqTTCManager::getGateKeeperContexts() const
 {
   // Can't set the table names in constructor, since don't know parent at that time ...
   // ... instead, have to set tables names first time this method is called

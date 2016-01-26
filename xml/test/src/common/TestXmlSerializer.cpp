@@ -29,17 +29,17 @@ struct XmlSerializerTestSetup {
 			mSerializer(new XmlSerializer()), mInputs(), mOutputs(), mTypes() {
 		mInputs = {
 			// vectors
-			"<entry id='testUintV' type='vector:uint'>40, 30, 1, 2</entry>",
-			"<entry id='testIntV' type='vector:int'>-2, 2, -42</entry>",
-			"<entry id='testFloatV' type='vector:float'>-2.2, 2.3, -42.0</entry>",
-			"<entry id='testBoolV' type='vector:bool'>false, false, true</entry>",
-			"<entry id='testStringV' type='vector:string'>hello, is, it, me, you're, looking, for</entry>",
+			"<param id='testUintV' type='vector:uint'>40, 30, 1, 2</param>",
+			"<param id='testIntV' type='vector:int'>-2, 2, -42</param>",
+			"<param id='testFloatV' type='vector:float'>-2.2, 2.3, -42.0</param>",
+			"<param id='testBoolV' type='vector:bool'>false, false, true</param>",
+			"<param id='testStringV' type='vector:string'>hello, is, it, me, you're, looking, for</param>",
 			// single objects
-			"<entry id='testUint' type='uint'>40</entry>",
-			"<entry id='testInt' type='int'>-2</entry>",
-			"<entry id='testFloat' type='float'>-2.2</entry>",
-			"<entry id='testBool' type='bool'>false</entry>",
-			"<entry id='testString' type='string'>hello</entry>"
+			"<param id='testUint' type='uint'>40</param>",
+			"<param id='testInt' type='int'>-2</param>",
+			"<param id='testFloat' type='float'>-2.2</param>",
+			"<param id='testBool' type='bool'>false</param>",
+			"<param id='testString' type='string'>hello</param>"
 		};
 		mOutputs = {
 			"[40,30,1,2]",
@@ -77,7 +77,7 @@ BOOST_FIXTURE_TEST_CASE(TestImport, XmlSerializerTestSetup)
 	for(unsigned int i = 0; i < mInputs.size(); ++i){
 		pugi::xml_document doc;
 		BOOST_REQUIRE_EQUAL(doc.load(mInputs.at(i).c_str()), true);
-		pugi::xml_node lNode = doc.child("entry");
+		pugi::xml_node lNode = doc.child("param");
 		BOOST_REQUIRE_EQUAL(lNode.empty(), false);
 		xdata::Serializable* result = mSerializer->import(lNode);
 
@@ -88,20 +88,20 @@ BOOST_FIXTURE_TEST_CASE(TestImport, XmlSerializerTestSetup)
 
 BOOST_FIXTURE_TEST_CASE(TestInvalid, XmlSerializerTestSetup)
 {
-	std::string lInput = "<entry id='test' type='vector:uint'>40, error, 1, 2</entry>";
+	std::string lInput = "<param id='test' type='vector:uint'>40, error, 1, 2</param>";
 	pugi::xml_document doc;
 	BOOST_REQUIRE_EQUAL(doc.load(lInput.c_str()), true);
-	pugi::xml_node lNode = doc.child("entry");
+	pugi::xml_node lNode = doc.child("param");
 
 	BOOST_CHECK_THROW(mSerializer->import(lNode), swatch::xml::ValueError);
 }
 
 BOOST_FIXTURE_TEST_CASE(TestUnkownType, XmlSerializerTestSetup)
 {
-	std::string lInput = "<entry id='test' type='unknown'>I can't do that Bob.</entry>";
+	std::string lInput = "<param id='test' type='unknown'>I can't do that Bob.</param>";
 	pugi::xml_document doc;
 	BOOST_REQUIRE_EQUAL(doc.load(lInput.c_str()), true);
-	pugi::xml_node lNode = doc.child("entry");
+	pugi::xml_node lNode = doc.child("param");
 
 	BOOST_CHECK_THROW(mSerializer->import(lNode), swatch::xml::UnknownDataType);
 }

@@ -35,18 +35,18 @@ struct TestXmlReaderSetup {
     mInvalidMainConfigStr = "<db>"
         "<key id=\"MyDummyKey\">"
         "<load module=\"file://xml/test/etc/swatch/test/sub1.xml\" />"
-        "<table id=\"system.processors\">"
-        "<entry id=\"resetBoard.clockSource\" type=\"string\">external</entry>"
-        "</table>"
+        "<context id=\"system.processors\">"
+        "<param id=\"resetBoard.clockSource\" type=\"string\">external</param>"
+        "</context>"
         "</key>"
         "</db>";
     mSubConfigStr = "<module>"
-        "<table id=\"system.processor1\">"
+        "<context id=\"system.processor1\">"
         "<state id=\"Halted\">"
         "<mon-obj id=\"ports.Rx00\" status=\"non-critical\" />"
         "</state>"
         "<mask id=\"ports.Rx00\" />"
-        "</table>"
+        "</context>"
         "<disable id=\"system.brokenProcessor\" />"
         "</module>";
     mInvalidSubConfigStr = "<module>"
@@ -55,12 +55,12 @@ struct TestXmlReaderSetup {
     // main config + sub config
     mMergedConfigStr = "<db>"
         "<key id=\"MyDummyKey\">"
-        "<table id=\"system.processor1\">"
+        "<context id=\"system.processor1\">"
         "<state id=\"Halted\">"
         "<mon-obj id=\"ports.Rx00\" status=\"non-critical\" />"
         "</state>"
         "<mask id=\"ports.Rx00\"/>"
-        "</table>"
+        "</context>"
         "<disable id=\"system.brokenProcessor\" />"
         "</key>"
         "</db>";
@@ -82,15 +82,20 @@ BOOST_AUTO_TEST_SUITE( TestXmlReader )
 
 BOOST_FIXTURE_TEST_CASE ( VerifyMainConfig, TestXmlReaderSetup ) {
   XmlReader lReader;
-  BOOST_REQUIRE_EQUAL(lReader.checkMainConfig(mMainConfig), true);
-  BOOST_REQUIRE_EQUAL(lReader.checkMainConfig(mInvalidMainConfig), false);
+  std::string lErrorMsg("");
+  BOOST_REQUIRE_EQUAL(lReader.checkMainConfig(mMainConfig, lErrorMsg), true);
+  BOOST_REQUIRE_EQUAL(lErrorMsg, "");
+  BOOST_REQUIRE_EQUAL(lReader.checkMainConfig(mInvalidMainConfig, lErrorMsg), false);
+  BOOST_REQUIRE_NE(lErrorMsg, "");
 }
 
 BOOST_FIXTURE_TEST_CASE ( VerifySubConfig, TestXmlReaderSetup ) {
   XmlReader lReader;
-
-  BOOST_REQUIRE_EQUAL(lReader.checkSubConfig(mSubConfig), true);
-  BOOST_REQUIRE_EQUAL(lReader.checkSubConfig(mInvalidSubConfig), false);
+  std::string lErrorMsg("");
+  BOOST_REQUIRE_EQUAL(lReader.checkSubConfig(mSubConfig, lErrorMsg), true);
+  BOOST_REQUIRE_EQUAL(lErrorMsg, "");
+  BOOST_REQUIRE_EQUAL(lReader.checkSubConfig(mInvalidSubConfig, lErrorMsg), false);
+  BOOST_REQUIRE_NE(lErrorMsg, "");
 }
 
 BOOST_FIXTURE_TEST_CASE ( TestToString, TestXmlReaderSetup ) {
@@ -115,13 +120,14 @@ BOOST_AUTO_TEST_CASE( TestReadXmlConfig ) {
   // the file itself will pass the check
   pugi::xml_document lMainConfig;
   lMainConfig.load_file(lTestFile.c_str());
-  BOOST_REQUIRE_EQUAL(lReader.checkMainConfig(lMainConfig), true);
-  // but the merged config, where <load> has been replaced with tables and 'disable' tag, will fail
-  BOOST_REQUIRE_EQUAL(lReader.checkMainConfig(lMergedDoc), false);
-  // the merged config should now have 2 tables (merged from 3) and one <disable> tag
+  std::string lErrorMsg("");
+  BOOST_REQUIRE_EQUAL(lReader.checkMainConfig(lMainConfig, lErrorMsg), true);
+  // but the merged config, where <load> has been replaced with contexts and 'disable' tag, will fail
+  BOOST_REQUIRE_EQUAL(lReader.checkMainConfig(lMergedDoc, lErrorMsg), false);
+  // the merged config should now have 2 contexts (merged from 3) and one <disable> tag
   pugi::xml_node lKey(lMergedDoc.child("db").find_child_by_attribute("key", "id", "MyDummyKey"));
 
-  int lResult = std::distance(lKey.children("table").begin(), lKey.children("table").end());
+  int lResult = std::distance(lKey.children("context").begin(), lKey.children("context").end());
   BOOST_REQUIRE_EQUAL(lResult, 2);
   lResult = std::distance(lKey.children("disable").begin(), lKey.children("disable").end());
   BOOST_REQUIRE_EQUAL(lResult, 1);

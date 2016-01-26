@@ -46,7 +46,7 @@ public:
 
   virtual ~DummyActionableObject();
 
-  virtual const std::vector<std::string>& getGateKeeperTables() const;
+  virtual const std::vector<std::string>& getGateKeeperContexts() const;
 
   uint32_t getNumber() const;
 

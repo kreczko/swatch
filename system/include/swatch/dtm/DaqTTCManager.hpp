@@ -108,7 +108,7 @@ public:
     
   static const std::vector<std::string> kDefaultMonitorableObjects;
 
-  virtual const std::vector<std::string>& getGateKeeperTables() const;
+  virtual const std::vector<std::string>& getGateKeeperContexts() const;
 
   //! Returns this amc13's TTC interface
   TTCInterface& getTTC();

@@ -20,124 +20,52 @@ GateKeeper::GateKeeper(const std::string& aKey) :
         mCache(),
         mSettings(),
         mUpdateTime() {
-  ParametersTable_t lParameters(new Parameters_t()); //Best practice to always use named shared_ptrs
-  mCache.insert(std::make_pair(kRuntimeTableLabel, lParameters));
+  ParametersContext_t lParameters(new Parameters_t()); //Best practice to always use named shared_ptrs
+  mCache.insert(std::make_pair(kRuntimeContextLabel, lParameters));
 
-  SettingsTable_t lSettings(new MonitoringSettings_t());
-  mSettings.insert(std::make_pair(kRuntimeTableLabel, lSettings));
+  SettingsContext_t lSettings(new MonitoringSettings_t());
+  mSettings.insert(std::make_pair(kRuntimeContextLabel, lSettings));
 }
 
 GateKeeper::~GateKeeper() {
 }
 
-//    bool GateKeeper::preload()
-//    {
-//      // Iterate over all objects under the top level: if they are CommandSequences, claim them and cache the resources they will use
-//      for ( Object::iterator lIt ( mToplevel->begin() ); lIt != mToplevel->end(); ++ lIt )
-//      {
-//        CommandSequence* lCommandSequence ( dynamic_cast< CommandSequence* > ( & ( *lIt ) ) );
-//
-//        if ( lCommandSequence )
-//        {
-//          const std::vector<std::string>& lTables = lCommandSequence->getTables();
-//
-//          for ( std::vector<std::string>::const_iterator lIt2 ( lTables.begin() ) ; lIt2!=lTables.end() ; ++lIt2 )
-//          {
-//            tTableCache::iterator lTableIt ( mCache.find ( *lIt2 ) );
-//
-//            if ( lTableIt != mCache.end() )
-//            {
-//              continue;
-//            }
-//
-//            tTable lTable ( getTable ( mKey , *lIt2 ) ); //perfectly acceptable to return NULL - no such table exists
-//
-//            if ( lTable )
-//            {
-//              mCache.insert ( std::make_pair ( *lIt2 , lTable ) );  //Could use add method here for clarity, but there is no point rechecking the existence of the Id in the cache
-//              mUpdateTime = boost::posix_time::microsec_clock::universal_time();
-//            }
-//          }
-//
-//
-//          for( CommandSequence::tCommandVector::const_iterator lIt2( lCommandSequence->getCommands().begin()) ; lIt2 != lCommandSequence->getCommands().end() ; ++lIt2 )
-//          {
-//            Command& lCommand = **lIt2; //Utility function
-//            std::set< std::string > lKeys( lCommand.getDefaultParams().keys() );
-//            for( std::set< std::string >::iterator lIt3( lKeys.begin() ); lIt3!=lKeys.end(); ++lIt3 )
-//            {
-//              get ( lCommandSequence->getId() , lCommand.getId() , *lIt3 , lTables );
-//            }
-//          }
-//
-////          std::set<std::string> lParams = lCommandSequence->getParams();
-////          for ( std::set<std::string>::const_iterator lIt2 ( lParams.begin() ) ; lIt2!=lParams.end() ; ++lIt2 )
-////          {
-////             get ( *lIt2 , lTables );
-////          }
-//        }
-//      }
-//
-//      return true;
-//    }
 
 GateKeeper::Parameter_t GateKeeper::get(const std::string& aParam,
-    const std::string& aTable) const {
-  ParametersTableCache_t::const_iterator lTable(mCache.find(aTable));
+    const std::string& aContext) const {
+  ParametersContextCache_t::const_iterator lContext(mCache.find(aContext));
 
-  if (lTable == mCache.end()) {
-    return Parameter_t(); //perfectly acceptable for table name to not exist, just try the table with the next highest priority
+  if (lContext == mCache.end()) {
+    return Parameter_t(); //perfectly acceptable for context name to not exist, just try the context with the next highest priority
   }
 
-  Parameters_t::iterator lData(lTable->second->find(aParam));
+  Parameters_t::iterator lData(lContext->second->find(aParam));
 
-  if (lData == lTable->second->end()) {
-    return Parameter_t(); //perfectly acceptable for table name to not exist, just try the table with the next highest priority
+  if (lData == lContext->second->end()) {
+    return Parameter_t(); //perfectly acceptable for context name to not exist, just try the context with the next highest priority
   }
 
   return lData->second;  //We found data!
 }
 
-//     GateKeeper::tParameter GateKeeper::get ( const std::string& aParam , const std::vector<std::string>& aTables )
-//     {
-//       //See if the value was set at Run-time
-//       tParameter lData ( get( aParam , mRuntimeTableLabel ) );
-//       if ( lData )
-//       {
-//         return lData;  //perfectly acceptable for specific table not hold the requested data, just try the table with the next highest priority
-//       }       
-// 
-//       //We could add runtime overriding of values to the GateKeeper and check them first...
-//       for ( std::vector<std::string>::const_iterator lIt ( aTables.begin() ) ; lIt!=aTables.end() ; ++lIt )
-//       {
-//         tParameter lData ( get( aParam , *lIt ) );
-//         if ( lData )
-//         {
-//           return lData;  //perfectly acceptable for specific table not hold the requested data, just try the table with the next highest priority
-//         }    
-//       }
-// 
-// //       throw UnknownParameter ( "Unable to find parameter '"+aParam+"' in any listed table" ); //no table contains the requested parameter - problem!
-//       return tParameter(); //to stop the compiler complaining...
-//     }
 
 GateKeeper::Parameter_t GateKeeper::get(const std::string& aNamespace,
     const std::string& aCommandPath, const std::string& aParameterId,
-    const std::string& aTable) const {
+    const std::string& aContext) const {
   Parameter_t lData;
-  lData = get(aNamespace, aTable);
+  lData = get(aNamespace, aContext);
   if (lData) {
-    return lData; //perfectly acceptable for specific table not hold the requested data, just try the table with the next highest priority
+    return lData; //perfectly acceptable for specific context not hold the requested data, just try the context with the next highest priority
   }
 
-  lData = get(aCommandPath, aTable);
+  lData = get(aCommandPath, aContext);
   if (lData) {
-    return lData; //perfectly acceptable for specific table not hold the requested data, just try the table with the next highest priority
+    return lData; //perfectly acceptable for specific context not hold the requested data, just try the context with the next highest priority
   }
 
-  lData = get(aParameterId, aTable);
+  lData = get(aParameterId, aContext);
   if (lData) {
-    return lData; //perfectly acceptable for specific table not hold the requested data, just try the table with the next highest priority
+    return lData; //perfectly acceptable for specific context not hold the requested data, just try the context with the next highest priority
   }
 
   return Parameter_t();
@@ -145,26 +73,26 @@ GateKeeper::Parameter_t GateKeeper::get(const std::string& aNamespace,
 
 GateKeeper::Parameter_t GateKeeper::get(const std::string& aSequenceId,
     const std::string& aCommandId, const std::string& aParameterId,
-    const std::vector<std::string>& aTablesToLookIn) const {
+    const std::vector<std::string>& aContextsToLookIn) const {
 
   std::string lCommandPath(aCommandId + "." + aParameterId);
   std::string lSequencePath(aSequenceId + "." + lCommandPath);
 
   //See if the value was set at Run-time
   Parameter_t lData;
-  lData = get(lSequencePath, lCommandPath, aParameterId, kRuntimeTableLabel);
+  lData = get(lSequencePath, lCommandPath, aParameterId, kRuntimeContextLabel);
   if (lData) {
-    return lData; //perfectly acceptable for specific table not hold the requested data, just try the table with the next highest priority
+    return lData; //perfectly acceptable for specific context not hold the requested data, just try the context with the next highest priority
   }
 
   //We could add runtime overriding of values to the GateKeeper and check them first...
-  for (std::vector<std::string>::const_iterator lIt(aTablesToLookIn.begin());
-      lIt != aTablesToLookIn.end(); ++lIt) {
+  for (std::vector<std::string>::const_iterator lIt(aContextsToLookIn.begin());
+      lIt != aContextsToLookIn.end(); ++lIt) {
     LOG(logger::kDebug) << "Searching : " << lSequencePath << ", "
         << lCommandPath << ", " << aParameterId << " in  " << *lIt << std::endl;
     lData = get(lSequencePath, lCommandPath, aParameterId, *lIt);
     if (lData) {
-      return lData; //perfectly acceptable for specific table not hold the requested data, just try the table with the next highest priority
+      return lData; //perfectly acceptable for specific context not hold the requested data, just try the context with the next highest priority
     }
   }
 
@@ -173,24 +101,24 @@ GateKeeper::Parameter_t GateKeeper::get(const std::string& aSequenceId,
 
 GateKeeper::MonitoringSetting_t GateKeeper::getMonitoringSetting(
     const std::string& aState, const std::string& aMetricId,
-    const std::vector<std::string>& aTablesToLookIn) const {
+    const std::vector<std::string>& aContextsToLookIn) const {
   std::string statePath(aState + "." + aMetricId);
 
   //See if the value was set at Run-time
   MonitoringSetting_t setting;
-  setting = getMonitoringSetting(statePath, aMetricId, kRuntimeTableLabel);
+  setting = getMonitoringSetting(statePath, aMetricId, kRuntimeContextLabel);
   if (setting) {
-    return setting; //perfectly acceptable for specific table not hold the requested data, just try the table with the next highest priority
+    return setting; //perfectly acceptable for specific context not hold the requested data, just try the context with the next highest priority
   }
 
   //We could add runtime overriding of values to the GateKeeper and check them first...
-  for (std::vector<std::string>::const_iterator lIt(aTablesToLookIn.begin());
-      lIt != aTablesToLookIn.end(); ++lIt) {
+  for (std::vector<std::string>::const_iterator lIt(aContextsToLookIn.begin());
+      lIt != aContextsToLookIn.end(); ++lIt) {
     LOG(logger::kDebug) << "Searching : " << statePath << ", " << aMetricId
         << " in  " << *lIt << std::endl;
     setting = getMonitoringSetting(statePath, aMetricId, *lIt);
     if (setting) {
-      return setting; //perfectly acceptable for specific table not hold the requested data, just try the table with the next highest priority
+      return setting; //perfectly acceptable for specific context not hold the requested data, just try the context with the next highest priority
     }
   }
 
@@ -199,35 +127,35 @@ GateKeeper::MonitoringSetting_t GateKeeper::getMonitoringSetting(
 
 GateKeeper::MonitoringSetting_t GateKeeper::getMonitoringSetting(
     const std::string& aStatePath, const std::string& aMetricId,
-    const std::string& aTableToLookIn) const {
+    const std::string& aContextToLookIn) const {
   MonitoringSetting_t setting;
-  setting = getMonitoringSetting(aStatePath, aTableToLookIn);
+  setting = getMonitoringSetting(aStatePath, aContextToLookIn);
   if (setting) {
-    return setting; //perfectly acceptable for specific table not hold the requested data, just try the table with the next highest priority
+    return setting; //perfectly acceptable for specific context not hold the requested data, just try the context with the next highest priority
   }
 
-  setting = getMonitoringSetting(aMetricId, aTableToLookIn);
+  setting = getMonitoringSetting(aMetricId, aContextToLookIn);
   if (setting) {
-    return setting; //perfectly acceptable for specific table not hold the requested data, just try the table with the next highest priority
+    return setting; //perfectly acceptable for specific context not hold the requested data, just try the context with the next highest priority
   }
 
   return MonitoringSetting_t();
 }
 
 GateKeeper::MonitoringSetting_t GateKeeper::getMonitoringSetting(
-    const std::string& aMetricId, const std::string& aTableToLookIn) const {
+    const std::string& aMetricId, const std::string& aContextToLookIn) const {
 
-  SettingsTableCache_t::const_iterator lTable(mSettings.find(aTableToLookIn));
+  SettingsContextCache_t::const_iterator lContext(mSettings.find(aContextToLookIn));
 
-  if (lTable == mSettings.end()) {
-    //perfectly acceptable for table name to not exist, just try the table with the next highest priority
+  if (lContext == mSettings.end()) {
+    //perfectly acceptable for context name to not exist, just try the context with the next highest priority
     return MonitoringSetting_t();
   }
 
-  MonitoringSettings_t::iterator settings(lTable->second->find(aMetricId));
+  MonitoringSettings_t::iterator settings(lContext->second->find(aMetricId));
 
-  if (settings == lTable->second->end()) {
-    //perfectly acceptable for table name to not exist, just try the table with the next highest priority
+  if (settings == lContext->second->end()) {
+    //perfectly acceptable for context name to not exist, just try the context with the next highest priority
     return MonitoringSetting_t();
   }
 
@@ -235,12 +163,12 @@ GateKeeper::MonitoringSetting_t GateKeeper::getMonitoringSetting(
 }
 
 
-bool GateKeeper::getMask(const std::string& aObjId, const std::vector<std::string>& aTablesToLookIn) const
+bool GateKeeper::getMask(const std::string& aObjId, const std::vector<std::string>& aContextsToLookIn) const
 {
   bool lMask = false;
   
-  for (std::vector<std::string>::const_iterator lIt(aTablesToLookIn.begin()); lIt != aTablesToLookIn.end(); ++lIt) {
-    LOG(logger::kDebug) << "Searching for mask for '" << aObjId << "', in table " << *lIt << std::endl;
+  for (std::vector<std::string>::const_iterator lIt(aContextsToLookIn.begin()); lIt != aContextsToLookIn.end(); ++lIt) {
+    LOG(logger::kDebug) << "Searching for mask for '" << aObjId << "', in context " << *lIt << std::endl;
     lMask = getMask(aObjId, *lIt);
     if (lMask)
       return lMask;
@@ -250,19 +178,19 @@ bool GateKeeper::getMask(const std::string& aObjId, const std::vector<std::strin
 }
 
 
-bool GateKeeper::getMask(const std::string& aObjId, const std::string& aTableToLookIn) const
+bool GateKeeper::getMask(const std::string& aObjId, const std::string& aContextToLookIn) const
 {
-   MasksTableCache_t::const_iterator lTable(mMasks.find(aTableToLookIn));
+   MasksContextCache_t::const_iterator lContext(mMasks.find(aContextToLookIn));
 
-  if (lTable == mMasks.end()) {
-    //perfectly acceptable for table name to not exist, just try the table with the next highest priority
+  if (lContext == mMasks.end()) {
+    //perfectly acceptable for context name to not exist, just try the context with the next highest priority
     return false;
   }
 
-  Masks_t::const_iterator lMaskIt = lTable->second->find(aObjId);
+  Masks_t::const_iterator lMaskIt = lContext->second->find(aObjId);
 
-  if (lMaskIt == lTable->second->end()) {
-    //perfectly acceptable for table name to not exist, just try the table with the next highest priority
+  if (lMaskIt == lContext->second->end()) {
+    //perfectly acceptable for context name to not exist, just try the context with the next highest priority
     return false;
   }
 
@@ -276,36 +204,36 @@ bool GateKeeper::isEnabled(const std::string& aObjId) const
 }
 
 
-void GateKeeper::add(const std::string& aId, ParametersTable_t aTable) {
-  ParametersTableCache_t::iterator lTableIt(mCache.find(aId));
+void GateKeeper::add(const std::string& aId, ParametersContext_t aContext) {
+  ParametersContextCache_t::iterator lContextIt(mCache.find(aId));
 
-  if (lTableIt != mCache.end()) {
-    throw TableWithIdAlreadyExists(
-        "Table With Id '" + aId + "' already exists");
+  if (lContextIt != mCache.end()) {
+    throw ContextWithIdAlreadyExists(
+        "Context With Id '" + aId + "' already exists");
   }
 
-  mCache.insert(std::make_pair(aId, aTable));
+  mCache.insert(std::make_pair(aId, aContext));
   mUpdateTime = boost::posix_time::microsec_clock::universal_time();
 }
 
-void GateKeeper::add(const std::string& aId, SettingsTable_t aTable) {
-  SettingsTableCache_t::iterator lTableIt(mSettings.find(aId));
-  if (lTableIt != mSettings.end()) {
-    throw TableWithIdAlreadyExists(
-        "Table of monitoring settings With Id '" + aId + "' already exists");
+void GateKeeper::add(const std::string& aId, SettingsContext_t aContext) {
+  SettingsContextCache_t::iterator lContextIt(mSettings.find(aId));
+  if (lContextIt != mSettings.end()) {
+    throw ContextWithIdAlreadyExists(
+        "Context of monitoring settings With Id '" + aId + "' already exists");
   }
 
-  mSettings.insert(std::make_pair(aId, aTable));
+  mSettings.insert(std::make_pair(aId, aContext));
 }
 
 
-void GateKeeper::add(const std::string& aId, MasksTable_t aTable)
+void GateKeeper::add(const std::string& aId, MasksContext_t aContext)
 {
-  MasksTableCache_t::const_iterator lTableIt(mMasks.find(aId));
-  if (lTableIt != mMasks.end())
-    throw TableWithIdAlreadyExists("Table of masks with Id '" + aId + "' already exists");
+  MasksContextCache_t::const_iterator lContextIt(mMasks.find(aId));
+  if (lContextIt != mMasks.end())
+    throw ContextWithIdAlreadyExists("Context of masks with Id '" + aId + "' already exists");
 
-  mMasks.insert(std::make_pair(aId, aTable));
+  mMasks.insert(std::make_pair(aId, aContext));
 }
 
 
@@ -313,7 +241,7 @@ void GateKeeper::addToDisabledSet ( const std::string& aId )
 {
   DisabledSet_t::const_iterator lIt(mDisabledObjs.find(aId));
   if (lIt != mDisabledObjs.end())
-    throw TableWithIdAlreadyExists("ID path '"+ aId + "' is already present in set of disabled IDs");
+    throw ContextWithIdAlreadyExists("ID path '"+ aId + "' is already present in set of disabled IDs");
   
   mDisabledObjs.insert(aId);
 }
@@ -325,52 +253,52 @@ const boost::posix_time::ptime& GateKeeper::lastUpdated() {
 
 void GateKeeper::setRuntimeParameter(const std::string& aParam,
     Parameter_t aData) {
-  ParametersTableCache_t::iterator lTable(mCache.find(kRuntimeTableLabel));
-  Parameters_t::iterator lIt(lTable->second->find(aParam));
+  ParametersContextCache_t::iterator lContext(mCache.find(kRuntimeContextLabel));
+  Parameters_t::iterator lIt(lContext->second->find(aParam));
 
-  if (lIt != lTable->second->end()) {
+  if (lIt != lContext->second->end()) {
     lIt->second = aData;
     return;
   }
-  lTable->second->insert(std::make_pair(aParam, aData));
+  lContext->second->insert(std::make_pair(aParam, aData));
 }
 
-const std::string GateKeeper::kRuntimeTableLabel = std::string("__runtime__");
+const std::string GateKeeper::kRuntimeContextLabel = std::string("__runtime__");
 
 std::ostream& operator<<(std::ostream& aStr,
     const swatch::core::GateKeeper& aGateKeeper) {
   std::string lDelimeter(100, '-');
-  for (GateKeeper::ParametersTableCache_t::const_iterator lTableIt(
-      aGateKeeper.mCache.begin()); lTableIt != aGateKeeper.mCache.end();
-      ++lTableIt) {
+  for (GateKeeper::ParametersContextCache_t::const_iterator lContextIt(
+      aGateKeeper.mCache.begin()); lContextIt != aGateKeeper.mCache.end();
+      ++lContextIt) {
     aStr << lDelimeter << std::endl;
-    aStr << "TABLE : " << lTableIt->first << std::endl;
+    aStr << "CONTEXT : " << lContextIt->first << std::endl;
     aStr << lDelimeter << std::endl;
 
     std::set<std::string> names;
-    boost::copy(*(lTableIt->second) | boost::adaptors::map_keys,
+    boost::copy(*(lContextIt->second) | boost::adaptors::map_keys,
         std::inserter(names, names.begin()));
 
     BOOST_FOREACH( const std::string& name, names ) {
-      aStr << " " << name << " : " << lTableIt->second->at(name)->toString()
+      aStr << " " << name << " : " << lContextIt->second->at(name)->toString()
           << std::endl;
     }
 
     aStr << lDelimeter << std::endl;
   }
 
-  for (GateKeeper::SettingsTableCache_t::const_iterator lTableIt(aGateKeeper.mSettings.begin());
-      lTableIt != aGateKeeper.mSettings.end(); ++lTableIt) {
+  for (GateKeeper::SettingsContextCache_t::const_iterator lContextIt(aGateKeeper.mSettings.begin());
+      lContextIt != aGateKeeper.mSettings.end(); ++lContextIt) {
       aStr << lDelimeter << std::endl;
-      aStr << "TABLE : " << lTableIt->first << std::endl;
+      aStr << "CONTEXT : " << lContextIt->first << std::endl;
       aStr << lDelimeter << std::endl;
 
       std::set<std::string> names;
-      boost::copy(*(lTableIt->second) | boost::adaptors::map_keys,
+      boost::copy(*(lContextIt->second) | boost::adaptors::map_keys,
           std::inserter(names, names.begin()));
 
       BOOST_FOREACH( const std::string& name, names ) {
-        monitoring::Status lMonStatus(lTableIt->second->at(name)->getStatus());
+        monitoring::Status lMonStatus(lContextIt->second->at(name)->getStatus());
         aStr << " " << name << " : " << lMonStatus << std::endl;
       }
 

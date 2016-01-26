@@ -1,7 +1,7 @@
 <module>
-  <table id="system.processors">
-    <entry id="resetBoard.clockSource" type="string">external</entry>
-    <!--- many more entries -->
-  </table>
-  <!-- In practice, many more tables -->
+  <context id="system.processors">
+    <param id="resetBoard.clockSource" type="string">external</param>
+    <!--- many more params -->
+  </context>
+  <!-- In practice, many more contexts -->
 </module>

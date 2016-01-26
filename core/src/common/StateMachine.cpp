@@ -203,7 +203,7 @@ void StateMachine::resetMaskableObjects(ActionableObject& aObj, const GateKeeper
   for(std::vector<std::string>::const_iterator lIdIt=lDescendants.begin(); lIdIt!=lDescendants.end(); lIdIt++)
   {
     if(MaskableObject* lMaskableObj = aObj.getObj<MaskableObject>(*lIdIt))
-      lMaskableObj->setMasked( aGateKeeper.getMask(*lIdIt, aObj.getGateKeeperTables()) );
+      lMaskableObj->setMasked( aGateKeeper.getMask(*lIdIt, aObj.getGateKeeperContexts()) );
   }
 }
 
@@ -332,7 +332,7 @@ void StateMachine::Transition::extractMonitoringSettings(const GateKeeper& aGate
     if (lDescendant) {
       // query the GateKeeper for relevant settings for each object
       std::string lPath = *lIt;
-      const std::vector<std::string>& lTablesToLookIn = lResource.getGateKeeperTables();
+      const std::vector<std::string>& lTablesToLookIn = lResource.getGateKeeperContexts();
       const GateKeeper::MonitoringSetting_t lMonSetting = aGateKeeper.getMonitoringSetting(mEndState, lPath,
           lTablesToLookIn);
       if (lMonSetting)
