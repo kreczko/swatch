@@ -6,9 +6,10 @@
 
 #include "swatch/core/Command.hpp"
 #include "swatch/core/CommandSequence.hpp"
+#include "swatch/core/MaskableObject.hpp"
+#include "swatch/core/StateMachine.hpp"
 #include "swatch/core/Utilities.hpp"
 #include "swatch/logger/Logger.hpp"
-#include "swatch/core/StateMachine.hpp"
 
 //log4cplus headers
 #include <log4cplus/loggingmacros.h>
@@ -52,27 +53,6 @@ ActionableObject::ActionableObject( const std::string& aId, const std::string& a
 ActionableObject::~ActionableObject() {
 }
 
-//------------------------------------------------------------------------------------
-CommandSequence& ActionableObject::getSequence( const std::string& aId )
-{
-  try {
-    return *(mCommandSequences.at( aId ));
-  } catch ( const std::out_of_range& e ) {
-    throw CommandSequenceNotFoundInActionableObject( "Unable to find CommandSequence with ID '" + aId + "' in object '" + getPath() + "'" );
-  }
-}
-
-
-//------------------------------------------------------------------------------------
-Command& ActionableObject::getCommand( const std::string& aId )
-{
-  try {
-    return *(mCommands.at( aId ));
-  } catch ( const std::out_of_range& e ) {
-    throw CommandNotFoundInActionableObject( "Unable to find Command with ID '" + aId + "' in object '" + getPath() + "'" );
-  }
-}
-
 
 //------------------------------------------------------------------------------------
 StateMachine& ActionableObject::getStateMachine( const std::string& aId )
@@ -95,6 +75,7 @@ std::set<std::string> ActionableObject::getSequences() const
   return lNames;
 }
 
+//------------------------------------------------------------------------------------
 std::set<std::string> ActionableObject::getCommands() const
 {
   std::set<std::string> lNames;
@@ -104,6 +85,7 @@ std::set<std::string> ActionableObject::getCommands() const
   return lNames;
 }
 
+//------------------------------------------------------------------------------------
 std::set<std::string> ActionableObject::getStateMachines() const
 {
   std::set<std::string> lNames;
@@ -112,6 +94,29 @@ std::set<std::string> ActionableObject::getStateMachines() const
   }
   return lNames;
 }
+
+
+//------------------------------------------------------------------------------------
+CommandSequence& ActionableObject::getSequence( const std::string& aId )
+{
+  try {
+    return *(mCommandSequences.at( aId ));
+  } catch ( const std::out_of_range& e ) {
+    throw CommandSequenceNotFoundInActionableObject( "Unable to find CommandSequence with ID '" + aId + "' in object '" + getPath() + "'" );
+  }
+}
+
+
+//------------------------------------------------------------------------------------
+Command& ActionableObject::getCommand( const std::string& aId )
+{
+  try {
+    return *(mCommands.at( aId ));
+  } catch ( const std::out_of_range& e ) {
+    throw CommandNotFoundInActionableObject( "Unable to find Command with ID '" + aId + "' in object '" + getPath() + "'" );
+  }
+}
+
 
 //------------------------------------------------------------------------------------
 CommandSequence& ActionableObject::registerSequence( const std::string& aId, const std::string& aFirstCommandId, const std::string& aFirstCommandNamespace)
@@ -170,6 +175,19 @@ ActionableObject::Status_t ActionableObject::getStatus() const
   ActionableStatusGuard lGuard(mStatus);
   return mStatus.getSnapshot(lGuard);
 }
+
+
+//------------------------------------------------------------------------------------
+void ActionableObject::resetMaskableObjects(const GateKeeper& aGateKeeper)
+{
+  std::vector<std::string> lDescendants = getDescendants();
+  for(std::vector<std::string>::const_iterator lIdIt=lDescendants.begin(); lIdIt!=lDescendants.end(); lIdIt++)
+  {
+    if(MaskableObject* lMaskableObj = getObj<MaskableObject>(*lIdIt))
+      lMaskableObj->setMasked( aGateKeeper.getMask(*lIdIt, this->getGateKeeperContexts()) );
+  }
+}
+
 
 
 //------------------------------------------------------------------------------------

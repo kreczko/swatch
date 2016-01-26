@@ -110,6 +110,7 @@ void StateMachine::addState(const std::string& aStateId)
 }
 
 
+//------------------------------------------------------------------------------------
 StateMachine::Transition& StateMachine::addTransition(const std::string& aTransitionId, const std::string& aFromState, const std::string& aToState)
 {
   State& lFromState = getState(aFromState);
@@ -144,7 +145,7 @@ void StateMachine::engage(const GateKeeper& aGateKeeper, const ActionableStatusG
   mStatus.setStateMachine(getId(), getInitialState(), aGuard);
 
   // Reset maskable objects (unmasked unless specified otherwise in gatekeeper)
-  resetMaskableObjects(mResource, aGateKeeper);
+  mResource.resetMaskableObjects(aGateKeeper);
   
   // Reset monitoring settings on children, and apply settings from gatekeeper
   resetMonitoringSettings();
@@ -211,7 +212,7 @@ void StateMachine::reset(const GateKeeper& aGateKeeper, const ActionableStatusGu
   mStatus.setState(getInitialState(), aGuard);
 
   // Reset maskable objects (unmasked unless specified otherwise in gatekeeper)
-  resetMaskableObjects(mResource, aGateKeeper);
+  mResource.resetMaskableObjects(aGateKeeper);
   
   // Reset monitoring settings on children, and apply settings from gatekeeper
   resetMonitoringSettings();
@@ -221,17 +222,7 @@ void StateMachine::reset(const GateKeeper& aGateKeeper, const ActionableStatusGu
 }
 
 
-void StateMachine::resetMaskableObjects(ActionableObject& aObj, const GateKeeper& aGateKeeper)
-{
-  std::vector<std::string> lDescendants = aObj.getDescendants();
-  for(std::vector<std::string>::const_iterator lIdIt=lDescendants.begin(); lIdIt!=lDescendants.end(); lIdIt++)
-  {
-    if(MaskableObject* lMaskableObj = aObj.getObj<MaskableObject>(*lIdIt))
-      lMaskableObj->setMasked( aGateKeeper.getMask(*lIdIt, aObj.getGateKeeperContexts()) );
-  }
-}
-
-
+//------------------------------------------------------------------------------------
 StateMachine::Transition::Transition(const std::string& aId, StateMachine& aOp, ActionableStatus& aActionableStatus, const std::string& aStartState, const std::string& aEndState) :
   CommandVec(aId, aOp.getActionable()),
   mStateMachine(aOp),

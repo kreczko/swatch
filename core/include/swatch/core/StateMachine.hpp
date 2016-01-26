@@ -102,8 +102,6 @@ public:
    * @param aGuard Guard that's locking the status object of the associated actionable object
    */
   void reset(const GateKeeper& aGateKeeper, const ActionableStatusGuard& aGuard);
-
-  static void resetMaskableObjects(ActionableObject& aObj, const GateKeeper& aGateKeeper);
   
   typedef CommandVecSnapshot TransitionSnapshot;
 

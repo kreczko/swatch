@@ -33,6 +33,7 @@ class ActionableObject;
 class ActionableSystem;
 class Command;
 class CommandSequence;
+class GateKeeper;
 class StateMachine;
 class SystemStateMachine;
 
@@ -102,6 +103,9 @@ public:
   Status_t getStatus() const;
   
   log4cplus::Logger& getLogger();
+
+  void resetMaskableObjects(const GateKeeper& aGateKeeper);
+
 
   typedef boost::unordered_map< std::string , CommandSequence* > CommandSequenceMap_t;
   typedef boost::unordered_map< std::string , Command* > CommandMap_t;
