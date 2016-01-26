@@ -6,6 +6,13 @@
     <mask id="ports.Rx00"/>
     <!--- many more params -->
   </context>
+  <context id="system.processors">
+    <state id="Halted">
+      <mon-obj id="ports.Rx03" status="non-critical" />
+    </state>
+    <!-- MASK INPUT PORT 00 -->
+    <mask id="inputPorts.Rx033" />
+  </context>
   <!-- In practice, many more contexts -->
   <disable id="system.brokenProcessor" />
 </module>

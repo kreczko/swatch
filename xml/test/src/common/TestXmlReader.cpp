@@ -131,6 +131,16 @@ BOOST_AUTO_TEST_CASE( TestReadXmlConfig ) {
   BOOST_REQUIRE_EQUAL(lResult, 2);
   lResult = std::distance(lKey.children("disable").begin(), lKey.children("disable").end());
   BOOST_REQUIRE_EQUAL(lResult, 1);
+
+  // added to describe the 'missing state' bug
+  pugi::xml_node lProcessors = lKey.find_child_by_attribute("context", "id", "system.processor1");
+  pugi::xml_node lState = lProcessors.find_child_by_attribute("state", "id", "Halted");
+  BOOST_REQUIRE(lState);
+
+  lProcessors = lKey.find_child_by_attribute("context", "id", "system.processors");
+  lState = lProcessors.find_child_by_attribute("state", "id", "Halted");
+  BOOST_REQUIRE(lState);
+
 }
 
 BOOST_AUTO_TEST_SUITE_END() // TestXmlReader

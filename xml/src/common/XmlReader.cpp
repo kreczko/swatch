@@ -87,8 +87,12 @@ void XmlReader::mergeContexts(const pugi::xml_node& aKeyNode, pugi::xml_node& aN
         if (strcmp(lLeaf.name(), "state") == 0) {
           // merge states
           pugi::xml_node lNewLeaf = lNewChild.find_child_by_attribute("state", "id", lLeaf.attribute("id").value());
-          for (pugi::xml_node lStateLeaf = lLeaf.first_child(); lStateLeaf; lStateLeaf = lStateLeaf.next_sibling()) {
-            lNewLeaf.append_copy(lStateLeaf);
+          if (!lNewLeaf)
+            lNewChild.append_copy(lLeaf);
+          else {
+            for (pugi::xml_node lStateLeaf = lLeaf.first_child(); lStateLeaf; lStateLeaf = lStateLeaf.next_sibling()) {
+              lNewLeaf.append_copy(lStateLeaf);
+            }
           }
         } else {
           lNewChild.append_copy(lLeaf);
