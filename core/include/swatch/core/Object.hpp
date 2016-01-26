@@ -216,6 +216,13 @@ class Object : public boost::noncopyable
   */
   template<typename T>
   T* getObj ( const std::string& aId );
+
+  /**
+    Navigate down the dot-delimited path from the current object and return the target, dynamic cast to type T
+    @param aId a dot-delimited path from the current object to the target
+    @return the object indicated by the dot-delimited path, dynamic casted to type T, or throw if the target doesn't exist
+  */
+
   template<typename T>
   const T* getObj ( const std::string& aId ) const;
 
@@ -318,6 +325,14 @@ T* Object::getObj ( const std::string& aId )
 {
   return dynamic_cast<T*> ( & this->getObj ( aId ) );
 }
+
+
+template<typename T>
+const T* Object::getObj ( const std::string& aId ) const
+{
+  return dynamic_cast<const T*> ( & this->getObj ( aId ) );
+}
+
 
 template<class T>
 void Object::addObj (Object* aChild, T aDeleter)

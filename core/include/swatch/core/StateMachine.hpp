@@ -23,7 +23,6 @@ class Command;
 class CommandSequence;
 class GateKeeper;
 class ReadOnlyXParameterSet;
-class SystemStateMachine;
 
 
 class StateMachine : public Object {
@@ -65,20 +64,44 @@ public:
 
   /*!
    * @brief Add transition to this FSM
-   * @param gaTransitionId The new transition's ID
+   * @param aTransitionId The new transition's ID
    * @param aFromState State that transition starts from
    * @param aToState State that transition goes to (in case no error occurs)
    */
   Transition& addTransition(const std::string& aTransitionId, const std::string& aFromState, const std::string& aToState);
 
-  //! Engage this FSM
+  /*!
+   * @brief Engage this FSM into initial state. Resets maskable descendants to unmasked, and monitoring settings to 
+   * enabled, then applies masks and monitoring settings from supplied gatekeeper
+   * @param aGateKeeper source of monitoring settings and masks
+   */
   void engage(const GateKeeper& aGateKeeper);
   
+  /*!
+   * @brief Engage this FSM into initial state, with actionable object's status already locked. Resets maskable descendants 
+   * to unmasked, and monitoring settings to enabled, then applies masks and monitoring settings from supplied gatekeeper
+   * @param aGateKeeper source of monitoring settings and masks
+   * @param aGuard Guard that's locking the status object of the associated actionable object
+   */
+  void engage(const GateKeeper& aGateKeeper, const ActionableStatusGuard& aGuard);
+
   //! Disengage this FSM
   void disengage();
 
-  //! Reset this FSM to initial state
+  /*!
+   * @brief Engage this FSM into initial state. Resets maskable descendants to unmasked, and monitoring settings to 
+   * enabled, then applies masks and monitoring settings from supplied gatekeeper
+   * @param aGateKeeper source of monitoring settings and masks
+   */
   void reset(const GateKeeper& aGateKeeper);
+
+  /*!
+   * @brief Reset this FSM into initial state, with actionable object's status already locked. Resets maskable descendants 
+   * to unmasked, and monitoring settings to enabled, then applies masks and monitoring settings from supplied gatekeeper
+   * @param aGateKeeper source of monitoring settings and masks
+   * @param aGuard Guard that's locking the status object of the associated actionable object
+   */
+  void reset(const GateKeeper& aGateKeeper, const ActionableStatusGuard& aGuard);
 
   static void resetMaskableObjects(ActionableObject& aObj, const GateKeeper& aGateKeeper);
   
@@ -127,11 +150,7 @@ public:
     void exec(const BusyGuard* aGuard, const GateKeeper& aGateKeeper, const bool& aUseThreadPool = true );
 
   private:
-    virtual void extractMonitoringSettings(const GateKeeper& aGateKeeper, MonitoringSettings_t& aMonSettings) const;
-
     void run(boost::shared_ptr<BusyGuard> aGuard);
-
-    void applyMonitoringSettings();
 
     void changeState(const ActionableStatusGuard& aGuard, std::ostream& aLogMessageSuffix);
 
@@ -153,7 +172,13 @@ private:
   const State& getState(const std::string& aStateId) const;
   
   State& getState(const std::string& aStateId);
-    
+
+  void resetMonitoringSettings();
+  
+  void extractMonitoringSettings(const GateKeeper& aGateKeeper, const std::string& aState, MonitoringSettings_t& aSettings) const;
+
+  void applyMonitoringSettings(const MonitoringSettings_t& aSettings);
+
   ActionableObject& mResource;
   ActionableStatus& mStatus;
     
@@ -166,11 +191,14 @@ private:
   std::map<std::string, State*> mStateMap;
 };
 
+
 DEFINE_SWATCH_EXCEPTION(StateNotDefined);
 DEFINE_SWATCH_EXCEPTION(StateAlreadyDefined);
 
 DEFINE_SWATCH_EXCEPTION(TransitionNotDefined);
 DEFINE_SWATCH_EXCEPTION(TransitionAlreadyDefined);
+
+
 }
 }
 

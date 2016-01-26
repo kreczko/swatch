@@ -39,27 +39,10 @@ namespace test {
       transitionAtoB = & testFSM.addTransition("t2", fsmStateA, fsmStateB);
       transitionBtoI = & testFSM.addTransition("t2", fsmStateB, fsmState0);
 
-
       GateKeeper::ParametersContext_t tbl(new GateKeeper::Parameters_t());
       tbl->insert( GateKeeper::Parameters_t::value_type(DummyCommand::paramToDo, GateKeeper::Parameter_t(new xdata::String(""))));
       tbl->insert( GateKeeper::Parameters_t::value_type(DummyCommand::paramX, GateKeeper::Parameter_t(new xdata::Integer(42))));
       gk.addContext("common", tbl);
-
-      // for child1
-      GateKeeper::SettingsContext_t settings_child1(new GateKeeper::MonitoringSettings_t());
-      GateKeeper::MonitoringSetting_t mon_setting1(new MonitoringSetting("child1", monitoring::kNonCritical));
-      GateKeeper::MonitoringSetting_t mon_setting2(new MonitoringSetting("child1.grandChild1", monitoring::kDisabled));
-      GateKeeper::MonitoringSetting_t mon_setting3(new MonitoringSetting("grandChild2", monitoring::kDisabled));
-      // for child1 metric
-      GateKeeper::MonitoringSetting_t mon_setting4(new MonitoringSetting("child1.dummyMetric", monitoring::kDisabled));
-
-      settings_child1->insert(GateKeeper::MonitoringSettings_t::value_type(fsmStateB + ".child1", mon_setting1));
-      settings_child1->insert(GateKeeper::MonitoringSettings_t::value_type(fsmStateB + ".child1.grandChild1", mon_setting2));
-      // this one should fail, as paths need to be relative to obj!
-      settings_child1->insert(GateKeeper::MonitoringSettings_t::value_type(fsmStateB + ".grandChild2", mon_setting3));
-      // metric
-      settings_child1->insert(GateKeeper::MonitoringSettings_t::value_type(fsmStateB + ".child1.dummyMetric", mon_setting4));
-      gk.addSettingsContext("common", settings_child1);
       
       GateKeeper::MasksContext_t lMasksContext(new GateKeeper::Masks_t());
       lMasksContext->insert("maskableA");
@@ -72,6 +55,25 @@ namespace test {
     }
     
     ~StateMachineTestSetup() {}
+
+    void addMonSettingsToGateKeeper(const std::string& aStateId)
+    {
+      // for child1
+      GateKeeper::SettingsContext_t settings_child1(new GateKeeper::MonitoringSettings_t());
+      GateKeeper::MonitoringSetting_t mon_setting1(new MonitoringSetting("child1", monitoring::kNonCritical));
+      GateKeeper::MonitoringSetting_t mon_setting2(new MonitoringSetting("child1.grandChild1", monitoring::kDisabled));
+      GateKeeper::MonitoringSetting_t mon_setting3(new MonitoringSetting("grandChild2", monitoring::kDisabled));
+      // for child1 metric
+      GateKeeper::MonitoringSetting_t mon_setting4(new MonitoringSetting("child1.dummyMetric", monitoring::kDisabled));
+
+      settings_child1->insert(GateKeeper::MonitoringSettings_t::value_type(aStateId + ".child1", mon_setting1));
+      settings_child1->insert(GateKeeper::MonitoringSettings_t::value_type(aStateId + ".child1.grandChild1", mon_setting2));
+      // this one should fail, as paths need to be relative to obj!
+      settings_child1->insert(GateKeeper::MonitoringSettings_t::value_type(aStateId + ".grandChild2", mon_setting3));
+      // metric
+      settings_child1->insert(GateKeeper::MonitoringSettings_t::value_type(aStateId + ".child1.dummyMetric", mon_setting4));
+      gk.addSettingsContext("common", settings_child1);
+    }
     
     boost::shared_ptr<DummyActionableObject> obj;
     DummyActionableObject::MonChild& child1;
@@ -92,8 +94,6 @@ namespace test {
     static const std::string cmdSeqId;
     static const std::string fsmState0, fsmStateError, fsmStateA, fsmStateB;
   };
-  
-
   
   const std::string StateMachineTestSetup::cmdSeqId = "cmdSeqA";
 
@@ -298,6 +298,40 @@ BOOST_AUTO_TEST_CASE(TestDisengageFSM)
   BOOST_CHECK_NO_THROW( testFSM.disengage() );
   BOOST_CHECK_EQUAL( obj.getStatus().getStateMachineId(), ActionableSnapshot::kNullStateMachineId );
   BOOST_CHECK_EQUAL( obj.getStatus().getState(), ActionableSnapshot::kNullStateId );
+}
+
+
+BOOST_FIXTURE_TEST_CASE(TestMonitoringSettingsAppliedDuringEngage, StateMachineTestSetup)
+{
+    // GOAL: Check that monitoring settings are reset, and those for initial state applied, during engage
+  addMonSettingsToGateKeeper(fsmState0);
+
+  // THE SETUP: Set to 'kDisabled', the monitorables that don't have settings in gatekeeper
+  //            ... in order to ensure their settings are reset to 'kEnabled'
+  grandChild2.setMonitoringStatus(monitoring::kDisabled);
+  grandChild1.getMetric("dummyMetric").setMonitoringStatus(monitoring::kDisabled);
+  grandChild2.getMetric("dummyMetric").setMonitoringStatus(monitoring::kDisabled);
+
+  // CHECK ASSUMPTIONS: Child monitorable objects and metrics have correct setting value before engage
+  BOOST_REQUIRE_EQUAL(child1.getMonitoringStatus(), monitoring::kEnabled);
+  BOOST_REQUIRE_EQUAL(grandChild1.getMonitoringStatus(), monitoring::kEnabled);
+  BOOST_REQUIRE_EQUAL(grandChild2.getMonitoringStatus(), monitoring::kDisabled);
+  BOOST_REQUIRE_EQUAL(child1.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kEnabled);
+  BOOST_REQUIRE_EQUAL(grandChild1.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kDisabled);
+  BOOST_REQUIRE_EQUAL(grandChild2.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kDisabled);
+
+  // THE TEST: Gatekeeper's monitoring settings for initial state should be applied during state machine reset
+  BOOST_REQUIRE_NO_THROW(testFSM.engage(gk));
+
+  BOOST_CHECK_EQUAL(child1.getMonitoringStatus(), monitoring::kNonCritical);
+  BOOST_CHECK_EQUAL(grandChild1.getMonitoringStatus(), monitoring::kDisabled);
+  // this one should fail, as paths need to be relative to obj and this setting has been made with ID 'grandChild2'
+  // not 'child1.grandChild2'
+  BOOST_CHECK_EQUAL(grandChild2.getMonitoringStatus(), monitoring::kEnabled);
+  // metrics
+  BOOST_CHECK_EQUAL(child1.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kDisabled);
+  BOOST_CHECK_EQUAL(grandChild1.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kEnabled);
+  BOOST_CHECK_EQUAL(grandChild2.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kEnabled);  
 }
 
 
@@ -572,23 +606,36 @@ BOOST_FIXTURE_TEST_CASE(TestRunGoodTransition, StateMachineTestSetup)
   BOOST_CHECK_EQUAL(s.getResults().at(1) , cmdNormal2.getStatus().getResult() );
 }
 
+
 BOOST_FIXTURE_TEST_CASE(TestDescendantMonitoringSettings, StateMachineTestSetup)
 {
-  BOOST_REQUIRE_EQUAL(child1.getMonitoringStatus(), monitoring::kEnabled);
-  BOOST_REQUIRE_EQUAL(child1.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kEnabled);
-  testFSM.engage(gk);
-  BOOST_REQUIRE_EQUAL( obj->getStatus().getStateMachineId(), testFSM.getId());
-  BOOST_REQUIRE_EQUAL( obj->getStatus().getState(), fsmState0);
+  // GOAL: Check that monitoring settings for state B are applied during transition A -> B
+  addMonSettingsToGateKeeper(fsmStateB);
 
-  BOOST_REQUIRE_NO_THROW(transitionItoA->exec(gk, false));
+  // THE SETUP: Move actionable object into state A, ready for test
+  testFSM.engage(gk);
+  transitionItoA->exec(gk, false);
+
+  // CHECK ASSUMPTIONS: Child monitorable objects and metrics all enabled before A->B transition
+  BOOST_REQUIRE_EQUAL(child1.getMonitoringStatus(), monitoring::kEnabled);
+  BOOST_REQUIRE_EQUAL(grandChild1.getMonitoringStatus(), monitoring::kEnabled);
+  BOOST_REQUIRE_EQUAL(grandChild2.getMonitoringStatus(), monitoring::kEnabled);
+  BOOST_REQUIRE_EQUAL(child1.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kEnabled);
+  BOOST_REQUIRE_EQUAL(grandChild1.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kEnabled);
+  BOOST_REQUIRE_EQUAL(grandChild2.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kEnabled);
+
+  // THE TEST: Monitoring settings from gatekeeper should be applied as the ActionableObject enters state B
   BOOST_REQUIRE_NO_THROW(transitionAtoB->exec(gk, false));
-  BOOST_REQUIRE_EQUAL(child1.getMonitoringStatus(), monitoring::kNonCritical);
-  BOOST_REQUIRE_EQUAL(grandChild1.getMonitoringStatus(), monitoring::kDisabled);
+
+  BOOST_CHECK_EQUAL(child1.getMonitoringStatus(), monitoring::kNonCritical);
+  BOOST_CHECK_EQUAL(grandChild1.getMonitoringStatus(), monitoring::kDisabled);
   // this one should fail, as paths need to be relative to obj and this setting has been made with ID 'grandChild2'
   // not 'child1.grandChild2'
-  BOOST_REQUIRE_NE(grandChild2.getMonitoringStatus(), monitoring::kDisabled);
+  BOOST_CHECK_EQUAL(grandChild2.getMonitoringStatus(), monitoring::kEnabled);
   // metrics
-  BOOST_REQUIRE_EQUAL(child1.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kDisabled);
+  BOOST_CHECK_EQUAL(child1.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kDisabled);
+  BOOST_CHECK_EQUAL(grandChild1.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kEnabled);
+  BOOST_CHECK_EQUAL(grandChild2.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kEnabled);
 }
 
 
@@ -640,6 +687,41 @@ BOOST_FIXTURE_TEST_CASE(TestResetDisengagedFSM, StateMachineTestSetup)
   BOOST_CHECK_EQUAL(maskableA.isMasked(), false);
   BOOST_CHECK_EQUAL(maskableB.isMasked(), false);
   BOOST_CHECK_EQUAL(maskableC.isMasked(), false);
+}
+
+
+BOOST_FIXTURE_TEST_CASE(TestMonitoringSettingsAppliedDuringReset, StateMachineTestSetup)
+{
+  // GOAL: Check that monitoring settings are reset, and those for initial state applied, during state machine reset
+  addMonSettingsToGateKeeper(fsmState0);
+
+  // THE SETUP: Engage FSM. set to 'kDisabled', the monitorables that don't have settings in gatekeeper
+  //            ... in order to ensure their settings are reset to 'kEnabled'
+  BOOST_REQUIRE_NO_THROW( testFSM.engage(DummyGateKeeper()) );
+  grandChild2.setMonitoringStatus(monitoring::kDisabled);
+  grandChild1.getMetric("dummyMetric").setMonitoringStatus(monitoring::kDisabled);
+  grandChild2.getMetric("dummyMetric").setMonitoringStatus(monitoring::kDisabled);
+
+  // CHECK ASSUMPTIONS: Child monitorable objects and metrics have correct setting value before main test
+  BOOST_REQUIRE_EQUAL(child1.getMonitoringStatus(), monitoring::kEnabled);
+  BOOST_REQUIRE_EQUAL(grandChild1.getMonitoringStatus(), monitoring::kEnabled);
+  BOOST_REQUIRE_EQUAL(grandChild2.getMonitoringStatus(), monitoring::kDisabled);
+  BOOST_REQUIRE_EQUAL(child1.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kEnabled);
+  BOOST_REQUIRE_EQUAL(grandChild1.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kDisabled);
+  BOOST_REQUIRE_EQUAL(grandChild2.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kDisabled);
+
+  // THE TEST: Gatekeeper's monitoring settings for initial state should be applied during state machine reset
+  BOOST_REQUIRE_NO_THROW(testFSM.reset(gk));
+
+  BOOST_CHECK_EQUAL(child1.getMonitoringStatus(), monitoring::kNonCritical);
+  BOOST_CHECK_EQUAL(grandChild1.getMonitoringStatus(), monitoring::kDisabled);
+  // this one should fail, as paths need to be relative to obj and this setting has been made with ID 'grandChild2'
+  // not 'child1.grandChild2'
+  BOOST_CHECK_EQUAL(grandChild2.getMonitoringStatus(), monitoring::kEnabled);
+  // metrics
+  BOOST_CHECK_EQUAL(child1.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kDisabled);
+  BOOST_CHECK_EQUAL(grandChild1.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kEnabled);
+  BOOST_CHECK_EQUAL(grandChild2.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kEnabled);  
 }
 
 

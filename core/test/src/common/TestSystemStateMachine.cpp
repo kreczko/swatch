@@ -50,7 +50,27 @@ struct SystemStateMachineTestSetup {
   }
 
   ~SystemStateMachineTestSetup() {}
-  
+
+  void addMonSettingsToGateKeeper(const std::string& aStateId) // Copied from TestStateMachine.cpp
+  {
+    // for child1
+    GateKeeper::SettingsContext_t settings_child1(new GateKeeper::MonitoringSettings_t());
+    GateKeeper::MonitoringSetting_t mon_setting1(new MonitoringSetting("monChild", monitoring::kNonCritical));
+    GateKeeper::MonitoringSetting_t mon_setting2(new MonitoringSetting("monChild.grandChild1", monitoring::kDisabled));
+    GateKeeper::MonitoringSetting_t mon_setting3(new MonitoringSetting("grandChild2", monitoring::kDisabled));
+    // for child1 metric
+    GateKeeper::MonitoringSetting_t mon_setting4(new MonitoringSetting("monChild.dummyMetric", monitoring::kDisabled));
+
+    settings_child1->insert(GateKeeper::MonitoringSettings_t::value_type(aStateId + ".monChild", mon_setting1));
+    settings_child1->insert(GateKeeper::MonitoringSettings_t::value_type(aStateId + ".monChild.grandChild1", mon_setting2));
+    // this one should fail, as paths need to be relative to obj!
+    settings_child1->insert(GateKeeper::MonitoringSettings_t::value_type(aStateId + ".grandChild2", mon_setting3));
+    // metric
+    settings_child1->insert(GateKeeper::MonitoringSettings_t::value_type(aStateId + ".monChild.dummyMetric", mon_setting4));
+    gk.addSettingsContext(sys->getId()+".common", settings_child1);
+  }
+
+
   struct Child {
     Child(DummyActionableObject& aObj);
     
@@ -64,6 +84,8 @@ struct SystemStateMachineTestSetup {
     StateMachine::Transition* ItoB;
     StateMachine::Transition* AtoB;
     DummyActionableObject::MonChild& monChild;
+    DummyActionableObject::MonChild& monGrandChild1;
+    DummyActionableObject::MonChild& monGrandChild2;
     DummyMaskableObject& maskableA;
     DummyMaskableObject& maskableB;
     DummyMaskableObject& maskableC;
@@ -94,6 +116,8 @@ SystemStateMachineTestSetup::Child::Child(DummyActionableObject& aObj) :
   ItoB(NULL),
   AtoB(NULL),
   monChild( obj.addMonitorable(new DummyActionableObject::MonChild("monChild", obj)) ),
+  monGrandChild1( monChild.addMonitorable(new DummyActionableObject::MonChild("grandChild1", obj)) ),
+  monGrandChild2( monChild.addMonitorable(new DummyActionableObject::MonChild("grandChild2", obj)) ),
   maskableA( obj.addMonitorable(new DummyMaskableObject("maskableA")) ),
   maskableB( monChild.addMonitorable(new DummyMaskableObject("maskableB")) ),
   maskableC( monChild.addMonitorable(new DummyMaskableObject("maskableC")) )
@@ -461,6 +485,57 @@ BOOST_FIXTURE_TEST_CASE(TestDisengageFSMChildComplications, SystemStateMachineTe
   BOOST_CHECK_EQUAL( child2.obj.getStatus().getState(), ActionableSnapshot::kNullStateId);
   BOOST_CHECK_EQUAL( child3.obj.getStatus().getStateMachineId(), ActionableSnapshot::kNullStateMachineId);
   BOOST_CHECK_EQUAL( child3.obj.getStatus().getState(), ActionableSnapshot::kNullStateId);
+}
+
+
+BOOST_FIXTURE_TEST_CASE(TestMonitoringSettingsAppliedDuringEngage, SystemStateMachineTestSetup)
+{
+  // GOAL: Check that monitoring settings are reset, and those for initial state applied, during engage
+  //       ONLY for actionable objects that are enabled
+  addMonSettingsToGateKeeper(childState0);
+  gk.addDisabledId(child2.obj.getPath());
+
+  // Add children to state machine
+  typedef std::vector<Child*>::const_iterator ChildIt_t;
+  const std::vector<Child*> lChildren = {&child1, &child2, &child3};
+  sysItoA->add(children.begin(), children.end(), child1.fsm.getId(), childState0, child1.ItoA->getId());
+  // THE SETUP: Set to 'kDisabled', the monitorables that don't have settings in gatekeeper
+  //            ... in order to ensure their settings are reset to 'kEnabled'
+  for(ChildIt_t lIt=lChildren.begin(); lIt != lChildren.end(); lIt++) {
+    (*lIt)->monGrandChild2.setMonitoringStatus(monitoring::kDisabled);
+    (*lIt)->monGrandChild1.getMetric("dummyMetric").setMonitoringStatus(monitoring::kDisabled);
+    (*lIt)->monGrandChild2.getMetric("dummyMetric").setMonitoringStatus(monitoring::kDisabled);
+
+    // CHECK ASSUMPTIONS: Child monitorable objects and metrics have correct setting value before engage
+    BOOST_REQUIRE_EQUAL((*lIt)->monChild.getMonitoringStatus(), monitoring::kEnabled);
+    BOOST_REQUIRE_EQUAL((*lIt)->monGrandChild1.getMonitoringStatus(), monitoring::kEnabled);
+    BOOST_REQUIRE_EQUAL((*lIt)->monGrandChild2.getMonitoringStatus(), monitoring::kDisabled);
+    BOOST_REQUIRE_EQUAL((*lIt)->monChild.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kEnabled);
+    BOOST_REQUIRE_EQUAL((*lIt)->monGrandChild1.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kDisabled);
+    BOOST_REQUIRE_EQUAL((*lIt)->monGrandChild2.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kDisabled);
+  }
+
+  // THE TEST: Gatekeeper's monitoring settings for initial state should be applied during state machine engage
+  fsm.engage(gk);
+
+  std::vector<Child*> lEnabledChildren = {&child1, &child3};
+  for(ChildIt_t lIt=lEnabledChildren.begin(); lIt != lEnabledChildren.end(); lIt++) {
+    BOOST_CHECK_EQUAL((*lIt)->monChild.getMonitoringStatus(), monitoring::kNonCritical);
+    BOOST_CHECK_EQUAL((*lIt)->monGrandChild1.getMonitoringStatus(), monitoring::kDisabled);
+    // this one should fail, as paths need to be relative to obj and this setting has been made with ID 'grandChild2'
+    // not 'child1.grandChild2'
+    BOOST_CHECK_EQUAL((*lIt)->monGrandChild2.getMonitoringStatus(), monitoring::kEnabled);
+    // metrics
+    BOOST_CHECK_EQUAL((*lIt)->monChild.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kDisabled);
+    BOOST_CHECK_EQUAL((*lIt)->monGrandChild1.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kEnabled);
+    BOOST_CHECK_EQUAL((*lIt)->monGrandChild2.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kEnabled);  
+  }
+  BOOST_CHECK_EQUAL(child2.monChild.getMonitoringStatus(), monitoring::kEnabled);
+  BOOST_CHECK_EQUAL(child2.monGrandChild1.getMonitoringStatus(), monitoring::kEnabled);
+  BOOST_CHECK_EQUAL(child2.monGrandChild2.getMonitoringStatus(), monitoring::kDisabled);
+  BOOST_CHECK_EQUAL(child2.monChild.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kEnabled);
+  BOOST_CHECK_EQUAL(child2.monGrandChild1.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kDisabled);
+  BOOST_CHECK_EQUAL(child2.monGrandChild2.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kDisabled);
 }
 
 
@@ -1405,6 +1480,59 @@ BOOST_FIXTURE_TEST_CASE(TestResetFSMChildDisengaged, SystemStateMachineTestSetup
     BOOST_CHECK_EQUAL((*lIt)->maskableC.isMasked(), false);
   }
 
+}
+
+
+BOOST_FIXTURE_TEST_CASE(TestMonitoringSettingsAppliedDuringReset, SystemStateMachineTestSetup)
+{
+  // Add children to state machine
+  typedef std::vector<Child*>::const_iterator ChildIt_t;
+  const std::vector<Child*> lChildren = {&child1, &child2, &child3};
+  sysItoA->add(children.begin(), children.end(), child1.fsm.getId(), childState0, child1.ItoA->getId());
+  BOOST_REQUIRE_NO_THROW(fsm.engage(DummyGateKeeper()));
+  
+  // GOAL: Check that monitoring settings are reset, and those for initial state applied, during reset
+  //       ONLY for actionable objects that are enabled
+  addMonSettingsToGateKeeper(childState0);
+  gk.addDisabledId(child2.obj.getPath());
+
+  // THE SETUP: Set to 'kDisabled', the monitorables that don't have settings in gatekeeper
+  //            ... in order to ensure their settings are reset to 'kEnabled'
+  for(ChildIt_t lIt=lChildren.begin(); lIt != lChildren.end(); lIt++) {
+    (*lIt)->monGrandChild2.setMonitoringStatus(monitoring::kDisabled);
+    (*lIt)->monGrandChild1.getMetric("dummyMetric").setMonitoringStatus(monitoring::kDisabled);
+    (*lIt)->monGrandChild2.getMetric("dummyMetric").setMonitoringStatus(monitoring::kDisabled);
+
+    // CHECK ASSUMPTIONS: Child monitorable objects and metrics have correct setting value before reset
+    BOOST_REQUIRE_EQUAL((*lIt)->monChild.getMonitoringStatus(), monitoring::kEnabled);
+    BOOST_REQUIRE_EQUAL((*lIt)->monGrandChild1.getMonitoringStatus(), monitoring::kEnabled);
+    BOOST_REQUIRE_EQUAL((*lIt)->monGrandChild2.getMonitoringStatus(), monitoring::kDisabled);
+    BOOST_REQUIRE_EQUAL((*lIt)->monChild.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kEnabled);
+    BOOST_REQUIRE_EQUAL((*lIt)->monGrandChild1.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kDisabled);
+    BOOST_REQUIRE_EQUAL((*lIt)->monGrandChild2.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kDisabled);
+  }
+
+  // THE TEST: Gatekeeper's monitoring settings for initial state should be applied during state machine reset
+  BOOST_REQUIRE_NO_THROW(fsm.reset(gk));
+
+  std::vector<Child*> lEnabledChildren = {&child1, &child3};
+  for(ChildIt_t lIt=lEnabledChildren.begin(); lIt != lEnabledChildren.end(); lIt++) {
+    BOOST_CHECK_EQUAL((*lIt)->monChild.getMonitoringStatus(), monitoring::kNonCritical);
+    BOOST_CHECK_EQUAL((*lIt)->monGrandChild1.getMonitoringStatus(), monitoring::kDisabled);
+    // this one should fail, as paths need to be relative to obj and this setting has been made with ID 'grandChild2'
+    // not 'child1.grandChild2'
+    BOOST_CHECK_EQUAL((*lIt)->monGrandChild2.getMonitoringStatus(), monitoring::kEnabled);
+    // metrics
+    BOOST_CHECK_EQUAL((*lIt)->monChild.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kDisabled);
+    BOOST_CHECK_EQUAL((*lIt)->monGrandChild1.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kEnabled);
+    BOOST_CHECK_EQUAL((*lIt)->monGrandChild2.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kEnabled);  
+  }
+  BOOST_CHECK_EQUAL(child2.monChild.getMonitoringStatus(), monitoring::kEnabled);
+  BOOST_CHECK_EQUAL(child2.monGrandChild1.getMonitoringStatus(), monitoring::kEnabled);
+  BOOST_CHECK_EQUAL(child2.monGrandChild2.getMonitoringStatus(), monitoring::kDisabled);
+  BOOST_CHECK_EQUAL(child2.monChild.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kEnabled);
+  BOOST_CHECK_EQUAL(child2.monGrandChild1.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kDisabled);
+  BOOST_CHECK_EQUAL(child2.monGrandChild2.getMetric("dummyMetric").getMonitoringStatus(), monitoring::kDisabled);
 }
 
 
