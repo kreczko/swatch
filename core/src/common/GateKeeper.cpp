@@ -268,6 +268,12 @@ const std::string GateKeeper::kRuntimeContextLabel = std::string("__runtime__");
 std::ostream& operator<<(std::ostream& aStr,
     const swatch::core::GateKeeper& aGateKeeper) {
   std::string lDelimeter(100, '-');
+
+  aStr << lDelimeter << std::endl;
+  for (auto lIt = aGateKeeper.mDisabledObjs.begin(); lIt != aGateKeeper.mDisabledObjs.end(); lIt++) {
+    aStr << "DISABLE : " << *lIt << std::endl;
+  }
+
   for (GateKeeper::ParametersContextCache_t::const_iterator lContextIt(
       aGateKeeper.mCache.begin()); lContextIt != aGateKeeper.mCache.end();
       ++lContextIt) {
@@ -303,7 +309,7 @@ std::ostream& operator<<(std::ostream& aStr,
       }
 
       aStr << lDelimeter << std::endl;
-    }
+  }
 
   return aStr;
 }
