@@ -562,7 +562,7 @@ void SystemStateMachine::reset(const GateKeeper& aGateKeeper)
   LOG4CPLUS_INFO(mResource.getLogger(), "Resetting system state machine '" << getId() << "'; entering state '" << getInitialState() << "'");
   mStatusMap.getSystemStatus().setState(getInitialState(), lGuard);
 
-  resetEnableFlagOnChildren(aGateKeeper, lGuardMap);
+  resetAndApplyEnableFlagOnChildren(aGateKeeper, lGuardMap);
 
   for(std::set<StateMachine*>::const_iterator smIt=mNonConstChildFSMs.begin(); smIt != mNonConstChildFSMs.end(); smIt++)
   {
@@ -604,7 +604,7 @@ void SystemStateMachine::engage(const GateKeeper& aGateKeeper)
   LOG4CPLUS_INFO(mResource.getLogger(), "Engaging state machine '" << getId() << "'; entering state '" << getInitialState() << "'");
   lSysStatus.setStateMachine(getId(), getInitialState(), lSysGuard);
 
-  resetEnableFlagOnChildren(aGateKeeper, lGuardMap);
+  resetAndApplyEnableFlagOnChildren(aGateKeeper, lGuardMap);
 
   for(auto lIt=mNonConstChildFSMs.begin(); lIt != mNonConstChildFSMs.end(); lIt++) {
     ActionableObject& lChild = (*lIt)->getActionable();
@@ -700,7 +700,7 @@ void SystemStateMachine::checkChildEngagedAndNotInTransition(const StateMachine&
 
 
 //------------------------------------------------------------------------------------
-void SystemStateMachine::resetEnableFlagOnChildren(const GateKeeper& aGateKeeper, const ActionableStatusGuardMap_t& aGuardMap)
+void SystemStateMachine::resetAndApplyEnableFlagOnChildren(const GateKeeper& aGateKeeper, const ActionableStatusGuardMap_t& aGuardMap)
 {
   for(auto lIt=mResource.getActionableChildren().begin(); lIt != mResource.getActionableChildren().end(); lIt++)
   {

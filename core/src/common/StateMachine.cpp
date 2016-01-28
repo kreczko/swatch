@@ -145,7 +145,7 @@ void StateMachine::engage(const GateKeeper& aGateKeeper, const ActionableStatusG
   mStatus.setStateMachine(getId(), getInitialState(), aGuard);
 
   // Reset maskable objects (unmasked unless specified otherwise in gatekeeper)
-  mResource.resetMaskableObjects(aGateKeeper);
+  mResource.resetAndApplyMasks(aGateKeeper);
   
   // Reset monitoring settings on children, and apply settings from gatekeeper
   resetMonitoringSettings();
@@ -212,7 +212,7 @@ void StateMachine::reset(const GateKeeper& aGateKeeper, const ActionableStatusGu
   mStatus.setState(getInitialState(), aGuard);
 
   // Reset maskable objects (unmasked unless specified otherwise in gatekeeper)
-  mResource.resetMaskableObjects(aGateKeeper);
+  mResource.resetAndApplyMasks(aGateKeeper);
   
   // Reset monitoring settings on children, and apply settings from gatekeeper
   resetMonitoringSettings();

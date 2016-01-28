@@ -178,7 +178,7 @@ ActionableObject::Status_t ActionableObject::getStatus() const
 
 
 //------------------------------------------------------------------------------------
-void ActionableObject::resetMaskableObjects(const GateKeeper& aGateKeeper)
+void ActionableObject::resetAndApplyMasks(const GateKeeper& aGateKeeper)
 {
   std::vector<std::string> lDescendants = getDescendants();
   for(std::vector<std::string>::const_iterator lIdIt=lDescendants.begin(); lIdIt!=lDescendants.end(); lIdIt++)

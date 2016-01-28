@@ -104,7 +104,7 @@ public:
   
   log4cplus::Logger& getLogger();
 
-  void resetMaskableObjects(const GateKeeper& aGateKeeper);
+  void resetAndApplyMasks(const GateKeeper& aGateKeeper);
 
 
   typedef boost::unordered_map< std::string , CommandSequence* > CommandSequenceMap_t;
