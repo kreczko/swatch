@@ -626,6 +626,11 @@ BOOST_FIXTURE_TEST_CASE(TestChildrenDisabledDuringEngage, SystemStateMachineTest
     BOOST_REQUIRE_EQUAL((*lIt)->maskableC.isMasked(), true);
   }
 
+  child1.obj.setMonitoringStatus(monitoring::kDisabled);
+  BOOST_REQUIRE_EQUAL(child1.obj.getMonitoringStatus(), monitoring::kDisabled);
+  child2.obj.setMonitoringStatus(monitoring::kEnabled);
+  BOOST_REQUIRE_EQUAL(child2.obj.getMonitoringStatus(), monitoring::kEnabled);
+
   // THE TEST:
   //  * Engage FSM; check that for child1,  A & B now masked, but C unmasked; no change on child2 & 3
   BOOST_CHECK_NO_THROW(fsm.engage(gk));
@@ -636,6 +641,8 @@ BOOST_FIXTURE_TEST_CASE(TestChildrenDisabledDuringEngage, SystemStateMachineTest
   BOOST_CHECK_EQUAL(child1.obj.getStatus().isEnabled(), true);
   BOOST_CHECK_EQUAL(child2.obj.getStatus().isEnabled(), false);
   BOOST_CHECK_EQUAL(child3.obj.getStatus().isEnabled(), true);
+  BOOST_CHECK_EQUAL(child1.obj.getMonitoringStatus(), monitoring::kEnabled);
+  BOOST_CHECK_EQUAL(child2.obj.getMonitoringStatus(), monitoring::kNonCritical);
 
   BOOST_CHECK_EQUAL(child1.obj.getStatus().getStateMachineId(), child1.fsm.getId());
   BOOST_CHECK_EQUAL(child1.obj.getStatus().getState(), childState0);
@@ -1622,12 +1629,16 @@ BOOST_FIXTURE_TEST_CASE(TestChildrenDisabledDuringReset, SystemStateMachineTestS
   BOOST_REQUIRE_EQUAL(child1.obj.getStatus().isEnabled(), true);
   BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getStateMachineId(), "anotherFSM");
   BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getState(), "anotherInitialState");
+  BOOST_REQUIRE_EQUAL(child1.obj.getMonitoringStatus(), monitoring::kEnabled);
   BOOST_REQUIRE_EQUAL(child2.obj.getStatus().isEnabled(), true);
   BOOST_REQUIRE_EQUAL(child2.obj.getStatus().getStateMachineId(), child2.fsm.getId());
   BOOST_REQUIRE_EQUAL(child2.obj.getStatus().getState(), childState0);
+  BOOST_REQUIRE_EQUAL(child2.obj.getMonitoringStatus(), monitoring::kEnabled);
   BOOST_REQUIRE_EQUAL(child3.obj.getStatus().isEnabled(), false);
   BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getStateMachineId(), child3.fsm.getId());
   BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getState(), childState0);
+  child3.obj.setMonitoringStatus(monitoring::kDisabled);
+  BOOST_REQUIRE_EQUAL(child3.obj.getMonitoringStatus(), monitoring::kDisabled);
 
   //  * Mask maskableC on each child (giving inverse of final result); require that starting assumptions are correct before testing
   for(ChildIt_t lIt=lChildren.begin(); lIt!=lChildren.end(); lIt++)
@@ -1649,8 +1660,11 @@ BOOST_FIXTURE_TEST_CASE(TestChildrenDisabledDuringReset, SystemStateMachineTestS
   BOOST_CHECK_EQUAL(sys->getStatus().getState(), sysState0);
 
   BOOST_CHECK_EQUAL(child1.obj.getStatus().isEnabled(), false);
+  BOOST_CHECK_EQUAL(child1.obj.getMonitoringStatus(), monitoring::kNonCritical);
   BOOST_CHECK_EQUAL(child2.obj.getStatus().isEnabled(), true);
+  BOOST_CHECK_EQUAL(child2.obj.getMonitoringStatus(), monitoring::kEnabled);
   BOOST_CHECK_EQUAL(child3.obj.getStatus().isEnabled(), true);
+  BOOST_CHECK_EQUAL(child3.obj.getMonitoringStatus(), monitoring::kEnabled);
 
   BOOST_CHECK_EQUAL(child1.obj.getStatus().getStateMachineId(), "anotherFSM");
   BOOST_CHECK_EQUAL(child1.obj.getStatus().getState(), "anotherInitialState");
