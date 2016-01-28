@@ -570,8 +570,11 @@ void SystemStateMachine::reset(const GateKeeper& aGateKeeper)
     const ActionableStatusGuard& lChildGuard = *lGuardMap.at(&lChild);
     ActionableStatus& lChildStatus = mStatusMap.getStatus((*smIt)->getActionable());
 
-    if (lChildStatus.isEnabled(lChildGuard))
+    if (lChildStatus.isEnabled(lChildGuard)) {
       (*smIt)->reset(aGateKeeper, lChildGuard);
+      lChild.setMonitoringStatus(monitoring::kEnabled);
+    } else
+      lChild.setMonitoringStatus(monitoring::kNonCritical);
   }  
 }
 
@@ -608,8 +611,11 @@ void SystemStateMachine::engage(const GateKeeper& aGateKeeper)
     const ActionableStatusGuard& lChildGuard = *lGuardMap.at(&lChild);
     ActionableStatus& lChildStatus = mStatusMap.getStatus(lChild);
 
-    if (lChildStatus.isEnabled(lChildGuard))
+    if (lChildStatus.isEnabled(lChildGuard)) {
       (*lIt)->engage(aGateKeeper, lChildGuard);
+      lChild.setMonitoringStatus(monitoring::kEnabled);
+    } else
+      lChild.setMonitoringStatus(monitoring::kNonCritical);
   }
 }
 
