@@ -278,7 +278,7 @@ std::ostream& operator<<(std::ostream& aStr,
       aGateKeeper.mCache.begin()); lContextIt != aGateKeeper.mCache.end();
       ++lContextIt) {
     aStr << lDelimeter << std::endl;
-    aStr << "CONTEXT : " << lContextIt->first << std::endl;
+    aStr << "CONTEXT (parameters) : " << lContextIt->first << std::endl;
     aStr << lDelimeter << std::endl;
 
     std::set<std::string> names;
@@ -296,7 +296,7 @@ std::ostream& operator<<(std::ostream& aStr,
   for (GateKeeper::SettingsContextCache_t::const_iterator lContextIt(aGateKeeper.mSettings.begin());
       lContextIt != aGateKeeper.mSettings.end(); ++lContextIt) {
       aStr << lDelimeter << std::endl;
-      aStr << "CONTEXT : " << lContextIt->first << std::endl;
+      aStr << "CONTEXT (monitoring settings) : " << lContextIt->first << std::endl;
       aStr << lDelimeter << std::endl;
 
       std::set<std::string> names;
@@ -311,6 +311,21 @@ std::ostream& operator<<(std::ostream& aStr,
       aStr << lDelimeter << std::endl;
   }
 
+  for (auto lContextIt = aGateKeeper.mMasks.begin(); lContextIt != aGateKeeper.mMasks.end(); lContextIt++) {
+    aStr << lDelimeter << std::endl;
+    aStr << "CONTEXT (masks) : " << lContextIt->first << std::endl;
+    aStr << lDelimeter << std::endl;
+ 
+    std::set<std::string> lNames;
+    boost::copy(*(lContextIt->second), std::inserter(lNames, lNames.begin()));
+    
+    BOOST_FOREACH(const std::string& lName, lNames)
+    {
+      aStr << " " << lName << std::endl;
+    }
+    aStr << lDelimeter << std::endl;
+  }
+  
   return aStr;
 }
 
