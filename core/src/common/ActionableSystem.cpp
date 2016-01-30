@@ -13,6 +13,7 @@
 //log4cplus headers
 #include <log4cplus/loggingmacros.h>
 #include <bits/stl_map.h>
+#include <map>
 
 
 namespace swatch {
@@ -49,9 +50,9 @@ void SystemFunctionoid::addParticipant(ActionableObject& aObj)
 
 
 ActionableSystem::StatusContainer::StatusContainer(const ActionableSystem& aSystem, ActionableStatus& aSysStatus) :
+  mSystem(aSystem),
   mSysStatus(aSysStatus)
 {
-  mStatusMap[&aSystem] = &aSysStatus;
 }
 
 ActionableSystem::StatusContainer::~StatusContainer()
@@ -65,7 +66,7 @@ const ActionableStatus& ActionableSystem::StatusContainer::getSystemStatus() con
 
 const ActionableStatus& ActionableSystem::StatusContainer::getStatus(const ActionableObject& aChild ) const
 {
-  return *mStatusMap.at(&aChild);
+  return *mChildStatusMap.at(&aChild);
 }
 
 ActionableStatus& ActionableSystem::StatusContainer::getSystemStatus()
@@ -76,13 +77,27 @@ ActionableStatus& ActionableSystem::StatusContainer::getSystemStatus()
 
 ActionableStatus& ActionableSystem::StatusContainer::getStatus(const ActionableObject& aChild )
 {
-  return *mStatusMap.at(&aChild);
+  return *mChildStatusMap.at(&aChild);
 }
 
 
-ActionableStatusGuardMap_t ActionableSystem::StatusContainer::lockMutexes() const
+ActionableSystem::GuardMap_t ActionableSystem::StatusContainer::lockMutexes() const
 {
-  return swatch::core::lockMutexes<>(mStatusMap.cbegin(), mStatusMap.cend());
+  // 1) Lock all of the actionable status instances
+  std::vector<const ActionableStatus*> lStatusVec;
+  lStatusVec.push_back(&mSysStatus);
+  for(auto lIt = mChildStatusMap.begin(); lIt != mChildStatusMap.end(); lIt++)
+    lStatusVec.push_back(lIt->second);
+  ActionableStatusGuardVec_t lGuardVec = swatch::core::lockMutexes<>(lStatusVec.begin(), lStatusVec.end());
+  
+  // 2) Create map of actionable system/object to the corresponding actionable status guard instance
+  ActionableSystem::GuardMap_t lGuardMap;
+  lGuardMap[&mSystem] = *lGuardVec.begin();
+  auto lChildStatusMapIt = mChildStatusMap.begin();
+  for(auto lGuardIt = (lGuardVec.begin()+1); lGuardIt != lGuardVec.end(); lGuardIt++, lChildStatusMapIt++)
+    lGuardMap[lChildStatusMapIt->first] = *lGuardIt;
+  
+  return lGuardMap;
 }
 
 
@@ -152,7 +167,7 @@ void ActionableSystem::addActionable(ActionableObject* aChildActionable)
 {
   addObj(aChildActionable, ActionableObject::Deleter());
   
-  mStatusMap.mStatusMap[aChildActionable] = &aChildActionable->mStatus;
+  mStatusMap.mChildStatusMap[aChildActionable] = &aChildActionable->mStatus;
   
   mActionableChildren[aChildActionable->getId()] = aChildActionable;
 }
@@ -188,7 +203,7 @@ void ActionableSystem::Deleter::operator ()(Object* aObject) {
 
 
 //------------------------------------------------------------------------------------
-SystemBusyGuard::SystemBusyGuard(SystemFunctionoid& aAction, ActionableSystem::StatusContainer& aStatusMap, const ActionableStatusGuardMap_t& aStatusGuardMap, const Callback_t& aCallback) : 
+SystemBusyGuard::SystemBusyGuard(SystemFunctionoid& aAction, ActionableSystem::StatusContainer& aStatusMap, const ActionableSystem::GuardMap_t& aStatusGuardMap, const Callback_t& aCallback) : 
   mSystem(aAction.getActionable()),
   mSysStatus(aStatusMap.getSystemStatus()),
   mAction(aAction),
@@ -218,7 +233,7 @@ SystemBusyGuard::SystemBusyGuard(SystemFunctionoid& aAction, ActionableSystem::S
   typedef std::set<ActionableObject*>::const_iterator ChildIt_t;
   for (ChildIt_t lIt = aAction.getParticipants().begin(); lIt != aAction.getParticipants().end(); lIt++)
   {
-    ActionableStatusGuard& lChildGuard = *aStatusGuardMap.at(*lIt);
+    const ActionableStatusGuard& lChildGuard = *aStatusGuardMap.at(*lIt);
     if (aStatusMap.getStatus(**lIt).isEnabled(lChildGuard))
       lEnabledParticipants.insert(*lIt);
   }
@@ -252,13 +267,10 @@ SystemBusyGuard::SystemBusyGuard(SystemFunctionoid& aAction, ActionableSystem::S
   std::vector<std::pair<ActionableStatus*, ActionableStatusGuard*> > lStatusVec;
   lStatusVec.push_back( std::pair<ActionableStatus*, ActionableStatusGuard*>(&lSysStatus, &lSysGuard) );
   for (ChildIt_t lIt = lEnabledParticipants.begin(); lIt != lEnabledParticipants.end(); lIt++)
-  {
     lStatusVec.push_back( std::pair<ActionableStatus*, ActionableStatusGuard*>(&aStatusMap.getStatus(**lIt), aStatusGuardMap.at(*lIt).get()) );
-  }
   ActionableStatus::waitUntilReadyToRunAction(lStatusVec, mAction);
   
-  for (ChildIt_t lIt = lEnabledParticipants.begin(); lIt != lEnabledParticipants.end(); lIt++)
-  {
+  for (ChildIt_t lIt = lEnabledParticipants.begin(); lIt != lEnabledParticipants.end(); lIt++) {
     ActionableStatusGuard& lChildGuard = *aStatusGuardMap.at(*lIt).get();
     ActionableStatus& lChildStatus = aStatusMap.getStatus(**lIt);
     mChildGuardMap[ *lIt ] = ChildGuardPtr_t(new BusyGuard(**lIt, lChildStatus, lChildGuard, mAction, BusyGuard::Adopt()) );

@@ -121,7 +121,7 @@ public:
 
   void checkForMissingParameters(const GateKeeper& aGateKeeper, std::map< const StateMachine::Transition*, std::vector<CommandVec::MissingParam> >& aMissingParams) const;
 
-  void checkForMissingParameters(const GateKeeper& aGateKeeper, std::map< const StateMachine::Transition*, std::vector<CommandVec::MissingParam> >& aMissingParams, const ActionableStatusGuardMap_t& aGuardMap) const;
+  void checkForMissingParameters(const GateKeeper& aGateKeeper, std::map< const StateMachine::Transition*, std::vector<CommandVec::MissingParam> >& aMissingParams, const ActionableSystem::GuardMap_t& aGuardMap) const;
 
   /*!
    * @brief Run the transition, extracting the parameters for each child transition from the supplied gatekeeper
@@ -242,7 +242,7 @@ private:
   //! Throws if child is not engaged in specified state machine, or running transition
   void checkChildEngagedAndNotInTransition(const StateMachine& aStateMachine, const ActionableStatusGuard& aGuard, const std::string& aAction) const;
 
-  void resetAndApplyEnableFlagOnChildren(const GateKeeper& aGateKeeper, const ActionableStatusGuardMap_t& aGuardMap);
+  void resetAndApplyEnableFlagOnChildren(const GateKeeper& aGateKeeper, const ActionableSystem::GuardMap_t& aGuardMap);
 
   struct State : public Object {
     State(const std::string& aId);

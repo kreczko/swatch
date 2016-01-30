@@ -93,24 +93,23 @@ bool ActionableSnapshot::isActionWaitingToRun() const
 
 
 //------------------------------------------------------------------------------------
-ActionableStatusGuardMap_t lockMutexes(const std::map<const MonitorableObject*, const ActionableStatus*>& aStatusMap)
+ActionableStatusGuardVec_t lockMutexes(const std::vector<const ActionableStatus*>& aStatusVec)
 {
-  typedef std::map<const MonitorableObject*, const ActionableStatus*>::const_iterator ConstIt_t;
-
   // Lock the mutexes ...
   std::vector<boost::mutex*> lMutexes;
-  for(ConstIt_t lIt=aStatusMap.begin(); lIt != aStatusMap.end(); lIt++)
-    lMutexes.push_back(& lIt->second->mMutex);
+  for(auto lIt=aStatusVec.begin(); lIt != aStatusVec.end(); lIt++)
+    lMutexes.push_back(& (*lIt)->mMutex);
 
   boost::indirect_iterator<std::vector<boost::mutex*>::iterator> begin(lMutexes.begin()), end(lMutexes.end());
   boost::lock(begin, end);
 
-  // ... then put them into lock guards
-  ActionableStatusGuardMap_t lLockGuardMap;
-  for(ConstIt_t lIt=aStatusMap.begin(); lIt != aStatusMap.end(); lIt++)
-    lLockGuardMap[lIt->first] = ActionableStatusGuardPtr_t(new ActionableStatusGuard(*lIt->second, boost::adopt_lock_t()));
-  
-  return lLockGuardMap;
+  // ... then put them into status guards
+  ActionableStatusGuardVec_t lGuardVec;
+  for(auto lIt=aStatusVec.begin(); lIt != aStatusVec.end(); lIt++) {
+    boost::shared_ptr<ActionableStatusGuard> lGuard(new ActionableStatusGuard(**lIt, boost::adopt_lock_t()));
+    lGuardVec.push_back(lGuard);
+  }  
+  return lGuardVec;
 }
 
 

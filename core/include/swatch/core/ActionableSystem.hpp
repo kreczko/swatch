@@ -49,6 +49,8 @@ class ActionableSystem : public MonitorableObject {
 public:
   typedef ActionableSnapshot Status_t;
 
+  typedef std::map<const MonitorableObject*, boost::shared_ptr<ActionableStatusGuard> > GuardMap_t;
+  
   class StatusContainer : boost::noncopyable {
   public:
     StatusContainer(const ActionableSystem& aSystem, ActionableStatus& aSysStatus);
@@ -64,11 +66,12 @@ public:
      * @brief Locks the mutexes for ActionableStatus object of the the system and all children known to this container.
      * @returns map containing the guards for all locked status objects; key is pointer to the associated actionable system/object
      */
-    ActionableStatusGuardMap_t lockMutexes() const;
+    GuardMap_t lockMutexes() const;
     
   private:
+    const ActionableSystem& mSystem;
     ActionableStatus& mSysStatus;
-    std::map<const MonitorableObject*, ActionableStatus*> mStatusMap;
+    std::map<const ActionableObject*, ActionableStatus*> mChildStatusMap;
     
     friend class ActionableSystem;
   };
@@ -135,7 +138,7 @@ class SystemBusyGuard : public boost::noncopyable {
 public:
   typedef boost::function<void(const ActionableStatusGuard&, std::ostream&)> Callback_t;
 
-  SystemBusyGuard(SystemFunctionoid& aAction, ActionableSystem::StatusContainer& aStatusMap, const ActionableStatusGuardMap_t& aStatusGuardMap, const Callback_t& aCallback);
+  SystemBusyGuard(SystemFunctionoid& aAction, ActionableSystem::StatusContainer& aStatusMap, const ActionableSystem::GuardMap_t& aStatusGuardMap, const Callback_t& aCallback);
   ~SystemBusyGuard();
 
   const BusyGuard& getChildGuard(const ActionableObject& aChild) const;
