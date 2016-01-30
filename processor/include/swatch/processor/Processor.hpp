@@ -59,6 +59,8 @@ struct RunControlFSM : public boost::noncopyable {
   static const std::string kTrConfigure;
   //! ID string for the 'align' transition (configured state to aligned state)
   static const std::string kTrAlign;
+  //! ID string for the 'stop' transition (aligned state to configured state)
+  static const std::string kTrStop;
 
   //! The run control FSM object
   core::StateMachine& fsm;
@@ -70,6 +72,8 @@ struct RunControlFSM : public boost::noncopyable {
   core::StateMachine::Transition& configure;
   //! The 'align' transition (configured state to aligned state)
   core::StateMachine::Transition& align;
+  //! The 'stop' transition (aligned state to configured state)
+  core::StateMachine::Transition& stop;
 
   RunControlFSM(core::StateMachine& aFSM);
 
