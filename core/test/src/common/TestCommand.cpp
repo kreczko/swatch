@@ -137,7 +137,7 @@ BOOST_FIXTURE_TEST_CASE(TestCommandError,  CommandTestSetup)
   error_cmd.exec(params);
   do {
   } while ( (error_cmd.getState() == ActionSnapshot::kScheduled) || (error_cmd.getState() == ActionSnapshot::kRunning) );
-  
+
   CommandSnapshot s = error_cmd.getStatus();
   BOOST_CHECK_EQUAL(s.getState(), ActionSnapshot::kError);
   BOOST_CHECK_EQUAL(s.getProgress(), DummyErrorCommand::finalProgress);
@@ -150,12 +150,14 @@ BOOST_FIXTURE_TEST_CASE(TestCommandError,  CommandTestSetup)
 
 BOOST_FIXTURE_TEST_CASE(TestThrowingCommand,  CommandTestSetup)
 {
-  LogLevel lLogThr = Log::logThreshold();
-  Log::setLogThreshold( swatch::logger::kFatal );
+  // Prevent the "ERROR" log message being printed during this test - by temporarily setting log threshold to FATAL - in
+  // ... order to avoid nightlies flagging this as an erro
+  log4cplus::LogLevel lLogLevel = error_cmd.getActionable().getLogger().getLogLevel();
+  error_cmd.getActionable().getLogger().setLogLevel(log4cplus::FATAL_LOG_LEVEL);
   throw_cmd.exec(params);
   do {
   } while ( (throw_cmd.getState() == ActionSnapshot::kScheduled) || (throw_cmd.getState() == ActionSnapshot::kRunning) );
-  Log::setLogThreshold( lLogThr );
+  error_cmd.getActionable().getLogger().setLogLevel(lLogLevel);
   
   CommandSnapshot s = throw_cmd.getStatus();
   BOOST_CHECK_EQUAL(s.getState(), ActionSnapshot::kError);
