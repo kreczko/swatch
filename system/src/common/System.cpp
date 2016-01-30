@@ -60,8 +60,8 @@ RunControlFSM::RunControlFSM(core::SystemStateMachine& aFSM) :
   start( fsm.addTransition(kTrStart, kStateAligned, kStateRunning)),
   pause( fsm.addTransition(kTrPause, kStateRunning, kStatePaused)),
   resume( fsm.addTransition(kTrResume, kStatePaused, kStateRunning)),
-  stopFromPaused( fsm.addTransition(kTrStop, kStatePaused, kStateAligned)),
-  stopFromRunning( fsm.addTransition(kTrStop, kStateRunning, kStateAligned))
+  stopFromPaused( fsm.addTransition(kTrStop, kStatePaused, kStateConfigured)),
+  stopFromRunning( fsm.addTransition(kTrStop, kStateRunning, kStateConfigured))
 {
 }
 

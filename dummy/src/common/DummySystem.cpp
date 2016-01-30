@@ -38,9 +38,11 @@ DummySystem::DummySystem(const swatch::core::AbstractStub& aStub) :
 
   fsm.resume.add(getDaqTTCs(), DaqTTCFSM_t::kStatePaused, DaqTTCFSM_t::kTrResume);
 
-  fsm.stopFromPaused.add(getDaqTTCs(), DaqTTCFSM_t::kStatePaused, DaqTTCFSM_t::kTrStop);
+  fsm.stopFromPaused.add(getDaqTTCs(), DaqTTCFSM_t::kStatePaused, DaqTTCFSM_t::kTrStop)
+                    .add(getProcessors(), ProcFSM_t::kStateAligned, ProcFSM_t::kTrStop);
 
-  fsm.stopFromRunning.add(getDaqTTCs(), DaqTTCFSM_t::kStateRunning, DaqTTCFSM_t::kTrStop);
+  fsm.stopFromRunning.add(getDaqTTCs(), DaqTTCFSM_t::kStateRunning, DaqTTCFSM_t::kTrStop)
+                     .add(getProcessors(), ProcFSM_t::kStateAligned, ProcFSM_t::kTrStop);
 }
 
 
