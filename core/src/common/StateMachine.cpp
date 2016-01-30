@@ -460,7 +460,7 @@ void StateMachine::applyMonitoringSettings(const MonitoringSettings_t& aSettings
       std::string lPath = *lIt;
       
       for (auto lMonSetting = aSettings.begin(); lMonSetting != aSettings.end(); ++lMonSetting) {
-        LOG(logger::kInfo) << lPath << " " << lMonSetting->getId();
+        LOG(logger::kDebug) << lPath << " " << lMonSetting->getId();
         
         if (lMonSetting->getId() == lPath) {
           lDescendant->setMonitoringStatus(lMonSetting->getStatus());
