@@ -20,10 +20,14 @@
 
 // AMC13 Headers
 #include "amc13/AMC13.hh"
+#include "swatch/dtm/AMCPortCollection.hpp"
+#include "swatch/amc13/AMCPort.hpp"
 
 // Boost Headers
 #include <boost/foreach.hpp>
 
+// log4cplus headers
+#include <log4cplus/loggingmacros.h>
 
 namespace swlo = swatch::logger;
 
@@ -181,7 +185,7 @@ ConfigureTTCCommand::code(const core::XParameterSet& params) {
 
 // --------------------------------------------------------
 ConfigureDAQCommand::ConfigureDAQCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
-core::Command(aId, aActionable, xdata::Integer()) {
+core::Command(aId, aActionable, xdata::String()) {
   // slots, fedId, slink, localTtc=False
   // Slinks
   registerParameter("slinkMask", xdata::UnsignedInteger(0x0));
@@ -202,14 +206,27 @@ ConfigureDAQCommand::code(const core::XParameterSet& params) {
   uint32_t bcnOffset = params.get<xdata::UnsignedInteger>("bcnOffset").value_;
   
   AMC13Manager& amc13mgr = getActionable<AMC13Manager>();
+  
+  // Extract list of AMCPorts
+  const dtm::AMCPortCollection& amcPorts = amc13mgr.getAMCPorts();
 
   ::amc13::AMC13& board = amc13mgr.driver();
 
   // TODO: replace with a proper parameters
   uint32_t bitmask = 0x0;
-  BOOST_FOREACH( uint32_t s, amc13mgr.getStub().amcSlots) {
-    bitmask |= ( 1<< (s-1) );
+
+  std::ostringstream oss;
+  BOOST_FOREACH(dtm::AMCPort* p, amcPorts.getPorts()) {
+    LOG4CPLUS_WARN(amc13mgr.getLogger(), "Checking slot " << p->getSlot());
+    // Skip the slot if masked.
+    if ( p->isMasked() ) continue;
+    // Add it to the bitmask, otherwise.
+    bitmask |= ( 1<< (p->getSlot()-1) ) ;
+    oss << p->getSlot() << " ";
   }
+
+  LOG4CPLUS_WARN(amc13mgr.getLogger(), "Enabling slots " << oss.str());
+  
   board.AMCInputEnable(bitmask);
   
   // Set FED ID
@@ -229,6 +246,8 @@ ConfigureDAQCommand::code(const core::XParameterSet& params) {
 
   // Reset T1, just in case
   board.reset(::amc13::AMC13Simple::T1);
+  
+  setResult(xdata::String("Enabled amcorts"+oss.str()));
 
   return State::kDone;
 }

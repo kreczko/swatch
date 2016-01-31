@@ -8,8 +8,6 @@
 #ifndef __SWATCH_AMC13_AMCPORT_HPP__
 #define	__SWATCH_AMC13_AMCPORT_HPP__
 
-#include "swatch/core/MonitorableObject.hpp"
-
 #include "swatch/dtm/AMCPort.hpp"
 // #include "amc13/AMC13.hh"
 

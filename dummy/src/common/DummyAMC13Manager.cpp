@@ -31,8 +31,8 @@ DummyAMC13Manager::DummyAMC13Manager( const swatch::core::AbstractStub& aStub ) 
   registerInterface( new AMC13TTC(*mDriver) );
   registerInterface( new AMC13SLinkExpress(0, *mDriver) );
   registerInterface( new dtm::AMCPortCollection() );
-  for(std::vector<uint32_t>::const_iterator lIt=getStub().amcSlots.begin(); lIt!=getStub().amcSlots.end(); lIt++)
-    getAMCPorts().addPort(new AMC13BackplaneDaqPort(*lIt, *mDriver));
+  for( uint32_t s(1); s<=kNumAMCPorts; ++s)
+    getAMCPorts().addPort(new AMC13BackplaneDaqPort(s, *mDriver));
   registerInterface( new AMC13EventBuilder(*mDriver));
   
   // 1) Commands

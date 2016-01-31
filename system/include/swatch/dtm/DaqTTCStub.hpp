@@ -57,8 +57,6 @@ public:
   //! ID for this FED
   uint16_t fedId;
 
-  //! Connected backplane links
-  std::vector<uint32_t> amcSlots;
 };
 
 

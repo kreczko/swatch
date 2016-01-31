@@ -104,6 +104,8 @@ public:
 
   uint16_t getFedId() const;
 
+  static const uint32_t kNumAMCPorts;
+
   static const std::vector<std::string> kDefaultMetrics;
     
   static const std::vector<std::string> kDefaultMonitorableObjects;
@@ -133,6 +135,7 @@ protected:
   EVBInterface& registerInterface(EVBInterface* aEventBuilder);
 
   RunControlFSM& getRunControlFSM();
+  
 
 private:
   DaqTTCStub mStub;

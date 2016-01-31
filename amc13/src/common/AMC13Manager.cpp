@@ -67,7 +67,7 @@ AMC13Manager::AMC13Manager(const swatch::core::AbstractStub& aStub) :
   
   registerInterface(new dtm::AMCPortCollection());
 
-  BOOST_FOREACH( uint32_t s, getStub().amcSlots) {
+  for( uint32_t s(1); s<= kNumAMCPorts; ++s) {
     getAMCPorts().addPort(new AMCPort(s, *mDriver));
   }
   

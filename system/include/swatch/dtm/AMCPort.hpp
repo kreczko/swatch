@@ -8,12 +8,12 @@
 #ifndef __SWATCH_DTM_AMCPORT_HPP__
 #define	__SWATCH_DTM_AMCPORT_HPP__
 
-#include "swatch/core/MonitorableObject.hpp"
+#include "swatch/core/MaskableObject.hpp"
 
 namespace swatch {
 namespace dtm {
 
-class AMCPort : public core::MonitorableObject {
+class AMCPort : public core::MaskableObject {
 protected:
 
   AMCPort( uint32_t aSlot );
@@ -21,6 +21,7 @@ protected:
 public:
   virtual ~AMCPort();
 
+  uint32_t getSlot();
 
 protected:
 

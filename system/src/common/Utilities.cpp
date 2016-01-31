@@ -37,11 +37,7 @@ treeToDaqTTCStub(const boost::property_tree::ptree& aPTree)
     aStub.crate          = aPTree.get<std::string>("CRATE NAME");
     aStub.slot           = aPTree.get<uint32_t>("CRATE SLOT");
     aStub.fedId          = aPTree.get<uint16_t>("FED ID");
-    BOOST_FOREACH( const auto &v, aPTree.get_child("AMC SLOTS")) {
-      aStub.amcSlots.emplace_back(
-        v.second.get_value<uint32_t>()
-      );
-    }
+
     return aStub;
 }
 

@@ -26,7 +26,6 @@ std::ostream& operator<<(std::ostream& aStream, const swatch::dtm::DaqTTCStub& a
        << "   - Crate ID = " << aStub.crate << "\n"
        << "   - Crate Slot = " << aStub.slot 
        << "   - FED ID = " << aStub.fedId << "\n"
-       << "   - AMC SLOTS = " << logger::shortVecFmt(aStub.amcSlots)
        << std::flush;
 
     return aStream;

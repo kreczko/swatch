@@ -58,6 +58,7 @@ core::StateMachine& RunControlFSM::addStates(core::StateMachine& aFSM)
   return aFSM;
 }
 
+const uint32_t DaqTTCManager::kNumAMCPorts = 12;
 const std::vector<std::string> DaqTTCManager::kDefaultMetrics = {"fedId"};
 const std::vector<std::string> DaqTTCManager::kDefaultMonitorableObjects = {"ttc","evb","amcports"};
 
