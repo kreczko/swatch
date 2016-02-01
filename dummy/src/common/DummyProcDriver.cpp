@@ -46,7 +46,7 @@ DummyProcDriver::ReadoutStatus DummyProcDriver::getReadoutStatus() const
   if ( (lNow < mErrTimeClk) && (lNow < mErrTimeDaq) )
     return ReadoutStatus(true, 8);
   else
-    return ReadoutStatus(false, 2);
+    return ReadoutStatus(true, 5);
 }
 
 
