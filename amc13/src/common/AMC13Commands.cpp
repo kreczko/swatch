@@ -247,7 +247,7 @@ ConfigureDAQCommand::code(const core::XParameterSet& params) {
   // Reset T1, just in case
   board.reset(::amc13::AMC13Simple::T1);
   
-  setResult(xdata::String("Enabled amcorts"+oss.str()));
+  setResult(xdata::String("Enabled amports: "+oss.str()));
 
   return State::kDone;
 }
