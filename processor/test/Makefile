@@ -10,7 +10,7 @@ PackageName = cactuscore-swatch-processor-test
 Packager = Alessandro Thea
 
 PACKAGE_VER_MAJOR = 0
-PACKAGE_VER_MINOR = 3
+PACKAGE_VER_MINOR = 4
 PACKAGE_VER_PATCH = 0
 PACKAGE_RELEASE = 0
 
