@@ -217,7 +217,6 @@ ConfigureDAQCommand::code(const core::XParameterSet& params) {
 
   std::ostringstream oss;
   BOOST_FOREACH(dtm::AMCPort* p, amcPorts.getPorts()) {
-    LOG4CPLUS_WARN(amc13mgr.getLogger(), "Checking slot " << p->getSlot());
     // Skip the slot if masked.
     if ( p->isMasked() ) continue;
     // Add it to the bitmask, otherwise.
@@ -225,8 +224,6 @@ ConfigureDAQCommand::code(const core::XParameterSet& params) {
     oss << p->getSlot() << " ";
   }
 
-  LOG4CPLUS_WARN(amc13mgr.getLogger(), "Enabling slots " << oss.str());
-  
   board.AMCInputEnable(bitmask);
   
   // Set FED ID
