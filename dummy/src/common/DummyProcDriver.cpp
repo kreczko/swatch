@@ -24,7 +24,9 @@ uint64_t DummyProcDriver::getFirmwareVersion() const
 
 DummyProcDriver::TTCStatus DummyProcDriver::getTTCStatus() const 
 {
-  bool allOK = (MicrosecClk_t::universal_time() < mErrTimeClk);
+  //bool allOK = (MicrosecClk_t::universal_time() < mErrTimeClk);
+  
+  bool allOK = true;
   
   TTCStatus s;
   s.bunchCounter = allOK ? 0x00001234 : 0;
@@ -43,9 +45,11 @@ DummyProcDriver::TTCStatus DummyProcDriver::getTTCStatus() const
 DummyProcDriver::ReadoutStatus DummyProcDriver::getReadoutStatus() const
 {
   ptime lNow = MicrosecClk_t::universal_time();
-  if ( (lNow < mErrTimeClk) && (lNow < mErrTimeDaq) )
+/*  if ( (lNow < mErrTimeClk) && (lNow < mErrTimeDaq) )
     return ReadoutStatus(true, 8);
   else
+    return ReadoutStatus(true, 2);*/
+    
     return ReadoutStatus(true, 5);
 }
 
@@ -61,9 +65,11 @@ DummyProcDriver::RxPortStatus DummyProcDriver::getRxPortStatus(uint32_t channelI
 
 bool DummyProcDriver::isTxPortOperating(uint32_t channelId) const
 {
-  if ( (MicrosecClk_t::universal_time() >= mErrTimeClk) || (MicrosecClk_t::universal_time() >= mErrTimeTx) )
+ /* if ( (MicrosecClk_t::universal_time() >= mErrTimeClk) || (MicrosecClk_t::universal_time() >= mErrTimeTx) )
     return false;
   else
+    return true;*/
+    
     return true;
 }
 
