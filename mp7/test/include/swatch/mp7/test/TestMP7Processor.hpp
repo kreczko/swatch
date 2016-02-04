@@ -12,6 +12,7 @@
 #include "swatch/core/Command.hpp"
 #include "swatch/mp7/MGTCommands.hpp"
 #include "swatch/mp7/ChannelCommandCore.hpp"
+#include "swatch/core/ReadOnlyXParameterSet.hpp"
 
 namespace swatch {
 namespace mp7 {
@@ -37,6 +38,19 @@ private:
   RxBufferCommandCore mCore;
 };
 
+struct TmtParameterMapper {
+
+  static void replaceParameters( swatch::core::Command& aCommand );
+  static core::ReadOnlyXParameterSet rebuild( const core::ReadOnlyXParameterSet& aParams, const ::mp7::orbit::Metric& aMetric );
+
+  static const std::string kBxParam;
+  static const std::string kCycleParam;
+  static const std::string kTmtBxParam;
+  static const std::string kTmtCycleParam;
+  static const std::string kTmtIdParam;
+};
+
+DEFINE_SWATCH_EXCEPTION(OrbitParametersError);
 
 class TMTAlignCommand : public AlignRxsToCommand {
 public:

@@ -71,48 +71,58 @@ swatch::core::Command::State PrintRxDescriptors::code(const core::XParameterSet&
   return State::kWarning;
 }
 
-/*
-swatch::core::Command::State PrintRxDescriptors::code(const core::XParameterSet& aParams)
+const std::string TmtParameterMapper::kBxParam = "bx";
+const std::string TmtParameterMapper::kCycleParam = "cycle";
+const std::string TmtParameterMapper::kTmtBxParam = "tmtBx";
+const std::string TmtParameterMapper::kTmtCycleParam = "tmtCycle";
+const std::string TmtParameterMapper::kTmtIdParam = "tmtId";
+
+void TmtParameterMapper::replaceParameters(swatch::core::Command& aCommand)
 {
-  // fetch the port selection parameter
-  const std::string portSelection = aParams.get<xdata::String>(kPortSelection).value_;
+  aCommand.unregisterParameter(kBxParam);
+  aCommand.unregisterParameter(kCycleParam);
+
+  aCommand.registerParameter(kTmtBxParam, xdata::UnsignedInteger(0x0));
+  aCommand.registerParameter(kTmtCycleParam, xdata::UnsignedInteger(0x0));
+  aCommand.registerParameter(kTmtIdParam, xdata::UnsignedInteger(0x0));
+}
+
+
+core::ReadOnlyXParameterSet TmtParameterMapper::rebuild(const core::ReadOnlyXParameterSet& aParams, const ::mp7::orbit::Metric& aMetric)
+{
+  xdata::UnsignedInteger tmtBx = aParams.get<xdata::UnsignedInteger>(kTmtBxParam);
+  xdata::UnsignedInteger tmtCycle = aParams.get<xdata::UnsignedInteger>(kTmtCycleParam);
+  xdata::UnsignedInteger tmtSlot = aParams.get<xdata::UnsignedInteger>(kTmtIdParam);
   
-  // Parse the list of selected ports
-  std::set<std::string> lSelIds = swatch::core::toolbox::IdSliceParser::parseSet(portSelection);
+  // Copy the parameter set
+  swatch::core::ReadOnlyXParameterSet lParams(aParams);
   
-  // Fetch the processor
-  MP7Processor& lProcessor = getActionable<MP7Processor>();
-  const ChannelsMap_t& rxDesc = lProcessor.getRxDescriptors();
+  // Strip parameters
+  lParams.erase(kTmtBxParam);
+  lParams.erase(kTmtCycleParam);
+  lParams.erase(kTmtIdParam);
   
-  DescriptorSelector selector(rxDesc);
   
-  // Get the list of known rx channel ids with a filter
-  std::set<std::string> lIds = selector.getIds();
   
-  // Ensure that all selected ids are known
-  if ( !lSelIds.empty() ) {
-    selector.checkAvailable(lSelIds);
-    
-  } else {
-    lSelIds = lIds;
+  if ( !orbit::isValid( tmtBx, tmtCycle, aMetric ) ) {
+    std::ostringstream msg;
+    msg << "Invalid orbit point parameters (" << tmtBx << ", " << tmtCycle << ")";
+
+    throw OrbitParametersError(msg.str());
   }
 
-  // Apply mask on ports
-  auto notMasked = (! boost::bind(&ChannelDescriptor::isMasked, _1) );
-  std::set<std::string> lEnabledIds = selector.filterIds(lSelIds, notMasked);
   
-  // Convert obj ids to channel ids
-  auto channels = selector.mapIdsToChannels(lEnabledIds);
+  ::mp7::orbit::Point p(tmtBx, tmtCycle);
+  aMetric.addBXs(p, tmtSlot);
+  
+  boost::shared_ptr<xdata::UnsignedInteger> lBx( new xdata::UnsignedInteger(p.bx) );
+  boost::shared_ptr<xdata::UnsignedInteger> lCycle( new xdata::UnsignedInteger(p.cycle) );
+  
+  lParams.adopt(kBxParam, lBx);
+  lParams.adopt(kCycleParam, lCycle);
 
-  std::ostringstream res;
-  res << "Selected channels : ";
-  std::copy(channels.begin(), channels.end(), std::ostream_iterator<uint32_t>(res, " "));
-  setResult(xdata::String(res.str()));
-
-  return State::kDone;
+  return lParams;
 }
-*/
-
 
 //
 // Parameter override tests
@@ -121,12 +131,7 @@ swatch::core::Command::State PrintRxDescriptors::code(const core::XParameterSet&
 TMTAlignCommand::TMTAlignCommand(const std::string& aId, swatch::core::ActionableObject& aActionable):
 AlignRxsToCommand(aId, aActionable)
 {
-  unregisterParameter("bx");
-  unregisterParameter("cycle");
-
-  registerParameter("tmtBx", xdata::UnsignedInteger(0x0));
-  registerParameter("tmtCycle", xdata::UnsignedInteger(0x0));
-  registerParameter("tmtSlot", xdata::UnsignedInteger(0x0));
+  TmtParameterMapper::replaceParameters(*this);
 }
 
 
@@ -135,23 +140,27 @@ core::Functionoid::State TMTAlignCommand::code(const ::swatch::core::XParameterS
 {
   // FIXME: Embed this check somewhere
   ::mp7::MP7Controller& driver = getActionable<MP7AbstractProcessor>().driver();
-  ::mp7::orbit::Metric metric = driver.getMetric();
+  ::mp7::orbit::Metric lMetric = driver.getMetric();
   
-  xdata::UnsignedInteger tmtBx = aParams.get<xdata::UnsignedInteger>("tmtBx");
-  xdata::UnsignedInteger tmtCycle = aParams.get<xdata::UnsignedInteger>("tmtCycle");
-  xdata::UnsignedInteger tmtSlot = aParams.get<xdata::UnsignedInteger>("tmtSlot");
+  swatch::core::ReadOnlyXParameterSet lParams = TmtParameterMapper::rebuild(aParams, lMetric);
+
+  /*
+    
+  xdata::UnsignedInteger tmtBx = aParams.get<xdata::UnsignedInteger>(kTmtBxParam);
+  xdata::UnsignedInteger tmtCycle = aParams.get<xdata::UnsignedInteger>(kTmtCycleParam);
+  xdata::UnsignedInteger tmtSlot = aParams.get<xdata::UnsignedInteger>(kTmtIdParam);
   
   // Copy the parameter set
   swatch::core::ReadOnlyXParameterSet lParams(aParams);
   
   // Strip parameters
-  lParams.erase("tmtBx");
-  lParams.erase("tmtCycle");
-  lParams.erase("tmtSlot");
+  lParams.erase(kTmtBxParam);
+  lParams.erase(kTmtCycleParam);
+  lParams.erase(kTmtIdParam);
   
   
   
-  if ( !orbit::isValid( tmtBx, tmtCycle, metric ) ) {
+  if ( !orbit::isValid( tmtBx, tmtCycle, lMetric ) ) {
     std::ostringstream msg;
     msg << "Invalid orbit point parameters (" << tmtBx << ", " << tmtCycle << ")";
 
@@ -162,14 +171,14 @@ core::Functionoid::State TMTAlignCommand::code(const ::swatch::core::XParameterS
   
   
   ::mp7::orbit::Point p(tmtBx, tmtCycle);
-  metric.addBXs(p, tmtSlot);
+  lMetric.addBXs(p, tmtSlot);
   
   boost::shared_ptr<xdata::UnsignedInteger> lBx( new xdata::UnsignedInteger(p.bx) );
   boost::shared_ptr<xdata::UnsignedInteger> lCycle( new xdata::UnsignedInteger(p.cycle) );
   
-  lParams.adopt("bx", lBx);
-  lParams.adopt("cycle", lCycle);
-  
+  lParams.adopt(kBxParam, lBx);
+  lParams.adopt(kCycleParam, lCycle);
+  */
   return AlignRxsToCommand::code(lParams);  
 }
 
