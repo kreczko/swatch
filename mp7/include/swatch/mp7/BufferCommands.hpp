@@ -37,7 +37,7 @@ private:
 
   static std::map< std::string, ::mp7::TestPathConfigurator::Mode > initBufferModeMap();
   
-  C mCore;
+  C mBufferCore;
 };
 
 typedef ConfigureBuffersCommand<RxBufferCommandCore> ConfigureRxBuffersCommand;
@@ -72,7 +72,7 @@ public:
 
 private:
 
-  C mCore;
+  C mBufferCore;
 };
 
 typedef SaveBuffersToFileCommand<RxBufferCommandCore> SaveRxBuffersToFileCommand;
@@ -90,7 +90,7 @@ public:
   virtual State code(const ::swatch::core::XParameterSet& params);
 private:
   
-  C mCore;
+  C mBufferCore;
 };
 
 typedef LatencyBuffersCommand<RxBufferCommandCore> LatencyRxBuffersCommand;
@@ -110,7 +110,7 @@ private:
 
   static uint32_t computeLatency( uint32_t aMaster, uint32_t aAlgo, uint32_t aInternal);
 
-  C mCore;
+  C mBufferCore;
 };
 
 typedef EasyLatencyCommand<RxBufferCommandCore> EasyRxLatencyCommand;

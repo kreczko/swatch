@@ -45,10 +45,10 @@ namespace mp7 {
   
 TDRFormatterCommand::TDRFormatterCommand(const std::string& aId, swatch::core::ActionableObject& aActionable):
   ChannelCommandBase(aId, aActionable, xdata::Integer()), 
-  mCore(*this, boost::bind(&ChannelDescriptor::getFormatterKind, _1) == ::mp7::kTDRFormatter) {
+  mFmtCore(*this, boost::bind(&ChannelDescriptor::getFormatterKind, _1) == ::mp7::kTDRFormatter) {
   
   // add default parameters
-  mCore.addParameters();
+  mFmtCore.addParameters();
   
   registerParameter("strip", xdata::Boolean(true));
   registerParameter("insert", xdata::Boolean(true));
@@ -64,7 +64,7 @@ core::Command::State TDRFormatterCommand::code(const ::swatch::core::XParameterS
 
   // Need to parse enabled channels
 
-  ::mp7::ChannelsManager cm = mCore.getManager(params);
+  ::mp7::ChannelsManager cm = mFmtCore.getManager(params);
 
   setProgress(0.0, "Configuring TDR header formatting...");
   

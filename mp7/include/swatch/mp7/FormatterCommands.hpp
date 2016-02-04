@@ -40,7 +40,7 @@ public:
   
 private:
   //! Command core
-  RxCommandCore mCore;
+  RxCommandCore mFmtCore;
 };
 
 

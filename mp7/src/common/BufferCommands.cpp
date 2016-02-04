@@ -87,10 +87,10 @@ ConfigureBuffersCommand<C>::initBufferModeMap()
 template<class C>
 ConfigureBuffersCommand<C>::ConfigureBuffersCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
 ChannelCommandBase(aId, aActionable, xdata::String()),
-mCore(*this)
+mBufferCore(*this)
 {
 
-  mCore.addParameters();
+  mBufferCore.addParameters();
 
   // Parameter registration  
   registerParameter("startBx", xdata::UnsignedInteger(0x0));
@@ -164,7 +164,7 @@ ConfigureBuffersCommand<C>::code(const ::swatch::core::XParameterSet& params)
 
   setStatusMsg(msg.str());
 
-  ::mp7::ChannelsManager cm = mCore.getManager(params);
+  ::mp7::ChannelsManager cm = mBufferCore.getManager(params);
 
   setProgress(0.2, "Generating BoardData object...");
 
@@ -275,10 +275,10 @@ CaptureBuffersCommand::code(const ::swatch::core::XParameterSet& params)
 template<class C>
 SaveBuffersToFileCommand<C>::SaveBuffersToFileCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
 ChannelCommandBase(aId, aActionable, xdata::String()),
-mCore(*this)
+mBufferCore(*this)
 {
 
-  mCore.addParameters();
+  mBufferCore.addParameters();
 
   registerParameter("filename", xdata::String(""));
 }
@@ -299,7 +299,7 @@ core::Command::State SaveBuffersToFileCommand<C>::code(const ::swatch::core::XPa
   ::mp7::MP7Controller& driver = getActionable< MP7AbstractProcessor>().driver();
 
   ::mp7::CtrlNode ctrl = driver.getCtrl();
-  ::mp7::ChannelsManager cm = mCore.getManager(params);
+  ::mp7::ChannelsManager cm = mBufferCore.getManager(params);
 
 
   // TOFIX: Output file should be compulsory
@@ -346,10 +346,10 @@ template class SaveBuffersToFileCommand<TxBufferCommandCore>;
 template<class C>
 LatencyBuffersCommand<C>::LatencyBuffersCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
 ChannelCommandBase(aId, aActionable, xdata::String()),
-mCore(*this)
+mBufferCore(*this)
 {
 
-  mCore.addParameters();
+  mBufferCore.addParameters();
 
   registerParameter("bankId", xdata::UnsignedInteger(0x0));
   registerParameter("depth", xdata::UnsignedInteger(0x0));
@@ -370,7 +370,7 @@ core::Command::State LatencyBuffersCommand<C>::code(const ::swatch::core::XParam
 
   setProgress(0.0, "Configuring buffers in latency mode");
 
-  ::mp7::ChannelsManager cm = mCore.getManager(params);
+  ::mp7::ChannelsManager cm = mBufferCore.getManager(params);
   ::mp7::LatencyPathConfigurator pc = ::mp7::LatencyPathConfigurator(bankId, depth);
 
   cm.configureBuffers(bKind, pc);
@@ -388,10 +388,10 @@ template class LatencyBuffersCommand<TxBufferCommandCore>;
 template<class C>
 EasyLatencyCommand<C>::EasyLatencyCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
 ChannelCommandBase(aId, aActionable, xdata::String()),
-mCore(*this)
+mBufferCore(*this)
 {
 
-  mCore.addParameters();
+  mBufferCore.addParameters();
 
   registerParameter("bankId", xdata::UnsignedInteger(0x0));
   registerParameter("masterLatency", xdata::UnsignedInteger(0x0));
@@ -417,7 +417,7 @@ core::Command::State EasyLatencyCommand<C>::code(const ::swatch::core::XParamete
 
   uint32_t depth = computeLatency(masterLatency, algoLatency, internalLatency);
 
-  ::mp7::ChannelsManager cm = mCore.getManager(params);
+  ::mp7::ChannelsManager cm = mBufferCore.getManager(params);
   ::mp7::LatencyPathConfigurator pc = ::mp7::LatencyPathConfigurator(bankId, depth);
 
   cm.configureBuffers(bKind, pc);

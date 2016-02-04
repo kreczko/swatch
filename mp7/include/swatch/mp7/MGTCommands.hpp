@@ -15,7 +15,7 @@ public:
   virtual core::Command::State code(const core::XParameterSet& params);
 
 private:
-  RxMGTCommandCore mCore;
+  RxMGTCommandCore mRxMGTCore;
 };
 
 
@@ -25,7 +25,7 @@ public:
     virtual ~ConfigureTxMGTsCommand() {}
     virtual core::Command::State code(const core::XParameterSet& params);
 private:
-  TxMGTCommandCore mCore;
+  TxMGTCommandCore mTxMGTCore;
 };
 
 
@@ -35,7 +35,7 @@ public:
     virtual ~AlignRxsToCommand() {}
     virtual core::Command::State code(const core::XParameterSet& params);
 private:
-  RxMGTCommandCore mCore;
+  RxMGTCommandCore mRxMGTCore;
 };
 
 
@@ -45,7 +45,7 @@ public:
     virtual ~AutoAlignCommand() {}
     virtual core::Command::State code (const core::XParameterSet& aParams);
 private:
-  RxMGTCommandCore mCore;
+  RxMGTCommandCore mRxMGTCore;
 };
 
 
