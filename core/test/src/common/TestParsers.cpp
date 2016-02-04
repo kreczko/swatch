@@ -63,7 +63,8 @@ BOOST_AUTO_TEST_CASE(IdSliceRangeException) {
 BOOST_AUTO_TEST_CASE(SliceSyntaxParsingTests) {
   std::cout << "ProcessorTestSuite.SliceSyntaxParsingTests" << std::endl;
   std::vector<std::string> expected, returned;
-  
+  std::vector<std::string> expectedSet, returnedSet;
+
   
   // Very basic strings (no prefix / suffix)
   expected = {"0", "1"};
@@ -112,13 +113,15 @@ BOOST_AUTO_TEST_CASE(SliceSyntaxParsingTests) {
   
   
   // Finally, strings that don't contain port slice syntax
-  BOOST_CHECK_THROW(toolbox::IdSliceParser::parse("abc[0]def"), swatch::core::toolbox::FailedSliceParsing);
+  BOOST_CHECK_THROW(toolbox::IdSliceParser::parse("abc[0]def"), swatch::core::toolbox::SliceParsingFailed);
         
-  BOOST_CHECK_THROW(toolbox::IdSliceParser::parse("abc[0:2:3:4]def"), swatch::core::toolbox::FailedSliceParsing);
+  BOOST_CHECK_THROW(toolbox::IdSliceParser::parse("abc[0:2:3:4]def"), swatch::core::toolbox::SliceParsingFailed);
   
-  BOOST_CHECK_THROW(toolbox::IdSliceParser::parse("[a:b:c]"), swatch::core::toolbox::FailedSliceParsing);
+  BOOST_CHECK_THROW(toolbox::IdSliceParser::parse("[a:b:c]"), swatch::core::toolbox::SliceParsingFailed);
 
-  BOOST_CHECK_THROW(toolbox::IdSliceParser::parse("abc0:4]"), swatch::core::toolbox::FailedSliceParsing);
+  BOOST_CHECK_THROW(toolbox::IdSliceParser::parse("abc0:4]"), swatch::core::toolbox::SliceParsingFailed);
+  
+  BOOST_CHECK_THROW(toolbox::IdSliceParser::parseSet("0, 0"), swatch::core::toolbox::SliceSetParsingDuplicatesFound);
 }
 
 BOOST_AUTO_TEST_SUITE_END() // ObjectTestSuite

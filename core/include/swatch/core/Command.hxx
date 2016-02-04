@@ -34,6 +34,11 @@ Command::Command( const std::string& aId , ActionableObject& aResource, const T&
 
 template<typename T>
 void Command::registerParameter(const std::string& aName, const T& aDefaultValue){
+  
+  if ( getPath() != getId() ) {
+    // The Command has already been registered. Parameters list cannot be modified
+    throw CommandParameterRegistrationFailed("Registering parameter outside constructors is not allowed");
+  }
   if (mDefaultParams.has(aName))
     mDefaultParams.erase(aName);
   mDefaultParams.add(aName, aDefaultValue);

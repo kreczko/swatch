@@ -9,6 +9,7 @@
 #define	__SWATCH_MP7_MP7ABSTRACTPROCESSOR_HPP__
 
 #include "swatch/processor/Processor.hpp"
+#include "swatch/mp7/ChannelDescriptors.hpp"
 
 
 namespace mp7 {
@@ -21,12 +22,19 @@ namespace mp7 {
 class MP7AbstractProcessor : public swatch::processor::Processor {
 public:
   MP7AbstractProcessor(const swatch::core::AbstractStub& aStub) : swatch::processor::Processor(aStub) {
-    
   }
   virtual ~MP7AbstractProcessor() {}
   
   virtual ::mp7::MP7Controller& driver() = 0; 
 
+  const ChannelsMap_t& getRxDescriptors() const;
+  
+  const ChannelsMap_t& getTxDescriptors() const;
+  
+protected:
+  ChannelsMap_t mRxDescriptors;
+  
+  ChannelsMap_t mTxDescriptors;
 };
 
 }

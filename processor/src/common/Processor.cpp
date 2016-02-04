@@ -128,7 +128,6 @@ Processor::getTTC() {
     return *mTTC;
 }
 
-
 //---
 const ReadoutInterface&
 Processor::getReadout() const {

@@ -208,6 +208,17 @@ void Command::setStatusMsg(const std::string& aMsg) {
 
 
 //------------------------------------------------------------------------------------
+void Command::unregisterParameter(const std::string name)
+{
+  if ( getPath() != getId() ) {
+    // The Command has already been registered. Parameters list cannot be modified
+    throw CommandParameterRegistrationFailed("Registering parameter outside constructors is not allowed");
+  }
+    
+  mDefaultParams.erase(name);
+}
+
+//------------------------------------------------------------------------------------
 const ReadWriteXParameterSet& Command::getDefaultParams() const {
   return mDefaultParams;
 }

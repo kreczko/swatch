@@ -26,10 +26,13 @@ namespace toolbox {
 struct IdSliceParser {
     static std::vector<std::string> parse( const std::string& aStringSlice );
     static std::vector<std::string> parseList( const std::string& aStringSlice );
+    static std::set<std::string> parseSet( const std::string& aStringSlice );
+
 };
 
-DEFINE_SWATCH_EXCEPTION(FailedSliceParsing);
-DEFINE_SWATCH_EXCEPTION(FailedSliceListParsing);
+DEFINE_SWATCH_EXCEPTION(SliceParsingFailed);
+DEFINE_SWATCH_EXCEPTION(SliceListParsingFailed);
+DEFINE_SWATCH_EXCEPTION(SliceSetParsingDuplicatesFound)
 
 } // namespace toolbox 
 } // namespace core 

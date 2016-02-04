@@ -73,8 +73,11 @@ public:
     const ReadWriteXParameterSet& getDefaultParams() const;
     
     const xdata::Serializable& getDefaultResult() const;
+
+    void unregisterParameter( const std::string name );
     
 protected:
+
     //! user-defined code for execution
     virtual ActionSnapshot::State code( const XParameterSet& aParams ) = 0;
 
@@ -165,6 +168,8 @@ private:
     ReadOnlyXParameterSet mParams;
     boost::shared_ptr<xdata::Serializable> mResult;
 };
+
+DEFINE_SWATCH_EXCEPTION(CommandParameterRegistrationFailed);
 
 } // namespace core
 } // namespace swatch

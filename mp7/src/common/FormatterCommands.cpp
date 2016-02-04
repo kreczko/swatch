@@ -36,70 +36,27 @@
 #include "mp7/exception.hpp"
 #include "mp7/FormatterNode.hpp"
 #include "mp7/DatapathNode.hpp"
+#include "swatch/mp7/Utilities.hpp"
 
 
 namespace swatch {
 namespace mp7 {
 
   
-AbstractFormatterCommand::~AbstractFormatterCommand()
-{
-}
-
-
-::mp7::ChannelsManager AbstractFormatterCommand::getChannelsMgr(const swatch::core::XParameterSet& aParams)
-{
-  // Parse parameter into channel ID mask
-  std::string channelMask = aParams.get<xdata::String>(kPortSelection).value_;
-  std::vector<uint32_t> mask;
-  if (channelMask.empty())
-  {
-    mask.reserve(72);
-    for(size_t i=0; i<72; i++)
-        mask.push_back(i);
-  }
-  else
-    mask = swatch::core::toolbox::UIntListParser::parse(channelMask);
-
-  // Grab list of ports registered in the processor
-  MP7AbstractProcessor& p = getActionable<MP7AbstractProcessor>();
- 
- // const std::vector<swatch::processor::ProcessorPortStub>& portStubs = (mKind == mp7::kRxBuffer) ? p->getStub().rxPorts : p->getStub().txPorts;
-  // std::vector<uint32_t> stubIds;
-  // for(std::vector<swatch::processor::ProcessorPortStub>::const_iterator lIt=portStubs.begin(); lIt!=portStubs.end(); lIt++)
-  //   stubIds.push_back( lIt->number );
-
-  // // Obtain intersection of the two lists
-  // std::sort(mask.begin(), mask.end());
-  // std::sort(stubIds.begin(), stubIds.end());
-  // std::vector<uint32_t> intersection;
-  // std::set_intersection(mask.begin(), mask.end(), stubIds.begin(), stubIds.end(), std::back_inserter(intersection));
-
-  //return p->driver().channelMgr(intersection);
-
-  return p.driver().channelMgr(mask);
-
-}
-
-const std::string AbstractFormatterCommand::kPortSelection = "portSelection";  
-
-
-
-
-
 TDRFormatterCommand::TDRFormatterCommand(const std::string& aId, swatch::core::ActionableObject& aActionable):
-  AbstractFormatterCommand(aId, aActionable, xdata::Integer()){
+  ChannelCommandBase(aId, aActionable, xdata::Integer()), 
+  mCore(*this, boost::bind(&ChannelDescriptor::getFormatterKind, _1) == ::mp7::kTDRFormatter) {
+  
+  // add default parameters
+  mCore.addParameters();
+  
   registerParameter("strip", xdata::Boolean(true));
   registerParameter("insert", xdata::Boolean(true));
 }
 
-TDRFormatterCommand::~TDRFormatterCommand(){
-}
-
+//---
 core::Command::State TDRFormatterCommand::code(const ::swatch::core::XParameterSet& params)
 {
-
-  MP7AbstractProcessor& mp7proc = getActionable<MP7AbstractProcessor>();
 
   bool strip  = params.get<xdata::Boolean>("strip").value_;
   bool insert = params.get<xdata::Boolean>("insert").value_;
@@ -107,22 +64,11 @@ core::Command::State TDRFormatterCommand::code(const ::swatch::core::XParameterS
 
   // Need to parse enabled channels
 
-  ::mp7::ChannelsManager cm = getChannelsMgr(params);
+  ::mp7::ChannelsManager cm = mCore.getManager(params);
 
-  setProgress(0.0, "Configuring formatters");
+  setProgress(0.0, "Configuring TDR header formatting...");
   
-  ::mp7::ChannelIDSet tdrIds = cm.ids(::mp7::kTDRFmtIDs);
-  
-  ::mp7::FormatterNode fmt = mp7proc.driver().getFormatter();
-  ::mp7::CtrlNode ctrl = mp7proc.driver().getCtrl();
-  ::mp7::DatapathNode datapath = mp7proc.driver().getDatapath();
-
-  setProgress(0.2, "Configuring TDR header formatting...");
-  
-  for(uint i = 0; i < tdrIds.channels().size(); i++){
-    datapath.selectLink(tdrIds.channels()[i]);
-    fmt.stripInsert(strip, insert);
-  }
+  cm.configureTDRFormatters(strip,insert);
 
   setStatusMsg("Configure TDR Formatting complete");
 

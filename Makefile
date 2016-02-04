@@ -23,15 +23,16 @@ PACKAGES = \
 	pyswatch
 else ifeq ($(Set), amc13)
 PACKAGES = \
-    $(SWATCH_PACKAGES) \
-    $(SWATCH_TEST_PACKAGES) \
+	$(SWATCH_PACKAGES) \
+	$(SWATCH_TEST_PACKAGES) \
 	amc13
 else ifeq ($(Set), hwdevel)
 PACKAGES = \
 	$(SWATCH_PACKAGES) \
-    $(SWATCH_TEST_PACKAGES) \
+        $(SWATCH_TEST_PACKAGES) \
 	amc13 \
-	mp7
+	mp7 \
+	mp7/test
 endif
 
 VIRTUAL_PACKAGES = $(addsuffix /.virtual.Makefile,${PACKAGES})

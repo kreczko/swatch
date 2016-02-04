@@ -72,6 +72,12 @@ BOOST_FIXTURE_TEST_CASE(TestDefaultParams, CommandTestSetup)
 
 
 
+BOOST_FIXTURE_TEST_CASE(TestUnregisterThrows, CommandTestSetup)
+{
+  BOOST_CHECK_THROW(cmd.unregisterParameter("dummy_cmd"), CommandParameterRegistrationFailed)
+}
+
+
 BOOST_FIXTURE_TEST_CASE(TestCommandInitialState,  CommandTestSetup)
 {
   const std::vector<const Command*> cmds = { &cmd, &warning_cmd, &error_cmd, &throw_cmd};

@@ -49,7 +49,7 @@ treeToProcessorStub(const boost::property_tree::ptree& aPTree)
     {
       try {
         pushBackPortStubs(pStub.rxPorts, rxPortInfo.second.get<std::string>("NAME"), rxPortInfo.second.get<std::string>("PID"));
-      } catch ( const core::toolbox::FailedSliceParsing &e ) {
+      } catch ( const core::toolbox::SliceParsingFailed &e ) {
         std::ostringstream msg;
         msg << "Failed to parse processor '" << pStub.id << "' rx ports" << std::endl;
         msg << "Details: " << e.what();
@@ -62,7 +62,7 @@ treeToProcessorStub(const boost::property_tree::ptree& aPTree)
     {
       try { 
         pushBackPortStubs(pStub.txPorts, txPortInfo.second.get<std::string>("NAME"), txPortInfo.second.get<std::string>("PID"));
-      } catch ( const core::toolbox::FailedSliceParsing &e ) {
+      } catch ( const core::toolbox::SliceParsingFailed &e ) {
         std::ostringstream msg;
         msg << "Failed to parse processor '" << pStub.id << "' tx ports" << std::endl;
         msg << "Details: " << e.what();

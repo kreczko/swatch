@@ -12,6 +12,8 @@
  */
 
 
+#include <set>
+
 #include "swatch/core/toolbox/IdSliceParser.hpp"
 
 // SWATCH Heaers
@@ -42,7 +44,7 @@ IdSliceParser::parse(const std::string& aStringSlice) {
         std::ostream_iterator<char> out_it (msg,"");
         msg << "Slice parsing stopped at position " << std::distance(aStringSlice.begin(), lBegin) << " of string '" << aStringSlice << "'";
 
-        throw FailedSliceParsing(msg.str());
+        throw SliceParsingFailed(msg.str());
       }
 
   } else {
@@ -73,16 +75,36 @@ IdSliceParser::parseList(const std::string& aStringSlice)
         std::ostringstream msg;
         msg << "SliceList parsing stopped at position " << std::distance(aStringSlice.begin(), lBegin) << " of string '" << aStringSlice << "'"; 
 
-        throw FailedSliceListParsing(msg.str());
+        throw SliceListParsingFailed(msg.str());
       }
 
   } else {
     // TODO: Should throw here
     return std::vector<std::string>();
   }
+  
+  // Special case for empty strings. They are parsed into a 1-element vector with a single empty string.
+  // If so return an empty vector
+  if (lIds.size() == 1 && lIds.front().empty())
+    lIds.clear();
       
   return lIds;
 }
+
+
+std::set<std::string> IdSliceParser::parseSet(const std::string& aStringSlice)
+{
+  std::vector<std::string> lIdList = parseList(aStringSlice);
+  
+  std::set<std::string> lIdSet(lIdList.begin(), lIdList.end());
+  
+  if ( lIdList.size() != lIdSet.size()) {
+    throw SliceSetParsingDuplicatesFound();
+  }
+  
+  return lIdSet;
+}
+    
 
 
 

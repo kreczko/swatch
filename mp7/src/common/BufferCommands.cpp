@@ -23,7 +23,8 @@
 
 // SWATCH headers
 #include "swatch/logger/Log.hpp"
-#include "swatch/mp7/MP7AbstractProcessor.hpp"
+#include "swatch/mp7/MP7Processor.hpp"
+#include "swatch/mp7/Utilities.hpp"
 
 
 namespace swatch {
@@ -31,32 +32,39 @@ namespace mp7 {
 
 
 // Static initialization
-template<AbstractChannelsCommand::ChannelGroup tGroup>
-// const std::map< std::string, ::mp7::TestPathConfigurator::Mode > ConfigureBuffersCommand<tGroup>::mBufferModeMap = initBufferModeMap();
-const std::map< std::string, ::mp7::TestPathConfigurator::Mode > ConfigureBuffersCommand<tGroup>::mBufferModeMap = {
-  {"Latency", ::mp7::TestPathConfigurator::kLatency}, 
-  {"Capture", ::mp7::TestPathConfigurator::kCapture}, 
-  {"PlayOnce", ::mp7::TestPathConfigurator::kPlayOnce}, 
-  {"PlayLoop", ::mp7::TestPathConfigurator::kPlayLoop}, 
-  {"Pattern", ::mp7::TestPathConfigurator::kPattern}, 
-  {"Zeroes", ::mp7::TestPathConfigurator::kZeroes}, 
-  {"CaptureStrobe", ::mp7::TestPathConfigurator::kCaptureStrobe}, 
-  {"Pattern3G", ::mp7::TestPathConfigurator::kPattern3G}, 
-  {"PlayOnceStrobe", ::mp7::TestPathConfigurator::kPlayOnceStrobe}, 
+template<class C>
+const std::map< std::string, ::mp7::TestPathConfigurator::Mode > ConfigureBuffersCommand<C>::mBufferModeMap = {
+  {"Latency", ::mp7::TestPathConfigurator::kLatency},
+  {"Capture", ::mp7::TestPathConfigurator::kCapture},
+  {"PlayOnce", ::mp7::TestPathConfigurator::kPlayOnce},
+  {"PlayLoop", ::mp7::TestPathConfigurator::kPlayLoop},
+  {"Pattern", ::mp7::TestPathConfigurator::kPattern},
+  {"Zeroes", ::mp7::TestPathConfigurator::kZeroes},
+  {"CaptureStrobe", ::mp7::TestPathConfigurator::kCaptureStrobe},
+  {"Pattern3G", ::mp7::TestPathConfigurator::kPattern3G},
+  {"PlayOnceStrobe", ::mp7::TestPathConfigurator::kPlayOnceStrobe},
   {"PlayOnce3G", ::mp7::TestPathConfigurator::kPlayOnce3G}
 };
 
+// // template specialisation
+// template<>
+// const ::mp7::bufferkind buffertraits<abstractchannelscommand::krx>::bufferkind = ::mp7::krxbuffer;
+
+// template<>
+// const ::mp7::bufferkind buffertraits<abstractchannelscommand::ktx>::bufferkind = ::mp7::ktxbuffer;
+
 // Template specialisation
 template<>
-const ::mp7::BufferKind BufferTraits<AbstractChannelsCommand::kRx>::bufferKind = ::mp7::kRxBuffer;
+const ::mp7::BufferKind BufferTraits<RxBufferCommandCore>::bufferKind = ::mp7::kRxBuffer;
 
 template<>
-const ::mp7::BufferKind BufferTraits<AbstractChannelsCommand::kTx>::bufferKind = ::mp7::kTxBuffer;
+const ::mp7::BufferKind BufferTraits<TxBufferCommandCore>::bufferKind = ::mp7::kTxBuffer;
 
 // --------------------------------------------------------
-template<AbstractChannelsCommand::ChannelGroup tGroup>
+template<class C>
 std::map< std::string, ::mp7::TestPathConfigurator::Mode >
-ConfigureBuffersCommand<tGroup>::initBufferModeMap() {
+ConfigureBuffersCommand<C>::initBufferModeMap()
+{
 
   std::map< std::string, ::mp7::TestPathConfigurator::Mode > lModes;
 
@@ -76,32 +84,32 @@ ConfigureBuffersCommand<tGroup>::initBufferModeMap() {
 
 
 // --------------------------------------------------------
-template<AbstractChannelsCommand::ChannelGroup tGroup>
-ConfigureBuffersCommand<tGroup>::ConfigureBuffersCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
-AbstractChannelsCommand(aId, aActionable, tGroup, xdata::String() ) {
+template<class C>
+ConfigureBuffersCommand<C>::ConfigureBuffersCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
+ChannelCommandBase(aId, aActionable, xdata::String()),
+mCore(*this)
+{
+
+  mCore.addParameters();
 
   // Parameter registration  
   registerParameter("startBx", xdata::UnsignedInteger(0x0));
   registerParameter("startCycle", xdata::UnsignedInteger(0x0));
   registerParameter("stopBx", xdata::UnsignedInteger());
   registerParameter("stopCycle", xdata::UnsignedInteger());
-  registerParameter("payload", xdata::String("file:///path/to/file"));
+  registerParameter("payload", xdata::String(""));
   registerParameter("mode", xdata::String(""));
 }
 
 
-// --------------------------------------------------------
-template<AbstractChannelsCommand::ChannelGroup tGroup>
-ConfigureBuffersCommand<tGroup>::~ConfigureBuffersCommand() {
-}
-
 
 // --------------------------------------------------------
-template<AbstractChannelsCommand::ChannelGroup tGroup>
+template<class C>
 core::Command::State
-ConfigureBuffersCommand<tGroup>::code(const ::swatch::core::XParameterSet& params) {
+ConfigureBuffersCommand<C>::code(const ::swatch::core::XParameterSet& params)
+{
 
-  const ::mp7::BufferKind bKind = BufferTraits<tGroup>::bufferKind;
+  const ::mp7::BufferKind bKind = BufferTraits<C>::bufferKind;
 
   // Extract parameter values
   // LOG(swatch::logger::kWarning) << params;
@@ -112,7 +120,7 @@ ConfigureBuffersCommand<tGroup>::code(const ::swatch::core::XParameterSet& param
   uint startCycleVal = params.get<xdata::UnsignedInteger>("startCycle").value_;
 
   uint stopBxVal = params.get<xdata::UnsignedInteger>("stopBx").value_;
-  uint stopCycleVal  = params.get<xdata::UnsignedInteger>("stopCycle").value_;
+  uint stopCycleVal = params.get<xdata::UnsignedInteger>("stopCycle").value_;
 
   std::string payload = params.get<xdata::String>("payload").value_;
 
@@ -130,7 +138,7 @@ ConfigureBuffersCommand<tGroup>::code(const ::swatch::core::XParameterSet& param
   ::mp7::orbit::Metric metric = driver.getMetric();
 
   // TOFIX: make check standard
-  if ( !orbit::isValid( startBx, startCycle, metric ) ) {
+  if (!orbit::isValid(startBx, startCycle, metric)) {
     std::ostringstream msg;
     msg << "Invalid orbit point parameters (" << startBx.value_ << ", " << startCycle.value_ << ")";
 
@@ -151,12 +159,12 @@ ConfigureBuffersCommand<tGroup>::code(const ::swatch::core::XParameterSet& param
   // Populate message
   msg << "Mode set: " << modeValue;
 
-  if ( !payload.empty() )
+  if (!payload.empty())
     msg << " reading from: " << payload;
 
   setStatusMsg(msg.str());
 
-  ::mp7::ChannelsManager cm = getChannelsMgr(params);
+  ::mp7::ChannelsManager cm = mCore.getManager(params);
 
   setProgress(0.2, "Generating BoardData object...");
 
@@ -169,7 +177,7 @@ ConfigureBuffersCommand<tGroup>::code(const ::swatch::core::XParameterSet& param
   ::mp7::TestPathConfigurator::Mode lBufMode;
   try {
     lBufMode = mBufferModeMap.at(modeValue);
-  } catch ( std::out_of_range& e ) {
+  } catch (std::out_of_range& e) {
     std::ostringstream msg;
     msg << "Unknown buffer mode: '" << modeValue << "'";
     setStatusMsg(msg.str());
@@ -182,10 +190,10 @@ ConfigureBuffersCommand<tGroup>::code(const ::swatch::core::XParameterSet& param
   ::mp7::TestPathConfigurator pc = ::mp7::TestPathConfigurator(lBufMode, startPoint, metric);
 
   // If stop is defined, update it
-  if ( !orbit::isNull(stopBx, stopCycle) )  {
-    
+  if (!orbit::isNull(stopBx, stopCycle)) {
+
     // Ensure the end orbit point is good
-    if ( !orbit::isValid( stopBx, stopCycle, metric ) ) {
+    if (!orbit::isValid(stopBx, stopCycle, metric)) {
       std::ostringstream msg;
       msg << "Invalid orbit point parameters (" << stopBx.value_ << ", " << stopCycle.value_ << ")";
 
@@ -208,7 +216,7 @@ ConfigureBuffersCommand<tGroup>::code(const ::swatch::core::XParameterSet& param
   // Apply configuration
   cm.configureBuffers(bKind, pc);
 
-  if ( !payload.empty() ) {
+  if (!payload.empty()) {
     LOG(swatch::logger::kWarning) << "loading " << payload;
 
     ::mp7::BoardData data = ::mp7::BoardDataFactory::generate(payload, bufferSize, true);
@@ -224,25 +232,22 @@ ConfigureBuffersCommand<tGroup>::code(const ::swatch::core::XParameterSet& param
 }
 
 
-template class ConfigureBuffersCommand<AbstractChannelsCommand::kRx>;
-template class ConfigureBuffersCommand<AbstractChannelsCommand::kTx>;
+template class ConfigureBuffersCommand<RxBufferCommandCore>;
+template class ConfigureBuffersCommand<TxBufferCommandCore>;
 
 
 
 // --------------------------------------------------------
 CaptureBuffersCommand::CaptureBuffersCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
-  swatch::core::Command(aId, aActionable, xdata::String() ) {
-}
-
-
-// --------------------------------------------------------
-CaptureBuffersCommand::~CaptureBuffersCommand() {
+swatch::core::Command(aId, aActionable, xdata::String())
+{
 }
 
 
 // --------------------------------------------------------
 core::Command::State
-CaptureBuffersCommand::code(const ::swatch::core::XParameterSet& params) {
+CaptureBuffersCommand::code(const ::swatch::core::XParameterSet& params)
+{
 
   ::mp7::MP7Controller& driver = getActionable< MP7AbstractProcessor>().driver();
 
@@ -267,35 +272,36 @@ CaptureBuffersCommand::code(const ::swatch::core::XParameterSet& params) {
 
 
 // --------------------------------------------------------
-template<AbstractChannelsCommand::ChannelGroup tGroup>
-SaveBuffersToFileCommand<tGroup>::SaveBuffersToFileCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
-  AbstractChannelsCommand(aId, aActionable, tGroup, xdata::String() ) {
+template<class C>
+SaveBuffersToFileCommand<C>::SaveBuffersToFileCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
+ChannelCommandBase(aId, aActionable, xdata::String()),
+mCore(*this)
+{
+
+  mCore.addParameters();
+
   registerParameter("filename", xdata::String(""));
 }
 
 
-// --------------------------------------------------------
-template<AbstractChannelsCommand::ChannelGroup tGroup>
-SaveBuffersToFileCommand<tGroup>::~SaveBuffersToFileCommand() {
-}
-
 
 // --------------------------------------------------------
-template<AbstractChannelsCommand::ChannelGroup tGroup>
-core::Command::State SaveBuffersToFileCommand<tGroup>::code(const ::swatch::core::XParameterSet& params) {
+template<class C>
+core::Command::State SaveBuffersToFileCommand<C>::code(const ::swatch::core::XParameterSet& params)
+{
 
   // Get the corresponding buffer kind
-  const ::mp7::BufferKind bKind = BufferTraits<tGroup>::bufferKind;
+  const ::mp7::BufferKind bKind = BufferTraits<C>::bufferKind;
 
   std::string filename = params.get<xdata::String>("filename").value_;
 
-//MP7AbstractProcessor* proc = getParent< MP7AbstractProcessor>();
+  //MP7AbstractProcessor* proc = getParent< MP7AbstractProcessor>();
   ::mp7::MP7Controller& driver = getActionable< MP7AbstractProcessor>().driver();
 
   ::mp7::CtrlNode ctrl = driver.getCtrl();
-  ::mp7::ChannelsManager cm = getChannelsMgr(params);
+  ::mp7::ChannelsManager cm = mCore.getManager(params);
 
-  
+
   // TOFIX: Output file should be compulsory
   if (filename == "") {
     std::ostringstream fn;
@@ -303,13 +309,13 @@ core::Command::State SaveBuffersToFileCommand<tGroup>::code(const ::swatch::core
     filename = fn.str();
   } else {
     // Expand variables contained in the filename
-    filename = swatch::core::shellExpandPath( filename );
-    
+    filename = swatch::core::shellExpandPath(filename);
+
     boost::filesystem::path p(filename);
     if (!boost::filesystem::exists(p.parent_path())) {
       try {
         boost::filesystem::create_directories(p.parent_path());
-      } catch (std::exception& e)  {
+      } catch (std::exception& e) {
         std::ostringstream err;
         err << "Exception caught. Cannot create dir " << p.parent_path() << ". Please provide a valid path for captures.";
         setStatusMsg(err.str());
@@ -321,8 +327,8 @@ core::Command::State SaveBuffersToFileCommand<tGroup>::code(const ::swatch::core
   setProgress(0.1, "Reading buffers...");
 
   ::mp7::BoardData data = cm.readBuffers(bKind);
-  
-    setProgress(0.5, "Saving data...");
+
+  setProgress(0.5, "Saving data...");
 
   ::mp7::BoardDataFactory::saveToFile(data, filename);
 
@@ -331,31 +337,32 @@ core::Command::State SaveBuffersToFileCommand<tGroup>::code(const ::swatch::core
 }
 
 // Template Instance
-template class SaveBuffersToFileCommand<AbstractChannelsCommand::kRx>;
-template class SaveBuffersToFileCommand<AbstractChannelsCommand::kTx>;
+template class SaveBuffersToFileCommand<RxBufferCommandCore>;
+template class SaveBuffersToFileCommand<TxBufferCommandCore>;
 
 
 
 // --------------------------------------------------------
-template<AbstractChannelsCommand::ChannelGroup tGroup>
-LatencyBuffersCommand<tGroup>::LatencyBuffersCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
-  AbstractChannelsCommand(aId, aActionable, tGroup, xdata::String() ) {
+template<class C>
+LatencyBuffersCommand<C>::LatencyBuffersCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
+ChannelCommandBase(aId, aActionable, xdata::String()),
+mCore(*this)
+{
+
+  mCore.addParameters();
+
   registerParameter("bankId", xdata::UnsignedInteger(0x0));
   registerParameter("depth", xdata::UnsignedInteger(0x0));
 }
 
 
-// --------------------------------------------------------
-template<AbstractChannelsCommand::ChannelGroup tGroup>
-LatencyBuffersCommand<tGroup>::~LatencyBuffersCommand() {
-}
-
 
 // --------------------------------------------------------
-template<AbstractChannelsCommand::ChannelGroup tGroup>
-core::Command::State LatencyBuffersCommand<tGroup>::code(const ::swatch::core::XParameterSet& params) {
+template<class C>
+core::Command::State LatencyBuffersCommand<C>::code(const ::swatch::core::XParameterSet& params)
+{
   // Get the corresponding buffer kind
-  const ::mp7::BufferKind bKind = BufferTraits<tGroup>::bufferKind;
+  const ::mp7::BufferKind bKind = BufferTraits<C>::bufferKind;
 
 
   uint bankId = params.get<xdata::UnsignedInteger>("bankId").value_;
@@ -363,7 +370,7 @@ core::Command::State LatencyBuffersCommand<tGroup>::code(const ::swatch::core::X
 
   setProgress(0.0, "Configuring buffers in latency mode");
 
-  ::mp7::ChannelsManager cm = getChannelsMgr(params);
+  ::mp7::ChannelsManager cm = mCore.getManager(params);
   ::mp7::LatencyPathConfigurator pc = ::mp7::LatencyPathConfigurator(bankId, depth);
 
   cm.configureBuffers(bKind, pc);
@@ -373,14 +380,19 @@ core::Command::State LatencyBuffersCommand<tGroup>::code(const ::swatch::core::X
   return State::kDone;
 }
 
-template class LatencyBuffersCommand<AbstractChannelsCommand::kRx>;
-template class LatencyBuffersCommand<AbstractChannelsCommand::kTx>;
+template class LatencyBuffersCommand<RxBufferCommandCore>;
+template class LatencyBuffersCommand<TxBufferCommandCore>;
 
 
 // --------------------------------------------------------
-template<AbstractChannelsCommand::ChannelGroup tGroup>
-EasyLatencyCommand<tGroup>::EasyLatencyCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
-  AbstractChannelsCommand(aId, aActionable, tGroup, xdata::String() ) {
+template<class C>
+EasyLatencyCommand<C>::EasyLatencyCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
+ChannelCommandBase(aId, aActionable, xdata::String()),
+mCore(*this)
+{
+
+  mCore.addParameters();
+
   registerParameter("bankId", xdata::UnsignedInteger(0x0));
   registerParameter("masterLatency", xdata::UnsignedInteger(0x0));
   registerParameter("algoLatency", xdata::UnsignedInteger(0x0));
@@ -388,52 +400,51 @@ EasyLatencyCommand<tGroup>::EasyLatencyCommand(const std::string& aId, swatch::c
 }
 
 
-// --------------------------------------------------------
-template<AbstractChannelsCommand::ChannelGroup tGroup>
-EasyLatencyCommand<tGroup>::~EasyLatencyCommand() {
-}
-
 
 // --------------------------------------------------------
-template<AbstractChannelsCommand::ChannelGroup tGroup>
-core::Command::State EasyLatencyCommand<tGroup>::code(const ::swatch::core::XParameterSet& params) {
+template<class C>
+core::Command::State EasyLatencyCommand<C>::code(const ::swatch::core::XParameterSet& params)
+{
   // Get the corresponding buffer kind
-  const ::mp7::BufferKind bKind = BufferTraits<tGroup>::bufferKind;
+  const ::mp7::BufferKind bKind = BufferTraits<C>::bufferKind;
 
   uint bankId = params.get<xdata::UnsignedInteger>("bankId").value_;
   uint masterLatency = params.get<xdata::UnsignedInteger>("masterLatency").value_;
   uint algoLatency = params.get<xdata::UnsignedInteger>("algoLatency").value_;
   uint internalLatency = params.get<xdata::UnsignedInteger>("internalLatency").value_;
 
-  setProgress(0.0, "Configuring "+boost::lexical_cast<std::string>(bKind)+" buffers in latency mode");
+  setProgress(0.0, "Configuring " + boost::lexical_cast<std::string>(bKind) + " buffers in latency mode");
 
   uint32_t depth = computeLatency(masterLatency, algoLatency, internalLatency);
 
-  ::mp7::ChannelsManager cm = getChannelsMgr(params);
+  ::mp7::ChannelsManager cm = mCore.getManager(params);
   ::mp7::LatencyPathConfigurator pc = ::mp7::LatencyPathConfigurator(bankId, depth);
 
   cm.configureBuffers(bKind, pc);
 
-  setStatusMsg(boost::lexical_cast<std::string>(bKind)+" buffers configured in latency mode: depth = "+boost::lexical_cast<std::string>(depth));
+  setStatusMsg(boost::lexical_cast<std::string>(bKind) + " buffers configured in latency mode: depth = " + boost::lexical_cast<std::string>(depth));
 
   return State::kDone;
 }
 
+
 template<>
-uint32_t 
-EasyLatencyCommand<AbstractChannelsCommand::kRx>::computeLatency(uint32_t aMaster, uint32_t aAlgo, uint32_t aInternal) {
-  return aMaster+aInternal;
+uint32_t
+EasyLatencyCommand<RxBufferCommandCore>::computeLatency(uint32_t aMaster, uint32_t aAlgo, uint32_t aInternal)
+{
+  return aMaster + aInternal;
 }
 
 
 template<>
-uint32_t 
-EasyLatencyCommand<AbstractChannelsCommand::kTx>::computeLatency(uint32_t aMaster, uint32_t aAlgo, uint32_t aInternal) {
-  return aMaster+aInternal-aAlgo;
+uint32_t
+EasyLatencyCommand<TxBufferCommandCore>::computeLatency(uint32_t aMaster, uint32_t aAlgo, uint32_t aInternal)
+{
+  return aMaster + aInternal - aAlgo;
 }
 
-template class EasyLatencyCommand<AbstractChannelsCommand::kRx>;
-template class EasyLatencyCommand<AbstractChannelsCommand::kTx>;
+template class EasyLatencyCommand<RxBufferCommandCore>;
+template class EasyLatencyCommand<TxBufferCommandCore>;
 
 
 } //end ns mp7

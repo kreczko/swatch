@@ -14,45 +14,33 @@
 #include "xdata/String.h"
 
 #include "swatch/core/Command.hpp"
-
-
-namespace mp7 {
-class ChannelsManager;
-}
+#include "swatch/mp7/ChannelCommandBase.hpp"
 
 
 namespace swatch {
 namespace mp7 {
 
-
-class AbstractFormatterCommand : public core::Command {
+class TDRFormatterCommand : public ChannelCommandBase {
 public:
-  virtual ~AbstractFormatterCommand();
-
-protected:
-  template<typename ResultType>
-  AbstractFormatterCommand( const std::string& aId, swatch::core::ActionableObject& aActionable, const ResultType& aDefault );
-
-  ::mp7::ChannelsManager getChannelsMgr(const swatch::core::XParameterSet& aParams);
-
- private:
-  static const std::string kPortSelection;
-};
-
-
-template<typename ResultType>
-AbstractFormatterCommand::AbstractFormatterCommand( const std::string& aId , swatch::core::ActionableObject& aActionable, const ResultType& aDefault ) :
-  core::Command(aId, aActionable, aDefault)
-{
-  registerParameter(kPortSelection,xdata::String());
-}
-
-
-class TDRFormatterCommand : public AbstractFormatterCommand {
-public:
+  /**
+   * 
+   * @param aId
+   * @param aActionable
+   */
   TDRFormatterCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
-  virtual ~TDRFormatterCommand();
+  
+  virtual ~TDRFormatterCommand() {}
+  
+  /**
+   * 
+   * @param params
+   * @return 
+   */
   virtual State code(const ::swatch::core::XParameterSet& params);
+  
+private:
+  //! Command core
+  RxCommandCore mCore;
 };
 
 
