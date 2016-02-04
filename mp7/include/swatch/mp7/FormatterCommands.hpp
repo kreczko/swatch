@@ -14,13 +14,13 @@
 #include "xdata/String.h"
 
 #include "swatch/core/Command.hpp"
-#include "swatch/mp7/ChannelCommandBase.hpp"
+#include "swatch/mp7/ChannelCommandCore.hpp"
 
 
 namespace swatch {
 namespace mp7 {
 
-class TDRFormatterCommand : public ChannelCommandBase {
+class TDRFormatterCommand : public swatch::core::Command {
 public:
   /**
    * 

@@ -5,7 +5,7 @@
  * Created on February 4, 2016, 11:57 AM
  */
 
-#include "swatch/mp7/ChannelCommandBase.hpp"
+#include "swatch/mp7/ChannelCommandCore.hpp"
 #include "swatch/core/toolbox/IdSliceParser.hpp"
 #include "swatch/mp7/MP7AbstractProcessor.hpp"
 
@@ -17,15 +17,11 @@
 namespace swatch {
 namespace mp7 {
 
-ChannelCommandBase::~ChannelCommandBase()
-{
-}
-
 const Rule_t ChannelCommandCore::kAlwaysTrue = boost::lambda::constant(true);
 const std::string ChannelCommandCore::kIdSelection = "ids";
 
 
-ChannelCommandCore::ChannelCommandCore(ChannelCommandBase& aCommand) :
+ChannelCommandCore::ChannelCommandCore(swatch::core::Command& aCommand) :
   mCommand(aCommand),
   mProcessor(aCommand.getActionable<MP7AbstractProcessor>())
 {
@@ -39,7 +35,7 @@ ChannelCommandCore::~ChannelCommandCore()
 
 void ChannelCommandCore::addParameters()
 {
-  registerParameter(kIdSelection, xdata::String());
+  mCommand.registerParameter(kIdSelection, xdata::String());
 }
 
 
@@ -91,7 +87,7 @@ const std::string RxCommandCore::kApplyMasks = "apply";
 const std::string RxCommandCore::kInvertMasks = "invert";
 const std::string RxCommandCore::kIgnoreMasks = "ignore";
 
-RxCommandCore::RxCommandCore(ChannelCommandBase& aCommand, const Rule_t& aFilter) :
+RxCommandCore::RxCommandCore(swatch::core::Command& aCommand, const Rule_t& aFilter) :
   ChannelCommandCore(aCommand),
   mRxGroupFilter(aFilter),
   mApplyMaskFilter(!boost::bind(&ChannelDescriptor::isMasked, _1)),
@@ -102,7 +98,7 @@ RxCommandCore::RxCommandCore(ChannelCommandBase& aCommand, const Rule_t& aFilter
 void RxCommandCore::addParameters() 
 {
   ChannelCommandCore::addParameters();
-  registerParameter(kMaskSelection, xdata::String(kApplyMasks));
+  mCommand.registerParameter(kMaskSelection, xdata::String(kApplyMasks));
 }
 
 
@@ -135,7 +131,7 @@ const Rule_t& RxCommandCore::getMaskFilter(const swatch::core::XParameterSet& aP
 // TxCommandCore
 //
 
-TxCommandCore::TxCommandCore(ChannelCommandBase& aCommand, const Rule_t& aFilter) :
+TxCommandCore::TxCommandCore(swatch::core::Command& aCommand, const Rule_t& aFilter) :
   ChannelCommandCore(aCommand),
   mTxGroupFilter(aFilter)
 {
@@ -155,7 +151,7 @@ const ChannelsMap_t& TxCommandCore::getChannelDescriptors() const
 //
 // RxMGTCommandCore
 //
-RxMGTCommandCore::RxMGTCommandCore(ChannelCommandBase& aCommand) :
+RxMGTCommandCore::RxMGTCommandCore(swatch::core::Command& aCommand) :
   RxCommandCore(aCommand, boost::bind(&ChannelDescriptor::hasMGT, _1))
 {
 }
@@ -164,7 +160,7 @@ RxMGTCommandCore::RxMGTCommandCore(ChannelCommandBase& aCommand) :
 // TxMGTCommandCore
 //
 
-TxMGTCommandCore::TxMGTCommandCore(ChannelCommandBase& aCommand) :
+TxMGTCommandCore::TxMGTCommandCore(swatch::core::Command& aCommand) :
   TxCommandCore(aCommand, boost::bind(&ChannelDescriptor::hasMGT, _1))
 {
 }
@@ -174,7 +170,7 @@ TxMGTCommandCore::TxMGTCommandCore(ChannelCommandBase& aCommand) :
 // RxBufferCommandCore
 //
 
-RxBufferCommandCore::RxBufferCommandCore(ChannelCommandBase& aCommand) :
+RxBufferCommandCore::RxBufferCommandCore(swatch::core::Command& aCommand) :
   RxCommandCore(aCommand, boost::bind(&ChannelDescriptor::hasBuffer, _1))
 {
 }
@@ -184,7 +180,7 @@ RxBufferCommandCore::RxBufferCommandCore(ChannelCommandBase& aCommand) :
 // TxBufferCommandCore
 //
 
-TxBufferCommandCore::TxBufferCommandCore(ChannelCommandBase& aCommand) :
+TxBufferCommandCore::TxBufferCommandCore(swatch::core::Command& aCommand) :
   TxCommandCore(aCommand, boost::bind(&ChannelDescriptor::hasBuffer, _1))
 {
 }

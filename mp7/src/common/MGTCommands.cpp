@@ -25,7 +25,7 @@ namespace mp7 {
 
 // --------------------------------------------------------
 ConfigureRxMGTsCommand::ConfigureRxMGTsCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
-ChannelCommandBase(aId, aActionable, xdata::String()),
+swatch::core::Command(aId, aActionable, xdata::String()),
 mRxMGTCore(*this)
 {
   
@@ -62,7 +62,7 @@ ConfigureRxMGTsCommand::code(const swatch::core::XParameterSet& params)
 
 // --------------------------------------------------------
 ConfigureTxMGTsCommand::ConfigureTxMGTsCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
-ChannelCommandBase(aId, aActionable, xdata::String()),
+swatch::core::Command(aId, aActionable, xdata::String()),
 mTxMGTCore(*this)
 {
   
@@ -111,7 +111,7 @@ ConfigureTxMGTsCommand::code(const swatch::core::XParameterSet& params) {
 
 // --------------------------------------------------------
 AlignRxsToCommand::AlignRxsToCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
-ChannelCommandBase(aId, aActionable, xdata::String()),
+swatch::core::Command(aId, aActionable, xdata::String()),
 mRxMGTCore(*this)
 {
     
@@ -178,7 +178,7 @@ AlignRxsToCommand::code(const swatch::core::XParameterSet& params) {
 
 
 AutoAlignCommand::AutoAlignCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
-ChannelCommandBase(aId, aActionable, xdata::String()),
+swatch::core::Command(aId, aActionable, xdata::String()),
 mRxMGTCore(*this)
 {
   mRxMGTCore.addParameters();

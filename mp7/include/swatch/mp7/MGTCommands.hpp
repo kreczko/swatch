@@ -2,13 +2,13 @@
 #define __SWATCH_MP7_MP7MGTCOMMANDS_HPP__
 
 
-#include "swatch/mp7/ChannelCommandBase.hpp"
+#include "swatch/mp7/ChannelCommandCore.hpp"
 
 
 namespace swatch {
 namespace mp7 {
 
-class ConfigureRxMGTsCommand : public ChannelCommandBase {
+class ConfigureRxMGTsCommand : public swatch::core::Command {
 public:
   ConfigureRxMGTsCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
   virtual ~ConfigureRxMGTsCommand() {}
@@ -19,7 +19,7 @@ private:
 };
 
 
-class ConfigureTxMGTsCommand : public ChannelCommandBase {
+class ConfigureTxMGTsCommand : public swatch::core::Command {
 public:
     ConfigureTxMGTsCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
     virtual ~ConfigureTxMGTsCommand() {}
@@ -29,7 +29,7 @@ private:
 };
 
 
-class AlignRxsToCommand : public ChannelCommandBase {
+class AlignRxsToCommand : public swatch::core::Command {
 public:
     AlignRxsToCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
     virtual ~AlignRxsToCommand() {}
@@ -39,7 +39,7 @@ private:
 };
 
 
-class AutoAlignCommand : public ChannelCommandBase {
+class AutoAlignCommand : public swatch::core::Command {
 public:
     AutoAlignCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
     virtual ~AutoAlignCommand() {}

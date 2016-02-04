@@ -9,7 +9,7 @@
 #define	__SWATCH_MP7_MP7ABSTRACTPROCESSOR_HPP__
 
 #include "swatch/processor/Processor.hpp"
-#include "swatch/mp7/ChannelDescriptors.hpp"
+#include "swatch/mp7/ChannelDescriptor.hpp"
 
 
 namespace mp7 {

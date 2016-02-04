@@ -61,32 +61,32 @@ template<>
 const ::mp7::BufferKind BufferTraits<TxBufferCommandCore>::bufferKind = ::mp7::kTxBuffer;
 
 // --------------------------------------------------------
-template<class C>
-std::map< std::string, ::mp7::TestPathConfigurator::Mode >
-ConfigureBuffersCommand<C>::initBufferModeMap()
-{
+// template<class C>
+// std::map< std::string, ::mp7::TestPathConfigurator::Mode >
+// ConfigureBuffersCommand<C>::initBufferModeMap()
+// {
 
-  std::map< std::string, ::mp7::TestPathConfigurator::Mode > lModes;
+//   std::map< std::string, ::mp7::TestPathConfigurator::Mode > lModes;
 
-  lModes["Latency"] = ::mp7::TestPathConfigurator::kLatency;
-  lModes["Capture"] = ::mp7::TestPathConfigurator::kCapture;
-  lModes["PlayOnce"] = ::mp7::TestPathConfigurator::kPlayOnce;
-  lModes["PlayLoop"] = ::mp7::TestPathConfigurator::kPlayLoop;
-  lModes["Pattern"] = ::mp7::TestPathConfigurator::kPattern;
-  lModes["Zeroes"] = ::mp7::TestPathConfigurator::kZeroes;
-  lModes["CaptureStrobe"] = ::mp7::TestPathConfigurator::kCaptureStrobe;
-  lModes["Pattern3G"] = ::mp7::TestPathConfigurator::kPattern3G;
-  lModes["PlayOnceStrobe"] = ::mp7::TestPathConfigurator::kPlayOnceStrobe;
-  lModes["PlayOnce3G"] = ::mp7::TestPathConfigurator::kPlayOnce3G;
+//   lModes["Latency"] = ::mp7::TestPathConfigurator::kLatency;
+//   lModes["Capture"] = ::mp7::TestPathConfigurator::kCapture;
+//   lModes["PlayOnce"] = ::mp7::TestPathConfigurator::kPlayOnce;
+//   lModes["PlayLoop"] = ::mp7::TestPathConfigurator::kPlayLoop;
+//   lModes["Pattern"] = ::mp7::TestPathConfigurator::kPattern;
+//   lModes["Zeroes"] = ::mp7::TestPathConfigurator::kZeroes;
+//   lModes["CaptureStrobe"] = ::mp7::TestPathConfigurator::kCaptureStrobe;
+//   lModes["Pattern3G"] = ::mp7::TestPathConfigurator::kPattern3G;
+//   lModes["PlayOnceStrobe"] = ::mp7::TestPathConfigurator::kPlayOnceStrobe;
+//   lModes["PlayOnce3G"] = ::mp7::TestPathConfigurator::kPlayOnce3G;
 
-  return lModes;
-}
+//   return lModes;
+// }
 
 
 // --------------------------------------------------------
 template<class C>
 ConfigureBuffersCommand<C>::ConfigureBuffersCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
-ChannelCommandBase(aId, aActionable, xdata::String()),
+swatch::core::Command(aId, aActionable, xdata::String()),
 mBufferCore(*this)
 {
 
@@ -274,7 +274,7 @@ CaptureBuffersCommand::code(const ::swatch::core::XParameterSet& params)
 // --------------------------------------------------------
 template<class C>
 SaveBuffersToFileCommand<C>::SaveBuffersToFileCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
-ChannelCommandBase(aId, aActionable, xdata::String()),
+swatch::core::Command(aId, aActionable, xdata::String()),
 mBufferCore(*this)
 {
 
@@ -345,7 +345,7 @@ template class SaveBuffersToFileCommand<TxBufferCommandCore>;
 // --------------------------------------------------------
 template<class C>
 LatencyBuffersCommand<C>::LatencyBuffersCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
-ChannelCommandBase(aId, aActionable, xdata::String()),
+swatch::core::Command(aId, aActionable, xdata::String()),
 mBufferCore(*this)
 {
 
@@ -387,7 +387,7 @@ template class LatencyBuffersCommand<TxBufferCommandCore>;
 // --------------------------------------------------------
 template<class C>
 EasyLatencyCommand<C>::EasyLatencyCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
-ChannelCommandBase(aId, aActionable, xdata::String()),
+swatch::core::Command(aId, aActionable, xdata::String()),
 mBufferCore(*this)
 {
 

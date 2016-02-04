@@ -3,7 +3,7 @@
 
 
 #include "swatch/mp7/MP7AbstractProcessor.hpp"
-#include "swatch/mp7/ChannelDescriptors.hpp"
+#include "swatch/mp7/ChannelDescriptor.hpp"
 
 // Forward declarations
 namespace mp7 {

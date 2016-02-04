@@ -52,7 +52,7 @@ TestMP7Processor::~TestMP7Processor()
 }
 
 PrintRxDescriptors::PrintRxDescriptors(const std::string& aId, core::ActionableObject& aResource) :
-  ChannelCommandBase(aId, aResource, xdata::String()),
+  swatch::core::Command(aId, aResource, xdata::String()),
   mCore(*this)
 {
   mCore.addParameters();

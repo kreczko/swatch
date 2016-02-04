@@ -44,7 +44,7 @@ namespace mp7 {
 
   
 TDRFormatterCommand::TDRFormatterCommand(const std::string& aId, swatch::core::ActionableObject& aActionable):
-  ChannelCommandBase(aId, aActionable, xdata::Integer()), 
+  swatch::core::Command(aId, aActionable, xdata::Integer()), 
   mFmtCore(*this, boost::bind(&ChannelDescriptor::getFormatterKind, _1) == ::mp7::kTDRFormatter) {
   
   // add default parameters

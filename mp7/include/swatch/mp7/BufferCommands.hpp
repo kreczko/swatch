@@ -6,7 +6,7 @@
 #include "mp7/PathConfigurator.hpp"
 
 // SWATCH headers
-#include "swatch/mp7/ChannelCommandBase.hpp"
+#include "swatch/mp7/ChannelCommandCore.hpp"
 
 namespace swatch {
 namespace mp7 {
@@ -23,7 +23,7 @@ struct BufferTraits {
  * @class ConfigureBuffersCommand
  */
 template<class C>
-class ConfigureBuffersCommand : public ChannelCommandBase {
+class ConfigureBuffersCommand : public swatch::core::Command {
 public:
 
   ConfigureBuffersCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
@@ -35,7 +35,7 @@ public:
 private:
   static const std::map< std::string, ::mp7::TestPathConfigurator::Mode > mBufferModeMap;
 
-  static std::map< std::string, ::mp7::TestPathConfigurator::Mode > initBufferModeMap();
+  // static std::map< std::string, ::mp7::TestPathConfigurator::Mode > initBufferModeMap();
   
   C mBufferCore;
 };
@@ -61,7 +61,7 @@ public:
  * @class SaveBuffersToFileCommand
  */
 template<class C>
-class SaveBuffersToFileCommand : public ChannelCommandBase {
+class SaveBuffersToFileCommand : public swatch::core::Command {
 public:
   
   SaveBuffersToFileCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
@@ -83,7 +83,7 @@ typedef SaveBuffersToFileCommand<TxBufferCommandCore> SaveTxBuffersToFileCommand
  * @class LatencyBuffersCommand
  */
 template<class C>
-class LatencyBuffersCommand : public ChannelCommandBase {
+class LatencyBuffersCommand : public swatch::core::Command {
 public:
   LatencyBuffersCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
   virtual ~LatencyBuffersCommand() {}
@@ -101,7 +101,7 @@ typedef LatencyBuffersCommand<TxBufferCommandCore> LatencyTxBuffersCommand;
  * @class EasyLatencyCommand
  */
 template<class C>
-class EasyLatencyCommand : public ChannelCommandBase {
+class EasyLatencyCommand : public swatch::core::Command {
 public:
   EasyLatencyCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
   virtual ~EasyLatencyCommand() {}

@@ -1,4 +1,4 @@
-#include "swatch/mp7/ChannelDescriptors.hpp"
+#include "swatch/mp7/ChannelDescriptor.hpp"
 
 // SWATCH Headers
 #include "swatch/core/MaskableObject.hpp"

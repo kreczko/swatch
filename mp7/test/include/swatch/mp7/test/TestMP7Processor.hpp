@@ -11,7 +11,7 @@
 #include "swatch/mp7/MP7NullAlgoProcessor.hpp"
 #include "swatch/core/Command.hpp"
 #include "swatch/mp7/MGTCommands.hpp"
-#include "swatch/mp7/ChannelCommandBase.hpp"
+#include "swatch/mp7/ChannelCommandCore.hpp"
 
 namespace swatch {
 namespace mp7 {
@@ -25,7 +25,7 @@ private:
 
 };
 
-class PrintRxDescriptors : public ChannelCommandBase {
+class PrintRxDescriptors : public swatch::core::Command {
 public:
 
   PrintRxDescriptors(const std::string& aId, core::ActionableObject& aResource);

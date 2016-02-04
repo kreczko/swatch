@@ -9,7 +9,7 @@
 #define	__SWATCH_MP7_CHANNELCOMMANDBASE_HPP__
 
 #include "swatch/core/Command.hpp"
-#include "swatch/mp7/ChannelDescriptors.hpp"
+#include "swatch/mp7/ChannelDescriptor.hpp"
 
 #include "mp7/ChannelsManager.hpp"
 
@@ -21,29 +21,12 @@ namespace mp7 {
 class MP7AbstractProcessor;
 
 /**
- * @class ChannelCommandBase
- */
-class ChannelCommandBase : public swatch::core::Command {
-public:
-  template<typename ResultType>
-  ChannelCommandBase( const std::string& aId, swatch::core::ActionableObject& aActionable, const ResultType& aDefault ) :
-  swatch::core::Command(aId, aActionable, aDefault)
-  {  
-  }
-
-  virtual ~ChannelCommandBase();
-private:
-
-  friend class ChannelCommandCore;
-};
-
-/**
  * @class ChannelCommandCore
  */
 class ChannelCommandCore
 {
 public:
-    ChannelCommandCore( ChannelCommandBase& );
+    ChannelCommandCore( swatch::core::Command& );
     ~ChannelCommandCore();
     
     virtual void addParameters();
@@ -57,26 +40,18 @@ public:
     static const std::string kIdSelection;
     
 protected:
-    template<typename T>
-    void registerParameter(const std::string& aName, const T& aDefaultValue);
-
-    ChannelCommandBase& mCommand;
+    swatch::core::Command& mCommand;
     const MP7AbstractProcessor& mProcessor;
     
     static const Rule_t kAlwaysTrue;
 };
-
-template<typename T>
-void ChannelCommandCore::registerParameter(const std::string& aName, const T& aDefaultValue) {
-  mCommand.registerParameter(aName, aDefaultValue);
-}
 
 /**
  * @class RxCommandCore
  */
 class RxCommandCore : public ChannelCommandCore {
 public:
-  RxCommandCore( ChannelCommandBase& aCommand, const Rule_t& aFilter );
+  RxCommandCore( swatch::core::Command& aCommand, const Rule_t& aFilter );
 
   virtual ~RxCommandCore() {}
 
@@ -108,7 +83,7 @@ DEFINE_SWATCH_EXCEPTION(ApplyMaskOptionInvalid);
  */
 class TxCommandCore : public ChannelCommandCore {
 public:
-  TxCommandCore(ChannelCommandBase& aCommand, const Rule_t& aFilter);
+  TxCommandCore(swatch::core::Command& aCommand, const Rule_t& aFilter);
   
   virtual ~TxCommandCore() {}
 
@@ -127,7 +102,7 @@ private:
 class RxMGTCommandCore : public RxCommandCore {
 public:
   
-  RxMGTCommandCore( ChannelCommandBase& aCommand );
+  RxMGTCommandCore( swatch::core::Command& aCommand );
   
   virtual ~RxMGTCommandCore() {}
 };
@@ -138,7 +113,7 @@ public:
  */
 class TxMGTCommandCore : public TxCommandCore {
 public:
-  TxMGTCommandCore(ChannelCommandBase& aCommand);
+  TxMGTCommandCore(swatch::core::Command& aCommand);
 
   virtual ~TxMGTCommandCore() {}
 
@@ -150,7 +125,7 @@ public:
 class RxBufferCommandCore : public RxCommandCore {
 public:
   
-  RxBufferCommandCore( ChannelCommandBase& aCommand );
+  RxBufferCommandCore( swatch::core::Command& aCommand );
   
   virtual ~RxBufferCommandCore() {}
   
@@ -162,7 +137,7 @@ public:
  */
 class TxBufferCommandCore : public TxCommandCore {
 public:
-  TxBufferCommandCore(ChannelCommandBase& aCommand);
+  TxBufferCommandCore(swatch::core::Command& aCommand);
 
   virtual ~TxBufferCommandCore() {}
 
