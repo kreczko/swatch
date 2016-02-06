@@ -1,6 +1,13 @@
-ifndef SWATCH_ROOT
-  SWATCH_ROOT:=${SWATCH_BACK_TO_ROOT}
-endif
+
+
+# Define SWATCH_ROOT if not already defined
+SWATCH_ROOT ?= ${SWATCH_BACK_TO_ROOT}
+
+# Normalize SWATCH_ROOT (important for RPM making)
+SWATCH_ROOT:=$(shell cd $(SWATCH_ROOT);pwd)
+
+# Export SWATCH_ROOT, otherwise rpmbuild is not going to pick it up (maybe the export can be move there)
+export SWATCH_ROOT
 
 BUILD_HOME:=${SWATCH_ROOT}
 

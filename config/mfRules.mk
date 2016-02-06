@@ -1,13 +1,18 @@
 
 # Library sources 
 LibrarySources = $(wildcard src/common/*.cpp) $(wildcard src/common/**/*.cpp)
+# Filter undesired files
 LibrarySourcesFiltered = $(filter-out ${IgnoreSources}, ${LibrarySources})
-LibraryObjectFiles = $(patsubst src/common/%.cpp,obj/%.o,${LibrarySourcesFiltered})
+# Turn them into objects
+LibraryObjectFiles = $(patsubst src/common/%.cpp,${PackagePath}/obj/%.o,${LibrarySourcesFiltered})
 
 ExecutableSources = $(wildcard src/common/*.cxx)
+# Filter undesired files
 ExecutableSourcesFiltered = $(filter-out ${IgnoreSources}, ${ExecutableSources})
-ExecutableObjectFiles = $(patsubst src/common/%.cxx,obj/%.o,${ExecutableSourcesFiltered})
-Executables = $(patsubst src/common/%.cxx,bin/%.exe,${ExecutableSourcesFiltered})
+# Turn them into objects
+ExecutableObjectFiles = $(patsubst src/common/%.cxx,${PackagePath}/obj/%.o,${ExecutableSourcesFiltered})
+# And binaries
+Executables = $(patsubst src/common/%.cxx,${PackagePath}/bin/%.exe,${ExecutableSourcesFiltered})
 
 #$(info LibrarySourcesFiltered = ${LibrarySourcesFiltered})
 #$(info ExecutableSourcesFiltered = ${ExecutableSourcesFiltered})
@@ -56,12 +61,12 @@ _all: ${LibraryTarget} ${Executables} ${ExtraTargets}
 
 
 # Implicit rule for .cpp -> .o 
-obj/%.o : src/common/%.cpp 
+${PackagePath}/obj/%.o : ${PackagePath}/src/common/%.cpp 
 	${MakeDir} $(@D)
 	${CPP} -c ${CxxFlags} ${IncludePaths} $< -o $@
 
 # Implicit rule for .cxx -> .o 
-obj/%.o : src/common/%.cxx 
+${PackagePath}/obj/%.o : ${PackagePath}/src/common/%.cxx 
 	${MakeDir} $(@D)
 	${CPP} -c ${CxxFlags} ${IncludePaths} $< -o $@
 	

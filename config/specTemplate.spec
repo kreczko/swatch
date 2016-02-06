@@ -44,28 +44,45 @@ Prefix: %{_prefix}
 %description
 __description__
 
-%prep
+#
+# Devel RPM specified attributes (extension to binary rpm with include files)
+#
+%package -n %{_packagename}-debuginfo
+Summary:  Debuginfo package for %{_summary}
+Group:    Applications/XDAQ
 
-%build
+%description -n %{_packagename}-debuginfo
+__description__
+
+
+#%prep
+
+#%build
 
 %install 
 # copy files to RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/%{_prefix}/{bin,lib,include,etc}
+mkdir -p $RPM_BUILD_ROOT/usr/lib/debug%{_prefix}/{bin,lib}
+mkdir -p $RPM_BUILD_ROOT/usr/src/debug/%{_packagename}-%{_version}/
 
 if [ -d %{_packagedir}/bin ]; then
   cd %{_packagedir}/bin; \
-  find . -name "*"  -exec install -D -m 755 {} $RPM_BUILD_ROOT/%{_prefix}/bin/{} \;
+# find . -name "*" -exec install -D -m 755 {} $RPM_BUILD_ROOT/%{_prefix}/bin/{} \;
+  find . -name "*" -exec $SWATCH_ROOT/config/install.sh {} %{_prefix}/bin/{} 755 $RPM_BUILD_ROOT %{_packagedir} %{_packagename} %{_version} %{_prefix}/include '%{_includedirs}' \;
 fi
+
+if [ -d %{_packagedir}/lib ]; then
+  cd %{_packagedir}/lib; \
+#  find . -name ".svn" -prune -o -name "*" -exec install -D -m 644 {} $RPM_BUILD_ROOT/%{_prefix}/lib/{} \;
+  find . -name "*" -exec $SWATCH_ROOT/config/install.sh {} %{_prefix}/lib/{} 655 $RPM_BUILD_ROOT %{_packagedir} %{_packagename} %{_version} %{_prefix}/include '%{_includedirs}' \;
+fi
+
 
 if [ -d %{_packagedir}/include ]; then
   cd %{_packagedir}/include; \
   find . \( -name "*.hpp"  -o -name "*.hxx" \)  -exec install -D -m 644 {} $RPM_BUILD_ROOT/%{_prefix}/include/{} \;
 fi
 
-if [ -d %{_packagedir}/lib ]; then
-  cd %{_packagedir}/lib; \
-  find . -name ".svn" -prune -o -name "*" -exec install -D -m 644 {} $RPM_BUILD_ROOT/%{_prefix}/lib/{} \;
-fi
 
 if [ -d %{_packagedir}/etc ]; then
   cd %{_packagedir}/etc; \
@@ -75,16 +92,36 @@ fi
 #cp -rp %{_sources_dir}/* $RPM_BUILD_ROOT%{_prefix}/.
 
 
-%clean 
+#create debug.source - SLC6 beardy wierdo "feature"
+cd %{_packagedir}
+#find include -name '*.hpp' -o -name '*.hxx' -fprintf rpm/debug.include "%p\0"
+#find src -name '*.cpp' -o -name '*.cxx' -fprintf rpm/debug.source "%p\0"
+#find src include -name '*.h' -print > rpm/debug.source -o -name '*.cc' -print > rpm/debug.source
+
+# Copy all sources and include files for debug RPMs
+cat %{_packagedir}/rpm/debug.source | sort -z -u | egrep -v -z '(<internal>|<built-in>)$' | ( cpio -pd0mL --quiet "$RPM_BUILD_ROOT/usr/src/debug/%{_packagename}-%{_version}" )
+cat %{_packagedir}/rpm/debug.include | sort -z -u | egrep -v -z '(<internal>|<built-in>)$' | ( cpio -pd0mL --quiet "$RPM_BUILD_ROOT/usr/src/debug/%{_packagename}-%{_version}" )
+# correct permissions on the created directories
+cd "$RPM_BUILD_ROOT/usr/src/debug/"
+find ./ -type d -exec chmod 755 {} \;
+
+%clean
 
 %post 
 
 %postun 
 
 %files 
-%defattr(-, root, root) 
+%defattr(-, root, root, -) 
 %{_prefix}/bin
 %{_prefix}/lib
 %{_prefix}/etc
 %{_prefix}/include
 
+#
+# Files that go in the debuginfo RPM
+#
+%files -n %{_packagename}-debuginfo
+%defattr(-,root,root,-)
+/usr/lib/debug
+/usr/src/debug

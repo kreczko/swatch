@@ -10,7 +10,6 @@ _rpmbuild: _spec_update
 	rpmbuild -bb -bl --buildroot=${RPMBUILD_DIR}/BUILD --define  "_topdir ${RPMBUILD_DIR}" rpm/${PackageName}.spec
 	find  ${RPMBUILD_DIR} -name "*.rpm" -exec mv {} $(PackagePath)/rpm \;
 
-
 .PHONY: _spec_update	
 _spec_update:
 	mkdir -p ${PackagePath}/rpm
@@ -29,7 +28,7 @@ _spec_update:
 	sed -i 's#__summary__#None#' ${PackagePath}/rpm/${PackageName}.spec
 	sed -i 's#__description__#None#' ${PackagePath}/rpm/${PackageName}.spec
 	sed -i 's#__url__#None#' ${PackagePath}/rpm/${PackageName}.spec
-
+	sed -i 's#__includedirs__#$(Includes)#' $(PackagePath)/rpm/$(PackageName).spec
 
 .PHONY: cleanrpm _cleanrpm
 cleanrpm: _cleanrpm
