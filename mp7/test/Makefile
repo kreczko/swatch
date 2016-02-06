@@ -5,7 +5,7 @@ include ${SWATCH_BACK_TO_ROOT}/config/mfCommonDefs.mk
 Project = cactuscore
 Package = swatch/mp7
 
-PackagePath = $(SWATCH_ROOT)/mp7
+PackagePath = $(SWATCH_ROOT)/mp7/test
 PackageName = cactuscore-swatch-mp7-test
 
 Packager = Alessandro Thea
