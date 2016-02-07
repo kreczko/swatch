@@ -16,6 +16,7 @@ Executables = $(patsubst src/common/%.cxx,${PackagePath}/bin/%.exe,${ExecutableS
 
 #$(info LibrarySourcesFiltered = ${LibrarySourcesFiltered})
 #$(info ExecutableSourcesFiltered = ${ExecutableSourcesFiltered})
+#$(info ExecutableObjectFiles = ${ExecutableObjectFiles})
 #$(info Executables = ${Executables})
 
 # Compiler Flags
@@ -79,7 +80,7 @@ ${LibraryTarget}: ${LibraryObjectFiles}
 -include $(LibraryObjectFiles:.o=.d)
 	
 # Static Pattern rule for binaries
-${Executables}: bin/%.exe: obj/%.o ${LibraryTarget}
+${Executables} : ${PackagePath}/bin/%.exe : ${PackagePath}/obj/%.o ${LibraryTarget}
 	${MakeDir} $(@D)
 	${LD} ${ExecutableLinkFlags} ${ExecutableDependentLibraries} $< -o $@
 
