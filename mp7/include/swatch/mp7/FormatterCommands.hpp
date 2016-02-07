@@ -43,6 +43,39 @@ private:
   RxCommandCore mFmtCore;
 };
 
+/**
+ * @class DemuxFormatterCommand
+ */
+class DemuxFormatterCommand : public swatch::core::Command {
+public:
+
+  DemuxFormatterCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
+
+  virtual ~DemuxFormatterCommand() {}
+
+  virtual State code(const ::swatch::core::XParameterSet& params);
+
+private:
+  //! Command core
+  RxCommandCore mFmtCore;
+};
+
+
+/**
+ * @class S1Formatter
+ */
+class S1Formatter : public swatch::core::Command {
+public:
+
+  S1Formatter(const std::string& aId, swatch::core::ActionableObject& aActionable);
+
+  virtual ~S1Formatter() {}
+
+  virtual State code(const ::swatch::core::XParameterSet& params);
+
+private:
+  RxCommandCore mFmtCore;  
+};
 
 }
 }

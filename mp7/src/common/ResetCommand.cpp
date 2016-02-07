@@ -19,8 +19,8 @@ namespace mp7 {
 ResetCommand::ResetCommand(const std::string& aId, swatch::core::ActionableObject& aActionable):
   Command(aId, aActionable, xdata::Integer()) {
   registerParameter("clockSource", xdata::String("external"));
-  registerParameter("clockConfig", xdata::String(""));
-  registerParameter("ttcConfig", xdata::String(""));
+  registerParameter("clockConfig", xdata::String("external"));
+  registerParameter("ttcConfig", xdata::String("external"));
 }
     
 ResetCommand::~ResetCommand(){
