@@ -106,9 +106,9 @@ void AMCPort::retrieveMetricValues() {
 
   using ::amc13::AMC13;
 
-  const std::string prefixAmc = swatch::core::strPrintf("STATUS.AMC%02d.", mSlotId);
-  const std::string prefixLink = swatch::core::strPrintf("STATUS.AMC%02d.LINK.", mSlotId);
-  const std::string prefixCtrs = swatch::core::strPrintf("STATUS.AMC%02d.COUNTERS.", mSlotId);
+  const std::string prefixAmc = swatch::core::strPrintf("STATUS.AMC%02d.", getSlot());
+  const std::string prefixLink = swatch::core::strPrintf("STATUS.AMC%02d.LINK.", getSlot());
+  const std::string prefixCtrs = swatch::core::strPrintf("STATUS.AMC%02d.COUNTERS.", getSlot());
 
   setMetricValue<>(mAMCLinkRevision, mDriver.read(AMC13::T1,prefixLink+"AMC_LINK_VER"));
 

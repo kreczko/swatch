@@ -23,7 +23,7 @@ public:
 
   uint32_t getSlot() const;
 
-protected:
+private:
   const uint32_t mSlotId;
 };
 
