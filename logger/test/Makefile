@@ -2,7 +2,7 @@ SWATCH_BACK_TO_ROOT= $(shell pwd)/../..
 
 include ${SWATCH_BACK_TO_ROOT}/config/mfCommonDefs.mk
 
-Project = cactuslogger
+Project = cactuscore
 Package = swatch/logger/test
 PackagePath = $(SWATCH_ROOT)/logger/test
 PackageName = cactuscore-swatch-logger-test
