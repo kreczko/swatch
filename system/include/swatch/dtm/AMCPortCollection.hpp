@@ -8,7 +8,9 @@
 #ifndef __SWATCH_DTM_AMCPORTCOLLECTION_HPP__
 #define	__SWATCH_DTM_AMCPORTCOLLECTION_HPP__
 
+
 #include "swatch/core/MonitorableObject.hpp"
+
 
 namespace swatch {
 namespace dtm {
@@ -18,26 +20,31 @@ class AMCPort;
 class AMCPortCollection : public core::MonitorableObject {
 public:
   AMCPortCollection();
+
   virtual ~AMCPortCollection();
 
-  typedef std::deque<AMCPort*> AMCPortDeque_t;
+  //! Returns number of ports
+  size_t getNumPorts() const;
+
+  typedef std::deque<const AMCPort*>::const_iterator const_iterator;
+  typedef std::deque<AMCPort*>::const_iterator iterator;
+
+  const std::deque<const AMCPort*>& getPorts() const;
+
+  const std::deque<AMCPort*>& getPorts();
 
   void addPort( AMCPort* aAMCPort );
 
-  AMCPortDeque_t & getPorts();
-
-  const AMCPortDeque_t & getPorts() const;
-  
 protected:
-
-  virtual void retrieveMetricValues() {};
-
+  void retrieveMetricValues() {};
 
 private:
-    AMCPortDeque_t mAMCPorts;
+  std::deque<const AMCPort*> mConstPorts;
+  std::deque<AMCPort*> mPorts;
 };
 
-} // namespace amc13
+
+} // namespace dtm
 } // namespace swatch 
 
 #endif	/* __SWATCH_DTM_AMCPORTCOLLECTION_HPP__ */

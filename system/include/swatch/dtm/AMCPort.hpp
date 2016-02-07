@@ -6,7 +6,7 @@
  */
 
 #ifndef __SWATCH_DTM_AMCPORT_HPP__
-#define	__SWATCH_DTM_AMCPORT_HPP__
+#define __SWATCH_DTM_AMCPORT_HPP__
 
 #include "swatch/core/MaskableObject.hpp"
 
@@ -21,16 +21,14 @@ protected:
 public:
   virtual ~AMCPort();
 
-  uint32_t getSlot();
+  uint32_t getSlot() const;
 
 protected:
-
-  uint32_t mSlotId;
-  
+  const uint32_t mSlotId;
 };
 
 } // namespace amc13
 } // namespace swatch 
 
-#endif	/* __SWATCH_AMC13_AMCPORT_HPP__ */
+#endif	/* __SWATCH_DTM_AMCPORT_HPP__ */
 

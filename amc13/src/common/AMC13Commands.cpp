@@ -216,7 +216,7 @@ ConfigureDAQCommand::code(const core::XParameterSet& params) {
   uint32_t bitmask = 0x0;
 
   std::ostringstream oss;
-  BOOST_FOREACH(dtm::AMCPort* p, amcPorts.getPorts()) {
+  BOOST_FOREACH(const dtm::AMCPort* p, amcPorts.getPorts()) {
     // Skip the slot if masked.
     if ( p->isMasked() ) continue;
     // Add it to the bitmask, otherwise.

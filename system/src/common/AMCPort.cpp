@@ -15,13 +15,15 @@ namespace dtm {
 
 AMCPort::AMCPort(uint32_t aSlot) :
   swatch::core::MaskableObject(swatch::core::strPrintf("amc%02d",aSlot)),
-  mSlotId(aSlot) {
+  mSlotId(aSlot)
+{
 }
 
-AMCPort::~AMCPort() {
+AMCPort::~AMCPort()
+{
 }
 
-uint32_t AMCPort::getSlot()
+uint32_t AMCPort::getSlot() const
 {
   return mSlotId;
 }

@@ -6,32 +6,49 @@
  */
 
 #include "swatch/dtm/AMCPortCollection.hpp"
+
+
 #include "swatch/dtm/AMCPort.hpp"
+
 
 namespace swatch {
 namespace dtm {
+
     
 AMCPortCollection::AMCPortCollection() :
-core::MonitorableObject("amcports") {
+  core::MonitorableObject("amcports")
+{
 }
 
-AMCPortCollection::~AMCPortCollection() {
+
+AMCPortCollection::~AMCPortCollection()
+{
 }
 
-void 
-AMCPortCollection::addPort(AMCPort* aAMCPort) {
-    this->addMonitorable(aAMCPort);
-    mAMCPorts.push_back(aAMCPort);
+
+size_t AMCPortCollection::getNumPorts() const
+{
+  return mPorts.size();
 }
 
-AMCPortCollection::AMCPortDeque_t &
-AMCPortCollection::getPorts() {
-    return mAMCPorts;
+
+const std::deque<const AMCPort*>& AMCPortCollection::getPorts() const
+{
+  return mConstPorts;
 }
 
-const AMCPortCollection::AMCPortDeque_t &
-AMCPortCollection::getPorts() const {
-    return mAMCPorts;
+
+const std::deque<AMCPort*>& AMCPortCollection::getPorts()
+{
+  return mPorts;
+}
+
+
+void AMCPortCollection::addPort(AMCPort* aAMCPort)
+{
+  this->addMonitorable(aAMCPort);
+  mConstPorts.push_back(aAMCPort);
+  mPorts.push_back(aAMCPort);
 }
 
 
