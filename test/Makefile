@@ -3,7 +3,7 @@ SWATCH_BACK_TO_ROOT= $(shell pwd)/..
 include ${SWATCH_BACK_TO_ROOT}/config/mfCommonDefs.mk
 
 Project = cactuscore
-Package = swatch/core/test
+Package = swatch/test
 PackagePath = $(SWATCH_ROOT)/test
 PackageName = cactuscore-swatch-test
 
@@ -69,11 +69,11 @@ IgnoreSources = src/common/console_test_runner.cxx
 # Temporary, horrible hack
 # console_test_runner must not be linked to cactus_core_test nor to the other test libraries
 # and therefore needs a dedicated build target
-ExtraTargets += bin/console_test_runner.exe
+ExtraTargets += ${PackagePath}/bin/console_test_runner.exe
 	
 include ${SWATCH_ROOT}/config/mfRules.mk
 include ${SWATCH_ROOT}/config/mfRPMRules.mk
 
 # Extra target after all others
-bin/console_test_runner.exe: obj/console_test_runner.o
+${PackagePath}/bin/console_test_runner.exe: ${PackagePath}/obj/console_test_runner.o
 	${LD} ${CxxFlags} -L${CACTUS_ROOT}/lib -lboost_unit_test_framework -ldl $< -o $@
