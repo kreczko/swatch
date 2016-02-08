@@ -50,8 +50,6 @@ struct TmtParameterMapper {
   static const std::string kTmtIdParam;
 };
 
-DEFINE_SWATCH_EXCEPTION(OrbitParametersError);
-
 class TMTAlignCommand : public AlignRxsToCommand {
 public:
   TMTAlignCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);

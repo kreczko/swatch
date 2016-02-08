@@ -108,7 +108,7 @@ core::ReadOnlyXParameterSet TmtParameterMapper::rebuild(const core::ReadOnlyXPar
     std::ostringstream msg;
     msg << "Invalid orbit point parameters (" << tmtBx << ", " << tmtCycle << ")";
 
-    throw OrbitParametersError(msg.str());
+    throw orbit::PointError(msg.str());
   }
 
   

@@ -25,6 +25,8 @@
 // XDAQ Headers
 #include "xdata/UnsignedInteger.h"
 
+#include "swatch/core/exception.hpp"
+
 // Forward declaration
 namespace mp7 {
 namespace orbit {
@@ -42,6 +44,8 @@ namespace orbit {
 bool isValid( const xdata::UnsignedInteger& aBx, const xdata::UnsignedInteger& aCycle, const ::mp7::orbit::Metric& aMetric );
 bool isGood( const xdata::UnsignedInteger& aBx, const xdata::UnsignedInteger& aCycle, const ::mp7::orbit::Metric& aMetric );
 bool isNull( const xdata::UnsignedInteger& aBx, const xdata::UnsignedInteger& aCycle);
+
+DEFINE_SWATCH_EXCEPTION(PointError);
 
 }
 
