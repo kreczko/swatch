@@ -6,12 +6,15 @@
  */
 #include <boost/test/unit_test.hpp>
 
-// swatch headers
+#include "xdata/String.h"
+#include "xdata/UnsignedInteger.h"
+
+// SWATCH headers
 #include "swatch/core/ThreadPool.hpp"
 #include "swatch/logger/Log.hpp"
-
-#include "swatch/core/test/DummyCommand.hpp"
 #include "swatch/core/test/DummyActionableObject.hpp"
+
+
 
 using namespace swatch::logger;
 using namespace swatch::core;
@@ -20,26 +23,48 @@ namespace swatch {
 namespace core {
 namespace test {
 
+class ThreadPoolCommand : public Command {
+public:
+  static const unsigned kDefaultWaitTimeInMs = 10;
+
+  ThreadPoolCommand(const std::string& aId, ActionableObject& aActionable) :
+    Command(aId, aActionable, xdata::String("A default result"))
+  {
+    registerParameter("milliseconds", xdata::UnsignedInteger(kDefaultWaitTimeInMs));
+  }
+
+
+  ~ThreadPoolCommand() {}
+
+private:
+  Command::State code(const XParameterSet& params)
+  {
+    setProgress(0.01, "Test command just started");
+    unsigned int milliseconds(params.get<xdata::UnsignedInteger>("milliseconds").value_);
+
+    for (unsigned int i = 0; i < milliseconds; ++i) {
+      boost::this_thread::sleep_for(boost::chrono::milliseconds(1));
+      setProgress(0.01 + 0.99 * float(i) / milliseconds, "Dummy command progressed");
+    }
+
+    setStatusMsg("My final message!");
+    return State::kDone;
+  }
+};
+
+
+
 struct ThreadPoolSetup {
 public:
   ThreadPoolSetup() :
       handler1("obj1"),
       handler2("obj2"),
       handler3("obj3"),
-      cmd1( handler1.registerCommand<DummyCommand>("cmd") ),
-      cmd2( handler2.registerCommand<DummyCommand>("cmd") ),
-      cmd3( handler3.registerCommand<DummyCommand>("cmd") ),
-      params(),
-      wait_time_in_ms(10)
+      cmd1( handler1.registerCommand<ThreadPoolCommand>("cmd") ),
+      cmd2( handler2.registerCommand<ThreadPoolCommand>("cmd") ),
+      cmd3( handler3.registerCommand<ThreadPoolCommand>("cmd") ),
+      params()
   {
-    cmd1.registerParameter("todo", xdata::String("sleep"));
-    cmd2.registerParameter("todo", xdata::String("sleep"));
-    cmd3.registerParameter("todo", xdata::String("sleep"));
-
-    cmd1.registerParameter("milliseconds", xdata::Integer(wait_time_in_ms));
-    cmd2.registerParameter("milliseconds", xdata::Integer(wait_time_in_ms));
-    cmd3.registerParameter("milliseconds", xdata::Integer(wait_time_in_ms));
-
   }
 
   ~ThreadPoolSetup() {}
@@ -49,7 +74,6 @@ public:
   Command& cmd2;
   Command& cmd3;
   ReadOnlyXParameterSet params;
-  unsigned int wait_time_in_ms;
 };
 
 BOOST_AUTO_TEST_SUITE( ThreadPoolTestSuite )
@@ -66,7 +90,7 @@ BOOST_FIXTURE_TEST_CASE(TolerantPool1, ThreadPoolSetup)
   // now wait for a bit
   // in 5ms cmd1 and cmd2 should start and due to nature of the pool finish
   // but cmd3 should not even start
-  boost::this_thread::sleep_for(boost::chrono::milliseconds(wait_time_in_ms/2));
+  boost::this_thread::sleep_for(boost::chrono::milliseconds(ThreadPoolCommand::kDefaultWaitTimeInMs/2));
   // delete pool, forces all running commands to finish
   ThreadPool::reset();
 
@@ -91,7 +115,7 @@ BOOST_FIXTURE_TEST_CASE(TolerantPool2, ThreadPoolSetup)
   // in 18ms cmd1 and cmd2 should finish
   // and cmd3 start
   boost::this_thread::sleep_for(
-      boost::chrono::milliseconds(int(wait_time_in_ms * 1.8)));
+      boost::chrono::milliseconds(int(ThreadPoolCommand::kDefaultWaitTimeInMs * 1.8)));
   // delete pool, forces all running commands to finish
   ThreadPool::reset();
 
@@ -113,7 +137,7 @@ BOOST_FIXTURE_TEST_CASE(GoodGuyPool, ThreadPoolSetup)
   // in 5ms cmd1 and cmd2 should start but not finish
   // and cmd3 should not start
   // but our pool is nice and should wait until the queue is empty
-  boost::this_thread::sleep_for(boost::chrono::milliseconds(wait_time_in_ms/2));
+  boost::this_thread::sleep_for(boost::chrono::milliseconds(ThreadPoolCommand::kDefaultWaitTimeInMs/2));
   // delete pool, forces all running commands to finish
   ThreadPool::reset();
 
@@ -145,7 +169,7 @@ Aborted
 //  // now wait for a bit
 //  // in 5ms cmd1 and cmd2 should start
 //  // but not cmd3
-//  boost::this_thread::sleep_for(boost::chrono::milliseconds(wait_time_in_ms/2));
+//  boost::this_thread::sleep_for(boost::chrono::milliseconds(ThreadPoolCommand::kDefaultWaitTimeInMs/2));
 //  // delete pool, forces all running commands (cmd1 & cmd2) to cancel
 //  try {
 //    ThreadPool::reset();
