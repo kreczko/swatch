@@ -10,71 +10,121 @@
 #define __SWATCH_DUMMY_DUMMYPROCESSORCOMMAND_HPP__
 
 
-#include "swatch/core/Command.hpp"
+#include "swatch/dummy/AbstractConfigureCommand.hpp"
+#include "swatch/dummy/AbstractForceStateCommand.hpp"
 
 
 namespace swatch {
 namespace dummy {
 
-    
-class DummyProcCommand : public swatch::core::Command {
-public:
-  DummyProcCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
-  ~DummyProcCommand();
-  
-  void sleep(const core::XParameterSet& aParams);
-};
 
-    
-class DummyRebootCommand : public DummyProcCommand {
+class DummyRebootCommand : public AbstractConfigureCommand {
 public:
   DummyRebootCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
   ~DummyRebootCommand();
-        
-  virtual State code(const swatch::core::XParameterSet& );
+
+private:  
+  void runAction(bool aErrorOccurs);
 };
     
-class DummyResetCommand : public DummyProcCommand {
+class DummyResetCommand : public AbstractConfigureCommand {
 public:
   DummyResetCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
   ~DummyResetCommand();
-        
-  virtual State code(const swatch::core::XParameterSet& );
+
+private:
+  void runAction(bool aErrorOccurs);
 };
 
-class DummyConfigureTxCommand : public DummyProcCommand {
+class DummyConfigureTxCommand : public AbstractConfigureCommand {
 public:
   DummyConfigureTxCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
   ~DummyConfigureTxCommand();
-  
-  virtual State code(const swatch::core::XParameterSet& params);
+
+private:
+  void runAction(bool aErrorOccurs);
 };
 
-class DummyConfigureRxCommand : public DummyProcCommand {
+class DummyConfigureRxCommand : public AbstractConfigureCommand {
 public:
   DummyConfigureRxCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
   ~DummyConfigureRxCommand();
-  
-  virtual State code(const swatch::core::XParameterSet& params);
+
+private:
+  void runAction(bool aErrorOccurs);
 };
 
 
-class DummyConfigureDaqCommand : public DummyProcCommand {
+class DummyConfigureDaqCommand : public AbstractConfigureCommand {
 public:
   DummyConfigureDaqCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
   ~DummyConfigureDaqCommand();
 
-  virtual State code(const swatch::core::XParameterSet& params);
+private:
+  void runAction(bool aErrorOccurs);
 };
 
 
-class DummyConfigureAlgoCommand : public DummyProcCommand {
+class DummyConfigureAlgoCommand : public AbstractConfigureCommand {
 public:
   DummyConfigureAlgoCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
   ~DummyConfigureAlgoCommand();
 
-  State code(const swatch::core::XParameterSet& params);       
+private:
+  void runAction(bool aErrorOccurs);       
 };
+
+
+class DummyProcessorForceClkTtcStateCommand : public AbstractForceStateCommand {
+public:
+  DummyProcessorForceClkTtcStateCommand(const std::string& aId, core::ActionableObject& aActionable);
+  ~DummyProcessorForceClkTtcStateCommand();
+
+private:
+  State code(const core::XParameterSet& aParamSet);
+};
+
+
+class DummyProcessorForceRxPortsStateCommand : public AbstractForceStateCommand {
+public:
+  DummyProcessorForceRxPortsStateCommand(const std::string& aId, core::ActionableObject& aActionable);
+  ~DummyProcessorForceRxPortsStateCommand();
+
+private:
+  State code(const core::XParameterSet& aParamSet);
+};
+
+
+class DummyProcessorForceTxPortsStateCommand : public AbstractForceStateCommand {
+public:
+  DummyProcessorForceTxPortsStateCommand(const std::string& aId, core::ActionableObject& aActionable);
+  ~DummyProcessorForceTxPortsStateCommand();
+
+private:
+  State code(const core::XParameterSet& aParamSet);
+};
+
+
+class DummyProcessorForceReadoutStateCommand : public AbstractForceStateCommand {
+public:
+  DummyProcessorForceReadoutStateCommand(const std::string& aId, core::ActionableObject& aActionable);
+  ~DummyProcessorForceReadoutStateCommand();
+
+private:
+  State code(const core::XParameterSet& aParamSet);
+};
+
+
+class DummyProcessorForceAlgoStateCommand : public AbstractForceStateCommand {
+public:
+  DummyProcessorForceAlgoStateCommand(const std::string& aId, core::ActionableObject& aActionable);
+  ~DummyProcessorForceAlgoStateCommand();
+
+private:
+  State code(const core::XParameterSet& aParamSet);
+};
+
+
 
 } // namespace dummy
 } // namespace swatch

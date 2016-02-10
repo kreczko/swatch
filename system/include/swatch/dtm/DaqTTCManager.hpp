@@ -122,7 +122,7 @@ public:
   dtm::AMCPortCollection& getAMCPorts();
 
 protected:
-      //! Register the supplied (heap-allocated) TTC interface; the child base class takes ownership of the TTC interface instance.
+  //! Register the supplied (heap-allocated) TTC interface; the child base class takes ownership of the TTC interface instance.
   TTCInterface& registerInterface( TTCInterface* aTTCInterface );
 
   //! Register the supplied (heap-allocated) SLink interface; the child base class takes ownership of the SLink interface instance.

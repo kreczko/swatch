@@ -2,14 +2,22 @@
 #include "swatch/dummy/DummyAMC13Driver.hpp"
 
 
-typedef boost::posix_time::microsec_clock MicrosecClk_t;
+#include <stdexcept>
+
+#include "boost/lexical_cast.hpp"
 
 
 namespace swatch {
 namespace dummy {
 
   
-DummyAMC13Driver::DummyAMC13Driver()
+DummyAMC13Driver::DummyAMC13Driver() : 
+  mClkTtcState(kError), 
+  mEvbState(kError),
+  mSLinkState(kError),
+  mAMCPortState(kError),
+  mRunning(false),
+  mFedId (0xFFFF)
 {
   reboot();
 } 
@@ -22,16 +30,33 @@ DummyAMC13Driver::~DummyAMC13Driver()
 
 DummyAMC13Driver::TTCStatus DummyAMC13Driver::readTTCStatus() const
 {
-  bool allOK = (MicrosecClk_t::universal_time() < mErrTimeReset);
-  
-  TTCStatus s;
-  s.clockFreq = allOK ? 40.0e6 : 15.0e6;
-  s.bc0Counter = 42;
-  s.errCountBC0 = allOK ? 0 : 5;
-  s.errCountSingleBit = allOK ? 0 : 100;
-  s.errCountDoubleBit = allOK ? 0 : 10;
-  
-  return s;
+  TTCStatus lStatus;
+  lStatus.bc0Counter = mRunning ? 42 : 0;
+
+  switch (mClkTtcState) {
+    // Good & Warning : Almost all metric values are the same
+    case ComponentState::kGood : 
+    case ComponentState::kWarning : 
+      lStatus.clockFreq = 40.0e6;
+      lStatus.errCountBC0 = 0;
+      lStatus.errCountSingleBit = 0;
+      lStatus.errCountDoubleBit = 0;
+      lStatus.warningSign = (mClkTtcState == ComponentState::kWarning);
+      break;
+    // Error : Incorrect clock freq; error counters non-zero
+    case ComponentState::kError : 
+      lStatus.clockFreq = 15.0e6;
+      lStatus.errCountBC0 = 5;
+      lStatus.errCountSingleBit = 100;
+      lStatus.errCountDoubleBit = 10;
+      lStatus.warningSign = true;
+      break;
+    // Hardware unreachable : Driver usually throws
+    case ComponentState::kNotReachable : 
+      throw std::runtime_error("Problem communicating with AMC13 (TTC block).");
+  }
+
+  return lStatus;
 }
 
 
@@ -41,49 +66,145 @@ uint16_t DummyAMC13Driver::readFedId() const
 }
 
 
+DummyAMC13Driver::EventBuilderStatus DummyAMC13Driver::readEvbStatus() const
+{
+  EventBuilderStatus lStatus;
+  lStatus.outOfSync = (mEvbState == ComponentState::kError);
+  lStatus.ttsWarning = (mEvbState != ComponentState::kGood);
+  lStatus.l1aCount = mRunning ? 42 : 0;
+  
+  if (mEvbState == ComponentState::kNotReachable)
+    throw std::runtime_error("Problem communicating with AMC13 (event builder).");
+
+  return lStatus;
+}
+
+
+DummyAMC13Driver::SLinkStatus DummyAMC13Driver::readSLinkStatus() const
+{
+  SLinkStatus lStatus;
+  lStatus.coreInitialised = (mSLinkState != ComponentState::kError);
+  lStatus.backPressure = (mSLinkState != ComponentState::kGood);
+  lStatus.wordsSent = mRunning ? 42000 : 0;
+  lStatus.packetsSent = mRunning ? 42 : 0;
+
+  if (mSLinkState == ComponentState::kNotReachable)
+    throw std::runtime_error("Problem communicating with AMC13 (event builder).");
+
+  return lStatus;
+}
+
+
+DummyAMC13Driver::AMCPortStatus DummyAMC13Driver::readAMCPortStatus(uint32_t aSlotId) const
+{
+  AMCPortStatus lStatus;
+  lStatus.outOfSync = (mAMCPortState == ComponentState::kError);
+  lStatus.ttsWarning = (mAMCPortState != ComponentState::kGood);
+  lStatus.amcEventCount = mRunning ? 42 : 0;
+
+  if (mAMCPortState == ComponentState::kNotReachable)
+    throw std::runtime_error("Problem communicating with AMC13 (AMC backplane port " + boost::lexical_cast<std::string>(aSlotId) + ").");
+
+  return lStatus;
+}
+
+
 void DummyAMC13Driver::reboot()
 {
-  mErrTimeReset = ptime( boost::posix_time::min_date_time );
-  mErrTimeDaq = ptime( boost::posix_time::min_date_time );
-  
+  mClkTtcState = kError;
+  mEvbState = kError;
+  mSLinkState = kError;
+  mAMCPortState = kError;
+  mRunning = false;  
   mFedId = 0;
 }
 
 
-void DummyAMC13Driver::reset(size_t aWarnAfter, size_t aErrorAfter)
+void DummyAMC13Driver::reset()
 {
-  ptime lNow = MicrosecClk_t::universal_time();
-  mWrnTimeReset = lNow + boost::posix_time::seconds(aWarnAfter);
-  mErrTimeReset = lNow + boost::posix_time::seconds(aErrorAfter);
-
-  mErrTimeDaq = ptime( boost::posix_time::min_date_time );
-  mWrnTimeDaq = ptime( boost::posix_time::min_date_time );
+  mClkTtcState = kGood;
+  mEvbState = kError;
+  mSLinkState = kError;
+  mAMCPortState = kError;
+  mRunning = false;
   mFedId = 0;
 }
 
 
-void DummyAMC13Driver::configureDaq(uint16_t fedId)
+void DummyAMC13Driver::forceClkTtcState(ComponentState aNewState)
 {
-  if (mErrTimeReset <= MicrosecClk_t::universal_time())
-    throw std::runtime_error("Couldn't configure daq - no clock!");
+  mClkTtcState = aNewState;
+}
+
+
+void DummyAMC13Driver::configureEvb(uint16_t aFedId)
+{
+  if (mClkTtcState == kError)
+    throw std::runtime_error("Couldn't configure event builder - no clock!");
   else {
-    mErrTimeDaq = ptime( boost::posix_time::max_date_time );
-    mFedId = fedId;
+    mEvbState = kGood;
+    mFedId = aFedId;
   }
 }
 
 
-void DummyAMC13Driver::startDaq(size_t aWarnAfter, size_t aErrorAfter)
+void DummyAMC13Driver::forceEvbState(ComponentState aNewState)
 {
-  if (mErrTimeReset <= MicrosecClk_t::universal_time() )
-    throw std::runtime_error("Couldn't enable daq - no clock!");
-  else if ( mErrTimeDaq <= MicrosecClk_t::universal_time() )
-    throw std::runtime_error("Couldn't enable daq - my daq block isn't configured!");
+  mEvbState = aNewState;
+}
+
+
+void DummyAMC13Driver::configureSLink(uint16_t aFedId)
+{
+  if (mClkTtcState == kError)
+    throw std::runtime_error("Couldn't configure event builder - no clock!");
   else {
-    ptime lNow = MicrosecClk_t::universal_time();
-    mWrnTimeDaq = lNow + boost::posix_time::seconds(aWarnAfter);
-    mErrTimeDaq = lNow + boost::posix_time::seconds(aErrorAfter);
+    mSLinkState = kGood;
+    mFedId = aFedId;
   }
+}
+
+
+void DummyAMC13Driver::forceSLinkState(ComponentState aNewState)
+{
+  mSLinkState = aNewState;
+}
+
+
+void DummyAMC13Driver::configureAMCPorts()
+{
+  if (mClkTtcState == kError)
+    throw std::runtime_error("Couldn't configure AMC port - no clock!");
+  else
+    mAMCPortState = kGood;
+}
+
+
+void DummyAMC13Driver::forceAMCPortState(ComponentState aNewState)
+{
+  mAMCPortState = aNewState;
+}
+
+
+void DummyAMC13Driver::startDaq()
+{
+  if (mClkTtcState == kError)
+    throw std::runtime_error("Couldn't start run - no clock!");
+  else if (mEvbState == kError)
+    throw std::runtime_error("Couldn't start run - my event builder isn't configured!");
+  else if (mSLinkState == kError)
+    throw std::runtime_error("Couldn't start run - my SLink express block isn't configured!");
+  else
+    mRunning = true;
+}
+
+
+void DummyAMC13Driver::stopDaq()
+{
+  if (!mRunning)
+    throw std::runtime_error("Couldn't stop run - not currently in run!");
+  else
+    mRunning = false;
 }
 
 

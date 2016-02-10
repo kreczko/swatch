@@ -3,8 +3,9 @@
 #define	__SWATCH_DUMMY_DUMMYDRIVER_HPP__
 
 
-// boost headers
-#include "boost/date_time/posix_time/posix_time_types.hpp"
+#include <stdint.h>
+
+#include "swatch/dummy/ComponentState.hpp"
 
 
 namespace swatch {
@@ -13,11 +14,12 @@ namespace dummy {
     
 class DummyProcDriver{
 public:
-  
   // Forward declarations
   struct TTCStatus;
   struct ReadoutStatus;
   struct RxPortStatus;
+  struct TxPortStatus;
+  struct AlgoStatus;
 
   DummyProcDriver();
 
@@ -31,28 +33,39 @@ public:
 
   RxPortStatus getRxPortStatus(uint32_t channelId) const;
 
-  bool isTxPortOperating(uint32_t channelId) const;
+  TxPortStatus getTxPortStatus(uint32_t channelId) const;
   
+  AlgoStatus getAlgoStatus() const;
+
   void reboot();
   
-  void reset(size_t aErrorAfter);
-  
-  void configureTxPorts(size_t aErrorAfter);
+  void reset();
 
-  void configureRxPorts(size_t aErrorAfter);
+  void forceClkTtcState(ComponentState aNewState);
 
-  void configureReadout(size_t aErrorAfter);
+  void configureRxPorts();
 
-  void configureAlgo(size_t aErrorAfter);
+  void forceRxPortsState(ComponentState aNewState);
+
+  void configureTxPorts();
+
+  void forceTxPortsState(ComponentState aNewState);
+
+  void configureReadout();
+
+  void forceReadoutState(ComponentState aNewState);
+
+  void configureAlgo();
+
+  void forceAlgoState(ComponentState aNewState);
   
 private:
-  typedef boost::posix_time::ptime ptime;
-    
-  ptime mErrTimeClk;
-  ptime mErrTimeTx;
-  ptime mErrTimeRx;
-  ptime mErrTimeDaq;
-  ptime mErrTimeAlgo;
+
+  ComponentState mClkState;
+  ComponentState mTxState;
+  ComponentState mRxState;
+  ComponentState mReadoutState;
+  ComponentState mAlgoState;
   
 public:
   struct TTCStatus {
@@ -64,6 +77,7 @@ public:
     bool bc0Locked;
     uint32_t errSingleBit;
     uint32_t errDoubleBit;
+    bool warningSign;
   };
 
   struct ReadoutStatus {
@@ -76,14 +90,34 @@ public:
   };
 
   struct RxPortStatus {
-    RxPortStatus(bool aIsLocked, bool aIsAligned, uint32_t aCrcErrCount) : 
+    RxPortStatus(bool aIsLocked, bool aIsAligned, uint32_t aCrcErrCount, bool aWarningSign) : 
       isLocked(aIsLocked),
       isAligned(aIsAligned),
-      crcErrCount(aCrcErrCount)
+      crcErrCount(aCrcErrCount),
+      warningSign(aWarningSign)
     {}
     bool isLocked;
     bool isAligned;
     uint32_t crcErrCount;
+    bool warningSign;
+  };
+
+  struct TxPortStatus {
+    TxPortStatus(bool aIsOperating, bool aWarningSign) : 
+      isOperating(aIsOperating),
+      warningSign(aWarningSign)
+    {}
+    bool isOperating;
+    bool warningSign;
+  };
+
+  struct AlgoStatus {
+    AlgoStatus(float aRateCounterA, float aRateCounterB) : 
+      rateCounterA(aRateCounterA),
+      rateCounterB(aRateCounterB)
+    {}
+    float rateCounterA;
+    float rateCounterB;
   };
 };
 

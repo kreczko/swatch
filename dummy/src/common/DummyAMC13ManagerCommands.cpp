@@ -2,13 +2,6 @@
 #include "swatch/dummy/DummyAMC13ManagerCommands.hpp"
 
 
-// boost headers
-#include "boost/thread/v2/thread.hpp"
-
-// XDAQ headers
-#include "xdata/Boolean.h"
-#include "xdata/UnsignedInteger.h"
-
 // SWATCH headers
 #include "swatch/dummy/DummyAMC13Manager.hpp"
 #include "swatch/dummy/DummyAMC13Driver.hpp"
@@ -19,38 +12,11 @@ namespace swatch {
 namespace dummy {
 
 
-/////////////////////////
-/*  DummyAMC13Command  */
-
-DummyAMC13Command::DummyAMC13Command(const std::string& aId, swatch::core::ActionableObject& aActionable) : 
-  Command(aId, aActionable, xdata::Boolean(true))
-{
-  registerParameter("cmdDuration", xdata::UnsignedInteger(10));
-}
-
-DummyAMC13Command::~DummyAMC13Command()
-{
-}
-
-void DummyAMC13Command::sleep(const core::XParameterSet& aParams)
-{
-  const size_t nrSeconds = aParams.get<xdata::UnsignedInteger>("cmdDuration").value_;
-
-  for(size_t i=0; i<(nrSeconds*4); i++)
-  {
-    std::ostringstream oss;
-    oss << "Done " << i << " of " << (nrSeconds*4) << " things";
-    setProgress(float(i)/float(nrSeconds*4), oss.str());
-    boost::this_thread::sleep_for(boost::chrono::milliseconds(250));
-  }
-}
-
-
 ///////////////////////////////
 /*  DummyAMC13RebootCommand  */
 
-DummyAMC13RebootCommand::DummyAMC13RebootCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) : 
-  DummyAMC13Command(aId,aActionable)
+DummyAMC13RebootCommand::DummyAMC13RebootCommand(const std::string& aId, core::ActionableObject& aActionable) : 
+  AbstractConfigureCommand(aId, aActionable)
 {
 }
 
@@ -58,106 +24,128 @@ DummyAMC13RebootCommand::~DummyAMC13RebootCommand()
 {
 }
 
-core::Command::State DummyAMC13RebootCommand::code(const swatch::core::XParameterSet& aParams)
+void DummyAMC13RebootCommand::runAction(bool aGoIntoError)
 { 
-  sleep(aParams);
-
-  DummyAMC13Driver& driver = getActionable<DummyAMC13Manager>().getDriver();
-  
-  driver.reboot();
-  
-  return State::kDone;
+  DummyAMC13Driver& lDriver = getActionable<DummyAMC13Manager>().getDriver();
+  lDriver.reboot();
 }
 
 
 //////////////////////////////
 /*  DummyAMC13ResetCommand  */
 
-DummyAMC13ResetCommand::DummyAMC13ResetCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) : 
-  DummyAMC13Command(aId,aActionable)
+DummyAMC13ResetCommand::DummyAMC13ResetCommand(const std::string& aId, core::ActionableObject& aActionable) : 
+  AbstractConfigureCommand(aId, aActionable)
 {
-  registerParameter("clkErrTimeout", xdata::UnsignedInteger(60));
-  registerParameter("clkWrnTimeout", xdata::UnsignedInteger(45));
 }
 
 DummyAMC13ResetCommand::~DummyAMC13ResetCommand()
 {
 }
 
-core::Command::State DummyAMC13ResetCommand::code(const swatch::core::XParameterSet& aParams)
+void DummyAMC13ResetCommand::runAction(bool aGoIntoError)
 {
-  sleep(aParams);
-
-  DummyAMC13Driver& driver = getActionable<DummyAMC13Manager>().getDriver();
-  
-  size_t lWrnTimeout = aParams.get<xdata::UnsignedInteger>("clkWrnTimeout").value_;
-  size_t lErrTimeout = aParams.get<xdata::UnsignedInteger>("clkErrTimeout").value_;
-
-  driver.reset(lWrnTimeout, lErrTimeout);
-  
-  return State::kDone;
+  DummyAMC13Driver& lDriver = getActionable<DummyAMC13Manager>().getDriver();
+  if (!aGoIntoError)
+    lDriver.reset();
+  else
+    lDriver.forceClkTtcState(dummy::kError);
 }
 
 
 ////////////////////////////////
-/*  DummyConfigureDaqCommand  */
+/*  DummyConfigureEvbCommand  */
 
-DummyAMC13ConfigureDaqCommand::DummyAMC13ConfigureDaqCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) : 
-  DummyAMC13Command(aId,aActionable)
+DummyAMC13ConfigureEvbCommand::DummyAMC13ConfigureEvbCommand(const std::string& aId, core::ActionableObject& aActionable) : 
+  AbstractConfigureCommand(aId, aActionable)
 {
 }
 
-DummyAMC13ConfigureDaqCommand::~DummyAMC13ConfigureDaqCommand()
+DummyAMC13ConfigureEvbCommand::~DummyAMC13ConfigureEvbCommand()
 {
 }
 
-core::Command::State DummyAMC13ConfigureDaqCommand::code(const swatch::core::XParameterSet& aParams)
+void DummyAMC13ConfigureEvbCommand::runAction(bool aGoIntoError)
 {
-  sleep(aParams);
-  
-  DummyAMC13Manager& mgr = getActionable<DummyAMC13Manager>();
+  DummyAMC13Manager& lMgr = getActionable<DummyAMC13Manager>();
+  DummyAMC13Driver& lDriver = lMgr.getDriver();
+  if (!aGoIntoError)
+    lDriver.configureEvb(lMgr.getStub().fedId);
+  else
+    lDriver.forceEvbState(dummy::kError);
+}
 
-  mgr.getDriver().configureDaq(mgr.getStub().fedId);
-  
-  return State::kDone;
+
+//////////////////////////////////
+/*  DummyConfigureSLinkCommand  */
+
+DummyAMC13ConfigureSLinkCommand::DummyAMC13ConfigureSLinkCommand(const std::string& aId, core::ActionableObject& aActionable) : 
+  AbstractConfigureCommand(aId, aActionable)
+{
+}
+
+DummyAMC13ConfigureSLinkCommand::~DummyAMC13ConfigureSLinkCommand()
+{
+}
+
+void DummyAMC13ConfigureSLinkCommand::runAction(bool aGoIntoError)
+{
+  DummyAMC13Manager& lMgr = getActionable<DummyAMC13Manager>();
+  DummyAMC13Driver& lDriver = lMgr.getDriver();
+  if (!aGoIntoError)
+    lDriver.configureSLink(lMgr.getStub().fedId);
+  else
+    lDriver.forceSLinkState(dummy::kError);
+}
+
+
+/////////////////////////////////////
+/*  DummyConfigureAMCPortsCommand  */
+
+DummyAMC13ConfigureAMCPortsCommand::DummyAMC13ConfigureAMCPortsCommand(const std::string& aId, core::ActionableObject& aActionable) : 
+  AbstractConfigureCommand(aId, aActionable)
+{
+}
+
+DummyAMC13ConfigureAMCPortsCommand::~DummyAMC13ConfigureAMCPortsCommand()
+{
+}
+
+void DummyAMC13ConfigureAMCPortsCommand::runAction(bool aGoIntoError)
+{
+  DummyAMC13Driver& lDriver = getActionable<DummyAMC13Manager>().getDriver();
+  if (!aGoIntoError)
+    lDriver.configureAMCPorts();
+  else
+    lDriver.forceAMCPortState(dummy::kError);
 }
 
 
 ////////////////////////////
 /*  DummyStartDaqCommand  */
 
-DummyAMC13StartDaqCommand::DummyAMC13StartDaqCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) : 
-  DummyAMC13Command(aId,aActionable)
+DummyAMC13StartDaqCommand::DummyAMC13StartDaqCommand(const std::string& aId, core::ActionableObject& aActionable) : 
+  AbstractConfigureCommand(aId, aActionable)
 {
-  registerParameter("daqErrTimeout", xdata::UnsignedInteger(60));
-  registerParameter("daqWrnTimeout", xdata::UnsignedInteger(45));
-
 }
 
 DummyAMC13StartDaqCommand::~DummyAMC13StartDaqCommand()
 {
 }
 
-core::Command::State DummyAMC13StartDaqCommand::code(const swatch::core::XParameterSet& aParams)
+void DummyAMC13StartDaqCommand::runAction(bool aGoIntoError)
 {
-  sleep(aParams);
-
-  DummyAMC13Driver& driver = getActionable<DummyAMC13Manager>().getDriver();
-  
-  size_t lWrnTimeout = aParams.get<xdata::UnsignedInteger>("daqWrnTimeout").value_;
-  size_t lErrTimeout = aParams.get<xdata::UnsignedInteger>("daqErrTimeout").value_;
-
-  driver.startDaq(lWrnTimeout, lErrTimeout);
-  
-  return State::kDone;
+  DummyAMC13Driver& lDriver = getActionable<DummyAMC13Manager>().getDriver();
+  if (!aGoIntoError)
+    lDriver.startDaq();
 }
 
 
 ////////////////////////////
 /*  DummyStartDaqCommand  */
 
-DummyAMC13StopDaqCommand::DummyAMC13StopDaqCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) : 
-  DummyAMC13Command(aId,aActionable)
+DummyAMC13StopDaqCommand::DummyAMC13StopDaqCommand(const std::string& aId, core::ActionableObject& aActionable) : 
+  AbstractConfigureCommand(aId, aActionable)
 {
 }
 
@@ -165,11 +153,92 @@ DummyAMC13StopDaqCommand::~DummyAMC13StopDaqCommand()
 {
 }
 
-core::Command::State DummyAMC13StopDaqCommand::code(const swatch::core::XParameterSet& aParams)
+void DummyAMC13StopDaqCommand::runAction(bool aGoIntoError)
 {
-  sleep(aParams);
+  DummyAMC13Driver& lDriver = getActionable<DummyAMC13Manager>().getDriver();
+  if (!aGoIntoError)
+    lDriver.stopDaq();
+}
 
-  return State::kDone;
+
+
+/////////////////////////////////////////
+/*  DummyAMC13ForceClkTtcStateCommand  */
+
+DummyAMC13ForceClkTtcStateCommand::DummyAMC13ForceClkTtcStateCommand(const std::string& aId, core::ActionableObject& aActionable) :
+  AbstractForceStateCommand(aId, aActionable)
+{
+}
+
+DummyAMC13ForceClkTtcStateCommand::~DummyAMC13ForceClkTtcStateCommand()
+{
+}
+
+core::Command::State DummyAMC13ForceClkTtcStateCommand::code(const core::XParameterSet& aParamSet)
+{
+  DummyAMC13Driver& lDriver = getActionable<DummyAMC13Manager>().getDriver();
+  lDriver.forceClkTtcState(parseState(aParamSet));
+  return core::ActionSnapshot::kDone;
+}
+
+
+//////////////////////////////////////
+/*  DummyAMC13ForceEvbStateCommand  */
+
+DummyAMC13ForceEvbStateCommand::DummyAMC13ForceEvbStateCommand(const std::string& aId, core::ActionableObject& aActionable) :
+  AbstractForceStateCommand(aId, aActionable)
+{
+}
+
+DummyAMC13ForceEvbStateCommand::~DummyAMC13ForceEvbStateCommand()
+{
+}
+
+core::Command::State DummyAMC13ForceEvbStateCommand::code(const core::XParameterSet& aParamSet)
+{
+  DummyAMC13Driver& lDriver = getActionable<DummyAMC13Manager>().getDriver();
+  lDriver.forceEvbState(parseState(aParamSet));
+  return core::ActionSnapshot::kDone;
+}
+
+
+////////////////////////////////////////
+/*  DummyAMC13ForceSLinkStateCommand  */
+
+DummyAMC13ForceSLinkStateCommand::DummyAMC13ForceSLinkStateCommand(const std::string& aId, core::ActionableObject& aActionable) :
+  AbstractForceStateCommand(aId, aActionable)
+{
+}
+
+DummyAMC13ForceSLinkStateCommand::~DummyAMC13ForceSLinkStateCommand()
+{
+}
+
+core::Command::State DummyAMC13ForceSLinkStateCommand::code(const core::XParameterSet& aParamSet)
+{
+  DummyAMC13Driver& lDriver = getActionable<DummyAMC13Manager>().getDriver();
+  lDriver.forceSLinkState(parseState(aParamSet));
+  return core::ActionSnapshot::kDone;
+}
+
+
+//////////////////////////////////////////
+/*  DummyAMC13ForceAMCPortStateCommand  */
+
+DummyAMC13ForceAMCPortStateCommand::DummyAMC13ForceAMCPortStateCommand(const std::string& aId, core::ActionableObject& aActionable) :
+  AbstractForceStateCommand(aId, aActionable)
+{
+}
+
+DummyAMC13ForceAMCPortStateCommand::~DummyAMC13ForceAMCPortStateCommand()
+{
+}
+
+core::Command::State DummyAMC13ForceAMCPortStateCommand::code(const core::XParameterSet& aParamSet)
+{
+  DummyAMC13Driver& lDriver = getActionable<DummyAMC13Manager>().getDriver();
+  lDriver.forceAMCPortState(parseState(aParamSet));
+  return core::ActionSnapshot::kDone;
 }
 
 

@@ -1,11 +1,16 @@
 #include "swatch/dummy/DummyProcDriver.hpp"
 
+
+#include <stdexcept>
+
+#include "boost/lexical_cast.hpp"
+
+
 namespace swatch {
 namespace dummy {
 
-typedef boost::posix_time::microsec_clock MicrosecClk_t;
 
-DummyProcDriver::DummyProcDriver() 
+DummyProcDriver::DummyProcDriver()
 {
   reboot();
 }
@@ -24,109 +29,186 @@ uint64_t DummyProcDriver::getFirmwareVersion() const
 
 DummyProcDriver::TTCStatus DummyProcDriver::getTTCStatus() const 
 {
-  //bool allOK = (MicrosecClk_t::universal_time() < mErrTimeClk);
-  
-  bool allOK = true;
-  
-  TTCStatus s;
-  s.bunchCounter = allOK ? 0x00001234 : 0;
-  s.eventCounter = allOK ? 0xdeadbeef : 0;
-  s.orbitCounter = allOK ? 0x0000cafe : 0;
-  s.clk40Stopped = ! allOK;
-  s.clk40Locked = allOK;
-  s.bc0Locked = allOK;
-  s.errSingleBit = allOK ? 0 : 42;
-  s.errDoubleBit = allOK ? 0 : 4;
+  TTCStatus lStatus;
+  lStatus.bunchCounter = 0x00001234;
+  lStatus.eventCounter = 0xdeadbeef;
+  lStatus.orbitCounter = 0x0000cafe;
 
-  return s;  
+  lStatus.clk40Stopped = (mClkState == ComponentState::kError);
+  lStatus.clk40Locked = (mClkState != ComponentState::kError);
+  lStatus.bc0Locked = (mClkState != ComponentState::kError);
+  lStatus.errSingleBit = (mClkState == ComponentState::kError) ? 42 : 0;
+  lStatus.errDoubleBit = (mClkState == ComponentState::kError) ? 4 : 0;
+
+  lStatus.warningSign = (mClkState != ComponentState::kGood);
+
+  // Hardware unreachable : Driver usually throws
+  if (mClkState == ComponentState::kNotReachable)
+    throw std::runtime_error("Problem communicating with board (TTC block).");
+
+  return lStatus;
 }
 
 
 DummyProcDriver::ReadoutStatus DummyProcDriver::getReadoutStatus() const
 {
-  ptime lNow = MicrosecClk_t::universal_time();
-/*  if ( (lNow < mErrTimeClk) && (lNow < mErrTimeDaq) )
-    return ReadoutStatus(true, 8);
-  else
-    return ReadoutStatus(true, 2);*/
-    
-    return ReadoutStatus(true, 5);
+  switch (mReadoutState) {
+    case ComponentState::kGood : 
+      return ReadoutStatus(true, 8);
+    case ComponentState::kWarning : 
+      return ReadoutStatus(true, 5);
+    case ComponentState::kError :
+      return ReadoutStatus(false, 2);
+    // Not reachable = throw
+    case ComponentState::kNotReachable : 
+      break;
+  }
+  throw std::runtime_error("Problem communicating with board (readout block).");
 }
 
 
-DummyProcDriver::RxPortStatus DummyProcDriver::getRxPortStatus(uint32_t channelId) const 
+DummyProcDriver::RxPortStatus DummyProcDriver::getRxPortStatus(uint32_t aChannelId) const 
 {
-  if ( (MicrosecClk_t::universal_time() >= mErrTimeClk) || (MicrosecClk_t::universal_time() >= mErrTimeRx) )
-    return RxPortStatus(false, false, 42);
-  else
-    return RxPortStatus(true, true, 0);
+  switch (mRxState) {
+    case ComponentState::kGood : 
+    case ComponentState::kWarning : 
+      return RxPortStatus(true, true, 0, mRxState == ComponentState::kWarning);
+    case ComponentState::kError : 
+      return RxPortStatus(false, false, 42, true);
+    case ComponentState::kNotReachable : 
+      break;
+  }
+  throw std::runtime_error("Problem communicating with board (rx port " + boost::lexical_cast<std::string>(aChannelId) + ").");
 }
 
 
-bool DummyProcDriver::isTxPortOperating(uint32_t channelId) const
+DummyProcDriver::TxPortStatus DummyProcDriver::getTxPortStatus(uint32_t aChannelId) const
 {
- /* if ( (MicrosecClk_t::universal_time() >= mErrTimeClk) || (MicrosecClk_t::universal_time() >= mErrTimeTx) )
-    return false;
-  else
-    return true;*/
-    
-    return true;
+  switch (mTxState) {
+    case ComponentState::kGood : 
+      return TxPortStatus(true, false);
+    case ComponentState::kWarning : 
+      return TxPortStatus(true, true);
+    case ComponentState::kError : 
+      return TxPortStatus(false, true);
+    case ComponentState::kNotReachable : 
+      break;
+  }
+  throw std::runtime_error("Problem communicating with board (tx port " + boost::lexical_cast<std::string>(aChannelId) + ").");
+}
+
+
+DummyProcDriver::AlgoStatus DummyProcDriver::getAlgoStatus() const
+{
+  switch (mAlgoState) {
+    // All good = rates below 40kHz
+    case ComponentState::kGood : 
+      return AlgoStatus(12e3, 20e3);
+    // Warning = rates between 40 and 80 kHz
+    case ComponentState::kWarning : 
+      return AlgoStatus(52e3, 54e3);
+    // Error = rates above 80 kHz
+    case ComponentState::kError : 
+      return AlgoStatus(85e3, 120e3);
+    // Not reachable = throw
+    case ComponentState::kNotReachable :
+      break;
+  }
+  throw std::runtime_error("Problem communicating with board (algo block).");
 }
 
 
 void DummyProcDriver::reboot()
 {
-  mErrTimeClk  = ptime( boost::posix_time::min_date_time );
-  mErrTimeTx   = ptime( boost::posix_time::min_date_time );
-  mErrTimeRx   = ptime( boost::posix_time::min_date_time );
-  mErrTimeDaq  = ptime( boost::posix_time::min_date_time );
-  mErrTimeAlgo = ptime( boost::posix_time::min_date_time );
+  mClkState = kError;
+  mTxState = kError;
+  mRxState = kError;
+  mReadoutState = kError;
+  mAlgoState = kError;
 }
 
 
-void DummyProcDriver::reset(size_t aErrorAfter)
+void DummyProcDriver::reset()
 {
-  mErrTimeClk = MicrosecClk_t::universal_time() + boost::posix_time::seconds(aErrorAfter);
-
-  mErrTimeTx = ptime( boost::posix_time::min_date_time );
-  mErrTimeRx = ptime( boost::posix_time::min_date_time );
-  mErrTimeDaq = ptime( boost::posix_time::min_date_time );
+  mClkState = kGood;
+  
+  mTxState = kError;
+  mRxState = kError;
+  mReadoutState = kError;
 }
 
 
-void DummyProcDriver::configureTxPorts(size_t aErrorAfter)
+void DummyProcDriver::forceClkTtcState(ComponentState aNewState)
 {
-  if ( MicrosecClk_t::universal_time() >= mErrTimeClk )
-    throw std::runtime_error("Couldn't configure tx ports - no clock!");
-  else
-    mErrTimeTx = MicrosecClk_t::universal_time() + boost::posix_time::seconds(aErrorAfter);
+  mClkState = aNewState;
 }
 
 
-void DummyProcDriver::configureRxPorts(size_t aErrorAfter)
+void DummyProcDriver::configureRxPorts()
 {
-  if ( MicrosecClk_t::universal_time() >= mErrTimeClk )
+  if (mClkState == kError) {
+    mRxState = kError;
     throw std::runtime_error("Couldn't configure rx ports - no clock!");
+  }
   else
-    mErrTimeRx = MicrosecClk_t::universal_time() + boost::posix_time::seconds(aErrorAfter);
+    mRxState = kGood;
 }
 
 
-void DummyProcDriver::configureReadout(size_t aErrorAfter)
+void DummyProcDriver::forceRxPortsState(ComponentState aNewState)
 {
-  if ( MicrosecClk_t::universal_time() >= mErrTimeClk )
+  mRxState = aNewState;
+}
+
+
+void DummyProcDriver::configureTxPorts()
+{
+  if (mClkState == kError) {
+    mTxState = kError;
+    throw std::runtime_error("Couldn't configure tx ports - no clock!");
+  }
+  else
+    mTxState = kGood;
+}
+
+
+void DummyProcDriver::forceTxPortsState(ComponentState aNewState)
+{
+  mTxState = aNewState;
+}
+
+
+void DummyProcDriver::configureReadout()
+{
+  if (mClkState == kError) {
+    mReadoutState = kError;
     throw std::runtime_error("Couldn't configure readout block - no clock!");
+  }
   else
-    mErrTimeDaq = MicrosecClk_t::universal_time() + boost::posix_time::seconds(aErrorAfter);
+    mReadoutState = kGood;
 }
 
 
-void DummyProcDriver::configureAlgo(size_t aErrorAfter)
+void DummyProcDriver::forceReadoutState(ComponentState aNewState)
 {
-  if ( MicrosecClk_t::universal_time() >= mErrTimeClk )
+  mReadoutState = aNewState;
+}
+
+
+void DummyProcDriver::configureAlgo()
+{
+  if (mClkState == kError) {
+    mReadoutState = kError;
     throw std::runtime_error("Couldn't configure algo - no clock!");
+  }
   else
-    mErrTimeAlgo = MicrosecClk_t::universal_time() + boost::posix_time::seconds(aErrorAfter);
+    mAlgoState = kGood;
+}
+
+
+void DummyProcDriver::forceAlgoState(ComponentState aNewState)
+{
+  mAlgoState = aNewState;
 }
 
 

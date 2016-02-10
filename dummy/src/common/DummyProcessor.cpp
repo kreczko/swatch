@@ -61,17 +61,22 @@ DummyProcessor::DummyProcessor(const swatch::core::AbstractStub& aStub) :
   core::Command& cfgDaq = registerCommand<DummyConfigureDaqCommand>("configureDaq");
   core::Command& cfgAlgo = registerCommand<DummyConfigureAlgoCommand>("configureAlgo");
 
+  registerCommand<DummyProcessorForceClkTtcStateCommand>("forceClkTtcState");
+  registerCommand<DummyProcessorForceRxPortsStateCommand>("forceRxPortsState");
+  registerCommand<DummyProcessorForceTxPortsStateCommand>("forceTxPortsState");
+  registerCommand<DummyProcessorForceReadoutStateCommand>("forceReadoutState");
+  registerCommand<DummyProcessorForceAlgoStateCommand>("forceAlgoState");
+
   // 3) Command sequences
-  core::CommandSequence& cfgSeq = registerSequence("configSeq1",reboot).then(reset).then(cfgDaq).then(cfgTx);
-  core::CommandSequence& cfgRxSeq = registerSequence("configRxSeq", cfgRx);
-  core::CommandSequence& cfgAlgoSeq = registerSequence("configAlgoSeq", cfgAlgo);
+  core::CommandSequence& cfgSeq = registerSequence("configPartA", reset).then(cfgDaq).then(cfgTx);
+  registerSequence("fullReconfigure", reboot).then(reset).then(cfgDaq).then(cfgAlgo).then(cfgRx).then(cfgTx);
 
   // 4) State machines
   processor::RunControlFSM& lFSM = getRunControlFSM();
   lFSM.coldReset.add(reboot);
-  lFSM.setup.add(cfgSeq);
-  lFSM.configure.add(cfgAlgoSeq);
-  lFSM.align.add(cfgRxSeq);
+  lFSM.setup.add(reboot).add(cfgSeq);
+  lFSM.configure.add(cfgAlgo);
+  lFSM.align.add(cfgRx);
   lFSM.fsm.addTransition("dummyNoOp", processor::RunControlFSM::kStateAligned, processor::RunControlFSM::kStateInitial);
 }
 

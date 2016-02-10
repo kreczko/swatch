@@ -18,10 +18,11 @@ public:
 
   virtual ~DummyTTC();
 
-  virtual void retrieveMetricValues();
-  
 private:
+  virtual void retrieveMetricValues();
+
   DummyProcDriver& mDriver;
+  core::Metric<bool>& mWarningSign;
 };
 
 } // namespace dummy

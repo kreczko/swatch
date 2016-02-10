@@ -2,50 +2,19 @@
 #include "swatch/dummy/DummyProcessorCommands.hpp"
 
 
-#include "xdata/Boolean.h"
-#include "xdata/UnsignedInteger.h"
-
 #include "swatch/dummy/DummyProcessor.hpp"
 #include "swatch/dummy/DummyProcDriver.hpp"
 
-
-namespace swco = swatch::core;
 
 namespace swatch {
 namespace dummy {
 
 
-////////////////////////
-/*  DummyProcCommand  */
-
-DummyProcCommand::DummyProcCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) : 
-  Command(aId, aActionable, xdata::Boolean(true))
-{
-  registerParameter("cmdDuration", xdata::UnsignedInteger(10));
-}
-
-DummyProcCommand::~DummyProcCommand() {}
-
-
-void DummyProcCommand::sleep(const core::XParameterSet& aParams)
-{  
-  const size_t nrSeconds = aParams.get<xdata::UnsignedInteger>("cmdDuration").value_;
-
-  for(size_t i=0; i<(nrSeconds*4); i++)
-  {
-    std::ostringstream oss;
-    oss << "Done " << i << " of " << (nrSeconds*4) << " things";
-    setProgress(float(i)/float(nrSeconds*4), oss.str());
-    boost::this_thread::sleep_for(boost::chrono::milliseconds(250));
-  }
-}
-
-
 //////////////////////////
 /*  DummyRebootCommand  */
 
-DummyRebootCommand::DummyRebootCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) : 
-  DummyProcCommand(aId, aActionable)
+DummyRebootCommand::DummyRebootCommand(const std::string& aId, core::ActionableObject& aActionable) : 
+  AbstractConfigureCommand(aId, aActionable)
 {
 }
 
@@ -53,151 +22,212 @@ DummyRebootCommand::~DummyRebootCommand()
 {
 }
 
-core::Command::State DummyRebootCommand::code(const swatch::core::XParameterSet& aParams)
+void DummyRebootCommand::runAction(bool aGoIntoError)
 {
-  sleep( aParams );
-  
-  DummyProcDriver& driver = getActionable<DummyProcessor>().getDriver();
-  
-  driver.reboot();
-  
-  return State::kDone;
+  DummyProcDriver& lDriver = getActionable<DummyProcessor>().getDriver();
+  lDriver.reboot();
 }
 
 
 /////////////////////////
 /*  DummyResetCommand  */
 
-DummyResetCommand::DummyResetCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) : 
-  DummyProcCommand(aId, aActionable)
+DummyResetCommand::DummyResetCommand(const std::string& aId, core::ActionableObject& aActionable) : 
+  AbstractConfigureCommand(aId, aActionable)
 {
-  registerParameter("clkErrorTimeout", xdata::UnsignedInteger(60));
 }
 
 DummyResetCommand::~DummyResetCommand()
 {
 }
 
-core::Command::State DummyResetCommand::code(const swatch::core::XParameterSet& aParams)
+void DummyResetCommand::runAction(bool aGoIntoError)
 {
-  sleep( aParams );
-  
-  DummyProcDriver& driver = getActionable<DummyProcessor>().getDriver();
-  
-  size_t timeout = aParams.get<xdata::UnsignedInteger>("clkErrorTimeout").value_;
-
-  driver.reset(timeout);
-  
-  return State::kDone;
+  DummyProcDriver& lDriver = getActionable<DummyProcessor>().getDriver();
+  if (!aGoIntoError)
+    lDriver.reset();
 }
 
 
 ///////////////////////////////
 /*  DummyConfigureTxCommand  */
 
-DummyConfigureTxCommand::DummyConfigureTxCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) : 
-  DummyProcCommand(aId, aActionable)
+DummyConfigureTxCommand::DummyConfigureTxCommand(const std::string& aId, core::ActionableObject& aActionable) : 
+  AbstractConfigureCommand(aId, aActionable)
 {
-  registerParameter("txErrorTimeout", xdata::UnsignedInteger(60));
 }
 
 DummyConfigureTxCommand::~DummyConfigureTxCommand()
 {
 }
 
-core::Command::State DummyConfigureTxCommand::code(const swatch::core::XParameterSet& aParams)
+void DummyConfigureTxCommand::runAction(bool aGoIntoError)
 {
-  sleep( aParams );
-
-  DummyProcDriver& driver = getActionable<DummyProcessor>().getDriver();
-  
-  size_t timeout = aParams.get<xdata::UnsignedInteger>("txErrorTimeout").value_;
-
-  driver.configureTxPorts(timeout);
-  
-  return State::kDone;
+  DummyProcDriver& lDriver = getActionable<DummyProcessor>().getDriver();
+  if (!aGoIntoError)
+    lDriver.configureTxPorts();
 }
 
 
 ///////////////////////////////
 /*  DummyConfigureRxCommand  */
 
-DummyConfigureRxCommand::DummyConfigureRxCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) : 
-  DummyProcCommand(aId, aActionable)
+DummyConfigureRxCommand::DummyConfigureRxCommand(const std::string& aId, core::ActionableObject& aActionable) : 
+  AbstractConfigureCommand(aId, aActionable)
 {
-  registerParameter("rxErrorTimeout", xdata::UnsignedInteger(60));
 }
 
 DummyConfigureRxCommand::~DummyConfigureRxCommand()
 {
 }
 
-core::Command::State DummyConfigureRxCommand::code(const swatch::core::XParameterSet& aParams)
+void DummyConfigureRxCommand::runAction(bool aGoIntoError)
 {
-  sleep( aParams );
-  
-  DummyProcDriver& driver = getActionable<DummyProcessor>().getDriver();
-  
-  size_t timeout = aParams.get<xdata::UnsignedInteger>("rxErrorTimeout").value_;
-
-  driver.configureRxPorts(timeout);
-  
-  return State::kDone;
+  DummyProcDriver& lDriver = getActionable<DummyProcessor>().getDriver();
+  if (!aGoIntoError)
+    lDriver.configureRxPorts();
 }
 
 
 ////////////////////////////////
 /*  DummyConfigureDaqCommand  */
 
-DummyConfigureDaqCommand::DummyConfigureDaqCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) : 
-  DummyProcCommand(aId, aActionable)
+DummyConfigureDaqCommand::DummyConfigureDaqCommand(const std::string& aId, core::ActionableObject& aActionable) : 
+  AbstractConfigureCommand(aId, aActionable)
 {
-  registerParameter("daqErrorTimeout", xdata::UnsignedInteger(60));
 }
 
 DummyConfigureDaqCommand::~DummyConfigureDaqCommand()
 {
 }
 
-core::Command::State DummyConfigureDaqCommand::code(const swatch::core::XParameterSet& aParams)
+void DummyConfigureDaqCommand::runAction(bool aGoIntoError)
 {
-  sleep( aParams );
-  
-  DummyProcDriver& driver = getActionable<DummyProcessor>().getDriver();
-  
-  size_t timeout = aParams.get<xdata::UnsignedInteger>("daqErrorTimeout").value_;
-
-  driver.configureReadout(timeout);
-  
-  return State::kDone;
+  DummyProcDriver& lDriver = getActionable<DummyProcessor>().getDriver();
+  if (!aGoIntoError)
+    lDriver.configureReadout();
 }
 
 
 /////////////////////////////////
 /*  DummyConfigureAlgoCommand  */
 
-DummyConfigureAlgoCommand::DummyConfigureAlgoCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) : 
-  DummyProcCommand(aId, aActionable)
+DummyConfigureAlgoCommand::DummyConfigureAlgoCommand(const std::string& aId, core::ActionableObject& aActionable) : 
+  AbstractConfigureCommand(aId, aActionable)
 {
-  registerParameter("algoErrorTimeout", xdata::UnsignedInteger(60));
 }
 
 DummyConfigureAlgoCommand::~DummyConfigureAlgoCommand()
 {
 }
 
-core::Command::State DummyConfigureAlgoCommand::code(const swatch::core::XParameterSet& aParams)
+void DummyConfigureAlgoCommand::runAction(bool aGoIntoError)
 {
-  sleep( aParams );
-  
-  DummyProcDriver& driver = getActionable<DummyProcessor>().getDriver();
-  
-  size_t timeout = aParams.get<xdata::UnsignedInteger>("algoErrorTimeout").value_;
-
-  driver.configureAlgo(timeout);
-  
-  return State::kDone;
+  DummyProcDriver& lDriver = getActionable<DummyProcessor>().getDriver();
+  if (!aGoIntoError)
+    lDriver.configureAlgo();
 }
+
+
+/////////////////////////////////////////////
+/*  DummyProcessorForceClkTtcStateCommand  */
+
+DummyProcessorForceClkTtcStateCommand::DummyProcessorForceClkTtcStateCommand(const std::string& aId, core::ActionableObject& aActionable) :
+  AbstractForceStateCommand(aId, aActionable)
+{
+}
+
+DummyProcessorForceClkTtcStateCommand::~DummyProcessorForceClkTtcStateCommand()
+{
+}
+
+core::Command::State DummyProcessorForceClkTtcStateCommand::code(const core::XParameterSet& aParamSet)
+{
+  DummyProcDriver& lDriver = getActionable<DummyProcessor>().getDriver();
+  lDriver.forceClkTtcState(parseState(aParamSet));
+  return core::ActionSnapshot::kDone;
+}
+
+
+//////////////////////////////////////////////
+/*  DummyProcessorForceRxPortsStateCommand  */
+
+DummyProcessorForceRxPortsStateCommand::DummyProcessorForceRxPortsStateCommand(const std::string& aId, core::ActionableObject& aActionable) :
+  AbstractForceStateCommand(aId, aActionable)
+{
+}
+
+DummyProcessorForceRxPortsStateCommand::~DummyProcessorForceRxPortsStateCommand()
+{
+}
+
+core::Command::State DummyProcessorForceRxPortsStateCommand::code(const core::XParameterSet& aParamSet)
+{
+  DummyProcDriver& lDriver = getActionable<DummyProcessor>().getDriver();
+  lDriver.forceRxPortsState(parseState(aParamSet));
+  return core::ActionSnapshot::kDone;
+}
+
+
+//////////////////////////////////////////////
+/*  DummyProcessorForceTxPortsStateCommand  */
+
+DummyProcessorForceTxPortsStateCommand::DummyProcessorForceTxPortsStateCommand(const std::string& aId, core::ActionableObject& aActionable) :
+  AbstractForceStateCommand(aId, aActionable)
+{
+}
+
+DummyProcessorForceTxPortsStateCommand::~DummyProcessorForceTxPortsStateCommand()
+{
+}
+
+core::Command::State DummyProcessorForceTxPortsStateCommand::code(const core::XParameterSet& aParamSet)
+{
+  DummyProcDriver& lDriver = getActionable<DummyProcessor>().getDriver();
+  lDriver.forceTxPortsState(parseState(aParamSet));
+  return core::ActionSnapshot::kDone;
+}
+
+
+//////////////////////////////////////////////
+/*  DummyProcessorForceReadoutStateCommand  */
+
+DummyProcessorForceReadoutStateCommand::DummyProcessorForceReadoutStateCommand(const std::string& aId, core::ActionableObject& aActionable) :
+  AbstractForceStateCommand(aId, aActionable)
+{
+}
+
+DummyProcessorForceReadoutStateCommand::~DummyProcessorForceReadoutStateCommand()
+{
+}
+
+core::Command::State DummyProcessorForceReadoutStateCommand::code(const core::XParameterSet& aParamSet)
+{
+  DummyProcDriver& lDriver = getActionable<DummyProcessor>().getDriver();
+  lDriver.forceReadoutState(parseState(aParamSet));
+  return core::ActionSnapshot::kDone;
+}
+
+
+///////////////////////////////////////////
+/*  DummyProcessorForceAlgoStateCommand  */
+
+DummyProcessorForceAlgoStateCommand::DummyProcessorForceAlgoStateCommand(const std::string& aId, core::ActionableObject& aActionable) :
+  AbstractForceStateCommand(aId, aActionable)
+{
+}
+
+DummyProcessorForceAlgoStateCommand::~DummyProcessorForceAlgoStateCommand()
+{
+}
+
+core::Command::State DummyProcessorForceAlgoStateCommand::code(const core::XParameterSet& aParamSet)
+{
+  DummyProcDriver& lDriver = getActionable<DummyProcessor>().getDriver();
+  lDriver.forceAlgoState(parseState(aParamSet));
+  return core::ActionSnapshot::kDone;
+}
+
 
 
 } // namespace dummy

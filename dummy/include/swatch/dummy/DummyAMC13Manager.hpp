@@ -14,16 +14,16 @@ class DummyAMC13Driver;
 
 class DummyAMC13Manager : public dtm::DaqTTCManager {
 public:
-    DummyAMC13Manager( const swatch::core::AbstractStub& aStub );
+  DummyAMC13Manager( const swatch::core::AbstractStub& aStub );
 
-    virtual ~DummyAMC13Manager();
-    
-    DummyAMC13Driver& getDriver() { return *mDriver;}
-    
+  virtual ~DummyAMC13Manager();
+
+  DummyAMC13Driver& getDriver() { return *mDriver;}
+
 private:
-    virtual void retrieveMetricValues();
-    
-    boost::scoped_ptr<DummyAMC13Driver> mDriver;
+  virtual void retrieveMetricValues();
+
+  boost::scoped_ptr<DummyAMC13Driver> mDriver;
 };
 
 

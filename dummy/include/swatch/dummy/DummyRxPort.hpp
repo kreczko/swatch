@@ -26,6 +26,7 @@ public:
 private:
   uint32_t mChannelId;
   DummyProcDriver& mDriver;
+  core::Metric<bool>& mWarningSign;
 };
 
 

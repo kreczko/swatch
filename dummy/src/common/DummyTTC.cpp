@@ -1,6 +1,7 @@
 
 #include "swatch/dummy/DummyTTC.hpp"
 #include "swatch/dummy/DummyProcDriver.hpp"
+#include "swatch/core/MetricConditions.hpp"
 
 
 namespace swatch {
@@ -9,8 +10,10 @@ namespace dummy {
 
 DummyTTC::DummyTTC(DummyProcDriver& aDriver) :
   TTCInterface(),
-  mDriver(aDriver)
+  mDriver(aDriver),
+  mWarningSign(registerMetric<bool>("warningSign"))
 {
+  setWarningCondition<>(mWarningSign, core::EqualCondition<bool>(true));
 }
 
 
@@ -33,6 +36,8 @@ void DummyTTC::retrieveMetricValues()
 
   setMetricValue<>(metricSingleBitErrors_, s.errSingleBit);
   setMetricValue<>(metricDoubleBitErrors_, s.errDoubleBit);
+
+  setMetricValue<>(mWarningSign, s.warningSign);
 }
 
 

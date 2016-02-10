@@ -24,6 +24,9 @@ private:
   void retrieveMetricValues();
     
   DummyAMC13Driver& mDriver;
+  core::Metric<bool>& mOOS;
+  core::Metric<bool>& mTTSWarning;
+  core::Metric<uint64_t>& mAMCEventCount;
 };
 
 
@@ -36,6 +39,9 @@ private:
   void retrieveMetricValues();
     
   DummyAMC13Driver& mDriver;
+  core::Metric<bool>& mOOS;
+  core::Metric<bool>& mTTSWarning;
+  core::Metric<uint64_t>& mL1ACount;
 };
 
 
@@ -48,6 +54,10 @@ private:
   void retrieveMetricValues();
     
   DummyAMC13Driver& mDriver;
+  core::Metric<bool>& mCoreInitialised;
+  core::Metric<bool>& mBackPressure;
+  core::Metric<uint32_t>& mWordsSent;
+  core::Metric<uint32_t>& mPacketsSent;
 };
 
 
@@ -60,6 +70,12 @@ private:
   void retrieveMetricValues();
     
   DummyAMC13Driver& mDriver;
+  core::Metric<double>& mClockFreq;
+  core::Metric<uint32_t>& mBC0Counter;
+  core::Metric<uint32_t>& mErrCountBC0;
+  core::Metric<uint32_t>& mErrCountSingleBit;
+  core::Metric<uint32_t>& mErrCountDoubleBit;
+  core::Metric<bool>& mWarningSign;
 };
 
 

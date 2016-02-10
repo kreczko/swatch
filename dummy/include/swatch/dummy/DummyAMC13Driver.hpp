@@ -3,8 +3,9 @@
 #define	__SWATCH_DUMMY_DUMMYAMC13DRIVER_HPP__
 
 
-// boost headers
-#include "boost/date_time/posix_time/posix_time_types.hpp"
+#include <stdint.h>
+
+#include "swatch/dummy/ComponentState.hpp"
 
 
 namespace swatch {
@@ -13,10 +14,13 @@ namespace dummy {
  
 class DummyAMC13Driver {
 public:
-  
+
   // Forward declarations
   struct TTCStatus;
-    
+  struct EventBuilderStatus;
+  struct SLinkStatus;
+  struct AMCPortStatus;
+
   DummyAMC13Driver();
 
   ~DummyAMC13Driver();
@@ -25,24 +29,44 @@ public:
 
   uint16_t readFedId() const;  
 
+  EventBuilderStatus readEvbStatus() const;
+
+  SLinkStatus readSLinkStatus() const;
+
+  AMCPortStatus readAMCPortStatus(uint32_t aSlotId) const;
+
   void reboot();
   
-  void reset(size_t aWarnAfter, size_t aErrorAfter);
-  
-  void configureDaq(uint16_t fedId);
+  void reset();
 
-  void startDaq(size_t aWarnAfter, size_t aErrorAfter);
-  
+  void forceClkTtcState(ComponentState aNewState);
+
+  void configureEvb(uint16_t aFedId);
+
+  void forceEvbState(ComponentState aNewState);
+
+  void configureSLink(uint16_t aFedId);
+
+  void forceSLinkState(ComponentState aNewState);
+
+  void configureAMCPorts();
+
+  void forceAMCPortState(ComponentState aNewState);
+
+  void startDaq();
+
+  void stopDaq();
+
 private:
-  typedef boost::posix_time::ptime ptime;
-  
-  ptime mErrTimeReset;
-  ptime mErrTimeDaq;
-  ptime mWrnTimeReset;
-  ptime mWrnTimeDaq;
+
+  ComponentState mClkTtcState;
+  ComponentState mEvbState;
+  ComponentState mSLinkState;
+  ComponentState mAMCPortState;
+  bool mRunning;
 
   uint16_t mFedId;
-  
+
 public:
   struct TTCStatus {
     double clockFreq;
@@ -50,6 +74,26 @@ public:
     uint32_t errCountBC0;
     uint32_t errCountSingleBit;
     uint32_t errCountDoubleBit;
+    bool warningSign;
+  };
+  
+  struct EventBuilderStatus {
+    bool outOfSync;
+    bool ttsWarning;
+    uint64_t l1aCount;
+  };
+  
+  struct SLinkStatus {
+    bool coreInitialised;
+    bool backPressure;
+    uint32_t wordsSent;
+    uint32_t packetsSent;
+  };
+
+  struct AMCPortStatus {
+    bool outOfSync;
+    bool ttsWarning;
+    uint64_t amcEventCount;    
   };
   
 };

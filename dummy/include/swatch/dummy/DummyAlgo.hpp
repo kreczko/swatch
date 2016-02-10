@@ -24,6 +24,9 @@ public:
   
 private:
   DummyProcDriver& mDriver;
+
+  core::Metric<float>& mRateCounterA;
+  core::Metric<float>& mRateCounterB;
 };
 
 } // namespace dummy
