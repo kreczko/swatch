@@ -104,8 +104,10 @@ BOOST_AUTO_TEST_CASE(ObjectGetTests)
     BOOST_CHECK_EQUAL( & family.granpa->getObj("parentB.kidB2"), family.kidB2 );
     
     // 3) Check that throws correctly when invalid ID given
-    BOOST_CHECK_THROW( family.granpa->getObj("invalid_object_id"), std::runtime_error);
-    BOOST_CHECK_THROW( family.granpa->getObj("parentA.invalid_object_id"), std::runtime_error);
+    BOOST_CHECK_THROW( family.granpa->getObj("invalid_object_id"), ObjectDoesNotExist);
+    BOOST_CHECK_THROW( family.granpa->getObj("parentA.invalid_object_id"), ObjectDoesNotExist);
+    BOOST_CHECK_THROW( family.granpa->getObjPtr<DummyObject>("invalid_object_id"), ObjectDoesNotExist);
+    BOOST_CHECK_THROW( family.granpa->getObjPtr<DummyObject>("parentA.invalid_object_id"), ObjectDoesNotExist);
     
     // ...
     //TODO: Here, or in other test cases ... Check type, typeName, getPaths, template<T>getObj, getChildrenOfType
@@ -119,7 +121,7 @@ BOOST_AUTO_TEST_CASE(ObjectAddTests)
   
   // Setup: Add a dummy child
   DummyObject* child = new DummyObject("child");
-  BOOST_CHECK_THROW( anObject.getObj("child"), std::runtime_error);
+  BOOST_CHECK_THROW( anObject.getObj("child"), ObjectDoesNotExist);
   anObject.add(child);
   BOOST_CHECK_EQUAL( & anObject.getObj("child"), child);
   

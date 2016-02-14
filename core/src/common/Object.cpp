@@ -202,7 +202,7 @@ Object& Object::getObj(const std::string& aId) {
 
   if ((it = mObjectsChart.find(father)) == mObjectsChart.end()) {
     stringstream ss;
-    ss << "Object " << father << " not found in " << mId;
+    ss << "Object '" << father << "' not found in '" << getPath() << "'";
     throw ObjectDoesNotExist(ss.str());
   }
 
