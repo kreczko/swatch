@@ -21,6 +21,7 @@
 
 // SWATCH headers
 #include "swatch/core/exception.hpp"
+#include "swatch/core/Utilities.hpp"
 
 
 namespace swatch {
@@ -215,6 +216,26 @@ class Object : public boost::noncopyable
     Navigate down the dot-delimited path from the current object and return the target, dynamic cast to type T
     @param aId a dot-delimited path from the current object to the target
     @throw ObjectDoesNotExist if object of specified ID path doesn't exist
+    @throw ObjectFailedCast if object of specified ID path exists, but dynamic cast fails
+    @return the object indicated by the dot-delimited path, dynamic casted to type T
+  */
+  template<typename T>
+  T& getObj(const std::string& aId);
+
+  /**
+    Navigate down the dot-delimited path from the current object and return the target, dynamic cast to type T
+    @param aId a dot-delimited path from the current object to the target
+    @throw ObjectDoesNotExist if object of specified ID path doesn't exist
+    @throw ObjectFailedCast if object of specified ID path exists, but dynamic cast fails
+    @return the object indicated by the dot-delimited path, dynamic casted to type T
+  */
+  template<typename T>
+  const T& getObj(const std::string& aId) const;
+
+  /**
+    Navigate down the dot-delimited path from the current object and return the target, dynamic cast to type T
+    @param aId a dot-delimited path from the current object to the target
+    @throw ObjectDoesNotExist if object of specified ID path doesn't exist
     @return the object indicated by the dot-delimited path, dynamic casted to type T; NULL pointer if dynamic cast fails; or throw if the target doesn't exist
   */
   template<typename T>
@@ -323,6 +344,33 @@ protected:
 };
 
 
+DEFINE_SWATCH_EXCEPTION(InvalidObjectId);
+DEFINE_SWATCH_EXCEPTION(ObjectDoesNotExist);
+DEFINE_SWATCH_EXCEPTION(ObjectFailedCast);
+
+
+template<typename T>
+T& Object::getObj ( const std::string& aId )
+{
+  T* lObj = dynamic_cast<T*> ( & this->getObj(aId) );
+  if (lObj == NULL)
+    throw ObjectFailedCast("Could not cast descendent '" + aId + "' of object '" + getPath() + "' to type " + demangleName(typeid(T).name()));
+  else
+    return *lObj;
+}
+
+
+template<typename T>
+const T& Object::getObj ( const std::string& aId ) const
+{
+  const T* lObj = dynamic_cast<const T*> ( &getObj(aId) );
+  if (lObj == NULL)
+    throw ObjectFailedCast("Could not cast descendent '" + aId + "' of object '" + getPath() + "' to type " + demangleName(typeid(T).name()));
+  else
+    return *lObj;
+}
+
+
 template<typename T>
 T* Object::getObjPtr ( const std::string& aId )
 {
@@ -352,10 +400,6 @@ void Object::addObj (Object* aChild, T aDeleter)
   mChildren.push_back(std::make_pair(aChild, new T(aDeleter)));
   mObjectsChart.insert(std::make_pair(aChild->getId(), aChild));
 }
-
-
-DEFINE_SWATCH_EXCEPTION(InvalidObjectId);
-DEFINE_SWATCH_EXCEPTION(ObjectDoesNotExist);
 
 
 } // namespace core

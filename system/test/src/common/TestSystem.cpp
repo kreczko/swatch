@@ -144,8 +144,8 @@ BOOST_FIXTURE_TEST_CASE(AddCrate, Params)
 {
     emptyStub.crates.push_back(cA);
     swsys::System * system = new swsys::System(emptyStub);
-    swsys::Crate * stored_crate = system->getObjPtr<swsys::Crate>("crateA");
-    BOOST_CHECK_EQUAL(cA.id, stored_crate->getId() );
+    swsys::Crate& stored_crate = system->getObj<swsys::Crate>("crateA");
+    BOOST_CHECK_EQUAL(cA.id, stored_crate.getId() );
 }
 
 BOOST_FIXTURE_TEST_CASE(AddCrateToMap, Params)

@@ -16,7 +16,12 @@ using namespace swatch::core::test;
 namespace swatch {
 namespace core {
 namespace test{
-      
+
+//! Unused class that inherits from object; defined to test what happens when dynamic cast fails
+class OtherObject : public Object 
+{
+};
+
 struct TestFamily{
   TestFamily();
   ~TestFamily();
@@ -102,10 +107,20 @@ BOOST_AUTO_TEST_CASE(ObjectGetTests)
     BOOST_CHECK_EQUAL( & family.granpa->getObj("parentA.kidA2"), family.kidA2 );
     BOOST_CHECK_EQUAL( & family.granpa->getObj("parentB.kidB1"), family.kidB1 );
     BOOST_CHECK_EQUAL( & family.granpa->getObj("parentB.kidB2"), family.kidB2 );
-    
-    // 3) Check that throws correctly when invalid ID given
+    BOOST_CHECK_EQUAL( & family.granpa->getObj<DummyObject>("parentA.kidA1"), family.kidA1 );
+    BOOST_CHECK_EQUAL( & family.granpa->getObj<DummyObject>("parentA.kidA2"), family.kidA2 );
+    BOOST_CHECK_EQUAL( & family.granpa->getObj<DummyObject>("parentB.kidB1"), family.kidB1 );
+    BOOST_CHECK_EQUAL( & family.granpa->getObj<DummyObject>("parentB.kidB2"), family.kidB2 );
+
+    // 3a) Check behaviour when ID is correct, but cast fails
+    BOOST_CHECK_THROW( family.granpa->getObj<OtherObject>("parentA.kidA1"), ObjectFailedCast);
+    BOOST_CHECK_EQUAL( family.granpa->getObjPtr<OtherObject>("parentA.kidA1"), (OtherObject*) NULL );
+
+    // 3b) Check that throws correctly when invalid ID given
     BOOST_CHECK_THROW( family.granpa->getObj("invalid_object_id"), ObjectDoesNotExist);
     BOOST_CHECK_THROW( family.granpa->getObj("parentA.invalid_object_id"), ObjectDoesNotExist);
+    BOOST_CHECK_THROW( family.granpa->getObj<DummyObject>("invalid_object_id"), ObjectDoesNotExist);
+    BOOST_CHECK_THROW( family.granpa->getObj<DummyObject>("parentA.invalid_object_id"), ObjectDoesNotExist);
     BOOST_CHECK_THROW( family.granpa->getObjPtr<DummyObject>("invalid_object_id"), ObjectDoesNotExist);
     BOOST_CHECK_THROW( family.granpa->getObjPtr<DummyObject>("parentA.invalid_object_id"), ObjectDoesNotExist);
     

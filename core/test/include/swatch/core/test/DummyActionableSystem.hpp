@@ -39,7 +39,7 @@ ObjType& DummyActionableSystem::addActionable(ObjType* aChild)
 
   const std::string& childId = aChild->getId();
   ActionableSystem::addActionable(aChild);
-  return *getObjPtr<ObjType>(childId);
+  return getObj<ObjType>(childId);
 }
 
 }

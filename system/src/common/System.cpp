@@ -281,10 +281,10 @@ void System::addLinks()
   BOOST_FOREACH(auto& lStub, getStub().links)
   {
     try {
-      processor::OutputPort* srcPort = getObjPtr<processor::OutputPort>(lStub.src);
-      processor::InputPort*  dstPort = getObjPtr<processor::InputPort>(lStub.dst);
+      processor::OutputPort& lSrcPort = getObj<processor::OutputPort>(lStub.src);
+      processor::InputPort&  lDstPort = getObj<processor::InputPort>(lStub.dst);
     
-      system::Link* link = new system::Link(lStub.id, srcPort, dstPort);
+      system::Link* link = new system::Link(lStub.id, &lSrcPort, &lDstPort);
       add(link);
     }
     catch (const core::exception& e) {
