@@ -74,7 +74,7 @@ DummyProcessor::DummyProcessor(const swatch::core::AbstractStub& aStub) :
   // 4) State machines
   processor::RunControlFSM& lFSM = getRunControlFSM();
   lFSM.coldReset.add(reboot);
-  lFSM.setup.add(reboot).add(cfgSeq);
+  lFSM.setup.add(cfgSeq);
   lFSM.configure.add(cfgAlgo);
   lFSM.align.add(cfgRx);
   lFSM.fsm.addTransition("dummyNoOp", processor::RunControlFSM::kStateAligned, processor::RunControlFSM::kStateInitial);
