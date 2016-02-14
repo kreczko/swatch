@@ -41,7 +41,7 @@ const std::deque<InputPort*>& InputPortCollection::getPorts()
 
 InputPort& InputPortCollection::getPort( const std::string& aId )
 {
-  if (InputPort* in = getObj<InputPort>( aId ))
+  if (InputPort* in = getObjPtr<InputPort>( aId ))
     return *in;
   else
     throw std::runtime_error("PortCollection \"" + this->getPath() + "\" does not contain any input port of ID \"" + aId + "\"");
@@ -89,7 +89,7 @@ const std::deque<OutputPort*>& OutputPortCollection::getPorts()
 
 OutputPort& OutputPortCollection::getPort( const std::string& aId )
 {
-  if (OutputPort* in = getObj<OutputPort>( aId ))
+  if (OutputPort* in = getObjPtr<OutputPort>( aId ))
     return *in;
   else
     throw std::runtime_error("PortCollection \"" + this->getPath() + "\" does not contain any input port of ID \"" + aId + "\"");

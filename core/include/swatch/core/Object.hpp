@@ -198,6 +198,7 @@ class Object : public boost::noncopyable
   /**
     Navigate down the dot-delimited path from the current object and return the target
     @param aId a dot-delimited path from the current object to the target
+    @throw ObjectDoesNotExist if object of specified ID path doesn't exist
     @return the object indicated by the dot-delimited path, or throw if the target doesn't exist
   */
   Object& getObj ( const std::string& aId );
@@ -205,6 +206,7 @@ class Object : public boost::noncopyable
   /**
     Navigate down the dot-delimited path from the current object and return the target
     @param aId a dot-delimited path from the current object to the target
+    @throw ObjectDoesNotExist if object of specified ID path doesn't exist
     @return the object indicated by the dot-delimited path, or throw if the target doesn't exist
   */
   const Object& getObj ( const std::string& aId ) const;
@@ -212,19 +214,20 @@ class Object : public boost::noncopyable
   /**
     Navigate down the dot-delimited path from the current object and return the target, dynamic cast to type T
     @param aId a dot-delimited path from the current object to the target
-    @return the object indicated by the dot-delimited path, dynamic casted to type T, or throw if the target doesn't exist
+    @throw ObjectDoesNotExist if object of specified ID path doesn't exist
+    @return the object indicated by the dot-delimited path, dynamic casted to type T; NULL pointer if dynamic cast fails; or throw if the target doesn't exist
   */
   template<typename T>
-  T* getObj ( const std::string& aId );
+  T* getObjPtr ( const std::string& aId );
 
   /**
     Navigate down the dot-delimited path from the current object and return the target, dynamic cast to type T
     @param aId a dot-delimited path from the current object to the target
-    @return the object indicated by the dot-delimited path, dynamic casted to type T, or throw if the target doesn't exist
+    @throw ObjectDoesNotExist if object of specified ID path doesn't exist
+    @return the object indicated by the dot-delimited path, dynamic casted to type T; NULL pointer if dynamic cast fails; or throw if the target doesn't exist
   */
-
   template<typename T>
-  const T* getObj ( const std::string& aId ) const;
+  const T* getObjPtr ( const std::string& aId ) const;
 
 //         template<typename T>
 //         std::deque<T*> getChildrenOfType();
@@ -321,14 +324,14 @@ protected:
 
 
 template<typename T>
-T* Object::getObj ( const std::string& aId )
+T* Object::getObjPtr ( const std::string& aId )
 {
   return dynamic_cast<T*> ( & this->getObj ( aId ) );
 }
 
 
 template<typename T>
-const T* Object::getObj ( const std::string& aId ) const
+const T* Object::getObjPtr ( const std::string& aId ) const
 {
   return dynamic_cast<const T*> ( & this->getObj ( aId ) );
 }
@@ -352,6 +355,7 @@ void Object::addObj (Object* aChild, T aDeleter)
 
 
 DEFINE_SWATCH_EXCEPTION(InvalidObjectId);
+DEFINE_SWATCH_EXCEPTION(ObjectDoesNotExist);
 
 
 } // namespace core

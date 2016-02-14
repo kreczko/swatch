@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE(TestDefaultMonitorableObjectsList) {
 
   for(auto it=Processor::kDefaultMonitorableObjects.begin(); it != Processor::kDefaultMonitorableObjects.end(); it++)
   {
-    BOOST_CHECK_NE(p.getObj<core::MonitorableObject>(*it), (swatch::core::MonitorableObject*)NULL);
+    BOOST_CHECK_NE(p.getObjPtr<core::MonitorableObject>(*it), (swatch::core::MonitorableObject*)NULL);
   }
 }
 

@@ -203,7 +203,7 @@ Object& Object::getObj(const std::string& aId) {
   if ((it = mObjectsChart.find(father)) == mObjectsChart.end()) {
     stringstream ss;
     ss << "Object " << father << " not found in " << mId;
-    throw runtime_error(ss.str());
+    throw ObjectDoesNotExist(ss.str());
   }
 
   if (child.empty()) {
@@ -231,7 +231,7 @@ const Object& Object::getObj(const std::string& aId) const {
   if ((it = mObjectsChart.find(father)) == mObjectsChart.end()) {
     stringstream ss;
     ss << "Object " << father << " not found in " << mId;
-    throw runtime_error(ss.str());
+    throw ObjectDoesNotExist(ss.str());
   }
 
   if (child.empty()) {

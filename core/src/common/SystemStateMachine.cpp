@@ -161,7 +161,7 @@ SystemTransition& SystemTransition::add(const std::vector<StateMachine::Transiti
     std::vector<std::string> children = mFSM.getActionable().getChildren();
     for(std::vector<std::string>::const_iterator lIt2=children.begin(); lIt2!=children.end(); lIt2++)
     {
-      ActionableObject* lChild = mFSM.getActionable().getObj<ActionableObject>(*lIt2);
+      ActionableObject* lChild = mFSM.getActionable().getObjPtr<ActionableObject>(*lIt2);
       if( &lObj == lChild )
         isChild = true;
     }

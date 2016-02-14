@@ -420,7 +420,7 @@ void StateMachine::extractMonitoringSettings(const GateKeeper& aGateKeeper, cons
   const ActionableObject& lResource = getActionable();
   std::vector<std::string> lDescendants = lResource.getDescendants();
   for (std::vector<std::string>::const_iterator lIt = lDescendants.begin(); lIt != lDescendants.end(); lIt++) {
-    const MonitorableObject* lDescendant = lResource.getObj<MonitorableObject>(*lIt);
+    const MonitorableObject* lDescendant = lResource.getObjPtr<MonitorableObject>(*lIt);
 
     if (lDescendant) {
       // query the GateKeeper for relevant settings for each object
@@ -453,7 +453,7 @@ void StateMachine::applyMonitoringSettings(const MonitoringSettings_t& aSettings
   std::vector<std::string> lDescendants = lResource.getDescendants();
   
   for (std::vector<std::string>::const_iterator lIt = lDescendants.begin(); lIt != lDescendants.end(); lIt++) {
-    MonitorableObject* lDescendant = lResource.getObj<MonitorableObject>(*lIt);
+    MonitorableObject* lDescendant = lResource.getObjPtr<MonitorableObject>(*lIt);
     
     if (lDescendant) {
       // query the GateKeeper for relevant settings for each object

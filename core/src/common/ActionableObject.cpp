@@ -183,7 +183,7 @@ void ActionableObject::resetAndApplyMasks(const GateKeeper& aGateKeeper)
   std::vector<std::string> lDescendants = getDescendants();
   for(std::vector<std::string>::const_iterator lIdIt=lDescendants.begin(); lIdIt!=lDescendants.end(); lIdIt++)
   {
-    if(MaskableObject* lMaskableObj = getObj<MaskableObject>(*lIdIt))
+    if(MaskableObject* lMaskableObj = getObjPtr<MaskableObject>(*lIdIt))
       lMaskableObj->setMasked( aGateKeeper.getMask(*lIdIt, this->getGateKeeperContexts()) );
   }
 }
