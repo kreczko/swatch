@@ -69,7 +69,7 @@ DummyProcessor::DummyProcessor(const swatch::core::AbstractStub& aStub) :
 
   // 3) Command sequences
   core::CommandSequence& cfgSeq = registerSequence("configPartA", reset).then(cfgDaq).then(cfgTx);
-  registerSequence("fullReconfigure", reboot).then(reset).then(cfgDaq).then(cfgAlgo).then(cfgRx).then(cfgTx);
+  registerSequence("fullReconfigure", reset).then(cfgDaq).then(cfgAlgo).then(cfgRx).then(cfgTx);
 
   // 4) State machines
   processor::RunControlFSM& lFSM = getRunControlFSM();
