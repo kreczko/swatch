@@ -10,14 +10,15 @@
 
 // SWATCH headers
 #include "swatch/processor/Utilities.hpp"
+#include "swatch/core/Utilities.hpp"
 #include "swatch/processor/ProcessorStub.hpp"
 #include "swatch/dtm/DaqTTCStub.hpp"
 #include "swatch/system/CrateStub.hpp"
 #include "swatch/core/toolbox/IdSliceParser.hpp"
 
 // boost headers
-#include "boost/foreach.hpp"
-#include "boost/lexical_cast.hpp"
+#include <boost/foreach.hpp>
+#include <boost/lexical_cast.hpp>
 
 namespace swatch {
 namespace dtm {
@@ -28,6 +29,21 @@ namespace dtm {
 swatch::dtm::DaqTTCStub
 treeToDaqTTCStub(const boost::property_tree::ptree& aPTree)
 {
+  std::set<std::string> expected = {
+    "NAME",
+    "CREATOR",
+    "ROLE",
+    "URI T1",
+    "ADDRESS TABLE T1",
+    "URI T2",
+    "ADDRESS TABLE T2",
+    "CRATE NAME",
+    "CRATE SLOT",
+    "FED ID"
+  };
+  
+  core::checkPtreeEntries(aPTree, expected);
+  
   DaqTTCStub aStub(aPTree.get<std::string>("NAME"));
 
   aStub.creator = aPTree.get<std::string>("CREATOR");
@@ -57,7 +73,13 @@ namespace system {
 swatch::system::CrateStub
 treeToCrateStub(const boost::property_tree::ptree& aPTree)
 {
-
+  std::set<std::string> expected = {
+    "NAME",
+    "LOCATION",
+    "DESCRIPTION"
+  };
+  core::checkPtreeEntries(aPTree, expected);
+  
   CrateStub astub(aPTree.get<std::string>("NAME"));
 
   astub.location = aPTree.get<std::string>("LOCATION");
@@ -74,16 +96,27 @@ swatch::system::SystemStub
 treeToSystemStub(const boost::property_tree::ptree& aPTree)
 {
   using boost::property_tree::ptree;
-  using boost::property_tree::json_parser::read_json;
 
 
-  const ptree &pt_system = aPTree.get_child("SYSTEM");
-  SystemStub aStub(pt_system.get<std::string>("NAME"));
+  const ptree &lPTSystem = aPTree.get_child("SYSTEM");
+
+  std::set<std::string> expected = {
+    "SYSTEM",
+    "NAME",
+    "CREATOR",
+    "CRATES",
+    "PROCESSORS",
+    "DAQTTCS",
+    "LINKS"
+  };
+  core::checkPtreeEntries(lPTSystem, expected);
+
+  SystemStub aStub(lPTSystem.get<std::string>("NAME"));
   aStub.loggerName = aStub.id;
-  aStub.creator = pt_system.get<std::string>("CREATOR");
+  aStub.creator = lPTSystem.get<std::string>("CREATOR");
 
 
-  BOOST_FOREACH(const ptree::value_type &v, pt_system.get_child("CRATES"))
+  BOOST_FOREACH(const ptree::value_type &v, lPTSystem.get_child("CRATES"))
   {
     aStub.crates.emplace_back(
         swatch::system::treeToCrateStub(v.second)
@@ -91,7 +124,7 @@ treeToSystemStub(const boost::property_tree::ptree& aPTree)
   }
 
 
-  BOOST_FOREACH(const ptree::value_type &v, pt_system.get_child("PROCESSORS"))
+  BOOST_FOREACH(const ptree::value_type &v, lPTSystem.get_child("PROCESSORS"))
   {
     swatch::processor::ProcessorStub lProcStub(swatch::processor::treeToProcessorStub(v.second));
     lProcStub.loggerName = aStub.id + "." + lProcStub.id;
@@ -99,7 +132,7 @@ treeToSystemStub(const boost::property_tree::ptree& aPTree)
   }
 
 
-  BOOST_FOREACH(const ptree::value_type &v, pt_system.get_child("DAQTTCS"))
+  BOOST_FOREACH(const ptree::value_type &v, lPTSystem.get_child("DAQTTCS"))
   {
     swatch::dtm::DaqTTCStub lDaqTTCStub(swatch::dtm::treeToDaqTTCStub(v.second));
     lDaqTTCStub.loggerName = aStub.id + "." + lDaqTTCStub.id;
@@ -107,7 +140,7 @@ treeToSystemStub(const boost::property_tree::ptree& aPTree)
   }
 
 
-  BOOST_FOREACH(const ptree::value_type& v, pt_system.get_child("LINKS"))
+  BOOST_FOREACH(const ptree::value_type& v, lPTSystem.get_child("LINKS"))
   {
     swatch::system::treeToLinkStub(v.second, aStub.links);
   }
@@ -127,15 +160,15 @@ treeToSystemStub(const boost::property_tree::ptree& aPTree)
 
 void treeToLinkStub(const boost::property_tree::ptree& aPTree, std::vector<LinkStub>& aLinkStubs)
 {
+  
+  std::set<std::string> expected = {"NAME", "RX", "RX PORT", "TX", "TX PORT"};
+  core::checkPtreeEntries(aPTree, expected);
+  
   const std::string name = aPTree.get<std::string>("NAME");
   const std::string src = aPTree.get<std::string>("RX");
   const std::string srcPort = aPTree.get<std::string>("RX PORT");
   const std::string dst = aPTree.get<std::string>("TX");
   const std::string dstPort = aPTree.get<std::string>("TX PORT");
-
-  //    expandLinkSliceSyntax(name, src, dst, aLinkStubs);
-  //    pushBackLinkStubs(aLinkStubs, name, src, srcPort, dst, dstPort);
-
 
   std::vector<std::string> names = core::toolbox::IdSliceParser::parse(name);
 
@@ -168,26 +201,6 @@ void treeToLinkStub(const boost::property_tree::ptree& aPTree, std::vector<LinkS
     aLinkStubs.push_back(b);
   }
 }
-
-
-//void pushBackLinkStubs(std::vector<LinkStub>& aLinkStubs, const std::string& aName, const std::string& aSrc, const std::string& aSrcPort, const std::string& aDst, const std::string& aDstPort)
-//{
-//  std::vector<std::string> names = core::toolbox::IdSliceParser::parse(aName);
-//  std::vector<std::string> src = core::toolbox::IdSliceParser::parse(aSrcPort);
-//  std::vector<std::string> dst = core::toolbox::IdSliceParser::parse(aDstPort);
-//
-//  if (names.size() != src.size())
-//    throw std::runtime_error(boost::lexical_cast<std::string>(names.size()) + " link names created from name \"" + aName + "\" using slice syntax, but " + boost::lexical_cast<std::string>(src.size()) + " source IDs created from \"" + aSrc + "\"");
-//  else if (names.size() != dst.size())
-//    throw std::runtime_error(boost::lexical_cast<std::string>(names.size()) + " link names created from name \"" + aName + "\" using slice syntax, but " + boost::lexical_cast<std::string>(dst.size()) + " destination IDs created from \"" + aDst + "\"");
-//
-//  for (size_t i = 0; i < names.size(); i++) {
-//    LinkStub b(names.at(i));
-//    b.srcPort = src.at(i);
-//    b.dstPort = dst.at(i);
-//    aLinkStubs.push_back(b);
-//  }
-//}
 
 
 } // namespace system

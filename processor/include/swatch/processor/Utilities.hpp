@@ -22,9 +22,6 @@ ProcessorStub treeToProcessorStub(const boost::property_tree::ptree& aPTree);
 
 void pushBackPortStubs(std::vector<ProcessorPortStub>& aPortStubs, const std::string& aName, const std::string& aIndex);
 
-
-DEFINE_SWATCH_EXCEPTION(FailedJSONParsing);
-
 } // namespace processor
 } // namespace swatch
 

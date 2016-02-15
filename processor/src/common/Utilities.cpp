@@ -21,6 +21,7 @@
 // SWATCH headers
 #include "swatch/processor/ProcessorStub.hpp"
 #include "swatch/core/toolbox/IdSliceParser.hpp"
+#include "swatch/core/Utilities.hpp"
 
 
 namespace swatch {
@@ -32,6 +33,21 @@ ProcessorStub
 treeToProcessorStub(const boost::property_tree::ptree& aPTree)
 {
   
+      std::set<std::string> expected = {
+      "NAME",
+      "CREATOR",
+      "CREATOR",
+      "HARDWARE TYPE",
+      "ROLE",
+      "URI",
+      "ADDRESS TABLE",
+      "CRATE NAME",
+      "CRATE SLOT",
+      "RX PORTS",
+      "TX PORTS"
+    };
+    core::checkPtreeEntries(aPTree, expected);
+
     // Fill the stub with basic info
  
   
@@ -53,7 +69,7 @@ treeToProcessorStub(const boost::property_tree::ptree& aPTree)
         std::ostringstream msg;
         msg << "Failed to parse processor '" << pStub.id << "' rx ports" << std::endl;
         msg << "Details: " << e.what();
-        throw FailedJSONParsing( msg.str() );
+        throw core::FailedJSONParsing( msg.str() );
       }
     }
     
@@ -66,7 +82,7 @@ treeToProcessorStub(const boost::property_tree::ptree& aPTree)
         std::ostringstream msg;
         msg << "Failed to parse processor '" << pStub.id << "' tx ports" << std::endl;
         msg << "Details: " << e.what();
-        throw FailedJSONParsing( msg.str() );
+        throw core::FailedJSONParsing( msg.str() );
       }
     }
     
