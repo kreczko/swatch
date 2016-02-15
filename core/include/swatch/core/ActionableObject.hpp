@@ -103,8 +103,19 @@ public:
   Status_t getStatus() const;
   
   log4cplus::Logger& getLogger();
+  
+  void enable();
+  
+  void enable( const ActionableStatusGuard& lGuard );
+
+  void disable();
+
+  void disable( const ActionableStatusGuard& lGuard );
+
 
   void resetAndApplyMasks(const GateKeeper& aGateKeeper);
+
+  void resetAndApplyMasks(const GateKeeper& aGateKeeper, const ActionableStatusGuard& lGuard);
 
 
   typedef boost::unordered_map< std::string , CommandSequence* > CommandSequenceMap_t;

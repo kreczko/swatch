@@ -176,10 +176,55 @@ ActionableObject::Status_t ActionableObject::getStatus() const
   return mStatus.getSnapshot(lGuard);
 }
 
+//------------------------------------------------------------------------------------
+void ActionableObject::enable()
+{
+  ActionableStatusGuard lGuard(mStatus);
+//  mStatus.enable(lGuard);
+  enable(lGuard);
+}
+
+//------------------------------------------------------------------------------------
+void ActionableObject::enable( const ActionableStatusGuard& lGuard)
+{
+  mStatus.enable(lGuard);
+}
+
+//------------------------------------------------------------------------------------
+void ActionableObject::disable()
+{
+  ActionableStatusGuard lGuard(mStatus);
+//  mStatus.disable(lGuard);
+  disable(lGuard);
+}
+
+//------------------------------------------------------------------------------------
+void ActionableObject::disable(const ActionableStatusGuard& lGuard )
+{
+  mStatus.disable(lGuard);
+}
+
 
 //------------------------------------------------------------------------------------
 void ActionableObject::resetAndApplyMasks(const GateKeeper& aGateKeeper)
 {
+  
+    ActionableStatusGuard lGuard(mStatus);
+//
+//  std::vector<std::string> lDescendants = getDescendants();
+//  for(std::vector<std::string>::const_iterator lIdIt=lDescendants.begin(); lIdIt!=lDescendants.end(); lIdIt++)
+//  {
+//    if(MaskableObject* lMaskableObj = getObj<MaskableObject>(*lIdIt))
+//      lMaskableObj->setMasked( aGateKeeper.getMask(*lIdIt, this->getGateKeeperContexts()) );
+//  }
+    
+    resetAndApplyMasks(aGateKeeper, lGuard);
+}
+
+//------------------------------------------------------------------------------------
+void ActionableObject::resetAndApplyMasks(const GateKeeper& aGateKeeper, const ActionableStatusGuard& lGuard)
+{
+//  ActionableStatusGuard lGuard(mStatus);
   std::vector<std::string> lDescendants = getDescendants();
   for(std::vector<std::string>::const_iterator lIdIt=lDescendants.begin(); lIdIt!=lDescendants.end(); lIdIt++)
   {
