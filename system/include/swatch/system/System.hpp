@@ -94,10 +94,12 @@ struct RunControlFSM : boost::noncopyable {
   core::SystemTransition& pause;
   //! The 'resume' transition (paused state to running state)
   core::SystemTransition& resume;
-  //! The 'stop' transition from paused state, to configured state
-  core::SystemTransition& stopFromPaused;
+  //! The 'stop' transition from aligned state, to configured state
+  core::SystemTransition& stopFromAligned;
   //! The 'stop' transition from running state, to configured state
   core::SystemTransition& stopFromRunning;
+  //! The 'stop' transition from paused state, to configured state
+  core::SystemTransition& stopFromPaused;
   
   RunControlFSM(core::SystemStateMachine& aFSM);
   
