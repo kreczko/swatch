@@ -108,7 +108,7 @@ void MaskingConfigurator::apply( const FEDEnableMap_t& aFEDEnableMap  )
     if ( (itFED = aFEDEnableMap.find(lPair.first)) != aFEDEnableMap.end() and itFED->second != 0) continue;
     
     BOOST_FOREACH( const std::string& path, lPair.second) {
-      swatch::core::MaskableObject* lMaskable = mSystem.getObj<swatch::core::MaskableObject>(path);
+      swatch::core::MaskableObject* lMaskable = mSystem.getObjPtr<swatch::core::MaskableObject>(path);
       
       // I should really throw here
       if ( !lMaskable ) continue;

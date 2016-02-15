@@ -286,8 +286,8 @@ void System::addLinks()
   BOOST_FOREACH(auto& lStub, getStub().links)
   {
     try {
-      processor::Processor*  srcProcessor = getObj<processor::Processor>(lStub.srcProcessor);
-      processor::Processor*  dstProcessor = getObj<processor::Processor>(lStub.dstProcessor);
+      processor::Processor*  srcProcessor = getObjPtr<processor::Processor>(lStub.srcProcessor);
+      processor::Processor*  dstProcessor = getObjPtr<processor::Processor>(lStub.dstProcessor);
       processor::InputPort* srcPort = &(srcProcessor->getInputPorts().getPort(lStub.srcPort));
       processor::OutputPort*  dstPort = &(dstProcessor->getOutputPorts().getPort(lStub.dstPort));
       
@@ -312,7 +312,7 @@ void System::validateConnectedFEDs()
     BOOST_FOREACH(std::string id, fed.second) {
       try {
         // Continue if id exists and can be cast to an input port.
-        if ( this->getObj<processor::InputPort>(id) ) continue;        
+        if ( this->getObjPtr<processor::InputPort>(id) ) continue;        
         lMissing[fed.first].push_back(id);
         
       } catch ( std::runtime_error& e ) {
