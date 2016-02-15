@@ -66,6 +66,7 @@ core::StateMachine& RunControlFSM::addStates(core::StateMachine& aFSM)
   aFSM.addState(kStateSync);
   aFSM.addState(kStateConfigured);
   aFSM.addState(kStateAligned);
+  aFSM.addState(kStateRunning);
   return aFSM;
 }
 
