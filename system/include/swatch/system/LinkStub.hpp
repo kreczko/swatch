@@ -27,12 +27,17 @@ public:
 
   virtual ~LinkStub() { }
 
-
+  //! Name of the source processor
+  std::string srcProcessor;
+  
   //! Name of the source port
-  std::string src;
+  std::string srcPort;
 
   //! Name of the destination port
-  std::string dst;
+  std::string dstProcessor;
+  
+    //! Name of the destination port
+  std::string dstPort;
 };
 
 

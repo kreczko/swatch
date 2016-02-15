@@ -33,7 +33,7 @@ CrateStub treeToCrateStub( const boost::property_tree::ptree& t );
 
 void treeToLinkStub(const boost::property_tree::ptree& aPTree, std::vector<LinkStub>& aLinkStubs);
 
-void pushBackLinkStubs(std::vector<LinkStub>& aLinkStubs, const std::string& aName, const std::string& aSrc, const std::string& aDst);
+//void pushBackLinkStubs(std::vector<LinkStub>& aLinkStubs, const std::string& aName, const std::string& aSrc, const std::string& aDst);
 
 
 } // namespace system

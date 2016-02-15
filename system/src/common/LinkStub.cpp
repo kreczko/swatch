@@ -16,8 +16,8 @@ namespace system {
 std::ostream& operator<<(std::ostream& aStream, const swatch::system::LinkStub& aStub)
 {    
     aStream << "LinkStub[" << aStub.id << "]:\n"
-       << "   - source port = " << aStub.src << "\n"
-       << "   - destination port = " << aStub.dst << "\n"
+       << "   - source processor = " << aStub.srcProcessor << ", port = " << aStub.srcPort << "\n"
+       << "   - destination processor = " << aStub.dstProcessor << ", port = " << aStub.dstPort << "\n"
        << std::flush;
 
     return aStream;

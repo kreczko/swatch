@@ -20,6 +20,7 @@
 #include "swatch/system/Crate.hpp"
 #include "swatch/system/Service.hpp"
 #include "swatch/dtm/DaqTTCManager.hpp"
+#include "swatch/processor/PortCollection.hpp"
 
 
 SWATCH_REGISTER_CLASS(swatch::system::System)
@@ -281,10 +282,15 @@ void System::addLinks()
   BOOST_FOREACH(auto& lStub, getStub().links)
   {
     try {
-      processor::OutputPort& lSrcPort = getObj<processor::OutputPort>(lStub.src);
-      processor::InputPort&  lDstPort = getObj<processor::InputPort>(lStub.dst);
+      processor::Processor*  srcProcessor = getObj<processor::Processor>(lStub.srcProcessor);
+      processor::Processor*  dstProcessor = getObj<processor::Processor>(lStub.dstProcessor);
+      processor::InputPort* srcPort = &(srcProcessor->getInputPorts().getPort(lStub.srcPort));
+      processor::OutputPort*  dstPort = &(dstProcessor->getOutputPorts().getPort(lStub.dstPort));
+      
+//      processor::OutputPort* srcPort = getObj<processor::OutputPort>(lStub.srcPort);
+//      processor::InputPort*  dstPort = getObj<processor::InputPort>(lStub.dstPort);
     
-      system::Link* link = new system::Link(lStub.id, &lSrcPort, &lDstPort);
+      system::Link* link = new system::Link(lStub.id, dstProcessor, dstPort, srcProcessor, srcPort);
       add(link);
     }
     catch (const core::exception& e) {
