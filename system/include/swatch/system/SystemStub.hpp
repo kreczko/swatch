@@ -27,7 +27,7 @@ namespace system {
 class SystemStub : public swatch::core::AbstractStub {
 public:
   
-  typedef std::map<uint32_t, std::vector<std::string> > Fed2ObjMap_t;
+  typedef std::map<uint32_t, std::vector<std::string> > FEDInputPortsMap;
   SystemStub(const std::string& aId) :
     AbstractStub(aId) { }
 
@@ -49,7 +49,7 @@ public:
 
   std::vector<swatch::system::LinkStub> links;
   
-  Fed2ObjMap_t connectedFEDs;
+  FEDInputPortsMap connectedFEDs;
 };
 
 

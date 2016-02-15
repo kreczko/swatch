@@ -307,7 +307,7 @@ void System::validateConnectedFEDs()
 {
 
   // Loop over FEdConnection map to check that all referenced objects exist and are InputPorts
-  SystemStub::Fed2ObjMap_t lMissing;  
+  SystemStub::FEDInputPortsMap lMissing;  
   BOOST_FOREACH( auto fed, getStub().connectedFEDs ) {
     BOOST_FOREACH(std::string id, fed.second) {
       try {
