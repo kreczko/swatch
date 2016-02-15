@@ -32,7 +32,8 @@ DummySystem::DummySystem(const swatch::core::AbstractStub& aStub) :
 
   fsm.align.add(getProcessors(), ProcFSM_t::kStateConfigured, ProcFSM_t::kTrAlign);
 
-  fsm.start.add(getDaqTTCs(), DaqTTCFSM_t::kStateConfigured, DaqTTCFSM_t::kTrStart);
+  fsm.start.add(getProcessors(), ProcFSM_t::kStateAligned, ProcFSM_t::kTrStart)
+           .add(getDaqTTCs(), DaqTTCFSM_t::kStateConfigured, DaqTTCFSM_t::kTrStart);
 
   fsm.pause.add(getDaqTTCs(), DaqTTCFSM_t::kStateRunning, DaqTTCFSM_t::kTrPause);
 
@@ -41,10 +42,10 @@ DummySystem::DummySystem(const swatch::core::AbstractStub& aStub) :
   fsm.stopFromAligned.add(getProcessors(), ProcFSM_t::kStateAligned, ProcFSM_t::kTrStop);
 
   fsm.stopFromRunning.add(getDaqTTCs(), DaqTTCFSM_t::kStateRunning, DaqTTCFSM_t::kTrStop)
-                     .add(getProcessors(), ProcFSM_t::kStateAligned, ProcFSM_t::kTrStop);
+                     .add(getProcessors(), ProcFSM_t::kStateRunning, ProcFSM_t::kTrStop);
 
   fsm.stopFromPaused.add(getDaqTTCs(), DaqTTCFSM_t::kStatePaused, DaqTTCFSM_t::kTrStop)
-                    .add(getProcessors(), ProcFSM_t::kStateAligned, ProcFSM_t::kTrStop);
+                    .add(getProcessors(), ProcFSM_t::kStateRunning, ProcFSM_t::kTrStop);
 }
 
 

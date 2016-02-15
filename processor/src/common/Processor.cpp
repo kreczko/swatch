@@ -37,11 +37,13 @@ const std::string RunControlFSM::kStateError = "Error";
 const std::string RunControlFSM::kStateSync = "Synchronised";
 const std::string RunControlFSM::kStateConfigured = "Configured";
 const std::string RunControlFSM::kStateAligned = "Aligned";
+const std::string RunControlFSM::kStateRunning = "Running";
 
 const std::string RunControlFSM::kTrColdReset = "coldReset";
 const std::string RunControlFSM::kTrSetup = "setup";
 const std::string RunControlFSM::kTrConfigure = "configure";
 const std::string RunControlFSM::kTrAlign = "align";
+const std::string RunControlFSM::kTrStart = "start";
 const std::string RunControlFSM::kTrStop = "stop";
 
 
@@ -52,7 +54,9 @@ RunControlFSM::RunControlFSM(core::StateMachine& aFSM) :
   setup( fsm.addTransition(kTrSetup, kStateInitial, kStateSync ) ),
   configure( fsm.addTransition(kTrConfigure, kStateSync, kStateConfigured) ),
   align( fsm.addTransition(kTrAlign, kStateConfigured, kStateAligned) ),
-  stop( fsm.addTransition(kTrStop, kStateAligned, kStateConfigured) )
+  start( fsm.addTransition(kTrStart, kStateAligned, kStateRunning) ),
+  stopFromAligned( fsm.addTransition(kTrStop, kStateAligned, kStateConfigured) ),
+  stopFromRunning( fsm.addTransition(kTrStop, kStateRunning, kStateConfigured) )
 {
 }
 

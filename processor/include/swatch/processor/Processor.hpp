@@ -50,6 +50,8 @@ struct RunControlFSM : public boost::noncopyable {
   static const std::string kStateConfigured;
   //! Aligned state
   static const std::string kStateAligned;
+  //! Running state
+  static const std::string kStateRunning;
 
   //! Cold reset transition (initial state to initial state)
   static const std::string kTrColdReset;
@@ -59,7 +61,9 @@ struct RunControlFSM : public boost::noncopyable {
   static const std::string kTrConfigure;
   //! ID string for the 'align' transition (configured state to aligned state)
   static const std::string kTrAlign;
-  //! ID string for the 'stop' transition (aligned state to configured state)
+  //! ID string for the 'start' transition (aligned state to running state)
+  static const std::string kTrStart;
+  //! ID string for the 'stop' transition (aligned/running state to configured state)
   static const std::string kTrStop;
 
   //! The run control FSM object
@@ -72,8 +76,12 @@ struct RunControlFSM : public boost::noncopyable {
   core::StateMachine::Transition& configure;
   //! The 'align' transition (configured state to aligned state)
   core::StateMachine::Transition& align;
-  //! The 'stop' transition (aligned state to configured state)
-  core::StateMachine::Transition& stop;
+  //! The 'start' transition (aligned state to running state)
+  core::StateMachine::Transition& start;
+  //! The 'stop' transition from aligned state, to configured state
+  core::StateMachine::Transition& stopFromAligned;
+  //! The 'stop' transition from running state to configured state
+  core::StateMachine::Transition& stopFromRunning;
 
   RunControlFSM(core::StateMachine& aFSM);
 
