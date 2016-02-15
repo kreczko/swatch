@@ -27,6 +27,8 @@
 // Boost Headers
 #include <boost/foreach.hpp>
 
+#include <log4cplus/loggingmacros.h>
+
 namespace swatch {
 namespace system {
 
@@ -50,7 +52,7 @@ void MaskingConfigurator::apply( const FEDEnableMap_t& aFEDEnableMap  )
     // Disable amc13 is FEDEnableMap says so
     FEDEnableMap_t::const_iterator it;
     if ((it = aFEDEnableMap.find(lAmc13->getFedId())) != aFEDEnableMap.end() and it->second == 0) {
-//      LOG4CPLUS_INFO(mLogger, "> Masking AMC13 " << lAmc13->getId() << ", FED " << lAmc13->getFedId() << ", value " << it->second);
+      LOG4CPLUS_INFO(mSystem.getLogger(), "> Masking AMC13 " << lAmc13->getId() << ", FED " << lAmc13->getFedId() << ", value " << it->second);
       lAmc13->disable();
     }
 

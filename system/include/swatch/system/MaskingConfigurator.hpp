@@ -11,24 +11,21 @@
  * Created on February 15, 2016, 9:02 AM
  */
 
-#ifndef MASKINGCONFIGURATOR_HPP
-#define MASKINGCONFIGURATOR_HPP
+#ifndef __SWATCH_SYSTEM_MASKINGCONFIGURATOR_HPP__
+#define __SWATCH_SYSTEM_MASKINGCONFIGURATOR_HPP__
 
 // C++ Headers
 #include <map>
 #include <stdint.h>
 
 namespace swatch {
-// Frward declaration
+// Forward declaration
 namespace core {
 class GateKeeper;
 }
 
 namespace system {
 class System;
-}
-
-namespace system {
 
 class MaskingConfigurator {
 public:
@@ -48,5 +45,5 @@ private:
 } // namespace system
 } //namespace swatch
 
-#endif /* MASKINGCONFIGURATOR_HPP */
+#endif /* __SWATCH_SYSTEM_MASKINGCONFIGURATOR_HPP__ */
 
