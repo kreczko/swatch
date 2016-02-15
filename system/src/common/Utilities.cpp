@@ -15,10 +15,12 @@
 #include "swatch/dtm/DaqTTCStub.hpp"
 #include "swatch/system/CrateStub.hpp"
 #include "swatch/core/toolbox/IdSliceParser.hpp"
+#include "swatch/core/AbstractFactory.hpp"
 
 // boost headers
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/range/algorithm/copy.hpp>
 
 namespace swatch {
 namespace dtm {
@@ -101,24 +103,24 @@ treeToSystemStub(const boost::property_tree::ptree& aPTree)
   const ptree &lPTSystem = aPTree.get_child("SYSTEM");
 
   std::set<std::string> expected = {
-    "SYSTEM",
     "NAME",
     "CREATOR",
     "CRATES",
     "PROCESSORS",
     "DAQTTCS",
-    "LINKS"
+    "LINKS",
+    "CONNECTED FEDS"
   };
   core::checkPtreeEntries(lPTSystem, expected);
 
-  SystemStub aStub(lPTSystem.get<std::string>("NAME"));
-  aStub.loggerName = aStub.id;
-  aStub.creator = lPTSystem.get<std::string>("CREATOR");
+  SystemStub lStub(lPTSystem.get<std::string>("NAME"));
+  lStub.loggerName = lStub.id;
+  lStub.creator = lPTSystem.get<std::string>("CREATOR");
 
 
   BOOST_FOREACH(const ptree::value_type &v, lPTSystem.get_child("CRATES"))
   {
-    aStub.crates.emplace_back(
+    lStub.crates.emplace_back(
         swatch::system::treeToCrateStub(v.second)
         );
   }
@@ -127,22 +129,22 @@ treeToSystemStub(const boost::property_tree::ptree& aPTree)
   BOOST_FOREACH(const ptree::value_type &v, lPTSystem.get_child("PROCESSORS"))
   {
     swatch::processor::ProcessorStub lProcStub(swatch::processor::treeToProcessorStub(v.second));
-    lProcStub.loggerName = aStub.id + "." + lProcStub.id;
-    aStub.processors.emplace_back(lProcStub);
+    lProcStub.loggerName = lStub.id + "." + lProcStub.id;
+    lStub.processors.emplace_back(lProcStub);
   }
 
 
   BOOST_FOREACH(const ptree::value_type &v, lPTSystem.get_child("DAQTTCS"))
   {
     swatch::dtm::DaqTTCStub lDaqTTCStub(swatch::dtm::treeToDaqTTCStub(v.second));
-    lDaqTTCStub.loggerName = aStub.id + "." + lDaqTTCStub.id;
-    aStub.daqttcs.emplace_back(lDaqTTCStub);
+    lDaqTTCStub.loggerName = lStub.id + "." + lDaqTTCStub.id;
+    lStub.daqttcs.emplace_back(lDaqTTCStub);
   }
 
 
   BOOST_FOREACH(const ptree::value_type& v, lPTSystem.get_child("LINKS"))
   {
-    swatch::system::treeToLinkStub(v.second, aStub.links);
+    swatch::system::treeToLinkStub(v.second, lStub.links);
   }
 
   /* Enable if need services
@@ -154,7 +156,98 @@ treeToSystemStub(const boost::property_tree::ptree& aPTree)
   sysPars.add("services",serviceSets);
    */
 
-  return aStub;
+  BOOST_FOREACH(const ptree::value_type& v, lPTSystem.get_child("CONNECTED FEDS"))
+  {
+    std::set<std::string> expected = {
+      "FED ID",
+      "RX PORTS",
+
+    };
+    
+    // MAke sure the ptree entries maxt expectations
+    core::checkPtreeEntries(v.second, expected);
+    
+    
+    uint32_t fedID = v.second.get<uint32_t>("FED ID");
+    
+    // Check for duplicates
+    if ( lStub.connectedFEDs.count(fedID) ) {
+      std::ostringstream msg;
+      msg << "FED " << fedID << " is referenced multiple times in 'CONNECTED FEDS'";
+      throw core::FailedJSONParsing(msg.str());
+    }
+    
+    
+    std::set<std::string> lRxPorts;
+    // Map to track duplicates
+    std::map<std::string,uint32_t> lDuplicates;
+    BOOST_FOREACH(const ptree::value_type& w, v.second.get_child("RX PORTS")) {
+      
+      std::vector<std::string> ids = core::toolbox::IdSliceParser::parse(w.second.get_value<std::string>());
+      
+      BOOST_FOREACH( std::string id, ids) {
+        
+        // Continue if insertion succeeds i.e. no duplicates
+        if ( lRxPorts.insert(id).second ) continue;
+        
+        // Otherwise Increase duplicate count for id
+        lDuplicates[id]++;
+        
+      }
+      
+    }
+
+    if ( !lDuplicates.empty() ) {
+      std::ostringstream msg;
+      msg << "Duplicates found while parsing CONNECTED FEDS map, FED "<< fedID << ". ";
+      BOOST_FOREACH( auto count, lDuplicates ) {
+        msg << "'" << count.first << "': " << count.second << " ";
+      }
+      throw core::FailedJSONParsing(msg.str());
+    }
+    
+    // Fill the map
+    boost::copy(lRxPorts, std::back_inserter(lStub.connectedFEDs[fedID]));
+
+  }
+  
+  std::set<std::string> lAllRxPorts, lDuplicates;
+
+  // Check for duplicates across the whole FEDConnectionMap
+  BOOST_FOREACH( auto fed, lStub.connectedFEDs ) {
+      BOOST_FOREACH( std::string id, fed.second ) {
+        // Continue if insertion succeeds i.e. no duplicates
+        if ( lAllRxPorts.insert(id).second ) continue;
+        
+        // Otherwise 
+        lDuplicates.insert(id);
+      }
+  }
+  
+
+  if (!lDuplicates.empty()) {
+    // Map to track duplicates across different feds
+    std::map<std::string, std::vector<uint32_t> > lDuplicateMap;
+    BOOST_FOREACH( std::string id, lDuplicates ) {
+      BOOST_FOREACH( auto fed, lStub.connectedFEDs ) {
+ 
+        if ( std::find(fed.second.begin(), fed.second.end(), id) == fed.second.end() ) continue;
+        
+        lDuplicateMap[id].push_back(fed.first);
+      } 
+    }
+    std::ostringstream msg;
+    msg << "Duplicates found across multiple FEDs while parsing CONNECTED FEDS map. ";
+
+
+    BOOST_FOREACH(auto count, lDuplicateMap){
+      msg << "id: '" << count.first << "': ";
+      boost::copy(count.second, std::ostream_iterator<uint32_t>(msg, " "));
+    }
+    throw core::FailedJSONParsing(msg.str());
+  }
+  
+  return lStub;
 }
 
 

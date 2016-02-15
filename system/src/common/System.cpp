@@ -4,10 +4,13 @@
  * Date:   July 2014
  */
 
+#include <boost/range/algorithm/remove_if.hpp>
+
 #include "swatch/system/System.hpp"
 
 // boost headers
 #include "boost/foreach.hpp"
+#include <boost/range/algorithm/copy.hpp>
 
 // SWATCH headers
 #include "swatch/logger/Log.hpp"
@@ -21,7 +24,8 @@
 #include "swatch/system/Service.hpp"
 #include "swatch/dtm/DaqTTCManager.hpp"
 #include "swatch/processor/PortCollection.hpp"
-
+#include <boost/range/adaptor/map.hpp>
+#include <boost/lambda/lambda.hpp>
 
 SWATCH_REGISTER_CLASS(swatch::system::System)
 
@@ -89,6 +93,8 @@ System::System( const swatch::core::AbstractStub& aStub ) :
   addDaqTTCs();
 //  addServices(sys);
   addLinks();
+  
+  validateConnectedFEDs();
 }
 
 
@@ -180,8 +186,6 @@ System::add(dtm::DaqTTCManager* aAMC13) {
 
   // but keep it aside
   mDaqTtc.push_back(aAMC13);
-  // Is this still a service?
-//    services_.push_back(aAMC13);
 
       // and give it a different view
   std::string crateId = aAMC13->getCrateId();
@@ -269,9 +273,9 @@ void System::addDaqTTCs()
       add(mgr);
     }
     catch (const core::exception& e) {
-      std::ostringstream oss;
-      oss << "Failed to create/add DaqTTCManager (id: '" << dStub.id << "'): " << e.what();
-      throw SystemConstructionFailed(oss.str());
+      std::ostringstream msg;
+      msg << "Failed to create/add DaqTTCManager (id: '" << dStub.id << "'): " << e.what();
+      throw SystemConstructionFailed(msg.str());
     }
   }
 }
@@ -287,20 +291,53 @@ void System::addLinks()
       processor::InputPort* srcPort = &(srcProcessor->getInputPorts().getPort(lStub.srcPort));
       processor::OutputPort*  dstPort = &(dstProcessor->getOutputPorts().getPort(lStub.dstPort));
       
-//      processor::OutputPort* srcPort = getObj<processor::OutputPort>(lStub.srcPort);
-//      processor::InputPort*  dstPort = getObj<processor::InputPort>(lStub.dstPort);
-    
       system::Link* link = new system::Link(lStub.id, dstProcessor, dstPort, srcProcessor, srcPort);
       add(link);
     }
     catch (const core::exception& e) {
-      std::ostringstream oss;
-      oss << "Failed to create/add internal link (id: '" << lStub.id << "'): " << e.what();
-      throw SystemConstructionFailed(oss.str());
+      std::ostringstream msg;
+      msg << "Failed to create/add internal link (id: '" << lStub.id << "'): " << e.what();
+      throw SystemConstructionFailed(msg.str());
     }
   }
 }
 
+
+void System::validateConnectedFEDs()
+{
+
+  // Loop over FEdConnection map to check that all referenced objects exist and are InputPorts
+  SystemStub::Fed2ObjMap_t lMissing;  
+  BOOST_FOREACH( auto fed, getStub().connectedFEDs ) {
+    BOOST_FOREACH(std::string id, fed.second) {
+      try {
+        // Continue if id exists and can be cast to an input port.
+        if ( this->getObj<processor::InputPort>(id) ) continue;        
+        lMissing[fed.first].push_back(id);
+        
+      } catch ( std::runtime_error& e ) {
+        lMissing[fed.first].push_back(id);
+
+      }
+    }
+  }
+  
+  if ( !lMissing.empty() ) {
+    std::ostringstream msg;
+    msg << "InputPorts referenced in FED Connection map not found: ";
+    
+    BOOST_FOREACH(auto fed, lMissing) {
+      msg << "FED: " << fed.first << " ";
+      boost::copy(fed.second |
+          boost::adaptors::transformed("'"+boost::lambda::_1+"'"),
+          std::ostream_iterator<std::string>(msg, " "));
+    }
+
+    throw SystemConstructionFailed(msg.str());
+
+  }
+  
+}
 
 RunControlFSM& System::getRunControlFSM() 
 {

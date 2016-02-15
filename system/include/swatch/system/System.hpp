@@ -106,7 +106,7 @@ private:
 };
 
 
-//! Generic class representing a system of one ore mores processors
+//! Generic class representing a system of one or mores processors
 class System : public core::ActionableSystem {
 public:
   
@@ -129,8 +129,6 @@ protected:
   virtual void retrieveMetricValues() {}
 
   RunControlFSM& getRunControlFSM();
-  //! List of external ports
-  // std::deque<SysPorts*> mPorts;    
 
 private:
     
@@ -144,6 +142,8 @@ private:
     void addProcessors();
     void addDaqTTCs();
     void addLinks();
+    
+    void validateConnectedFEDs();
 
     const SystemStub mStub;
 

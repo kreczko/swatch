@@ -9,6 +9,7 @@
 
 // C++ headers
 #include <iosfwd>
+#include <map>
 
 // SWATCH headers
 #include "swatch/core/AbstractStub.hpp"
@@ -25,6 +26,8 @@ namespace system {
 //! Structure that holds the data required to build a system
 class SystemStub : public swatch::core::AbstractStub {
 public:
+  
+  typedef std::map<uint32_t, std::vector<std::string> > Fed2ObjMap_t;
   SystemStub(const std::string& aId) :
     AbstractStub(aId) { }
 
@@ -45,6 +48,8 @@ public:
   std::vector<swatch::dtm::DaqTTCStub> daqttcs;
 
   std::vector<swatch::system::LinkStub> links;
+  
+  Fed2ObjMap_t connectedFEDs;
 };
 
 

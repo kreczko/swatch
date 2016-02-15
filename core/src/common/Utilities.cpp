@@ -13,6 +13,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/range/algorithm/copy.hpp>
 #include <boost/range/adaptor/map.hpp>
+#include <boost/lambda/lambda.hpp>
 
 namespace swatch {
 namespace core {
@@ -24,9 +25,16 @@ void checkPtreeEntries(const boost::property_tree::ptree& aPTree, const std::set
   if ( found != aExpected ) {
     std::ostringstream msg;
     msg << "Expected fields: ";
-    boost::copy(aExpected, std::ostream_iterator<std::string>(msg, " ") );
+    // add quotes while appending field names to the msg 
+    boost::copy(aExpected |
+      boost::adaptors::transformed("'"+boost::lambda::_1+"'"),
+      std::ostream_iterator<std::string>(msg, " ") );
+    
     msg << ", found: ";
-    boost::copy(found, std::ostream_iterator<std::string>(msg, " ") );
+    // add quotes while appending field names to the msg 
+    boost::copy(found |
+      boost::adaptors::transformed("'"+boost::lambda::_1+"'"),
+      std::ostream_iterator<std::string>(msg, " ") );
     //
     throw FailedJSONParsing(msg.str());
   }
