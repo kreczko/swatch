@@ -30,8 +30,8 @@ mRxMGTCore(*this)
 {
   
   mRxMGTCore.addParameters();
-  registerParameter("orbitTag", xdata::Boolean(true));
-  registerParameter("polarity", xdata::Boolean(false));
+  registerParameter("orbitTag", xdata::Boolean(false));
+  registerParameter("polarity", xdata::Boolean(true));
 
 }
 
@@ -68,9 +68,9 @@ mTxMGTCore(*this)
   
   mTxMGTCore.addParameters();
 
-  registerParameter("orbitTag", xdata::Boolean(true));
+  registerParameter("orbitTag", xdata::Boolean(false));
   registerParameter("loopback", xdata::Boolean(false));
-  registerParameter("polarity", xdata::Boolean(false));
+  registerParameter("polarity", xdata::Boolean(true));
 
 }
 

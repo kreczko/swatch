@@ -38,44 +38,102 @@ mSystem(aSystem)
 }
 
 
-void MaskingConfigurator::apply( const FEDEnableMap_t& aFEDEnableMap  )
+const std::deque<std::string>& MaskingConfigurator::getAutoDisabledDTMs() const
 {
+  return mAutoDisabledDtms;
+}
+
+
+const std::deque<std::string>& MaskingConfigurator::getAutoDisabledAMCs() const
+{
+  return mAutoDisabledAMCs;
+}
+
+
+const std::deque<std::string>& MaskingConfigurator::getAutoDisabledAMCPorts() const
+{
+  return mAutoDisabledAMCPorts;
+}
+
+
+const std::deque<std::string>& MaskingConfigurator::getAutoMaskedLinks() const
+{
+  return mAutoMaskedLinks;
+}
+
+
+const std::deque<std::string>& MaskingConfigurator::getAutoMaskedInputs() const
+{
+  return mAutoMaskedInputs;
+}
+
+
+void MaskingConfigurator::clearLists()
+{
+  mAutoDisabledDtms.clear();
+  mAutoDisabledAMCs.clear();
+  mAutoDisabledAMCPorts.clear();
+  mAutoMaskedLinks.clear();
+  mAutoMaskedInputs.clear();
+}
+
+//---
+void MaskingConfigurator::disableCrates(const FEDEnableMap_t& aFEDEnableMap)
+{
+  
+  
+  mAutoDisabledDtms.clear();
+  mAutoDisabledAMCs.clear();
   
   // First pass, disable AMC13s and connected AMCs
   BOOST_FOREACH(const swatch::system::System::CratesMap_t::value_type& c, mSystem.getCrates())
   {
     swatch::system::Crate* lCrate = c.second;
 
-    swatch::dtm::DaqTTCManager* lAmc13 = lCrate->amc13();
-    if (!lAmc13) continue;
+    swatch::dtm::DaqTTCManager* lDtm = lCrate->amc13();
+    if (!lDtm) continue;
 
     // Disable amc13 is FEDEnableMap says so
     FEDEnableMap_t::const_iterator it;
-    if ((it = aFEDEnableMap.find(lAmc13->getFedId())) != aFEDEnableMap.end() and it->second == 0) {
-      LOG4CPLUS_INFO(mSystem.getLogger(), "> Masking AMC13 " << lAmc13->getId() << ", FED " << lAmc13->getFedId() << ", value " << it->second);
-      lAmc13->disable();
+    if ((it = aFEDEnableMap.find(lDtm->getFedId())) != aFEDEnableMap.end() and it->second == 0) {
+      LOG4CPLUS_INFO(mSystem.getLogger(), "Masking AMC13 " << lDtm->getId() << ", FED " << lDtm->getFedId() << ", value " << it->second);
+      lDtm->disable();
+      // Track AMC13s masked by FEDMap
+      mAutoDisabledDtms.push_back(lDtm->getPath());
     }
 
     std::vector<uint32_t> slots = lCrate->getPopulatedSlots();
     // Disable
-    if (!lAmc13->getStatus().isEnabled()) {
+    if (!lDtm->getStatus().isEnabled()) {
+      LOG4CPLUS_INFO(mSystem.getLogger(), "AMC13 " << lDtm->getId() << " is disabled. Disabling all processors in the same crate " << lCrate->getId());
 
       BOOST_FOREACH(uint32_t s, slots) {
-        if ( s == lAmc13->getSlot() ) continue;
+        if ( s == lDtm->getSlot() ) continue;
         lCrate->amc(s)->disable();
+        
+        // Track masked amcs
+        mAutoDisabledAMCs.push_back(lCrate->amc(s)->getPath());
       }
     }
   }
+}
 
-  // Second pass, disable AMC13 ports
+
+//---
+void MaskingConfigurator::maskAMCPorts()
+{
+
+  mAutoDisabledAMCPorts.clear();
+  
+  // Second pass, mask AMC13 ports
   BOOST_FOREACH(const swatch::system::System::CratesMap_t::value_type& c, mSystem.getCrates())
   {
     swatch::system::Crate* lCrate = c.second;
-    swatch::dtm::DaqTTCManager* lAmc13 = lCrate->amc13();
+    swatch::dtm::DaqTTCManager* lDtm = lCrate->amc13();
 
-    if (!lAmc13) continue;
+    if (!lDtm) continue;
 
-    BOOST_FOREACH(swatch::dtm::AMCPort* port, lAmc13->getAMCPorts().getPorts()) {
+    BOOST_FOREACH(swatch::dtm::AMCPort* port, lDtm->getAMCPorts().getPorts()) {
 
       swatch::processor::Processor* lAmc = lCrate->amc(port->getSlot());
 
@@ -84,12 +142,21 @@ void MaskingConfigurator::apply( const FEDEnableMap_t& aFEDEnableMap  )
         port->setMasked();
         //TODO: Dynamic monitoring settings?
         port->setMonitoringStatus(swatch::core::monitoring::kDisabled);
+        
+        // Keep track of masked ports
+        mAutoDisabledAMCPorts.push_back(port->getPath());
       }
-
     }
+    
+    
   }
+}
 
-  // Third step, mask input ports linked to disabled procs
+
+void MaskingConfigurator::maskInternalLinks()
+{
+  mAutoMaskedLinks.clear();
+
   const std::deque<swatch::system::Link*>& lLinks = mSystem.getLinks();
   if ( !lLinks.empty() ) {
     
@@ -100,8 +167,18 @@ void MaskingConfigurator::apply( const FEDEnableMap_t& aFEDEnableMap  )
       //TODO: Dynamic monitoring settings?
       lLink->getDstPort()->setMonitoringStatus(swatch::core::monitoring::kDisabled);
 
+      // Keep track of masked links
+      mAutoMaskedLinks.push_back(lLink->getPath());
     }
   }
+
+}
+
+
+void MaskingConfigurator::maskExternalInputs(const FEDEnableMap_t& aFEDEnableMap)
+{
+  
+  mAutoMaskedInputs.clear();
 
   // Final step, FEDEnableMap-based masking
   FEDEnableMap_t::const_iterator itFED;
@@ -116,22 +193,133 @@ void MaskingConfigurator::apply( const FEDEnableMap_t& aFEDEnableMap  )
       if ( !lMaskable ) continue;
       
       lMaskable->setMasked();
+
+      //TODO: Dynamic monitoring settings?
+      lMaskable->setMonitoringStatus(swatch::core::monitoring::kDisabled);
       
+      // Keep track of the masked input ports
+      mAutoMaskedInputs.push_back(lMaskable->getPath());
     }
   }
 }
 
 
+//---
+void MaskingConfigurator::applyDynamic( const FEDEnableMap_t& aFEDEnableMap  )
+{
+  
+  // First pass, disable AMC13s and connected AMCs
+  disableCrates(aFEDEnableMap);
+//  BOOST_FOREACH(const swatch::system::System::CratesMap_t::value_type& c, mSystem.getCrates())
+//  {
+//    swatch::system::Crate* lCrate = c.second;
+//
+//    swatch::dtm::DaqTTCManager* lAmc13 = lCrate->amc13();
+//    if (!lAmc13) continue;
+//
+//    // Disable amc13 is FEDEnableMap says so
+//    FEDEnableMap_t::const_iterator it;
+//    if ((it = aFEDEnableMap.find(lAmc13->getFedId())) != aFEDEnableMap.end() and it->second == 0) {
+//      LOG4CPLUS_INFO(mSystem.getLogger(), "Masking AMC13 " << lAmc13->getId() << ", FED " << lAmc13->getFedId() << ", value " << it->second);
+//      lAmc13->disable();
+//    }
+//
+//    std::vector<uint32_t> slots = lCrate->getPopulatedSlots();
+//    // Disable
+//    if (!lAmc13->getStatus().isEnabled()) {
+//      LOG4CPLUS_INFO(mSystem.getLogger(), "AMC13 " << lAmc13->getId() << " is disabled. Disabling all processors in the same crate " << lCrate->getId());
+//
+//      BOOST_FOREACH(uint32_t s, slots) {
+//        if ( s == lAmc13->getSlot() ) continue;
+//        lCrate->amc(s)->disable();
+//      }
+//    }
+//  }
+
+  // Second pass, mask AMC13 ports
+  maskAMCPorts();
+//  BOOST_FOREACH(const swatch::system::System::CratesMap_t::value_type& c, mSystem.getCrates())
+//  {
+//    swatch::system::Crate* lCrate = c.second;
+//    swatch::dtm::DaqTTCManager* lAmc13 = lCrate->amc13();
+//
+//    if (!lAmc13) continue;
+//
+//    BOOST_FOREACH(swatch::dtm::AMCPort* port, lAmc13->getAMCPorts().getPorts()) {
+//
+//      swatch::processor::Processor* lAmc = lCrate->amc(port->getSlot());
+//
+//      // Mask port if slot is not populated or amc is disabled
+//      if ( !lAmc or !lAmc->getStatus().isEnabled()) {
+//        port->setMasked();
+//        //TODO: Dynamic monitoring settings?
+//        port->setMonitoringStatus(swatch::core::monitoring::kDisabled);
+//      }
+//    }
+//    
+//    
+//  }
+
+
+  // Third step, mask input ports linked to disabled processors
+  maskInternalLinks();
+//  const std::deque<swatch::system::Link*>& lLinks = mSystem.getLinks();
+//  if ( !lLinks.empty() ) {
+//    
+//    BOOST_FOREACH( swatch::system::Link* lLink, mSystem.getLinks() ) {
+//      if ( lLink->getSrcProcessor()->getStatus().isEnabled() ) continue;
+//      
+//      lLink->getDstPort()->setMasked();
+//      //TODO: Dynamic monitoring settings?
+//      lLink->getDstPort()->setMonitoringStatus(swatch::core::monitoring::kDisabled);
+//
+//    }
+//  }
+
+  // Final step, FEDEnableMap-based masking
+  maskExternalInputs(aFEDEnableMap);
+//  FEDEnableMap_t::const_iterator itFED;
+//  BOOST_FOREACH( const SystemStub::FEDInputPortsMap::value_type& lPair, mSystem.getStub().connectedFEDs) {
+//    // Fed is there and is enabled
+//    if ( (itFED = aFEDEnableMap.find(lPair.first)) != aFEDEnableMap.end() and itFED->second != 0) continue;
+//    
+//    BOOST_FOREACH( const std::string& path, lPair.second) {
+//      swatch::core::MaskableObject* lMaskable = mSystem.getObjPtr<swatch::core::MaskableObject>(path);
+//      
+//      // I should really throw here
+//      if ( !lMaskable ) continue;
+//      
+//      lMaskable->setMasked();
+//
+//      //TODO: Dynamic monitoring settings?
+//      lLink->getDstPort()->setMonitoringStatus(swatch::core::monitoring::kDisabled);
+//      
+//    }
+//  }
+}
+
+
+//---
 void MaskingConfigurator::clear()
 {
+  clearLists();
+  
   BOOST_FOREACH(const auto& p, mSystem.getActionableChildren())
   {
+    // Enable
     p.second->enable();
+    
+    // Unmask everything
+    // p.second->clearMasks();
   }
 }  
 
-void MaskingConfigurator::reset(swatch::core::GateKeeper& aGateKeeper) 
+
+//---
+void MaskingConfigurator::applyStatic(swatch::core::GateKeeper& aGateKeeper) 
 {
+  clearLists();
+  
   // Apply static masks
   BOOST_FOREACH(const auto& p, mSystem.getActionableChildren()) {
 
