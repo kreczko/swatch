@@ -78,6 +78,9 @@ DemuxFormatterCommand::DemuxFormatterCommand(const std::string& aId, swatch::cor
   swatch::core::Command(aId, aActionable, xdata::Integer()),
   mFmtCore(*this, boost::bind(&ChannelDescriptor::getFormatterKind, _1) == ::mp7::kDemuxFormatter) {
 
+    // add default parameters
+  mFmtCore.addParameters();
+  
   registerParameter("strip", xdata::Boolean(true));
   registerParameter("insert", xdata::Boolean(true));
   registerParameter("startBx", xdata::UnsignedInteger(0x0));
@@ -166,6 +169,9 @@ S1Formatter::S1Formatter(const std::string& aId, swatch::core::ActionableObject&
   swatch::core::Command(aId, aActionable, xdata::Integer()),
   mFmtCore(*this, boost::bind(&ChannelDescriptor::getFormatterKind, _1) == ::mp7::kStage1Formatter)
 {
+    // add default parameters
+  mFmtCore.addParameters();
+  
   registerParameter("s1BC0Bx", xdata::UnsignedInteger(0x0));
   registerParameter("s1BC0Cycle", xdata::UnsignedInteger(0x0));
 }
