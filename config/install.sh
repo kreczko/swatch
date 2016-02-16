@@ -22,7 +22,6 @@ if [ -h "$SRC" ]; then
 else
   # Regular file
   if [ -f "$SRC" ]; then
-    echo AAAA install -D -m $PERM $SRC $RPM_BUILD_ROOT/$DST
     install -D -m $PERM $SRC $RPM_BUILD_ROOT/$DST
 
     MIME=`file -ib $SRC`

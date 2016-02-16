@@ -94,13 +94,15 @@ fi
 
 #create debug.source - SLC6 beardy wierdo "feature"
 cd %{_packagedir}
-#find include -name '*.hpp' -o -name '*.hxx' -fprintf rpm/debug.include "%p\0"
 #find src -name '*.cpp' -o -name '*.cxx' -fprintf rpm/debug.source "%p\0"
 #find src include -name '*.h' -print > rpm/debug.source -o -name '*.cc' -print > rpm/debug.source
 
+cat %{_packagedir}/rpm/debug.source | sort -z -u | egrep -v -z '(<internal>|<built-in>)$' | egrep -v -z %{_packagedir} >  %{_packagedir}/rpm/debug.source.clean
 # Copy all sources and include files for debug RPMs
-cat %{_packagedir}/rpm/debug.source | sort -z -u | egrep -v -z '(<internal>|<built-in>)$' | ( cpio -pd0mL --quiet "$RPM_BUILD_ROOT/usr/src/debug/%{_packagename}-%{_version}" )
-cat %{_packagedir}/rpm/debug.include | sort -z -u | egrep -v -z '(<internal>|<built-in>)$' | ( cpio -pd0mL --quiet "$RPM_BUILD_ROOT/usr/src/debug/%{_packagename}-%{_version}" )
+cat  %{_packagedir}/rpm/debug.source.clean | ( cpio -pd0mL --quiet "$RPM_BUILD_ROOT/usr/src/debug/%{_packagename}-%{_version}" )
+
+#cat %{_packagedir}/rpm/debug.source | sort -z -u | egrep -v -z '(<internal>|<built-in>)$' | ( cpio -pd0mL --quiet "$RPM_BUILD_ROOT/usr/src/debug/%{_packagename}-%{_version}" )
+#cat %{_packagedir}/rpm/debug.include | sort -z -u | egrep -v -z '(<internal>|<built-in>)$' | ( cpio -pd0mL --quiet "$RPM_BUILD_ROOT/usr/src/debug/%{_packagename}-%{_version}" )
 # correct permissions on the created directories
 cd "$RPM_BUILD_ROOT/usr/src/debug/"
 find ./ -type d -exec chmod 755 {} \;
