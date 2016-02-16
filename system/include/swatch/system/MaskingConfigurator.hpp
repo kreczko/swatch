@@ -18,7 +18,7 @@
 #include <map>
 #include <stdint.h>
 #include <string>
-#include <deque>
+#include <vector>
 
 #include <boost/noncopyable.hpp>
 
@@ -51,15 +51,25 @@ public:
   void applyDynamic( const FEDEnableMap_t& aFEDEnableMap );
   
   /**
-   * Clears masks
+   * Clears masks and disable flags
    */
   void clear();
   
-  const std::deque<std::string>& getAutoDisabledDTMs() const;
-  const std::deque<std::string>& getAutoDisabledAMCs() const;
-  const std::deque<std::string>& getAutoDisabledAMCPorts() const;
-  const std::deque<std::string>& getAutoMaskedLinks() const;
-  const std::deque<std::string>& getAutoMaskedInputs() const;
+  /**
+   * Returns the list of automatically disabled DTMs 
+   * @return list of automatically disabled DTMs
+   */
+  const std::vector<std::string>& getAutoDisabledDTMs() const;
+  
+  /**
+   * Returns the list of automatically disabled AMCs
+   * @return list of automatically disabled AMCs
+   */
+  const std::vector<std::string>& getAutoDisabledAMCs() const;
+  
+  const std::vector<std::string>& getAutoDisabledAMCPorts() const;
+  const std::vector<std::string>& getAutoMaskedLinks() const;
+  const std::vector<std::string>& getAutoMaskedInputs() const;
   
 private:
   
@@ -76,19 +86,19 @@ private:
   swatch::system::System& mSystem;
   
   //! List of automatically disabled DTMs
-  std::deque<std::string> mAutoDisabledDtms;
+  std::vector<std::string> mAutoDisabledDtms;
   
   //! List of automatically disabled AMCs
-  std::deque<std::string> mAutoDisabledAMCs;
+  std::vector<std::string> mAutoDisabledAMCs;
   
   //! List of automatically disabled AMC ports
-  std::deque<std::string> mAutoDisabledAMCPorts;
+  std::vector<std::string> mAutoDisabledAMCPorts;
   
   //! List of automatically masked internal links
-  std::deque<std::string> mAutoMaskedLinks;
+  std::vector<std::string> mAutoMaskedLinks;
   
   //! List of automatically disable inputs
-  std::deque<std::string> mAutoMaskedInputs;
+  std::vector<std::string> mAutoMaskedInputs;
 
 };
 

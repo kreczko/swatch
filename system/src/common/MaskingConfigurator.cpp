@@ -38,31 +38,31 @@ mSystem(aSystem)
 }
 
 
-const std::deque<std::string>& MaskingConfigurator::getAutoDisabledDTMs() const
+const std::vector<std::string>& MaskingConfigurator::getAutoDisabledDTMs() const
 {
   return mAutoDisabledDtms;
 }
 
 
-const std::deque<std::string>& MaskingConfigurator::getAutoDisabledAMCs() const
+const std::vector<std::string>& MaskingConfigurator::getAutoDisabledAMCs() const
 {
   return mAutoDisabledAMCs;
 }
 
 
-const std::deque<std::string>& MaskingConfigurator::getAutoDisabledAMCPorts() const
+const std::vector<std::string>& MaskingConfigurator::getAutoDisabledAMCPorts() const
 {
   return mAutoDisabledAMCPorts;
 }
 
 
-const std::deque<std::string>& MaskingConfigurator::getAutoMaskedLinks() const
+const std::vector<std::string>& MaskingConfigurator::getAutoMaskedLinks() const
 {
   return mAutoMaskedLinks;
 }
 
 
-const std::deque<std::string>& MaskingConfigurator::getAutoMaskedInputs() const
+const std::vector<std::string>& MaskingConfigurator::getAutoMaskedInputs() const
 {
   return mAutoMaskedInputs;
 }
@@ -147,7 +147,6 @@ void MaskingConfigurator::maskAMCPorts()
         mAutoDisabledAMCPorts.push_back(port->getPath());
       }
     }
-    
     
   }
 }
@@ -263,7 +262,7 @@ void MaskingConfigurator::applyDynamic( const FEDEnableMap_t& aFEDEnableMap  )
 
   // Third step, mask input ports linked to disabled processors
   maskInternalLinks();
-//  const std::deque<swatch::system::Link*>& lLinks = mSystem.getLinks();
+//  const std::vector<swatch::system::Link*>& lLinks = mSystem.getLinks();
 //  if ( !lLinks.empty() ) {
 //    
 //    BOOST_FOREACH( swatch::system::Link* lLink, mSystem.getLinks() ) {
