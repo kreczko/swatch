@@ -308,6 +308,15 @@ void MaskingConfigurator::clear()
     // Enable
     p.second->enable();
     
+    
+    for ( core::Object::iterator itObj = mSystem.begin(); itObj != mSystem.end(); ++itObj) {
+      core::MaskableObject* lMaskable = dynamic_cast<swatch::core::MaskableObject*> (&(*itObj));
+      
+      if ( !lMaskable ) continue;
+      
+      lMaskable->setMasked(false);
+
+    }
     // Unmask everything
     // p.second->clearMasks();
   }
