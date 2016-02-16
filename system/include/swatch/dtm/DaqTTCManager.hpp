@@ -120,6 +120,12 @@ public:
     
   //! Returns this amc13's link interface
   dtm::AMCPortCollection& getAMCPorts();
+  
+  //! Returns this amc13's SLinkExpress
+  const dtm::SLinkExpress& getSLinkExpress() const;
+  
+  //! Returns this amc13's SLinkExpress
+  dtm::SLinkExpress& getSLinkExpress();
 
 protected:
   //! Register the supplied (heap-allocated) TTC interface; the child base class takes ownership of the TTC interface instance.

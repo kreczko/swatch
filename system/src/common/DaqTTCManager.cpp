@@ -145,6 +145,15 @@ DaqTTCManager::getAMCPorts() const {
   return *mAMCPorts;
 }
 
+const dtm::SLinkExpress& DaqTTCManager::getSLinkExpress() const {
+  return *(this -> mSLink);
+}
+
+
+dtm::SLinkExpress& DaqTTCManager::getSLinkExpress() {
+  return *(this -> mSLink);
+}
+
 // --------------------------------------------------------
 TTCInterface&
 DaqTTCManager::registerInterface(TTCInterface* aTTCInterface) {
@@ -194,6 +203,7 @@ DaqTTCManager::registerInterface(EVBInterface* aEventBuilder) {
   mEvb = aEventBuilder;
   return *mEvb;
 }
+
 
 } // namespace dtm
 } // namespace swatch
