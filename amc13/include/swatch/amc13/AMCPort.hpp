@@ -9,7 +9,7 @@
 #define	__SWATCH_AMC13_AMCPORT_HPP__
 
 #include "swatch/dtm/AMCPort.hpp"
-// #include "amc13/AMC13.hh"
+#include "swatch/core/TTSUtils.hpp"
 
 namespace amc13 {
   class AMC13;
@@ -46,7 +46,7 @@ protected:
   core::Metric<uint32_t>& mAMC13LinkRevision;
 
   //! AMC_Links: AMC_TTS
-  core::Metric<std::string>& mTTS;
+  core::Metric<core::tts::State>& mTTS;
 
   //! AMC_Links: AMC_EVENTS
   core::Metric<uint64_t>& mAMCEvents;

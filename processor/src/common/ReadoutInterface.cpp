@@ -18,7 +18,7 @@ const std::vector<std::string> ReadoutInterface::kDefaultMetrics = {"tts","amcCo
   
 ReadoutInterface::ReadoutInterface() : 
   core::MonitorableObject("readout"),
-  mMetricTTS( registerMetric<std::string>("tts") ),
+  mMetricTTS( registerMetric<core::tts::State>("tts") ),
   mMetricAMCCoreReady( registerMetric<bool>("amcCoreReady") )       
 {
 
@@ -27,8 +27,8 @@ ReadoutInterface::ReadoutInterface() :
 //      core::EqualCondition<uint32_t>(0x2),
 //      core::NotEqualCondition<uint32_t>(0x8));
   setConditions(mMetricTTS,
-      core::EqualCondition<std::string>(core::tts::kErrorStr),
-      core::NotEqualCondition<std::string>(core::tts::kReadyStr));
+      core::EqualCondition<core::tts::State>(core::tts::kError),
+      core::NotEqualCondition<core::tts::State>(core::tts::kReady));
 
   // Error if AMCCore is not ready
   setErrorCondition(mMetricAMCCoreReady, core::EqualCondition<bool>(false));

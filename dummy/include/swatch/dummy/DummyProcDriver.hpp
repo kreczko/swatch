@@ -7,6 +7,7 @@
 #include <string>
 
 #include "swatch/dummy/ComponentState.hpp"
+#include "swatch/core/TTSUtils.hpp"
 
 
 namespace swatch {
@@ -82,12 +83,12 @@ public:
   };
 
   struct ReadoutStatus {
-      ReadoutStatus(bool aAMCCoreReady, std::string aTTSState) : 
+      ReadoutStatus(bool aAMCCoreReady, core::tts::State aTTSState) : 
         amcCoreReady(aAMCCoreReady),
         ttsState(aTTSState)
       {}
       bool amcCoreReady;
-      std::string ttsState;
+      core::tts::State ttsState;
   };
 
   struct RxPortStatus {

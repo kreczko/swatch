@@ -10,6 +10,7 @@
 
 
 #include "swatch/dtm/EVBInterface.hpp"
+#include "swatch/core/TTSUtils.hpp"
 
 namespace amc13 {
 class AMC13;
@@ -27,7 +28,7 @@ public:
   virtual void retrieveMetricValues();
 
 private:
-  static const std::string& ttsInternalStatusDecoder( uint32_t aTTSInternalState );
+  static core::tts::State ttsInternalStatusDecoder( uint32_t aTTSInternalState );
 
   ::amc13::AMC13& mDriver;
 
@@ -41,10 +42,10 @@ private:
   core::Metric<bool>& mSyncLost;
 
   // T1: STATUS.AMC_TTS_STATE
-  core::Metric<std::string>& mAMCsTTSState;
+  core::Metric<core::tts::State>& mAMCsTTSState;
 
   // T1: STATUS.T1_TTS_STATE
-  core::Metric<std::string>& mTTSState;
+  core::Metric<core::tts::State>& mTTSState;
 
   // T1: STATUS.GENERAL.L1A_COUNT
   core::Metric<uint64_t>& mL1ACount;

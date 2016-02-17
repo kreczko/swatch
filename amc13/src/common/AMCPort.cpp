@@ -58,7 +58,7 @@ AMCPort::AMCPort(uint32_t aSlot, ::amc13::AMC13& aDriver) :
   mLinkReady(registerMetric<bool>("ready") ),
   mLinkOK(registerMetric<bool>("ok") ),
   mAMC13LinkRevision(registerMetric<uint32_t>("amc13Revision") ),
-  mTTS(registerMetric<std::string>("tts") ) ,
+  mTTS(registerMetric<core::tts::State>("tts") ) ,
   mAMCEvents(registerMetric<uint64_t>("amcEvents") ) ,
   mAMCHeaders(registerMetric<uint64_t>("amcHeaders") ) ,
   mAMCTrailers(registerMetric<uint64_t>("amcTrailers") ) ,
@@ -82,8 +82,8 @@ AMCPort::AMCPort(uint32_t aSlot, ::amc13::AMC13& aDriver) :
 
   // Error if OOS, Warning if not Ready
   setConditions(mTTS,
-      core::EqualCondition<std::string>(core::tts::kErrorStr), 
-      core::NotEqualCondition<std::string>(core::tts::kReadyStr));
+      core::EqualCondition<core::tts::State>(core::tts::kError), 
+      core::NotEqualCondition<core::tts::State>(core::tts::kReady));
   
   setErrorCondition(mAMCBcnMismatch,core::NotEqualCondition<uint64_t>(0x0));
   setErrorCondition(mAMCOrnMismatch,core::NotEqualCondition<uint64_t>(0x0));
@@ -123,7 +123,7 @@ void AMCPort::retrieveMetricValues() {
   
   setMetricValue<>(mAMC13LinkRevision, mDriver.read(AMC13::T1,prefixLink+"AMC13_LINK_VER"));
   
-  setMetricValue<>(mTTS, core::tts::codeToString(mDriver.read(AMC13::T1,prefixLink+"AMC_TTS")));
+  setMetricValue<>(mTTS, static_cast<core::tts::State>(mDriver.read(AMC13::T1,prefixLink+"AMC_TTS")));
 
   // Counters
   setMetricValue<>(mAMCEvents, read64bCounter(mDriver, AMC13::T1,prefixCtrs+"RECEIVED_EVENT_COUNTER"));

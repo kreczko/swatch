@@ -1,9 +1,10 @@
 #ifndef __SWATCH_CORE_TTSUTILS_HPP__
 #define __SWATCH_CORE_TTSUTILS_HPP__
 
+// C++ Headers
 #include <stdint.h>
 #include <string>
-
+#include <ostream>
 
 namespace swatch {
 namespace core {
@@ -15,19 +16,22 @@ enum State {
     kBusy = 0x4,
     kReady = 0x8,
     kError = 0xc,
-    kDisconnected = 0xf
+    kDisconnected = 0xf,
+    kUnknown = 0xff
 };
 
 
-extern const std::string kWarningStr;
-extern const std::string kOutOfSyncStr;
-extern const std::string kBusyStr;
-extern const std::string kReadyStr;
-extern const std::string kErrorStr;
-extern const std::string kDisconnectedStr;
-extern const std::string kUnknownStr;
+// extern const std::string kWarningStr;
+// extern const std::string kOutOfSyncStr;
+// extern const std::string kBusyStr;
+// extern const std::string kReadyStr;
+// extern const std::string kErrorStr;
+// extern const std::string kDisconnectedStr;
+// extern const std::string kUnknownStr;
 
-const std::string& codeToString( uint32_t aCode );
+// const std::string& codeToString( uint32_t aCode );
+
+std::ostream& operator<<(std::ostream& oStream, const State& aState);
 
 } // namespace tts
 } // namespace core

@@ -5,6 +5,7 @@
 
 // SWATCH headers
 #include "swatch/core/MonitorableObject.hpp"
+#include "swatch/core/TTSUtils.hpp"
 
 
 namespace swatch {
@@ -23,7 +24,7 @@ public:
   static const std::vector<std::string>  kDefaultMetrics;
 
 protected:
-  core::Metric<std::string>& mMetricTTS;
+  core::Metric<core::tts::State>& mMetricTTS;
   core::Metric<bool>& mMetricAMCCoreReady;
 };
 
