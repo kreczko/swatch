@@ -45,10 +45,16 @@ public:
   void applyStatic(swatch::core::GateKeeper& aGateKeeper);
   
   /**
+   * 
+   * @param aFEDEnableMap
+   */
+  void disableCrates(const FEDEnableMap_t& aFEDEnableMap);
+
+  /**
    * Applies FED-mask-based dynamic masks
    * @param aFEDEnableMap FEDEnableMap, listing enable and disabled FEDs
    */
-  void applyDynamic( const FEDEnableMap_t& aFEDEnableMap );
+  void applyDynamicMasks( const FEDEnableMap_t& aFEDEnableMap );
   
   /**
    * Clears masks and disable flags
@@ -74,8 +80,6 @@ public:
 private:
   
   void clearLists();
-
-  void disableCrates(const FEDEnableMap_t& aFEDEnableMap);
 
   void maskAMCPorts();
 
