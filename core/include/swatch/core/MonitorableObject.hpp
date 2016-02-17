@@ -14,6 +14,9 @@
 // BOOST headers
 #include "boost/unordered_map.hpp"
 
+// log4cplus headers
+#include <log4cplus/logger.h>
+
 // SWATCH headers
 #include "swatch/core/exception.hpp"
 #include "swatch/core/Object.hpp"
@@ -110,7 +113,7 @@ protected:
   void addMonitorable(MonitorableObject* aMonObj);
 
   //! Sets this object's monitorable status pointer (used by MetricWriteGuard, in updateMetrics method)
-  void setMonitorableStatus(AbstractMonitorableStatus& aStatus);
+  void setMonitorableStatus(AbstractMonitorableStatus& aStatus, log4cplus::Logger& aLogger);
 
 private:
   typedef boost::unordered_map< std::string , AbstractMetric* > MetricMap_t;
@@ -121,7 +124,8 @@ private:
   std::string mUpdateErrorMsg;
   swatch::core::monitoring::Status mMonitoringStatus;
   AbstractMonitorableStatus* mStatus;
-          
+  log4cplus::Logger mLogger;
+ 
   friend class MetricUpdateGuard;
 };
 

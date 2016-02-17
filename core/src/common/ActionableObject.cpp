@@ -45,7 +45,7 @@ ActionableObject::ActionableObject( const std::string& aId, const std::string& a
   mStatus(),
   mLogger(swatch::logger::Logger::getInstance(aLoggerName))
 {
-  setMonitorableStatus(mStatus);
+  setMonitorableStatus(mStatus, mLogger);
 }
 
 

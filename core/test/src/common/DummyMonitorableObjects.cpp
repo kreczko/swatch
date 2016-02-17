@@ -9,6 +9,7 @@
 
 
 #include "swatch/core/MetricConditions.hpp"
+#include "swatch/logger/Logger.hpp"
 
 
 namespace swatch {
@@ -118,10 +119,12 @@ void DummyMonitorableStatus::finishedUpdatingMetrics(const MonitorableStatusGuar
 
 
 
+log4cplus::Logger DummyMasterMonitorableObject::sLogger = swatch::logger::Logger::getInstance("swatch.core.DummyMasterMonitorableObject");
+
 DummyMasterMonitorableObject::DummyMasterMonitorableObject() : 
   DummyMonitorableObject()
 {
-  setMonitorableStatus(mStatus);
+  setMonitorableStatus(mStatus, sLogger);
 }
 
 DummyMasterMonitorableObject::~DummyMasterMonitorableObject()

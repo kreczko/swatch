@@ -70,6 +70,8 @@ public:
 
 private:
   DummyMonitorableStatus mStatus;
+  
+  static log4cplus::Logger sLogger;
 };
 
 

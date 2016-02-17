@@ -2,8 +2,12 @@
 #include "swatch/core/MonitorableObject.hpp"
 
 
-#include "swatch/core/AbstractMonitorableStatus.hpp"
 #include "boost/foreach.hpp"
+
+#include <log4cplus/loggingmacros.h>
+
+#include "swatch/core/AbstractMonitorableStatus.hpp"
+#include "swatch/logger/Logger.hpp"
 
 
 using namespace std;
@@ -13,11 +17,12 @@ namespace core {
 
 
 MonitorableObject::MonitorableObject( const std::string& aId ) :
-    Object( aId ),
-    mMetrics(),
-    mUpdateErrorMsg(""),
-    mMonitoringStatus(monitoring::kEnabled),
-    mStatus(NULL)
+  Object( aId ),
+  mMetrics(),
+  mUpdateErrorMsg(""),
+  mMonitoringStatus(monitoring::kEnabled),
+  mStatus(NULL),
+  mLogger(swatch::logger::Logger::getInstance("swatch.core.MonitorableObject"))
 {
 }
 
@@ -114,6 +119,8 @@ void MonitorableObject::updateMetrics(const MetricUpdateGuard& aGuard)
   {
     // TODO: should lock a mutex ??
     mUpdateErrorMsg = e.what();
+    
+    LOG4CPLUS_WARN(mLogger, "Exception of type '" << demangleName(typeid(e).name()) << "' was thrown by retrieveMetricValues() method of monitorable object '" << this->getPath() << "'. Exception message: " << e.what());
   }
 
   BOOST_FOREACH(MetricMap_t::value_type p, mMetrics) {
@@ -148,21 +155,22 @@ void MonitorableObject::addMonitorable(MonitorableObject* aMonObj)
   // (use setStatus method to check that descendants aren't already using custom status instances defined by end user)
   if(mStatus != NULL)
   {
-    aMonObj->setMonitorableStatus(*mStatus);
+    aMonObj->setMonitorableStatus(*mStatus, mLogger);
 
     for(Object::iterator lIt = aMonObj->begin(); lIt != aMonObj->end(); lIt++)
     {
       if ( MonitorableObject* lChildMonObj = dynamic_cast<MonitorableObject*>(&*lIt) )
-        lChildMonObj->setMonitorableStatus(*mStatus);
+        lChildMonObj->setMonitorableStatus(*mStatus, mLogger);
     }
   }
 }
 
-void MonitorableObject::setMonitorableStatus(AbstractMonitorableStatus& aStatus)
+void MonitorableObject::setMonitorableStatus(AbstractMonitorableStatus& aStatus, log4cplus::Logger& aLogger)
 {
-  if((mStatus == NULL) || (mStatus == &aStatus))
-    mStatus = &aStatus;  
-  else
+  if((mStatus == NULL) || (mStatus == &aStatus)) {
+   mStatus = &aStatus;  
+   mLogger = aLogger;
+  } else
     throw std::runtime_error("Status of monitorable object '" + getId() + "' has already been set");
 }
 
