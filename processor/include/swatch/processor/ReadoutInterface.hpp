@@ -23,7 +23,7 @@ public:
   static const std::vector<std::string>  kDefaultMetrics;
 
 protected:
-  core::Metric<uint32_t>& mMetricTTS;
+  core::Metric<std::string>& mMetricTTS;
   core::Metric<bool>& mMetricAMCCoreReady;
 };
 

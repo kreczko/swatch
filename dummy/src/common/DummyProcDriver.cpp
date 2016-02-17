@@ -4,6 +4,7 @@
 #include <stdexcept>
 
 #include "boost/lexical_cast.hpp"
+#include "swatch/core/TTSUtils.hpp"
 
 
 namespace swatch {
@@ -52,13 +53,14 @@ DummyProcDriver::TTCStatus DummyProcDriver::getTTCStatus() const
 
 DummyProcDriver::ReadoutStatus DummyProcDriver::getReadoutStatus() const
 {
+  namespace tts=swatch::core::tts;
   switch (mReadoutState) {
     case ComponentState::kGood : 
-      return ReadoutStatus(true, 8);
+      return ReadoutStatus(true, tts::kReadyStr);
     case ComponentState::kWarning : 
-      return ReadoutStatus(true, 5);
+      return ReadoutStatus(true, tts::kWarningStr);
     case ComponentState::kError :
-      return ReadoutStatus(false, 2);
+      return ReadoutStatus(false, tts::kErrorStr);
     // Not reachable = throw
     case ComponentState::kNotReachable : 
       break;

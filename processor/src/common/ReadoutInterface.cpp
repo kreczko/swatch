@@ -6,27 +6,29 @@
 
 #include "swatch/processor/ReadoutInterface.hpp"
 
-
 #include "swatch/core/MetricConditions.hpp"
-
+#include "swatch/core/TTSUtils.hpp"
 
 namespace swatch {
 namespace processor {
 
 // Static Members Initialization
-const std::vector<std::string> ReadoutInterface::kDefaultMetrics = {"tts"};
+const std::vector<std::string> ReadoutInterface::kDefaultMetrics = {"tts","amcCoreReady"};
 
   
 ReadoutInterface::ReadoutInterface() : 
   core::MonitorableObject("readout"),
-  mMetricTTS( registerMetric<uint32_t>("tts") ),
+  mMetricTTS( registerMetric<std::string>("tts") ),
   mMetricAMCCoreReady( registerMetric<bool>("amcCoreReady") )       
 {
 
   // Error if in OOS, warning if not Ready
+//  setConditions(mMetricTTS,
+//      core::EqualCondition<uint32_t>(0x2),
+//      core::NotEqualCondition<uint32_t>(0x8));
   setConditions(mMetricTTS,
-      core::EqualCondition<uint32_t>(0x2),
-      core::NotEqualCondition<uint32_t>(0x8));
+      core::EqualCondition<std::string>(core::tts::kErrorStr),
+      core::NotEqualCondition<std::string>(core::tts::kReadyStr));
 
   // Error if AMCCore is not ready
   setErrorCondition(mMetricAMCCoreReady, core::EqualCondition<bool>(false));

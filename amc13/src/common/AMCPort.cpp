@@ -11,6 +11,7 @@
 
 #include "swatch/core/MetricConditions.hpp"
 #include "swatch/core/Utilities.hpp"
+#include "swatch/core/TTSUtils.hpp"
 
 
  // AMC13 Headers
@@ -57,7 +58,7 @@ AMCPort::AMCPort(uint32_t aSlot, ::amc13::AMC13& aDriver) :
   mLinkReady(registerMetric<bool>("ready") ),
   mLinkOK(registerMetric<bool>("ok") ),
   mAMC13LinkRevision(registerMetric<uint32_t>("amc13Revision") ),
-  mTTS(registerMetric<uint32_t>("tts") ) ,
+  mTTS(registerMetric<std::string>("tts") ) ,
   mAMCEvents(registerMetric<uint64_t>("amcEvents") ) ,
   mAMCHeaders(registerMetric<uint64_t>("amcHeaders") ) ,
   mAMCTrailers(registerMetric<uint64_t>("amcTrailers") ) ,
@@ -80,7 +81,9 @@ AMCPort::AMCPort(uint32_t aSlot, ::amc13::AMC13& aDriver) :
   setErrorCondition(mLinkOK,core::EqualCondition<bool>(false));
 
   // Error if OOS, Warning if not Ready
-  setConditions(mTTS,core::EqualCondition<uint32_t>(0x2), core::NotEqualCondition<uint32_t>(0x8));
+  setConditions(mTTS,
+      core::EqualCondition<std::string>(core::tts::kErrorStr), 
+      core::NotEqualCondition<std::string>(core::tts::kReadyStr));
   
   setErrorCondition(mAMCBcnMismatch,core::NotEqualCondition<uint64_t>(0x0));
   setErrorCondition(mAMCOrnMismatch,core::NotEqualCondition<uint64_t>(0x0));
@@ -120,7 +123,7 @@ void AMCPort::retrieveMetricValues() {
   
   setMetricValue<>(mAMC13LinkRevision, mDriver.read(AMC13::T1,prefixLink+"AMC13_LINK_VER"));
   
-  setMetricValue<>(mTTS, mDriver.read(AMC13::T1,prefixLink+"AMC_TTS"));
+  setMetricValue<>(mTTS, core::tts::codeToString(mDriver.read(AMC13::T1,prefixLink+"AMC_TTS")));
 
   // Counters
   setMetricValue<>(mAMCEvents, read64bCounter(mDriver, AMC13::T1,prefixCtrs+"RECEIVED_EVENT_COUNTER"));

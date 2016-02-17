@@ -4,6 +4,7 @@
 
 
 #include <stdint.h>
+#include <string>
 
 #include "swatch/dummy/ComponentState.hpp"
 
@@ -81,12 +82,12 @@ public:
   };
 
   struct ReadoutStatus {
-      ReadoutStatus(bool aAMCCoreReady, uint32_t aTTSState) : 
+      ReadoutStatus(bool aAMCCoreReady, std::string aTTSState) : 
         amcCoreReady(aAMCCoreReady),
         ttsState(aTTSState)
       {}
       bool amcCoreReady;
-      uint32_t ttsState;
+      std::string ttsState;
   };
 
   struct RxPortStatus {

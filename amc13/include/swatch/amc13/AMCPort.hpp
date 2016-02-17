@@ -46,7 +46,7 @@ protected:
   core::Metric<uint32_t>& mAMC13LinkRevision;
 
   //! AMC_Links: AMC_TTS
-  core::Metric<uint32_t>& mTTS;
+  core::Metric<std::string>& mTTS;
 
   //! AMC_Links: AMC_EVENTS
   core::Metric<uint64_t>& mAMCEvents;

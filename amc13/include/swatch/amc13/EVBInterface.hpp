@@ -27,7 +27,7 @@ public:
   virtual void retrieveMetricValues();
 
 private:
-  static uint32_t ttsInternalStatusDecoder( uint32_t aTTSInternalState );
+  static const std::string& ttsInternalStatusDecoder( uint32_t aTTSInternalState );
 
   ::amc13::AMC13& mDriver;
 
@@ -41,10 +41,10 @@ private:
   core::Metric<bool>& mSyncLost;
 
   // T1: STATUS.AMC_TTS_STATE
-  core::Metric<uint32_t>& mAMCsTTSState;
+  core::Metric<std::string>& mAMCsTTSState;
 
   // T1: STATUS.T1_TTS_STATE
-  core::Metric<uint32_t>& mTTSState;
+  core::Metric<std::string>& mTTSState;
 
   // T1: STATUS.GENERAL.L1A_COUNT
   core::Metric<uint64_t>& mL1ACount;

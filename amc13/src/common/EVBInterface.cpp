@@ -13,6 +13,7 @@
 #include "swatch/core/MetricConditions.hpp"
 
 #include "amc13/AMC13.hh"
+#include "swatch/core/TTSUtils.hpp"
 
 namespace swatch {
 namespace amc13 {
@@ -22,8 +23,8 @@ EVBInterface::EVBInterface( ::amc13::AMC13& aDriver ) :
   mDriver(aDriver),
   mOverflowWarning(registerMetric<bool>("warningOverflow") ),
   mSyncLost(registerMetric<bool>("outOfSync") ),
-  mAMCsTTSState(registerMetric<uint32_t>("amcsTts") ),
-  mTTSState(registerMetric<uint32_t>("tts") ),
+  mAMCsTTSState(registerMetric<std::string>("amcsTts") ),
+  mTTSState(registerMetric<std::string>("tts") ),
   mL1ACount(registerMetric<uint64_t>("l1aCount")),
   mRunTime(registerMetric<uint64_t>("runTime")),
   mReadyTime(registerMetric<uint64_t>("readyTime")),
@@ -35,15 +36,22 @@ EVBInterface::EVBInterface( ::amc13::AMC13& aDriver ) :
   setErrorCondition(mOverflowWarning,core::EqualCondition<bool>(true));
   setErrorCondition(mSyncLost,core::EqualCondition<bool>(true));
 
-  setConditions(mAMCsTTSState, core::EqualCondition<uint32_t>(0x2), core::NotEqualCondition<uint32_t>(0x8));
-  setConditions(mTTSState, core::EqualCondition<uint32_t>(0x2), core::NotEqualCondition<uint32_t>(0x8));
+  setConditions(mAMCsTTSState,
+      core::EqualCondition<std::string>(core::tts::kErrorStr),
+      core::NotEqualCondition<std::string>(core::tts::kReadyStr)
+      );
+  
+  setConditions(mTTSState,
+      core::EqualCondition<std::string>(core::tts::kErrorStr),
+      core::NotEqualCondition<std::string>(core::tts::kReadyStr)
+      );
 }
 
 EVBInterface::~EVBInterface() {
 }
 
 
-uint32_t EVBInterface::ttsInternalStatusDecoder(uint32_t aTTSInternalState) {
+const std::string& EVBInterface::ttsInternalStatusDecoder(uint32_t aTTSInternalState) {
   /*
    * From: http://bucms.bu.edu/twiki/bin/view/BUCMSPublic/AMC13UserManual
    * 
@@ -64,18 +72,19 @@ uint32_t EVBInterface::ttsInternalStatusDecoder(uint32_t aTTSInternalState) {
   const uint32_t kReady = 0;
   switch (aTTSInternalState) {
     case kReady:
-      return 0x8;
+      return core::tts::kReadyStr;
     case kBusy:
-      return 0x4;
+      return core::tts::kBusyStr;
     case kOverflowWarning:
-      return 0x1;
+      return core::tts::kWarningStr;
     case kSyncLost:
-      return 0x2;
+      return core::tts::kOutOfSyncStr;
     case kError:
-      return 0xc;
+      return core::tts::kErrorStr;
     case kDisconnected:
+      return core::tts::kDisconnectedStr;
     default:
-      return 0x0;
+      return core::tts::kUnknownStr;
   }
 }
 
@@ -89,7 +98,7 @@ EVBInterface::retrieveMetricValues() {
   setMetricValue<>(mOverflowWarning, (bool)mDriver.read(AMC13::T1,prefixEvb+"OVERFLOW_WARNING"));
   setMetricValue<>(mSyncLost, (bool)mDriver.read(AMC13::T1,prefixEvb+"SYNC_LOST"));
   setMetricValue<>(mAMCsTTSState, ttsInternalStatusDecoder(mDriver.read(AMC13::T1,prefixStat+"AMC_TTS_STATE")));
-  setMetricValue<>(mTTSState, mDriver.read(AMC13::T1,prefixStat+"T1_TTS_STATE"));
+  setMetricValue<>(mTTSState, core::tts::codeToString(mDriver.read(AMC13::T1,prefixStat+"T1_TTS_STATE")));
   setMetricValue<>(mL1ACount, read64bCounter(mDriver, AMC13::T1,prefixGeneral+"L1A_COUNT"));
   setMetricValue<>(mRunTime, read64bCounter(mDriver, AMC13::T1,prefixGeneral+"RUN_TIME"));
   setMetricValue<>(mReadyTime, read64bCounter(mDriver, AMC13::T1,prefixGeneral+"READY_TIME"));
