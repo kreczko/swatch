@@ -20,17 +20,6 @@ enum State {
     kUnknown = 0xff
 };
 
-
-// extern const std::string kWarningStr;
-// extern const std::string kOutOfSyncStr;
-// extern const std::string kBusyStr;
-// extern const std::string kReadyStr;
-// extern const std::string kErrorStr;
-// extern const std::string kDisconnectedStr;
-// extern const std::string kUnknownStr;
-
-// const std::string& codeToString( uint32_t aCode );
-
 std::ostream& operator<<(std::ostream& oStream, const State& aState);
 
 } // namespace tts
