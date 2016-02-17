@@ -242,7 +242,7 @@ private:
   //! Throws if child is not engaged in specified state machine, or running transition
   void checkChildEngagedAndNotInTransition(const StateMachine& aStateMachine, const ActionableStatusGuard& aGuard, const std::string& aAction) const;
 
-  void resetAndApplyEnableFlagOnChildren(const GateKeeper& aGateKeeper, const ActionableSystem::GuardMap_t& aGuardMap);
+  void disableChildren(const GateKeeper& aGateKeeper, const ActionableSystem::GuardMap_t& aGuardMap);
 
   struct State : public Object {
     State(const std::string& aId);

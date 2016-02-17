@@ -1607,7 +1607,9 @@ BOOST_FIXTURE_TEST_CASE(TestChildrenDisabledDuringReset, SystemStateMachineTestS
 
   // PURPOSE: Check that reset ...
   //    - Disables children specified in gatekeeper (child1)
-  //    - Leaves all other children enabled (child2 + child3)
+  //    - Leaves all other children:
+  //       - Enabled if they were already enabled at the start of `reset` method (child2)
+  //       - Disabled if they were already disabled at the start of `reset` method (child3)
   //    - Doesn't care if disabled children are in other state machines 
   //    - Only changes masks on children that are enabled (i.e. child2 + child3)
 
@@ -1622,9 +1624,11 @@ BOOST_FIXTURE_TEST_CASE(TestChildrenDisabledDuringReset, SystemStateMachineTestS
   //  * Engage child3 in main FSM (will be enabled in reset)
   child3.fsm.engage(DummyGateKeeper());
 
-  //  * Engage child1 in another FSM (will be disabled in reset, hence reset shouldn't care)
+  //  * Engage child1 & child3 in another FSM (will be disabled in reset, hence reset shouldn't care)
   child1.fsm.disengage();
   child1.obj.registerStateMachine("anotherFSM", "anotherInitialState", "sE").engage(DummyGateKeeper());
+  child3.fsm.disengage();
+  child3.obj.registerStateMachine("anotherFSM", "anotherInitialState", "sE").engage(DummyGateKeeper());
 
   BOOST_REQUIRE_EQUAL(child1.obj.getStatus().isEnabled(), true);
   BOOST_REQUIRE_EQUAL(child1.obj.getStatus().getStateMachineId(), "anotherFSM");
@@ -1635,8 +1639,8 @@ BOOST_FIXTURE_TEST_CASE(TestChildrenDisabledDuringReset, SystemStateMachineTestS
   BOOST_REQUIRE_EQUAL(child2.obj.getStatus().getState(), childState0);
   BOOST_REQUIRE_EQUAL(child2.obj.getMonitoringStatus(), monitoring::kEnabled);
   BOOST_REQUIRE_EQUAL(child3.obj.getStatus().isEnabled(), false);
-  BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getStateMachineId(), child3.fsm.getId());
-  BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getState(), childState0);
+  BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getStateMachineId(), "anotherFSM");
+  BOOST_REQUIRE_EQUAL(child3.obj.getStatus().getState(), "anotherInitialState");
   child3.obj.setMonitoringStatus(monitoring::kDisabled);
   BOOST_REQUIRE_EQUAL(child3.obj.getMonitoringStatus(), monitoring::kDisabled);
 
@@ -1663,24 +1667,27 @@ BOOST_FIXTURE_TEST_CASE(TestChildrenDisabledDuringReset, SystemStateMachineTestS
   BOOST_CHECK_EQUAL(child1.obj.getMonitoringStatus(), monitoring::kNonCritical);
   BOOST_CHECK_EQUAL(child2.obj.getStatus().isEnabled(), true);
   BOOST_CHECK_EQUAL(child2.obj.getMonitoringStatus(), monitoring::kEnabled);
-  BOOST_CHECK_EQUAL(child3.obj.getStatus().isEnabled(), true);
-  BOOST_CHECK_EQUAL(child3.obj.getMonitoringStatus(), monitoring::kEnabled);
+  BOOST_CHECK_EQUAL(child3.obj.getStatus().isEnabled(), false);
+  BOOST_CHECK_EQUAL(child3.obj.getMonitoringStatus(), monitoring::kNonCritical);
 
-  BOOST_CHECK_EQUAL(child1.obj.getStatus().getStateMachineId(), "anotherFSM");
-  BOOST_CHECK_EQUAL(child1.obj.getStatus().getState(), "anotherInitialState");
-  BOOST_CHECK_EQUAL(child1.maskableA.isMasked(), false);
-  BOOST_CHECK_EQUAL(child1.maskableB.isMasked(), false);
-  BOOST_CHECK_EQUAL(child1.maskableC.isMasked(), true);
 
-  for(ChildIt_t lIt=lChildren.begin()+1; lIt!=lChildren.end(); lIt++)
+  BOOST_CHECK_EQUAL(child2.obj.getStatus().getStateMachineId(), child2.fsm.getId());
+  BOOST_CHECK_EQUAL(child2.obj.getStatus().getState(), childState0);
+  BOOST_CHECK_EQUAL(child2.maskableA.isMasked(), true);
+  BOOST_CHECK_EQUAL(child2.maskableB.isMasked(), true);
+  BOOST_CHECK_EQUAL(child2.maskableC.isMasked(), false);
+
+  for(ChildIt_t lIt=lChildren.begin(); lIt!=lChildren.end(); lIt++)
   {
     const Child& lChild = **lIt;
 
-    BOOST_CHECK_EQUAL(lChild.obj.getStatus().getStateMachineId(), lChild.fsm.getId());
-    BOOST_CHECK_EQUAL(lChild.obj.getStatus().getState(), childState0);
-    BOOST_CHECK_EQUAL(lChild.maskableA.isMasked(), true);
-    BOOST_CHECK_EQUAL(lChild.maskableB.isMasked(), true);
-    BOOST_CHECK_EQUAL(lChild.maskableC.isMasked(), false);
+    if ( &lChild != &child2 ) {
+      BOOST_CHECK_EQUAL(lChild.obj.getStatus().getStateMachineId(), "anotherFSM");
+      BOOST_CHECK_EQUAL(lChild.obj.getStatus().getState(), "anotherInitialState");
+      BOOST_CHECK_EQUAL(lChild.maskableA.isMasked(), false);
+      BOOST_CHECK_EQUAL(lChild.maskableB.isMasked(), false);
+      BOOST_CHECK_EQUAL(lChild.maskableC.isMasked(), true);
+    }
   }
 }
 
