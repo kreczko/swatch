@@ -187,6 +187,11 @@ BOOST_AUTO_TEST_CASE(GoodMonitorableObject)
   BOOST_CHECK_EQUAL(ms.getStatusFlag(), swatch::core::StatusFlag::kGood);
   BOOST_CHECK_EQUAL(ms2.getStatusFlag(), swatch::core::StatusFlag::kGood);
   BOOST_CHECK_EQUAL(m.getStatusFlag(), swatch::core::StatusFlag::kGood);
+
+  // After change monitorable object to 'disabled', getStatusFlag() should return kNoLimit, regardless of metric status
+  m.setMonitoringStatus(swatch::core::monitoring::kDisabled);
+  BOOST_REQUIRE_EQUAL(m.getMonitoringStatus(), swatch::core::monitoring::kDisabled);
+  BOOST_CHECK_EQUAL(m.getStatusFlag(), swatch::core::kNoLimit);
 }
 
 BOOST_AUTO_TEST_CASE(CriticalFailure)
@@ -202,6 +207,11 @@ BOOST_AUTO_TEST_CASE(CriticalFailure)
   BOOST_CHECK_EQUAL(ms.getStatusFlag(), swatch::core::StatusFlag::kError);
   BOOST_CHECK_EQUAL(ms2.getStatusFlag(), swatch::core::StatusFlag::kGood);
   BOOST_CHECK_EQUAL(m.getStatusFlag(), swatch::core::StatusFlag::kError);
+  
+  // After change monitorable object to 'disabled', getStatusFlag() should return kNoLimit, regardless of metric status
+  m.setMonitoringStatus(swatch::core::monitoring::kDisabled);
+  BOOST_REQUIRE_EQUAL(m.getMonitoringStatus(), swatch::core::monitoring::kDisabled);
+  BOOST_CHECK_EQUAL(m.getStatusFlag(), swatch::core::kNoLimit);
 }
 
 BOOST_AUTO_TEST_CASE(NonCriticalFailure)
@@ -222,7 +232,7 @@ BOOST_AUTO_TEST_CASE(NonCriticalFailure)
   BOOST_CHECK_EQUAL(m.getStatusFlag(), swatch::core::StatusFlag::kGood);
 }
 
-BOOST_AUTO_TEST_CASE(DisabledFailure)
+BOOST_AUTO_TEST_CASE(DisabledMetricFailure)
 {
   DummyMasterMonitorableObject m;
   m.updateMetrics();
@@ -237,7 +247,7 @@ BOOST_AUTO_TEST_CASE(DisabledFailure)
   BOOST_CHECK_EQUAL(m.getStatusFlag(), swatch::core::StatusFlag::kGood);
 }
 
-BOOST_AUTO_TEST_CASE(DisabledFailureNoUnknown)
+BOOST_AUTO_TEST_CASE(DisabledMetricFailureNoUnknown)
 {
   DummyMasterMonitorableObject m;
   m.updateMetrics();

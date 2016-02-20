@@ -70,6 +70,10 @@ AbstractMetric& MonitorableObject::getMetric( const std::string& aId )
 StatusFlag MonitorableObject::getStatusFlag() const
 {
   StatusFlag result = kNoLimit;
+
+  // If this object is disabled, then return kNoLimit as status
+  if (mMonitoringStatus == swatch::core::monitoring::kDisabled)
+    return kNoLimit;
   
   std::vector<std::string> childIds = getChildren();
 
