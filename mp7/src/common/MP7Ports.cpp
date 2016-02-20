@@ -18,6 +18,7 @@
 #include "mp7/ChannelIDSet.hpp"
 #include "mp7/AlignMonNode.hpp"
 #include "mp7/Utilities.hpp"
+#include "swatch/core/MetricConditions.hpp"
 
 
 namespace swatch {
@@ -30,8 +31,18 @@ MP7RxPort::MP7RxPort( const std::string& aId, uint32_t aChannelID, ::mp7::MP7Con
   mDriver(aController),
   mDatapath(mDriver.getDatapath()),
   mMgt(mDatapath.getNode< ::mp7::MGTRegionNode>("region.mgt")),
-  mAlign(mDatapath.getNode< ::mp7::AlignMonNode>("region.align"))
+  mAlign(mDatapath.getNode< ::mp7::AlignMonNode>("region.align")),
+  mMetricPacketCounter(registerMetric<uint32_t>("packetCounter")),
+  mMetricAlignBx(registerMetric<uint32_t>("alignBx")),
+  mMetricAlignCycle(registerMetric<uint32_t>("alignCycle"))
 {
+  
+  setWarningCondition(mMetricPacketCounter,core::EqualCondition<uint32_t>(0));
+
+  setWarningCondition(mMetricAlignBx,core::EqualCondition<uint32_t>(0xfff));
+
+  setWarningCondition(mMetricAlignCycle,core::EqualCondition<uint32_t>(0x7));
+
 }
 
 
@@ -56,7 +67,8 @@ void MP7RxPort::retrieveMetricValues()
   uhal::ValWord<uint32_t> mgtNoCRCs = mMgt.getNode(mgtStatusNodePath+".crc_checked").read();
 
   /* IS ALIGNED */
-  uhal::ValWord<uint32_t> alignErrors = mAlign.getNode("stat.err_cnt").read();
+  ::mp7::AlignStatus alStatus = mAlign.status();
+//  uhal::ValWord<uint32_t> alignErrors = mAlign.getNode("stat.err_cnt").read();
   
   
   /* CRC ERRORS */
@@ -74,11 +86,18 @@ void MP7RxPort::retrieveMetricValues()
     mgtNoCRCs.value() != 0x0
   );
 
-  setMetricValue<>(metricIsLocked_, isLocked);
+  setMetricValue<>(mMetricIsLocked, isLocked);
+
+  setMetricValue<>(mMetricPacketCounter, mgtNoCRCs.value());
+
+  setMetricValue<>(mMetricCRCErrors, crcErrors.value());
   
-  setMetricValue<>(metricIsAligned_, alignErrors.value() == 0);
+  setMetricValue<>(mMetricIsAligned, alStatus.marker and alStatus.errors == 0);
   
-  setMetricValue<>(metricCRCErrors_, crcErrors.value());
+  setMetricValue<>(mMetricAlignBx, alStatus.position.bx);
+
+  setMetricValue<>(mMetricAlignCycle, alStatus.position.cycle);
+
 }
 
 
@@ -121,7 +140,7 @@ void MP7TxPort::retrieveMetricValues()
     s["tx_fsm_reset_done"]
   );
 
-  setMetricValue<>(metricIsOperating_, isOperating);
+  setMetricValue<>(mMetricIsOperating, isOperating);
 }
 
 }

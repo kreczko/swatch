@@ -25,9 +25,9 @@ public:
     static const std::vector<std::string> kDefaultMetrics;
 
 protected:
-    core::Metric<bool>& metricIsLocked_;
-    core::Metric<bool>& metricIsAligned_;
-    core::Metric<uint32_t>& metricCRCErrors_;    
+    core::Metric<bool>& mMetricIsLocked;
+    core::Metric<bool>& mMetricIsAligned;
+    core::Metric<uint32_t>& mMetricCRCErrors;    
 };
 
 
@@ -42,7 +42,7 @@ public:
     static const std::vector<std::string> kDefaultMetrics;
 
 protected:
-    core::Metric<bool>& metricIsOperating_;
+    core::Metric<bool>& mMetricIsOperating;
 };
 
 }

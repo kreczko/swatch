@@ -20,13 +20,13 @@ namespace mp7 {
 
 MP7TTCInterface::MP7TTCInterface(::mp7::MP7Controller& controller) :
 mDriver(controller),
-mBC0Counter(registerMetric<uint32_t>("bc0Counter")),
-mEC0Counter(registerMetric<uint32_t>("ec0Counter")),
-mOC0Counter(registerMetric<uint32_t>("oc0Counter")),
-mResyncCounter(registerMetric<uint32_t>("resyncCounter")),
-mStartCounter(registerMetric<uint32_t>("startCounter")),
-mStopCounter(registerMetric<uint32_t>("stopCounter")),
-mTestCounter(registerMetric<uint32_t>("testCounter")) {
+mMetricBC0Counter(registerMetric<uint32_t>("bc0Counter")),
+mMetricEC0Counter(registerMetric<uint32_t>("ec0Counter")),
+mMetricOC0Counter(registerMetric<uint32_t>("oc0Counter")),
+mMetricResyncCounter(registerMetric<uint32_t>("resyncCounter")),
+mMetricStartCounter(registerMetric<uint32_t>("startCounter")),
+mMetricStopCounter(registerMetric<uint32_t>("stopCounter")),
+mMetricTestCounter(registerMetric<uint32_t>("testCounter")) {
 }
 
 
@@ -49,16 +49,18 @@ void MP7TTCInterface::retrieveMetricValues() {
   
   const ::mp7::TTCNode& ttc = mDriver.getTTC();
   const ::mp7::CtrlNode& ctrl = mDriver.getCtrl();
-  
-  setMetricValue<>(metricBunchCounter_, ttc.readBunchCounter());
-  setMetricValue<>(metricOrbitCounter_, ttc.readOrbitCounter());
-  setMetricValue<>(metricEventCounter_, ttc.readEventCounter());
 
-  setMetricValue<>(metricSingleBitErrors_, ttc.readSingleBitErrorCounter());
-  setMetricValue<>(metricDoubleBitErrors_, ttc.readDoubleBitErrorCounter());
-  setMetricValue<>(metricIsClock40Locked_, ctrl.clock40Locked());
-  setMetricValue<>(metricHasClock40Stopped_, ctrl.clock40Stopped());
-  setMetricValue<>(metricIsBC0Locked_, ttc.readBC0Locked());
+  // L1A Counter = Event Counter (next event)-1
+  setMetricValue<>(mMetricL1ACounter, ttc.readEventCounter()-1);
+  
+  setMetricValue<>(mMetricBunchCounter, ttc.readBunchCounter());
+  setMetricValue<>(mMetricOrbitCounter, ttc.readOrbitCounter());
+
+  setMetricValue<>(mMetricSingleBitErrors, ttc.readSingleBitErrorCounter());
+  setMetricValue<>(mMetricDoubleBitErrors, ttc.readDoubleBitErrorCounter());
+  setMetricValue<>(mMetricIsClock40Locked, ctrl.clock40Locked());
+  setMetricValue<>(mMetricHasClock40Stopped, ctrl.clock40Stopped());
+  setMetricValue<>(mMetricIsBC0Locked, ttc.readBC0Locked());
 
 
 
@@ -82,13 +84,13 @@ void MP7TTCInterface::retrieveMetricValues() {
 
   ttc.getClient().dispatch();
 
-  setMetricValue<>(mBC0Counter, (uint32_t)bc0Counter);
-  setMetricValue<>(mEC0Counter, (uint32_t)ec0Counter);
-  setMetricValue<>(mOC0Counter, (uint32_t)oc0Counter);
-  setMetricValue<>(mResyncCounter, (uint32_t)resyncCounter);
-  setMetricValue<>(mStartCounter, (uint32_t)startCounter);
-  setMetricValue<>(mStopCounter, (uint32_t)stopCounter);
-  setMetricValue<>(mTestCounter, (uint32_t)testCounter);
+  setMetricValue<>(mMetricBC0Counter, (uint32_t)bc0Counter);
+  setMetricValue<>(mMetricEC0Counter, (uint32_t)ec0Counter);
+  setMetricValue<>(mMetricOC0Counter, (uint32_t)oc0Counter);
+  setMetricValue<>(mMetricResyncCounter, (uint32_t)resyncCounter);
+  setMetricValue<>(mMetricStartCounter, (uint32_t)startCounter);
+  setMetricValue<>(mMetricStopCounter, (uint32_t)stopCounter);
+  setMetricValue<>(mMetricTestCounter, (uint32_t)testCounter);
 
 }
 

@@ -33,12 +33,30 @@ protected:
   virtual void retrieveMetricValues();
   
 private:
-  //! Pointer to the main resource
+  //! MP7 channel number
   uint32_t mChannelID;
+  
+  //! Reference to the MP7Controller
   ::mp7::MP7Controller& mDriver;
+  
+  //! Reference to Datapath node
   const ::mp7::DatapathNode& mDatapath;
+  
+  //! Reference to MGT Node
   const ::mp7::MGTRegionNode& mMgt;
+  
+  //! Reference to Alignment Node
   const ::mp7::AlignMonNode& mAlign;
+  
+  //! Metric containing packet counter 
+  core::Metric<uint32_t>& mMetricPacketCounter;  
+  
+  //! Metric containing alignment bx value
+  core::Metric<uint32_t>& mMetricAlignBx;
+
+  //! Metric containing alignment cycle
+  core::Metric<uint32_t>& mMetricAlignCycle;
+
 };
 
 

@@ -28,7 +28,7 @@ void DummyTxPort::retrieveMetricValues()
 {
   DummyProcDriver::TxPortStatus lStatus = mDriver.getTxPortStatus(mChannelId);
 
-  setMetricValue<>(metricIsOperating_, lStatus.isOperating);
+  setMetricValue<>(mMetricIsOperating, lStatus.isOperating);
   setMetricValue<>(mWarningSign, lStatus.warningSign);
 }
 

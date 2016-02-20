@@ -29,23 +29,29 @@ public:
 
 
 protected:
+    //! Metric containing l1a counter values
+    core::Metric<uint32_t>& mMetricL1ACounter;;
+    
     //! Metric containing bunch counter value
-    core::Metric<uint32_t>& metricBunchCounter_;
-    //! Metric containing event counter value
-    core::Metric<uint32_t>& metricEventCounter_;
+    core::Metric<uint32_t>& mMetricBunchCounter;
+    
     //! Metric containing orbit counter value
-    core::Metric<uint32_t>& metricOrbitCounter_;
+    core::Metric<uint32_t>& mMetricOrbitCounter;
     
     //! Metric indicating if clk40 is locked
-    core::Metric<bool>& metricIsClock40Locked_;
+    core::Metric<bool>& mMetricIsClock40Locked;
+    
     //! Metric indicating if clk40 has stopped
-    core::Metric<bool>& metricHasClock40Stopped_;
+    core::Metric<bool>& mMetricHasClock40Stopped;
+    
     //! Metric indicating if BC0 is locked
-    core::Metric<bool>& metricIsBC0Locked_;
+    core::Metric<bool>& mMetricIsBC0Locked;
+    
     //! Metric representing single-bit error counter
-    core::Metric<uint32_t>& metricSingleBitErrors_;
+    core::Metric<uint32_t>& mMetricSingleBitErrors;
+    
     //! Metric representing double-bit error counter
-    core::Metric<uint32_t>& metricDoubleBitErrors_;
+    core::Metric<uint32_t>& mMetricDoubleBitErrors;
     
 public:
     static const std::vector<std::string> kDefaultMetrics;

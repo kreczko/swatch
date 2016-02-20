@@ -29,9 +29,9 @@ void DummyRxPort::retrieveMetricValues()
 {
   DummyProcDriver::RxPortStatus s = mDriver.getRxPortStatus(mChannelId);
   
-  setMetricValue<>(metricIsLocked_, s.isLocked);
-  setMetricValue<>(metricIsAligned_, s.isAligned);
-  setMetricValue<>(metricCRCErrors_, s.crcErrCount);
+  setMetricValue<>(mMetricIsLocked, s.isLocked);
+  setMetricValue<>(mMetricIsAligned, s.isAligned);
+  setMetricValue<>(mMetricCRCErrors, s.crcErrCount);
   setMetricValue<>(mWarningSign, s.warningSign);
 }
 

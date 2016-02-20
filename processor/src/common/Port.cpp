@@ -14,9 +14,9 @@ namespace processor {
 
 InputPort::InputPort( const std::string& aId) : 
     MaskableObject(aId),
-    metricIsLocked_( registerMetric<bool>("isLocked", core::EqualCondition<bool>(false)) ),
-    metricIsAligned_( registerMetric<bool>("isAligned", core::EqualCondition<bool>(false)) ),
-    metricCRCErrors_( registerMetric<uint32_t>("crcErrors", core::GreaterThanCondition<uint32_t>(0)) )        
+    mMetricIsLocked( registerMetric<bool>("isLocked", core::EqualCondition<bool>(false)) ),
+    mMetricIsAligned( registerMetric<bool>("isAligned", core::EqualCondition<bool>(false)) ),
+    mMetricCRCErrors( registerMetric<uint32_t>("crcErrors", core::GreaterThanCondition<uint32_t>(0)) )        
 {
 }
 
@@ -28,7 +28,7 @@ const std::vector<std::string> InputPort::kDefaultMetrics = { "isLocked", "isAli
 
 OutputPort::OutputPort( const std::string& aId ) :
     MonitorableObject(aId),
-    metricIsOperating_( registerMetric<bool>("isOperating", core::EqualCondition<bool>(false)) )
+    mMetricIsOperating( registerMetric<bool>("isOperating", core::EqualCondition<bool>(false)) )
 {
 }
 

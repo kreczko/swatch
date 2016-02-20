@@ -63,10 +63,16 @@ public:
 
   virtual const Rule_t& getMaskFilter(const swatch::core::XParameterSet& aParams) const;
 
-
+  //!
   static const std::string kMaskSelection;
+  
+  //!
   static const std::string kApplyMasks;
+  
+  //!
   static const std::string kInvertMasks;
+  
+  //!
   static const std::string kIgnoreMasks;
   
 private:

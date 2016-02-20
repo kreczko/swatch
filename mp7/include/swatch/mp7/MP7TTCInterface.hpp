@@ -37,13 +37,13 @@ private:
     
   ::mp7::MP7Controller& mDriver;
 
-  core::Metric<uint32_t>& mBC0Counter;
-  core::Metric<uint32_t>& mEC0Counter;
-  core::Metric<uint32_t>& mOC0Counter;
-  core::Metric<uint32_t>& mResyncCounter;
-  core::Metric<uint32_t>& mStartCounter;
-  core::Metric<uint32_t>& mStopCounter;
-  core::Metric<uint32_t>& mTestCounter;
+  core::Metric<uint32_t>& mMetricBC0Counter;
+  core::Metric<uint32_t>& mMetricEC0Counter;
+  core::Metric<uint32_t>& mMetricOC0Counter;
+  core::Metric<uint32_t>& mMetricResyncCounter;
+  core::Metric<uint32_t>& mMetricStartCounter;
+  core::Metric<uint32_t>& mMetricStopCounter;
+  core::Metric<uint32_t>& mMetricTestCounter;
 
 };
  

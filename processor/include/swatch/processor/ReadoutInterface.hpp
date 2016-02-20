@@ -26,6 +26,7 @@ public:
 protected:
   core::Metric<core::tts::State>& mMetricTTS;
   core::Metric<bool>& mMetricAMCCoreReady;
+  core::Metric<uint32_t>& mMetricEventCounter;
 };
 
 

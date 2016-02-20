@@ -25,6 +25,7 @@ void MP7ReadoutInterface::retrieveMetricValues() {
 
   setMetricValue<>(mMetricTTS, static_cast<core::tts::State>(readOut.readTTSState()));
   setMetricValue<>(mMetricAMCCoreReady, (bool)readOut.isAMC13LinkReady());
+  setMetricValue<>(mMetricEventCounter,readOut.readEventCounter());
 
 
 }
