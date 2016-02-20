@@ -20,7 +20,7 @@ ReadoutInterface::ReadoutInterface() :
   core::MonitorableObject("readout"),
   mMetricTTS( registerMetric<core::tts::State>("tts") ),
   mMetricAMCCoreReady( registerMetric<bool>("amcCoreReady") ),
-  mMetricEventCounter( registerMetric<uint32_t>("enentCounter") )       
+  mMetricEventCounter( registerMetric<uint32_t>("eventCounter") )       
 {
 
   // Error if in OOS, warning if not Ready
