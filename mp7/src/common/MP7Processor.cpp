@@ -33,12 +33,15 @@
 #include "uhal/HwInterface.hpp"
 #include "uhal/ConnectionManager.hpp"
 
-// C++ Headers
+// log4cplus headers
+#include "log4cplus/loggingmacros.h"
+
+// C++ headers
 #include <iomanip>
 
 
-namespace swlog = swatch::logger;
 namespace swpro = swatch::processor;
+
 
 SWATCH_REGISTER_CLASS(swatch::mp7::MP7Processor);
 
@@ -111,7 +114,8 @@ MP7AbstractProcessor(aStub)
   registerCommand<SetupReadout>(CmdIds::kSetupReadout);
   registerCommand<LoadReadoutMenu>(CmdIds::kLoadReadoutMenu);
 
-  LOG(swlog::kNotice) << "MP7 Processor '" << this->getId() << "' built: firmware 0x" << std::hex << retrieveFirmwareVersion() << std::endl;
+  uint64_t lFwVsn = retrieveFirmwareVersion();
+  LOG4CPLUS_INFO(getLogger(), "MP7 processor '" << this->getId() << "' built: firmware 0x" << std::hex << lFwVsn);
 }
 
 //---

@@ -8,13 +8,11 @@
 #include "swatch/amc13/AMC13Manager.hpp"
 
 
-// Swatch Headers
+// SWATCH headers
 #include "swatch/core/Factory.hpp"
-#include "swatch/logger/Log.hpp"
 #include "swatch/dtm/DaqTTCStub.hpp"
 #include "swatch/core/CommandSequence.hpp"
 #include "swatch/dtm/AMCPortCollection.hpp"
-
 
 #include "swatch/amc13/AMC13Commands.hpp"
 #include "swatch/amc13/TTCInterface.hpp"
@@ -25,20 +23,20 @@
 // XDAQ headers
 #include "xdata/String.h"
 
-// AMC13 Headers
+// AMC13 headers
 #include "amc13/AMC13.hh"
-#include "swatch/amc13/EVBInterface.hpp"
 
-// Boost Headers
+// log4cplus headers
+#include "log4cplus/loggingmacros.h"
+
+// boost headers
 #include <boost/assign.hpp>
 #include <boost/foreach.hpp>
 #include <boost/preprocessor/facilities.hpp>
 
 
-namespace swlo = swatch::logger;
-
-
 SWATCH_REGISTER_CLASS(swatch::amc13::AMC13Manager)
+
 
 namespace swatch {
 namespace amc13 {
@@ -96,8 +94,7 @@ AMC13Manager::AMC13Manager(const swatch::core::AbstractStub& aStub) :
 
   uint32_t vT1 = mDriver->read(AMC13::T1, "STATUS.FIRMWARE_VERS");
   uint32_t vT2 = mDriver->read(AMC13::T2, "STATUS.FIRMWARE_VERS");
-  LOG(swlo::kNotice) << "AMC13 Service '" << getId() << "' built. T1 ver: 0x" << std::hex << vT1 << " T2 ver: 0x" << std::hex << vT2;
-
+  LOG4CPLUS_INFO(getLogger(), "AMC13 manager '" << getId() << "' built. T1 ver: 0x" << std::hex << vT1 << " T2 ver: 0x" << std::hex << vT2);
 }
 
 
