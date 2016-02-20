@@ -10,19 +10,23 @@ namespace dummy {
 
 
 DummyReadoutInterface::DummyReadoutInterface(DummyProcDriver& aDriver) :
-ReadoutInterface(),
-mDriver(aDriver) {
+  ReadoutInterface(),
+  mDriver(aDriver)
+{
 }
 
 
-DummyReadoutInterface::~DummyReadoutInterface() {
+DummyReadoutInterface::~DummyReadoutInterface()
+{
 }
 
 
-void DummyReadoutInterface::retrieveMetricValues() {
+void DummyReadoutInterface::retrieveMetricValues()
+{
   DummyProcDriver::ReadoutStatus lStatus = mDriver.getReadoutStatus();
   setMetricValue<>(mMetricAMCCoreReady, lStatus.amcCoreReady);
   setMetricValue<>(mMetricTTS, lStatus.ttsState);
+  setMetricValue<>(mMetricEventCounter, lStatus.eventCounter);
 }
 
 

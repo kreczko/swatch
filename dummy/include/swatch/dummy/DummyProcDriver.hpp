@@ -83,12 +83,14 @@ public:
   };
 
   struct ReadoutStatus {
-      ReadoutStatus(bool aAMCCoreReady, core::tts::State aTTSState) : 
-        amcCoreReady(aAMCCoreReady),
-        ttsState(aTTSState)
-      {}
-      bool amcCoreReady;
-      core::tts::State ttsState;
+    ReadoutStatus(bool aAMCCoreReady, core::tts::State aTTSState, uint32_t aEventCounter) : 
+      amcCoreReady(aAMCCoreReady),
+      ttsState(aTTSState),
+      eventCounter(aEventCounter)
+    {}
+    bool amcCoreReady;
+    core::tts::State ttsState;
+    uint32_t eventCounter;
   };
 
   struct RxPortStatus {

@@ -56,11 +56,11 @@ DummyProcDriver::ReadoutStatus DummyProcDriver::getReadoutStatus() const
   namespace tts=swatch::core::tts;
   switch (mReadoutState) {
     case ComponentState::kGood : 
-      return ReadoutStatus(true, tts::kReady);
+      return ReadoutStatus(true, tts::kReady, 0xcafebeef);
     case ComponentState::kWarning : 
-      return ReadoutStatus(true, tts::kWarning);
+      return ReadoutStatus(true, tts::kWarning, 0xcafebeef);
     case ComponentState::kError :
-      return ReadoutStatus(false, tts::kError);
+      return ReadoutStatus(false, tts::kError, 0xcafe0000);
     // Not reachable = throw
     case ComponentState::kNotReachable : 
       break;
