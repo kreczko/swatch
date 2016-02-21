@@ -2,7 +2,7 @@
 #define __SWATCH_MP7_MP7MGTCOMMANDS_HPP__
 
 
-#include "swatch/mp7/ChannelCommandCore.hpp"
+#include "swatch/mp7/CommandChannelSelector.hpp"
 
 
 namespace swatch {
@@ -15,7 +15,7 @@ public:
   virtual core::Command::State code(const core::XParameterSet& params);
 
 private:
-  RxMGTCommandCore mRxMGTCore;
+  RxMGTSelector mRxMGTHelper;
 };
 
 
@@ -25,7 +25,7 @@ public:
     virtual ~ConfigureTxMGTsCommand() {}
     virtual core::Command::State code(const core::XParameterSet& params);
 private:
-  TxMGTCommandCore mTxMGTCore;
+  TxMGTSelector mTxMGTHelper;
 };
 
 
@@ -35,7 +35,7 @@ public:
     virtual ~AlignRxsToCommand() {}
     virtual core::Command::State code(const core::XParameterSet& params);
 private:
-  RxMGTCommandCore mRxMGTCore;
+  RxMGTSelector mRxMGTHelper;
 };
 
 
@@ -45,7 +45,7 @@ public:
     virtual ~AutoAlignCommand() {}
     virtual core::Command::State code (const core::XParameterSet& aParams);
 private:
-  RxMGTCommandCore mRxMGTCore;
+  RxMGTSelector mRxMGTHelper;
 };
 
 

@@ -7,15 +7,27 @@
 namespace swatch {
 namespace mp7 {
 
-
+/**
+ * @class UploadFirmwareCommand
+ * 
+ * Upload firmare image on the on-board SC cards
+ */
 class UploadFirmwareCommand : public ::swatch::core::Command {
 public:
+  /**
+   * 
+   */
   UploadFirmwareCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
   virtual ~UploadFirmwareCommand();
   virtual State code(const ::swatch::core::XParameterSet& params);
 
 };
 
+/**
+ * @class DeleteFirmwareCommand
+ * 
+ * Deletes firmware image from the on-board SD card
+ */
 class DeleteFirmwareCommand : public ::swatch::core::Command {
 public:
   DeleteFirmwareCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);

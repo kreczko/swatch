@@ -32,8 +32,8 @@ namespace mp7 {
 
 
 // Static initialization
-template<class C>
-const std::map< std::string, ::mp7::TestPathConfigurator::Mode > ConfigureBuffersCommand<C>::mBufferModeMap = {
+template<class Selector>
+const std::map< std::string, ::mp7::TestPathConfigurator::Mode > ConfigureBuffersCommand<Selector>::mBufferModeMap = {
   {"Latency", ::mp7::TestPathConfigurator::kLatency},
   {"Capture", ::mp7::TestPathConfigurator::kCapture},
   {"PlayOnce", ::mp7::TestPathConfigurator::kPlayOnce},
@@ -55,10 +55,10 @@ const std::map< std::string, ::mp7::TestPathConfigurator::Mode > ConfigureBuffer
 
 // Template specialisation
 template<>
-const ::mp7::BufferKind BufferTraits<RxBufferCommandCore>::bufferKind = ::mp7::kRxBuffer;
+const ::mp7::BufferKind BufferTraits<RxBufferSelector>::bufferKind = ::mp7::kRxBuffer;
 
 template<>
-const ::mp7::BufferKind BufferTraits<TxBufferCommandCore>::bufferKind = ::mp7::kTxBuffer;
+const ::mp7::BufferKind BufferTraits<TxBufferSelector>::bufferKind = ::mp7::kTxBuffer;
 
 // --------------------------------------------------------
 // template<class C>
@@ -84,13 +84,13 @@ const ::mp7::BufferKind BufferTraits<TxBufferCommandCore>::bufferKind = ::mp7::k
 
 
 // --------------------------------------------------------
-template<class C>
-ConfigureBuffersCommand<C>::ConfigureBuffersCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
+template<class Selector>
+ConfigureBuffersCommand<Selector>::ConfigureBuffersCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
 swatch::core::Command(aId, aActionable, xdata::String()),
-mBufferCore(*this)
+mBufferSelector(*this)
 {
 
-  mBufferCore.addParameters();
+  mBufferSelector.addParameters();
 
   // Parameter registration  
   registerParameter("startBx", xdata::UnsignedInteger(0x0));
@@ -104,12 +104,12 @@ mBufferCore(*this)
 
 
 // --------------------------------------------------------
-template<class C>
+template<class Selector>
 core::Command::State
-ConfigureBuffersCommand<C>::code(const ::swatch::core::XParameterSet& params)
+ConfigureBuffersCommand<Selector>::code(const ::swatch::core::XParameterSet& params)
 {
 
-  const ::mp7::BufferKind bKind = BufferTraits<C>::bufferKind;
+  const ::mp7::BufferKind bKind = BufferTraits<Selector>::bufferKind;
 
   // Extract parameter values
   // LOG(swatch::logger::kWarning) << params;
@@ -164,7 +164,7 @@ ConfigureBuffersCommand<C>::code(const ::swatch::core::XParameterSet& params)
 
   setStatusMsg(msg.str());
 
-  ::mp7::ChannelsManager cm = mBufferCore.getManager(params);
+  ::mp7::ChannelsManager cm = mBufferSelector.getManager(params);
 
   setProgress(0.2, "Generating BoardData object...");
 
@@ -232,8 +232,8 @@ ConfigureBuffersCommand<C>::code(const ::swatch::core::XParameterSet& params)
 }
 
 
-template class ConfigureBuffersCommand<RxBufferCommandCore>;
-template class ConfigureBuffersCommand<TxBufferCommandCore>;
+template class ConfigureBuffersCommand<RxBufferSelector>;
+template class ConfigureBuffersCommand<TxBufferSelector>;
 
 
 
@@ -272,13 +272,13 @@ CaptureBuffersCommand::code(const ::swatch::core::XParameterSet& params)
 
 
 // --------------------------------------------------------
-template<class C>
-SaveBuffersToFileCommand<C>::SaveBuffersToFileCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
+template<class Selector>
+SaveBuffersToFileCommand<Selector>::SaveBuffersToFileCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
 swatch::core::Command(aId, aActionable, xdata::String()),
-mBufferCore(*this)
+mBufferSelector(*this)
 {
 
-  mBufferCore.addParameters();
+  mBufferSelector.addParameters();
 
   registerParameter("filename", xdata::String(""));
 }
@@ -286,12 +286,12 @@ mBufferCore(*this)
 
 
 // --------------------------------------------------------
-template<class C>
-core::Command::State SaveBuffersToFileCommand<C>::code(const ::swatch::core::XParameterSet& params)
+template<class Selector>
+core::Command::State SaveBuffersToFileCommand<Selector>::code(const ::swatch::core::XParameterSet& params)
 {
 
   // Get the corresponding buffer kind
-  const ::mp7::BufferKind bKind = BufferTraits<C>::bufferKind;
+  const ::mp7::BufferKind bKind = BufferTraits<Selector>::bufferKind;
 
   std::string filename = params.get<xdata::String>("filename").value_;
 
@@ -299,7 +299,7 @@ core::Command::State SaveBuffersToFileCommand<C>::code(const ::swatch::core::XPa
   ::mp7::MP7Controller& driver = getActionable< MP7AbstractProcessor>().driver();
 
   ::mp7::CtrlNode ctrl = driver.getCtrl();
-  ::mp7::ChannelsManager cm = mBufferCore.getManager(params);
+  ::mp7::ChannelsManager cm = mBufferSelector.getManager(params);
 
 
   // TOFIX: Output file should be compulsory
@@ -337,19 +337,19 @@ core::Command::State SaveBuffersToFileCommand<C>::code(const ::swatch::core::XPa
 }
 
 // Template Instance
-template class SaveBuffersToFileCommand<RxBufferCommandCore>;
-template class SaveBuffersToFileCommand<TxBufferCommandCore>;
+template class SaveBuffersToFileCommand<RxBufferSelector>;
+template class SaveBuffersToFileCommand<TxBufferSelector>;
 
 
 
 // --------------------------------------------------------
-template<class C>
-LatencyBuffersCommand<C>::LatencyBuffersCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
+template<class Selector>
+LatencyBuffersCommand<Selector>::LatencyBuffersCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
 swatch::core::Command(aId, aActionable, xdata::String()),
-mBufferCore(*this)
+mBufferSelector(*this)
 {
 
-  mBufferCore.addParameters();
+  mBufferSelector.addParameters();
 
   registerParameter("bankId", xdata::UnsignedInteger(0x0));
   registerParameter("depth", xdata::UnsignedInteger(0x0));
@@ -358,11 +358,11 @@ mBufferCore(*this)
 
 
 // --------------------------------------------------------
-template<class C>
-core::Command::State LatencyBuffersCommand<C>::code(const ::swatch::core::XParameterSet& params)
+template<class Selector>
+core::Command::State LatencyBuffersCommand<Selector>::code(const ::swatch::core::XParameterSet& params)
 {
   // Get the corresponding buffer kind
-  const ::mp7::BufferKind bKind = BufferTraits<C>::bufferKind;
+  const ::mp7::BufferKind bKind = BufferTraits<Selector>::bufferKind;
 
 
   uint bankId = params.get<xdata::UnsignedInteger>("bankId").value_;
@@ -370,7 +370,7 @@ core::Command::State LatencyBuffersCommand<C>::code(const ::swatch::core::XParam
 
   setProgress(0.0, "Configuring buffers in latency mode");
 
-  ::mp7::ChannelsManager cm = mBufferCore.getManager(params);
+  ::mp7::ChannelsManager cm = mBufferSelector.getManager(params);
   ::mp7::LatencyPathConfigurator pc = ::mp7::LatencyPathConfigurator(bankId, depth);
 
   cm.configureBuffers(bKind, pc);
@@ -380,18 +380,18 @@ core::Command::State LatencyBuffersCommand<C>::code(const ::swatch::core::XParam
   return State::kDone;
 }
 
-template class LatencyBuffersCommand<RxBufferCommandCore>;
-template class LatencyBuffersCommand<TxBufferCommandCore>;
+template class LatencyBuffersCommand<RxBufferSelector>;
+template class LatencyBuffersCommand<TxBufferSelector>;
 
 
 // --------------------------------------------------------
-template<class C>
-EasyLatencyCommand<C>::EasyLatencyCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
+template<class Selector>
+EasyLatencyCommand<Selector>::EasyLatencyCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
 swatch::core::Command(aId, aActionable, xdata::String()),
-mBufferCore(*this)
+mBufferSelector(*this)
 {
 
-  mBufferCore.addParameters();
+  mBufferSelector.addParameters();
 
   registerParameter("bankId", xdata::UnsignedInteger(0x0));
   registerParameter("masterLatency", xdata::UnsignedInteger(0x0));
@@ -402,11 +402,11 @@ mBufferCore(*this)
 
 
 // --------------------------------------------------------
-template<class C>
-core::Command::State EasyLatencyCommand<C>::code(const ::swatch::core::XParameterSet& params)
+template<class Selector>
+core::Command::State EasyLatencyCommand<Selector>::code(const ::swatch::core::XParameterSet& params)
 {
   // Get the corresponding buffer kind
-  const ::mp7::BufferKind bKind = BufferTraits<C>::bufferKind;
+  const ::mp7::BufferKind bKind = BufferTraits<Selector>::bufferKind;
 
   uint bankId = params.get<xdata::UnsignedInteger>("bankId").value_;
   uint masterLatency = params.get<xdata::UnsignedInteger>("masterLatency").value_;
@@ -417,7 +417,7 @@ core::Command::State EasyLatencyCommand<C>::code(const ::swatch::core::XParamete
 
   uint32_t depth = computeLatency(masterLatency, algoLatency, internalLatency);
 
-  ::mp7::ChannelsManager cm = mBufferCore.getManager(params);
+  ::mp7::ChannelsManager cm = mBufferSelector.getManager(params);
   ::mp7::LatencyPathConfigurator pc = ::mp7::LatencyPathConfigurator(bankId, depth);
 
   cm.configureBuffers(bKind, pc);
@@ -430,7 +430,7 @@ core::Command::State EasyLatencyCommand<C>::code(const ::swatch::core::XParamete
 
 template<>
 uint32_t
-EasyLatencyCommand<RxBufferCommandCore>::computeLatency(uint32_t aMaster, uint32_t aAlgo, uint32_t aInternal)
+EasyLatencyCommand<RxBufferSelector>::computeLatency(uint32_t aMaster, uint32_t aAlgo, uint32_t aInternal)
 {
   return aMaster + aInternal;
 }
@@ -438,13 +438,13 @@ EasyLatencyCommand<RxBufferCommandCore>::computeLatency(uint32_t aMaster, uint32
 
 template<>
 uint32_t
-EasyLatencyCommand<TxBufferCommandCore>::computeLatency(uint32_t aMaster, uint32_t aAlgo, uint32_t aInternal)
+EasyLatencyCommand<TxBufferSelector>::computeLatency(uint32_t aMaster, uint32_t aAlgo, uint32_t aInternal)
 {
   return aMaster + aInternal - aAlgo;
 }
 
-template class EasyLatencyCommand<RxBufferCommandCore>;
-template class EasyLatencyCommand<TxBufferCommandCore>;
+template class EasyLatencyCommand<RxBufferSelector>;
+template class EasyLatencyCommand<TxBufferSelector>;
 
 
 } //end ns mp7

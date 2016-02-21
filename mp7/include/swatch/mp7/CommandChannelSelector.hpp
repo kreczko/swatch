@@ -23,11 +23,11 @@ class MP7AbstractProcessor;
 /**
  * @class ChannelCommandCore
  */
-class ChannelCommandCore
+class CommandChannelSelector
 {
 public:
-    ChannelCommandCore( swatch::core::Command& );
-    ~ChannelCommandCore();
+    CommandChannelSelector( swatch::core::Command& );
+    ~CommandChannelSelector();
     
     virtual void addParameters();
     ::mp7::ChannelsManager getManager( const swatch::core::XParameterSet& aParams ) const;
@@ -49,11 +49,11 @@ protected:
 /**
  * @class RxCommandCore
  */
-class RxCommandCore : public ChannelCommandCore {
+class RxChannelSelector : public CommandChannelSelector {
 public:
-  RxCommandCore( swatch::core::Command& aCommand, const Rule_t& aFilter );
+  RxChannelSelector( swatch::core::Command& aCommand, const Rule_t& aFilter );
 
-  virtual ~RxCommandCore() {}
+  virtual ~RxChannelSelector() {}
 
   virtual void addParameters();
   
@@ -87,11 +87,11 @@ DEFINE_SWATCH_EXCEPTION(ApplyMaskOptionInvalid);
 /**
  * @class TxCommandCore
  */
-class TxCommandCore : public ChannelCommandCore {
+class TxChannelSelector : public CommandChannelSelector {
 public:
-  TxCommandCore(swatch::core::Command& aCommand, const Rule_t& aFilter);
+  TxChannelSelector(swatch::core::Command& aCommand, const Rule_t& aFilter);
   
-  virtual ~TxCommandCore() {}
+  virtual ~TxChannelSelector() {}
 
   virtual const Rule_t& getGroupFilter() const;
 
@@ -105,35 +105,35 @@ private:
 /**
  * @class RxMGTCommandCore
  */
-class RxMGTCommandCore : public RxCommandCore {
+class RxMGTSelector : public RxChannelSelector {
 public:
   
-  RxMGTCommandCore( swatch::core::Command& aCommand );
+  RxMGTSelector( swatch::core::Command& aCommand );
   
-  virtual ~RxMGTCommandCore() {}
+  virtual ~RxMGTSelector() {}
 };
 
 
 /**
  * @class TxMGTCommandCore
  */
-class TxMGTCommandCore : public TxCommandCore {
+class TxMGTSelector : public TxChannelSelector {
 public:
-  TxMGTCommandCore(swatch::core::Command& aCommand);
+  TxMGTSelector(swatch::core::Command& aCommand);
 
-  virtual ~TxMGTCommandCore() {}
+  virtual ~TxMGTSelector() {}
 
 };
 
 /**
  * @class RxBufferCommandCore
  */
-class RxBufferCommandCore : public RxCommandCore {
+class RxBufferSelector : public RxChannelSelector {
 public:
   
-  RxBufferCommandCore( swatch::core::Command& aCommand );
+  RxBufferSelector( swatch::core::Command& aCommand );
   
-  virtual ~RxBufferCommandCore() {}
+  virtual ~RxBufferSelector() {}
   
 };
 
@@ -141,11 +141,11 @@ public:
 /**
  * @class TxBufferCommandCore
  */
-class TxBufferCommandCore : public TxCommandCore {
+class TxBufferSelector : public TxChannelSelector {
 public:
-  TxBufferCommandCore(swatch::core::Command& aCommand);
+  TxBufferSelector(swatch::core::Command& aCommand);
 
-  virtual ~TxBufferCommandCore() {}
+  virtual ~TxBufferSelector() {}
 
 };
 

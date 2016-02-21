@@ -5,7 +5,7 @@
  * Created on February 4, 2016, 11:57 AM
  */
 
-#include "swatch/mp7/ChannelCommandCore.hpp"
+#include "swatch/mp7/CommandChannelSelector.hpp"
 #include "swatch/core/toolbox/IdSliceParser.hpp"
 #include "swatch/mp7/MP7AbstractProcessor.hpp"
 
@@ -17,41 +17,41 @@
 namespace swatch {
 namespace mp7 {
 
-const Rule_t ChannelCommandCore::kAlwaysTrue = boost::lambda::constant(true);
-const std::string ChannelCommandCore::kIdSelection = "ids";
+const Rule_t CommandChannelSelector::kAlwaysTrue = boost::lambda::constant(true);
+const std::string CommandChannelSelector::kIdSelection = "ids";
 
 
-ChannelCommandCore::ChannelCommandCore(swatch::core::Command& aCommand) :
+CommandChannelSelector::CommandChannelSelector(swatch::core::Command& aCommand) :
   mCommand(aCommand),
   mProcessor(aCommand.getActionable<MP7AbstractProcessor>())
 {
 
 }
 
-ChannelCommandCore::~ChannelCommandCore()
+CommandChannelSelector::~CommandChannelSelector()
 {
 }
 
 
-void ChannelCommandCore::addParameters()
+void CommandChannelSelector::addParameters()
 {
   mCommand.registerParameter(kIdSelection, xdata::String());
 }
 
 
-std::string ChannelCommandCore::getIdSelection( const swatch::core::XParameterSet& aParams ) const
+std::string CommandChannelSelector::getIdSelection( const swatch::core::XParameterSet& aParams ) const
 {
   return aParams.get<xdata::String>(kIdSelection).value_;
 }
 
 
-const Rule_t& ChannelCommandCore::getMaskFilter(const swatch::core::XParameterSet& aParams) const
+const Rule_t& CommandChannelSelector::getMaskFilter(const swatch::core::XParameterSet& aParams) const
 {
   return kAlwaysTrue;
 }
 
 
-::mp7::ChannelsManager ChannelCommandCore::getManager(const swatch::core::XParameterSet& aParams) const
+::mp7::ChannelsManager CommandChannelSelector::getManager(const swatch::core::XParameterSet& aParams) const
 {
   // Parse the list of selected ports
   std::set<std::string> lSelIds = swatch::core::toolbox::IdSliceParser::parseSet(getIdSelection(aParams));
@@ -82,37 +82,37 @@ const Rule_t& ChannelCommandCore::getMaskFilter(const swatch::core::XParameterSe
 // RxCommandCore
 //
 
-const std::string RxCommandCore::kMaskSelection = "masks";
-const std::string RxCommandCore::kApplyMasks = "apply";
-const std::string RxCommandCore::kInvertMasks = "invert";
-const std::string RxCommandCore::kIgnoreMasks = "ignore";
+const std::string RxChannelSelector::kMaskSelection = "masks";
+const std::string RxChannelSelector::kApplyMasks = "apply";
+const std::string RxChannelSelector::kInvertMasks = "invert";
+const std::string RxChannelSelector::kIgnoreMasks = "ignore";
 
-RxCommandCore::RxCommandCore(swatch::core::Command& aCommand, const Rule_t& aFilter) :
-  ChannelCommandCore(aCommand),
+RxChannelSelector::RxChannelSelector(swatch::core::Command& aCommand, const Rule_t& aFilter) :
+  CommandChannelSelector(aCommand),
   mRxGroupFilter(aFilter),
   mApplyMaskFilter(!boost::bind(&ChannelDescriptor::isMasked, _1)),
   mInvertMaskFilter(boost::bind(&ChannelDescriptor::isMasked, _1))
 {
 }
 
-void RxCommandCore::addParameters() 
+void RxChannelSelector::addParameters() 
 {
-  ChannelCommandCore::addParameters();
+  CommandChannelSelector::addParameters();
   mCommand.registerParameter(kMaskSelection, xdata::String(kApplyMasks));
 }
 
 
-const Rule_t& RxCommandCore::getGroupFilter() const
+const Rule_t& RxChannelSelector::getGroupFilter() const
 {
   return mRxGroupFilter;
 }
 
-const ChannelsMap_t& RxCommandCore::getChannelDescriptors() const
+const ChannelsMap_t& RxChannelSelector::getChannelDescriptors() const
 {
   return mProcessor.getRxDescriptors();
 }
 
-const Rule_t& RxCommandCore::getMaskFilter(const swatch::core::XParameterSet& aParams) const
+const Rule_t& RxChannelSelector::getMaskFilter(const swatch::core::XParameterSet& aParams) const
 {
   const std::string& masks = aParams.get<xdata::String>(kMaskSelection).value_;
   
@@ -131,19 +131,19 @@ const Rule_t& RxCommandCore::getMaskFilter(const swatch::core::XParameterSet& aP
 // TxCommandCore
 //
 
-TxCommandCore::TxCommandCore(swatch::core::Command& aCommand, const Rule_t& aFilter) :
-  ChannelCommandCore(aCommand),
+TxChannelSelector::TxChannelSelector(swatch::core::Command& aCommand, const Rule_t& aFilter) :
+  CommandChannelSelector(aCommand),
   mTxGroupFilter(aFilter)
 {
 }
 
-const Rule_t& TxCommandCore::getGroupFilter() const
+const Rule_t& TxChannelSelector::getGroupFilter() const
 {
   return mTxGroupFilter;
 }
 
 
-const ChannelsMap_t& TxCommandCore::getChannelDescriptors() const
+const ChannelsMap_t& TxChannelSelector::getChannelDescriptors() const
 {
   return mProcessor.getTxDescriptors();
 }
@@ -151,8 +151,8 @@ const ChannelsMap_t& TxCommandCore::getChannelDescriptors() const
 //
 // RxMGTCommandCore
 //
-RxMGTCommandCore::RxMGTCommandCore(swatch::core::Command& aCommand) :
-  RxCommandCore(aCommand, boost::bind(&ChannelDescriptor::hasMGT, _1))
+RxMGTSelector::RxMGTSelector(swatch::core::Command& aCommand) :
+  RxChannelSelector(aCommand, boost::bind(&ChannelDescriptor::hasMGT, _1))
 {
 }
 
@@ -160,8 +160,8 @@ RxMGTCommandCore::RxMGTCommandCore(swatch::core::Command& aCommand) :
 // TxMGTCommandCore
 //
 
-TxMGTCommandCore::TxMGTCommandCore(swatch::core::Command& aCommand) :
-  TxCommandCore(aCommand, boost::bind(&ChannelDescriptor::hasMGT, _1))
+TxMGTSelector::TxMGTSelector(swatch::core::Command& aCommand) :
+  TxChannelSelector(aCommand, boost::bind(&ChannelDescriptor::hasMGT, _1))
 {
 }
 
@@ -170,8 +170,8 @@ TxMGTCommandCore::TxMGTCommandCore(swatch::core::Command& aCommand) :
 // RxBufferCommandCore
 //
 
-RxBufferCommandCore::RxBufferCommandCore(swatch::core::Command& aCommand) :
-  RxCommandCore(aCommand, boost::bind(&ChannelDescriptor::hasBuffer, _1))
+RxBufferSelector::RxBufferSelector(swatch::core::Command& aCommand) :
+  RxChannelSelector(aCommand, boost::bind(&ChannelDescriptor::hasBuffer, _1))
 {
 }
 
@@ -180,8 +180,8 @@ RxBufferCommandCore::RxBufferCommandCore(swatch::core::Command& aCommand) :
 // TxBufferCommandCore
 //
 
-TxBufferCommandCore::TxBufferCommandCore(swatch::core::Command& aCommand) :
-  TxCommandCore(aCommand, boost::bind(&ChannelDescriptor::hasBuffer, _1))
+TxBufferSelector::TxBufferSelector(swatch::core::Command& aCommand) :
+  TxChannelSelector(aCommand, boost::bind(&ChannelDescriptor::hasBuffer, _1))
 {
 }
 

@@ -11,7 +11,7 @@
 #include "swatch/mp7/MP7NullAlgoProcessor.hpp"
 #include "swatch/core/Command.hpp"
 #include "swatch/mp7/MGTCommands.hpp"
-#include "swatch/mp7/ChannelCommandCore.hpp"
+#include "swatch/mp7/CommandChannelSelector.hpp"
 #include "swatch/core/ReadOnlyXParameterSet.hpp"
 
 namespace swatch {
@@ -35,7 +35,7 @@ public:
 
 private:
   
-  RxBufferCommandCore mCore;
+  RxBufferSelector mCore;
 };
 
 struct TmtParameterMapper {

@@ -25,7 +25,7 @@ class MP7ReadoutInterface : public swatch::processor::ReadoutInterface {
 public:
     MP7ReadoutInterface( ::mp7::MP7Controller& );
 
-    ~MP7ReadoutInterface();
+    virtual ~MP7ReadoutInterface();
     
 protected:
     virtual void retrieveMetricValues();

@@ -14,7 +14,7 @@
 #include "xdata/String.h"
 
 #include "swatch/core/Command.hpp"
-#include "swatch/mp7/ChannelCommandCore.hpp"
+#include "swatch/mp7/CommandChannelSelector.hpp"
 
 
 namespace swatch {
@@ -40,7 +40,7 @@ public:
   
 private:
   //! Command core
-  RxCommandCore mFmtCore;
+  RxChannelSelector mFmtSelector;
 };
 
 /**
@@ -57,7 +57,7 @@ public:
 
 private:
   //! Command core
-  RxCommandCore mFmtCore;
+  RxChannelSelector mFmtSelector;
 };
 
 
@@ -74,7 +74,7 @@ public:
   virtual State code(const ::swatch::core::XParameterSet& params);
 
 private:
-  RxCommandCore mFmtCore;  
+  RxChannelSelector mFmtSelector;  
 };
 
 }

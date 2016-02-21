@@ -6,7 +6,7 @@
 #include "mp7/PathConfigurator.hpp"
 
 // SWATCH headers
-#include "swatch/mp7/ChannelCommandCore.hpp"
+#include "swatch/mp7/CommandChannelSelector.hpp"
 
 namespace swatch {
 namespace mp7 {
@@ -14,7 +14,7 @@ namespace mp7 {
 
 
 // Templated translator from BufferCore to BufferKind
-template<class C>
+template<class Selector>
 struct BufferTraits {
     const static ::mp7::BufferKind bufferKind;
 };
@@ -22,7 +22,7 @@ struct BufferTraits {
 /**
  * @class ConfigureBuffersCommand
  */
-template<class C>
+template<class Selector>
 class ConfigureBuffersCommand : public swatch::core::Command {
 public:
 
@@ -32,16 +32,16 @@ public:
 
   virtual swatch::core::Command::State code(const ::swatch::core::XParameterSet& params);
 
-private:
+protected:
   static const std::map< std::string, ::mp7::TestPathConfigurator::Mode > mBufferModeMap;
 
   // static std::map< std::string, ::mp7::TestPathConfigurator::Mode > initBufferModeMap();
   
-  C mBufferCore;
+  Selector mBufferSelector;
 };
 
-typedef ConfigureBuffersCommand<RxBufferCommandCore> ConfigureRxBuffersCommand;
-typedef ConfigureBuffersCommand<TxBufferCommandCore> ConfigureTxBuffersCommand;
+typedef ConfigureBuffersCommand<RxBufferSelector> ConfigureRxBuffersCommand;
+typedef ConfigureBuffersCommand<TxBufferSelector> ConfigureTxBuffersCommand;
 
 
 /**
@@ -60,7 +60,7 @@ public:
 /**
  * @class SaveBuffersToFileCommand
  */
-template<class C>
+template<class Selector>
 class SaveBuffersToFileCommand : public swatch::core::Command {
 public:
   
@@ -70,51 +70,66 @@ public:
   
   virtual swatch::core::Command::State code(const ::swatch::core::XParameterSet& params);
 
-private:
+protected:
 
-  C mBufferCore;
+  Selector mBufferSelector;
 };
 
-typedef SaveBuffersToFileCommand<RxBufferCommandCore> SaveRxBuffersToFileCommand;
-typedef SaveBuffersToFileCommand<TxBufferCommandCore> SaveTxBuffersToFileCommand;
+typedef SaveBuffersToFileCommand<RxBufferSelector> SaveRxBuffersToFileCommand;
+typedef SaveBuffersToFileCommand<TxBufferSelector> SaveTxBuffersToFileCommand;
 
 
 /**
- * @class LatencyBuffersCommand
+ * Command template to configure buffers in latency mode.
+ * @tparam H Channel helper class 
  */
-template<class C>
+template<class Selector>
 class LatencyBuffersCommand : public swatch::core::Command {
 public:
+  /**
+   */
   LatencyBuffersCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
-  virtual ~LatencyBuffersCommand() {}
-  virtual State code(const ::swatch::core::XParameterSet& params);
-private:
   
-  C mBufferCore;
+  /**
+   * Destructor
+   */
+  virtual ~LatencyBuffersCommand() {}
+  
+  /**
+   * 
+   * @param aParams
+   * @return 
+   */
+  virtual State code(const ::swatch::core::XParameterSet& aParams);
+
+private:
+  //! Buffers helper class
+  Selector mBufferSelector;
 };
 
-typedef LatencyBuffersCommand<RxBufferCommandCore> LatencyRxBuffersCommand;
-typedef LatencyBuffersCommand<TxBufferCommandCore> LatencyTxBuffersCommand;
+typedef LatencyBuffersCommand<RxBufferSelector> LatencyRxBuffersCommand;
+typedef LatencyBuffersCommand<TxBufferSelector> LatencyTxBuffersCommand;
 
 
 /**
- * @class EasyLatencyCommand
+ * 
  */
-template<class C>
+template<class Selector>
 class EasyLatencyCommand : public swatch::core::Command {
 public:
   EasyLatencyCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
   virtual ~EasyLatencyCommand() {}
   virtual State code(const ::swatch::core::XParameterSet& params);
-private:
+
+protected:
 
   static uint32_t computeLatency( uint32_t aMaster, uint32_t aAlgo, uint32_t aInternal);
 
-  C mBufferCore;
+  Selector mBufferSelector;
 };
 
-typedef EasyLatencyCommand<RxBufferCommandCore> EasyRxLatencyCommand;
-typedef EasyLatencyCommand<TxBufferCommandCore> EasyTxLatencyCommand;
+typedef EasyLatencyCommand<RxBufferSelector> EasyRxLatencyCommand;
+typedef EasyLatencyCommand<TxBufferSelector> EasyTxLatencyCommand;
 
 
 }

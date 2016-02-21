@@ -45,10 +45,10 @@ namespace mp7 {
   
 TDRFormatterCommand::TDRFormatterCommand(const std::string& aId, swatch::core::ActionableObject& aActionable):
   swatch::core::Command(aId, aActionable, xdata::Integer()), 
-  mFmtCore(*this, boost::bind(&ChannelDescriptor::getFormatterKind, _1) == ::mp7::kTDRFormatter) {
+  mFmtSelector(*this, boost::bind(&ChannelDescriptor::getFormatterKind, _1) == ::mp7::kTDRFormatter) {
   
   // add default parameters
-  mFmtCore.addParameters();
+  mFmtSelector.addParameters();
   
   registerParameter("strip", xdata::Boolean(true));
   registerParameter("insert", xdata::Boolean(true));
@@ -62,7 +62,7 @@ core::Command::State TDRFormatterCommand::code(const swatch::core::XParameterSet
   bool insert = params.get<xdata::Boolean>("insert").value_;
 
 
-  ::mp7::ChannelsManager cm = mFmtCore.getManager(params);
+  ::mp7::ChannelsManager cm = mFmtSelector.getManager(params);
 
   setProgress(0.0, "Configuring TDR header formatting...");
   
@@ -76,10 +76,10 @@ core::Command::State TDRFormatterCommand::code(const swatch::core::XParameterSet
 
 DemuxFormatterCommand::DemuxFormatterCommand(const std::string& aId, swatch::core::ActionableObject& aActionable):
   swatch::core::Command(aId, aActionable, xdata::Integer()),
-  mFmtCore(*this, boost::bind(&ChannelDescriptor::getFormatterKind, _1) == ::mp7::kDemuxFormatter) {
+  mFmtSelector(*this, boost::bind(&ChannelDescriptor::getFormatterKind, _1) == ::mp7::kDemuxFormatter) {
 
     // add default parameters
-  mFmtCore.addParameters();
+  mFmtSelector.addParameters();
   
   registerParameter("strip", xdata::Boolean(true));
   registerParameter("insert", xdata::Boolean(true));
@@ -102,7 +102,7 @@ swatch::core::Command::State DemuxFormatterCommand::code(const swatch::core::XPa
 
 
   ::mp7::MP7Controller& driver = getActionable<MP7AbstractProcessor>().driver();
-  ::mp7::ChannelsManager cm =  mFmtCore.getManager(params);
+  ::mp7::ChannelsManager cm =  mFmtSelector.getManager(params);
   ::mp7::orbit::Metric m = driver.getMetric();
 
   if (!orbit::isValid(startBx, startCycle, m)) {
@@ -167,10 +167,10 @@ swatch::core::Command::State DemuxFormatterCommand::code(const swatch::core::XPa
 
 S1Formatter::S1Formatter(const std::string& aId, swatch::core::ActionableObject& aActionable):
   swatch::core::Command(aId, aActionable, xdata::Integer()),
-  mFmtCore(*this, boost::bind(&ChannelDescriptor::getFormatterKind, _1) == ::mp7::kStage1Formatter)
+  mFmtSelector(*this, boost::bind(&ChannelDescriptor::getFormatterKind, _1) == ::mp7::kStage1Formatter)
 {
     // add default parameters
-  mFmtCore.addParameters();
+  mFmtSelector.addParameters();
   
   registerParameter("s1BC0Bx", xdata::UnsignedInteger(0x0));
   registerParameter("s1BC0Cycle", xdata::UnsignedInteger(0x0));
@@ -187,7 +187,7 @@ swatch::core::Command::State S1Formatter::code(const swatch::core::XParameterSet
   uint s1BC0Cycle = params.get<xdata::UnsignedInteger>("s1BC0Cycle").value_; 
 
 
-  ::mp7::ChannelsManager cm =  mFmtCore.getManager(params);
+  ::mp7::ChannelsManager cm =  mFmtSelector.getManager(params);
 
   setProgress(0.0, "Configuring formatters");
   

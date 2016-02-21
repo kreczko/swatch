@@ -26,10 +26,10 @@ namespace mp7 {
 // --------------------------------------------------------
 ConfigureRxMGTsCommand::ConfigureRxMGTsCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
 swatch::core::Command(aId, aActionable, xdata::String()),
-mRxMGTCore(*this)
+mRxMGTHelper(*this)
 {
   
-  mRxMGTCore.addParameters();
+  mRxMGTHelper.addParameters();
   registerParameter("orbitTag", xdata::Boolean(false));
   registerParameter("polarity", xdata::Boolean(true));
 
@@ -43,7 +43,7 @@ ConfigureRxMGTsCommand::code(const swatch::core::XParameterSet& params)
   bool orbitTag = params.get<xdata::Boolean>("orbitTag").value_;
   bool polarity = params.get<xdata::Boolean>("polarity").value_;
 
-  ::mp7::ChannelsManager cm = mRxMGTCore.getManager(params);
+  ::mp7::ChannelsManager cm = mRxMGTHelper.getManager(params);
 
   setProgress(0.0, "Configuring Rx MGTs...");
 
@@ -63,10 +63,10 @@ ConfigureRxMGTsCommand::code(const swatch::core::XParameterSet& params)
 // --------------------------------------------------------
 ConfigureTxMGTsCommand::ConfigureTxMGTsCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
 swatch::core::Command(aId, aActionable, xdata::String()),
-mTxMGTCore(*this)
+mTxMGTHelper(*this)
 {
   
-  mTxMGTCore.addParameters();
+  mTxMGTHelper.addParameters();
 
   registerParameter("orbitTag", xdata::Boolean(false));
   registerParameter("loopback", xdata::Boolean(false));
@@ -81,7 +81,7 @@ ConfigureTxMGTsCommand::code(const swatch::core::XParameterSet& params) {
   bool loopback = params.get<xdata::Boolean>("loopback").value_;
   bool polarity = params.get<xdata::Boolean>("polarity").value_;
 
-  ::mp7::ChannelsManager cm = mTxMGTCore.getManager(params);
+  ::mp7::ChannelsManager cm = mTxMGTHelper.getManager(params);
 
   setProgress(0.0, "Configuring Tx MGTs");
 
@@ -112,10 +112,10 @@ ConfigureTxMGTsCommand::code(const swatch::core::XParameterSet& params) {
 // --------------------------------------------------------
 AlignRxsToCommand::AlignRxsToCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
 swatch::core::Command(aId, aActionable, xdata::String()),
-mRxMGTCore(*this)
+mRxMGTHelper(*this)
 {
     
-  mRxMGTCore.addParameters();
+  mRxMGTHelper.addParameters();
   
   registerParameter("bx", xdata::UnsignedInteger(0x0));
   registerParameter("cycle", xdata::UnsignedInteger(0x0));
@@ -142,7 +142,7 @@ AlignRxsToCommand::code(const swatch::core::XParameterSet& params) {
   }
   //--
     
-  ::mp7::ChannelsManager cm = mRxMGTCore.getManager(params);
+  ::mp7::ChannelsManager cm = mRxMGTHelper.getManager(params);
 
   std::ostringstream alTo;
   alTo << "Aligning the MP MGTs to " << bx << ", " << cycle << "...";
@@ -179,9 +179,9 @@ AlignRxsToCommand::code(const swatch::core::XParameterSet& params) {
 
 AutoAlignCommand::AutoAlignCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
 swatch::core::Command(aId, aActionable, xdata::String()),
-mRxMGTCore(*this)
+mRxMGTHelper(*this)
 {
-  mRxMGTCore.addParameters();
+  mRxMGTHelper.addParameters();
 
   registerParameter("margin", xdata::UnsignedInteger(3));
 }
@@ -194,7 +194,7 @@ core::Command::State AutoAlignCommand::code(const core::XParameterSet& aParams)
 {
   xdata::UnsignedInteger lMargin = aParams.get<xdata::UnsignedInteger>("margin");
 
-  ::mp7::ChannelsManager lChanMgr = mRxMGTCore.getManager(aParams);
+  ::mp7::ChannelsManager lChanMgr = mRxMGTHelper.getManager(aParams);
 
   setProgress(0.01, "Starting auto-align with margin=" + boost::lexical_cast<std::string>(lMargin.value_));
 

@@ -23,7 +23,7 @@ namespace mp7 {
 class MP7NullAlgo : public swatch::processor::AlgoInterface {
 public:
     MP7NullAlgo( ::mp7::MP7Controller& );
-    ~MP7NullAlgo();
+    virtual ~MP7NullAlgo();
     
     //! Implemented as a no-op for the moment
     virtual void reset();
