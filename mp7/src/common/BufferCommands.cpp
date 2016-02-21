@@ -397,6 +397,8 @@ mBufferSelector(*this)
   registerParameter("masterLatency", xdata::UnsignedInteger(0x0));
   registerParameter("algoLatency", xdata::UnsignedInteger(0x0));
   registerParameter("internalLatency", xdata::UnsignedInteger(0x0));
+  registerParameter("rxExtraBxs", xdata::UnsignedInteger(0x0));
+  registerParameter("txExtraBxs", xdata::UnsignedInteger(0x0));
 }
 
 
@@ -412,10 +414,12 @@ core::Command::State EasyLatencyCommand<Selector>::code(const ::swatch::core::XP
   uint masterLatency = params.get<xdata::UnsignedInteger>("masterLatency").value_;
   uint algoLatency = params.get<xdata::UnsignedInteger>("algoLatency").value_;
   uint internalLatency = params.get<xdata::UnsignedInteger>("internalLatency").value_;
+  uint rxExtraBxs = params.get<xdata::UnsignedInteger>("rxExtraBxs").value_;
+  uint txExtraBxs = params.get<xdata::UnsignedInteger>("txExtraBxs").value_;
 
   setProgress(0.0, "Configuring " + boost::lexical_cast<std::string>(bKind) + " buffers in latency mode");
 
-  uint32_t depth = computeLatency(masterLatency, algoLatency, internalLatency);
+  uint32_t depth = computeLatency(masterLatency, algoLatency, internalLatency, rxExtraBxs, txExtraBxs);
 
   ::mp7::ChannelsManager cm = mBufferSelector.getManager(params);
   ::mp7::LatencyPathConfigurator pc = ::mp7::LatencyPathConfigurator(bankId, depth);
@@ -430,17 +434,17 @@ core::Command::State EasyLatencyCommand<Selector>::code(const ::swatch::core::XP
 
 template<>
 uint32_t
-EasyLatencyCommand<RxBufferSelector>::computeLatency(uint32_t aMaster, uint32_t aAlgo, uint32_t aInternal)
+EasyLatencyCommand<RxBufferSelector>::computeLatency(uint32_t aMaster, uint32_t aAlgo, uint32_t aInternal, uint32_t aRxExtraBxs, uint32_t aTxExtraBxs)
 {
-  return aMaster + aInternal;
+  return aMaster + aInternal + aRxExtraBxs;
 }
 
 
 template<>
 uint32_t
-EasyLatencyCommand<TxBufferSelector>::computeLatency(uint32_t aMaster, uint32_t aAlgo, uint32_t aInternal)
+EasyLatencyCommand<TxBufferSelector>::computeLatency(uint32_t aMaster, uint32_t aAlgo, uint32_t aInternal, uint32_t aRxExtraBxs, uint32_t aTxExtraBxs)
 {
-  return aMaster + aInternal - aAlgo;
+  return aMaster + aInternal - aAlgo + aTxExtraBxs;
 }
 
 template class EasyLatencyCommand<RxBufferSelector>;
