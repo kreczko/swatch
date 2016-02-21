@@ -31,6 +31,7 @@ public:
     
     virtual void addParameters();
     ::mp7::ChannelsManager getManager( const swatch::core::XParameterSet& aParams ) const;
+    ::mp7::MP7Controller& getDriver();
 
     virtual const ChannelsMap_t& getChannelDescriptors() const = 0;
     virtual std::string getIdSelection( const swatch::core::XParameterSet& aParams ) const;
@@ -41,7 +42,7 @@ public:
     
 protected:
     swatch::core::Command& mCommand;
-    const MP7AbstractProcessor& mProcessor;
+    MP7AbstractProcessor& mProcessor;
     
     static const Rule_t kAlwaysTrue;
 };

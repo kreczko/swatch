@@ -14,6 +14,9 @@
 
 #include "mp7/MP7Controller.hpp"
 
+//log4cplus headers
+#include <log4cplus/loggingmacros.h>
+
 namespace swatch {
 namespace mp7 {
 
@@ -74,9 +77,21 @@ const Rule_t& CommandChannelSelector::getMaskFilter(const swatch::core::XParamet
   // Convert obj ids to channel ids
   std::vector<uint32_t> lChannels = selector.mapIdsToChannels(lEnabledIds);
   
-  return mCommand.getActionable<MP7AbstractProcessor>().driver().channelMgr(lChannels);
+  std::ostringstream msg;
+  boost::copy( lEnabledIds, std::ostream_iterator<std::string>(msg," "));
+
+  LOG4CPLUS_DEBUG(mProcessor.getLogger(),"Command '"<< mCommand.getId() << "', selected IDs " << msg.str());
+
+  return mProcessor.driver().channelMgr(lChannels);
 
 }
+
+::mp7::MP7Controller& CommandChannelSelector::getDriver() {
+
+  return mProcessor.driver();
+
+}
+
 
 //
 // RxCommandCore

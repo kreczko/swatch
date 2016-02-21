@@ -22,6 +22,7 @@ ChannelDescriptor::ChannelDescriptor(uint32_t aChannelId, bool aHasMGTs, bool aH
   mChannelId(aChannelId),
   mHasMGT(aHasMGTs),
   mHasBuffer(aHasBuffer),
+  mFormatterKind(aFmtKind),
   mMaskable(aMaskable)
 {
 //  std::cout << "--------------------" << std::endl;
