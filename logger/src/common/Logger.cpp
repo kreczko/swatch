@@ -10,7 +10,7 @@ namespace logger {
 
 bool Logger::sInitialised = false;
 // needs absolute path
-std::string Logger::sConfigFile = "log4cplus.properties";
+std::string Logger::sConfigFile = (getenv("SWATCH_LOG4CPLUS_CONFIG") ? getenv("SWATCH_LOG4CPLUS_CONFIG") : "log4cplus.properties");
 
 log4cplus::Logger Logger::getInstance(const log4cplus::tstring& aName) {
   using namespace log4cplus;
