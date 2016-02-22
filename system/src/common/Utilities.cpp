@@ -126,11 +126,6 @@ treeToSystemStub(const boost::property_tree::ptree& aPTree)
         );
   }
 
-  BOOST_FOREACH(const ptree::value_type &v, lPTSystem.get_child("EXCLUDED BOARDS"))
-  {
-    lStub.excludedBoards.push_back(v.second.get_value<std::string>());
-  }
-
   BOOST_FOREACH(const ptree::value_type &v, lPTSystem.get_child("PROCESSORS"))
   {
     swatch::processor::ProcessorStub lProcStub(swatch::processor::treeToProcessorStub(v.second));
@@ -145,6 +140,21 @@ treeToSystemStub(const boost::property_tree::ptree& aPTree)
     lDaqTTCStub.loggerName = lStub.id + "." + lDaqTTCStub.id;
     lStub.daqttcs.emplace_back(lDaqTTCStub);
   }
+
+  
+  std::vector<std::string> lBoardIDs;
+  for(auto lIt = lStub.processors.begin(); lIt != lStub.processors.end(); lIt++)
+    lBoardIDs.push_back(lIt->id);
+  for(auto lIt = lStub.daqttcs.begin(); lIt != lStub.daqttcs.end(); lIt++ )
+    lBoardIDs.push_back(lIt->id);
+  BOOST_FOREACH(const ptree::value_type &v, lPTSystem.get_child("EXCLUDED BOARDS"))
+  {
+    const std::string lId(v.second.get_value<std::string>());
+    if (std::count(lBoardIDs.begin(), lBoardIDs.end(), lId) == 0)
+      throw core::FailedJSONParsing("EXCLUDED BOARD ID '" + lId + "' does not match any of the system's processors/DaqTTCManagers");
+    lStub.excludedBoards.push_back(lId);
+  }
+
 
 
   BOOST_FOREACH(const ptree::value_type& v, lPTSystem.get_child("LINKS"))
