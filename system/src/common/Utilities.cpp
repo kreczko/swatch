@@ -106,6 +106,7 @@ treeToSystemStub(const boost::property_tree::ptree& aPTree)
     "NAME",
     "CREATOR",
     "CRATES",
+    "EXCLUDED BOARDS",
     "PROCESSORS",
     "DAQTTCS",
     "LINKS",
@@ -125,6 +126,10 @@ treeToSystemStub(const boost::property_tree::ptree& aPTree)
         );
   }
 
+  BOOST_FOREACH(const ptree::value_type &v, lPTSystem.get_child("EXCLUDED BOARDS"))
+  {
+    lStub.excludedBoards.push_back(v.second.get_value<std::string>());
+  }
 
   BOOST_FOREACH(const ptree::value_type &v, lPTSystem.get_child("PROCESSORS"))
   {

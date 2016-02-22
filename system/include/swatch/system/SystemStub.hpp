@@ -41,6 +41,8 @@ public:
   //! Name of system class
   std::string creator;
   
+  std::vector<std::string> excludedBoards;
+  
   std::vector<swatch::system::CrateStub> crates;
 
   std::vector<swatch::processor::ProcessorStub> processors;
