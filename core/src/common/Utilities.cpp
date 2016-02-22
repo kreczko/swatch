@@ -87,6 +87,8 @@ void millisleep(const double& aMillisec)
 //---
 std::vector<std::string> shellExpandPaths(const std::string& aPath)
 {
+  if ( aPath.empty() ) return std::vector<std::string>();
+      
   std::vector<std::string> lPaths;
   wordexp_t lSubstitutedPath;
   int code = wordexp(aPath.c_str(), &lSubstitutedPath, WRDE_NOCMD);
@@ -111,6 +113,8 @@ std::string shellExpandPath(const std::string& aPath)
 
   if (lPaths.size() > 1) {
     throw std::runtime_error("Failed to expand: multiple matches found");
+  } else if ( lPaths.empty() ) {
+    return "";
   }
 
   return lPaths[0];
