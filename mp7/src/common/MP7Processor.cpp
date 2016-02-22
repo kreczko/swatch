@@ -56,6 +56,7 @@ const std::string MP7Processor::CmdIds::kReboot = "reboot";
 const std::string MP7Processor::CmdIds::kHardReset = "hardReset";
 const std::string MP7Processor::CmdIds::kScanSD = "scanSD";
 const std::string MP7Processor::CmdIds::kReset = "resetBoard";
+const std::string MP7Processor::CmdIds::kSetId = "setId";
 const std::string MP7Processor::CmdIds::kCfgRxMGTs = "cfgRxMGTs";
 const std::string MP7Processor::CmdIds::kCfgTxMGTs = "cfgTxMGTs";
 const std::string MP7Processor::CmdIds::kAlignMGTs = "alignMGTs";
@@ -97,6 +98,7 @@ MP7AbstractProcessor(aStub)
   registerCommand<HardResetCommand>(CmdIds::kHardReset);
   registerCommand<ScanSDCommand>(CmdIds::kScanSD);
   registerCommand<ResetCommand>(CmdIds::kReset);
+  registerCommand<SetIDCommand>(CmdIds::kSetId);
   registerCommand<ConfigureRxMGTsCommand>(CmdIds::kCfgRxMGTs);
   registerCommand<ConfigureTxMGTsCommand>(CmdIds::kCfgTxMGTs);
   registerCommand<AlignRxsToCommand>(CmdIds::kAlignMGTs);

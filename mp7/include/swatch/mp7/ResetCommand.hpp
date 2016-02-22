@@ -9,14 +9,27 @@
 namespace swatch {
 namespace mp7 {
 
-  
-class ResetCommand : public ::swatch::core::Command {
+/**
+ * @class ResetCommand
+ * Issues a global reset to the MP7 and configures clocking and ttc infrastructure
+ */  
+class ResetCommand : public core::Command
+{
 public:
-  ResetCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
-  virtual ~ResetCommand();
-  virtual State code(const ::swatch::core::XParameterSet& params);
+  ResetCommand(const std::string& aId, core::ActionableObject& aActionable);
+  virtual ~ResetCommand() {}
+  virtual State code(const core::XParameterSet& params);
 
 };
+
+class SetIDCommand : public core::Command
+{
+public:
+    SetIDCommand(const std::string& aId, core::ActionableObject& aActionable);
+    ~SetIDCommand() {}
+    virtual State code(const core::XParameterSet& params);
+};
+
 
 
 } //end ns mp7

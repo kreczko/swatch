@@ -4,6 +4,7 @@
 
 #include "xdata/String.h"
 #include "xdata/Integer.h"
+#include "xdata/UnsignedInteger.h"
 
 #include "mp7/MP7Controller.hpp"
 #include "mp7/PathConfigurator.hpp"
@@ -17,16 +18,15 @@ namespace mp7 {
 
 
 ResetCommand::ResetCommand(const std::string& aId, swatch::core::ActionableObject& aActionable):
-  Command(aId, aActionable, xdata::Integer()) {
+  Command(aId, aActionable, xdata::Integer()) 
+{
   registerParameter("clockSource", xdata::String("external"));
   registerParameter("clockConfig", xdata::String("external"));
   registerParameter("ttcConfig", xdata::String("external"));
 }
     
-ResetCommand::~ResetCommand(){
-}
     
-::swatch::core::Command::State ResetCommand::code(const ::swatch::core::XParameterSet& params)
+core::Command::State ResetCommand::code(const core::XParameterSet& params)
 {
      
   // setProgress(0., "Resetting MP7");
@@ -71,5 +71,28 @@ ResetCommand::~ResetCommand(){
   return State::kDone;
 }
 
-} //end ns mp7
-} //end ns swatch
+SetIDCommand::SetIDCommand(const std::string& aId, swatch::core::ActionableObject& aActionable):
+Command(aId, aActionable, xdata::UnsignedInteger())
+{
+  registerParameter("boardId", xdata::UnsignedInteger(0x0));
+}
+
+core::Command::State SetIDCommand::code(const core::XParameterSet& params)
+{
+  MP7AbstractProcessor& p = getActionable<MP7AbstractProcessor>();
+  ::mp7::MP7Controller& driver = p.driver();
+
+  uint32_t boardId = params.get<xdata::UnsignedInteger>("boardId").value_;
+
+  const ::mp7::CtrlNode& lCtrl = driver.getCtrl();
+
+  // FIXME: replace with CtrlNode command when implemented
+  lCtrl.getNode("board_id").write(boardId);
+  lCtrl.getClient().dispatch();
+
+  setResult(xdata::UnsignedInteger(boardId));
+  return State::kDone;
+}
+
+} // namespace mp7
+} // namespace swatch
