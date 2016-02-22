@@ -252,6 +252,9 @@ void System::addProcessors()
 {
   BOOST_FOREACH(auto& pStub, getStub().processors)
   {
+    if (std::count(getStub().excludedBoards.begin(), getStub().excludedBoards.end(), pStub.id) > 0)
+      continue;
+    
     try {
       processor::Processor* p = core::Factory::get()->make<processor::Processor>(pStub.creator, pStub);
       add(p);
@@ -269,6 +272,9 @@ void System::addDaqTTCs()
 {
   BOOST_FOREACH(auto& dStub, getStub().daqttcs)
   {
+    if (std::count(getStub().excludedBoards.begin(), getStub().excludedBoards.end(), dStub.id) > 0)
+      continue;
+    
     try {
       dtm::DaqTTCManager* mgr = core::Factory::get()->make<dtm::DaqTTCManager>(dStub.creator, dStub);
       add(mgr);
@@ -286,6 +292,11 @@ void System::addLinks()
 {
   BOOST_FOREACH(auto& lStub, getStub().links)
   {
+    if (std::count(getStub().excludedBoards.begin(), getStub().excludedBoards.end(), lStub.srcProcessor) > 0)
+      continue;
+    else if (std::count(getStub().excludedBoards.begin(), getStub().excludedBoards.end(), lStub.dstProcessor) > 0)
+      continue;
+
     try {
       processor::Processor&  srcProcessor = getObj<processor::Processor>(lStub.srcProcessor);
       processor::Processor&  dstProcessor = getObj<processor::Processor>(lStub.dstProcessor);
@@ -310,14 +321,15 @@ void System::validateConnectedFEDs()
   // Loop over FEdConnection map to check that all referenced objects exist and are InputPorts
   SystemStub::FEDInputPortsMap lMissing;  
   BOOST_FOREACH( auto fed, getStub().connectedFEDs ) {
-    BOOST_FOREACH(std::string id, fed.second) {
+    BOOST_FOREACH(std::string lPortPath, fed.second) {
+
       try {
         // Continue if id exists and can be cast to an input port.
-        if ( this->getObjPtr<processor::InputPort>(id) ) continue;        
-        lMissing[fed.first].push_back(id);
+        if ( this->getObjPtr<processor::InputPort>(lPortPath) ) continue;        
+        lMissing[fed.first].push_back(lPortPath);
         
       } catch ( std::runtime_error& e ) {
-        lMissing[fed.first].push_back(id);
+        lMissing[fed.first].push_back(lPortPath);
 
       }
     }

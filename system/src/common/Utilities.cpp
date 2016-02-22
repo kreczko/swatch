@@ -190,13 +190,18 @@ treeToSystemStub(const boost::property_tree::ptree& aPTree)
       
       std::vector<std::string> ids = core::toolbox::IdSliceParser::parse(w.second.get_value<std::string>());
       
-      BOOST_FOREACH( std::string id, ids) {
+      BOOST_FOREACH( std::string lPortPath, ids) {
+
+        // Skip this port if it references an excluded board
+        const std::string lProcId = lPortPath.substr(0, lPortPath.find('.'));
+        if (std::count(lStub.excludedBoards.begin(), lStub.excludedBoards.end(), lProcId) > 0)
+          continue;
         
         // Continue if insertion succeeds i.e. no duplicates
-        if ( lRxPorts.insert(id).second ) continue;
+        if ( lRxPorts.insert(lPortPath).second ) continue;
         
         // Otherwise Increase duplicate count for id
-        lDuplicates[id]++;
+        lDuplicates[lPortPath]++;
         
       }
       
