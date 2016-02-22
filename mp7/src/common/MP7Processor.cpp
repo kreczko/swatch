@@ -19,7 +19,7 @@
 #include "swatch/mp7/FormatterCommands.hpp"
 #include "swatch/mp7/MGTCommands.hpp"
 #include "swatch/mp7/MmcCommands.hpp"
-#include "swatch/mp7/ResetCommand.hpp"
+#include "swatch/mp7/GeneralCommands.hpp"
 #include "swatch/mp7/MP7Ports.hpp"
 #include "swatch/mp7/MP7ReadoutInterface.hpp"
 #include "swatch/mp7/MP7TTCInterface.hpp"

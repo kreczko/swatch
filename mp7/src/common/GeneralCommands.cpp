@@ -1,5 +1,5 @@
 
-#include "swatch/mp7/ResetCommand.hpp"
+#include "swatch/mp7/GeneralCommands.hpp"
 
 
 #include "xdata/String.h"

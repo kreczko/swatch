@@ -152,11 +152,6 @@ LoadReadoutMenu::LoadReadoutMenu( const std::string& aId, swatch::core::Actionab
 
   for( uint32_t iM(0); iM < mModes; ++iM ) {
 
-      // <entry id="roMenu.mode1:eventSize" type="uint"></entry>
-      // <entry id="roMenu.mode1:eventsToTrigger" type="uint"></entry>
-      // <entry id="roMenu.mode1:eventType" type="uint"></entry>
-      // <entry id="roMenu.mode1:tokenDelay" type="uint"></entry>
-
     modeStr = "mode"+boost::lexical_cast<std::string>(iM)+":";
     registerParameter(modeStr+"eventSize", xdata::UnsignedInteger());
     registerParameter(modeStr+"eventToTrigger", xdata::UnsignedInteger());
@@ -164,13 +159,6 @@ LoadReadoutMenu::LoadReadoutMenu( const std::string& aId, swatch::core::Actionab
     registerParameter(modeStr+"tokenDelay", xdata::UnsignedInteger());
 
     for( uint32_t iC(0); iC < mCaptures; ++iC ) {
-
-      // <entry id="roMenu.mode0:capture0:enable" type="bool"></entry>
-      // <entry id="roMenu.mode0:capture0:id" type="uint"></entry>
-      // <entry id="roMenu.mode0:capture0:bankId" type="uint"></entry>
-      // <entry id="roMenu.mode0:capture0:length" type="uint"></entry>
-      // <entry id="roMenu.mode0:capture0:delay" type="uint"></entry>
-      // <entry id="roMenu.mode0:capture0:readoutLength" type="uint"></entry>
 
       capStr = modeStr+"capture"+boost::lexical_cast<std::string>(iC)+":";
 
@@ -190,16 +178,6 @@ LoadReadoutMenu::LoadReadoutMenu( const std::string& aId, swatch::core::Actionab
 LoadReadoutMenu::~LoadReadoutMenu() {
 }
 
-// --------------------------------------------------------
-//LoadReadoutMenu*
-//LoadReadoutMenu::create( const std::string& aId, ::mp7::MP7Controller& aDriver) {
-//  const ::mp7::ReadoutCtrlNode& rc = aDriver.getReadout().getNode< ::mp7::ReadoutCtrlNode >("readout_control");
-//  uint32_t lBanks = rc.readNumBanks();
-//  uint32_t lModes = rc.readNumModes();
-//  uint32_t lCaptures = rc.readNumCaptures();
-//
-//  return new LoadReadoutMenu(aId, aDaDriver, lBanks, lModes, lCaptures);
-//}
 
 // --------------------------------------------------------
 core::Command::State
@@ -218,11 +196,6 @@ LoadReadoutMenu::code(const ::swatch::core::XParameterSet& aParams)
   }
   
   for( uint32_t iM(0); iM < mModes; ++iM ) {
-
-      // <entry id="roMenu.mode1:eventSize" type="uint"></entry>
-      // <entry id="roMenu.mode1:eventsToTrigger" type="uint"></entry>
-      // <entry id="roMenu.mode1:eventType" type="uint"></entry>
-      // <entry id="roMenu.mode1:tokenDelay" type="uint"></entry>
 
     modeStr = "mode"+boost::lexical_cast<std::string>(iM)+":";
     const xdata::UnsignedInteger& eventSize = aParams.get<xdata::UnsignedInteger>(modeStr+"eventSize");
