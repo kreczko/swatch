@@ -9,6 +9,7 @@
 // boost headers
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
+#include <log4cplus/loggingmacros.h>
 
 // XDAQ headers
 #include "xdata/String.h"
@@ -397,8 +398,8 @@ mBufferSelector(*this)
   registerParameter("masterLatency", xdata::UnsignedInteger(0x0));
   registerParameter("algoLatency", xdata::UnsignedInteger(0x0));
   registerParameter("internalLatency", xdata::UnsignedInteger(0x0));
-  registerParameter("rxExtraBxs", xdata::UnsignedInteger(0x0));
-  registerParameter("txExtraBxs", xdata::UnsignedInteger(0x0));
+  registerParameter("rxExtraFrames", xdata::UnsignedInteger(0x0));
+  registerParameter("txExtraFrames", xdata::UnsignedInteger(0x0));
 }
 
 
@@ -414,13 +415,13 @@ core::Command::State EasyLatencyCommand<Selector>::code(const ::swatch::core::XP
   uint masterLatency = params.get<xdata::UnsignedInteger>("masterLatency").value_;
   uint algoLatency = params.get<xdata::UnsignedInteger>("algoLatency").value_;
   uint internalLatency = params.get<xdata::UnsignedInteger>("internalLatency").value_;
-  uint rxExtraBxs = params.get<xdata::UnsignedInteger>("rxExtraBxs").value_;
-  uint txExtraBxs = params.get<xdata::UnsignedInteger>("txExtraBxs").value_;
+  uint rxExtraFrames = params.get<xdata::UnsignedInteger>("rxExtraFrames").value_;
+  uint txExtraFrames = params.get<xdata::UnsignedInteger>("txExtraFrames").value_;
 
   setProgress(0.0, "Configuring " + boost::lexical_cast<std::string>(bKind) + " buffers in latency mode");
 
-  uint32_t depth = computeLatency(masterLatency, algoLatency, internalLatency, rxExtraBxs, txExtraBxs);
-
+  uint32_t depth = computeLatency(masterLatency, algoLatency, internalLatency, rxExtraFrames, txExtraFrames);
+  
   ::mp7::ChannelsManager cm = mBufferSelector.getManager(params);
   ::mp7::LatencyPathConfigurator pc = ::mp7::LatencyPathConfigurator(bankId, depth);
 
@@ -434,17 +435,34 @@ core::Command::State EasyLatencyCommand<Selector>::code(const ::swatch::core::XP
 
 template<>
 uint32_t
-EasyLatencyCommand<RxBufferSelector>::computeLatency(uint32_t aMaster, uint32_t aAlgo, uint32_t aInternal, uint32_t aRxExtraBxs, uint32_t aTxExtraBxs)
+EasyLatencyCommand<RxBufferSelector>::computeLatency(uint32_t aMaster, uint32_t aAlgo, uint32_t aInternal, uint32_t aRxExtraFrames, uint32_t aTxExtraFrames)
 {
-  return aMaster + aInternal + aRxExtraBxs;
+  //  return aMaster + aInternal + aRxExtraFrames;
+  uint32_t lLatency = aMaster + aInternal + aRxExtraFrames;
+  LOG4CPLUS_INFO(getActionable<MP7AbstractProcessor>().getLogger(), "Compute Rx Latency:" 
+      << " M(" << aMaster 
+      << ")+I(" << aInternal
+      << ")+xRx(" << aRxExtraFrames
+      << ") => L = " << lLatency);
+
+  return lLatency;
 }
 
 
 template<>
 uint32_t
-EasyLatencyCommand<TxBufferSelector>::computeLatency(uint32_t aMaster, uint32_t aAlgo, uint32_t aInternal, uint32_t aRxExtraBxs, uint32_t aTxExtraBxs)
+EasyLatencyCommand<TxBufferSelector>::computeLatency(uint32_t aMaster, uint32_t aAlgo, uint32_t aInternal, uint32_t aRxExtraFrames, uint32_t aTxExtraFrames)
 {
-  return aMaster + aInternal - aAlgo + aTxExtraBxs;
+  uint32_t lLatency = aMaster + aInternal - aAlgo + aTxExtraFrames;
+
+    LOG4CPLUS_INFO(getActionable<MP7AbstractProcessor>().getLogger(), "Compute Tx Latency:" 
+      << " M(" << aMaster 
+      << ")+I(" << aInternal
+      << ")-A(" << aAlgo
+      << ")+xTx(" << aRxExtraFrames
+      << ") => L = " << lLatency);
+
+  return lLatency;
 }
 
 template class EasyLatencyCommand<RxBufferSelector>;

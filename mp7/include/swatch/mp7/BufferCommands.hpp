@@ -123,7 +123,7 @@ public:
 
 protected:
 
-  static uint32_t computeLatency( uint32_t aMaster, uint32_t aAlgo, uint32_t aInternal, uint32_t aRxExtraBxs, uint32_t aTxExtraBxs);
+  uint32_t computeLatency( uint32_t aMaster, uint32_t aAlgo, uint32_t aInternal, uint32_t aRxExtraFramess, uint32_t aTxExtraFrames);
 
   Selector mBufferSelector;
 };
