@@ -83,16 +83,20 @@ void Command::runCode(boost::shared_ptr<BusyGuard> aActionGuard, const XParamete
     boost::unique_lock<boost::mutex> lock(mMutex);
     gettimeofday(&mExecEndTime, NULL);
     switch (s) { 
-      case State::kDone :
       case State::kWarning :
+        LOG4CPLUS_WARN(getActionable().getLogger(), "Command '" << getId() << "' returned warning. Last status message: " << mStatusMsg);
+      case State::kDone :
+        mState = s;
         mProgress = 1.0;
-      case State::kError : 
+        break;
+      case State::kError :
+        LOG4CPLUS_ERROR(getActionable().getLogger(), "Command '" << getId() << "' returned error. Progress = " << mProgress << "; last status message: " << mStatusMsg);
         mState = s;
         break;
       default : 
         mState = State::kError;
         mStatusMsg = "Command::code() method returned invalid Status enum value '" + boost::lexical_cast<std::string>(s) + "'   \n Original status message was: " + mStatusMsg;
-        LOG4CPLUS_ERROR(getActionable().getLogger(), "Command '" << getId() << " : " << mStatusMsg);
+        LOG4CPLUS_ERROR(getActionable().getLogger(), "Command '" << getId() << "' : " << mStatusMsg);
     }
   }
   catch (const std::exception& e) {
