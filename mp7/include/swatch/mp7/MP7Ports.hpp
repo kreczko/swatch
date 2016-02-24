@@ -57,6 +57,8 @@ private:
   //! Metric containing alignment cycle
   core::Metric<uint32_t>& mMetricAlignCycle;
 
+  //! Metric containing alignment cycle
+  core::Metric<uint32_t>& mMetricAlignErrors;  
 };
 
 

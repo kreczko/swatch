@@ -34,7 +34,8 @@ MP7RxPort::MP7RxPort( const std::string& aId, uint32_t aChannelID, ::mp7::MP7Con
   mAlign(mDatapath.getNode< ::mp7::AlignMonNode>("region.align")),
   mMetricPacketCounter(registerMetric<uint32_t>("packetCounter")),
   mMetricAlignBx(registerMetric<uint32_t>("alignBx")),
-  mMetricAlignCycle(registerMetric<uint32_t>("alignCycle"))
+  mMetricAlignCycle(registerMetric<uint32_t>("alignCycle")),
+  mMetricAlignErrors(registerMetric<uint32_t>("alignErrors"))    
 {
   
   setWarningCondition(mMetricPacketCounter,core::EqualCondition<uint32_t>(0));
@@ -42,6 +43,8 @@ MP7RxPort::MP7RxPort( const std::string& aId, uint32_t aChannelID, ::mp7::MP7Con
   setWarningCondition(mMetricAlignBx,core::EqualCondition<uint32_t>(0xfff));
 
   setWarningCondition(mMetricAlignCycle,core::EqualCondition<uint32_t>(0x7));
+
+  setErrorCondition(mMetricAlignErrors,core::NotEqualCondition<uint32_t>(0x0));
 
 }
 
@@ -97,6 +100,8 @@ void MP7RxPort::retrieveMetricValues()
   setMetricValue<>(mMetricAlignBx, alStatus.position.bx);
 
   setMetricValue<>(mMetricAlignCycle, alStatus.position.cycle);
+
+  setMetricValue<>(mMetricAlignErrors, alStatus.errors);
 
 }
 
