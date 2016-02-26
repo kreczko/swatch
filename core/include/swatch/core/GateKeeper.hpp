@@ -94,6 +94,18 @@ public:
 
   const boost::posix_time::ptime& lastUpdated();
 
+  ParametersContextCache_t::const_iterator parametersBegin() const;
+  ParametersContextCache_t::const_iterator parametersEnd() const;
+
+  SettingsContextCache_t::const_iterator monitoringSettingsBegin() const;
+  SettingsContextCache_t::const_iterator monitoringSettingsEnd() const;
+
+  MasksContextCache_t::const_iterator masksBegin() const;
+  MasksContextCache_t::const_iterator masksEnd() const;
+
+  DisabledSet_t::const_iterator disabledFlagsBegin() const;
+  DisabledSet_t::const_iterator disabledFlagsEnd() const;
+
 protected:
   /**
    * Add a named context to the map of cached contexts

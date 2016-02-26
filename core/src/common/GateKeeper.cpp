@@ -301,5 +301,33 @@ std::ostream& operator<<(std::ostream& aStr,
   return aStr;
 }
 
+GateKeeper::ParametersContextCache_t::const_iterator GateKeeper::parametersBegin() const {
+  return mParameters.cbegin();
+}
+GateKeeper::ParametersContextCache_t::const_iterator GateKeeper::parametersEnd() const {
+  return mParameters.cend();
+}
+
+GateKeeper::SettingsContextCache_t::const_iterator GateKeeper::monitoringSettingsBegin() const {
+  return mSettings.cbegin();
+}
+GateKeeper::SettingsContextCache_t::const_iterator GateKeeper::monitoringSettingsEnd() const {
+  return mSettings.cend();
+}
+
+GateKeeper::MasksContextCache_t::const_iterator GateKeeper::masksBegin() const {
+  return mMasks.cbegin();
+}
+GateKeeper::MasksContextCache_t::const_iterator GateKeeper::masksEnd() const {
+  return mMasks.cend();
+}
+
+GateKeeper::DisabledSet_t::const_iterator GateKeeper::disabledFlagsBegin() const {
+  return mDisabledObjs.cbegin();
+}
+GateKeeper::DisabledSet_t::const_iterator GateKeeper::disabledFlagsEnd() const {
+  return mDisabledObjs.cend();
+}
+
 } /* namespace core */
 } /* namespace swatch */
