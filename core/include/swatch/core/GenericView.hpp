@@ -21,9 +21,9 @@ public:
   GenericView(const T& aObject, const std::string& aObjectId, const std::string& aContext = "none");
   ~GenericView();
 
-  const std::string& context() const;
-  const std::string& objectId() const;
-  const T& object() const;
+  const std::string& getContext() const;
+  const std::string& getObjectId() const;
+  const T& getObject() const;
 
   // need comparison operator for the use of GenericView in a set
   bool operator==(const GenericView<T>& aOther) const;

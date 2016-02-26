@@ -89,14 +89,14 @@ BOOST_FIXTURE_TEST_CASE ( TestDisabledFlagsView, TestGateKeeperViewSetup ) {
   unsigned int i = 0;
   for (GateKeeperView::DisabledFlags_t::const_iterator it = lView.disabledFlagsBegin(); it != lView.disabledFlagsEnd();
       ++it, ++i) {
-    BOOST_CHECK_EQUAL(it->context(), "none");
+    BOOST_CHECK_EQUAL(it->getContext(), "none");
     if (i == 0) {
-      BOOST_CHECK_EQUAL(it->objectId(), "dummy_sys.childA1");
-      BOOST_CHECK_EQUAL(it->object(), "dummy_sys.childA1");
+      BOOST_CHECK_EQUAL(it->getObjectId(), "dummy_sys.childA1");
+      BOOST_CHECK_EQUAL(it->getObject(), "dummy_sys.childA1");
     }
     if (i == 1) {
-      BOOST_CHECK_EQUAL(it->objectId(), "dummy_sys.child42");
-      BOOST_CHECK_EQUAL(it->object(), "dummy_sys.child42");
+      BOOST_CHECK_EQUAL(it->getObjectId(), "dummy_sys.child42");
+      BOOST_CHECK_EQUAL(it->getObject(), "dummy_sys.child42");
     }
   }
 }
@@ -116,8 +116,8 @@ BOOST_FIXTURE_TEST_CASE ( TestMasksView, TestGateKeeperViewSetup ) {
   lMasks.push_back("componentC");
 
   for (GateKeeperView::Masks_t::const_iterator it = lView.masksBegin(); it != lView.masksEnd(); ++it, ++i) {
-    BOOST_CHECK_EQUAL(it->context(), lContexts.at(i));
-    BOOST_CHECK_EQUAL(it->objectId(), lMasks.at(i));
+    BOOST_CHECK_EQUAL(it->getContext(), lContexts.at(i));
+    BOOST_CHECK_EQUAL(it->getObjectId(), lMasks.at(i));
   }
 }
 
@@ -130,8 +130,8 @@ BOOST_FIXTURE_TEST_CASE ( TestMasksViewWithContext, TestGateKeeperViewSetup ) {
   BOOST_REQUIRE_EQUAL(lView.masksSize(), size_t(1));
   unsigned int i = 0;
   for (GateKeeperView::Masks_t::const_iterator it = lView.masksBegin(); it != lView.masksEnd(); ++it, ++i) {
-    BOOST_CHECK_EQUAL(it->context(), lContexts.at(i));
-    BOOST_CHECK_EQUAL(it->objectId(), lMasks.at(i));
+    BOOST_CHECK_EQUAL(it->getContext(), lContexts.at(i));
+    BOOST_CHECK_EQUAL(it->getObjectId(), lMasks.at(i));
   }
 }
 
@@ -160,9 +160,9 @@ BOOST_FIXTURE_TEST_CASE ( TestMonitoringSettingsView, TestGateKeeperViewSetup ) 
   unsigned int i = 0;
   for (GateKeeperView::MonitoringSettings_t::const_iterator it = lView.monitoringSettingsBegin();
       it != lView.monitoringSettingsEnd(); ++it, ++i) {
-    BOOST_CHECK_EQUAL(it->context(), lContexts.at(i));
-    BOOST_CHECK_EQUAL(it->objectId(), lSettings.at(i));
-    BOOST_CHECK_EQUAL(it->object()->getStatus(), lValues.at(i));
+    BOOST_CHECK_EQUAL(it->getContext(), lContexts.at(i));
+    BOOST_CHECK_EQUAL(it->getObjectId(), lSettings.at(i));
+    BOOST_CHECK_EQUAL(it->getObject()->getStatus(), lValues.at(i));
   }
 }
 
@@ -187,9 +187,9 @@ BOOST_FIXTURE_TEST_CASE ( TestMonitoringSettingsViewWithContext, TestGateKeeperV
   unsigned int i = 0;
   for (GateKeeperView::MonitoringSettings_t::const_iterator it = lView.monitoringSettingsBegin();
       it != lView.monitoringSettingsEnd(); ++it, ++i) {
-    BOOST_CHECK_EQUAL(it->context(), lContexts.at(i));
-    BOOST_CHECK_EQUAL(it->objectId(), lSettings.at(i));
-    BOOST_CHECK_EQUAL(it->object()->getStatus(), lValues.at(i));
+    BOOST_CHECK_EQUAL(it->getContext(), lContexts.at(i));
+    BOOST_CHECK_EQUAL(it->getObjectId(), lSettings.at(i));
+    BOOST_CHECK_EQUAL(it->getObject()->getStatus(), lValues.at(i));
   }
 }
 
@@ -220,9 +220,9 @@ BOOST_FIXTURE_TEST_CASE ( TestParameterView, TestGateKeeperViewSetup ) {
   unsigned int i = 0;
   for (GateKeeperView::Parameters_t::const_iterator it = lView.parametersBegin(); it != lView.parametersEnd();
       ++it, ++i) {
-    BOOST_CHECK_EQUAL(it->context(), lContexts.at(i));
-    BOOST_CHECK_EQUAL(it->objectId(), lParameters.at(i));
-    BOOST_CHECK_EQUAL(it->object()->toString(), lValues.at(i));
+    BOOST_CHECK_EQUAL(it->getContext(), lContexts.at(i));
+    BOOST_CHECK_EQUAL(it->getObjectId(), lParameters.at(i));
+    BOOST_CHECK_EQUAL(it->getObject()->toString(), lValues.at(i));
   }
 }
 
@@ -240,9 +240,9 @@ BOOST_FIXTURE_TEST_CASE ( TestParameterViewWithContext, TestGateKeeperViewSetup 
   unsigned int i = 0;
   for (GateKeeperView::Parameters_t::const_iterator it = lView.parametersBegin(); it != lView.parametersEnd();
       ++it, ++i) {
-    BOOST_CHECK_EQUAL(it->context(), lContexts.at(i));
-    BOOST_CHECK_EQUAL(it->objectId(), lParameters.at(i));
-    BOOST_CHECK_EQUAL(it->object()->toString(), lValues.at(i));
+    BOOST_CHECK_EQUAL(it->getContext(), lContexts.at(i));
+    BOOST_CHECK_EQUAL(it->getObjectId(), lParameters.at(i));
+    BOOST_CHECK_EQUAL(it->getObject()->toString(), lValues.at(i));
   }
 }
 
