@@ -21,10 +21,8 @@ GateKeeper::GateKeeper(const std::string& aKey) :
         mSettings(),
         mUpdateTime() {
   ParametersContext_t lParameters(new Parameters_t()); //Best practice to always use named shared_ptrs
-  mParameters.insert(std::make_pair(kRuntimeContextLabel, lParameters));
 
   SettingsContext_t lSettings(new MonitoringSettings_t());
-  mSettings.insert(std::make_pair(kRuntimeContextLabel, lSettings));
 }
 
 GateKeeper::~GateKeeper() {
@@ -39,7 +37,7 @@ GateKeeper::Parameter_t GateKeeper::get(const std::string& aParam,
     return Parameter_t(); //perfectly acceptable for context name to not exist, just try the context with the next highest priority
   }
 
-  Parameters_t::iterator lData(lContext->second->find(aParam));
+  Parameters_t::const_iterator lData(lContext->second->find(aParam));
 
   if (lData == lContext->second->end()) {
     return Parameter_t(); //perfectly acceptable for context name to not exist, just try the context with the next highest priority
@@ -78,14 +76,8 @@ GateKeeper::Parameter_t GateKeeper::get(const std::string& aSequenceId,
   std::string lCommandPath(aCommandId + "." + aParameterId);
   std::string lSequencePath(aSequenceId + "." + lCommandPath);
 
-  //See if the value was set at Run-time
   Parameter_t lData;
-  lData = get(lSequencePath, lCommandPath, aParameterId, kRuntimeContextLabel);
-  if (lData) {
-    return lData; //perfectly acceptable for specific context not hold the requested data, just try the context with the next highest priority
-  }
 
-  //We could add runtime overriding of values to the GateKeeper and check them first...
   for (std::vector<std::string>::const_iterator lIt(aContextsToLookIn.begin());
       lIt != aContextsToLookIn.end(); ++lIt) {
     LOG(logger::kDebug) << "Searching : " << lSequencePath << ", "
@@ -104,14 +96,8 @@ GateKeeper::MonitoringSetting_t GateKeeper::getMonitoringSetting(
     const std::vector<std::string>& aContextsToLookIn) const {
   std::string statePath(aState + "." + aMetricId);
 
-  //See if the value was set at Run-time
   MonitoringSetting_t setting;
-  setting = getMonitoringSetting(statePath, aMetricId, kRuntimeContextLabel);
-  if (setting) {
-    return setting; //perfectly acceptable for specific context not hold the requested data, just try the context with the next highest priority
-  }
 
-  //We could add runtime overriding of values to the GateKeeper and check them first...
   for (std::vector<std::string>::const_iterator lIt(aContextsToLookIn.begin());
       lIt != aContextsToLookIn.end(); ++lIt) {
     LOG(logger::kDebug) << "Searching : " << statePath << ", " << aMetricId
@@ -152,7 +138,7 @@ GateKeeper::MonitoringSetting_t GateKeeper::getMonitoringSetting(
     return MonitoringSetting_t();
   }
 
-  MonitoringSettings_t::iterator settings(lContext->second->find(aMetricId));
+  MonitoringSettings_t::const_iterator settings(lContext->second->find(aMetricId));
 
   if (settings == lContext->second->end()) {
     //perfectly acceptable for context name to not exist, just try the context with the next highest priority
@@ -250,20 +236,6 @@ void GateKeeper::addToDisabledSet ( const std::string& aId )
 const boost::posix_time::ptime& GateKeeper::lastUpdated() {
   return mUpdateTime;
 }
-
-void GateKeeper::setRuntimeParameter(const std::string& aParam,
-    Parameter_t aData) {
-  ParametersContextCache_t::iterator lContext(mParameters.find(kRuntimeContextLabel));
-  Parameters_t::iterator lIt(lContext->second->find(aParam));
-
-  if (lIt != lContext->second->end()) {
-    lIt->second = aData;
-    return;
-  }
-  lContext->second->insert(std::make_pair(aParam, aData));
-}
-
-const std::string GateKeeper::kRuntimeContextLabel = std::string("__runtime__");
 
 std::ostream& operator<<(std::ostream& aStr,
     const swatch::core::GateKeeper& aGateKeeper) {

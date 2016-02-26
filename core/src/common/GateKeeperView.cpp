@@ -33,6 +33,7 @@ GateKeeperView::GateKeeperView(const GateKeeper& aGateKeeper, const std::vector<
 void GateKeeperView::extractDisabled(const GateKeeper& aGateKeeper) {
   mDisabledFlags.clear();
   mDisabledFlags.reserve(aGateKeeper.mDisabledObjs.size());
+//  BOOST_FOREACH(const GateKeeper::DisabledSet_t lIt, aGateKeeper.mDisabledObjs){
   for (GateKeeper::DisabledSet_t::const_iterator lIt = aGateKeeper.mDisabledObjs.cbegin();
       lIt != aGateKeeper.mDisabledObjs.cend(); ++lIt) {
     DisabledFlagView_t lView(*lIt, *lIt);
@@ -48,7 +49,7 @@ void GateKeeperView::extractMasks(const GateKeeper& aGateKeeper, const std::vect
   }
 
   BOOST_FOREACH(const std::string& lContext, lContextsToLookIn) {
-    GateKeeper::MasksContext_t lMasks(aGateKeeper.mMasks.at(lContext));
+    GateKeeper::MasksContextConst_t lMasks(aGateKeeper.mMasks.at(lContext));
     for (GateKeeper::Masks_t::const_iterator lMask = lMasks->cbegin(); lMask != lMasks->cend(); ++lMask) {
       MaskView_t lView(*lMask, *lMask, lContext);
       mMasks.insert(lView);
@@ -65,7 +66,7 @@ void GateKeeperView::extractMonitoringSettings(const GateKeeper& aGateKeeper,
   }
 
   BOOST_FOREACH(const std::string& lContext, lContextsToLookIn) {
-    GateKeeper::SettingsContext_t lSettings(aGateKeeper.mSettings.at(lContext));
+    GateKeeper::SettingsContextConst_t lSettings(aGateKeeper.mSettings.at(lContext));
     for (GateKeeper::MonitoringSettings_t::const_iterator lSetting = lSettings->cbegin(); lSetting != lSettings->cend();
         ++lSetting) {
       MonitoringView_t lView(lSetting->second, lSetting->first, lContext);
@@ -83,7 +84,7 @@ void GateKeeperView::extractParameters(const GateKeeper& aGateKeeper,
   }
 
   BOOST_FOREACH(const std::string& lContext, lContextsToLookIn) {
-    GateKeeper::ParametersContext_t lParameters(aGateKeeper.mParameters.at(lContext));
+    GateKeeper::ParametersContextConst_t lParameters(aGateKeeper.mParameters.at(lContext));
     for (GateKeeper::Parameters_t::const_iterator lParameter = lParameters->cbegin(); lParameter != lParameters->cend();
         ++lParameter) {
       ParameterView_t lView(lParameter->second, lParameter->first, lContext);

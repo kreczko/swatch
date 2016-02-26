@@ -49,20 +49,23 @@ public:
   // 'aSequenceId.aCommandId.aParameterId'
   typedef boost::unordered_map<std::string, Parameter_t> Parameters_t;
   typedef boost::shared_ptr<Parameters_t> ParametersContext_t;
+  typedef boost::shared_ptr<const Parameters_t> ParametersContextConst_t;
   // these pairs are then stored in different contexts, e.g. 'system.processors'
-  typedef boost::unordered_map<std::string, ParametersContext_t> ParametersContextCache_t;
+  typedef boost::unordered_map<std::string, ParametersContextConst_t> ParametersContextCache_t;
 
   // for monitoring settings
   typedef MonitoringSettingPtr_t MonitoringSetting_t;
   // monitoring settings are mapped against a state, e.g. 'HALTED'
   typedef boost::unordered_map<std::string, MonitoringSetting_t> MonitoringSettings_t;
   typedef boost::shared_ptr<MonitoringSettings_t> SettingsContext_t;
+  typedef boost::shared_ptr<const MonitoringSettings_t> SettingsContextConst_t;
   // these pairs are then stored in different contexts, e.g. 'system.processors'
   typedef boost::unordered_map<std::string, SettingsContext_t> SettingsContextCache_t;
 
   typedef boost::unordered_set<std::string> Masks_t;
   typedef boost::shared_ptr<Masks_t> MasksContext_t;
-  typedef boost::unordered_map<std::string, MasksContext_t> MasksContextCache_t;
+  typedef boost::shared_ptr<const Masks_t> MasksContextConst_t;
+  typedef boost::unordered_map<std::string, MasksContextConst_t> MasksContextCache_t;
 
   typedef boost::unordered_set<std::string> DisabledSet_t;
 
@@ -90,8 +93,6 @@ public:
   bool isEnabled(const std::string& aObjId) const;
 
   const boost::posix_time::ptime& lastUpdated();
-
-  void setRuntimeParameter(const std::string& aParam, Parameter_t aData);
 
 protected:
   /**
@@ -136,7 +137,6 @@ private:
   /// The last time a context was modified
   boost::posix_time::ptime mUpdateTime;
 
-  static const std::string kRuntimeContextLabel;
 };
 
 DEFINE_SWATCH_EXCEPTION(ContextWithIdAlreadyExists);
