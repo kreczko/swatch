@@ -30,7 +30,7 @@ struct TestXmlGateKeeperSetup {
         "	<param id=\"cmdDuration\" type=\"uint\">6</param>"
         "	<param id=\"clkErrorTimeout\" type=\"uint\">120</param>"
         "	<!-- Value for parameter 'cmdDuration' in 'reboot' command -->"
-        "	<param id=\"reboot.cmdDuration\" type=\"uint\">8</param>"
+        "	<param cmd=\"reboot\" id=\"cmdDuration\" type=\"uint\">8</param>"
         "</context>"
         ""
         "<!-- Different parameter values for processors with role 'dummy_p1' ; higher priority"
@@ -40,17 +40,17 @@ struct TestXmlGateKeeperSetup {
         "<param id=\"cmdDuration\" type=\"uint\">8</param>"
         "<param id=\"clkErrorTimeout\" type=\"uint\">60</param>"
         "<!-- Value for parameter \"cmdDuration\" in \"reboot\" command -->"
-        "<param id=\"reboot.cmdDuration\" type=\"uint\">12</param>"
+        "<param cmd=\"reboot\" id=\"cmdDuration\" type=\"uint\">12</param>"
         "</context>"
         ""
         "<context id=\"dummy_s1.dummy_p2\">"
-        "			<param id=\"clkErrorTimeout\" type=\"uint\">40</param>"
+        "      <param id=\"clkErrorTimeout\" type=\"uint\">40</param>"
         "</context>"
         ""
         "<!-- AMC13s ... -->"
         "<context id=\"dummy_s1.daqttcs\">"
         "<param id=\"cmdDuration\" type=\"uint\">8</param>"
-        "<param id=\"reboot.cmdDuration\" type=\"uint\">12</param>"
+        "<param cmd=\"reboot\" id=\"cmdDuration\" type=\"uint\">12</param>"
         "<param id=\"clkErrorTimeout\" type=\"uint\">120</param>"
         "</context>"
         "</key>"
@@ -135,9 +135,9 @@ BOOST_AUTO_TEST_SUITE( TestXmlGateKeeper )
 
 BOOST_FIXTURE_TEST_CASE ( VerifyBaseConfig, TestXmlGateKeeperSetup )
 {
-	XmlGateKeeper gk(base_config, "RunKey1");
-	std::vector<std::string> contextsToLookIn;
-	contextsToLookIn.push_back("dummy_s1.processors");
+  XmlGateKeeper gk(base_config, "RunKey1");
+  std::vector<std::string> contextsToLookIn;
+  contextsToLookIn.push_back("dummy_s1.processors");
 
   BOOST_CHECK_EQUAL(gk.get("", "", "cmdDuration", contextsToLookIn)->toString(), "6");
   BOOST_CHECK_EQUAL(gk.get("", "", "clkErrorTimeout", contextsToLookIn)->toString(), "120");
@@ -252,7 +252,9 @@ BOOST_AUTO_TEST_CASE( CreateFromConfigFile ) {
   lContextsToLookIn = std::vector<std::string> { "system.processors", "system.processor1" };
 
   // from sub1.xml
-  BOOST_CHECK_EQUAL(lGK.get("", "", "resetBoard.clockSource", lContextsToLookIn)->toString(), "external");
+  BOOST_CHECK_EQUAL(lGK.get("", "", "someParameter", lContextsToLookIn)->toString(), "aCommonValueAcrossCommands");
+  BOOST_CHECK_EQUAL(lGK.get("", "resetBoard", "clockSource", lContextsToLookIn)->toString(), "external");
+  BOOST_CHECK_EQUAL(lGK.get("someNamespace", "myCoolCommand", "myParameter", lContextsToLookIn)->toString(), "aSpecificValue");
   // from sub2.xml
   BOOST_CHECK_EQUAL(lGK.get("", "", "electronLookUpTable", lContextsToLookIn)->toString(), "[56,345,954,310]");
   // from sub3.xml

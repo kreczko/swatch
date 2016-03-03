@@ -58,6 +58,12 @@ private:
   log4cplus::Logger mLogger;
 };
 
+
+DEFINE_SWATCH_EXCEPTION ( AttributeMissing );
+DEFINE_SWATCH_EXCEPTION ( InvalidAttribute );
+DEFINE_SWATCH_EXCEPTION ( InvalidAttributeValue );
+
+
 } /* namespace xml */
 } /* namespace swatch */
 

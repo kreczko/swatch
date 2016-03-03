@@ -78,12 +78,41 @@ XmlGateKeeper::~XmlGateKeeper()
 
 
 //------------------------------------------------------------------------------------------------------------------
-std::pair<std::string, GateKeeper::Parameter_t> XmlGateKeeper::createParameter(pugi::xml_node& aParam)
+std::pair<std::string, GateKeeper::Parameter_t> XmlGateKeeper::createParameter(pugi::xml_node& aParamNode)
 {
-  std::string lParamId(aParam.attribute("id").value());
-  std::string lType(aParam.attribute("type").value());
-  std::string lValue(aParam.child_value());
-  xdata::Serializable* lSerializable(mSerializer->import(aParam));
+  pugi::xml_attribute lParamAttribute = aParamNode.attribute("id");
+  pugi::xml_attribute lCmdAttribute = aParamNode.attribute("cmd");
+  pugi::xml_attribute lNamespaceAttribute = aParamNode.attribute("ns");
+
+  if (!lParamAttribute)
+    throw AttributeMissing("Parameter tag is missing required attribute 'id'");
+    
+  std::string lParamId(lParamAttribute.value());
+  if (lParamId.empty())
+    throw InvalidAttributeValue("Parameter tag has empty value for 'id' attribute");
+  else if (lParamId.find('.') != std::string::npos)
+    throw InvalidAttributeValue("Parameter with ID '"+lParamId+"': id attribute contains invalid character '.'");
+
+  if (lCmdAttribute) {
+    if (std::string(lCmdAttribute.value()).find('.') != std::string::npos)
+      throw InvalidAttributeValue("Parameter with ID '"+lParamId+"': cmd attribute, '"+lCmdAttribute.value()+"', contains invalid character '.'");
+    else
+      lParamId = std::string(lCmdAttribute.value()) + "." + lParamId;
+    
+    if (std::string(lNamespaceAttribute.value()).find('.') != std::string::npos)
+      throw InvalidAttributeValue("Parameter with ID '"+lParamId+"': ns attribute, '"+lNamespaceAttribute.value()+"', contains invalid character '.'");
+    else
+      lParamId = std::string(lNamespaceAttribute.value()) + "." + lParamId;
+  }
+  else {
+    // Namespace attribute should not exist if command attribute doesn't exist
+    if (lNamespaceAttribute)
+      throw InvalidAttribute("Parameter with ID '"+lParamId+"': namespace attribute cannot be defined without cmd attribute defined");
+  }
+
+  std::string lType(aParamNode.attribute("type").value());
+  std::string lValue(aParamNode.child_value());
+  xdata::Serializable* lSerializable(mSerializer->import(aParamNode));
 
   return std::make_pair(lParamId, GateKeeper::Parameter_t(lSerializable));
 }
@@ -199,8 +228,6 @@ std::pair<std::string, GateKeeper::MasksContext_t> XmlGateKeeper::createMasksCon
 //------------------------------------------------------------------------------------------------------------------
 std::string XmlGateKeeper::parseDisableNode(const pugi::xml_node& aNode) const
 {
-  std::cout << "XML GK: " << aNode.name() << " ; id=" << aNode.attribute("id").value() << std::endl;
-
   std::string lId(aNode.attribute("id").value());
   return lId;
 }

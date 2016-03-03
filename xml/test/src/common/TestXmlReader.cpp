@@ -36,22 +36,22 @@ struct TestXmlReaderSetup {
         "<key id=\"MyDummyKey\">"
         "<load module=\"file://xml/test/etc/swatch/test/sub1.xml\" />"
         "<context id=\"system.processors\">"
-        "<param id=\"resetBoard.clockSource\" type=\"string\">external</param>"
+        "<param cmd=\"resetBoard\" id=\"clockSource\" type=\"string\">external</param>"
         "</context>"
         "</key>"
         "</db>";
-    mSubConfigStr = "<module>"
-        "<context id=\"system.processor1\">"
+    mSubConfigStr = "<run-settings id=\"system\">"
+        "<context id=\"processor1\">"
         "<state id=\"Halted\">"
         "<mon-obj id=\"ports.Rx00\" status=\"non-critical\" />"
         "</state>"
         "<mask id=\"ports.Rx00\" />"
         "</context>"
-        "<disable id=\"system.brokenProcessor\" />"
-        "</module>";
-    mInvalidSubConfigStr = "<module>"
+        "<disable id=\"brokenProcessor\" />"
+        "</run-settings>";
+    mInvalidSubConfigStr = "<run-settings>"
         "<load module=\"file://xml/test/etc/swatch/test/sub1.xml\" />"
-        "</module>";
+        "</run-settings>";
     // main config + sub config
     mMergedConfigStr = "<db>"
         "<key id=\"MyDummyKey\">"
@@ -92,8 +92,10 @@ BOOST_FIXTURE_TEST_CASE ( VerifyMainConfig, TestXmlReaderSetup ) {
 BOOST_FIXTURE_TEST_CASE ( VerifySubConfig, TestXmlReaderSetup ) {
   XmlReader lReader;
   std::string lErrorMsg("");
+  std::cout << "About to check valid config module" << std::endl;
   BOOST_REQUIRE_EQUAL(lReader.checkSubConfig(mSubConfig, lErrorMsg), true);
   BOOST_REQUIRE_EQUAL(lErrorMsg, "");
+  std::cout << "About to check invalid config module" << std::endl;
   BOOST_REQUIRE_EQUAL(lReader.checkSubConfig(mInvalidSubConfig, lErrorMsg), false);
   BOOST_REQUIRE_NE(lErrorMsg, "");
 }

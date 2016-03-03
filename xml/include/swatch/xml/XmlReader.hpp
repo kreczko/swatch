@@ -29,6 +29,17 @@ namespace xml {
  */
 class XmlReader {
 public:
+  
+  static const std::string kModuleNameTechnical;
+  static const std::string kModuleNameAlgo;
+  static const std::string kModuleNameRunSettings;
+  
+  enum ModuleType {
+    kTechnical,
+    kAlgo,
+    kRunSettings
+  };
+  
   XmlReader();
   ~XmlReader();
 
@@ -59,12 +70,12 @@ public:
    *   <disable id="system.brokenProcessor" /> <!-- 0 or more -->
    * </module>
    */
-  bool checkSubConfig(const pugi::xml_document& aSubConfig, std::string& aErrorMsg) const;
+  static bool checkSubConfig(const pugi::xml_document& aSubConfig, std::string& aErrorMsg);
 
   /**
    * Returns the string representation of a XML document
    */
-  const std::string docToString(const pugi::xml_document& aDoc) const;
+  static const std::string docToString(const pugi::xml_document& aDoc);
 
   /**
    * Takes a file path (aFilePath) and loads it into an XML document (aDocToLoadInto).
@@ -72,6 +83,14 @@ public:
    */
   void loadFromFile(const std::string& aFilePath, pugi::xml_document& aDocToLoadInto) const;
 
+  static void appendSubConfig(const pugi::xml_document& aSubConfigNode, pugi::xml_node& aDestinationNode);
+
+  /**
+   * Takes an XML document merges leafes from <context> & <state> under the same <key> and with the same ID.
+   */
+  static void mergeContexts(const pugi::xml_node& aKeyNode, pugi::xml_node& aNewKeyNode);
+
+  
 private:
   log4cplus::Logger mLogger;
 
@@ -80,13 +99,10 @@ private:
     virtual void write(const void* aData, size_t aSize);
   };
 
-  void mergeSubConfigs(const pugi::xml_node& aKeyNode, pugi::xml_node& aNewKeyNode,
+  void mergeSubConfigFiles(const pugi::xml_node& aKeyNode, pugi::xml_node& aNewKeyNode,
       const std::string& aMainConfigPath) const;
 
-  /**
-   * Takes an XML document merges leafes from <context> & <state> under the same <key> and with the same ID.
-   */
-  void mergeContexts(const pugi::xml_node& aKeyNode, pugi::xml_node& aNewKeyNode) const;
+  
 
   /**
    * Normalises the path of subconfigs included with the <load> tag.
@@ -94,8 +110,7 @@ private:
    * If the path is relative it will be transformed into an absolute path
    * with repect to the MainConfigPath.
    */
-  const std::string normaliseSubConfigPath(const std::string& aMainConfigPath, const std::string& aSubConfigPath) const;
-
+  static const std::string normaliseSubConfigPath(const std::string& aMainConfigPath, const std::string& aSubConfigPath);
 };
 
 DEFINE_SWATCH_EXCEPTION(InvalidConfig);
