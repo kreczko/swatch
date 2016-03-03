@@ -98,11 +98,13 @@ std::pair<std::string, GateKeeper::Parameter_t> XmlGateKeeper::createParameter(p
       throw InvalidAttributeValue("Parameter with ID '"+lParamId+"': cmd attribute, '"+lCmdAttribute.value()+"', contains invalid character '.'");
     else
       lParamId = std::string(lCmdAttribute.value()) + "." + lParamId;
-    
-    if (std::string(lNamespaceAttribute.value()).find('.') != std::string::npos)
-      throw InvalidAttributeValue("Parameter with ID '"+lParamId+"': ns attribute, '"+lNamespaceAttribute.value()+"', contains invalid character '.'");
-    else
-      lParamId = std::string(lNamespaceAttribute.value()) + "." + lParamId;
+
+    if (lNamespaceAttribute) {
+      if (std::string(lNamespaceAttribute.value()).find('.') != std::string::npos)
+        throw InvalidAttributeValue("Parameter with ID '"+lParamId+"': ns attribute, '"+lNamespaceAttribute.value()+"', contains invalid character '.'");
+      else
+        lParamId = std::string(lNamespaceAttribute.value()) + "." + lParamId;
+    }
   }
   else {
     // Namespace attribute should not exist if command attribute doesn't exist
