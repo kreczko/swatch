@@ -1,4 +1,4 @@
-<technical id="system">
+<infra id="system">
   <context id="processors">
     <param id="someParameter" type="string">aCommonValueAcrossCommands</param>
     <param cmd="resetBoard" id="clockSource" type="string">external</param>
@@ -6,4 +6,4 @@
     <!--- many more params -->
   </context>
   <!-- In practice, many more contexts -->
-</technical>
+</infra>

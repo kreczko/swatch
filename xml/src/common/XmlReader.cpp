@@ -12,7 +12,7 @@ namespace swatch {
 namespace xml {
 
 
-const std::string XmlReader::kModuleNameTechnical = "technical";
+const std::string XmlReader::kModuleNameInfra = "infra";
 const std::string XmlReader::kModuleNameAlgo = "algo";
 const std::string XmlReader::kModuleNameRunSettings = "run-settings";
 
@@ -186,12 +186,12 @@ bool XmlReader::checkSubConfig(const pugi::xml_document& aSubConfig, std::string
   if(!lResult)
     aErrorMsg += "More than one top-level tag detected in configuration module file\n";
 
-  // Top level node is either 'technical', 'algo' or 'run-settings'
+  // Top level node is either 'infra', 'algo' or 'run-settings'
   pugi::xml_node lModule = aSubConfig.first_child();
   std::string lModuleTagName = lModule.name();
-  ModuleType lModuleType = kTechnical;
-  if (lModuleTagName == kModuleNameTechnical)
-    lModuleType = kTechnical;
+  ModuleType lModuleType = kInfra;
+  if (lModuleTagName == kModuleNameInfra)
+    lModuleType = kInfra;
   else if (lModuleTagName == kModuleNameAlgo)
     lModuleType = kAlgo;
   else if (lModuleTagName == kModuleNameRunSettings)

@@ -1,5 +1,5 @@
-#ifndef __SWATCH_XML_XMLINCLUDE_HPP__
-#define __SWATCH_XML_XMLINCLUDE_HPP__
+#ifndef __SWATCH_XML_XMLREADER_HPP__
+#define __SWATCH_XML_XMLREADER_HPP__
 
 // Standard headers
 #include <string>
@@ -30,12 +30,12 @@ namespace xml {
 class XmlReader {
 public:
   
-  static const std::string kModuleNameTechnical;
+  static const std::string kModuleNameInfra;
   static const std::string kModuleNameAlgo;
   static const std::string kModuleNameRunSettings;
   
   enum ModuleType {
-    kTechnical,
+    kInfra,
     kAlgo,
     kRunSettings
   };
@@ -119,4 +119,4 @@ DEFINE_SWATCH_EXCEPTION(XmlFileError);
 }
 }
 
-#endif	/* __SWATCH_XML_XMLINCLUDE_HPP__ */
+#endif	/* __SWATCH_XML_XMLREADER_HPP__ */
