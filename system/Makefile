@@ -11,8 +11,8 @@ PackageName = cactuscore-swatch-system
 Packager = Alessandro Thea
 
 PACKAGE_VER_MAJOR = 0
-PACKAGE_VER_MINOR = 5
-PACKAGE_VER_PATCH = 1
+PACKAGE_VER_MINOR = 6
+PACKAGE_VER_PATCH = 0
 PACKAGE_RELEASE = 0
 
 Library = cactus_swatch_system
