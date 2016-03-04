@@ -253,8 +253,11 @@ bool XmlReader::checkSubConfig(const pugi::xml_document& aSubConfig, std::string
           }
         }        
       }
-    } // end: if lSubTagName == "context
-
+    } // end: if lSubTagName == "context"
+    else if ((lSubTagName == "disable") && (lModuleType != kRunSettings)) {
+      aErrorMsg += "Cannot use tag <" + lSubTagName + "> in a '" + lModuleTagName + "' configuration module\n";
+      lResult = false;
+    } // end: else if lSubTagName == "disable"
   }
 
   return lResult;
