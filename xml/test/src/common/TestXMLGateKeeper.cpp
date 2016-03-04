@@ -258,6 +258,7 @@ BOOST_AUTO_TEST_CASE( CreateFromConfigFile ) {
   // from sub2.xml
   BOOST_CHECK_EQUAL(lGK.get("", "", "electronLookUpTable", lContextsToLookIn)->toString(), "[56,345,954,310]");
   // from sub3.xml
+  BOOST_CHECK_EQUAL(lGK.get("", "", "aParam", lContextsToLookIn)->toString(), "aValueForProcessor1");
   BOOST_CHECK_EQUAL(lGK.getMonitoringSetting("Halted", "ports.Rx00", lContextsToLookIn)->getStatus(),
       monitoring::kNonCritical);
   BOOST_CHECK_EQUAL(lGK.getMonitoringSetting("Halted", "ports.Rx01", lContextsToLookIn)->getStatus(),

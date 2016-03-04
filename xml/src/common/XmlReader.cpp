@@ -244,11 +244,7 @@ bool XmlReader::checkSubConfig(const pugi::xml_document& aSubConfig, std::string
           aErrorMsg += std::string("Cannot use tag <") + lChildTag.name() + "> in a '" + lModuleTagName + "' configuration module\n";
           lResult = false;
         }
-        else if ((lModuleType == kRunSettings) && (strcmp(lChildTag.name(), "param") == 0)) {
-          aErrorMsg += std::string("Cannot use tag <") + lChildTag.name() + "> in a '" + lModuleTagName + "' configuration module\n";
-          lResult = false;
-        }
-        else if ((lModuleType == kAlgo) && (strcmp(lChildTag.name(), "param") == 0)) {
+        else if ((lModuleType != kInfra) && (strcmp(lChildTag.name(), "param") == 0)) {
           for(pugi::xml_node::attribute_iterator lAttIt = lChildTag.attributes_begin(); lAttIt != lChildTag.attributes_end(); lAttIt++) {
             if (strcmp(lAttIt->name(),"ns") == 0 || strcmp(lAttIt->name(),"cmd") == 0) {
               aErrorMsg += std::string("Cannot specify attribute '") + lAttIt->name() + "' in a <param> tag within a '" + lModuleTagName + "' configuration module\n";
@@ -258,6 +254,7 @@ bool XmlReader::checkSubConfig(const pugi::xml_document& aSubConfig, std::string
         }        
       }
     } // end: if lSubTagName == "context
+
   }
 
   return lResult;

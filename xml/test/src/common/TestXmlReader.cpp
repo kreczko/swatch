@@ -42,6 +42,7 @@ struct TestXmlReaderSetup {
         "</db>";
     mSubConfigStr = "<run-settings id=\"system\">"
         "<context id=\"processor1\">"
+        "<param id=\"aParam\" type=\"string\">aValue</param>"
         "<state id=\"Halted\">"
         "<mon-obj id=\"ports.Rx00\" status=\"non-critical\" />"
         "</state>"
