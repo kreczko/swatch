@@ -44,6 +44,8 @@ private:
 
   std::vector<std::string> splitAndTrim( const std::string& aStr, const std::string aDelimiter );
   
+//  void validate(const pugi::xml_node& aNode) ;
+  
   // Dynamic binder to object handlers by type
   std::map<std::string, xdata::Serializable*> mDefaults;
 };

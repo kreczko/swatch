@@ -6,6 +6,7 @@
 #include "swatch/xml/XmlSerializer.hpp"
 #include "swatch/xml/VectorSerializer.hpp"
 #include "swatch/xml/SimpleSerializer.hpp"
+#include "swatch/xml/TableSerializer.hpp"
 //log4cplus headers
 #include <log4cplus/loggingmacros.h>
 
@@ -26,6 +27,8 @@ XmlSerializer::XmlSerializer() :
 	this->addObjectSerializer(new VectorSerializer<xdata::Float>());
 	this->addObjectSerializer(new VectorSerializer<xdata::Boolean>());
 	this->addObjectSerializer(new VectorSerializer<xdata::String>());
+    // register table serializer
+    this->addObjectSerializer(new TableSerializer());
 }
 
 XmlSerializer::~XmlSerializer() {

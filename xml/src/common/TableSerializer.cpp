@@ -69,19 +69,15 @@ std::vector<std::string> TableSerializer::splitAndTrim(const std::string& aStr, 
   return lTokens;
 }
 
-xdata::Serializable* TableSerializer::import(const pugi::xml_node& aNode)
+/*
+void TableSerializer::validate(const pugi::xml_node& aNode )
 {
-  
-  aNode.print(std::cout, "", pugi::format_raw);std::cout << std::endl;
 
-  // Get the delimiter
-  pugi::xml_attribute lDelimiterAttr(aNode.attribute("delimiter"));
-  std::string lDelimiter(lDelimiterAttr.empty() ? "," : lDelimiterAttr.value());
-  // And the main nodes of the table
+    // And the main nodes of the table
   pugi::xml_node lColsNode = aNode.child(kColsTag.c_str());
   pugi::xml_node lTypesNode = aNode.child(kTypesTag.c_str());
   pugi::xml_node lRows = aNode.child(kRowsTag.c_str());
-
+  
   if ( !( lColsNode && lTypesNode && lRows) ) {
     std::ostringstream msg;
     msg << "Missing nodes: ";
@@ -92,16 +88,64 @@ xdata::Serializable* TableSerializer::import(const pugi::xml_node& aNode)
     throw ValueError(msg.str());
   }
   
+  uint32_t iRow(0);
+  for (pugi::xml_node lKey = lRows.first_child(); lKey; lKey = lKey.next_sibling()) {
+    if ( lKey.name() != kRowTag ) {
+      std::ostringstream msg;
+      msg << "Invalid tag <" << lKey.name() << "> found (child " << iRow << ").";
+      throw ValueError(msg.str());
+    } else {
+      ++iRow;
+    }  
+  }
+}*/
+
+xdata::Serializable* TableSerializer::import(const pugi::xml_node& aNode)
+{
+//  aNode.print(std::cout, "", pugi::format_raw);std::cout << std::endl;
+
+  // Get the delimiter
+  pugi::xml_attribute lDelimiterAttr(aNode.attribute("delimiter"));
+  std::string lDelimiter(lDelimiterAttr.empty() ? "," : lDelimiterAttr.value());
+  // And the main nodes of the table
+  pugi::xml_node lColsNode = aNode.child(kColsTag.c_str());
+  pugi::xml_node lTypesNode = aNode.child(kTypesTag.c_str());
+  pugi::xml_node lRows = aNode.child(kRowsTag.c_str());
+
+//  validate(aNode);
+  if ( !( lColsNode && lTypesNode && lRows) ) {
+    std::ostringstream msg;
+    msg << "Missing nodes: ";
+    if ( !lColsNode ) msg << "'" << kColsTag << "' ";
+    if ( !lTypesNode ) msg << "'" << kTypesTag << "' ";
+    if ( !lRows ) msg << "'" << kRowsTag << "' ";
+    
+    throw ValueError(msg.str());
+  }
+  
+  uint32_t nRow(0);
+  for (pugi::xml_node lKey = lRows.first_child(); lKey; lKey = lKey.next_sibling()) {
+    if ( lKey.name() != kRowTag ) {
+      std::ostringstream msg;
+      msg << "Invalid tag <" << lKey.name() << "> found (child " << nRow << ").";
+      throw ValueError(msg.str());
+    } else {
+      ++nRow;
+    }  
+  }
+  
   std::vector<std::string> lColNames = splitAndTrim(lColsNode.child_value(), lDelimiter);
   std::vector<std::string> lTypeNames = splitAndTrim(lTypesNode.child_value(), lDelimiter);
 
   
   if ( lColNames.size() != lTypeNames.size()) {
-    std::cout << lColNames.size() << " - " << lTypeNames.size() << std::endl;
-    throw ValueError("Vaccaboia");
+    std::ostringstream msg;
+    msg << "Column/Types mismatch: n(columns)" << lColNames.size() << " n(types) " << lTypeNames.size();
+    throw ValueError(msg.str());
   }
   
   xdata::Table* lTable = new xdata::Table();
+  lTable->reserve(nRow);
 
   std::vector<xdata::Serializable*> lColumnDefaults(lColNames.size());
   std::string lNormalizedType;
@@ -111,25 +155,21 @@ xdata::Serializable* TableSerializer::import(const pugi::xml_node& aNode)
     lColumnDefaults[c] = mDefaults[lNormalizedType];
   }
   
-  
-  std::string lRowStr;
-  std::vector<std::string> lElements(lColNames.size());
+  std::vector<std::string> lElements;
+  lElements.reserve(lColNames.size());
 
+  uint32_t iRow(0);
   for (pugi::xml_node lKey = lRows.first_child(); lKey; lKey = lKey.next_sibling()) {
-    if ( lKey.name() != kRowTag ) {
-      delete lTable;
-      throw ValueError("Pizello");
-    }
-    std::cout << "row!" << std::endl;
 
     lElements = splitAndTrim(lKey.child_value(),lDelimiter);
 
     if ( lColNames.size() != lElements.size()) {
       delete lTable;
-      throw ValueError("Cacca");
+      std::ostringstream msg;
+      msg << "Column/Cell mismatchin in row " << iRow << ": n(columns)" << lColNames.size() << " n(cells) " << lElements.size();
+      throw ValueError(msg.str());
     }
-    
-
+   
     xdata::Table::Row& lRow = *lTable->append();
 
     for ( size_t k(0); k<lColNames.size(); ++k) {
@@ -137,7 +177,7 @@ xdata::Serializable* TableSerializer::import(const pugi::xml_node& aNode)
       lRow.getField(lColNames[k])->fromString(lElements[k]);
     }
     
-
+    ++iRow;
   }
 
   return lTable;
