@@ -42,19 +42,25 @@ void CommandChannelSelector::addParameters()
 }
 
 
-std::string CommandChannelSelector::getIdSelection( const swatch::core::XParameterSet& aParams ) const
+//---
+std::string
+CommandChannelSelector::getIdSelection( const swatch::core::XParameterSet& aParams ) const
 {
   return aParams.get<xdata::String>(kIdSelection).value_;
 }
 
 
-const Rule_t& CommandChannelSelector::getMaskFilter(const swatch::core::XParameterSet& aParams) const
+//---
+const Rule_t&
+CommandChannelSelector::getMaskFilter(const swatch::core::XParameterSet& aParams) const
 {
   return kAlwaysTrue;
 }
 
 
-::mp7::ChannelsManager CommandChannelSelector::getManager(const swatch::core::XParameterSet& aParams) const
+//---
+::mp7::ChannelsManager
+CommandChannelSelector::getManager(const swatch::core::XParameterSet& aParams) const
 {
   // Parse the list of selected ports
   std::set<std::string> lSelIds = swatch::core::toolbox::IdSliceParser::parseSet(getIdSelection(aParams));
@@ -86,7 +92,9 @@ const Rule_t& CommandChannelSelector::getMaskFilter(const swatch::core::XParamet
 
 }
 
-::mp7::MP7Controller& CommandChannelSelector::getDriver() {
+//---
+::mp7::MP7Controller&
+CommandChannelSelector::getDriver() {
 
   return mProcessor.driver();
 

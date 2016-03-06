@@ -21,6 +21,7 @@
 #include "mp7/PathConfigurator.hpp"
 #include "mp7/TTCNode.hpp"
 #include "mp7/operators.hpp"
+#include "mp7/Logger.hpp"
 
 // SWATCH headers
 #include "swatch/logger/Log.hpp"
@@ -30,6 +31,39 @@
 
 namespace swatch {
 namespace mp7 {
+
+
+ZeroEverythingCommand::ZeroEverythingCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
+swatch::core::Command(aId, aActionable, xdata::String())
+{
+
+}
+
+
+swatch::core::Command::State ZeroEverythingCommand::code(const ::swatch::core::XParameterSet& params)
+{
+  // Extract the MP7 driver
+  ::mp7::MP7Controller& driver = getActionable<MP7AbstractProcessor>().driver();
+  ::mp7::orbit::Metric metric = driver.getMetric();
+  
+  // Create a base configurator
+  ::mp7::TestPathConfigurator lZeroConfigurator = ::mp7::TestPathConfigurator(::mp7::TestPathConfigurator::kZeroes, ::mp7::orbit::Point(), metric);
+
+  // Configure 
+  ::mp7::ChannelsManager cm = driver.channelMgr();
+
+  // 
+  std::ostringstream zeroedIds;
+  zeroedIds << ::mp7::logger::shortVecFmt(cm.ids(::mp7::kBufferIDs).channels());
+  setStatusMsg("Masking MP7 inputs " + zeroedIds.str());
+
+  // Zero
+  cm.configureBuffers(::mp7::kRxBuffer, lZeroConfigurator);
+  
+  setResult(xdata::String("Masked MP7 inputs "+zeroedIds.str()));
+
+  return State::kDone;
+}
 
 
 // Static initialization
@@ -62,29 +96,6 @@ template<>
 const ::mp7::BufferKind BufferTraits<TxBufferSelector>::bufferKind = ::mp7::kTxBuffer;
 
 // --------------------------------------------------------
-// template<class C>
-// std::map< std::string, ::mp7::TestPathConfigurator::Mode >
-// ConfigureBuffersCommand<C>::initBufferModeMap()
-// {
-
-//   std::map< std::string, ::mp7::TestPathConfigurator::Mode > lModes;
-
-//   lModes["Latency"] = ::mp7::TestPathConfigurator::kLatency;
-//   lModes["Capture"] = ::mp7::TestPathConfigurator::kCapture;
-//   lModes["PlayOnce"] = ::mp7::TestPathConfigurator::kPlayOnce;
-//   lModes["PlayLoop"] = ::mp7::TestPathConfigurator::kPlayLoop;
-//   lModes["Pattern"] = ::mp7::TestPathConfigurator::kPattern;
-//   lModes["Zeroes"] = ::mp7::TestPathConfigurator::kZeroes;
-//   lModes["CaptureStrobe"] = ::mp7::TestPathConfigurator::kCaptureStrobe;
-//   lModes["Pattern3G"] = ::mp7::TestPathConfigurator::kPattern3G;
-//   lModes["PlayOnceStrobe"] = ::mp7::TestPathConfigurator::kPlayOnceStrobe;
-//   lModes["PlayOnce3G"] = ::mp7::TestPathConfigurator::kPlayOnce3G;
-
-//   return lModes;
-// }
-
-
-// --------------------------------------------------------
 template<class Selector>
 ConfigureBuffersCommand<Selector>::ConfigureBuffersCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
 swatch::core::Command(aId, aActionable, xdata::String()),
@@ -113,8 +124,6 @@ ConfigureBuffersCommand<Selector>::code(const ::swatch::core::XParameterSet& par
   const ::mp7::BufferKind bKind = BufferTraits<Selector>::bufferKind;
 
   // Extract parameter values
-  // LOG(swatch::logger::kWarning) << params;
-
   std::string modeValue = params.get<xdata::String>("mode").value_;
 
   uint startBxVal = params.get<xdata::UnsignedInteger>("startBx").value_;
@@ -124,8 +133,6 @@ ConfigureBuffersCommand<Selector>::code(const ::swatch::core::XParameterSet& par
   uint stopCycleVal = params.get<xdata::UnsignedInteger>("stopCycle").value_;
 
   std::string payload = params.get<xdata::String>("payload").value_;
-
-  // TODO: make a generic bx/cycle checker
 
   const xdata::UnsignedInteger& startBx = params.get<xdata::UnsignedInteger>("startBx");
   const xdata::UnsignedInteger& startCycle = params.get<xdata::UnsignedInteger>("startCycle");

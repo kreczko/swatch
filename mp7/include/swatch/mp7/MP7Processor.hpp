@@ -52,6 +52,7 @@ protected:
     static const std::string kHardReset;
     static const std::string kScanSD;
     static const std::string kReset;
+    static const std::string kZeroInputs;
     static const std::string kSetId;
     static const std::string kCfgRxMGTs;
     static const std::string kCfgTxMGTs;

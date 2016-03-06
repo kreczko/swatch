@@ -13,10 +13,25 @@ namespace mp7 {
 
 
 
-// Templated translator from BufferCore to BufferKind
+/**
+ * Templated translator from BufferCore to BufferKind
+ */
 template<class Selector>
 struct BufferTraits {
     const static ::mp7::BufferKind bufferKind;
+};
+
+/**
+ * @class ZeroEverythingCommand
+ */
+class ZeroEverythingCommand : public swatch::core::Command {
+public:
+  ZeroEverythingCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
+  
+  virtual ~ZeroEverythingCommand() {}
+
+  virtual swatch::core::Command::State code(const ::swatch::core::XParameterSet& params);
+  
 };
 
 /**
