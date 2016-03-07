@@ -1,68 +1,23 @@
-#include "swatch/mp7/ChannelDescriptor.hpp"
+/* 
+ * File:   DescriptorSelector.cpp
+ * Author: ale
+ * 
+ * Created on March 6, 2016, 12:35 PM
+ */
 
-// SWATCH Headers
-#include "swatch/core/MaskableObject.hpp"
+#include "swatch/mp7/channel/DescriptorSelector.hpp"
 
-// BOOST Headers
 
 #include <boost/foreach.hpp>
-#include <stdexcept>
-#include <sstream>
+#include <boost/range/algorithm/copy.hpp>
+#include <boost/range/adaptor/map.hpp>
+#include <boost/range/adaptor/filtered.hpp>
 
 namespace swatch {
 namespace mp7 {
+namespace channel {
 
-
-ChannelDescriptor::ChannelDescriptor()
-{
-
-}
-
-ChannelDescriptor::ChannelDescriptor(uint32_t aChannelId, bool aHasMGTs, bool aHasBuffer, ::mp7::FormatterKind aFmtKind, const core::MaskableObject* aMaskable) :
-  mChannelId(aChannelId),
-  mHasMGT(aHasMGTs),
-  mHasBuffer(aHasBuffer),
-  mFormatterKind(aFmtKind),
-  mMaskable(aMaskable)
-{
-//  std::cout << "--------------------" << std::endl;
-//  std::cout << "objid " << mObjId << std::endl;
-//  std::cout << "chid  " << mChannelId << std::endl;
-//  std::cout << "mgt  " << mHasMGT << std::endl;
-//  std::cout << "buf  " << mHasBuffer << std::endl;
-  
-}
-
-uint32_t ChannelDescriptor::getChannelId() const
-{
-  return mChannelId;
-}
-
-bool ChannelDescriptor::hasMGT() const
-{
-  return mHasMGT;
-}
-
-bool ChannelDescriptor::hasBuffer() const
-{
-  return mHasBuffer;
-}
-
-
-::mp7::FormatterKind ChannelDescriptor::getFormatterKind() const
-{
-  return mFormatterKind;
-}
-
-bool ChannelDescriptor::isMasked() const
-{
-  if ( !mMaskable ) return false;
-  
-  return mMaskable->isMasked();
-}
-
-
-DescriptorSelector::DescriptorSelector(const std::map<std::string, ChannelDescriptor>& aMap) :
+DescriptorSelector::DescriptorSelector(const std::map<std::string, Descriptor>& aMap) :
   mMap(aMap)
 {
 }
@@ -86,7 +41,7 @@ std::vector<uint32_t> DescriptorSelector::getChannelIds() const
   std::vector<uint32_t> lIds;
   boost::copy(mMap 
     | boost::adaptors::map_values 
-    | boost::adaptors::transformed(boost::bind(&ChannelDescriptor::getChannelId,_1)),
+    | boost::adaptors::transformed(boost::bind(&Descriptor::getChannelId,_1)),
     std::inserter(lIds, lIds.end()));
   return lIds;
 }
@@ -95,7 +50,7 @@ std::vector<uint32_t> DescriptorSelector::getChannelIds() const
 std::vector<uint32_t> DescriptorSelector::mapIdsToChannels(const std::set<std::string>& aIds) const
 {
   
-  checkAvailable(aIds);
+  checkExist(aIds);
   
   std::vector<uint32_t> lChIds;
   BOOST_FOREACH(const std::string& id, aIds) {
@@ -108,7 +63,7 @@ std::vector<uint32_t> DescriptorSelector::mapIdsToChannels(const std::set<std::s
 
 std::set<std::string> DescriptorSelector::queryIds(const Rule_t& aPred) const
 {
-  auto lArg = boost::bind(&std::map<std::string, ChannelDescriptor>::value_type::second, _1);
+  auto lArg = boost::bind(&std::map<std::string, Descriptor>::value_type::second, _1);
   std::set<std::string> lIds;
   boost::copy(mMap
       | boost::adaptors::filtered(boost::bind(aPred, lArg))
@@ -119,7 +74,7 @@ std::set<std::string> DescriptorSelector::queryIds(const Rule_t& aPred) const
 }
 
 
-void DescriptorSelector::checkAvailable(const std::set<std::string>& aIds ) const
+void DescriptorSelector::checkExist(const std::set<std::string>& aIds ) const
 {
   std::set<std::string> lIds = getIds();
 
@@ -155,5 +110,6 @@ std::set<std::string> DescriptorSelector::filterIds( const std::set<std::string>
   return lFiltered;
 }
 
+} // namespace channel
 } // namespace mp7
 } // namespace swatch

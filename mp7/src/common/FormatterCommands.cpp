@@ -45,7 +45,7 @@ namespace mp7 {
   
 TDRFormatterCommand::TDRFormatterCommand(const std::string& aId, swatch::core::ActionableObject& aActionable):
   swatch::core::Command(aId, aActionable, xdata::Integer()), 
-  mFmtSelector(*this, boost::bind(&ChannelDescriptor::getFormatterKind, _1) == ::mp7::kTDRFormatter) {
+  mFmtSelector(*this, boost::bind(&channel::Descriptor::getFormatterKind, _1) == ::mp7::kTDRFormatter) {
   
   // add default parameters
   mFmtSelector.addParameters();
@@ -101,7 +101,7 @@ core::Command::State TDRFormatterCommand::code(const swatch::core::XParameterSet
 
 DemuxFormatterCommand::DemuxFormatterCommand(const std::string& aId, swatch::core::ActionableObject& aActionable):
   swatch::core::Command(aId, aActionable, xdata::Integer()),
-  mFmtSelector(*this, boost::bind(&ChannelDescriptor::getFormatterKind, _1) == ::mp7::kDemuxFormatter) {
+  mFmtSelector(*this, boost::bind(&channel::Descriptor::getFormatterKind, _1) == ::mp7::kDemuxFormatter) {
 
     // add default parameters
   mFmtSelector.addParameters();
@@ -214,7 +214,7 @@ swatch::core::Command::State DemuxFormatterCommand::code(const swatch::core::XPa
 //
 S1Formatter::S1Formatter(const std::string& aId, swatch::core::ActionableObject& aActionable):
   swatch::core::Command(aId, aActionable, xdata::Integer()),
-  mFmtSelector(*this, boost::bind(&ChannelDescriptor::getFormatterKind, _1) == ::mp7::kStage1Formatter)
+  mFmtSelector(*this, boost::bind(&channel::Descriptor::getFormatterKind, _1) == ::mp7::kStage1Formatter)
 {
     // add default parameters
   mFmtSelector.addParameters();

@@ -24,11 +24,11 @@ struct BufferTraits {
 /**
  * @class ZeroEverythingCommand
  */
-class ZeroEverythingCommand : public swatch::core::Command {
+class ZeroInputsCommand : public swatch::core::Command {
 public:
-  ZeroEverythingCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
+  ZeroInputsCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
   
-  virtual ~ZeroEverythingCommand() {}
+  virtual ~ZeroInputsCommand() {}
 
   virtual swatch::core::Command::State code(const ::swatch::core::XParameterSet& params);
   

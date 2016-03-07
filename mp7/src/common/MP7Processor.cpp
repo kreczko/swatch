@@ -99,7 +99,7 @@ MP7AbstractProcessor(aStub)
   registerCommand<HardResetCommand>(CmdIds::kHardReset);
   registerCommand<ScanSDCommand>(CmdIds::kScanSD);
   registerCommand<ResetCommand>(CmdIds::kReset);
-  registerCommand<ZeroEverythingCommand>(CmdIds::kZeroInputs);
+  registerCommand<ZeroInputsCommand>(CmdIds::kZeroInputs);
   registerCommand<SetIDCommand>(CmdIds::kSetId);
   registerCommand<ConfigureRxMGTsCommand>(CmdIds::kCfgRxMGTs);
   registerCommand<ConfigureTxMGTsCommand>(CmdIds::kCfgTxMGTs);
@@ -164,7 +164,7 @@ void MP7Processor::buildPorts(const processor::ProcessorStub& stub)
       lFmtKind = ::mp7::kDemuxFormatter;
     }
 
-    mRxDescriptors[it->id] = ChannelDescriptor(it->number, lHasMGT, lHasBuffer, lFmtKind, rxPort);
+    mRxDescriptors[it->id] = channel::Descriptor(it->number, lHasMGT, lHasBuffer, lFmtKind, rxPort);
 
   }
 
@@ -190,7 +190,7 @@ void MP7Processor::buildPorts(const processor::ProcessorStub& stub)
       lFmtKind = ::mp7::kDemuxFormatter;
     }
 
-    mTxDescriptors[it->id] = ChannelDescriptor(it->number, lHasMGT, lHasBuffer, lFmtKind);
+    mTxDescriptors[it->id] = channel::Descriptor(it->number, lHasMGT, lHasBuffer, lFmtKind);
 
   }
 }

@@ -71,13 +71,16 @@ core::Command::State ResetCommand::code(const core::XParameterSet& params)
   return State::kDone;
 }
 
+//---
 SetIDCommand::SetIDCommand(const std::string& aId, swatch::core::ActionableObject& aActionable):
 Command(aId, aActionable, xdata::UnsignedInteger())
 {
   registerParameter("boardId", xdata::UnsignedInteger(0x0));
 }
 
-core::Command::State SetIDCommand::code(const core::XParameterSet& params)
+//---
+core::Command::State 
+SetIDCommand::code(const core::XParameterSet& params)
 {
   MP7AbstractProcessor& p = getActionable<MP7AbstractProcessor>();
   ::mp7::MP7Controller& driver = p.driver();

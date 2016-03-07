@@ -9,7 +9,7 @@
 #define	__SWATCH_MP7_CHANNELCOMMANDBASE_HPP__
 
 #include "swatch/core/Command.hpp"
-#include "swatch/mp7/ChannelDescriptor.hpp"
+#include "swatch/mp7/channel/DescriptorSelector.hpp"
 
 #include "mp7/ChannelsManager.hpp"
 
@@ -21,7 +21,7 @@ namespace mp7 {
 class MP7AbstractProcessor;
 
 /**
- * @class ChannelCommandCore
+ * @class ChannelCommandSelector
  */
 class CommandChannelSelector
 {
@@ -33,10 +33,10 @@ public:
     ::mp7::ChannelsManager getManager( const swatch::core::XParameterSet& aParams ) const;
     ::mp7::MP7Controller& getDriver();
 
-    virtual const ChannelsMap_t& getChannelDescriptors() const = 0;
+    virtual const channel::DescriptorMap_t& getDescriptors() const = 0;
     virtual std::string getIdSelection( const swatch::core::XParameterSet& aParams ) const;
-    virtual const Rule_t& getGroupFilter() const = 0;
-    virtual const Rule_t& getMaskFilter( const swatch::core::XParameterSet& aParams ) const;
+    virtual const channel::Rule_t& getGroupFilter() const = 0;
+    virtual const channel::Rule_t& getMaskFilter( const swatch::core::XParameterSet& aParams ) const;
     
     static const std::string kIdSelection;
     
@@ -44,25 +44,25 @@ protected:
     swatch::core::Command& mCommand;
     MP7AbstractProcessor& mProcessor;
     
-    static const Rule_t kAlwaysTrue;
+    static const channel::Rule_t kAlwaysTrue;
 };
 
 /**
- * @class RxCommandCore
+ * @class RxCommandSelector
  */
 class RxChannelSelector : public CommandChannelSelector {
 public:
-  RxChannelSelector( swatch::core::Command& aCommand, const Rule_t& aFilter );
+  RxChannelSelector( swatch::core::Command& aCommand, const channel::Rule_t& aFilter );
 
   virtual ~RxChannelSelector() {}
 
   virtual void addParameters();
   
-  virtual const Rule_t& getGroupFilter() const;
+  virtual const channel::Rule_t& getGroupFilter() const;
   
-  virtual const ChannelsMap_t& getChannelDescriptors() const;
+  virtual const channel::DescriptorMap_t& getDescriptors() const;
 
-  virtual const Rule_t& getMaskFilter(const swatch::core::XParameterSet& aParams) const;
+  virtual const channel::Rule_t& getMaskFilter(const swatch::core::XParameterSet& aParams) const;
 
   //!
   static const std::string kMaskSelection;
@@ -77,34 +77,34 @@ public:
   static const std::string kIgnoreMasks;
   
 private:
-  const Rule_t mRxGroupFilter;
-  const Rule_t mApplyMaskFilter;
-  const Rule_t mInvertMaskFilter;
+  const channel::Rule_t mRxGroupFilter;
+  const channel::Rule_t mApplyMaskFilter;
+  const channel::Rule_t mInvertMaskFilter;
 
 };
 
 DEFINE_SWATCH_EXCEPTION(ApplyMaskOptionInvalid);
 
 /**
- * @class TxCommandCore
+ * @class TxCommandSelector
  */
 class TxChannelSelector : public CommandChannelSelector {
 public:
-  TxChannelSelector(swatch::core::Command& aCommand, const Rule_t& aFilter);
+  TxChannelSelector(swatch::core::Command& aCommand, const channel::Rule_t& aFilter);
   
   virtual ~TxChannelSelector() {}
 
-  virtual const Rule_t& getGroupFilter() const;
+  virtual const channel::Rule_t& getGroupFilter() const;
 
-  virtual const ChannelsMap_t& getChannelDescriptors() const;
+  virtual const channel::DescriptorMap_t& getDescriptors() const;
 
 private:
-  const Rule_t mTxGroupFilter;
+  const channel::Rule_t mTxGroupFilter;
 };
 
 
 /**
- * @class RxMGTCommandCore
+ * @class RxMGTCommandSelector
  */
 class RxMGTSelector : public RxChannelSelector {
 public:
@@ -116,7 +116,7 @@ public:
 
 
 /**
- * @class TxMGTCommandCore
+ * @class TxMGTCommandSelector
  */
 class TxMGTSelector : public TxChannelSelector {
 public:
@@ -127,7 +127,7 @@ public:
 };
 
 /**
- * @class RxBufferCommandCore
+ * @class RxBufferCommandSelector
  */
 class RxBufferSelector : public RxChannelSelector {
 public:
@@ -140,7 +140,7 @@ public:
 
 
 /**
- * @class TxBufferCommandCore
+ * @class TxBufferCommandSelector
  */
 class TxBufferSelector : public TxChannelSelector {
 public:

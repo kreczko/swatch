@@ -9,7 +9,7 @@
 #define	__SWATCH_MP7_MP7ABSTRACTPROCESSOR_HPP__
 
 #include "swatch/processor/Processor.hpp"
-#include "swatch/mp7/ChannelDescriptor.hpp"
+#include "swatch/mp7/channel/Descriptor.hpp"
 
 
 namespace mp7 {
@@ -27,14 +27,14 @@ public:
   
   virtual ::mp7::MP7Controller& driver() = 0; 
 
-  const ChannelsMap_t& getRxDescriptors() const;
+  const channel::DescriptorMap_t& getRxDescriptors() const;
   
-  const ChannelsMap_t& getTxDescriptors() const;
+  const channel::DescriptorMap_t& getTxDescriptors() const;
   
 protected:
-  ChannelsMap_t mRxDescriptors;
+  channel::DescriptorMap_t mRxDescriptors;
   
-  ChannelsMap_t mTxDescriptors;
+  channel::DescriptorMap_t mTxDescriptors;
 };
 
 }

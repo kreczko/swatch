@@ -33,14 +33,14 @@ namespace swatch {
 namespace mp7 {
 
 
-ZeroEverythingCommand::ZeroEverythingCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
+ZeroInputsCommand::ZeroInputsCommand(const std::string& aId, swatch::core::ActionableObject& aActionable) :
 swatch::core::Command(aId, aActionable, xdata::String())
 {
 
 }
 
 
-swatch::core::Command::State ZeroEverythingCommand::code(const ::swatch::core::XParameterSet& params)
+swatch::core::Command::State ZeroInputsCommand::code(const ::swatch::core::XParameterSet& params)
 {
   // Extract the MP7 driver
   ::mp7::MP7Controller& driver = getActionable<MP7AbstractProcessor>().driver();
