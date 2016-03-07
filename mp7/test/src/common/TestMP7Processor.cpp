@@ -55,13 +55,13 @@ PrintRxDescriptors::PrintRxDescriptors(const std::string& aId, core::ActionableO
   swatch::core::Command(aId, aResource, xdata::String()),
   mCore(*this)
 {
-  mCore.addParameters();
+  mCore.addCommandParameters();
 }
 
 
 swatch::core::Command::State PrintRxDescriptors::code(const core::XParameterSet& aParams)
 {
-  ::mp7::ChannelsManager mgr = mCore.getManager(aParams);
+  ::mp7::ChannelsManager mgr = mCore.manager(aParams);
   
   auto channels = mgr.ids(::mp7::kBufferIDs).channels();
   std::ostringstream res;

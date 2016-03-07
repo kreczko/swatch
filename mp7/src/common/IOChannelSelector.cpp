@@ -41,7 +41,7 @@ IOChannelSelector::~IOChannelSelector()
 }
 
 
-void IOChannelSelector::addParameters()
+void IOChannelSelector::addCommandParameters()
 {
   mCommand.registerParameter(kIdSelection, xdata::String());
 }
@@ -65,7 +65,7 @@ IOChannelSelector::getMaskFilter(const swatch::core::XParameterSet& aParams) con
 
 //---
 ::mp7::ChannelsManager
-IOChannelSelector::getManager(const swatch::core::XParameterSet& aParams) const
+IOChannelSelector::manager(const swatch::core::XParameterSet& aParams) const
 {
   // Parse the list of selected ports
   std::set<std::string> lSelIds = swatch::core::toolbox::IdSliceParser::parseSet(getIdSelection(aParams));
@@ -123,9 +123,9 @@ RxChannelSelector::RxChannelSelector(swatch::core::Command& aCommand, const chan
 {
 }
 
-void RxChannelSelector::addParameters() 
+void RxChannelSelector::addCommandParameters() 
 {
-  IOChannelSelector::addParameters();
+  IOChannelSelector::addCommandParameters();
   mCommand.registerParameter(kMaskSelection, xdata::String(kApplyMasks));
 }
 

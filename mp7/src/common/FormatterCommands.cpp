@@ -48,7 +48,7 @@ TDRFormatterCommand::TDRFormatterCommand(const std::string& aId, swatch::core::A
   mFmtSelector(*this, boost::bind(&channel::Descriptor::getFormatterKind, _1) == ::mp7::kTDRFormatter) {
   
   // add default parameters
-  mFmtSelector.addParameters();
+  mFmtSelector.addCommandParameters();
   
   registerParameter("strip", xdata::Boolean(true));
   registerParameter("insert", xdata::Boolean(true));
@@ -62,7 +62,7 @@ core::Command::State TDRFormatterCommand::code(const swatch::core::XParameterSet
   bool insert = params.get<xdata::Boolean>("insert").value_;
 
   ::mp7::MP7Controller& driver = mFmtSelector.getDriver();
-  ::mp7::ChannelsManager cm = mFmtSelector.getManager(params);
+  ::mp7::ChannelsManager cm = mFmtSelector.manager(params);
 
   setProgress(0.0, "Configuring TDR header formatting...");
   
@@ -104,7 +104,7 @@ DemuxFormatterCommand::DemuxFormatterCommand(const std::string& aId, swatch::cor
   mFmtSelector(*this, boost::bind(&channel::Descriptor::getFormatterKind, _1) == ::mp7::kDemuxFormatter) {
 
     // add default parameters
-  mFmtSelector.addParameters();
+  mFmtSelector.addCommandParameters();
   
   registerParameter("strip", xdata::Boolean(true));
   registerParameter("insert", xdata::Boolean(true));
@@ -127,7 +127,7 @@ swatch::core::Command::State DemuxFormatterCommand::code(const swatch::core::XPa
 
 
   ::mp7::MP7Controller& driver = mFmtSelector.getDriver();
-  ::mp7::ChannelsManager cm =  mFmtSelector.getManager(params);
+  ::mp7::ChannelsManager cm =  mFmtSelector.manager(params);
   ::mp7::orbit::Metric m = driver.getMetric();
 
   // Check dv begin orbitpoint
@@ -217,7 +217,7 @@ S1Formatter::S1Formatter(const std::string& aId, swatch::core::ActionableObject&
   mFmtSelector(*this, boost::bind(&channel::Descriptor::getFormatterKind, _1) == ::mp7::kStage1Formatter)
 {
     // add default parameters
-  mFmtSelector.addParameters();
+  mFmtSelector.addCommandParameters();
   
   registerParameter("s1BC0Bx", xdata::UnsignedInteger(0x0));
   registerParameter("s1BC0Cycle", xdata::UnsignedInteger(0x0));
@@ -234,7 +234,7 @@ swatch::core::Command::State S1Formatter::code(const swatch::core::XParameterSet
   uint s1BC0Cycle = params.get<xdata::UnsignedInteger>("s1BC0Cycle").value_; 
 
 
-  ::mp7::ChannelsManager cm =  mFmtSelector.getManager(params);
+  ::mp7::ChannelsManager cm =  mFmtSelector.manager(params);
 
   setProgress(0.0, "Configuring formatters");
   

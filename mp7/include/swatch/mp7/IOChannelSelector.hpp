@@ -31,8 +31,19 @@ public:
     IOChannelSelector( swatch::core::Command& );
     ~IOChannelSelector();
     
-    virtual void addParameters();
-    ::mp7::ChannelsManager getManager( const swatch::core::XParameterSet& aParams ) const;
+    /**
+     * Add Channel Selector specific parameters to the current command
+     */
+    virtual void addCommandParameters();
+    /**
+     * Creates a mp7::ChannelManager object with channel selection applied based on current parameters
+     * @return mp7::ChannelManager object 
+     */
+    ::mp7::ChannelsManager manager( const swatch::core::XParameterSet& aParams ) const;
+    /**
+     * MP7Controller getter
+     * @return reference to the MP7Controller
+     */
     ::mp7::MP7Controller& getDriver();
 
     virtual const channel::DescriptorMap_t& getDescriptors() const = 0;
@@ -58,7 +69,7 @@ public:
 
   virtual ~RxChannelSelector() {}
 
-  virtual void addParameters();
+  virtual void addCommandParameters();
   
   virtual const channel::Rule_t& getGroupFilter() const;
   

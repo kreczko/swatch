@@ -102,7 +102,7 @@ swatch::core::Command(aId, aActionable, xdata::String()),
 mBufferSelector(*this)
 {
 
-  mBufferSelector.addParameters();
+  mBufferSelector.addCommandParameters();
 
   // Parameter registration  
   registerParameter("startBx", xdata::UnsignedInteger(0x0));
@@ -172,7 +172,7 @@ ConfigureBuffersCommand<Selector>::code(const ::swatch::core::XParameterSet& par
 
   setStatusMsg(msg.str());
 
-  ::mp7::ChannelsManager cm = mBufferSelector.getManager(params);
+  ::mp7::ChannelsManager cm = mBufferSelector.manager(params);
 
   setProgress(0.2, "Generating BoardData object...");
 
@@ -286,7 +286,7 @@ swatch::core::Command(aId, aActionable, xdata::String()),
 mBufferSelector(*this)
 {
 
-  mBufferSelector.addParameters();
+  mBufferSelector.addCommandParameters();
 
   registerParameter("filename", xdata::String(""));
 }
@@ -307,7 +307,7 @@ core::Command::State SaveBuffersToFileCommand<Selector>::code(const ::swatch::co
   ::mp7::MP7Controller& driver = getActionable< MP7AbstractProcessor>().driver();
 
   ::mp7::CtrlNode ctrl = driver.getCtrl();
-  ::mp7::ChannelsManager cm = mBufferSelector.getManager(params);
+  ::mp7::ChannelsManager cm = mBufferSelector.manager(params);
 
 
   // TOFIX: Output file should be compulsory
@@ -357,7 +357,7 @@ swatch::core::Command(aId, aActionable, xdata::String()),
 mBufferSelector(*this)
 {
 
-  mBufferSelector.addParameters();
+  mBufferSelector.addCommandParameters();
 
   registerParameter("bankId", xdata::UnsignedInteger(0x0));
   registerParameter("depth", xdata::UnsignedInteger(0x0));
@@ -378,7 +378,7 @@ core::Command::State LatencyBuffersCommand<Selector>::code(const ::swatch::core:
 
   setProgress(0.0, "Configuring buffers in latency mode");
 
-  ::mp7::ChannelsManager cm = mBufferSelector.getManager(params);
+  ::mp7::ChannelsManager cm = mBufferSelector.manager(params);
   ::mp7::LatencyPathConfigurator pc = ::mp7::LatencyPathConfigurator(bankId, depth);
 
   cm.configureBuffers(bKind, pc);
@@ -399,7 +399,7 @@ swatch::core::Command(aId, aActionable, xdata::String()),
 mBufferSelector(*this)
 {
 
-  mBufferSelector.addParameters();
+  mBufferSelector.addCommandParameters();
 
   registerParameter("bankId", xdata::UnsignedInteger(0x0));
   registerParameter("masterLatency", xdata::UnsignedInteger(0x0));
@@ -429,7 +429,7 @@ core::Command::State EasyLatencyCommand<Selector>::code(const ::swatch::core::XP
 
   uint32_t depth = computeLatency(masterLatency, algoLatency, internalLatency, rxExtraFrames, txExtraFrames);
   
-  ::mp7::ChannelsManager cm = mBufferSelector.getManager(params);
+  ::mp7::ChannelsManager cm = mBufferSelector.manager(params);
   ::mp7::LatencyPathConfigurator pc = ::mp7::LatencyPathConfigurator(bankId, depth);
 
   cm.configureBuffers(bKind, pc);
