@@ -2,7 +2,7 @@
 #define __SWATCH_MP7_MP7MGTCOMMANDS_HPP__
 
 
-#include "swatch/mp7/CommandChannelSelector.hpp"
+#include "swatch/mp7/IOChannelSelector.hpp"
 
 
 namespace swatch {

@@ -1,5 +1,5 @@
-#ifndef __SWATCH_MP7_CHANNELDESCRIPTORS_HPP__
-#define __SWATCH_MP7_CHANNELDESCRIPTORS_HPP__
+#ifndef __SWATCH_MP7_CHANNEL_DESCRIPTOR_HPP__
+#define __SWATCH_MP7_CHANNEL_DESCRIPTOR_HPP__
 
 // MP7 Headers
 #include "mp7/definitions.hpp"
@@ -56,4 +56,4 @@ typedef std::map<std::string, Descriptor> DescriptorMap_t;
 } // namespace mp7 
 } // namespace swatch
 
-#endif /* __SWATCH_MP7_CHANNELDESCRIPTORS_HPP__ */
+#endif /* __SWATCH_MP7_CHANNEL_DESCRIPTOR_HPP__ */

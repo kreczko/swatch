@@ -5,8 +5,8 @@
  * Created on March 6, 2016, 12:35 PM
  */
 
-#ifndef __SWATCH_MP7_CHANNEL_DESCRIPTORSELECTOR_HPP__
-#define	__SWATCH_MP7_CHANNEL_DESCRIPTORSELECTOR_HPP__
+#ifndef __SWATCH_MP7_CHANNEL_DESCRIPTORFINDER_HPP__
+#define	__SWATCH_MP7_CHANNEL_DESCRIPTORFINDER_HPP__
 
 #include "swatch/core/exception.hpp"
 #include <boost/noncopyable.hpp>
@@ -20,12 +20,12 @@ namespace channel {
 // Typedefs
 typedef boost::function<bool (const Descriptor&) > Rule_t;
 
-class DescriptorSelector : public boost::noncopyable {
+class DescriptorFinder : public boost::noncopyable {
 public:
 
-  DescriptorSelector( const std::map<std::string, Descriptor>& aMap);
+  DescriptorFinder( const std::map<std::string, Descriptor>& aMap);
 
-  virtual ~DescriptorSelector();
+  virtual ~DescriptorFinder();
 
   //----
   /**
@@ -76,5 +76,5 @@ DEFINE_SWATCH_EXCEPTION(DescriptorIdsNotFound);
 } // namespace mp7 
 } // namespace swatch
 
-#endif	/* __SWATCH_MP7_CHANNEL_DESCRIPTORSELECTOR_HPP__ */
+#endif	/* __SWATCH_MP7_CHANNEL_DESCRIPTORFINDER_HPP__ */
 

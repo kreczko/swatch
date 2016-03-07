@@ -11,7 +11,7 @@
 #include "swatch/mp7/MP7NullAlgoProcessor.hpp"
 #include "swatch/core/Command.hpp"
 #include "swatch/mp7/MGTCommands.hpp"
-#include "swatch/mp7/CommandChannelSelector.hpp"
+#include "swatch/mp7/IOChannelSelector.hpp"
 #include "swatch/core/ReadOnlyXParameterSet.hpp"
 
 namespace swatch {

@@ -6,7 +6,7 @@
 #include "mp7/PathConfigurator.hpp"
 
 // SWATCH headers
-#include "swatch/mp7/CommandChannelSelector.hpp"
+#include "swatch/mp7/IOChannelSelector.hpp"
 
 namespace swatch {
 namespace mp7 {

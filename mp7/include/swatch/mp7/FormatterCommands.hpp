@@ -14,7 +14,7 @@
 #include "xdata/String.h"
 
 #include "swatch/core/Command.hpp"
-#include "swatch/mp7/CommandChannelSelector.hpp"
+#include "swatch/mp7/IOChannelSelector.hpp"
 
 
 namespace swatch {

@@ -5,7 +5,7 @@
  * Created on March 6, 2016, 12:35 PM
  */
 
-#include "swatch/mp7/channel/DescriptorSelector.hpp"
+#include "swatch/mp7/channel/DescriptorFinder.hpp"
 
 
 #include <boost/foreach.hpp>
@@ -17,17 +17,17 @@ namespace swatch {
 namespace mp7 {
 namespace channel {
 
-DescriptorSelector::DescriptorSelector(const std::map<std::string, Descriptor>& aMap) :
+DescriptorFinder::DescriptorFinder(const std::map<std::string, Descriptor>& aMap) :
   mMap(aMap)
 {
 }
 
 
-DescriptorSelector::~DescriptorSelector()
+DescriptorFinder::~DescriptorFinder()
 {
 }
 
-std::set<std::string> DescriptorSelector::getIds() const
+std::set<std::string> DescriptorFinder::getIds() const
 {
   std::set<std::string> lIds;
   boost::copy(mMap
@@ -36,7 +36,7 @@ std::set<std::string> DescriptorSelector::getIds() const
   return lIds;
 }
 
-std::vector<uint32_t> DescriptorSelector::getChannelIds() const
+std::vector<uint32_t> DescriptorFinder::getChannelIds() const
 {
   std::vector<uint32_t> lIds;
   boost::copy(mMap 
@@ -47,7 +47,7 @@ std::vector<uint32_t> DescriptorSelector::getChannelIds() const
 }
 
 
-std::vector<uint32_t> DescriptorSelector::mapIdsToChannels(const std::set<std::string>& aIds) const
+std::vector<uint32_t> DescriptorFinder::mapIdsToChannels(const std::set<std::string>& aIds) const
 {
   
   checkExist(aIds);
@@ -61,7 +61,7 @@ std::vector<uint32_t> DescriptorSelector::mapIdsToChannels(const std::set<std::s
 }
 
 
-std::set<std::string> DescriptorSelector::queryIds(const Rule_t& aPred) const
+std::set<std::string> DescriptorFinder::queryIds(const Rule_t& aPred) const
 {
   auto lArg = boost::bind(&std::map<std::string, Descriptor>::value_type::second, _1);
   std::set<std::string> lIds;
@@ -74,7 +74,7 @@ std::set<std::string> DescriptorSelector::queryIds(const Rule_t& aPred) const
 }
 
 
-void DescriptorSelector::checkExist(const std::set<std::string>& aIds ) const
+void DescriptorFinder::checkExist(const std::set<std::string>& aIds ) const
 {
   std::set<std::string> lIds = getIds();
 
@@ -88,7 +88,7 @@ void DescriptorSelector::checkExist(const std::set<std::string>& aIds ) const
   }
 }
 
-std::set<std::string> DescriptorSelector::filterIds( const std::set<std::string>& aIds, const Rule_t& aPred ) const
+std::set<std::string> DescriptorFinder::filterIds( const std::set<std::string>& aIds, const Rule_t& aPred ) const
 {
   std::set<std::string> lFiltered;
   std::vector<std::string> lNotFound;

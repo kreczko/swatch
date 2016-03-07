@@ -1,5 +1,5 @@
 /* 
- * File:   ChannelCommandBase.hpp
+ * File:   IOChannelSelector.hpp
  * Author: ale
  *
  * Created on February 4, 2016, 11:57 AM
@@ -8,9 +8,11 @@
 #ifndef __SWATCH_MP7_CHANNELCOMMANDBASE_HPP__
 #define	__SWATCH_MP7_CHANNELCOMMANDBASE_HPP__
 
+// Swatch Headers
 #include "swatch/core/Command.hpp"
-#include "swatch/mp7/channel/DescriptorSelector.hpp"
+#include "swatch/mp7/channel/DescriptorFinder.hpp"
 
+// MP7 Headers
 #include "mp7/ChannelsManager.hpp"
 
 
@@ -21,13 +23,13 @@ namespace mp7 {
 class MP7AbstractProcessor;
 
 /**
- * @class ChannelCommandSelector
+ * @class ChannelSelector
  */
-class CommandChannelSelector
+class IOChannelSelector
 {
 public:
-    CommandChannelSelector( swatch::core::Command& );
-    ~CommandChannelSelector();
+    IOChannelSelector( swatch::core::Command& );
+    ~IOChannelSelector();
     
     virtual void addParameters();
     ::mp7::ChannelsManager getManager( const swatch::core::XParameterSet& aParams ) const;
@@ -48,9 +50,9 @@ protected:
 };
 
 /**
- * @class RxCommandSelector
+ * @class RxSelector
  */
-class RxChannelSelector : public CommandChannelSelector {
+class RxChannelSelector : public IOChannelSelector {
 public:
   RxChannelSelector( swatch::core::Command& aCommand, const channel::Rule_t& aFilter );
 
@@ -86,9 +88,9 @@ private:
 DEFINE_SWATCH_EXCEPTION(ApplyMaskOptionInvalid);
 
 /**
- * @class TxCommandSelector
+ * @class TxSelector
  */
-class TxChannelSelector : public CommandChannelSelector {
+class TxChannelSelector : public IOChannelSelector {
 public:
   TxChannelSelector(swatch::core::Command& aCommand, const channel::Rule_t& aFilter);
   
@@ -104,7 +106,7 @@ private:
 
 
 /**
- * @class RxMGTCommandSelector
+ * @class RxMGTSelector
  */
 class RxMGTSelector : public RxChannelSelector {
 public:
@@ -116,7 +118,7 @@ public:
 
 
 /**
- * @class TxMGTCommandSelector
+ * @class TxMGTSelector
  */
 class TxMGTSelector : public TxChannelSelector {
 public:
@@ -127,7 +129,7 @@ public:
 };
 
 /**
- * @class RxBufferCommandSelector
+ * @class RxBufferSelector
  */
 class RxBufferSelector : public RxChannelSelector {
 public:
@@ -140,7 +142,7 @@ public:
 
 
 /**
- * @class TxBufferCommandSelector
+ * @class TxBufferSelector
  */
 class TxBufferSelector : public TxChannelSelector {
 public:

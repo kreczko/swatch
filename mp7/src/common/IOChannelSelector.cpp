@@ -1,11 +1,11 @@
 /* 
- * File:   ChannelCommandBase.cpp
+ * File:   IOChannelSelector.cpp
  * Author: ale
  * 
  * Created on February 4, 2016, 11:57 AM
  */
 
-#include "swatch/mp7/CommandChannelSelector.hpp"
+#include "swatch/mp7/IOChannelSelector.hpp"
 #include "swatch/core/toolbox/IdSliceParser.hpp"
 #include "swatch/mp7/MP7AbstractProcessor.hpp"
 
@@ -25,23 +25,23 @@
 namespace swatch {
 namespace mp7 {
 
-const channel::Rule_t CommandChannelSelector::kAlwaysTrue = boost::lambda::constant(true);
-const std::string CommandChannelSelector::kIdSelection = "ids";
+const channel::Rule_t IOChannelSelector::kAlwaysTrue = boost::lambda::constant(true);
+const std::string IOChannelSelector::kIdSelection = "ids";
 
 
-CommandChannelSelector::CommandChannelSelector(swatch::core::Command& aCommand) :
+IOChannelSelector::IOChannelSelector(swatch::core::Command& aCommand) :
   mCommand(aCommand),
   mProcessor(aCommand.getActionable<MP7AbstractProcessor>())
 {
 
 }
 
-CommandChannelSelector::~CommandChannelSelector()
+IOChannelSelector::~IOChannelSelector()
 {
 }
 
 
-void CommandChannelSelector::addParameters()
+void IOChannelSelector::addParameters()
 {
   mCommand.registerParameter(kIdSelection, xdata::String());
 }
@@ -49,7 +49,7 @@ void CommandChannelSelector::addParameters()
 
 //---
 std::string
-CommandChannelSelector::getIdSelection( const swatch::core::XParameterSet& aParams ) const
+IOChannelSelector::getIdSelection( const swatch::core::XParameterSet& aParams ) const
 {
   return aParams.get<xdata::String>(kIdSelection).value_;
 }
@@ -57,7 +57,7 @@ CommandChannelSelector::getIdSelection( const swatch::core::XParameterSet& aPara
 
 //---
 const channel::Rule_t&
-CommandChannelSelector::getMaskFilter(const swatch::core::XParameterSet& aParams) const
+IOChannelSelector::getMaskFilter(const swatch::core::XParameterSet& aParams) const
 {
   return kAlwaysTrue;
 }
@@ -65,12 +65,12 @@ CommandChannelSelector::getMaskFilter(const swatch::core::XParameterSet& aParams
 
 //---
 ::mp7::ChannelsManager
-CommandChannelSelector::getManager(const swatch::core::XParameterSet& aParams) const
+IOChannelSelector::getManager(const swatch::core::XParameterSet& aParams) const
 {
   // Parse the list of selected ports
   std::set<std::string> lSelIds = swatch::core::toolbox::IdSliceParser::parseSet(getIdSelection(aParams));
   
-  channel::DescriptorSelector selector(getDescriptors());
+  channel::DescriptorFinder selector(getDescriptors());
   
   // Get the list of known rx channel ids with a filter
   std::set<std::string> lIds = selector.queryIds(getGroupFilter());
@@ -99,7 +99,7 @@ CommandChannelSelector::getManager(const swatch::core::XParameterSet& aParams) c
 
 //---
 ::mp7::MP7Controller&
-CommandChannelSelector::getDriver() {
+IOChannelSelector::getDriver() {
 
   return mProcessor.driver();
 
@@ -116,7 +116,7 @@ const std::string RxChannelSelector::kInvertMasks = "invert";
 const std::string RxChannelSelector::kIgnoreMasks = "ignore";
 
 RxChannelSelector::RxChannelSelector(swatch::core::Command& aCommand, const channel::Rule_t& aFilter) :
-  CommandChannelSelector(aCommand),
+  IOChannelSelector(aCommand),
   mRxGroupFilter(aFilter),
   mApplyMaskFilter(!boost::bind(&channel::Descriptor::isMasked, _1)),
   mInvertMaskFilter(boost::bind(&channel::Descriptor::isMasked, _1))
@@ -125,7 +125,7 @@ RxChannelSelector::RxChannelSelector(swatch::core::Command& aCommand, const chan
 
 void RxChannelSelector::addParameters() 
 {
-  CommandChannelSelector::addParameters();
+  IOChannelSelector::addParameters();
   mCommand.registerParameter(kMaskSelection, xdata::String(kApplyMasks));
 }
 
@@ -160,7 +160,7 @@ const channel::Rule_t& RxChannelSelector::getMaskFilter(const swatch::core::XPar
 //
 
 TxChannelSelector::TxChannelSelector(swatch::core::Command& aCommand, const channel::Rule_t& aFilter) :
-  CommandChannelSelector(aCommand),
+  IOChannelSelector(aCommand),
   mTxGroupFilter(aFilter)
 {
 }
