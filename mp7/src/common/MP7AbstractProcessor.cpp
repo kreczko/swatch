@@ -10,13 +10,13 @@
 namespace swatch {
 namespace mp7 {
 
-const ChannelsMap_t& MP7AbstractProcessor::getRxDescriptors() const
+const channel::DescriptorMap_t& MP7AbstractProcessor::getRxDescriptors() const
 {
   return mRxDescriptors;
 }
 
 
-const ChannelsMap_t& MP7AbstractProcessor::getTxDescriptors() const
+const channel::DescriptorMap_t& MP7AbstractProcessor::getTxDescriptors() const
 {
   return mTxDescriptors;
 }
