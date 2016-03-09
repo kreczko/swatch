@@ -95,13 +95,13 @@ std::pair<std::string, GateKeeper::Parameter_t> XmlGateKeeper::createParameter(p
 
   if (lCmdAttribute) {
     if (std::string(lCmdAttribute.value()).find('.') != std::string::npos)
-      throw InvalidAttributeValue("Parameter with ID '"+lParamId+"': cmd attribute, '"+lCmdAttribute.value()+"', contains invalid character '.'");
+      throw InvalidAttributeValue("Parameter with ID '"+lParamId+"': cmd attribute value '"+lCmdAttribute.value()+"' contains invalid character '.'");
     else
       lParamId = std::string(lCmdAttribute.value()) + "." + lParamId;
 
     if (lNamespaceAttribute) {
       if (std::string(lNamespaceAttribute.value()).find('.') != std::string::npos)
-        throw InvalidAttributeValue("Parameter with ID '"+lParamId+"': ns attribute, '"+lNamespaceAttribute.value()+"', contains invalid character '.'");
+        throw InvalidAttributeValue("Parameter with ID '"+lParamId+"': ns attribute value '"+lNamespaceAttribute.value()+"' contains invalid character '.'");
       else
         lParamId = std::string(lNamespaceAttribute.value()) + "." + lParamId;
     }
@@ -133,8 +133,8 @@ std::pair<std::string, GateKeeper::ParametersContext_t> XmlGateKeeper::createCon
     } catch (const std::exception& e) {
       std::string lParamId(lParam.attribute("id").value());
       std::string lMsg("Error parsing parameter '" + lParamId + "' from context '" + lContextId + "'");
-      LOG4CPLUS_FATAL(mLogger, lMsg + ": " << e.what());
-      throw e;
+      LOG4CPLUS_ERROR(mLogger, lMsg + ": " << e.what());
+      throw;
     }
 
     if (lParameterContext->find(lParameter.first) != lParameterContext->end()) {
