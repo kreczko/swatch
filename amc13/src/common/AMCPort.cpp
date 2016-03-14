@@ -72,7 +72,7 @@ AMCPort::AMCPort(uint32_t aSlot, ::amc13::AMC13& aDriver) :
   mAMC13BcnMismatch(registerMetric<uint64_t>("amc13BcnMismatch") ) ,
   mAMC13OrnMismatch(registerMetric<uint64_t>("amc13OrnMismatch") ) ,
 
-  mEventErrors(registerMetric<uint64_t>("eventErrors") ) ,
+  mEventCounterJumps(registerMetric<uint64_t>("eventCounterJumps") ) ,
   mCrcErrors(registerMetric<uint32_t>("crcErrors") ) {
   
   // Assign Error and Warning conditions
@@ -152,7 +152,7 @@ void AMCPort::retrieveMetricValues() {
 
   setMetricValue<>(mAMC13OrnMismatch, read64bCounter(mDriver, AMC13::T1,prefixCtrs+"AMC13_ORN_MISMATCH"));
 
-  setMetricValue<>(mEventErrors, read64bCounter(mDriver, AMC13::T1,prefixCtrs+"EVN_ERRORS_AT_LINK_INPUT"));
+  setMetricValue<>(mEventCounterJumps, read64bCounter(mDriver, AMC13::T1,prefixCtrs+"EVN_ERRORS_AT_LINK_INPUT"));
 
   setMetricValue<>(mCrcErrors, mDriver.read(AMC13::T1,prefixAmc+"BP_CRC_ERR"));
 

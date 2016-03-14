@@ -79,7 +79,7 @@ protected:
   core::Metric<uint64_t>& mAMC13OrnMismatch;
 
   //! AMC_Links: AMC_EVN_ERRORS
-  core::Metric<uint64_t>& mEventErrors;
+  core::Metric<uint64_t>& mEventCounterJumps;
 
   //! AMC_Links: CRC_ERR
   core::Metric<uint32_t>& mCrcErrors;
