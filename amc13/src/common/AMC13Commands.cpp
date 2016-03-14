@@ -167,11 +167,9 @@ ConfigureTTCCommand::code(const core::XParameterSet& params) {
     
     // configure TTC commands
     board.setOcrCommand(ocrCmd);
-    board.write(::amc13::AMC13Simple::T1,"CONF.TTC.OCR_MASK",0x0);
 
     // Replace with python bindings when they come out...
-    board.write(::amc13::AMC13Simple::T1,"CONF.TTC.RESYNC.COMMAND",resyncCmd);
-    board.write(::amc13::AMC13Simple::T1,"CONF.TTC.RESYNC.MASK",0x0);
+    board.setResyncCommand(resyncCmd);
     
     // Do we need this in this command?
     if ( localTTC ) board.localTtcSignalEnable(true);
