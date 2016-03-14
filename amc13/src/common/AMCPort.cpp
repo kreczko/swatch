@@ -86,12 +86,18 @@ AMCPort::AMCPort(uint32_t aSlot, ::amc13::AMC13& aDriver) :
       core::NotEqualCondition<core::tts::State>(core::tts::kReady));
   
   setErrorCondition(mAMCBcnMismatch,core::NotEqualCondition<uint64_t>(0x0));
-  setErrorCondition(mAMCOrnMismatch,core::NotEqualCondition<uint64_t>(0x0));
   setErrorCondition(mAMC13BcnMismatch,core::NotEqualCondition<uint64_t>(0x0));
-  setErrorCondition(mAMC13OrnMismatch,core::NotEqualCondition<uint64_t>(0x0));
   
-  setErrorCondition(mEventErrors,core::NotEqualCondition<uint64_t>(0x0));
   setErrorCondition(mCrcErrors,core::NotEqualCondition<uint32_t>(0x0));
+  
+  
+  setWarningCondition(mAMCOrnMismatch,core::NotEqualCondition<uint64_t>(0x0));
+  setWarningCondition(mAMC13OrnMismatch,core::NotEqualCondition<uint64_t>(0x0));
+//  setWarningCondition(mEventErrors,core::NotEqualCondition<uint64_t>(0x0));
+
+//  mEventErrors.setMonitoringStatus(core::monitoring::kNonCritical);
+  mAMCOrnMismatch.setMonitoringStatus(core::monitoring::kNonCritical);
+  mAMC13OrnMismatch.setMonitoringStatus(core::monitoring::kNonCritical);
 }
 
 AMCPort::~AMCPort() {
