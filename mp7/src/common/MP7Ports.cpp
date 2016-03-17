@@ -15,7 +15,6 @@
 #include "mp7/MP7Controller.hpp"
 #include "mp7/DatapathNode.hpp"
 #include "mp7/MGTRegionNode.hpp"
-#include "mp7/ChannelIDSet.hpp"
 #include "mp7/AlignMonNode.hpp"
 #include "mp7/Utilities.hpp"
 #include "swatch/core/MetricConditions.hpp"
@@ -59,7 +58,7 @@ void MP7RxPort::retrieveMetricValues()
 {
   // Select the link, and calculate channel's local ID (within quad) ...
   mDatapath.selectLink(this->mChannelID);
-  uint32_t localId = ::mp7::ChannelIDSet::channelToLocal(mChannelID);
+  uint32_t localId = ::mp7::ChannelGroup::channelToLocal(mChannelID);
   
 
   /* IS LOCKED */
@@ -70,7 +69,7 @@ void MP7RxPort::retrieveMetricValues()
   uhal::ValWord<uint32_t> mgtNoCRCs = mMgt.getNode(mgtStatusNodePath+".crc_checked").read();
 
   /* IS ALIGNED */
-  ::mp7::AlignStatus alStatus = mAlign.status();
+  ::mp7::AlignStatus alStatus = mAlign.readStatus();
 //  uhal::ValWord<uint32_t> alignErrors = mAlign.getNode("stat.err_cnt").read();
   
   
@@ -130,7 +129,7 @@ void MP7TxPort::retrieveMetricValues()
   mDatapath.selectLink(mChannelID);
   
   // Calculate the channel local id
-  uint32_t l = ::mp7::ChannelIDSet::channelToLocal(mChannelID);
+  uint32_t l = ::mp7::ChannelGroup::channelToLocal(mChannelID);
 
   // Point to the right node
   std::string path = ::mp7::strprintf("ro_regs.ch%d.status", l);

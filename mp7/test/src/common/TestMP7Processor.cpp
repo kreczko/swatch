@@ -21,7 +21,7 @@
 #include <boost/foreach.hpp>
 #include <xdata/Vector.h>
 #include "mp7/definitions.hpp"
-#include "mp7/ChannelsManager.hpp"
+#include "mp7/ChannelManager.hpp"
 #include "mp7/MP7Controller.hpp"
 #include "swatch/mp7/MGTCommands.hpp"
 #include "swatch/core/ReadWriteXParameterSet.hpp"
@@ -61,9 +61,9 @@ PrintRxDescriptors::PrintRxDescriptors(const std::string& aId, core::ActionableO
 
 swatch::core::Command::State PrintRxDescriptors::code(const core::XParameterSet& aParams)
 {
-  ::mp7::ChannelsManager mgr = mCore.manager(aParams);
+  ::mp7::ChannelManager mgr = mCore.manager(aParams);
   
-  auto channels = mgr.ids(::mp7::kBufferIDs).channels();
+  auto channels = mgr.getDescriptor().pickRxBufferIDs(::mp7::kBuffer).channels();
   std::ostringstream res;
   res << "Selected channels : ";
   std::copy(channels.begin(), channels.end(), std::ostream_iterator<uint32_t>(res, " "));

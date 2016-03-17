@@ -18,7 +18,7 @@ namespace mp7 {
  */
 template<class Selector>
 struct BufferTraits {
-    const static ::mp7::BufferKind bufferKind;
+    const static ::mp7::RxTxSelector kRxTxSelector;
 };
 
 /**

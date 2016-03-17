@@ -133,38 +133,23 @@ MP7Processor::~MP7Processor()
 void MP7Processor::buildPorts(const processor::ProcessorStub& stub)
 {
 
-  // 
-  // HACK ALERT
-  // 
-  const std::vector<uint32_t>& lMGTIDs = mDriver->getChannelIDs(::mp7::kLinkIDs).channels();
-  const std::vector<uint32_t>& lBufferIDs = mDriver->getChannelIDs(::mp7::kBufferIDs).channels();
-  const std::vector<uint32_t>& lTDRFmtIDs = mDriver->getChannelIDs(::mp7::kTDRFmtIDs).channels();
-  const std::vector<uint32_t>& lDmxFmtIDs = mDriver->getChannelIDs(::mp7::kDemuxFmtIDs).channels();
+  const ::mp7::DatapathDescriptor lDescriptor = mDriver->channelMgr().getDescriptor();
 
   // Add input ports
   for (auto it = stub.rxPorts.begin(); it != stub.rxPorts.end(); it++) {
 
     MP7RxPort* rxPort = new MP7RxPort(it->id, it->number, *mDriver);
     getInputPorts().addPort(rxPort);
+    const ::mp7::RegionInfo& lRegInfo = lDescriptor.getRegionInfoByChannel(it->number);
 
-    // Fetch mgt status
-    bool lHasMGT = (std::find(lMGTIDs.begin(), lMGTIDs.end(), it->number) != lMGTIDs.end());
-
-    // Fetch buffer status
-    bool lHasBuffer = (std::find(lBufferIDs.begin(), lBufferIDs.end(), it->number) != lBufferIDs.end());
-
-    // Resolve formatter kind
-    ::mp7::FormatterKind lFmtKind = ::mp7::kEmptyFormatter;
-    // Assign TDRFormatter fmt kind if port number is in the TDRFormatter group
-    if (std::find(lTDRFmtIDs.begin(), lTDRFmtIDs.end(), it->number) != lTDRFmtIDs.end()) {
-      lFmtKind = ::mp7::kTDRFormatter;
-    }
-    // Assign DemuxFormatter fmt kind if port number is in the DemuxFormatter group
-    else if (std::find(lDmxFmtIDs.begin(), lDmxFmtIDs.end(), it->number) != lDmxFmtIDs.end()) {
-      lFmtKind = ::mp7::kDemuxFormatter;
-    }
-
-    mRxDescriptors[it->id] = channel::Descriptor(it->number, lHasMGT, lHasBuffer, lFmtKind, rxPort);
+    mRxDescriptors[it->id] = 
+        channel::Descriptor(
+        it->number,
+        lRegInfo.mgtIn != ::mp7::kNoMGT,
+        lRegInfo.bufIn != ::mp7::kNoBuffer,
+        lRegInfo.fmt,
+        rxPort
+        );
 
   }
 
@@ -173,24 +158,33 @@ void MP7Processor::buildPorts(const processor::ProcessorStub& stub)
 
     getOutputPorts().addPort(new MP7TxPort(it->id, it->number, *mDriver));
 
-    // Fetch mgt status
-    bool lHasMGT = (std::find(lMGTIDs.begin(), lMGTIDs.end(), it->number) != lMGTIDs.end());
+    const ::mp7::RegionInfo& lRegInfo = lDescriptor.getRegionInfoByChannel(it->number);
 
-    // Fetch buffer status
-    bool lHasBuffer = (std::find(lBufferIDs.begin(), lBufferIDs.end(), it->number) != lBufferIDs.end());
+//    // Fetch mgt status
+//    bool lHasMGT = (std::find(lMGTIDs.begin(), lMGTIDs.end(), it->number) != lMGTIDs.end());
+//
+//    // Fetch buffer status
+//    bool lHasBuffer = (std::find(lBufferIDs.begin(), lBufferIDs.end(), it->number) != lBufferIDs.end());
+//
+//    // Resolve formatter kind
+//    ::mp7::FormatterKind lFmtKind = ::mp7::kEmptyFormatter;
+//    // Assign TDRFormatter fmt kind if port number is in the TDRFormatter group
+//    if (std::find(lTDRFmtIDs.begin(), lTDRFmtIDs.end(), it->number) != lTDRFmtIDs.end()) {
+//      lFmtKind = ::mp7::kTDRFormatter;
+//    }
+//      // Assign DemuxFormatter fmt kind if port number is in the DemuxFormatter group
+//    else if (std::find(lDmxFmtIDs.begin(), lDmxFmtIDs.end(), it->number) != lDmxFmtIDs.end()) {
+//      lFmtKind = ::mp7::kDemuxFormatter;
+//    }
 
-    // Resolve formatter kind
-    ::mp7::FormatterKind lFmtKind = ::mp7::kEmptyFormatter;
-    // Assign TDRFormatter fmt kind if port number is in the TDRFormatter group
-    if (std::find(lTDRFmtIDs.begin(), lTDRFmtIDs.end(), it->number) != lTDRFmtIDs.end()) {
-      lFmtKind = ::mp7::kTDRFormatter;
-    }
-      // Assign DemuxFormatter fmt kind if port number is in the DemuxFormatter group
-    else if (std::find(lDmxFmtIDs.begin(), lDmxFmtIDs.end(), it->number) != lDmxFmtIDs.end()) {
-      lFmtKind = ::mp7::kDemuxFormatter;
-    }
-
-    mTxDescriptors[it->id] = channel::Descriptor(it->number, lHasMGT, lHasBuffer, lFmtKind);
+//    mTxDescriptors[it->id] = channel::Descriptor(it->number, lHasMGT, lHasBuffer, lFmtKind);
+    mTxDescriptors[it->id] = 
+        channel::Descriptor(
+        it->number, 
+        lRegInfo.mgtOut != ::mp7::kNoMGT, 
+        lRegInfo.bufOut != ::mp7::kNoBuffer, 
+        lRegInfo.fmt
+        );
 
   }
 }

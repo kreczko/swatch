@@ -62,7 +62,7 @@ core::Command::State TDRFormatterCommand::code(const swatch::core::XParameterSet
   bool insert = params.get<xdata::Boolean>("insert").value_;
 
   ::mp7::MP7Controller& driver = mFmtSelector.getDriver();
-  ::mp7::ChannelsManager cm = mFmtSelector.manager(params);
+  ::mp7::ChannelManager cm = mFmtSelector.manager(params);
 
   setProgress(0.0, "Configuring TDR header formatting...");
   
@@ -72,7 +72,7 @@ core::Command::State TDRFormatterCommand::code(const swatch::core::XParameterSet
 
 
   //FIXME: Patch starts
- ::mp7::ChannelIDSet tdrChans = cm.ids(::mp7::kTDRFmtIDs);
+ ::mp7::ChannelGroup tdrChans = cm.getDescriptor().pickFmtIDs(::mp7::kTDRFormatter);
  
  ::mp7::FormatterNode fmt = driver.getFormatter();
  ::mp7::DatapathNode datapath = driver.getDatapath();
@@ -127,7 +127,7 @@ swatch::core::Command::State DemuxFormatterCommand::code(const swatch::core::XPa
 
 
   ::mp7::MP7Controller& driver = mFmtSelector.getDriver();
-  ::mp7::ChannelsManager cm =  mFmtSelector.manager(params);
+  ::mp7::ChannelManager cm =  mFmtSelector.manager(params);
   ::mp7::orbit::Metric m = driver.getMetric();
 
   // Check dv begin orbitpoint
@@ -161,7 +161,7 @@ swatch::core::Command::State DemuxFormatterCommand::code(const swatch::core::XPa
   // cm.configureDemuxFormatters(strip, insert, first, last);
 
   //FIXME: Patch starts
-  ::mp7::ChannelIDSet dmxIds = cm.ids(::mp7::kDemuxFmtIDs);
+  ::mp7::ChannelGroup dmxIds = cm.getDescriptor().pickFmtIDs(::mp7::kDemuxFormatter);
 
   ::mp7::FormatterNode fmt = driver.getFormatter();
   ::mp7::DatapathNode datapath = driver.getDatapath();
@@ -234,7 +234,7 @@ swatch::core::Command::State S1Formatter::code(const swatch::core::XParameterSet
   uint s1BC0Cycle = params.get<xdata::UnsignedInteger>("s1BC0Cycle").value_; 
 
 
-  ::mp7::ChannelsManager cm =  mFmtSelector.manager(params);
+  ::mp7::ChannelManager cm =  mFmtSelector.manager(params);
 
   setProgress(0.0, "Configuring formatters");
   
@@ -250,7 +250,7 @@ swatch::core::Command::State S1Formatter::code(const swatch::core::XParameterSet
     bc0 << "Tagging BC0 at " << s1BC0Bx << ", " << s1BC0Cycle << "...";
     setProgress(0.4, bc0.str());
     ::mp7::orbit::Point bx = m.subCycles(::mp7::orbit::Point(s1BC0Bx,s1BC0Cycle),1);
-    BOOST_FOREACH(uint32_t r, cm.ids(::mp7::kS1FmtIDs).regions()) {
+    BOOST_FOREACH(uint32_t r, cm.getDescriptor().pickFmtIDs(::mp7::kStage1Formatter).regions()) {
       datapath.selectRegion(r);
       fmt.tagBC0(bx);
     }

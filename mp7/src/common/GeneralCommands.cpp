@@ -56,7 +56,7 @@ core::Command::State ResetCommand::code(const core::XParameterSet& params)
   
   // Reset MGTs
   setProgress(0.5,"Resetting MGTs");
-  driver.channelMgr().resetLinks();
+  driver.channelMgr().resetMGTs();
   
   // Reset AMC13 block
   setProgress(0.68,"Resetting AMC-AMC13 Link");

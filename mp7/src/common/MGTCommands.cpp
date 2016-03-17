@@ -43,7 +43,7 @@ ConfigureRxMGTsCommand::code(const swatch::core::XParameterSet& params)
   bool orbitTag = params.get<xdata::Boolean>("orbitTag").value_;
   bool polarity = params.get<xdata::Boolean>("polarity").value_;
 
-  ::mp7::ChannelsManager cm = mRxMGTHelper.manager(params);
+  ::mp7::ChannelManager cm = mRxMGTHelper.manager(params);
 
   setProgress(0.0, "Configuring Rx MGTs...");
 
@@ -81,7 +81,7 @@ ConfigureTxMGTsCommand::code(const swatch::core::XParameterSet& params) {
   bool loopback = params.get<xdata::Boolean>("loopback").value_;
   bool polarity = params.get<xdata::Boolean>("polarity").value_;
 
-  ::mp7::ChannelsManager cm = mTxMGTHelper.manager(params);
+  ::mp7::ChannelManager cm = mTxMGTHelper.manager(params);
 
   setProgress(0.0, "Configuring Tx MGTs");
 
@@ -142,7 +142,7 @@ AlignRxsToCommand::code(const swatch::core::XParameterSet& params) {
   }
   //--
     
-  ::mp7::ChannelsManager cm = mRxMGTHelper.manager(params);
+  ::mp7::ChannelManager cm = mRxMGTHelper.manager(params);
 
   std::ostringstream alTo;
   alTo << "Aligning the MP MGTs to " << bx << ", " << cycle << "...";
@@ -161,7 +161,7 @@ AlignRxsToCommand::code(const swatch::core::XParameterSet& params) {
 
   setProgress(0.6, "Checking Links...");
   try {
-    cm.checkLinks();
+    cm.checkMGTs();
   }  catch (std::exception &e) {
     std::ostringstream err;
     err << "Exception caught while trying to check links: " << e.what();
@@ -194,7 +194,7 @@ core::Command::State AutoAlignCommand::code(const core::XParameterSet& aParams)
 {
   xdata::UnsignedInteger lMargin = aParams.get<xdata::UnsignedInteger>("margin");
 
-  ::mp7::ChannelsManager lChanMgr = mRxMGTHelper.manager(aParams);
+  ::mp7::ChannelManager lChanMgr = mRxMGTHelper.manager(aParams);
 
   setProgress(0.01, "Starting auto-align with margin=" + boost::lexical_cast<std::string>(lMargin.value_));
 

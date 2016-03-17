@@ -64,7 +64,7 @@ IOChannelSelector::getMaskFilter(const swatch::core::XParameterSet& aParams) con
 
 
 //---
-::mp7::ChannelsManager
+::mp7::ChannelManager
 IOChannelSelector::manager(const swatch::core::XParameterSet& aParams) const
 {
   // Parse the list of selected ports

@@ -13,7 +13,7 @@
 #include "swatch/mp7/channel/DescriptorFinder.hpp"
 
 // MP7 Headers
-#include "mp7/ChannelsManager.hpp"
+#include "mp7/ChannelManager.hpp"
 
 
 namespace swatch {
@@ -39,7 +39,7 @@ public:
      * Creates a mp7::ChannelManager object with channel selection applied based on current parameters
      * @return mp7::ChannelManager object 
      */
-    ::mp7::ChannelsManager manager( const swatch::core::XParameterSet& aParams ) const;
+    ::mp7::ChannelManager manager( const swatch::core::XParameterSet& aParams ) const;
     /**
      * MP7Controller getter
      * @return reference to the MP7Controller
