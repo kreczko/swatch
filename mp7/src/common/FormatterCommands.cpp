@@ -61,30 +61,30 @@ core::Command::State TDRFormatterCommand::code(const swatch::core::XParameterSet
   bool strip  = params.get<xdata::Boolean>("strip").value_;
   bool insert = params.get<xdata::Boolean>("insert").value_;
 
-  ::mp7::MP7Controller& driver = mFmtSelector.getDriver();
+//  ::mp7::MP7Controller& driver = mFmtSelector.getDriver();
   ::mp7::ChannelManager cm = mFmtSelector.manager(params);
 
   setProgress(0.0, "Configuring TDR header formatting...");
   
   // Bugged in mp7sw 1.8.4 and 1.8.4
   // Will be fixed in 1.9.X
-  // cm.configureTDRFormatters(strip,insert);
+  cm.configureHdrFormatters(::mp7::kTDRFormatter, strip,insert);
 
 
-  //FIXME: Patch starts
- ::mp7::ChannelGroup tdrChans = cm.getDescriptor().pickFmtIDs(::mp7::kTDRFormatter);
- 
- ::mp7::FormatterNode fmt = driver.getFormatter();
- ::mp7::DatapathNode datapath = driver.getDatapath();
-
- setProgress(0.2, "Configuring TDR header formatting...");
-
- BOOST_FOREACH( uint32_t ch, tdrChans.channels() ) { 
- // for(uint i = 0; i < tdrChans.channels().size(); i++){
-   // datapath.selectLink(tdrChans.channels()[i]);
-   datapath.selectLink(ch);
-   fmt.stripInsert(strip, insert);
- }
+//  //FIXME: Patch starts
+// ::mp7::ChannelGroup tdrChans = cm.getDescriptor().pickFmtIDs(::mp7::kTDRFormatter);
+// 
+// ::mp7::FormatterNode fmt = driver.getFormatter();
+// ::mp7::DatapathNode datapath = driver.getDatapath();
+//
+// setProgress(0.2, "Configuring TDR header formatting...");
+//
+// BOOST_FOREACH( uint32_t ch, tdrChans.channels() ) { 
+// // for(uint i = 0; i < tdrChans.channels().size(); i++){
+//   // datapath.selectLink(tdrChans.channels()[i]);
+//   datapath.selectLink(ch);
+//   fmt.stripInsert(strip, insert);
+// }
 
   //FIXME: Patch ends
 
@@ -168,13 +168,12 @@ swatch::core::Command::State DemuxFormatterCommand::code(const swatch::core::XPa
 
   setProgress(0.2, "Configuring Demux header formatting...");
 
-  BOOST_FOREACH( uint32_t ch, dmxIds.channels() ) { 
-  // for(uint i = 0; i < dmxIds.channels().size(); i++){
-   // datapath.selectLink(dmxIds.channels()[i]);
-   datapath.selectLink(ch);
-   fmt.stripInsert(strip, insert);
-  }
-
+//  BOOST_FOREACH( uint32_t ch, dmxIds.channels() ) { 
+//   datapath.selectLink(ch);
+//   fmt.stripInsert(strip, insert);
+//  }
+  cm.configureHdrFormatters(::mp7::kDemuxFormatter, strip, insert);
+  
   // Fixme: this is always true
   if(not (
       startBx.isNaN() and 
@@ -185,23 +184,19 @@ swatch::core::Command::State DemuxFormatterCommand::code(const swatch::core::XPa
     ){
 
     setProgress(0.4, "Configuring Demux data valid override...");
-    ::mp7::orbit::Metric m = driver.getMetric();
-    // ::mp7::orbit::Point first = m.subCycles(::mp7::orbit::Point(startBx,startCycle),1);
-    // ::mp7::orbit::Point last = m.subCycles(::mp7::orbit::Point(stopBx,stopCycle),1);
-    BOOST_FOREACH( uint32_t ch, dmxIds.channels() ) { 
-    // for(uint i = 0; i < dmxIds.channels().size(); i++){
-     // datapath.selectLink(dmxIds.channels()[i]);
-      datapath.selectLink(ch);
-      fmt.overrideValid(first, last);
-    }
+    cm.configureDVFormatters(first, last);
+//    ::mp7::orbit::Metric m = driver.getMetric();
+//    BOOST_FOREACH( uint32_t ch, dmxIds.channels() ) { 
+//      datapath.selectLink(ch);
+//      fmt.overrideValid(first, last);
+//    }
   } else {
     setProgress(0.4, "Disabling Demux data valid override...");
-    BOOST_FOREACH( uint32_t ch, dmxIds.channels() ) { 
-    // for(uint i = 0; i < dmxIds.channels().size(); i++){
-     // datapath.selectLink(dmxIds.channels()[i]);
-      datapath.selectLink(ch);
-      fmt.enableValidOverride(false);
-   }
+    cm.disableDVFormatters();
+//    BOOST_FOREACH( uint32_t ch, dmxIds.channels() ) { 
+//      datapath.selectLink(ch);
+//      fmt.enableValidOverride(false);
+//   }
 
    setStatusMsg("Configure Demux Formatting complete");
   }
