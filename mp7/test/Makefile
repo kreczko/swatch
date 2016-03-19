@@ -13,7 +13,7 @@ Packager = Alessandro Thea
 PACKAGE_VER_MAJOR = 0
 PACKAGE_VER_MINOR = 7
 PACKAGE_VER_PATCH = 0
-PACKAGE_RELEASE = 0.alpha0
+PACKAGE_RELEASE = 1
 
 Library = cactus_swatch_mp7_test
 
