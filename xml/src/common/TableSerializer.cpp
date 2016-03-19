@@ -29,20 +29,22 @@ const std::string TableSerializer::kRowTag = "row";
 
 TableSerializer::TableSerializer()
 {
-  	// register simple serliazers
-	this->addDefault(new xdata::UnsignedInteger());
-	this->addDefault(new xdata::Integer());
-	this->addDefault(new xdata::Float());
-	this->addDefault(new xdata::Boolean());
-	this->addDefault(new xdata::String());
+  // register simple serliazers
+  this->addDefault(new xdata::UnsignedInteger());
+  this->addDefault(new xdata::Integer());
+  this->addDefault(new xdata::Float());
+  this->addDefault(new xdata::Boolean());
+  this->addDefault(new xdata::String());
 }
 
 
 TableSerializer::~TableSerializer()
 {
   std::map<std::string, xdata::Serializable*>::iterator it;
-  for( it = mDefaults.begin(); it != mDefaults.end(); ++it)
-    if (it->second) delete it->second;
+  for( it = mDefaults.begin(); it != mDefaults.end(); ++it) {
+    if (it->second)
+      delete it->second;
+  }
 }
 
 
@@ -116,9 +118,12 @@ xdata::Serializable* TableSerializer::import(const pugi::xml_node& aNode)
   if ( !( lColsNode && lTypesNode && lRows) ) {
     std::ostringstream msg;
     msg << "Missing nodes: ";
-    if ( !lColsNode ) msg << "'" << kColsTag << "' ";
-    if ( !lTypesNode ) msg << "'" << kTypesTag << "' ";
-    if ( !lRows ) msg << "'" << kRowsTag << "' ";
+    if ( !lColsNode )
+      msg << "'" << kColsTag << "' ";
+    if ( !lTypesNode )
+      msg << "'" << kTypesTag << "' ";
+    if ( !lRows )
+      msg << "'" << kRowsTag << "' ";
     
     throw ValueError(msg.str());
   }
@@ -184,8 +189,9 @@ xdata::Serializable* TableSerializer::import(const pugi::xml_node& aNode)
 }
 
 
-const xdata::Serializable* TableSerializer::const_import(const pugi::xml_node& aNode){
-    return const_cast<xdata::Serializable*>(import(aNode));
+const xdata::Serializable* TableSerializer::const_import(const pugi::xml_node& aNode)
+{
+  return const_cast<xdata::Serializable*>(import(aNode));
 }
 
 
@@ -195,16 +201,18 @@ std::string TableSerializer::type() const
   return tmp.type();
 }
 
-// Copied from XmlSerializer
-std::string TableSerializer::normaliseType(const std::string& aType) {
-	std::string lType(aType);
-	// expand type names
-	if (lType == "vector:uint")
-		lType = "vector:unsigned int";
-	if (lType == "uint")
-		lType = "unsigned int";
 
-	return lType;
+// Copied from XmlSerializer
+std::string TableSerializer::normaliseType(const std::string& aType)
+{
+  std::string lType(aType);
+  // expand type names
+  if (lType == "vector:uint")
+    lType = "vector:unsigned int";
+  if (lType == "uint")
+    lType = "unsigned int";
+
+  return lType;
 }
 
 } // namespace xml
