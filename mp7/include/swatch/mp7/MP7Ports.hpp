@@ -12,7 +12,7 @@
 
 
 namespace  mp7 {
-class MP7Controller;
+class MP7MiniController;
 class MGTRegionNode;
 class DatapathNode;
 class AlignMonNode;
@@ -26,7 +26,7 @@ class MP7AbstractProcessor;
 class MP7RxPort : public processor::InputPort {
 
 public:
-  MP7RxPort( const std::string& aId, uint32_t aChannelID, ::mp7::MP7Controller& aController );
+  MP7RxPort( const std::string& aId, uint32_t aChannelID, ::mp7::MP7MiniController& aController );
   virtual ~MP7RxPort();
 
 protected:
@@ -37,7 +37,7 @@ private:
   uint32_t mChannelID;
   
   //! Reference to the MP7Controller
-  ::mp7::MP7Controller& mDriver;
+  ::mp7::MP7MiniController& mDriver;
   
   //! Reference to Datapath node
   const ::mp7::DatapathNode& mDatapath;
@@ -65,7 +65,7 @@ private:
 class MP7TxPort : public processor::OutputPort {
 
 public: 
-    MP7TxPort( const std::string& aId, uint32_t aChannelID, ::mp7::MP7Controller& aController );
+    MP7TxPort( const std::string& aId, uint32_t aChannelID, ::mp7::MP7MiniController& aController );
     virtual ~MP7TxPort();
     
 protected:
@@ -74,7 +74,7 @@ protected:
 private:
     //! Pointer to the main resource
     uint32_t mChannelID;
-    ::mp7::MP7Controller& mDriver;
+    ::mp7::MP7MiniController& mDriver;
     const ::mp7::DatapathNode& mDatapath;
     const ::mp7::MGTRegionNode& mMgt;
 

@@ -9,7 +9,7 @@
 
 
 // MP7 Headers
-#include "mp7/MP7Controller.hpp"
+#include "mp7/MP7MiniController.hpp"
 #include "mp7/CtrlNode.hpp"
 #include "mp7/TTCNode.hpp"
 #include "mp7/ReadoutNode.hpp"
@@ -18,7 +18,7 @@ namespace swatch {
 namespace mp7 {
 
 
-MP7TTCInterface::MP7TTCInterface(::mp7::MP7Controller& controller) :
+MP7TTCInterface::MP7TTCInterface(::mp7::MP7MiniController& controller) :
 mDriver(controller),
 mMetricBC0Counter(registerMetric<uint32_t>("bc0Counter")),
 mMetricEC0Counter(registerMetric<uint32_t>("ec0Counter")),

@@ -14,7 +14,7 @@
 
 
 namespace mp7 {
-class MP7Controller;
+class MP7MiniController;
 }
 
 
@@ -23,7 +23,7 @@ namespace mp7 {
 
 class MP7TTCInterface : public swatch::processor::TTCInterface {
 public:
-  MP7TTCInterface( ::mp7::MP7Controller& );
+  MP7TTCInterface( ::mp7::MP7MiniController& );
   virtual ~MP7TTCInterface();
   
   virtual void clearCounters();
@@ -35,7 +35,7 @@ protected:
     
 private:
     
-  ::mp7::MP7Controller& mDriver;
+  ::mp7::MP7MiniController& mDriver;
 
   core::Metric<uint32_t>& mMetricBC0Counter;
   core::Metric<uint32_t>& mMetricEC0Counter;

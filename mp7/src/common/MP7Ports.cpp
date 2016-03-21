@@ -12,7 +12,7 @@
 #include "swatch/mp7/MP7AbstractProcessor.hpp"
 
 // MP7 headers
-#include "mp7/MP7Controller.hpp"
+#include "mp7/MP7MiniController.hpp"
 #include "mp7/DatapathNode.hpp"
 #include "mp7/MGTRegionNode.hpp"
 #include "mp7/AlignMonNode.hpp"
@@ -24,7 +24,7 @@ namespace swatch {
 namespace mp7 {
 
 //---
-MP7RxPort::MP7RxPort( const std::string& aId, uint32_t aChannelID, ::mp7::MP7Controller& aController ) :
+MP7RxPort::MP7RxPort( const std::string& aId, uint32_t aChannelID, ::mp7::MP7MiniController& aController ) :
   InputPort(aId),
   mChannelID(aChannelID),
   mDriver(aController),
@@ -107,7 +107,7 @@ void MP7RxPort::retrieveMetricValues()
 
 
 //---
-MP7TxPort::MP7TxPort(const std::string& aId, uint32_t aChannelID, ::mp7::MP7Controller& aController) :
+MP7TxPort::MP7TxPort(const std::string& aId, uint32_t aChannelID, ::mp7::MP7MiniController& aController) :
   OutputPort(aId),
   mChannelID(aChannelID),
   mDriver(aController),
