@@ -67,7 +67,8 @@ protected:
     static const std::string kCfgLatencyTxBuffers;
     static const std::string kCfgEasyRxLatency;
     static const std::string kCfgEasyTxLatency;
-    static const std::string kCfgFormatterTdr;
+    static const std::string kHdrFormatter;
+    static const std::string kDataValidFmt;
     static const std::string kSetupReadout;
     static const std::string kLoadReadoutMenu;
   };

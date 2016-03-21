@@ -20,16 +20,11 @@
 namespace swatch {
 namespace mp7 {
 
-class TDRFormatterCommand : public swatch::core::Command {
-public:
-  /**
-   * 
-   * @param aId
-   * @param aActionable
-   */
-  TDRFormatterCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
+class HeaderFormatterCommand : public swatch::core::Command {
+  public:
+  HeaderFormatterCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
   
-  virtual ~TDRFormatterCommand() {}
+  virtual ~HeaderFormatterCommand() {}
   
   /**
    * 
@@ -43,22 +38,66 @@ private:
   RxChannelSelector mFmtSelector;
 };
 
-/**
- * @class DemuxFormatterCommand
- */
-class DemuxFormatterCommand : public swatch::core::Command {
-public:
 
-  DemuxFormatterCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
+class DatavalidFormatterCommand : public swatch::core::Command {
+  public:
+  DatavalidFormatterCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
+  
+  virtual ~DatavalidFormatterCommand() {}
 
-  virtual ~DemuxFormatterCommand() {}
-
+  /**
+   * 
+   * @param params
+   * @return 
+   */
   virtual State code(const ::swatch::core::XParameterSet& params);
 
-private:
+  private:
   //! Command core
-  RxChannelSelector mFmtSelector;
+  TxChannelSelector mFmtSelector;
 };
+
+
+
+//class TDRFormatterCommand : public swatch::core::Command {
+//public:
+//  /**
+//   * 
+//   * @param aId
+//   * @param aActionable
+//   */
+//  TDRFormatterCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
+//  
+//  virtual ~TDRFormatterCommand() {}
+//  
+//  /**
+//   * 
+//   * @param params
+//   * @return 
+//   */
+//  virtual State code(const ::swatch::core::XParameterSet& params);
+//  
+//private:
+//  //! Command core
+//  RxChannelSelector mFmtSelector;
+//};
+//
+///**
+// * @class DemuxFormatterCommand
+// */
+//class DemuxFormatterCommand : public swatch::core::Command {
+//public:
+//
+//  DemuxFormatterCommand(const std::string& aId, swatch::core::ActionableObject& aActionable);
+//
+//  virtual ~DemuxFormatterCommand() {}
+//
+//  virtual State code(const ::swatch::core::XParameterSet& params);
+//
+//private:
+//  //! Command core
+//  RxChannelSelector mFmtSelector;
+//};
 
 
 /**

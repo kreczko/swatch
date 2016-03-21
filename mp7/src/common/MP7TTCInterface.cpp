@@ -59,7 +59,7 @@ void MP7TTCInterface::retrieveMetricValues() {
   setMetricValue<>(mMetricSingleBitErrors, ttc.readSingleBitErrorCounter());
   setMetricValue<>(mMetricDoubleBitErrors, ttc.readDoubleBitErrorCounter());
   setMetricValue<>(mMetricIsClock40Locked, ctrl.clock40Locked());
-  setMetricValue<>(mMetricHasClock40Stopped, ctrl.clock40Locked());
+  setMetricValue<>(mMetricHasClock40Stopped, !ctrl.clock40Locked());
   setMetricValue<>(mMetricIsBC0Locked, ttc.readBC0Locked());
 
 
