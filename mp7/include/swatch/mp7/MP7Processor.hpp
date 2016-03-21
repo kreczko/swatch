@@ -4,16 +4,10 @@
 
 #include "swatch/mp7/MP7AbstractProcessor.hpp"
 #include "swatch/mp7/channel/Descriptor.hpp"
-
-// Forward declarations
-namespace mp7 {
-class MP7Controller;
-}
-
+#include "mp7/MP7Controller.hpp"
 
 namespace swatch {
 namespace mp7 {
-
 
 // Temporary class
 struct MP7ClockMode {

@@ -139,7 +139,7 @@ AlignRxsToCommand(aId, aActionable)
 core::Functionoid::State TMTAlignCommand::code(const ::swatch::core::XParameterSet& aParams)
 {
   // FIXME: Embed this check somewhere
-  ::mp7::MP7Controller& driver = getActionable<MP7AbstractProcessor>().driver();
+  ::mp7::MP7MiniController& driver = getActionable<MP7AbstractProcessor>().driver();
   ::mp7::orbit::Metric lMetric = driver.getMetric();
   
   swatch::core::ReadOnlyXParameterSet lParams = TmtParameterMapper::rebuild(aParams, lMetric);

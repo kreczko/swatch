@@ -43,7 +43,7 @@ swatch::core::Command(aId, aActionable, xdata::String())
 swatch::core::Command::State ZeroInputsCommand::code(const ::swatch::core::XParameterSet& params)
 {
   // Extract the MP7 driver
-  ::mp7::MP7Controller& driver = getActionable<MP7AbstractProcessor>().driver();
+  ::mp7::MP7MiniController& driver = getActionable<MP7AbstractProcessor>().driver();
   ::mp7::orbit::Metric metric = driver.getMetric();
   
   // Create a base configurator
@@ -142,7 +142,7 @@ ConfigureBuffersCommand<Selector>::code(const ::swatch::core::XParameterSet& par
   // Instantiate the message streamer once
   std::ostringstream msg;
   // Extract the MP7 driver
-  ::mp7::MP7Controller& driver = getActionable<MP7AbstractProcessor>().driver();
+  ::mp7::MP7MiniController& driver = getActionable<MP7AbstractProcessor>().driver();
   ::mp7::orbit::Metric metric = driver.getMetric();
 
   // TOFIX: make check standard
@@ -257,7 +257,7 @@ core::Command::State
 CaptureBuffersCommand::code(const ::swatch::core::XParameterSet& params)
 {
 
-  ::mp7::MP7Controller& driver = getActionable< MP7AbstractProcessor>().driver();
+  ::mp7::MP7MiniController& driver = getActionable< MP7AbstractProcessor>().driver();
 
   ::mp7::TTCNode ttc = driver.getTTC();
   ::mp7::ChannelManager cm = driver.channelMgr();
@@ -304,7 +304,7 @@ core::Command::State SaveBuffersToFileCommand<Selector>::code(const ::swatch::co
   std::string filename = params.get<xdata::String>("filename").value_;
 
   //MP7AbstractProcessor* proc = getParent< MP7AbstractProcessor>();
-  ::mp7::MP7Controller& driver = getActionable< MP7AbstractProcessor>().driver();
+  ::mp7::MP7MiniController& driver = getActionable< MP7AbstractProcessor>().driver();
 
   ::mp7::CtrlNode ctrl = driver.getCtrl();
   ::mp7::ChannelManager cm = mBufferSelector.manager(params);

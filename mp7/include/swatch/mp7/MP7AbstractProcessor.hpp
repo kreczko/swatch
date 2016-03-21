@@ -13,7 +13,7 @@
 
 
 namespace mp7 {
-class MP7Controller;
+class MP7MiniController;
 }
 
 namespace swatch {
@@ -25,7 +25,11 @@ public:
   }
   virtual ~MP7AbstractProcessor() {}
   
-  virtual ::mp7::MP7Controller& driver() = 0; 
+  virtual ::mp7::MP7MiniController& driver() = 0; 
+  
+  template< class T>
+  T& driver();
+  
 
   const channel::DescriptorMap_t& getRxDescriptors() const;
   

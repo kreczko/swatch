@@ -22,7 +22,7 @@
 
 // SWATCH headers
 #include "swatch/logger/Log.hpp"
-#include "swatch/mp7/MP7AbstractProcessor.hpp"
+#include "swatch/mp7/MP7Processor.hpp"
 
 
 namespace swatch {
@@ -56,7 +56,7 @@ SetupReadout::code(const ::swatch::core::XParameterSet& aParams)
   xdata::UnsignedInteger lDrain = aParams.get<xdata::UnsignedInteger>("drain");
   xdata::UnsignedInteger lFake = aParams.get<xdata::UnsignedInteger>("fake");
 
-  MP7AbstractProcessor& p = getActionable<MP7AbstractProcessor>();
+  MP7Processor& p = getActionable<MP7Processor>();
   ::mp7::MP7Controller& driver = p.driver();
 
   const ::mp7::TTCNode& ttc = driver.getTTC();
@@ -136,7 +136,7 @@ LoadReadoutMenu::LoadReadoutMenu( const std::string& aId, swatch::core::Actionab
   swatch::core::Command(aId, aActionable, xdata::UnsignedInteger())
 {
   
-	::mp7::MP7Controller& lDriver = getActionable<MP7AbstractProcessor>().driver();
+	::mp7::MP7Controller& lDriver = getActionable<MP7Processor>().driver();
 	const ::mp7::ReadoutCtrlNode& rc = lDriver.getReadout().getNode< ::mp7::ReadoutCtrlNode>("readout_control");
 
 	mBanks = rc.readNumBanks();
@@ -234,7 +234,7 @@ LoadReadoutMenu::code(const ::swatch::core::XParameterSet& aParams)
     }
   }
   
-  ::mp7::MP7Controller& driver = getActionable<MP7AbstractProcessor>().driver();
+  ::mp7::MP7Controller& driver = getActionable<MP7Processor>().driver();
   const ::mp7::ReadoutCtrlNode& rc = driver.getReadout().getNode< ::mp7::ReadoutCtrlNode >("readout_control"); 
   
   

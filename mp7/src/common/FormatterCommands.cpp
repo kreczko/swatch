@@ -102,7 +102,7 @@ swatch::core::Command::State DatavalidFormatterCommand::code(const swatch::core:
   const xdata::UnsignedInteger& stopCycle  =  params.get<xdata::UnsignedInteger>("stopCycle");
 
 
-  ::mp7::MP7Controller& driver = mFmtSelector.getDriver();
+  ::mp7::MP7MiniController& driver = mFmtSelector.getDriver();
   ::mp7::ChannelManager cm =  mFmtSelector.manager(params);
   ::mp7::orbit::Metric m = driver.getMetric();
 

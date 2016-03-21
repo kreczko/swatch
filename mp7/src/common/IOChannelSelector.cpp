@@ -98,7 +98,7 @@ IOChannelSelector::manager(const swatch::core::XParameterSet& aParams) const
 }
 
 //---
-::mp7::MP7Controller&
+::mp7::MP7MiniController&
 IOChannelSelector::getDriver() {
 
   return mProcessor.driver();

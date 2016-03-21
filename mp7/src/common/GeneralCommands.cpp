@@ -10,7 +10,7 @@
 #include "mp7/PathConfigurator.hpp"
 #include "mp7/TTCNode.hpp"
 
-#include "swatch/mp7/MP7AbstractProcessor.hpp"
+#include "swatch/mp7/MP7Processor.hpp"
 
 
 namespace swatch {
@@ -31,7 +31,7 @@ core::Command::State ResetCommand::code(const core::XParameterSet& params)
      
   // setProgress(0., "Resetting MP7");
   
-  MP7AbstractProcessor& p = getActionable<MP7AbstractProcessor>();
+  MP7Processor& p = getActionable<MP7Processor>();
   ::mp7::MP7Controller& driver = p.driver();
   setProgress(0.,"Resetting clocks");
 
@@ -82,7 +82,7 @@ Command(aId, aActionable, xdata::UnsignedInteger())
 core::Command::State 
 SetIDCommand::code(const core::XParameterSet& params)
 {
-  MP7AbstractProcessor& p = getActionable<MP7AbstractProcessor>();
+  MP7Processor& p = getActionable<MP7Processor>();
   ::mp7::MP7Controller& driver = p.driver();
 
   uint32_t boardId = params.get<xdata::UnsignedInteger>("boardId").value_;

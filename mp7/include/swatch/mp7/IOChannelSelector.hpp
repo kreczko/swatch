@@ -44,7 +44,7 @@ public:
      * MP7Controller getter
      * @return reference to the MP7Controller
      */
-    ::mp7::MP7Controller& getDriver();
+    ::mp7::MP7MiniController& getDriver();
 
     virtual const channel::DescriptorMap_t& getDescriptors() const = 0;
     virtual std::string getIdSelection( const swatch::core::XParameterSet& aParams ) const;
