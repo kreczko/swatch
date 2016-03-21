@@ -138,7 +138,77 @@ git remote add origin <your github repo url>
 git push origin master
 ```
 
-## Working on a ticket
+## Working on a ticket: via SVN
+
+Any change that consists of more than one commit should be developed in a branch (rather than in the trunk).
+
+### Step 1: Create the branch
+
+The branch name should follow the following convention: developername_swatch/swatch_ticket_<ticketNumber>
+
+To make a minimal branch containing the core SWATCH packages, plus the SWATCH cell, the SVN commands are:
+```
+svn mkdir -m "SWATCH, refs #ticketnumber : Creating branch" svn+ssh://svn.cern.ch/reps/cactus/branches/deveopername_swatch/swatch_ticket_ticketnumber
+svn mkdir -m "SWATCH, refs #ticketnumber : Populating branch" svn+ssh://svn.cern.ch/reps/cactus/branches/deveopername_swatch/swatch_ticket_ticketnumber/cactuscore
+svn cp -m "SWATCH, refs #ticketnumber : Populating branch" svn+ssh://svn.cern.ch/reps/cactus/trunk/cactuscore/swatch svn+ssh://svn.cern.ch/reps/cactus/branches/developername_swatch/swatch_ticket_ticketnumber/cactuscore/
+svn cp -m "SWATCH, refs #ticketnumber : Populating branch" svn+ssh://svn.cern.ch/reps/cactus/trunk/cactuscore/swatchcell svn+ssh://svn.cern.ch/reps/cactus/branches/developername_swatch/swatch_ticket_ticketnumber/cactuscore/
+svn cp -m "SWATCH, refs #ticketnumber : Populating branch" svn+ssh://svn.cern.ch/reps/cactus/trunk/config svn+ssh://svn.cern.ch/reps/cactus/branches/developername_swatch/swatch_ticket_ticketnumber/
+```
+
+### Step 2: Checkout code and commit to the branch
+
+The magic command to check out the branch is:
+```
+svn co svn+ssh://svn.cern.ch/reps/cactus/branches/developername_swatch/swatch_ticket_ticketnumber
+```
+
+### Step 3: Merge back into the trunk
+
+First, merge the latest trunk changes into the branch:
+```
+cd path/to/checked-out-branch/cactuscore/swatch
+svn merge ^/trunk/cactuscore/swatch . 
+# Rebuild & re-run unit tests
+svn commit -m "SWATCH, refs #ticketnumber : Merging trunk changes into dev branch"
+cd ../swatchcell
+svn merge ^/trunk/cactuscore/swatchcell .
+# Re-built & run tests as appropriate
+svn commit -m "SWATCH, refs #ticketnumber : Merging trunk changes into dev branch"
+```
+
+Then, change directory into a clean checked-out copy (i.e. no local changes) of the trunk.
+ * Run the SVN "merge" command with the --dry-run option, which will show the output of the command without really doing any changes into the repository. This is useful so that you make sure the merge only affects the files you expect it to affect.
+```
+cd cactuscore/swatch
+svn merge --dry-run --reintegrate ^/branches/developername_my-project/my-project_ticketnumber/cactuscore/swatch
+cd ../swatchcell
+svn merge --dry-run --reintegrate ^/branches/developername_my-project/my-project_ticketnumber/cactuscore/swatchcell
+```
+ * Once you make sure the outcome of the dry run is as expected, run the same command without the --dry-run option, re-build, test, and commit if all goes well! I.e:
+```
+cd cactuscore/swatch
+svn merge --reintegrate ^/branches/developername_my-project/my-project_ticketnumber/cactuscore/swatch
+# Rebuild && run unit tests; if successful, continue ...
+cd cactuscore/swatchcell
+svn merge --reintegrate ^/branches/developername_my-project/my-project_ticketnumber/cactuscore/swatchcell
+# Rebuild && run appropriate tests; if successful, continue ...
+cd ../swatch
+svn commit -m "SWATCH, refs #ticketnumber : Merge changes from dev branch into trunk"
+cd ../swatchcell
+svn commit -m "SWATCH, refs #ticketnumber : Merge changes from dev branch into trunk"
+```
+
+N.B. In case you get an error like:
+```
+svn: Reintegrate can only be used if revisions XXX through YYY were previously merged from svn+ssh://svn.cern.ch/reps/cactus/trunk/ZZZ to the reintegrate source, but this is not the case
+```
+You can fix it by going back into the branch directory and forcing SVN to merge the missing revisions before trying again to merge the branch into the trunk: 
+```
+svn merge -r XXX:YYY ^/trunk/ZZZ
+```
+
+
+## Working on a ticket: via git
 
 ### Create your git branch
 First set the ticket number, your CERN user name and the branch name you will
