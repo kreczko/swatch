@@ -19,8 +19,7 @@ PACKAGES = \
 	$(SWATCH_TEST_PACKAGES)
 else ifeq ($(Set), pro)
 PACKAGES = \
-	$(SWATCH_PACKAGES) \
-	pyswatch
+	$(SWATCH_PACKAGES)
 else ifeq ($(Set), amc13)
 PACKAGES = \
 	$(SWATCH_PACKAGES) \

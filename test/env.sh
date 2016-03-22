@@ -29,9 +29,6 @@ pathadd LD_LIBRARY_PATH "${CACTUS_ROOT}/lib"
 SWATCH_TESTS=$( readlink -f $(dirname $BASH_SOURCE)/ )
 SWATCH_ROOT=$( readlink -f ${SWATCH_TESTS}/.. )
 
-pathadd PYTHONPATH "${SWATCH_ROOT}/pyswatch/pkg"
-pathadd PYTHONPATH "${SWATCH_ROOT}/pyswatch/lib"
-
 pathadd PATH "${SWATCH_ROOT}/test/bin"
 
 pathadd LD_LIBRARY_PATH "${SWATCH_ROOT}/logger/lib"
