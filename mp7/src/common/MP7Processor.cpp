@@ -71,8 +71,8 @@ const std::string MP7Processor::CmdIds::kCfgLatencyRxBuffers = "latencyRxBuffers
 const std::string MP7Processor::CmdIds::kCfgLatencyTxBuffers = "latencyTxBuffers";
 const std::string MP7Processor::CmdIds::kCfgEasyRxLatency = "easyRxLatency";
 const std::string MP7Processor::CmdIds::kCfgEasyTxLatency = "easyTxLatency";
-const std::string MP7Processor::CmdIds::kHdrFormatter = "cfgHdrFormatter";
-const std::string MP7Processor::CmdIds::kDataValidFmt = "cfgDVFormatter";
+const std::string MP7Processor::CmdIds::kCfgHdrFormatter = "cfgHdrFormatter";
+const std::string MP7Processor::CmdIds::kCfgDataValidFmt = "cfgDVFormatter";
 const std::string MP7Processor::CmdIds::kSetupReadout = "roSetup";
 const std::string MP7Processor::CmdIds::kLoadReadoutMenu = "roLoadMenu";
 
@@ -115,8 +115,8 @@ MP7AbstractProcessor(aStub)
   registerCommand<LatencyTxBuffersCommand>(CmdIds::kCfgLatencyTxBuffers);
   registerCommand<EasyRxLatencyCommand>(CmdIds::kCfgEasyRxLatency);
   registerCommand<EasyTxLatencyCommand>(CmdIds::kCfgEasyTxLatency);
-  registerCommand<HeaderFormatterCommand>(CmdIds::kHdrFormatter);
-  registerCommand<DatavalidFormatterCommand>(CmdIds::kDataValidFmt);
+  registerCommand<HeaderFormatterCommand>(CmdIds::kCfgHdrFormatter);
+  registerCommand<DatavalidFormatterCommand>(CmdIds::kCfgDataValidFmt);
   registerCommand<SetupReadout>(CmdIds::kSetupReadout);
   registerCommand<LoadReadoutMenu>(CmdIds::kLoadReadoutMenu);
 
