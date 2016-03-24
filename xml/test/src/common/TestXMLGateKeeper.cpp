@@ -267,6 +267,12 @@ BOOST_AUTO_TEST_CASE( CreateFromConfigFile ) {
   BOOST_CHECK_EQUAL(lGK.isEnabled("system.brokenProcessor"), false);
 }
 
+BOOST_FIXTURE_TEST_CASE ( TestNonExistingKeyShouldThrow, TestXmlGateKeeperSetup )
+{
+  BOOST_CHECK_THROW(new XmlGateKeeper(config_with_metrics, "non existent key"), NonExistentKey);
+
+}
+
 BOOST_AUTO_TEST_SUITE_END() // TestGateKeeper
 
 }//ns: test

@@ -130,6 +130,7 @@ private:
 DEFINE_SWATCH_EXCEPTION ( ContextWithIdAlreadyExists );
 DEFINE_SWATCH_EXCEPTION ( ParameterWithGivenIdAlreadyExistsInContext );
 DEFINE_SWATCH_EXCEPTION ( MSettingWithGivenIdAlreadyExistsInContext );
+DEFINE_SWATCH_EXCEPTION ( NonExistentKey );
 
 
 } // namespace core

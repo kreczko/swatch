@@ -54,6 +54,9 @@ void XmlGateKeeper::readXmlDocument(const pugi::xml_document& aXmlDoc, const std
 {
   pugi::xml_node lKey(aXmlDoc.child("db").find_child_by_attribute("key", "id", aRunKey.c_str()));
 
+  if(!lKey)
+    throw NonExistentKey("Could not find key ' " +  aRunKey + "'");
+
   for (pugi::xml_node lContext(lKey.child("context")); lContext; lContext = lContext.next_sibling("context"))
   {
     std::pair < std::string, GateKeeper::ParametersContext_t > lParameterContext(createContext(lContext));
@@ -61,7 +64,7 @@ void XmlGateKeeper::readXmlDocument(const pugi::xml_document& aXmlDoc, const std
 
     std::pair < std::string, GateKeeper::SettingsContext_t > lSettingsContext(createSettingsContext(lContext));
     add(lSettingsContext.first, lSettingsContext.second);
-    
+
     std::pair < std::string, GateKeeper::MasksContext_t> lMasksContext(createMasksContext(lContext));
     add(lMasksContext.first, lMasksContext.second);
   }
@@ -198,7 +201,7 @@ std::pair<std::string, GateKeeper::SettingsContext_t> XmlGateKeeper::createSetti
 
 
 //------------------------------------------------------------------------------------------------------------------
-std::pair<std::string, GateKeeper::MonitoringSetting_t> XmlGateKeeper::createMonitoringSetting(const pugi::xml_node& aParam) const 
+std::pair<std::string, GateKeeper::MonitoringSetting_t> XmlGateKeeper::createMonitoringSetting(const pugi::xml_node& aParam) const
 {
   std::string lId(aParam.attribute("id").value());
   std::string lStatus(aParam.attribute("status").value());
@@ -217,7 +220,7 @@ std::pair<std::string, GateKeeper::MasksContext_t> XmlGateKeeper::createMasksCon
   for (pugi::xml_node lParam(aContext.child("mask")); lParam; lParam = lParam.next_sibling("mask")) {
 
     std::string lId = lParam.attribute("id").value();
-    
+
     if (lMaskContext->find(lId) != lMaskContext->end())
       throw ParameterWithGivenIdAlreadyExistsInContext("Mask with ID '" + lId + "' already exists in context '" + lContextId + "' in file '" + mFileName + "'");
 
