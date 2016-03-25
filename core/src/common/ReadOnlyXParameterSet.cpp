@@ -100,19 +100,7 @@ ReadOnlyXParameterSet::operator[](const std::string& aName) const {
 
 
 //---
-std::string ReadOnlyXParameterSet::parameterAsString(const std::string& aName) const
-{
-  EntryMap_t::const_iterator it = mEntries.find(aName);
-  if ( it == mEntries.end() ) {
-    throw XParameterNotFound("Parameter '" + aName + " not found");
-  }
-
-  return it->second->toString();
-}
-
-
-//---
-void ReadOnlyXParameterSet::adopt(const std::string& aName , const boost::shared_ptr<xdata::Serializable>& aData )
+void ReadOnlyXParameterSet::adopt(const std::string& aName , const boost::shared_ptr<const xdata::Serializable>& aData )
 {
   std::pair<EntryMap_t::iterator, bool> it = mEntries.emplace(aName, aData);
 

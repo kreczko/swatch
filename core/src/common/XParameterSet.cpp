@@ -42,9 +42,9 @@ std::ostream& operator<< ( std::ostream& aStr , const swatch::core::XParameterSe
     aStr << "\"" << name << "\":(<" << demangleName(typeid(lData).name()) << ">, ";
 
     if ( typeid(lData) == typeid(xdata::String) ) {
-      aStr << "\"" << aXParameterSet.parameterAsString(name) << "\"";
+      aStr << "\"" << aXParameterSet.get(name).toString() << "\"";
     } else {
-      aStr << aXParameterSet.parameterAsString(name);
+      aStr << aXParameterSet.get(name).toString();
     }
     aStr << ")";
   }

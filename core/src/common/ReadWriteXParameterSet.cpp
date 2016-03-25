@@ -97,18 +97,6 @@ ReadWriteXParameterSet::operator[](const std::string& aName) const
 
 
 //---
-std::string ReadWriteXParameterSet::parameterAsString(const std::string& aName) const
-{
-  EntryMap_t::const_iterator it = mEntries.find(aName);
-  if ( it == mEntries.end() ) {
-    throw XParameterNotFound(aName +" not found");
-  }
-
-  return it->second.object->toString();
-}
-
-
-//---
 void ReadWriteXParameterSet::deepCopyFrom(const ReadWriteXParameterSet& aOtherSet)
 {
   for( EntryMap_t::const_iterator it = aOtherSet.mEntries.begin(); it != aOtherSet.mEntries.end(); it++)

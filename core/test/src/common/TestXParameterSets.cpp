@@ -31,7 +31,6 @@ BOOST_AUTO_TEST_CASE ( EmptySetTest ) {
   BOOST_CHECK_THROW(pset1["aKey"], XParameterNotFound);
   BOOST_CHECK_THROW(pset1.get("aKey"), XParameterNotFound);
   BOOST_CHECK_THROW(pset1.get<xdata::String>("aKey"), XParameterNotFound);
-  BOOST_CHECK_THROW(pset1.parameterAsString("aKey"), XParameterNotFound);
   BOOST_CHECK_EQUAL(pset1.has("aKey"), false);
   
   
@@ -42,7 +41,6 @@ BOOST_AUTO_TEST_CASE ( EmptySetTest ) {
   BOOST_CHECK_THROW(pset2["aKey"], XParameterNotFound);
   BOOST_CHECK_THROW(pset2.get("aKey"), XParameterNotFound);
   BOOST_CHECK_THROW(pset2.get<xdata::String>("aKey"), XParameterNotFound);
-  BOOST_CHECK_THROW(pset1.parameterAsString("aKey"), XParameterNotFound);
   BOOST_CHECK_EQUAL(pset2.has("aKey"), false);
 }
 
@@ -92,9 +90,9 @@ BOOST_FIXTURE_TEST_CASE ( SimpleAdoptGetEraseTest, XParTestSetup)
   BOOST_CHECK_EQUAL( psetReadOnly.get<xdata::Integer>("intB").value_, intB->value_);
   
   // Check that values converted to string correctly
-  BOOST_CHECK_EQUAL( psetReadOnly.parameterAsString("aString"), str->value_);
-  BOOST_CHECK_EQUAL( psetReadOnly.parameterAsString("intA"), boost::lexical_cast<std::string>(intA->value_) );
-  BOOST_CHECK_EQUAL( psetReadOnly.parameterAsString("intB"), boost::lexical_cast<std::string>(intB->value_) );
+  BOOST_CHECK_EQUAL( psetReadOnly.get("aString").toString(), str->value_);
+  BOOST_CHECK_EQUAL( psetReadOnly.get("intA").toString(), boost::lexical_cast<std::string>(intA->value_) );
+  BOOST_CHECK_EQUAL( psetReadOnly.get("intB").toString(), boost::lexical_cast<std::string>(intB->value_) );
   
   // Check that parameter values weren't copied
   BOOST_CHECK_EQUAL( & psetReadOnly.get("aString") , str.get() );
@@ -137,9 +135,9 @@ BOOST_FIXTURE_TEST_CASE ( SimpleAdoptGetEraseTest, XParTestSetup)
   BOOST_CHECK_EQUAL( psetReadWrite.get<xdata::Integer>("intB").value_, intB->value_);
   
   // Check that values converted to string correctly
-  BOOST_CHECK_EQUAL( psetReadWrite.parameterAsString("aString"), str->value_);
-  BOOST_CHECK_EQUAL( psetReadWrite.parameterAsString("intA"), boost::lexical_cast<std::string>(intA->value_) );
-  BOOST_CHECK_EQUAL( psetReadWrite.parameterAsString("intB"), boost::lexical_cast<std::string>(intB->value_) );
+  BOOST_CHECK_EQUAL( psetReadWrite.get("aString").toString(), str->value_);
+  BOOST_CHECK_EQUAL( psetReadWrite.get("intA").toString(), boost::lexical_cast<std::string>(intA->value_) );
+  BOOST_CHECK_EQUAL( psetReadWrite.get("intB").toString(), boost::lexical_cast<std::string>(intB->value_) );
   
   // Check that parameter values weren't copied
   BOOST_CHECK_EQUAL( & psetReadWrite.get("aString") , str.get() );
@@ -182,9 +180,9 @@ BOOST_FIXTURE_TEST_CASE ( SimpleAdoptGetEraseTest, XParTestSetup)
   BOOST_CHECK_EQUAL( psetReadWrite.get<xdata::Integer>("intB").value_, intB->value_);
   
   // Check that parameter values converted to string correctly
-  BOOST_CHECK_EQUAL( psetReadWrite.parameterAsString("aString"), str->value_);
-  BOOST_CHECK_EQUAL( psetReadWrite.parameterAsString("intA"), boost::lexical_cast<std::string>(intA->value_) );
-  BOOST_CHECK_EQUAL( psetReadWrite.parameterAsString("intB"), boost::lexical_cast<std::string>(intB->value_) );
+  BOOST_CHECK_EQUAL( psetReadWrite.get("aString").toString(), str->value_);
+  BOOST_CHECK_EQUAL( psetReadWrite.get("intA").toString(), boost::lexical_cast<std::string>(intA->value_) );
+  BOOST_CHECK_EQUAL( psetReadWrite.get("intB").toString(), boost::lexical_cast<std::string>(intB->value_) );
   
   // Check that parameter values WERE copied
   BOOST_CHECK_NE ( & psetReadWrite.get("aString") , str.get() );
@@ -237,9 +235,9 @@ BOOST_FIXTURE_TEST_CASE ( ReadOnlyShallowCopyTest, XParTestSetup)
   BOOST_CHECK_EQUAL( pset.get<xdata::Integer>("intB").value_, intB->value_);
   
   // Check that values converted to string correctly
-  BOOST_CHECK_EQUAL( pset.parameterAsString("aString"), str->value_);
-  BOOST_CHECK_EQUAL( pset.parameterAsString("intA"), boost::lexical_cast<std::string>(intA->value_) );
-  BOOST_CHECK_EQUAL( pset.parameterAsString("intB"), boost::lexical_cast<std::string>(intB->value_) );
+  BOOST_CHECK_EQUAL( pset.get("aString").toString(), str->value_);
+  BOOST_CHECK_EQUAL( pset.get("intA").toString(), boost::lexical_cast<std::string>(intA->value_) );
+  BOOST_CHECK_EQUAL( pset.get("intB").toString(), boost::lexical_cast<std::string>(intB->value_) );
   
   // Check that parameter values weren't copied
   BOOST_CHECK_EQUAL( & pset.get("aString") , str.get() );
@@ -291,9 +289,9 @@ BOOST_FIXTURE_TEST_CASE ( ReadWriteToReadOnlyShallowCopyTest, XParTestSetup)
   BOOST_CHECK_EQUAL( pset.get<xdata::Integer>("intB").value_, intB->value_);
   
   // Check that values converted to string correctly
-  BOOST_CHECK_EQUAL( pset.parameterAsString("aString"), str->value_);
-  BOOST_CHECK_EQUAL( pset.parameterAsString("intA"), boost::lexical_cast<std::string>(intA->value_) );
-  BOOST_CHECK_EQUAL( pset.parameterAsString("intB"), boost::lexical_cast<std::string>(intB->value_) );
+  BOOST_CHECK_EQUAL( pset.get("aString").toString(), str->value_);
+  BOOST_CHECK_EQUAL( pset.get("intA").toString(), boost::lexical_cast<std::string>(intA->value_) );
+  BOOST_CHECK_EQUAL( pset.get("intB").toString(), boost::lexical_cast<std::string>(intB->value_) );
   
   // Check that parameter values weren't copied
   BOOST_CHECK_EQUAL( & pset.get("aString") , str.get() );
@@ -346,9 +344,9 @@ BOOST_FIXTURE_TEST_CASE ( ReadWriteDeepCopyTest, XParTestSetup)
   BOOST_CHECK_EQUAL( pset.get<xdata::Integer>("intB").value_, intB->value_);
   
   // Check that values converted to string correctly
-  BOOST_CHECK_EQUAL( pset.parameterAsString("aString"), str->value_);
-  BOOST_CHECK_EQUAL( pset.parameterAsString("intA"), boost::lexical_cast<std::string>(intA->value_) );
-  BOOST_CHECK_EQUAL( pset.parameterAsString("intB"), boost::lexical_cast<std::string>(intB->value_) );
+  BOOST_CHECK_EQUAL( pset.get("aString").toString(), str->value_);
+  BOOST_CHECK_EQUAL( pset.get("intA").toString(), boost::lexical_cast<std::string>(intA->value_) );
+  BOOST_CHECK_EQUAL( pset.get("intB").toString(), boost::lexical_cast<std::string>(intB->value_) );
   
   // Check that parameter values WERE copied
   BOOST_CHECK_NE( & pset.get("aString") , str.get() );

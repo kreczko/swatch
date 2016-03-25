@@ -116,7 +116,7 @@ private:
 
     ReadOnlyXParameterSet mRunningParams;
 
-    xdata::Serializable* const mDefaultResult;
+    const xdata::Serializable* const mDefaultResult;
 
     ActionSnapshot::State mState;
 
@@ -146,7 +146,7 @@ private:
 //! Provides a snapshot of the progress/status of a swatch::core::Command
 class CommandSnapshot : public ActionSnapshot {
 public:
-    CommandSnapshot(const std::string& aPath, ActionSnapshot::State aState, float aRunningTime, float aProgress, const std::string& aStatusMsg, const ReadOnlyXParameterSet& aParamSet, const boost::shared_ptr<xdata::Serializable>& aResult);
+    CommandSnapshot(const std::string& aPath, ActionSnapshot::State aState, float aRunningTime, float aProgress, const std::string& aStatusMsg, const ReadOnlyXParameterSet& aParamSet, const boost::shared_ptr<const xdata::Serializable>& aResult);
 
     //! Returns fractional progress of command; range [0,1]
     float getProgress() const;
@@ -160,13 +160,11 @@ public:
     //! Returns command's result; equal to NULL if command has not already completed execution
     const xdata::Serializable* const getResult() const;    
     
-    std::string getResultAsString() const;
-    
 private:
     float mProgress;
     std::string mStatusMsg;
     ReadOnlyXParameterSet mParams;
-    boost::shared_ptr<xdata::Serializable> mResult;
+    boost::shared_ptr<const xdata::Serializable> mResult;
 };
 
 DEFINE_SWATCH_EXCEPTION(CommandParameterRegistrationFailed);

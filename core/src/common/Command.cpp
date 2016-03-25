@@ -137,7 +137,7 @@ CommandSnapshot Command::getStatus() const {
   boost::unique_lock<boost::mutex> lock(mMutex);
   
   // Only let user see the result once the command has completed (since its contents can change before then) ...
-  boost::shared_ptr<xdata::Serializable> result((xdata::Serializable*) NULL);
+  boost::shared_ptr<const xdata::Serializable> result((xdata::Serializable*) NULL);
   if ( (mState == ActionSnapshot::kDone) || (mState == ActionSnapshot::kWarning) || (mState == ActionSnapshot::kError))
     result = mResult;
   
@@ -250,7 +250,7 @@ ReadOnlyXParameterSet Command::mergeParametersWithDefaults( const XParameterSet&
 
     
 //------------------------------------------------------------------------------------
-CommandSnapshot::CommandSnapshot(const std::string& aPath, ActionSnapshot::State aState, float aRunningTime, float aProgress, const std::string& aStatusMsg, const ReadOnlyXParameterSet& aParams, const boost::shared_ptr<xdata::Serializable>& aResult) :
+CommandSnapshot::CommandSnapshot(const std::string& aPath, ActionSnapshot::State aState, float aRunningTime, float aProgress, const std::string& aStatusMsg, const ReadOnlyXParameterSet& aParams, const boost::shared_ptr<const xdata::Serializable>& aResult) :
   ActionSnapshot(aPath, aState, aRunningTime),
   mProgress(aProgress),
   mStatusMsg(aStatusMsg),
@@ -284,13 +284,6 @@ const XParameterSet& CommandSnapshot::getParameters() const {
 const xdata::Serializable*
 const CommandSnapshot::getResult() const {
   return mResult.get();
-}
-
-
-//------------------------------------------------------------------------------------
-std::string
-CommandSnapshot::getResultAsString() const {
-  return mResult->toString();
 }
 
 

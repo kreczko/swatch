@@ -65,8 +65,6 @@ public:
   template<typename T>
   const T& get( const std::string& aName ) const;
 
-  virtual std::string parameterAsString(const std::string& aName) const;
-
 
   /* --- ADDING ENTRIES TO SET --- */
   

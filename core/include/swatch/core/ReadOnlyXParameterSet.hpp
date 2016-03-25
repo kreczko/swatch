@@ -63,15 +63,13 @@ public:
   template<typename T>
   const T& get( const std::string& aName ) const { return this->XParameterSet::get<T>(aName); }
 
-  virtual std::string parameterAsString(const std::string& aName) const;
-  
   /**
    * Adopt a parameter in the set; the data that is pointed to is not copied, and stored internally via a shared_ptr. The data type must be a derived from xdata::Serializable
    * 
    * @param aName Parameter name
    * @param aData Pointer to import in the set
    */
-  void adopt( const std::string& aName , const boost::shared_ptr<xdata::Serializable>& aData );
+  void adopt( const std::string& aName , const boost::shared_ptr<const xdata::Serializable>& aData );
   
   /**
    * Adopt a parameter that's already stored in another the set; the data that is pointed to is not copied - instead its shared between the parameter sets.
@@ -92,7 +90,7 @@ public:
 
 
 private:
-  typedef boost::unordered_map<std::string, boost::shared_ptr<xdata::Serializable> > EntryMap_t;
+  typedef boost::unordered_map<std::string, boost::shared_ptr<const xdata::Serializable> > EntryMap_t;
 
   EntryMap_t mEntries;
 };

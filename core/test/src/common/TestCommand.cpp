@@ -117,7 +117,7 @@ BOOST_FIXTURE_TEST_CASE(TestSuccessfulCommand,  CommandTestSetup)
   BOOST_CHECK_EQUAL(s.getParameters().get<xdata::Integer>("x").value_, 42);
   BOOST_CHECK_EQUAL(s.getParameters().get<xdata::String>("todo").value_, "useResource");
   BOOST_REQUIRE(s.getResult() != NULL);
-  BOOST_CHECK_EQUAL(s.getResultAsString(), params.get("x").toString());  
+  BOOST_CHECK_EQUAL(s.getResult()->toString(), params.get("x").toString());  
 }
 
 
@@ -134,7 +134,7 @@ BOOST_FIXTURE_TEST_CASE(TestCommandWarning,  CommandTestSetup)
   BOOST_CHECK_EQUAL(s.getStatusMsg(), DummyWarningCommand::finalMsg);
   //BOOST_CHECK_EQUAL(s.getParameters().size(), size_t(0));
   BOOST_REQUIRE(s.getResult() != NULL);
-  BOOST_CHECK_EQUAL(s.getResultAsString(), boost::lexical_cast<std::string>(DummyWarningCommand::defaultResult.value_));
+  BOOST_CHECK_EQUAL(s.getResult()->toString(), boost::lexical_cast<std::string>(DummyWarningCommand::defaultResult.value_));
 }
 
 
@@ -150,7 +150,7 @@ BOOST_FIXTURE_TEST_CASE(TestCommandError,  CommandTestSetup)
   BOOST_CHECK_EQUAL(s.getStatusMsg(), DummyErrorCommand::finalMsg);
   BOOST_CHECK_EQUAL(s.getParameters().size(), size_t(0));
   BOOST_REQUIRE(s.getResult() != NULL);
-  BOOST_CHECK_EQUAL(s.getResultAsString(), boost::lexical_cast<std::string>(DummyErrorCommand::defaultResult.value_));
+  BOOST_CHECK_EQUAL(s.getResult()->toString(), boost::lexical_cast<std::string>(DummyErrorCommand::defaultResult.value_));
 }
 
 
@@ -171,7 +171,7 @@ BOOST_FIXTURE_TEST_CASE(TestThrowingCommand,  CommandTestSetup)
   BOOST_CHECK_EQUAL(s.getStatusMsg(), "An exception of type 'std::runtime_error' was thrown in Command::code(): " + DummyThrowCommand::exceptionMsg);
   BOOST_CHECK_EQUAL(s.getParameters().size(), size_t(0));
   BOOST_REQUIRE(s.getResult() != NULL);
-  BOOST_CHECK_EQUAL(s.getResultAsString(), boost::lexical_cast<std::string>(DummyThrowCommand::defaultResult.value_));
+  BOOST_CHECK_EQUAL(s.getResult()->toString(), boost::lexical_cast<std::string>(DummyThrowCommand::defaultResult.value_));
 }
 
 

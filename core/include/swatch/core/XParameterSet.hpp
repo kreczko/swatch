@@ -63,9 +63,6 @@ public:
   template<typename T>
   const T& get( const std::string& aName ) const;
   
-  //! Retrieves string representation of parameter with specified name - i.e. the result of calling xdata::Serializable::toString() method; throws XParameterNotFound if doesn't contain a parameter with specified name
-  virtual std::string parameterAsString(const std::string& aName) const = 0;
-
   /**
    * Removes parameter of specified name from the list of variables.
    * 

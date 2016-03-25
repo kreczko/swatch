@@ -40,7 +40,7 @@ Command::State DummyCommand::code(const XParameterSet& params)
 {
   DummyActionableObject& res = getActionable<DummyActionableObject>();
 
-  std::string todo = params.parameterAsString("todo");
+  std::string todo = params.get("todo").toString();
   setResult(params.get("x"));
 
   if (todo == "useResource") {

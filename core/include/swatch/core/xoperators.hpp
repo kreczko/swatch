@@ -27,17 +27,17 @@ std::ostream& operator<< (std::ostream& aStream, const xdata::Serializable& aSer
  */
 template<typename T>
 int operator==(const xdata::SimpleType<T> & aSer1, const xdata::SimpleType<T> & aSer2) {
-    return const_cast<xdata::SimpleType<T>&>(aSer1).operator ==(aSer2);
+    return (aSer1 == aSer2);
 }
 
 template<typename T>
 int operator==(const xdata::SimpleType<T> & aSer1, const T & aSer2) {
-    return const_cast<xdata::SimpleType<T>&>(aSer1).operator ==(aSer2);
+    return (aSer1 == aSer2);
 }
 
 template<typename T>
 int operator==(const T & aSer1, const xdata::SimpleType<T> & aSer2) {
-    return const_cast<xdata::SimpleType<T>&>(aSer2).operator ==(aSer1);
+    return (aSer2 == aSer1);
 }
 
 /*
@@ -47,12 +47,6 @@ int operator==(const T & aSer1, const xdata::SimpleType<T> & aSer2) {
  /*
  * operator==
  */
-int operator==(const xdata::String & aStr1, const xdata::String & aStr2);
-
-int operator==(const xdata::String & aStr1, const std::string & aStr2);
-
-int operator==(const xdata::String & aStr1, const char* aStr2);
-
 int operator==(const std::string & aStr1, const xdata::String & aStr2);
 
 int operator==(const char* & aStr1, const xdata::String& bStr2);
