@@ -23,16 +23,17 @@ void DummyGateKeeper::addContext(const std::string& aId, const ParametersContext
   add(aId, aContext);
 }
 
-void DummyGateKeeper::addSettingsContext(const std::string& aId, const SettingsContext_t& aContext)
+void DummyGateKeeper::addSettingsContext(const std::string& aContextId, const MonitoringSettings_t& aSettingsMap)
 {
-  add(aId, aContext);
+  add(aContextId, SettingsContext_t(new MonitoringSettings_t(aSettingsMap)));
 }
   
   
-void DummyGateKeeper::addMasksContext(const std::string& aId, const MasksContext_t& aContext)
+void DummyGateKeeper::addMasksContext(const std::string& aContextId, const Masks_t& aMasksSet)
 {
-  add(aId, aContext);
+  add(aContextId, MasksContext_t(new Masks_t(aMasksSet)));
 }
+
   
 void DummyGateKeeper::addDisabledId(const std::string& aId)
 {

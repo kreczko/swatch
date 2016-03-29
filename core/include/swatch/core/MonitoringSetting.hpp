@@ -59,7 +59,7 @@ private:
 };
 
 typedef std::vector<MonitoringSetting> MonitoringSettings_t;
-typedef boost::shared_ptr<MonitoringSetting> MonitoringSettingPtr_t;
+typedef boost::shared_ptr<const MonitoringSetting> MonitoringSettingPtr_t;
 
 } // namespace core
 } // namespace swatch

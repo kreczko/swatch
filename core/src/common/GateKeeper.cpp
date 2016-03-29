@@ -17,14 +17,12 @@ namespace core {
 
 GateKeeper::GateKeeper(const std::string& aKey) :
         mKey(aKey),
-        mCache(),
+        mParameters(),
         mSettings(),
         mUpdateTime() {
   ParametersContext_t lParameters(new Parameters_t()); //Best practice to always use named shared_ptrs
-  mCache.insert(std::make_pair(kRuntimeContextLabel, lParameters));
 
   SettingsContext_t lSettings(new MonitoringSettings_t());
-  mSettings.insert(std::make_pair(kRuntimeContextLabel, lSettings));
 }
 
 GateKeeper::~GateKeeper() {
@@ -33,13 +31,13 @@ GateKeeper::~GateKeeper() {
 
 GateKeeper::Parameter_t GateKeeper::get(const std::string& aParam,
     const std::string& aContext) const {
-  ParametersContextCache_t::const_iterator lContext(mCache.find(aContext));
+  ParametersContextCache_t::const_iterator lContext(mParameters.find(aContext));
 
-  if (lContext == mCache.end()) {
+  if (lContext == mParameters.end()) {
     return Parameter_t(); //perfectly acceptable for context name to not exist, just try the context with the next highest priority
   }
 
-  Parameters_t::iterator lData(lContext->second->find(aParam));
+  Parameters_t::const_iterator lData(lContext->second->find(aParam));
 
   if (lData == lContext->second->end()) {
     return Parameter_t(); //perfectly acceptable for context name to not exist, just try the context with the next highest priority
@@ -78,14 +76,8 @@ GateKeeper::Parameter_t GateKeeper::get(const std::string& aSequenceId,
   std::string lCommandPath(aCommandId + "." + aParameterId);
   std::string lSequencePath(aSequenceId + "." + lCommandPath);
 
-  //See if the value was set at Run-time
   Parameter_t lData;
-  lData = get(lSequencePath, lCommandPath, aParameterId, kRuntimeContextLabel);
-  if (lData) {
-    return lData; //perfectly acceptable for specific context not hold the requested data, just try the context with the next highest priority
-  }
 
-  //We could add runtime overriding of values to the GateKeeper and check them first...
   for (std::vector<std::string>::const_iterator lIt(aContextsToLookIn.begin());
       lIt != aContextsToLookIn.end(); ++lIt) {
     LOG(logger::kDebug) << "Searching : " << lSequencePath << ", "
@@ -104,14 +96,8 @@ GateKeeper::MonitoringSetting_t GateKeeper::getMonitoringSetting(
     const std::vector<std::string>& aContextsToLookIn) const {
   std::string statePath(aState + "." + aMetricId);
 
-  //See if the value was set at Run-time
   MonitoringSetting_t setting;
-  setting = getMonitoringSetting(statePath, aMetricId, kRuntimeContextLabel);
-  if (setting) {
-    return setting; //perfectly acceptable for specific context not hold the requested data, just try the context with the next highest priority
-  }
 
-  //We could add runtime overriding of values to the GateKeeper and check them first...
   for (std::vector<std::string>::const_iterator lIt(aContextsToLookIn.begin());
       lIt != aContextsToLookIn.end(); ++lIt) {
     LOG(logger::kDebug) << "Searching : " << statePath << ", " << aMetricId
@@ -152,7 +138,7 @@ GateKeeper::MonitoringSetting_t GateKeeper::getMonitoringSetting(
     return MonitoringSetting_t();
   }
 
-  MonitoringSettings_t::iterator settings(lContext->second->find(aMetricId));
+  MonitoringSettings_t::const_iterator settings(lContext->second->find(aMetricId));
 
   if (settings == lContext->second->end()) {
     //perfectly acceptable for context name to not exist, just try the context with the next highest priority
@@ -205,14 +191,14 @@ bool GateKeeper::isEnabled(const std::string& aObjId) const
 
 
 void GateKeeper::add(const std::string& aId, ParametersContext_t aContext) {
-  ParametersContextCache_t::iterator lContextIt(mCache.find(aId));
+  ParametersContextCache_t::iterator lContextIt(mParameters.find(aId));
 
-  if (lContextIt != mCache.end()) {
+  if (lContextIt != mParameters.end()) {
     throw ContextWithIdAlreadyExists(
         "Context With Id '" + aId + "' already exists");
   }
 
-  mCache.insert(std::make_pair(aId, aContext));
+  mParameters.insert(std::make_pair(aId, aContext));
   mUpdateTime = boost::posix_time::microsec_clock::universal_time();
 }
 
@@ -251,20 +237,6 @@ const boost::posix_time::ptime& GateKeeper::lastUpdated() {
   return mUpdateTime;
 }
 
-void GateKeeper::setRuntimeParameter(const std::string& aParam,
-    Parameter_t aData) {
-  ParametersContextCache_t::iterator lContext(mCache.find(kRuntimeContextLabel));
-  Parameters_t::iterator lIt(lContext->second->find(aParam));
-
-  if (lIt != lContext->second->end()) {
-    lIt->second = aData;
-    return;
-  }
-  lContext->second->insert(std::make_pair(aParam, aData));
-}
-
-const std::string GateKeeper::kRuntimeContextLabel = std::string("__runtime__");
-
 std::ostream& operator<<(std::ostream& aStr,
     const swatch::core::GateKeeper& aGateKeeper) {
   std::string lDelimeter(100, '-');
@@ -275,7 +247,7 @@ std::ostream& operator<<(std::ostream& aStr,
   }
 
   for (GateKeeper::ParametersContextCache_t::const_iterator lContextIt(
-      aGateKeeper.mCache.begin()); lContextIt != aGateKeeper.mCache.end();
+      aGateKeeper.mParameters.begin()); lContextIt != aGateKeeper.mParameters.end();
       ++lContextIt) {
     aStr << lDelimeter << std::endl;
     aStr << "CONTEXT (parameters) : " << lContextIt->first << std::endl;
@@ -327,6 +299,34 @@ std::ostream& operator<<(std::ostream& aStr,
   }
   
   return aStr;
+}
+
+GateKeeper::ParametersContextCache_t::const_iterator GateKeeper::parametersBegin() const {
+  return mParameters.cbegin();
+}
+GateKeeper::ParametersContextCache_t::const_iterator GateKeeper::parametersEnd() const {
+  return mParameters.cend();
+}
+
+GateKeeper::SettingsContextCache_t::const_iterator GateKeeper::monitoringSettingsBegin() const {
+  return mSettings.cbegin();
+}
+GateKeeper::SettingsContextCache_t::const_iterator GateKeeper::monitoringSettingsEnd() const {
+  return mSettings.cend();
+}
+
+GateKeeper::MasksContextCache_t::const_iterator GateKeeper::masksBegin() const {
+  return mMasks.cbegin();
+}
+GateKeeper::MasksContextCache_t::const_iterator GateKeeper::masksEnd() const {
+  return mMasks.cend();
+}
+
+GateKeeper::DisabledSet_t::const_iterator GateKeeper::disabledFlagsBegin() const {
+  return mDisabledObjs.cbegin();
+}
+GateKeeper::DisabledSet_t::const_iterator GateKeeper::disabledFlagsEnd() const {
+  return mDisabledObjs.cend();
 }
 
 } /* namespace core */

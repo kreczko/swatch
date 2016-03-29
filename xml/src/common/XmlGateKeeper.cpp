@@ -127,7 +127,7 @@ std::pair<std::string, GateKeeper::Parameter_t> XmlGateKeeper::createParameter(p
 std::pair<std::string, GateKeeper::ParametersContext_t> XmlGateKeeper::createContext(pugi::xml_node& aContext)
 {
   std::string lContextId(aContext.attribute("id").value());
-  ParametersContext_t lParameterContext(new Parameters_t());
+  boost::shared_ptr<Parameters_t> lParameterContext(new Parameters_t());
 
   for (pugi::xml_node lParam(aContext.child("param")); lParam; lParam = lParam.next_sibling("param")) {
     std::pair<std::string, GateKeeper::Parameter_t> lParameter;
@@ -155,7 +155,7 @@ std::pair<std::string, GateKeeper::SettingsContext_t> XmlGateKeeper::createSetti
     const pugi::xml_node& aContext) const
 {
   std::string lContextId(aContext.attribute("id").value());
-  SettingsContext_t lSettingsContext(new MonitoringSettings_t());
+  boost::shared_ptr<MonitoringSettings_t> lSettingsContext(new MonitoringSettings_t());
 
   for (pugi::xml_node lParam(aContext.child("state")); lParam;
       lParam = lParam.next_sibling("state")) {
@@ -215,7 +215,7 @@ std::pair<std::string, GateKeeper::MonitoringSetting_t> XmlGateKeeper::createMon
 std::pair<std::string, GateKeeper::MasksContext_t> XmlGateKeeper::createMasksContext(const pugi::xml_node& aContext) const
 {
   std::string lContextId(aContext.attribute("id").value());
-  MasksContext_t lMaskContext(new Masks_t());
+  boost::shared_ptr<Masks_t> lMaskContext(new Masks_t());
 
   for (pugi::xml_node lParam(aContext.child("mask")); lParam; lParam = lParam.next_sibling("mask")) {
 

@@ -28,41 +28,35 @@ struct TestGateKeeperSetup {
     typedef GateKeeper::MonitoringSettings_t MonSettings_t;
     typedef GateKeeper::Masks_t Masks_t;
 
-    GateKeeper::ParametersContext_t commonParams(new Parameters_t());
-    commonParams->insert(Parameters_t::value_type("hello", new xdata::String("World")));
-    commonParams->insert(Parameters_t::value_type("answer", new xdata::Integer(42)));
+    GateKeeper::ParametersContext_t commonParams(new Parameters_t{
+        {"hello", new xdata::String("World")},
+        {"answer", new xdata::Integer(42)}
+    });
     mGk.addContext("dummy_sys.common", commonParams);
 
-    GateKeeper::ParametersContext_t childA1Params(new Parameters_t());
-    childA1Params->insert( Parameters_t::value_type("hello", new xdata::String("World! (childA1)")));
+    GateKeeper::ParametersContext_t childA1Params(new Parameters_t{
+        {"hello", new xdata::String("World! (childA1)")}
+    });
     mGk.addContext("dummy_sys.childA1", childA1Params);
 
-    GateKeeper::ParametersContext_t childTypeAParams(new GateKeeper::Parameters_t());
-    childTypeAParams->insert( Parameters_t::value_type("sequence_1.command_1.parameter_1", new xdata::String("sequence")));
-    childTypeAParams->insert( Parameters_t::value_type("command_1.parameter_1", new xdata::String("command")));
+    GateKeeper::ParametersContext_t childTypeAParams(new GateKeeper::Parameters_t{
+        {"sequence_1.command_1.parameter_1", new xdata::String("sequence")},
+        {"command_1.parameter_1", new xdata::String("command")}
+    });
     mGk.addContext("dummy_sys.childTypeA", childTypeAParams);
 
     // monitoring status
-    GateKeeper::SettingsContext_t metricSettings(new GateKeeper::MonitoringSettings_t());
-    metricSettings->insert( MonSettings_t::value_type("criticalMetric", new MonitoringSetting("criticalMetric",monitoring::kEnabled)));
-    metricSettings->insert( MonSettings_t::value_type("weird_state.criticalMetric",
-        new MonitoringSetting("weird_state.criticalMetric", monitoring::kDisabled)));
-    metricSettings->insert( MonSettings_t::value_type("nonCriticalMetric", 
-        new MonitoringSetting("nonCriticalMetric", monitoring::kNonCritical)));
+    MonSettings_t metricSettings {
+        {"criticalMetric", new MonitoringSetting("criticalMetric",monitoring::kEnabled)},
+        {"weird_state.criticalMetric", new MonitoringSetting("weird_state.criticalMetric", monitoring::kDisabled)},
+        {"nonCriticalMetric", new MonitoringSetting("nonCriticalMetric", monitoring::kNonCritical)}
+    };
     mGk.addSettingsContext("dummy_sys.childTypeA", metricSettings);
 
     // Masks
-    GateKeeper::MasksContext_t commonMasks(new Masks_t());
-    commonMasks->insert( "componentA" );
-    mGk.addMasksContext("dummy_sys.common", commonMasks);
-
-    GateKeeper::MasksContext_t procsMasks(new Masks_t());
-    procsMasks->insert( "componentB" );
-    mGk.addMasksContext("dummy_sys.childTypeA", procsMasks);
-    
-    GateKeeper::MasksContext_t proc1Masks(new Masks_t());
-    proc1Masks->insert( "componentC" );
-    mGk.addMasksContext("dummy_sys.childA1", proc1Masks);
+    mGk.addMasksContext("dummy_sys.common", Masks_t{"componentA"});
+    mGk.addMasksContext("dummy_sys.childTypeA", Masks_t{"componentB"});
+    mGk.addMasksContext("dummy_sys.childA1", Masks_t{"componentC"});
     
     // Disable some IDs
     mGk.addDisabledId("dummy_sys.childA1");

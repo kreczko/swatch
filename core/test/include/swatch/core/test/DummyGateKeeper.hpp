@@ -26,8 +26,8 @@ class DummyGateKeeper : public GateKeeper {
 
   // Expose gatekeeper "add" methods as public for unit testing 
   void addContext( const std::string& aId, const ParametersContext_t&);
-  void addSettingsContext(const std::string& aId, const SettingsContext_t& aContext);
-  void addMasksContext(const std::string& aId, const MasksContext_t& aContext);
+  void addSettingsContext(const std::string& aContextId, const MonitoringSettings_t& aSettingsMap);
+  void addMasksContext(const std::string& aContextId, const Masks_t& aMasksSet);
   void addDisabledId(const std::string& aId);
 };
 

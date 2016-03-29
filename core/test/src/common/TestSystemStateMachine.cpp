@@ -35,38 +35,32 @@ struct SystemStateMachineTestSetup {
     sysItoA = &fsm.addTransition("sysIToA", sysState0, sysStateA);
     sysAtoB = &fsm.addTransition("sysAToB", sysStateA, sysStateB);
     
-    GateKeeper::ParametersContext_t tbl(new GateKeeper::Parameters_t());
-    tbl->insert( GateKeeper::Parameters_t::value_type(DummyCommand::paramToDo, GateKeeper::Parameter_t(new xdata::String(""))));
-    tbl->insert( GateKeeper::Parameters_t::value_type(DummyCommand::paramX, GateKeeper::Parameter_t(new xdata::Integer(42))));
+    GateKeeper::ParametersContext_t tbl(new GateKeeper::Parameters_t{
+        {DummyCommand::paramToDo, new xdata::String("")},
+        {DummyCommand::paramX, new xdata::Integer(42)}
+    });
     gk.addContext(sys->getId()+".common", tbl);
 
-    GateKeeper::MasksContext_t lMasksContext(new GateKeeper::Masks_t());
-    lMasksContext->insert("maskableA");
-    lMasksContext->insert("monChild.maskableB");
+    typedef GateKeeper::Masks_t Masks_t;
+    // Add mask for "maskableA", "child1.maskableB", and "maskableC"
     // "maskableC": FALSE ENTRY (i.e. should not take effect on child1.maskableC)
     //   - here to check that masks are applied using MaskableObject's ID path relative to the ActionableObject (not just using ID string)
-    lMasksContext->insert("maskableC");
-    gk.addMasksContext(sys->getId()+".common", lMasksContext);
-  }
+    gk.addMasksContext(sys->getId()+".common", Masks_t{"maskableA", "monChild.maskableB", "maskableC"});
+    }
 
   ~SystemStateMachineTestSetup() {}
 
   void addMonSettingsToGateKeeper(const std::string& aStateId) // Copied from TestStateMachine.cpp
   {
     // for child1
-    GateKeeper::SettingsContext_t settings_child1(new GateKeeper::MonitoringSettings_t());
-    GateKeeper::MonitoringSetting_t mon_setting1(new MonitoringSetting("monChild", monitoring::kNonCritical));
-    GateKeeper::MonitoringSetting_t mon_setting2(new MonitoringSetting("monChild.grandChild1", monitoring::kDisabled));
-    GateKeeper::MonitoringSetting_t mon_setting3(new MonitoringSetting("grandChild2", monitoring::kDisabled));
-    // for child1 metric
-    GateKeeper::MonitoringSetting_t mon_setting4(new MonitoringSetting("monChild.dummyMetric", monitoring::kDisabled));
-
-    settings_child1->insert(GateKeeper::MonitoringSettings_t::value_type(aStateId + ".monChild", mon_setting1));
-    settings_child1->insert(GateKeeper::MonitoringSettings_t::value_type(aStateId + ".monChild.grandChild1", mon_setting2));
-    // this one should fail, as paths need to be relative to obj!
-    settings_child1->insert(GateKeeper::MonitoringSettings_t::value_type(aStateId + ".grandChild2", mon_setting3));
-    // metric
-    settings_child1->insert(GateKeeper::MonitoringSettings_t::value_type(aStateId + ".monChild.dummyMetric", mon_setting4));
+    GateKeeper::MonitoringSettings_t settings_child1 {
+        {aStateId + ".monChild", new MonitoringSetting("monChild", monitoring::kNonCritical)},
+        {aStateId + ".monChild.grandChild1", new MonitoringSetting("monChild.grandChild1", monitoring::kDisabled)},
+        // this one should fail, as paths need to be relative to obj!
+        {aStateId + ".grandChild2", new MonitoringSetting("grandChild2", monitoring::kDisabled)},
+        // for child1 metric
+        {aStateId + ".monChild.dummyMetric", new MonitoringSetting("monChild.dummyMetric", monitoring::kDisabled)}
+    };
     gk.addSettingsContext(sys->getId()+".common", settings_child1);
   }
 
