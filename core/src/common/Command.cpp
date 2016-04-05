@@ -85,7 +85,11 @@ void Command::runCode(boost::shared_ptr<BusyGuard> aActionGuard, const XParamete
     switch (s) { 
       case State::kWarning :
         LOG4CPLUS_WARN(getActionable().getLogger(), "Command '" << getId() << "' returned warning. Last status message: " << mStatusMsg);
+        mState = s;
+        mProgress = 1.0;
+        break;
       case State::kDone :
+        LOG4CPLUS_INFO(getActionable().getLogger(), "Command '" << getId() << "' completed successfully. Last status message: " << mStatusMsg);
         mState = s;
         mProgress = 1.0;
         break;
