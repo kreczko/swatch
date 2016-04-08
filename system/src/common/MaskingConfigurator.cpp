@@ -245,7 +245,7 @@ void MaskingConfigurator::clear()
 
 
 //---
-void MaskingConfigurator::applyStatic(swatch::core::GateKeeper& aGateKeeper) 
+void MaskingConfigurator::applyStatic(const swatch::core::GateKeeper& aGateKeeper) 
 {
   clearLists();
   

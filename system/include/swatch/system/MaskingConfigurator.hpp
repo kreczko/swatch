@@ -42,7 +42,7 @@ public:
    * Applies static masks from GateKeeper
    * @param aGateKeeper GateKeeper reference
    */
-  void applyStatic(swatch::core::GateKeeper& aGateKeeper);
+  void applyStatic(const swatch::core::GateKeeper& aGateKeeper);
   
   /**
    * 
