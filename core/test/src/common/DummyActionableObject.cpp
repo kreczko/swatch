@@ -68,7 +68,8 @@ DummyActionableObject::DummyActionableObject(const std::string& aId) :
   mDummyMetric(registerMetric<uint32_t>("dummyMetric")),
   mWait(false),
   mContinue(false),
-  mWaitingThread()
+  mWaitingThread(),
+  mWaitBeforeSettingMetricValue(false)
 {
 }
 
@@ -131,10 +132,17 @@ StateMachine& DummyActionableObject::registerStateMachine(const std::string& aId
 }
 
 
-void DummyActionableObject::pleaseWaitNextTime()
+void DummyActionableObject::pleaseWait()
 {
   boost::lock_guard<boost::mutex> lGuard(mMutex);
   mWait = true;
+}
+
+void DummyActionableObject::pleaseWaitBeforeSettingMetricValue()
+{
+  boost::lock_guard<boost::mutex> lGuard(mMutex);
+  mWait = true;
+  mWaitBeforeSettingMetricValue = true;
 }
 
 
@@ -185,9 +193,13 @@ void DummyActionableObject::wait() const
 
 void DummyActionableObject::retrieveMetricValues()
 {
+  if (mWaitBeforeSettingMetricValue)
+    wait();
+
   setMetricValue(mDummyMetric, getNumber());
 
-  wait();
+  if (!mWaitBeforeSettingMetricValue)
+    wait();
 }
 
 

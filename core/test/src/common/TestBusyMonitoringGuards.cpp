@@ -67,6 +67,36 @@ void UpdateMetrics::operator()()
 }
 
 
+class ReadMetrics {
+public:
+  ReadMetrics(DummyActionableObject& aObj);
+  ~ReadMetrics();
+  
+  void operator()();
+  
+  boost::scoped_ptr<const MetricSnapshot> dummyMetricSnapshot;
+
+private:
+  DummyActionableObject& mObj;
+};
+
+ReadMetrics::ReadMetrics(DummyActionableObject& aObj) :
+  mObj(aObj)
+{
+}
+
+ReadMetrics::~ReadMetrics() {}
+
+void ReadMetrics::operator()()
+{
+  std::cout << "ReadMetrics::operator()() -- ENTERING" << std::endl;
+  MetricReadGuard lGuard(mObj);
+  std::cout << "  ... mid-way ..." << std::endl;
+  dummyMetricSnapshot.reset(new MetricSnapshot(mObj.getDummyMetric().getSnapshot()));
+  std::cout << "ReadMetrics::operator()() -- EXITING" << std::endl;
+}
+
+
 class RunCommand {
 public:
   RunCommand(Command& aCmd, const ReadOnlyXParameterSet& aParams);
@@ -110,7 +140,7 @@ BOOST_FIXTURE_TEST_CASE(TestBusyThenMetricWriteGuard, BusyMonitoringGuardTestSet
   BOOST_REQUIRE_EQUAL(waitingCmd.getState(), ActionSnapshot::kInitial);
 
   // 1a) Run command in another thread (via thread pool)
-  obj->pleaseWaitNextTime();
+  obj->pleaseWait();
   waitingCmd.exec(ReadOnlyXParameterSet());
   // 1b) Spawn another thread that starts updating metrics
   UpdateMetrics lUpdateMetricsFunctor(*obj);
@@ -170,7 +200,7 @@ BOOST_FIXTURE_TEST_CASE(TestMetricWriteThenBusyGuard, BusyMonitoringGuardTestSet
   BOOST_REQUIRE_EQUAL(waitingCmd.getState(), ActionSnapshot::kInitial);
   
   // 1) Spawn a thread that will update metrics 
-  obj->pleaseWaitNextTime();
+  obj->pleaseWait();
   UpdateMetrics lUpdateMetricsFunctor(*obj);
   boost::thread lUpdateMetricsThread(lUpdateMetricsFunctor);
   
@@ -227,6 +257,101 @@ BOOST_FIXTURE_TEST_CASE(TestMetricWriteThenBusyGuard, BusyMonitoringGuardTestSet
 
   // 5) Finally, check that the other command has never been run
   BOOST_CHECK_EQUAL( anotherCmd.getState(), ActionSnapshot::kInitial );
+}
+
+
+BOOST_FIXTURE_TEST_CASE(TestMetricUpdateThenMetricRead, BusyMonitoringGuardTestSetup)
+{
+  // 0) Check that metric's value is "unknown" .
+  MetricSnapshot lMetricSnapshot = obj->getDummyMetric().getSnapshot();
+  BOOST_REQUIRE_EQUAL(lMetricSnapshot.getStatusFlag(), swatch::core::kUnknown);
+  BOOST_REQUIRE_EQUAL(lMetricSnapshot.getUpdateTimestamp().tv_sec, 0);
+  BOOST_REQUIRE_EQUAL(lMetricSnapshot.getUpdateTimestamp().tv_usec, 0);
+  
+  // 1) Spawn a thread that will update metrics 
+  obj->pleaseWaitBeforeSettingMetricValue();
+  UpdateMetrics lUpdateMetricsFunctor(*obj);
+  boost::thread lUpdateMetricsThread(lUpdateMetricsFunctor);
+  
+  // 2) Sleep until updateMetrics is waiting; then spawn a thread that reads the dummy metric
+  while ( obj->getWaitingThread() != lUpdateMetricsThread.get_id() )
+  {
+    boost::this_thread::sleep_for( boost::chrono::milliseconds(2) );
+  }
+  lMetricSnapshot = obj->getDummyMetric().getSnapshot();
+  BOOST_REQUIRE_EQUAL(lMetricSnapshot.getStatusFlag(), swatch::core::kUnknown);
+  BOOST_REQUIRE_EQUAL(lMetricSnapshot.getUpdateTimestamp().tv_sec, 0);
+  BOOST_REQUIRE_EQUAL(lMetricSnapshot.getUpdateTimestamp().tv_usec, 0);
+  ActionableObject::Status_t lObjStatus = obj->getStatus();
+  BOOST_REQUIRE( lObjStatus.isUpdatingMetrics() );
+
+  ReadMetrics lMetricReader(*obj);
+  boost::thread lReadMetricsThread(boost::ref(lMetricReader));
+
+  // 3) Sleep for many milli-seconds & check that metric reader thread hasn't been allowed to read the metrics yet
+  //   (temp solution to make sure that "metric reader" thread is in MetricReadGuard's CTOR)
+  boost::this_thread::sleep_for( boost::chrono::milliseconds(200) );
+  BOOST_CHECK( lMetricReader.dummyMetricSnapshot.get() == (const swatch::core::MetricSnapshot*) NULL );
+  
+
+  // 4) Let "metric update" thread continue, and join both "metric update" & "metric read" sthreads
+  //    ... then check that metric values read by the "metric read" thread are not "kUnknown" - i.e. check that
+  //    ... MetricReadGuard's CTOR didn't return until after updateMetrics returned.
+  obj->pleaseContinue();
+  lUpdateMetricsThread.join();
+  lReadMetricsThread.join();
+
+  lObjStatus = obj->getStatus();
+  BOOST_CHECK( ! lObjStatus.isUpdatingMetrics() );
+
+  BOOST_REQUIRE( lMetricReader.dummyMetricSnapshot.get() != (const swatch::core::MetricSnapshot*) NULL );
+  BOOST_CHECK_NE(lMetricReader.dummyMetricSnapshot->getStatusFlag(), swatch::core::kUnknown);
+  BOOST_CHECK_NE(lMetricReader.dummyMetricSnapshot->getUpdateTimestamp().tv_sec, 0);
+  BOOST_CHECK_NE(lMetricReader.dummyMetricSnapshot->getUpdateTimestamp().tv_usec, 0);
+}
+
+
+BOOST_FIXTURE_TEST_CASE(TestMetricReadThenMetricUpdate, BusyMonitoringGuardTestSetup)
+{
+  // 0) Check that metric's value is "unknown".
+  MetricSnapshot lMetricSnapshot = obj->getDummyMetric().getSnapshot();
+  BOOST_REQUIRE_EQUAL(lMetricSnapshot.getStatusFlag(), swatch::core::kUnknown);
+  BOOST_REQUIRE_EQUAL(lMetricSnapshot.getUpdateTimestamp().tv_sec, 0);
+  BOOST_REQUIRE_EQUAL(lMetricSnapshot.getUpdateTimestamp().tv_usec, 0);
+  
+  // 1) Create a MetricReadGuard instance, and then spawn a "update metrics" thread
+  UpdateMetrics lUpdateMetricsFunctor(*obj);
+  boost::thread lUpdateMetricsThread;
+  {
+    MetricReadGuard lMetricReadGuard(*obj);
+    obj->pleaseWait();
+    lUpdateMetricsThread = boost::thread(lUpdateMetricsFunctor);
+
+    // 2) Check that MetricUpdateGuard CTOR is in a blocking wait (i.e. retrieveMetricValues hasn't been called yet,
+    //    even after a short sleep)
+    boost::this_thread::sleep_for(boost::chrono::milliseconds(500));
+    BOOST_CHECK( obj->getWaitingThread() == boost::thread::id() );
+    BOOST_CHECK( ! obj->getStatus().isUpdatingMetrics() );
+  }
+  
+  // 3) Now that MetricReadGuard has been destroyed, sleep until dummy object's updateMetrics is waiting
+  //    ... Check that metric have been updated at this point, and actionable object's status is "updating metrics"
+  while ( obj->getWaitingThread() != lUpdateMetricsThread.get_id() )
+  {
+    boost::this_thread::sleep_for( boost::chrono::milliseconds(2) );
+  }
+  lMetricSnapshot = obj->getDummyMetric().getSnapshot();
+  BOOST_CHECK_NE(lMetricSnapshot.getStatusFlag(), swatch::core::kUnknown);
+  BOOST_CHECK_NE(lMetricSnapshot.getUpdateTimestamp().tv_sec, 0);
+  BOOST_CHECK_NE(lMetricSnapshot.getUpdateTimestamp().tv_usec, 0);
+  BOOST_CHECK( obj->getStatus().isUpdatingMetrics() );
+
+  // 4) Let "metric update" thread continue, join that thread, and ...
+  //    ... check that actionable object's status is no longer "updating metrics"
+  obj->pleaseContinue();
+  lUpdateMetricsThread.join();
+
+  BOOST_CHECK( ! obj->getStatus().isUpdatingMetrics() );
 }
 
 

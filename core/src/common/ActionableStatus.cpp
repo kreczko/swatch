@@ -25,6 +25,8 @@ ActionableSnapshot::ActionableSnapshot() :
   mStateMachineId(kNullStateMachineId),
   mState(kNullStateId),
   mUpdatingMetrics(false),
+  mNumberOfWaitingMetricUpdates(0),
+  mNumberOfMetricReaders(0),
   mWaitingToRunAction(false),
   mEnabled(true)
 {
@@ -260,6 +262,22 @@ void ActionableStatus::kill(const ActionableStatusGuard& aGuard)
 
 
 //------------------------------------------------------------------------------------
+void ActionableStatus::waitUntilReadyToUpdateMetrics(MonitorableStatusGuard& aGuard)
+{
+  throwIfWrongGuard(aGuard);
+
+  mStatus.mNumberOfWaitingMetricUpdates++;
+  while((mStatus.mRunningActions.size() > 0) || mStatus.mWaitingToRunAction || isUpdatingMetrics(aGuard) || (mStatus.mNumberOfMetricReaders > 0))
+  {
+    mConditionVar.wait(getUniqueLock(aGuard));
+  }
+
+  mStatus.mNumberOfWaitingMetricUpdates--;
+  mStatus.mUpdatingMetrics = true;
+}
+
+
+//------------------------------------------------------------------------------------
 void ActionableStatus::finishedUpdatingMetrics(const MonitorableStatusGuard& aGuard)
 {
   throwIfWrongGuard(aGuard);
@@ -271,16 +289,26 @@ void ActionableStatus::finishedUpdatingMetrics(const MonitorableStatusGuard& aGu
 
 
 //------------------------------------------------------------------------------------
-void ActionableStatus::waitUntilReadyToUpdateMetrics(MonitorableStatusGuard& aGuard)
+void ActionableStatus::waitUntilReadyToReadMetrics(MonitorableStatusGuard& aGuard)
 {
   throwIfWrongGuard(aGuard);
 
-  while((mStatus.mRunningActions.size() > 0) || mStatus.mWaitingToRunAction || isUpdatingMetrics(aGuard))
+  while (isUpdatingMetrics(aGuard) || (mStatus.mNumberOfWaitingMetricUpdates > 0))
   {
     mConditionVar.wait(getUniqueLock(aGuard));
   }
-  
-  mStatus.mUpdatingMetrics = true;
+
+  mStatus.mNumberOfMetricReaders++;
+}
+
+
+//------------------------------------------------------------------------------------
+void ActionableStatus::finishedReadingMetrics(const MonitorableStatusGuard& aGuard)
+{
+  throwIfWrongGuard(aGuard);
+
+  mStatus.mNumberOfMetricReaders--;
+  mConditionVar.notify_all();
 }
 
 

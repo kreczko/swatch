@@ -31,11 +31,15 @@ public:
   virtual ~AbstractMonitorableStatus();
 
   virtual bool isUpdatingMetrics(const MonitorableStatusGuard& aGuard) const = 0;
-  
+
   virtual void waitUntilReadyToUpdateMetrics(MonitorableStatusGuard& aGuard) = 0;
 
   virtual void finishedUpdatingMetrics(const MonitorableStatusGuard& aGuard) = 0;
   
+  virtual void waitUntilReadyToReadMetrics(MonitorableStatusGuard& aGuard) = 0;
+
+  virtual void finishedReadingMetrics(const MonitorableStatusGuard& aGuard) = 0;
+
 protected:
   boost::unique_lock<boost::mutex>& getUniqueLock(MonitorableStatusGuard& aGuard) const;
 

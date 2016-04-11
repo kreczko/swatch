@@ -27,6 +27,7 @@
 namespace swatch {
 namespace core {
 
+class MetricReadGuard;
 class MetricUpdateGuard;
 class AbstractMonitorableStatus;
 
@@ -127,6 +128,7 @@ private:
   log4cplus::Logger mLogger;
  
   friend class MetricUpdateGuard;
+  friend class MetricReadGuard;
 };
 
 
@@ -138,6 +140,18 @@ class MetricUpdateGuard : boost::noncopyable {
 public:
   MetricUpdateGuard(MonitorableObject& aMonObj);
   ~MetricUpdateGuard();
+  
+  bool isCorrectGuard(const MonitorableObject& aMonObj) const;
+
+private:
+  AbstractMonitorableStatus& mObjStatus;
+};
+
+
+class MetricReadGuard : boost::noncopyable {
+public:
+  MetricReadGuard(MonitorableObject& aMonObj);
+  ~MetricReadGuard();
   
   bool isCorrectGuard(const MonitorableObject& aMonObj) const;
 

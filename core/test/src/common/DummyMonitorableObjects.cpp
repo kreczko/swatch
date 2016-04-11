@@ -79,7 +79,8 @@ void DummyMonitorableObject::retrieveMetricValues()
 
 
 DummyMonitorableStatus::DummyMonitorableStatus() :
-  mIsUpdatingMetrics(false)
+  mIsUpdatingMetrics(false),
+  mNumberOfMetricReaders(0)
 {
 }
 
@@ -102,7 +103,7 @@ bool DummyMonitorableStatus::isUpdatingMetrics(const MonitorableStatusGuard& aGu
 void DummyMonitorableStatus::waitUntilReadyToUpdateMetrics(MonitorableStatusGuard& aGuard)
 {
   throwIfWrongGuard(aGuard);
-  while ( mIsUpdatingMetrics )
+  while ( mIsUpdatingMetrics || (mNumberOfMetricReaders > 0) )
   {
     getUniqueLock(aGuard).unlock();
     boost::this_thread::sleep_for(boost::chrono::microseconds(2));
@@ -117,6 +118,23 @@ void DummyMonitorableStatus::finishedUpdatingMetrics(const MonitorableStatusGuar
   mIsUpdatingMetrics = false;
 }
 
+void DummyMonitorableStatus::waitUntilReadyToReadMetrics(MonitorableStatusGuard& aGuard)
+{
+  throwIfWrongGuard(aGuard);
+  while ( mIsUpdatingMetrics )
+  {
+    getUniqueLock(aGuard).unlock();
+    boost::this_thread::sleep_for(boost::chrono::microseconds(2));
+    getUniqueLock(aGuard).lock();
+  };
+  mNumberOfMetricReaders++;
+}
+
+void DummyMonitorableStatus::finishedReadingMetrics(const MonitorableStatusGuard& aGuard)
+{
+  throwIfWrongGuard(aGuard);
+  mNumberOfMetricReaders--;
+}
 
 
 log4cplus::Logger DummyMasterMonitorableObject::sLogger = swatch::logger::Logger::getInstance("swatch.core.DummyMasterMonitorableObject");

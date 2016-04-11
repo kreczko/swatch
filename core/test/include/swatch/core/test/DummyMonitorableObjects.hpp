@@ -57,8 +57,13 @@ public:
   bool isUpdatingMetrics(const MonitorableStatusGuard& aGuard) const;
   void waitUntilReadyToUpdateMetrics(MonitorableStatusGuard& aGuard);
   void finishedUpdatingMetrics(const MonitorableStatusGuard& aGuard);
+
+  void waitUntilReadyToReadMetrics(MonitorableStatusGuard& aGuard);
+  void finishedReadingMetrics(const MonitorableStatusGuard& aGuard);
+
 private:
   bool mIsUpdatingMetrics;
+  size_t mNumberOfMetricReaders;
 };
 
 

@@ -204,5 +204,30 @@ bool MetricUpdateGuard::isCorrectGuard(const MonitorableObject& aMonObj) const
 }
 
 
+
+MetricReadGuard::MetricReadGuard(MonitorableObject& aMonObj) :
+  mObjStatus(*aMonObj.mStatus)
+{
+  if (aMonObj.mStatus == NULL)
+    throw std::runtime_error("Status not defined for monitorable object " + aMonObj.getId());
+
+  MonitorableStatusGuard lLockGuard(mObjStatus);
+  mObjStatus.waitUntilReadyToReadMetrics(lLockGuard);
+}
+
+
+MetricReadGuard::~MetricReadGuard()
+{
+  MonitorableStatusGuard lLockGuard(mObjStatus);
+  mObjStatus.finishedReadingMetrics(lLockGuard);
+}
+
+
+bool MetricReadGuard::isCorrectGuard(const MonitorableObject& aMonObj) const
+{
+  return (aMonObj.mStatus == &mObjStatus);
+}
+
+
 }
 }

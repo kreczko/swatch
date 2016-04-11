@@ -71,8 +71,11 @@ public:
   template<class T>
   T& addMonitorable(T* aObj); // { addMonitorable(aObj); }
   
-  //! Tells object to wait next time the "wait" method is called; e.g. in WaitCommand or retrieveMetrics
-  void pleaseWaitNextTime();
+  //! Tells object to wait each time the "wait" method is called; e.g. in WaitCommand or retrieveMetrics
+  void pleaseWait();
+
+  //! Tells object to wait each time the "wait" method is called (e.g. in WaitCommand or retrieveMetrics), and to wait before metric value is set in retrieveMetrics
+  void pleaseWaitBeforeSettingMetricValue();
 
   //! Returns id of thread that's currently waiting; if no thread is currently executing the "wait" method 
   boost::thread::id getWaitingThread();
@@ -94,6 +97,8 @@ private:
   mutable boost::thread::id mWaitingThread;
   mutable boost::mutex mMutex;
   mutable boost::condition_variable mConditionVar;
+
+  bool mWaitBeforeSettingMetricValue;
 
   mutable std::vector<std::string> mGateKeeperTables;
   

@@ -101,6 +101,9 @@ private:
   
   bool mUpdatingMetrics;
   
+  size_t mNumberOfWaitingMetricUpdates;
+  size_t mNumberOfMetricReaders;  
+  
   bool mWaitingToRunAction;
 
   bool mEnabled;
@@ -185,11 +188,17 @@ public:
   //! Disables all future actions from running on this resource
   void kill(const ActionableStatusGuard& aGuard);
 
-  virtual void finishedUpdatingMetrics(const MonitorableStatusGuard& aGuard);
-
-  //! Blocks calling thread until no actions are running AND no threads calling "waitUntilReadyToRunAction"; then sets status to updating metrics before returning (DOESN'T THROW)
+  //! Blocks calling thread until no actions are running, no threads calling "waitUntilReadyToRunAction", *and* no threads reading metrics; then sets status to updating metrics before returning (DOESN'T THROW)
   virtual void waitUntilReadyToUpdateMetrics(MonitorableStatusGuard& aGuard);
 
+  virtual void finishedUpdatingMetrics(const MonitorableStatusGuard& aGuard);
+
+  //! Blocks calling thread until no threads updating metrics, and no threads calling "waitUntilReadyToUpdateMetrics"; then sets status to "reading metrics" before returning (DOESN'T THROW)
+  virtual void waitUntilReadyToReadMetrics(MonitorableStatusGuard& aGuard);
+
+  virtual void finishedReadingMetrics(const MonitorableStatusGuard& aGuard);
+
+  
   /*!
    * @brief Blocks calling thread until ready to run action (i.e. isUpdatingMetrics() = false), and then add specified Functionoid to "running actions" stack before returning
    * @throws if an action is already running, or an action is already queued (another thread waiting in this method)
