@@ -21,6 +21,8 @@ Library = cactus_swatch_xml
 Includes =	\
 		include  \
 		${SWATCH_ROOT}/core/include \
+		${SWATCH_ROOT}/processor/include \
+		${SWATCH_ROOT}/system/include \
 		${SWATCH_ROOT}/logger/include \
 		${CACTUS_ROOT}/include \
 		$(XDAQ_ROOT)/include \
@@ -29,13 +31,17 @@ Includes =	\
 LibraryPaths =  \
 		lib \
 		${SWATCH_ROOT}/core/lib \
+		${SWATCH_ROOT}/processor/lib \
+		${SWATCH_ROOT}/system/lib \
 		${SWATCH_ROOT}/logger/lib \
 		${CACTUS_ROOT}/lib \
-		$(XDAQ_ROOT)/lib \ 
+		$(XDAQ_ROOT)/lib
 	
 Libraries =	\
 		cactus_swatch_core \
 		cactus_swatch_logger \
+		cactus_swatch_processor \
+		cactus_swatch_system \
 		cactus_extern_pugixml
 
 include ${SWATCH_ROOT}/config/mfRules.mk

@@ -2,15 +2,15 @@ Set?=devel
 SWATCH_PACKAGES = \
 	logger \
 	core \
-	xml \
 	processor \
-	system
+	system \
+	xml
 SWATCH_TEST_PACKAGES = \
 	logger/test \
 	core/test \
-	xml/test \
 	processor/test \
 	system/test \
+	xml/test \
 	dummy \
 	test
 ifeq ($(Set), devel)
