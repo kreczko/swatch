@@ -3,7 +3,7 @@
 
   <crate id="S2D11-29">
     <location>Point5, S2D11-29</location>
-    <description>=Calorimeter trigger layer 2 main processor crate</description>
+    <description>Calorimeter trigger layer 2 main processor crate</description>
   </crate>
 
   <processor id="MP8">

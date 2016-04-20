@@ -1,7 +1,7 @@
 // SWATCH headers
 #include "swatch/core/toolbox/IdSliceParser.hpp"
 #include "swatch/logger/Logger.hpp"
-#include "swatch/processor/Utilities.hpp"
+//#include "swatch/processor/Utilities.hpp"
 #include "swatch/xml/XmlSystem.hpp"
 // only for now
 #include "swatch/xml/XmlReader.hpp"
@@ -22,14 +22,15 @@ swatch::system::SystemStub xmlFileToSystemStub(const std::string& aFileName) {
   log4cplus::Logger lLogger(swatch::logger::Logger::getInstance("swatch.xml.system.xmlFileToSystemStub"));
   LOG4CPLUS_DEBUG(lLogger, "Reading sytem XML file '" + aFileName + "'");
   pugi::xml_document lXmlDoc;
-  loadFromFile(aFileName, lXmlDoc);
+  detail::loadFromFile(aFileName, lXmlDoc);
 
   return xmlToSystemStub(lXmlDoc);
 }
 
 swatch::system::SystemStub xmlToSystemStub(const pugi::xml_document& aXmlDoc) {
+  using namespace detail;
   log4cplus::Logger lLogger(swatch::logger::Logger::getInstance("swatch.xml.system.xmlToSystemStub"));
-  if (!validateSystemXml(aXmlDoc)) {
+  if (!detail::validateSystemXml(aXmlDoc)) {
     throw InvalidSystemDescription("The given XML is not a valid description of swatch::system::System");
   }
 
@@ -54,7 +55,7 @@ swatch::system::SystemStub xmlToSystemStub(const pugi::xml_document& aXmlDoc) {
     } else if (lTag == "link") {
       lStub.links = xmlToLinkStubs(lNode);
     } else if (lTag == "connected-fed") {
-      //TODO: connected-fed
+      lStub.connectedFEDs = xmlToConnectedFeds(lNode);
     } else if (lTag == "excluded-boards") {
       //TODO: excluded boards
     } else {
@@ -65,6 +66,7 @@ swatch::system::SystemStub xmlToSystemStub(const pugi::xml_document& aXmlDoc) {
   return lStub;
 }
 
+namespace detail {
 swatch::system::CrateStub xmlToCrateStub(const pugi::xml_node& aNode) {
   log4cplus::Logger lLogger(swatch::logger::Logger::getInstance("swatch.xml.system.xmlToCrateStub"));
   std::string lId = aNode.attribute("id").value();
@@ -96,13 +98,13 @@ swatch::processor::ProcessorStub xmlToProcessorStub(const pugi::xml_node& aNode)
       lTxPort != aNode.children("tx-port").end(); ++lTxPort) {
     std::string lName(lTxPort->attribute("name").value());
     std::string lPid(lTxPort->attribute("pid").value());
-    swatch::processor::pushBackPortStubs(lStub.txPorts, lName, lPid);
+    pushBackPortStubs(lStub.txPorts, lName, lPid);
   }
   for (pugi::xml_named_node_iterator lTxPort = aNode.children("rx-port").begin();
       lTxPort != aNode.children("rx-port").end(); ++lTxPort) {
     std::string lName(lTxPort->attribute("name").value());
     std::string lPid(lTxPort->attribute("pid").value());
-    swatch::processor::pushBackPortStubs(lStub.rxPorts, lName, lPid);
+    pushBackPortStubs(lStub.rxPorts, lName, lPid);
   }
   lStub.creator = lCreator;
   lStub.hwtype = lHwType;
@@ -170,8 +172,6 @@ std::vector<swatch::system::LinkStub> xmlToLinkStubs(const pugi::xml_node& aNode
   std::string lDstPortsStr = aNode.child_value("tx-port");
 
   std::vector<std::string> lNames = core::toolbox::IdSliceParser::parse(lId);
-  LOG4CPLUS_ERROR(lLogger, "id: " + lId + ";" + lSrcPortsStr + ";" + lDstPortsStr);
-
   std::vector<std::string> lSrcPorts = core::toolbox::IdSliceParser::parse(lSrcPortsStr);
   std::vector<std::string> lDstPorts = core::toolbox::IdSliceParser::parse(lDstPortsStr);
 
@@ -210,8 +210,9 @@ bool validateSystemXml(const pugi::xml_document& aXmlDoc) {
 
 // only one <system> tag per config
   bool lResult = std::distance(aXmlDoc.children(MAINTAG).begin(), aXmlDoc.children(MAINTAG).end()) == 1;
-  if (!lResult)
+  if (!lResult) {
     LOG4CPLUS_ERROR(lLogger, "More than one <" + std::string(MAINTAG) + "> tag detected");
+  }
 
   if (!hasAttr(lSystem, "id")) {
     lResult = false;
@@ -223,10 +224,11 @@ bool validateSystemXml(const pugi::xml_document& aXmlDoc) {
 
   for (pugi::xml_node lChild = lSystem.first_child(); lChild; lChild = lChild.next_sibling()) {
     std::string lName = lChild.name();
-    if (!hasAttr(lChild, "id") && lName != "creator") {
+    if (!validateChildXml(lChild)) {
       lResult = false;
-      LOG4CPLUS_ERROR(lLogger, "<" + lName + "> tag has no 'id' attribute!");
+      LOG4CPLUS_ERROR(lLogger, "Something wrong with <system> child <" + lName + "> ");
     }
+    lResult = lResult && validateChildXml(lChild);
 
     if (std::find(SUBTAGS.begin(), SUBTAGS.end(), lName) != SUBTAGS.end()) {
       lCounter[lName] += 1;
@@ -254,7 +256,139 @@ bool validateSystemXml(const pugi::xml_document& aXmlDoc) {
     }
   }
 
-//TODO: what to do if you find "unknown tags
+  return lResult;
+}
+
+bool validateChildXml(const pugi::xml_node& aChildNode) {
+  std::string lName = aChildNode.name();
+  if (lName == "creator") {
+    return validateCreatorXml(aChildNode);
+  } else if (lName == "crate") {
+    return validateCrateXml(aChildNode);
+  } else if (lName == "processor") {
+    return validateProcessorXml(aChildNode);
+  } else if (lName == "daqttc-mgr") {
+    return validateDAQTTCXml(aChildNode);
+  } else if (lName == "link") {
+    return validateLinkXml(aChildNode);
+  } else if (lName == "connected-fed") {
+    return true;
+  } else {
+    return true;
+  }
+  return true;
+}
+
+bool validateCreatorXml(const pugi::xml_node& aNode) {
+  log4cplus::Logger lLogger(swatch::logger::Logger::getInstance("swatch.xml.system.validateCreatorXml"));
+  bool lResult = true;
+
+  if (strcmp(aNode.child_value(), "") == 0) {
+    LOG4CPLUS_ERROR(lLogger, "<" << aNode.name() << "> tag is empty!");
+    lResult = false;
+  }
+
+  return lResult;
+}
+
+bool validateCrateXml(const pugi::xml_node& aNode) {
+  log4cplus::Logger lLogger(swatch::logger::Logger::getInstance("swatch.xml.system.validateCrateXml"));
+  bool lResult = true;
+
+  if (!hasAttr(aNode, "id")) {
+    LOG4CPLUS_ERROR(lLogger, "<" << aNode.name() << "> tag has no 'id' attribute!");
+    lResult = false;
+  }
+
+  lResult = lResult && childContentNonEmpty(aNode, "location");
+  lResult = lResult && childContentNonEmpty(aNode, "description");
+
+  return lResult;
+}
+
+bool validateProcessorXml(const pugi::xml_node& aNode) {
+  log4cplus::Logger lLogger(swatch::logger::Logger::getInstance("swatch.xml.system.validateProcessorXml"));
+  bool lResult = true;
+  if (!hasAttr(aNode, "id")) {
+    LOG4CPLUS_ERROR(lLogger, "<" << aNode.name() << "> tag has no 'id' attribute!");
+    lResult = false;
+  }
+
+  lResult = lResult && childContentNonEmpty(aNode, "hw-type");
+  lResult = lResult && childContentNonEmpty(aNode, "role");
+
+  size_t lNUri = numberOfChildren(aNode, "uri");
+  if (lNUri != 1) {
+    LOG4CPLUS_ERROR(lLogger, "Require exactly 1 <uri> tag for <processor>, but found " << lNUri << "!");
+    lResult = false;
+  }
+
+  lResult = lResult && childContentNonEmpty(aNode, "uri");
+
+  size_t lNAddrTab = numberOfChildren(aNode, "address-table");
+  if (lNAddrTab != 1) {
+    LOG4CPLUS_ERROR(lLogger, "Require exactly 1 <address-table> tag for <processor>, but found " << lNAddrTab << "!");
+    lResult = false;
+  }
+  lResult = lResult && childContentNonEmpty(aNode, "address-table");
+  lResult = lResult && childContentNonEmpty(aNode, "crate");
+  lResult = lResult && childContentNonEmpty(aNode, "slot");
+
+  lResult = lResult && hasAttr(aNode.child("rx-port"), "name");
+  lResult = lResult && hasAttr(aNode.child("rx-port"), "pid");
+
+  lResult = lResult && hasAttr(aNode.child("tx-port"), "name");
+  lResult = lResult && hasAttr(aNode.child("tx-port"), "pid");
+
+  return lResult;
+}
+
+bool validateDAQTTCXml(const pugi::xml_node& aNode) {
+  log4cplus::Logger lLogger(swatch::logger::Logger::getInstance("swatch.xml.system.validateDAQTTCXml"));
+  bool lResult = true;
+  if (!hasAttr(aNode, "id")) {
+    LOG4CPLUS_ERROR(lLogger, "<" << aNode.name() << "> tag has no 'id' attribute!");
+    lResult = false;
+  }
+
+  lResult = lResult && childContentNonEmpty(aNode, "role");
+
+  size_t lNUri = numberOfChildren(aNode, "uri");
+  if (lNUri != 2) {
+    LOG4CPLUS_ERROR(lLogger, "Require exactly 2 <uri> tag for <daqttc-mgr>, but found " << lNUri << "!");
+    lResult = false;
+  }
+
+  lResult = lResult && childContentNonEmpty(aNode, "uri");
+
+  size_t lNAddrTab = numberOfChildren(aNode, "address-table");
+  if (lNAddrTab != 2) {
+    LOG4CPLUS_ERROR(lLogger, "Require exactly 2 <address-table> tag for <daqttc-mgr>, but found " << lNAddrTab << "!");
+    lResult = false;
+  }
+  lResult = lResult && childContentNonEmpty(aNode, "address-table");
+  lResult = lResult && childContentNonEmpty(aNode, "crate");
+  lResult = lResult && childContentNonEmpty(aNode, "slot");
+  lResult = lResult && childContentNonEmpty(aNode, "fed-id");
+
+  return lResult;
+}
+
+bool validateLinkXml(const pugi::xml_node& aNode) {
+  log4cplus::Logger lLogger(swatch::logger::Logger::getInstance("swatch.xml.system.validateLinkXml"));
+  bool lResult = true;
+
+  if (!hasAttr(aNode, "id")) {
+    LOG4CPLUS_ERROR(lLogger, "<" << aNode.name() << "> tag has no 'id' attribute!");
+    lResult = false;
+  }
+
+  lResult = lResult && childContentNonEmpty(aNode, "from");
+  lResult = lResult && childContentNonEmpty(aNode, "to");
+
+  lResult = lResult && childContentNonEmpty(aNode, "tx-port");
+  lResult = lResult && childContentNonEmpty(aNode, "rx-port");
+
 
   return lResult;
 }
@@ -269,6 +403,21 @@ bool hasAttr(const pugi::xml_node& aNode, const std::string& aAttr) {
     return false;
 
   return true;
+}
+
+bool childContentNonEmpty(const pugi::xml_node& aNode, const std::string& aChildName) {
+  log4cplus::Logger lLogger(swatch::logger::Logger::getInstance("swatch.xml.system.childContentNonEmpty"));
+  unsigned int i = 1;
+  bool lResult(true);
+  for (pugi::xml_named_node_iterator lChild = aNode.children(aChildName.c_str()).begin();
+      lChild != aNode.children(aChildName.c_str()).end(); ++lChild) {
+    if (strcmp(lChild->child_value(), "") == 0) {
+      LOG4CPLUS_ERROR(lLogger, i << ". entry of <" << aChildName << "> tag for <" << aNode.name() << "> is empty!");
+      lResult = false;
+    }
+  }
+
+  return lResult;
 }
 
 //TODO: move this to general XML functions
@@ -289,6 +438,26 @@ size_t numberOfChildren(const pugi::xml_node& aNode, const std::string& aChildNa
   return std::distance(aNode.children(aChildName.c_str()).begin(), aNode.children(aChildName.c_str()).end());
 }
 
+void pushBackPortStubs(std::vector<swatch::processor::ProcessorPortStub>& aPortStubs, const std::string& aName,
+    const std::string& aIndex) {
+  std::vector<std::string> names = core::toolbox::IdSliceParser::parse(aName);
+  std::vector<std::string> indices = core::toolbox::IdSliceParser::parse(aIndex);
+
+  if (names.size() != indices.size())
+    throw std::runtime_error(
+        boost::lexical_cast<std::string>(names.size()) + " port names created from name \"" + aName
+            + "\" using slice syntax, but " + boost::lexical_cast<std::string>(indices.size())
+            + " indices created from \"" + aIndex + "\"");
+
+  for (size_t i = 0; i < names.size(); i++) {
+
+    swatch::processor::ProcessorPortStub b(names.at(i));
+    b.number = boost::lexical_cast<unsigned>(indices.at(i));
+    aPortStubs.push_back(b);
+  }
 }
-}
-}
+
+} // detail
+} // system
+} // xml
+} // swatch

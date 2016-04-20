@@ -112,12 +112,12 @@ BOOST_AUTO_TEST_CASE ( TestInvalid ) {
   //TODO: set logger to ignore ERRORS
   pugi::xml_document lInvalid;
   lInvalid.load("<system></system>");
-  BOOST_REQUIRE_EQUAL(validateSystemXml(lInvalid), false);
+  BOOST_REQUIRE_EQUAL(detail::validateSystemXml(lInvalid), false);
   BOOST_CHECK_THROW(xmlToSystemStub(lInvalid), InvalidSystemDescription);
 }
 
 BOOST_FIXTURE_TEST_CASE ( TestSystem, TestXmlSystemSetup ) {
-  BOOST_REQUIRE_EQUAL(validateSystemXml(mSystemXml), true);
+  BOOST_REQUIRE_EQUAL(detail::validateSystemXml(mSystemXml), true);
   swatch::system::SystemStub lStub = xmlToSystemStub(mSystemXml);
   BOOST_REQUIRE_EQUAL(lStub.id, "calol2");
   BOOST_REQUIRE_EQUAL(lStub.creator, "calol2::System");
@@ -129,7 +129,7 @@ BOOST_FIXTURE_TEST_CASE ( TestSystem, TestXmlSystemSetup ) {
 
 BOOST_FIXTURE_TEST_CASE ( TestCrate, TestXmlSystemSetup ) {
   pugi::xml_node lNode = mCrateXml.child("crate");
-  swatch::system::CrateStub lStub = xmlToCrateStub(lNode);
+  swatch::system::CrateStub lStub = detail::xmlToCrateStub(lNode);
 
   BOOST_REQUIRE_EQUAL(lStub.id, "S2D11-29");
   BOOST_REQUIRE_EQUAL(lStub.location, "Point5, S2D11-29");
@@ -138,7 +138,7 @@ BOOST_FIXTURE_TEST_CASE ( TestCrate, TestXmlSystemSetup ) {
 
 BOOST_FIXTURE_TEST_CASE ( TestProcessor, TestXmlSystemSetup ) {
   pugi::xml_node lNode = mProc1Xml.child("processor");
-  swatch::processor::ProcessorStub lStub = xmlToProcessorStub(lNode);
+  swatch::processor::ProcessorStub lStub = detail::xmlToProcessorStub(lNode);
 
   BOOST_REQUIRE_EQUAL(lStub.id, "MP8");
   BOOST_REQUIRE_EQUAL(lStub.creator, "calol2::MainProcessor");
@@ -155,14 +155,14 @@ BOOST_FIXTURE_TEST_CASE ( TestProcessor, TestXmlSystemSetup ) {
   BOOST_REQUIRE_EQUAL(lStub.rxPorts.size(), size_t(72));
 
   lNode = mProc2Xml.child("processor");
-  lStub = xmlToProcessorStub(lNode);
+  lStub = detail::xmlToProcessorStub(lNode);
   BOOST_REQUIRE_EQUAL(lStub.txPorts.size(), size_t(7));
   BOOST_REQUIRE_EQUAL(lStub.rxPorts.size(), size_t(72));
 }
 
 BOOST_FIXTURE_TEST_CASE ( TestDaqTTC, TestXmlSystemSetup ) {
   pugi::xml_node lNode = mDaqTTCXml.child("daqttc-mgr");
-  swatch::dtm::DaqTTCStub lStub = xmlToDaqTTCStub(lNode);
+  swatch::dtm::DaqTTCStub lStub = detail::xmlToDaqTTCStub(lNode);
 
   BOOST_REQUIRE_EQUAL(lStub.id, "AMC13");
   BOOST_REQUIRE_EQUAL(lStub.role, "daqttc");
@@ -182,7 +182,7 @@ BOOST_FIXTURE_TEST_CASE ( TestDaqTTC, TestXmlSystemSetup ) {
 
 BOOST_FIXTURE_TEST_CASE ( TestLinks, TestXmlSystemSetup ) {
   pugi::xml_node lNode = mLinkXml.child("link");
-  std::vector<swatch::system::LinkStub> lStubs(xmlToLinkStubs(lNode));
+  std::vector<swatch::system::LinkStub> lStubs(detail::xmlToLinkStubs(lNode));
   BOOST_REQUIRE_EQUAL(lStubs.size(), size_t(6));
 }
 
