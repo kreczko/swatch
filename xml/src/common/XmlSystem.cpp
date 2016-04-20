@@ -8,7 +8,9 @@
 
 // external headers
 #include "pugixml/pugixml.hpp"
+#include <boost/foreach.hpp>
 #include <boost/unordered_map.hpp>
+#include <boost/range/algorithm/copy.hpp>
 #include "boost/lexical_cast.hpp"
 #include <log4cplus/loggingmacros.h>
 
@@ -55,13 +57,16 @@ swatch::system::SystemStub xmlToSystemStub(const pugi::xml_document& aXmlDoc) {
     } else if (lTag == "link") {
       lStub.links = xmlToLinkStubs(lNode);
     } else if (lTag == "connected-fed") {
-      lStub.connectedFEDs = xmlToConnectedFeds(lNode);
+      xmlToConnectedFeds(lNode, lStub.connectedFEDs);
     } else if (lTag == "excluded-boards") {
       //TODO: excluded boards
     } else {
       //TODO: unknown tag
     }
   } // end for loop
+
+  // final checks
+  checkForConnectionMapDuplicates(lStub.connectedFEDs);
 
   return lStub;
 }
@@ -202,6 +207,53 @@ std::vector<swatch::system::LinkStub> xmlToLinkStubs(const pugi::xml_node& aNode
   }
 
   return lStubs;
+}
+
+void xmlToConnectedFeds(const pugi::xml_node& aNode, swatch::system::SystemStub::FEDInputPortsMap& aFedMap) {
+  log4cplus::Logger lLogger(swatch::logger::Logger::getInstance("swatch.xml.system.xmlToConnectedFeds"));
+
+  uint32_t lFedID = boost::lexical_cast<uint32_t>(aNode.attribute("id").value());
+  if (aFedMap.count(lFedID)) {
+    std::ostringstream msg;
+    msg << "FED " << lFedID << " is referenced multiple times in 'CONNECTED FEDS'";
+    LOG4CPLUS_ERROR(lLogger, msg.str());
+    throw InvalidSystemDescription(msg.str());
+  }
+
+  std::set<std::string> lRxPorts;
+  // Map to track duplicates
+  std::map<std::string, uint32_t> lDuplicates;
+
+  BOOST_FOREACH(pugi::xml_node lPort, aNode.children("port")) {
+    std::string lPortId = lPort.attribute("id").value();
+    std::vector<std::string> lPortIds = core::toolbox::IdSliceParser::parse(lPortId);
+    BOOST_FOREACH( std::string lPortPath, lPortIds) {
+
+//      const std::string lProcId = lPortPath.substr(0, lPortPath.find('.'));
+      // TODO: Skip this port if it references an excluded board
+//      if (std::count(lStub.excludedBoards.begin(), lStub.excludedBoards.end(), lProcId) > 0)
+//        continue;
+      // Continue if insertion succeeds i.e. no duplicates
+      if (lRxPorts.insert(lPortPath).second)
+        continue;
+
+      // Otherwise Increase duplicate count for id
+      lDuplicates[lPortPath]++;
+    }
+  }
+
+  if (!lDuplicates.empty()) {
+    std::ostringstream msg;
+    msg << "Duplicates found while parsing CONNECTED FEDS map, FED " << lFedID << ". ";
+    BOOST_FOREACH( auto count, lDuplicates ) {
+      msg << "'" << count.first << "': " << count.second << " ";
+    }
+    LOG4CPLUS_ERROR(lLogger, msg.str());
+    throw InvalidSystemDescription(msg.str());
+  }
+
+  // Fill the map
+  boost::copy(lRxPorts, std::back_inserter(aFedMap[lFedID]));
 }
 
 bool validateSystemXml(const pugi::xml_document& aXmlDoc) {
@@ -389,6 +441,30 @@ bool validateLinkXml(const pugi::xml_node& aNode) {
   lResult = lResult && childContentNonEmpty(aNode, "tx-port");
   lResult = lResult && childContentNonEmpty(aNode, "rx-port");
 
+  return lResult;
+}
+
+bool validateConnectedFedXml(const pugi::xml_node& aNode) {
+  log4cplus::Logger lLogger(swatch::logger::Logger::getInstance("swatch.xml.system.validateConnectedFedXml"));
+  bool lResult = true;
+
+  if (!hasAttr(aNode, "id")) {
+    LOG4CPLUS_ERROR(lLogger, "<" << aNode.name() << "> tag has no 'id' attribute!");
+    lResult = false;
+  }
+
+  if (numberOfChildren(aNode, "port") == 0) {
+    LOG4CPLUS_ERROR(lLogger, "No <port> tags found within <" << aNode.name() << ">. At least one expected.");
+    lResult = false;
+  }
+  size_t i(1);
+  for (pugi::xml_named_node_iterator lPort = aNode.children("port").begin(); lPort != aNode.children("port").end();
+      ++lPort) {
+    if (!hasAttr(*lPort, "id")) {
+      LOG4CPLUS_ERROR(lLogger, i << ". entry of <port> tag for <" << aNode.name() << "> has no 'id' attribute!");
+      lResult = false;
+    }
+  }
 
   return lResult;
 }
@@ -454,6 +530,45 @@ void pushBackPortStubs(std::vector<swatch::processor::ProcessorPortStub>& aPortS
     swatch::processor::ProcessorPortStub b(names.at(i));
     b.number = boost::lexical_cast<unsigned>(indices.at(i));
     aPortStubs.push_back(b);
+  }
+}
+
+void checkForConnectionMapDuplicates(const swatch::system::SystemStub::FEDInputPortsMap& aFedMap) {
+  log4cplus::Logger lLogger(swatch::logger::Logger::getInstance("swatch.xml.system.checkForConnectionMapDuplicates"));
+  std::set<std::string> lAllRxPorts, lDuplicates;
+
+  BOOST_FOREACH( auto lFed, aFedMap ) {
+    BOOST_FOREACH( std::string lId, lFed.second ) {
+      // Continue if insertion succeeds i.e. no duplicates
+      if (lAllRxPorts.insert(lId).second)
+        continue;
+
+      lDuplicates.insert(lId);
+    }
+  }
+
+  if (!lDuplicates.empty()) {
+    // Map to track duplicates across different feds
+    std::map<std::string, std::vector<uint32_t> > lDuplicateMap;
+    BOOST_FOREACH( std::string lId, lDuplicates ) {
+      BOOST_FOREACH( auto lFed, aFedMap ) {
+
+        if (std::find(lFed.second.begin(), lFed.second.end(), lId) == lFed.second.end())
+          continue;
+
+        lDuplicateMap[lId].push_back(lFed.first);
+      }
+    }
+    std::ostringstream msg;
+    msg << "Duplicates found across multiple FEDs while parsing CONNECTED FEDS map. ";
+
+    BOOST_FOREACH(auto lCount, lDuplicateMap) {
+      msg << "id: '" << lCount.first << "': ";
+      boost::copy(lCount.second, std::ostream_iterator<uint32_t>(msg, " "));
+    }
+
+    LOG4CPLUS_ERROR(lLogger, msg.str());
+    throw InvalidSystemDescription(msg.str());
   }
 }
 

@@ -186,6 +186,15 @@ BOOST_FIXTURE_TEST_CASE ( TestLinks, TestXmlSystemSetup ) {
   BOOST_REQUIRE_EQUAL(lStubs.size(), size_t(6));
 }
 
+BOOST_FIXTURE_TEST_CASE ( TestConnectedFeds, TestXmlSystemSetup ) {
+  pugi::xml_node lNode = mFEDXml.child("connected-fed");
+  swatch::system::SystemStub::FEDInputPortsMap lFedMap;
+  detail::xmlToConnectedFeds(lNode, lFedMap);
+
+  BOOST_REQUIRE_EQUAL(lFedMap.count(1356), size_t(1));
+  BOOST_REQUIRE_EQUAL(lFedMap[1356].size(), size_t(10+14));
+}
+
 BOOST_AUTO_TEST_SUITE_END() // TestXmlSystem
 
 }//ns: test

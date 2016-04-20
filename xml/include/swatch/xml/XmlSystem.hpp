@@ -70,9 +70,10 @@ swatch::system::CrateStub xmlToCrateStub(const pugi::xml_node& aNode);
 std::vector<swatch::system::LinkStub> xmlToLinkStubs(const pugi::xml_node& aNode);
 
 /**
- * Converts a <connected-fed> tag to swatch::system::SystemStub::FEDInputPortsMap
+ * Converts a <connected-fed> tag to swatch::system::SystemStub::FEDInputPortsMap (aFedMap).
+ * Checks for duplicates (not allowed).
  */
-swatch::system::SystemStub::FEDInputPortsMap xmlToConnectedFeds(const pugi::xml_node& aNode);
+void xmlToConnectedFeds(const pugi::xml_node& aNode, swatch::system::SystemStub::FEDInputPortsMap& aFedMap);
 
 /**
  * Validates the swatch::system::System XML description from an XML document
@@ -199,6 +200,7 @@ void loadFromFile(const std::string& aFilePath, pugi::xml_document& aDocToLoadIn
 void pushBackPortStubs(std::vector<swatch::processor::ProcessorPortStub>& aPortStubs, const std::string& aName,
     const std::string& aIndex);
 
+void checkForConnectionMapDuplicates(const swatch::system::SystemStub::FEDInputPortsMap& aFedMap);
 } //ns: detail
 } //ns: system
 } //ns: xml
